@@ -496,7 +496,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             // find manual attributes
             Map<String, String> manualAttributes = new LinkedHashMap<>();
             for (String line : lines) {
-                if (!RELOCATE_MANUAL_ATTRIBUTES && line.length() == 0) {
+                if (!RELOCATE_MANUAL_ATTRIBUTES && line.isEmpty()) {
                     break;
                 }
                 for (Pattern attrName : MANUAL_ATTRIBUTES) {

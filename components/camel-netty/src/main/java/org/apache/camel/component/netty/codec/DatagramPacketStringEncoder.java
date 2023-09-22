@@ -63,7 +63,7 @@ public class DatagramPacketStringEncoder
             throws Exception {
         if (msg.content() instanceof CharSequence) {
             CharSequence payload = (CharSequence) msg.content();
-            if (payload.length() == 0) {
+            if (payload.isEmpty()) {
                 return;
             }
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<>(

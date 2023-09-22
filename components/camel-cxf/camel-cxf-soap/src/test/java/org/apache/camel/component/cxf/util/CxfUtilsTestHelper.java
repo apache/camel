@@ -73,7 +73,7 @@ public final class CxfUtilsTestHelper {
         String decUri = writer.getNamespaceContext().getNamespaceURI(prefix);
         boolean declareNamespace = decUri == null || !decUri.equals(ns);
 
-        if (ns == null || ns.length() == 0) {
+        if (ns == null || ns.isEmpty()) {
             writer.writeStartElement(localName);
             if (StringUtils.isEmpty(decUri)) {
                 declareNamespace = false;
@@ -112,9 +112,9 @@ public final class CxfUtilsTestHelper {
                 } else {
                     String attns = attr.getNamespaceURI();
                     String value = attr.getNodeValue();
-                    if (attns == null || attns.length() == 0) {
+                    if (attns == null || attns.isEmpty()) {
                         writer.writeAttribute(name, value);
-                    } else if (attrPrefix == null || attrPrefix.length() == 0) {
+                    } else if (attrPrefix == null || attrPrefix.isEmpty()) {
                         writer.writeAttribute(attns, name, value);
                     } else {
                         writer.writeAttribute(attrPrefix, attns, name, value);

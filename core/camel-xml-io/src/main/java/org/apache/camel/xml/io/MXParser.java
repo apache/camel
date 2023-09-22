@@ -922,7 +922,7 @@ public class MXParser implements XmlPullParser {
                 }
             }
         } else {
-            if (namespace != null && namespace.length() == 0) {
+            if (namespace != null && namespace.isEmpty()) {
                 namespace = null;
             }
             if (namespace != null)
@@ -2054,7 +2054,7 @@ public class MXParser implements XmlPullParser {
             ensureNamespacesCapacity(namespaceEnd);
             int prefixHash = -1;
             if (colonPos != -1) {
-                if (ns.length() == 0) {
+                if (ns.isEmpty()) {
                     throw new XmlPullParserException(
                             "non-default namespace can not be declared to be empty string", this, null);
                 }

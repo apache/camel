@@ -539,7 +539,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     }
 
     private String toXmlString(String input) {
-        if (input == null || input.length() == 0) {
+        if (input == null || input.isEmpty()) {
             return null;
         }
 

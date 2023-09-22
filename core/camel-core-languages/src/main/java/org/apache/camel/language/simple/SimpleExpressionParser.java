@@ -208,10 +208,10 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         for (SimpleNode node : nodes) {
             String exp = node.createCode(expression);
             if (exp != null) {
-                if (sb.length() == 0 && node instanceof LiteralNode) {
+                if (sb.isEmpty() && node instanceof LiteralNode) {
                     firstIsLiteral = true;
                 }
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     // okay we append together and this requires that the first node to be literal
                     if (!firstIsLiteral) {
                         // then insert an empty string + to force type into string so the compiler

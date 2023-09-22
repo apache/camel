@@ -216,7 +216,7 @@ public final class EndpointUriFactoryGenerator {
             sb.append(sj);
             sb.append("}");
         }
-        if (sb.length() == 0) {
+        if (sb.isEmpty()) {
             return null;
         }
         return sb.toString();
