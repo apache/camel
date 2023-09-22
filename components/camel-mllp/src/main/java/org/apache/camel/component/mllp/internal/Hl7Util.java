@@ -311,7 +311,7 @@ public final class Hl7Util {
     public String convertToPrintFriendlyString(String phiString) {
         if (null == phiString) {
             return NULL_REPLACEMENT_VALUE;
-        } else if (phiString.length() == 0) {
+        } else if (phiString.isEmpty()) {
             return EMPTY_REPLACEMENT_VALUE;
         }
 

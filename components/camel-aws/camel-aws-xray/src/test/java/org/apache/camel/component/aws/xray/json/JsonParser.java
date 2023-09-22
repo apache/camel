@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.lang3.StringUtils;
 
 public final class JsonParser {
@@ -104,13 +105,13 @@ public final class JsonParser {
                         break;
                     }
                 default:
-                    if (('"' == c && curToken.length() == 0)
-                            || ('"' == c && curToken.length() > 0 && curToken.charAt(curToken.length() - 1) != '\\')) {
+                    if (('"' == c && curToken.isEmpty())
+                            || ('"' == c && !curToken.isEmpty() && curToken.charAt(curToken.length() - 1) != '\\')) {
                         inWord = !inWord;
                     }
                     if (!inWord && !doNotIncludeSymbols.contains(String.valueOf(c))) {
                         curToken.append(c);
-                    } else if ('"' != c || (curToken.length() > 0 && curToken.charAt(curToken.length() - 1) == '\\')) {
+                    } else if ('"' != c || (!curToken.isEmpty() && curToken.charAt(curToken.length() - 1) == '\\')) {
                         curToken.append(c);
                     }
             }
@@ -135,7 +136,7 @@ public final class JsonParser {
 
     private static Object sanitizeData(String data) {
         data = data.trim();
-        if (data.toLowerCase().equals("true") || data.toLowerCase().equals("false")) {
+        if (ObjectHelper.isBoolean(data)) {
             return Boolean.valueOf(data);
         }
         if (data.contains(".") && StringUtils.countMatches(data, ".") == 1 && data.matches("[0-9\\.]+")) {

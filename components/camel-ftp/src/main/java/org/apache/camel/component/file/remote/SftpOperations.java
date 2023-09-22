@@ -676,7 +676,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             // extract the path segment relative to the target path and make
             // sure it keeps the preceding '/' for the regex op
             String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ? 1 : 0));
-            if (p.length() == 0) {
+            if (p.isEmpty()) {
                 return;
             }
             // the first character must be '/' and hence removed

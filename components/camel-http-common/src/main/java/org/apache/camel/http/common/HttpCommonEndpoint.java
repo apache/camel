@@ -259,7 +259,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     public String getPath() {
         //if the path is empty, we just return the default path here
-        return httpUri.getPath().length() == 0 ? "/" : httpUri.getPath();
+        return httpUri.getPath().isEmpty() ? "/" : httpUri.getPath();
     }
 
     public int getPort() {

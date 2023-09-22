@@ -136,7 +136,7 @@ public final class HttpHelper {
      * @return       the extracted parameter value, see more details in javadoc.
      */
     public static Object extractHttpParameterValue(String value) {
-        if (value == null || ObjectHelper.isEmpty(value)) {
+        if (ObjectHelper.isEmpty(value)) {
             return value;
         }
 

@@ -200,7 +200,7 @@ public class Bind extends CamelCommand {
         }
 
         // create a dummy placeholder, so it is easier to add new properties manually
-        if (sb.length() == 0) {
+        if (sb.isEmpty()) {
             sb.append("#properties:\n      #key: \"value\"");
         }
 

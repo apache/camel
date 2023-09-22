@@ -146,7 +146,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     }
 
     private void validateInputs() throws IllegalArgumentException {
-        if (getChannel() == null || getChannel().length() == 0) {
+        if (getChannel() == null || getChannel().isEmpty()) {
             throw new IllegalArgumentException("A required parameter was not set when creating this Endpoint (channel)");
         }
 

@@ -167,7 +167,7 @@ public class AnnotationTransformerLoader extends Transformer implements Transfor
                             break;
                         }
                         line = line.trim();
-                        if (line.startsWith("#") || line.length() == 0) {
+                        if (line.startsWith("#") || line.isEmpty()) {
                             continue;
                         }
                         packages.add(line);

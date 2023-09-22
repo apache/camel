@@ -173,7 +173,7 @@ public class JndiContext implements Context, Serializable {
 
     @Override
     public Object lookup(String name) throws NamingException {
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             return this;
         }
         Object result = treeBindings.get(name);
