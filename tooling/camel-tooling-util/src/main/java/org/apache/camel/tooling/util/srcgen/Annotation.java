@@ -77,28 +77,22 @@ public class Annotation {
     }
 
     public static String quote(String value) {
-        StringBuilder sb = null;
+        final String escapeCharsIn = "\n\t\r\\\"\'";
+        final String escapeCharsOut = "ntr\\\"\'";
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"");
         for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
-            if (c == '"' || c == '\\') {
-                if (sb == null) {
-                    sb = new StringBuilder();
-                    sb.append("\"");
-                    sb.append("\\");
-                    sb.append(c);
-                }
+            int e=escapeCharsIn.indexOf(c) ;
+            if (e > -1) {
+                // Preserve single char escape sequences
+                sb.append("\\");
+                sb.append(escapeCharsOut.charAt(e));
             } else {
-                if (sb != null) {
-                    sb.append(c);
-                }
+                sb.append(c);
             }
         }
-        if (sb == null) {
-            return "\"" + value + "\"";
-        } else {
-            sb.append("\"");
-            return sb.toString();
-        }
+        sb.append("\"");
+        return sb.toString();
     }
-
 }
