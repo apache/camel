@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ import io.undertow.servlet.api.DeploymentManager;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -101,9 +103,23 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         con.setRequestMethod(req.getMethod());
         if (req instanceof PostMethodWebRequest) {
             con.setDoOutput(true);
+            String contentType = con.getRequestProperty("Content-Type");
+            boolean isMultipart = ObjectHelper.isNotEmpty(contentType) && contentType.startsWith("multipart/form-data");
+            if (isMultipart) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("------Boundary\r\n");
+                builder.append("Content-Disposition: form-data; name=\"file\"; filename=\"test.txt\"\r\n");
+                builder.append("Content-Type: application/octet-stream\r\n\r\n");
+                con.getOutputStream().write(builder.toString().getBytes(StandardCharsets.UTF_8));
+            }
+
             InputStream is = ((PostMethodWebRequest) req).content;
             if (is != null) {
                 IOHelper.copy(is, con.getOutputStream());
+            }
+
+            if (isMultipart) {
+                con.getOutputStream().write("\r\n------Boundary--\r\n".getBytes(StandardCharsets.UTF_8));
             }
         }
         int code = con.getResponseCode();
