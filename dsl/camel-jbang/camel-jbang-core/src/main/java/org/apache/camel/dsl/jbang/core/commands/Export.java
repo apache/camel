@@ -35,11 +35,11 @@ public class Export extends ExportBaseCommand {
 
     @Override
     protected Integer export() throws Exception {
-        // read runtime and gav from profile if not configured
         File profile = new File(getProfile() + ".properties");
         if (profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
+            // read runtime and gav from profile if not configured
             if (this.runtime == null) {
                 this.runtime = prop.getProperty("camel.jbang.runtime");
             }
@@ -67,6 +67,9 @@ public class Export extends ExportBaseCommand {
             this.secretsRefreshProviders
                     = prop.getProperty("camel.jbang.secretsRefreshProviders", this.secretsRefreshProviders);
             this.openapi = prop.getProperty("camel.jbang.openApi", this.openapi);
+            this.repos = prop.getProperty("camel.jbang.repos", this.repos);
+            this.mavenSettings = prop.getProperty("camel.jbang.maven-settings", this.mavenSettings);
+            this.mavenSettingsSecurity = prop.getProperty("camel.jbang.maven-settings-security", this.mavenSettingsSecurity);
         }
 
         if (runtime == null) {
@@ -98,6 +101,8 @@ public class Export extends ExportBaseCommand {
         cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
         cmd.gav = this.gav;
+        cmd.mavenSettings = this.mavenSettings;
+        cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
         cmd.exportDir = this.exportDir;
         cmd.fresh = this.fresh;
         cmd.javaVersion = this.javaVersion;

@@ -96,6 +96,15 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
+    @CommandLine.Option(names = { "--maven-settings" },
+                        description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies."
+                                      + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    String mavenSettings;
+
+    @CommandLine.Option(names = { "--maven-settings-security" },
+                        description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
+    String mavenSettingsSecurity;
+
     @CommandLine.Option(names = { "--main-classname" },
                         description = "The class name of the Camel Main application class",
                         defaultValue = "CamelApplication")
