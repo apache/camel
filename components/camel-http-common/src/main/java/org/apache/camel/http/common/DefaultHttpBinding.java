@@ -199,6 +199,9 @@ public class DefaultHttpBinding implements HttpBinding {
     protected void readBody(HttpServletRequest request, Message message) {
         LOG.trace("readBody {}", request);
 
+        // Process attachments first as some servlet containers expect the body to not have been read at this point
+        populateAttachments(request, message);
+
         // lets parse the body
         Object body = message.getBody();
         // reset the stream cache if the body is the instance of StreamCache
@@ -226,8 +229,6 @@ public class DefaultHttpBinding implements HttpBinding {
                 message.setBody(null);
             }
         }
-
-        populateAttachments(request, message);
     }
 
     protected void populateRequestParameters(HttpServletRequest request, Message message) {
