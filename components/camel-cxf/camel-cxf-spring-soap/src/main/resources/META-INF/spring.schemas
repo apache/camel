@@ -14,11 +14,9 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
-http\://camel.apache.org/schema/cxf/jaxws/camel-cxf.xsd=schema/cxfJaxwsEndpoint.xsd
 
+http\://camel.apache.org/schema/cxf/jaxws/camel-cxf.xsd=schema/cxfJaxwsEndpoint.xsd
 http\://camel.apache.org/schema/cxf/jaxws/camel-cxf-${camel.version}.xsd=schema/cxfJaxwsEndpoint.xsd
 
-
 http\://camel.apache.org/schema/cxf/jaxws/camel-cxf-spring.xsd=schema/cxfJaxwsEndpoint.xsd
-
 http\://camel.apache.org/schema/cxf/jaxws/camel-cxf-${camel.version}-spring.xsd=schema/cxfJaxwsEndpoint.xsd
