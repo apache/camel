@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.LongAdder;
  */
 final class TypeConverterStatistics implements ConverterStatistics {
 
+    private boolean statisticsEnabled;
     private final LongAdder noopCounter = new LongAdder();
     private final LongAdder attemptCounter = new LongAdder();
     private final LongAdder missCounter = new LongAdder();
@@ -57,27 +58,37 @@ final class TypeConverterStatistics implements ConverterStatistics {
 
     @Override
     public void incrementFailed() {
-        failedCounter.increment();
+        if (statisticsEnabled) {
+            failedCounter.increment();
+        }
     }
 
     @Override
     public void incrementNoop() {
-        noopCounter.increment();
+        if (statisticsEnabled) {
+            noopCounter.increment();
+        }
     }
 
     @Override
     public void incrementHit() {
-        hitCounter.increment();
+        if (statisticsEnabled) {
+            hitCounter.increment();
+        }
     }
 
     @Override
     public void incrementMiss() {
-        missCounter.increment();
+        if (statisticsEnabled) {
+            missCounter.increment();
+        }
     }
 
     @Override
     public void incrementAttempt() {
-        attemptCounter.increment();
+        if (statisticsEnabled) {
+            attemptCounter.increment();
+        }
     }
 
     @Override
@@ -91,7 +102,12 @@ final class TypeConverterStatistics implements ConverterStatistics {
 
     @Override
     public boolean isStatisticsEnabled() {
-        return true;
+        return statisticsEnabled;
+    }
+
+    @Override
+    public void setStatisticsEnabled(boolean statisticsEnabled) {
+        this.statisticsEnabled = statisticsEnabled;
     }
 
     @Override
