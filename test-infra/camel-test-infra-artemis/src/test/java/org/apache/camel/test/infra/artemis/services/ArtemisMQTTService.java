@@ -40,7 +40,6 @@ public class ArtemisMQTTService extends AbstractArtemisEmbeddedService {
         this.port = port;
         brokerURL = "tcp://0.0.0.0:" + port;
 
-
         AddressSettings addressSettings = new AddressSettings();
         addressSettings.setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL);
 
