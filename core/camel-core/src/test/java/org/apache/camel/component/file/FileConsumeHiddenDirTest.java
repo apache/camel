@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.file;
 
+import java.nio.file.Files;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -37,15 +37,15 @@ public class FileConsumeHiddenDirTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Report 123", "Report 456");
 
-        template.sendBodyAndHeader(fileUri(".hidden"), "Report 123", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader(fileUri(".hidden"), "Report 456", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(fileUri(".hidden"), "Report 123", Exchange.FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(fileUri("obvious"), "Report 456", Exchange.FILE_NAME, "report2.txt");
 
         assertMockEndpointsSatisfied();
 
         Awaitility.await().untilAsserted(() -> {
             // file should be deleted
-            assertFalse(Files.exists(testFile("report.txt")), "File should been deleted");
-            assertFalse(Files.exists(testFile("report2.txt")), "File should been deleted");
+            assertFalse(Files.exists(testFile(".hidden/report1.txt")), "File should been deleted");
+            assertFalse(Files.exists(testFile("obvious/report2.txt")), "File should been deleted");
         });
     }
 
@@ -53,7 +53,7 @@ public class FileConsumeHiddenDirTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUri(".hidden?initialDelay=0&delay=10&delete=true&includeHiddenDir=true"))
+                from(fileUri("?initialDelay=0&delay=10&delete=true&includeHiddenDir=true&recursive=true"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };
