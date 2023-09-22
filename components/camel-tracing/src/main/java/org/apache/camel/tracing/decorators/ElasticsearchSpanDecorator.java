@@ -22,11 +22,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 
 public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
 
     public static final String ELASTICSEARCH_DB_TYPE = "elasticsearch";
 
+    @Deprecated
     public static final String ELASTICSEARCH_CLUSTER_TAG = "elasticsearch.cluster";
 
     @Override
@@ -60,6 +62,7 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
         String cluster = stripSchemeAndOptions(endpoint);
         if (cluster != null) {
             span.setTag(ELASTICSEARCH_CLUSTER_TAG, cluster);
+            span.setTag(TagConstants.SERVER_ADDRESS, cluster);
         }
     }
 

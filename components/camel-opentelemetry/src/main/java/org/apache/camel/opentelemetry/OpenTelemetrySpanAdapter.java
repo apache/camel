@@ -70,12 +70,12 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
 
     @Override
     public void setTag(Tag key, String value) {
-        this.span.setAttribute(tagMap.get(key), value);
+        this.span.setAttribute(tagMap.getOrDefault(key, key.getAttribute()), value);
     }
 
     @Override
     public void setTag(Tag key, Number value) {
-        this.span.setAttribute(tagMap.get(key), value.intValue());
+        this.span.setAttribute(tagMap.getOrDefault(key, key.getAttribute()), value.intValue());
     }
 
     @Override
