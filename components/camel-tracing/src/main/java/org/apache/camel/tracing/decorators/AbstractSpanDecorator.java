@@ -99,9 +99,10 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         String scheme = getComponentName(endpoint);
         span.setComponent(CAMEL_COMPONENT + scheme);
 
-        // Including the endpoint URI path and query provides access to any options that may
+        // Including the endpoint URI provides access to any options that may
         // have been provided, for subsequent analysis
         String uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
+        span.setTag("camel.uri", uri);
         span.setTag(TagConstants.URL_PATH, stripSchemeAndOptions(endpoint));
         String query = URISupport.extractQuery(uri);
         if (query != null) {
