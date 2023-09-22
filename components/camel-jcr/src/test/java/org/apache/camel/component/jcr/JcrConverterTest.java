@@ -68,7 +68,7 @@ public class JcrConverterTest {
                     public boolean supportsAutoWiring() {
                         return false;
                     }
-                }, true, false);
+                }, true);
         ServiceHelper.startService(converter);
     }
 
