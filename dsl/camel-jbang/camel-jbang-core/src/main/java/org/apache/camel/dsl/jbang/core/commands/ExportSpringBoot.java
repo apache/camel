@@ -445,31 +445,6 @@ class ExportSpringBoot extends Export {
     }
 
     @Override
-    protected void prepareApplicationProperties(Properties properties) {
-        if (secretsRefresh) {
-            if (secretsRefreshProviders != null) {
-                List<String> providers = getSecretProviders();
-
-                for (String provider : providers) {
-                    switch (provider) {
-                        case "aws":
-                            exportAwsSecretsRefreshProp(properties);
-                            break;
-                        case "gcp":
-                            exportGcpSecretsRefreshProp(properties);
-                            break;
-                        case "azure":
-                            exportAzureSecretsRefreshProp(properties);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
     protected String applicationPropertyLine(String key, String value) {
         // camel.main.x should be renamed to camel.springboot.x
         if (key.startsWith("camel.main.")) {
