@@ -546,7 +546,7 @@ public final class URISupport {
      */
     public static URI createRemainingURI(URI originalURI, Map<String, Object> params) throws URISyntaxException {
         String s = createQueryString(params);
-        if (s.length() == 0) {
+        if (s.isEmpty()) {
             s = null;
         }
         return createURIWithQuery(originalURI, s);

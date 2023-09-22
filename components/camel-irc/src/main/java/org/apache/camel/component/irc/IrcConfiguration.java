@@ -130,7 +130,7 @@ public class IrcConfiguration implements Cloneable {
     public String getSpaceSeparatedChannelNames() {
         StringBuilder retval = new StringBuilder();
         for (IrcChannel channel : channelList) {
-            retval.append(retval.length() == 0 ? "" : " ").append(channel.getName());
+            retval.append(retval.isEmpty() ? "" : " ").append(channel.getName());
         }
         return retval.toString();
     }

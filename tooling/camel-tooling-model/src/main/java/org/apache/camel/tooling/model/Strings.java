@@ -29,7 +29,7 @@ public final class Strings {
      * Returns true if the given text is null or empty string or has <tt>null</tt> as the value
      */
     public static boolean isNullOrEmpty(String text) {
-        return text == null || text.length() == 0 || "null".equals(text);
+        return text == null || text.isEmpty() || "null".equals(text);
     }
 
     public static String cutLastZeroDigit(String version) {
