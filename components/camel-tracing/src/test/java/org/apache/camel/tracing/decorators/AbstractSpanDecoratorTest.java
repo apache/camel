@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
+import org.apache.camel.tracing.Tag;
 import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -75,6 +76,7 @@ public class AbstractSpanDecoratorTest {
 
         decorator.pre(span, null, endpoint);
 
+        assertEquals("camel-test", span.tags().get(Tag.COMPONENT.name()));
         assertEquals("camel-test", span.tags().get(TagConstants.COMPONENT));
     }
 
@@ -103,6 +105,7 @@ public class AbstractSpanDecoratorTest {
 
         decorator.post(span, exchange, null);
 
+        assertEquals(true, span.tags().get(Tag.ERROR.name()));
         assertEquals(true, span.tags().get(TagConstants.ERROR));
         assertEquals(1, span.logEntries().size());
         assertEquals("error", span.logEntries().get(0).fields().get("event"));
