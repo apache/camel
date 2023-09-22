@@ -346,29 +346,4 @@ class ExportCamelMain extends Export {
         is = ExportCamelMain.class.getResourceAsStream("/assembly/runner.xml");
         safeCopy(is, new File(srcResourcesDir, "assembly/runner.xml"));
     }
-
-    @Override
-    protected void prepareApplicationProperties(Properties properties) {
-        if (secretsRefresh) {
-            if (secretsRefreshProviders != null) {
-                List<String> providers = getSecretProviders();
-
-                for (String provider : providers) {
-                    switch (provider) {
-                        case "aws":
-                            exportAwsSecretsRefreshProp(properties);
-                            break;
-                        case "gcp":
-                            exportGcpSecretsRefreshProp(properties);
-                            break;
-                        case "azure":
-                            exportAzureSecretsRefreshProp(properties);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-    }
 }
