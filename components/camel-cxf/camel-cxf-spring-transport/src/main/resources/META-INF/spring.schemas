@@ -15,5 +15,6 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-# since we don't publish the camel schema in the cxf site, we will always use the schema file in the class path 
+# since we don't publish the camel schema in the cxf site, we will always use the schema file in the class path
+ 
 http\://cxf.apache.org/transports/camel.xsd=schema/configuration/camel.xsd
