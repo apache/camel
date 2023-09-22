@@ -24,6 +24,7 @@ import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.TracingObservationHandler.TracingContext;
 import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.Tag;
 
 public class MicrometerObservationSpanAdapter implements SpanAdapter {
     private static final String DEFAULT_EVENT_NAME = "log";
@@ -52,6 +53,17 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     }
 
     @Override
+    public void setTag(Tag key, String value) {
+        this.observation.highCardinalityKeyValue(key.toString(), value);
+        this.observation.highCardinalityKeyValue(key.getAttribute(), value);
+    }
+
+    @Override
+    public void setTag(Tag key, Number value) {
+        setTag(key, value.toString());
+    }
+
+    @Override
     public void setTag(String key, String value) {
         this.observation.highCardinalityKeyValue(key, value);
     }
@@ -64,6 +76,18 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     @Override
     public void setTag(String key, Boolean value) {
         setTag(key, value.toString());
+    }
+
+    @Override
+    public void setLowCardinalityTag(Tag key, String value) {
+        observation.lowCardinalityKeyValue(key.toString(), value);
+        observation.lowCardinalityKeyValue(key.getAttribute(), value);
+    }
+
+    @Override
+    public void setLowCardinalityTag(Tag key, Number value) {
+        observation.lowCardinalityKeyValue(key.toString(), value.toString());
+        observation.lowCardinalityKeyValue(key.getAttribute(), value.toString());
     }
 
     @Override
