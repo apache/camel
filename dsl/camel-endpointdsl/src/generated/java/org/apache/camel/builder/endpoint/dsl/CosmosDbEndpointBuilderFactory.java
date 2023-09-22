@@ -363,6 +363,24 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: CONSISTENT
+         * Group: common
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder indexingPolicy(
+                String indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
          * Sets the flag to enable writes on any regions for geo-replicated
          * database accounts in the Azure Cosmos DB service. When the value of
          * this property is true, the SDK will direct write operations to
@@ -1180,6 +1198,24 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: CONSISTENT
+         * Group: common
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder indexingPolicy(
+                String indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
          * Sets the flag to enable writes on any regions for geo-replicated
          * database accounts in the Azure Cosmos DB service. When the value of
          * this property is true, the SDK will direct write operations to
@@ -1880,6 +1916,23 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointBuilder databaseEndpoint(String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: CONSISTENT
+         * Group: common
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder indexingPolicy(String indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
             return this;
         }
         /**

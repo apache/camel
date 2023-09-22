@@ -80,7 +80,7 @@ class CosmosDbDatabaseOperationsIT {
 
         // test create container
         final CosmosContainerResponse createdContainer = operations
-                .createContainer(containerId, "/test", null)
+                .createContainer(containerId, "/test", null, null)
                 .block();
 
         assertNotNull(createdContainer);
@@ -116,7 +116,7 @@ class CosmosDbDatabaseOperationsIT {
 
         // second we test if we want to create a container when we get container operations
         operations
-                .createContainerIfNotExistAndGetContainerOperations(containerId, "/path", null)
+                .createContainerIfNotExistAndGetContainerOperations(containerId, "/path", null, "Consistent")
                 .getContainerId()
                 .block();
 

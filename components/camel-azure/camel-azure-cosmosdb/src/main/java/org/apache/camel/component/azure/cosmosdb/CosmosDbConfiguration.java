@@ -66,6 +66,8 @@ public class CosmosDbConfiguration implements Cloneable {
     private boolean createDatabaseIfNotExists;
     @UriParam(label = "common", defaultValue = "false")
     private boolean createContainerIfNotExists;
+    @UriParam(label = "common", defaultValue = "CONSISTENT", enums = "CONSISTENT, LAZY, NONE")
+    private String indexingPolicy = "CONSISTENT";
     @UriParam(label = "common")
     private ThroughputProperties throughputProperties;
     @UriParam(label = "consumer", defaultValue = "false")
@@ -467,6 +469,18 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setOperation(CosmosDbOperationsDefinition operation) {
         this.operation = operation;
+    }
+
+    /**
+     * The CosmosDB Indexing Policy that will be set in case of container creation, this option is related to
+     * {@link createLeaseContainerIfNotExists} and it will be taken into account when the latter is true.
+     */
+    public String getIndexingPolicy() {
+        return indexingPolicy;
+    }
+
+    public void setIndexingPolicy(String indexingPolicy) {
+        this.indexingPolicy = indexingPolicy;
     }
 
     // *************************************************

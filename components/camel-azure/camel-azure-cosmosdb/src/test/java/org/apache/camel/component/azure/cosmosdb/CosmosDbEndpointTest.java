@@ -62,6 +62,28 @@ class CosmosDbEndpointTest extends CamelTestSupport {
     }
 
     @Test
+    void testCreateEndpointWithIndexingPolicyConfig() throws Exception {
+        final String uri = "azure-cosmosdb://mydb/myContainer";
+        final String remaining = "mydb/myContainer";
+        final Map<String, Object> params = new HashMap<>();
+        params.put("databaseEndpoint", "https://test.com:443");
+        params.put("createDatabaseIfNotExists", "true");
+        params.put("accountKey", "myKey");
+        params.put("indexingPolicy", "LAZY");
+
+        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
+                .createEndpoint(uri, remaining, params);
+
+        assertEquals("mydb", endpoint.getConfiguration().getDatabaseName());
+        assertEquals("myContainer", endpoint.getConfiguration().getContainerName());
+        assertEquals("https://test.com:443", endpoint.getConfiguration().getDatabaseEndpoint());
+        assertEquals("myKey", endpoint.getConfiguration().getAccountKey());
+        assertEquals("LAZY", endpoint.getConfiguration().getIndexingPolicy());
+        assertTrue(endpoint.getConfiguration().isCreateDatabaseIfNotExists());
+
+    }
+
+    @Test
     void testCreateConsumerWithInvalidConfig() throws Exception {
         final String uri = "azure-cosmosdb://mydb/myContainer";
         String remaining = "mydb";

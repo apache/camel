@@ -27,6 +27,7 @@ public final class CosmosDbConstants {
     public static final String QUERY_REQUEST_OPTIONS = HEADER_PREFIX + "QueryRequestOptions";
     public static final String CREATE_DATABASE_IF_NOT_EXIST = HEADER_PREFIX + "CreateDatabaseIfNotExist";
     public static final String CREATE_CONTAINER_IF_NOT_EXIST = HEADER_PREFIX + "CreateContainerIfNotExist";
+    public static final String INDEXING_POLICY = HEADER_PREFIX + "IndexingPolicy";
     public static final String THROUGHPUT_PROPERTIES = HEADER_PREFIX + "ThroughputProperties";
     public static final String DATABASE_REQUEST_OPTIONS = HEADER_PREFIX + "DatabaseRequestOptions";
     public static final String CONTAINER_PARTITION_KEY_PATH = HEADER_PREFIX + "ContainerPartitionKeyPath";

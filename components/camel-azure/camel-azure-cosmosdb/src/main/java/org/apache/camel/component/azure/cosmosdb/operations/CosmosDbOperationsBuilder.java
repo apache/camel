@@ -29,6 +29,8 @@ public final class CosmosDbOperationsBuilder {
     private boolean createContainerIfNotExist;
     private ThroughputProperties throughputProperties;
 
+    private String indexingPolicy;
+
     private CosmosDbOperationsBuilder(CosmosAsyncClientWrapper clientWrapper) {
         this.clientWrapper = clientWrapper;
     }
@@ -67,6 +69,11 @@ public final class CosmosDbOperationsBuilder {
         return this;
     }
 
+    public CosmosDbOperationsBuilder withIndexingPolicy(String indexingPolicy) {
+        this.indexingPolicy = indexingPolicy;
+        return this;
+    }
+
     public CosmosDbDatabaseOperations buildDatabaseOperations() {
         // if we enabled this flag, we create a database first before running the operation
         if (createDatabaseIfNotExist) {
@@ -85,7 +92,8 @@ public final class CosmosDbOperationsBuilder {
             return buildDatabaseOperations()
                     .createContainerIfNotExistAndGetContainerOperations(containerName,
                             containerPartitionKeyPath,
-                            throughputProperties);
+                            throughputProperties,
+                            indexingPolicy);
         }
 
         // otherwise just return the operation without creating a container if it is not existing
