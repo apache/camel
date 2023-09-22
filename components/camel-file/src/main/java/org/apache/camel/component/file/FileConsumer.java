@@ -171,6 +171,9 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     private File[] listFiles(File directory) {
+        if (!getEndpoint().isIncludeHiddenDir()) {
+            return null;
+        }
         final File[] dirFiles = directory.listFiles();
 
         if (dirFiles == null || dirFiles.length == 0) {
@@ -314,8 +317,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
     @Override
     protected boolean isMatchedHiddenFile(GenericFile<File> file, boolean isDirectory) {
-        String name = file.getFileNameOnly();
         if (isDirectory) {
+            String name = file.getFileNameOnly();
             return getEndpoint().isIncludeHiddenDir() && !".camel".equals(name);
         }
 
