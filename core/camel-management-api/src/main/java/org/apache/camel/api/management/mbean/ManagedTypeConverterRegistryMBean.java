@@ -42,6 +42,9 @@ public interface ManagedTypeConverterRegistryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Utilization statistics enabled")
     boolean isStatisticsEnabled();
 
+    @ManagedAttribute(description = "Utilization statistics enabled")
+    void setStatisticsEnabled(boolean statisticsEnabled);
+
     @ManagedAttribute(description = "Number of type converters in the registry")
     int getNumberOfTypeConverters();
 

@@ -63,7 +63,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     // special enum converter for optional performance
     protected final TypeConverter enumTypeConverter = new EnumTypeConverter();
 
-    private final ConverterStatistics statistics;
+    private final ConverterStatistics statistics = new TypeConverterStatistics();
 
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Ignore;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.DEBUG;
@@ -71,14 +71,6 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     // Why 256: as of Camel 4, we have about 230 type converters. Therefore, set the capacity to a few more to provide
     // space for others added during runtime
     private final Map<TypeConvertible<?, ?>, TypeConverter> converters = new ConcurrentHashMap<>(256);
-
-    protected CoreTypeConverterRegistry(boolean statisticsEnabled) {
-        if (statisticsEnabled) {
-            statistics = new TypeConverterStatistics();
-        } else {
-            statistics = new NoopTypeConverterStatistics();
-        }
-    }
 
     @Override
     public boolean allowNull() {

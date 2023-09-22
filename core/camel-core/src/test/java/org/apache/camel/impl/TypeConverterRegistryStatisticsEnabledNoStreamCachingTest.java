@@ -30,12 +30,9 @@ public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends C
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(false);
-        context.setLoadTypeConverters(isLoadTypeConverters());
+        CamelContext context = super.createCamelContext();
         context.setStreamCaching(false);
         context.setTypeConverterStatisticsEnabled(true);
-        context.build();
-
         return context;
     }
 

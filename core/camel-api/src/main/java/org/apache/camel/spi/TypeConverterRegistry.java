@@ -71,6 +71,13 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
          * Whether statistics is enabled.
          */
         boolean isStatisticsEnabled();
+
+        /**
+         * Sets whether statistics is enabled.
+         *
+         * @param statisticsEnabled <tt>true</tt> to enable
+         */
+        void setStatisticsEnabled(boolean statisticsEnabled);
     }
 
     /**
