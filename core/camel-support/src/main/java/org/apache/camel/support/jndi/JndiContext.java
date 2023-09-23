@@ -381,7 +381,7 @@ public class JndiContext implements Context, Serializable {
     }
 
     private abstract class LocalNamingEnumeration implements NamingEnumeration<Object> {
-        private Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
+        private final Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
 
         @Override
         public boolean hasMore() throws NamingException {
