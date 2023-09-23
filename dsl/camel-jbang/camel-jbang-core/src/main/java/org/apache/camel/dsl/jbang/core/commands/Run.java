@@ -1112,7 +1112,7 @@ public class Run extends CamelCommand {
             // relative file is okay, otherwise we assume it's a hidden file
             boolean ok = name.startsWith("..") || name.startsWith("./");
             if (!ok) {
-                return false;
+                return true;
             }
         }
 
