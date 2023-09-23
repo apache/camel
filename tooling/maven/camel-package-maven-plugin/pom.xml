@@ -32,6 +32,10 @@
     <name>Camel :: Maven Plugins :: Camel Maven Package</name>
     <description>Maven plugin to help package Camel components and plugins</description>
 
+    <properties>
+        <skip.camel.maven.plugin.tests>false</skip.camel.maven.plugin.tests>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -225,6 +229,7 @@
                                 <goal>clean</goal>
                                 <goal>verify</goal>
                             </goals>
+                            <skipInvocation>${skip.camel.maven.plugin.tests}</skipInvocation>
                         </configuration>
                         <executions>
                             <execution>

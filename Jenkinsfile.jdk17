@@ -58,7 +58,7 @@ pipeline {
 
         stage('Build & Install') {
             steps {
-                sh "./mvnw -U $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install"
+                sh "./mvnw -U $MAVEN_PARAMS -Dskip.camel.maven.plugin.tests -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install"
             }
         }
 
