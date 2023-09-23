@@ -69,7 +69,7 @@ We appreciate all reproducers, but there are a few tips that can make us appreci
 * When an external application is required, reduce debugging friction:
 ** Use the plain Camel Core (i.e.: if it's a problem on Camel Core, avoid creating a reproducer based on Camel Quarkus, Camel Spring Boot and others).
 ** Use Java: the Camel Core is written in Java and that's the language the community is most familiar with.
-
+* Reproducers using Camel JBang are also highly helpful.
 
 [NOTE]
 ====
@@ -83,7 +83,7 @@ mvn archetype:generate -B \
     -DarchetypeVersion=4.0.0 \
     -Dpackage=org.apache.camel \
     -DgroupId=org.apache.camel.reproducer \
-    -DartifactId=testing-routes-with-test-container \
+    -DartifactId=reproducer-for-my-issue \
     -Dversion=1.0.0-SNAPSHOT
 ----
 
@@ -229,7 +229,7 @@ Be mindful of the source checks, formatting, and structure of the git commit mes
 CAMEL-9999: Some message goes here
 ----
 
-=== Making a contribution
+=== Making a good contribution
 
 * Ensure that the unit tests include proper assertions.
 * Avoid simply outputting changes to the standard output/error or just logging.
