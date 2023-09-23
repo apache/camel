@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-servicebus",
     "title": "Azure ServiceBus",
-    "description": "Send and receive messages to\/from Azure Event Bus.",
+    "description": "Send and receive messages to\/from Azure Service Bus.",
     "deprecated": false,
     "firstVersion": "3.12.0",
     "label": "cloud,messaging",
