@@ -54,7 +54,7 @@ public class BaseParser {
 
     protected final MXParser parser;
     protected String namespace;
-    protected Set<String> secondaryNamespaces = new HashSet<>();
+    protected final Set<String> secondaryNamespaces = new HashSet<>();
     protected Resource resource;
 
     public BaseParser(Resource resource) throws IOException, XmlPullParserException {

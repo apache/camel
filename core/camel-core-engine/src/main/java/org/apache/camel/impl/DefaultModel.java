@@ -93,7 +93,7 @@ public class DefaultModel implements Model {
     private List<TransformerDefinition> transformers = new ArrayList<>();
     private List<ValidatorDefinition> validators = new ArrayList<>();
     // XML and YAML DSL allows to declare beans in the DSL
-    private List<RegistryBeanDefinition> beans = new ArrayList<>();
+    private final List<RegistryBeanDefinition> beans = new ArrayList<>();
     private final Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
     private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
