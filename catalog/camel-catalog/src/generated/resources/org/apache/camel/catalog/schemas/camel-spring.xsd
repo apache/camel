@@ -439,7 +439,7 @@ Enriches a message with data from a secondary resource
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel error handling.
+Error handler settings
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -9382,7 +9382,7 @@ The line separator of the files The default value is to use the JVM platform lin
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The normalized line separator of the files The default value is a new line character. Default value: \n
+The normalized line separator of the files The default value is a new line character. Default value: 
 ]]>
             </xs:documentation>
           </xs:annotation>
