@@ -45,7 +45,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
      * Define a {@link org.apache.camel.Predicate} which targets the Exchange.
      */
     public T exchange(final Predicate<Exchange> predicate) {
-        this.predicate = predicate::test;
+        this.predicate = predicate;
         return parent;
     }
 
