@@ -2,7 +2,7 @@
 :doctitle: Azure ServiceBus
 :shortname: azure-servicebus
 :artifactid: camel-azure-servicebus
-:description: Send and receive messages to/from Azure Event Bus.
+:description: Send and receive messages to/from Azure Service Bus.
 :since: 3.12
 :supportlevel: Stable
 :tabs-sync-option:

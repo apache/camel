@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Send and receive messages to/from Azure Event Bus.
+ * Send and receive messages to/from Azure Service Bus.
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "azure-servicebus", title = "Azure ServiceBus",
              syntax = "azure-servicebus:topicOrQueueName", category = {
