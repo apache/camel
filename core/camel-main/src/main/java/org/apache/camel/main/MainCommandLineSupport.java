@@ -275,7 +275,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         System.out.println();
     }
 
-    public abstract class Option {
+    public abstract static class Option {
         private final String abbreviation;
         private final String fullName;
         private final String description;
