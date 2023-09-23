@@ -109,7 +109,7 @@ public class Run extends CamelCommand {
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
     private boolean silentRun;
-    private boolean pipeRun;
+    private boolean scriptRun;
     private boolean transformRun;
 
     private File logFile;
@@ -280,9 +280,9 @@ public class Run extends CamelCommand {
         return run();
     }
 
-    protected Integer runPipe(String file) throws Exception {
+    protected Integer runScript(String file) throws Exception {
         this.files.add(file);
-        pipeRun = true;
+        scriptRun = true;
         return run();
     }
 
@@ -468,7 +468,7 @@ public class Run extends CamelCommand {
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
-        } else if (pipeRun) {
+        } else if (scriptRun) {
             // auto terminate if being idle
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", "1");
         }
@@ -1054,11 +1054,11 @@ public class Run extends CamelCommand {
         if (silentRun) {
             // do not configure logging
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, pipeRun, false);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, scriptRun, false);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
-            if (!pipeRun) {
+            if (!scriptRun) {
                 // remember log file
                 File dir = new File(System.getProperty("user.home"), ".camel");
                 String name = RuntimeUtil.getPid() + ".log";
