@@ -11272,7 +11272,7 @@
             "type" : "string",
             "title" : "Normalized Line Separator",
             "description" : "The normalized line separator of the files The default value is a new line character.",
-            "default" : "\\n"
+            "default" : "\n"
           },
           "nullValue" : {
             "type" : "string",
@@ -11375,7 +11375,7 @@
             "type" : "string",
             "title" : "Normalized Line Separator",
             "description" : "The normalized line separator of the files The default value is a new line character.",
-            "default" : "\\n"
+            "default" : "\n"
           },
           "nullValue" : {
             "type" : "string",
@@ -11500,7 +11500,7 @@
             "type" : "string",
             "title" : "Normalized Line Separator",
             "description" : "The normalized line separator of the files The default value is a new line character.",
-            "default" : "\\n"
+            "default" : "\n"
           },
           "nullValue" : {
             "type" : "string",
