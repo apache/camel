@@ -326,7 +326,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     /**
      * Whether the starting directory must exist. Mind that the autoCreate option is default enabled, which means the
      * starting directory is normally auto created if it doesn't exist. You can disable autoCreate and enable this to
-     * ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
+     * ensure the starting directory must exist. Will throw an exception if the directory doesn't exist.
      */
     public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
         this.startingDirectoryMustExist = startingDirectoryMustExist;

@@ -2434,7 +2434,7 @@ public interface FileEndpointBuilderFactory {
          * option is default enabled, which means the starting directory is
          * normally auto created if it doesn't exist. You can disable autoCreate
          * and enable this to ensure the starting directory must exist. Will
-         * thrown an exception if the directory doesn't exist.
+         * throw an exception if the directory doesn't exist.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2454,7 +2454,7 @@ public interface FileEndpointBuilderFactory {
          * option is default enabled, which means the starting directory is
          * normally auto created if it doesn't exist. You can disable autoCreate
          * and enable this to ensure the starting directory must exist. Will
-         * thrown an exception if the directory doesn't exist.
+         * throw an exception if the directory doesn't exist.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
