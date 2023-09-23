@@ -61,6 +61,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -170,6 +171,10 @@ public class Run extends CamelCommand {
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
+
+    @Option(names = { "--exclude" },
+            description = "Exclude files by name or pattern. Multiple names can be separated by comma.")
+    String exclude;
 
     @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
     boolean logging = true;
@@ -759,6 +764,7 @@ public class Run extends CamelCommand {
             kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
             stub = answer.getProperty("camel.jbang.stub", stub);
+            exclude = answer.getProperty("camel.jbang.exclude", exclude);
         }
 
         if (kameletsVersion == null) {
@@ -1161,8 +1167,13 @@ public class Run extends CamelCommand {
             // relative file is okay, otherwise we assume it's a hidden file
             boolean ok = name.startsWith("..") || name.startsWith("./");
             if (!ok) {
-                return false;
+                return true;
             }
+        }
+
+        // is the file excluded?
+        if (isExcluded(name, exclude)) {
+            return true;
         }
 
         // skip dirs
@@ -1177,6 +1188,18 @@ public class Run extends CamelCommand {
             return true;
         }
 
+        return false;
+    }
+
+    private static boolean isExcluded(String name, String exclude) {
+        if (exclude != null) {
+            for (String pattern : exclude.split(",")) {
+                pattern = pattern.trim();
+                if (AntPathMatcher.INSTANCE.match(pattern, name)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

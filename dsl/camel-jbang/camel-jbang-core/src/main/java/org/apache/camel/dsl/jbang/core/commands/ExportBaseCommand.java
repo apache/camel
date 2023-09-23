@@ -96,6 +96,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
+    @CommandLine.Option(names = { "--exclude" },
+                        description = "Exclude files by name or pattern. Multiple names can be separated by comma.")
+    String exclude;
+
     @CommandLine.Option(names = { "--maven-settings" },
                         description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies."
                                       + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
@@ -274,6 +278,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.localKameletDir = localKameletDir;
         run.dependencies = dependencies;
         run.files = files;
+        run.exclude = exclude;
         run.openapi = openapi;
         return run.runSilent();
     }

@@ -70,6 +70,7 @@ public class Export extends ExportBaseCommand {
             this.repos = prop.getProperty("camel.jbang.repos", this.repos);
             this.mavenSettings = prop.getProperty("camel.jbang.maven-settings", this.mavenSettings);
             this.mavenSettingsSecurity = prop.getProperty("camel.jbang.maven-settings-security", this.mavenSettingsSecurity);
+            this.exclude = prop.getProperty("camel.jbang.exclude", this.exclude);
         }
 
         if (runtime == null) {
@@ -126,6 +127,7 @@ public class Export extends ExportBaseCommand {
         cmd.secretsRefreshProviders = this.secretsRefreshProviders;
         cmd.openapi = this.openapi;
         cmd.packageName = this.packageName;
+        cmd.exclude = this.exclude;
         // run export
         return cmd.export();
     }

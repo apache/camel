@@ -2421,6 +2421,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.dependencies`
 |Additional dependencies (Use commas to separate multiple dependencies). See more details at xref:_adding_custom_jars[].
 
+|`camel.jbang.exclude`
+|Exclude files by name or pattern. Multiple names can be separated by comma.
+
 |`camel.jbang.classpathFiles`
 |Additional files to add to classpath (Use commas to separate multiple files). See more details at xref:_adding_custom_jars[].
 
