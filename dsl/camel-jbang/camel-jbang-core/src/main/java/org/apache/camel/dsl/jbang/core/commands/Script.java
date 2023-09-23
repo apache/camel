@@ -22,9 +22,9 @@ import java.util.Stack;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "pipe", description = "Run Camel integration in pipe and filters mode for terminal scripting",
+@CommandLine.Command(name = "script", description = "Run Camel integration as shell script for terminal scripting",
                      sortOptions = false)
-public class Pipe extends CamelCommand {
+public class Script extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of file", arity = "1",
                             paramLabel = "<file>", parameterConsumer = FileConsumer.class)
@@ -58,7 +58,7 @@ public class Pipe extends CamelCommand {
                         arity = "0")
     String[] property;
 
-    public Pipe(CamelJBangMain main) {
+    public Script(CamelJBangMain main) {
         super(main);
     }
 
@@ -69,7 +69,7 @@ public class Pipe extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // remove leading ./ when calling a script in pipe mode
+        // remove leading ./ when calling a script in script mode
         if (file != null && file.startsWith("./")) {
             file = file.substring(2);
         }
@@ -83,12 +83,12 @@ public class Pipe extends CamelCommand {
         run.maxIdleSeconds = maxIdleSeconds;
         run.property = property;
         run.propertiesFiles = propertiesFiles;
-        return run.runPipe(file);
+        return run.runScript(file);
     }
 
-    static class FileConsumer extends ParameterConsumer<Pipe> {
+    static class FileConsumer extends ParameterConsumer<Script> {
         @Override
-        protected void doConsumeParameters(Stack<String> args, Pipe cmd) {
+        protected void doConsumeParameters(Stack<String> args, Script cmd) {
             cmd.file = args.pop();
         }
     }
