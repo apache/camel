@@ -81,6 +81,9 @@ public final class FileConstants {
     @Metadata(label = "consumer", description = "A `long` value containing the initial offset.", javaType = "long")
     public static final String INITIAL_OFFSET = "CamelFileInitialOffset";
 
+    @Metadata(description = "Camel will by default move any processed file into a .camel subdirectory in the directory the file was consumed from", javaType = "String")
+    public static final String DEFAULT_SUB_FOLDER = ".camel";
+
     private FileConstants() {
         // Utility class
     }

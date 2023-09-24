@@ -322,7 +322,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             if (!name.startsWith(".")) {
                 return true;
             }
-            return getEndpoint().isIncludeHiddenDir() && !".camel".equals(name);
+            return getEndpoint().isIncludeHiddenDir() && !FileConstants.DEFAULT_SUB_FOLDER.equals(name);
         }
 
         if (getEndpoint().isIncludeHiddenFiles()) {
