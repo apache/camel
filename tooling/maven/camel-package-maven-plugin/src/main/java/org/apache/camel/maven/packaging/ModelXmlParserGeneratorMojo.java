@@ -513,15 +513,14 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                     String gn = nn[2];
                     String sn = nn[3];
                     if (first) {
-                        sb.append("    if (\"" + nn[1] + "\".equals(parser.getNamespace())) {\n");
+                        sb.append("    if (\"").append(nn[1]).append("\".equals(parser.getNamespace())) {\n");
                         first = false;
                     } else {
-                        sb.append("    else if (\"" + nn[1] + "\".equals(parser.getNamespace())) {\n");
+                        sb.append("    else if (\"").append(nn[1]).append("\".equals(parser.getNamespace())) {\n");
                     }
-                    sb.append("        Element el = doParseDOMElement(\"" + nn[0] + "\", \"" + nn[1] + "\", def." + gn
-                              + "());\n");
+                    sb.append("        Element el = doParseDOMElement(\"").append(nn[0]).append("\", \"").append(nn[1]).append("\", def.").append(gn).append("());\n");
                     sb.append("        if (el != null) {\n");
-                    sb.append("            doAddElement(el, def." + gn + "(), def::" + sn + ");\n");
+                    sb.append("            doAddElement(el, def.").append(gn).append("(), def::").append(sn).append(");\n");
                     sb.append("            return true;\n");
                     sb.append("        }\n");
                     sb.append("        return false;\n");
@@ -549,7 +548,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                                + "    }\n" + "    " + returnClause + "\n" + "}";
                 } else {
                     StringBuilder sb = new StringBuilder();
-                    sb.append(" (def, key) -> {\n" + externalElements + "    switch (key) {\n");
+                    sb.append(" (def, key) -> {\n").append(externalElements).append("    switch (key) {\n");
                     for (Map.Entry<String, String> entry : cases.entrySet()) {
                         sb.append("        case \"").append(entry.getKey()).append("\": ").append(entry.getValue())
                                 .append(" break;\n");
