@@ -215,11 +215,12 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
      * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the original route),
-     * to ensure the body can be read when the original message is being used later. If the body is converted to {@link org.apache.camel.StreamCache}
-     * then the message body on the current {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body.
-     * If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
-     * able to re-read when accessed later.
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
+     * original route), to ensure the body can be read when the original message is being used later. If the body is
+     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
+     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
+     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
+     * later.
      * <p/>
      * <b>Important:</b> The original input means the input message that are bounded by the current
      * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
@@ -232,7 +233,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * <p/>
      * By default this feature is off.
      *
-     * @return the builder
+     * @return     the builder
      * @deprecated use {@link #useOriginalMessage()}
      */
     @Deprecated
@@ -245,11 +246,12 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * Will use the original input message when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
      * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the original route),
-     * to ensure the body can be read when the original message is being used later. If the body is converted to {@link org.apache.camel.StreamCache}
-     * then the message body on the current {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body.
-     * If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
-     * able to re-read when accessed later.
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
+     * original route), to ensure the body can be read when the original message is being used later. If the body is
+     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
+     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
+     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
+     * later.
      * <p/>
      * <b>Important:</b> The original input means the input message that are bounded by the current
      * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
@@ -379,11 +381,12 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
      * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the original route),
-     * to ensure the body can be read when the original message is being used later. If the body is converted to {@link org.apache.camel.StreamCache}
-     * then the message body on the current {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body.
-     * If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
-     * able to re-read when accessed later.
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
+     * original route), to ensure the body can be read when the original message is being used later. If the body is
+     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
+     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
+     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
+     * later.
      * <p/>
      * <b>Important:</b> The original input means the input message that are bounded by the current
      * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
