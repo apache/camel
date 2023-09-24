@@ -75,8 +75,8 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final String MODEL_PACKAGE = "org.apache.camel.model";
 
-    private Map<Class<?>, List<Property>> properties = new ConcurrentHashMap<>();
-    private Map<Class<?>, List<Member>> members = new ConcurrentHashMap<>();
+    private final Map<Class<?>, List<Property>> properties = new ConcurrentHashMap<>();
+    private final Map<Class<?>, List<Member>> members = new ConcurrentHashMap<>();
 
     private static Type type(Member member) {
         return member instanceof Method
@@ -789,7 +789,7 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         return fn.substring(0, 1).toLowerCase() + fn.substring(1);
     }
 
-    class Property {
+    static class Property {
         private final Member field;
         private final Member getter;
         private final Member setter;

@@ -72,7 +72,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "generate-endpoint-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointDslMojo extends AbstractGeneratorMojo {
-    private static final transient Pattern COMMA_PRESERVER_PATTERN = Pattern.compile(",(\\S)");
+    private static final Pattern COMMA_PRESERVER_PATTERN = Pattern.compile(",(\\S)");
 
     /**
      * The project build directory
