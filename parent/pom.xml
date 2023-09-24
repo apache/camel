@@ -68,13 +68,13 @@
         <avro-ipc-jetty-version>1.11.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.2</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.151</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.152</aws-java-sdk2-version>
         <aws-xray-version>2.14.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.16</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
         <bouncycastle-version>1.76</bouncycastle-version>
         <box-java-sdk-version>4.2.1</box-java-sdk-version>
-        <braintree-gateway-version>3.25.0</braintree-gateway-version>
+        <braintree-gateway-version>3.26.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.4.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.8</caffeine-version>
@@ -256,7 +256,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>4.4.3</jedis-client-version>
         <jetcd-version>0.7.5</jetcd-version>
-        <jetty-version>11.0.15</jetty-version>
+        <jetty-version>11.0.16</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>

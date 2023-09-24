@@ -1324,8 +1324,9 @@ public final class ObjectHelper {
 
     /**
      * Checks whether the given string is a valid boolean value (i.e.; either "true" or "false") ignoring its case
-     * @param str the string to evaluate
-     * @return true if it is a valid boolean value or false otherwise
+     *
+     * @param  str the string to evaluate
+     * @return     true if it is a valid boolean value or false otherwise
      */
     public static boolean isBoolean(String str) {
         return "true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str);

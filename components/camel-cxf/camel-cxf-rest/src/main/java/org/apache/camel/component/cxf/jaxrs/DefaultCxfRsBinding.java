@@ -312,6 +312,9 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             if (headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), camelExchange)
                     || entry.getValue().isEmpty()) {
                 LOG.trace("Drop CXF message protocol header: {}={}", entry.getKey(), entry.getValue());
+            } else if (entry.getKey().startsWith(":")) {
+                /* Ignore HTTP/2 pseudo headers such as :status */
+                continue;
             } else {
                 // just put the first String element, as the complex one is filtered
                 camelMessage.setHeader(entry.getKey(), entry.getValue().get(0));

@@ -17,6 +17,7 @@
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.EntityResolver;
 
@@ -127,11 +129,26 @@ public class XsltEndpoint extends ProcessorEndpoint {
                 newEndpoint.onExchange(exchange);
                 return;
             }
+            String template = exchange.getIn().getHeader(XsltConstants.XSLT_STYLESHEET, String.class);
+            if (template != null) {
+                // need to create a new builder that uses this template as source
+                LOG.trace("Using XSLT stylesheet from header: {}", XsltConstants.XSLT_STYLESHEET);
+                XsltBuilder builder = createBuilderForCustomStylesheet(template, exchange);
+                builder.process(exchange);
+                return;
+            }
         }
         if (!contentCache || cacheCleared) {
             loadResource(resourceUri, xslt);
         }
         super.onExchange(exchange);
+    }
+
+    protected XsltBuilder createBuilderForCustomStylesheet(String template, Exchange exchange) throws Exception {
+        InputStream is = getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, template);
+        XsltBuilder builder = createXsltBuilder();
+        builder.setTransformerSource(new StreamSource(is));
+        return builder;
     }
 
     @ManagedAttribute(description = "Whether to allow to use resource template from header or not (default false).")
@@ -270,15 +287,15 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.errorListener = errorListener;
     }
 
-    @ManagedAttribute(description = "Cache for the resource content (the stylesheet file) when it is loaded.")
+    @ManagedAttribute(description = "Cache for the resource content (the stylesheet file) when it is loaded on startup.")
     public boolean isContentCache() {
         return contentCache;
     }
 
     /**
-     * Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the
-     * stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to
-     * reload at runtime via JMX using the clearCachedStylesheet operation.
+     * Cache for the resource content (the stylesheet file) when it is loaded on startup. If set to false Camel will
+     * reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be
+     * forced to reload at runtime via JMX using the clearCachedStylesheet operation.
      */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
@@ -381,16 +398,17 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
         // must load resource first which sets a template and do a stylesheet compilation to catch errors early
         // load resource from classpath otherwise load in doStart()
-        if (ResourceHelper.isClasspathUri(resourceUri)) {
+        if (contentCache && ResourceHelper.isClasspathUri(resourceUri)) {
             loadResource(resourceUri, xslt);
         }
-        setProcessor(getXslt());
+        setProcessor(xslt);
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (!ResourceHelper.isClasspathUri(resourceUri)) {
+
+        if (contentCache && !ResourceHelper.isClasspathUri(resourceUri)) {
             loadResource(resourceUri, xslt);
         }
     }
