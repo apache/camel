@@ -25,6 +25,6 @@
     "securityDefinitions": { "index": 10, "kind": "element", "displayName": "Security Definitions", "label": "security", "required": false, "type": "object", "javaType": "org.apache.camel.model.rest.RestSecuritiesDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the security definitions such as Basic, OAuth2 etc." },
     "securityRequirements": { "index": 11, "kind": "element", "displayName": "Security Requirements", "label": "security", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.SecurityDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the security requirement(s) for all endpoints." },
     "id": { "index": 12, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "description": { "index": 13, "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" }
+    "description": { "index": 13, "kind": "element", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" }
   }
 }
