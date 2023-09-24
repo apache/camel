@@ -25,7 +25,7 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 
 public class DispatchRouterContainer extends GenericContainer<DispatchRouterContainer> implements MessagingContainer {
     private static final int DEFAULT_AMQP_PORT = 5672;
-    private static final String FROM_IMAGE_NAME = "fedora:37";
+    private static final String FROM_IMAGE_NAME = "fedora:38";
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public DispatchRouterContainer() {
