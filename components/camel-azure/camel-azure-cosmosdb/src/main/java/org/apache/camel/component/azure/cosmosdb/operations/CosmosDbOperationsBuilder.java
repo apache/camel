@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.cosmosdb.operations;
 
+import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 
@@ -29,7 +30,7 @@ public final class CosmosDbOperationsBuilder {
     private boolean createContainerIfNotExist;
     private ThroughputProperties throughputProperties;
 
-    private String indexingPolicy;
+    private IndexingPolicy indexingPolicy;
 
     private CosmosDbOperationsBuilder(CosmosAsyncClientWrapper clientWrapper) {
         this.clientWrapper = clientWrapper;
@@ -69,7 +70,7 @@ public final class CosmosDbOperationsBuilder {
         return this;
     }
 
-    public CosmosDbOperationsBuilder withIndexingPolicy(String indexingPolicy) {
+    public CosmosDbOperationsBuilder withIndexingPolicy(IndexingPolicy indexingPolicy) {
         this.indexingPolicy = indexingPolicy;
         return this;
     }

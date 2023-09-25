@@ -45,7 +45,7 @@ public class CosmosDbDatabaseOperations {
 
     public Mono<CosmosContainerResponse> createContainer(
             final String containerId, final String containerPartitionKeyPath, final ThroughputProperties throughputProperties,
-            final String indexingPolicy) {
+            final IndexingPolicy indexingPolicy) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, "containerId");
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerPartitionKeyPath, "containerPartitionKeyPath");
 
@@ -60,9 +60,7 @@ public class CosmosDbDatabaseOperations {
         if (ObjectHelper.isNotEmpty(indexingPolicy)) {
             CosmosContainerProperties cosmosProp
                     = new CosmosContainerProperties(containerId, enhancedContainerPartitionKeyPath);
-            IndexingPolicy indexPolicy = new IndexingPolicy();
-            indexPolicy.setIndexingMode(IndexingMode.valueOf(indexingPolicy));
-            cosmosProp.setIndexingPolicy(indexPolicy);
+            cosmosProp.setIndexingPolicy(indexingPolicy);
 
             return applyToDatabase(database -> database.createContainerIfNotExists(cosmosProp,
                     throughputProperties));
@@ -74,7 +72,7 @@ public class CosmosDbDatabaseOperations {
 
     public CosmosDbContainerOperations createContainerIfNotExistAndGetContainerOperations(
             final String containerId, final String containerPartitionKeyPath, final ThroughputProperties throughputProperties,
-            final String indexingPolicy) {
+            final IndexingPolicy indexingPolicy) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, "containerId");
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerPartitionKeyPath, "containerPartitionKeyPath");
 
@@ -111,7 +109,7 @@ public class CosmosDbDatabaseOperations {
 
     private Mono<CosmosAsyncContainer> getAndCreateContainerIfNotExist(
             final String containerId, final String containerPartitionKeyPath, final boolean createContainerIfNotExist,
-            final ThroughputProperties throughputProperties, final String indexingPolicy) {
+            final ThroughputProperties throughputProperties, final IndexingPolicy indexingPolicy) {
         if (createContainerIfNotExist) {
             return createContainer(containerId, containerPartitionKeyPath, throughputProperties, indexingPolicy)
                     .then(database)

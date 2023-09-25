@@ -62,7 +62,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "hostname":
         case "hostName": getOrCreateConfiguration(target).setHostName(property(camelContext, java.lang.String.class, value)); return true;
         case "indexingpolicy":
-        case "indexingPolicy": getOrCreateConfiguration(target).setIndexingPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "indexingPolicy": getOrCreateConfiguration(target).setIndexingPolicy(property(camelContext, com.azure.cosmos.models.IndexingPolicy.class, value)); return true;
         case "itemid":
         case "itemId": getOrCreateConfiguration(target).setItemId(property(camelContext, java.lang.String.class, value)); return true;
         case "itempartitionkey":
@@ -133,7 +133,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "hostname":
         case "hostName": return java.lang.String.class;
         case "indexingpolicy":
-        case "indexingPolicy": return java.lang.String.class;
+        case "indexingPolicy": return com.azure.cosmos.models.IndexingPolicy.class;
         case "itemid":
         case "itemId": return java.lang.String.class;
         case "itempartitionkey":

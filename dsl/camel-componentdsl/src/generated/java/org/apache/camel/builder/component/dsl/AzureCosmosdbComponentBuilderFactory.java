@@ -240,24 +240,6 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
-         * The CosmosDB Indexing Policy that will be set in case of container
-         * creation, this option is related to createLeaseContainerIfNotExists
-         * and it will be taken into account when the latter is true.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: CONSISTENT
-         * Group: common
-         * 
-         * @param indexingPolicy the value to set
-         * @return the dsl builder
-         */
-        default AzureCosmosdbComponentBuilder indexingPolicy(
-                java.lang.String indexingPolicy) {
-            doSetProperty("indexingPolicy", indexingPolicy);
-            return this;
-        }
-        /**
          * Sets the flag to enable writes on any regions for geo-replicated
          * database accounts in the Azure Cosmos DB service. When the value of
          * this property is true, the SDK will direct write operations to
@@ -579,6 +561,24 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder indexingPolicy(
+                com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -666,7 +666,6 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "createContainerIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateContainerIfNotExists((boolean) value); return true;
             case "createDatabaseIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateDatabaseIfNotExists((boolean) value); return true;
             case "databaseEndpoint": getOrCreateConfiguration((CosmosDbComponent) component).setDatabaseEndpoint((java.lang.String) value); return true;
-            case "indexingPolicy": getOrCreateConfiguration((CosmosDbComponent) component).setIndexingPolicy((java.lang.String) value); return true;
             case "multipleWriteRegionsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setMultipleWriteRegionsEnabled((boolean) value); return true;
             case "preferredRegions": getOrCreateConfiguration((CosmosDbComponent) component).setPreferredRegions((java.lang.String) value); return true;
             case "readRequestsFallbackEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setReadRequestsFallbackEnabled((boolean) value); return true;
@@ -684,6 +683,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((CosmosDbComponent) component).setOperation((org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition) value); return true;
             case "query": getOrCreateConfiguration((CosmosDbComponent) component).setQuery((java.lang.String) value); return true;
             case "queryRequestOptions": getOrCreateConfiguration((CosmosDbComponent) component).setQueryRequestOptions((com.azure.cosmos.models.CosmosQueryRequestOptions) value); return true;
+            case "indexingPolicy": getOrCreateConfiguration((CosmosDbComponent) component).setIndexingPolicy((com.azure.cosmos.models.IndexingPolicy) value); return true;
             case "autowiredEnabled": ((CosmosDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accountKey": getOrCreateConfiguration((CosmosDbComponent) component).setAccountKey((java.lang.String) value); return true;
             case "useDefaultIdentity": getOrCreateConfiguration((CosmosDbComponent) component).setUseDefaultIdentity((boolean) value); return true;

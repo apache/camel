@@ -20,12 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.azure.cosmos.models.CosmosContainerRequestOptions;
-import com.azure.cosmos.models.CosmosDatabaseRequestOptions;
-import com.azure.cosmos.models.CosmosItemRequestOptions;
-import com.azure.cosmos.models.CosmosQueryRequestOptions;
-import com.azure.cosmos.models.PartitionKey;
-import com.azure.cosmos.models.ThroughputProperties;
+import com.azure.cosmos.models.*;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
@@ -88,9 +83,9 @@ public class CosmosDbConfigurationOptionsProxy {
                 String.class);
     }
 
-    public String getIndexingPolicy(final Exchange exchange) {
+    public IndexingPolicy getIndexingPolicy(final Exchange exchange) {
         return getOption(exchange, CosmosDbConstants.INDEXING_POLICY, configuration::getIndexingPolicy,
-                String.class);
+                IndexingPolicy.class);
     }
 
     public CosmosContainerRequestOptions getContainerRequestOptions(final Exchange exchange) {
