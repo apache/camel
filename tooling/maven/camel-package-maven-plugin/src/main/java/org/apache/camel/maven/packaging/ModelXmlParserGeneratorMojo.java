@@ -518,7 +518,8 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                     } else {
                         sb.append("    else if (\"").append(nn[1]).append("\".equals(parser.getNamespace())) {\n");
                     }
-                    sb.append("        Element el = doParseDOMElement(\"").append(nn[0]).append("\", \"").append(nn[1]).append("\", def.").append(gn).append("());\n");
+                    sb.append("        Element el = doParseDOMElement(\"").append(nn[0]).append("\", \"").append(nn[1])
+                            .append("\", def.").append(gn).append("());\n");
                     sb.append("        if (el != null) {\n");
                     sb.append("            doAddElement(el, def.").append(gn).append("(), def::").append(sn).append(");\n");
                     sb.append("            return true;\n");
