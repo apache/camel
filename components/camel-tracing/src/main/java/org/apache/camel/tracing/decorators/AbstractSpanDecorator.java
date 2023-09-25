@@ -98,6 +98,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         String scheme = getComponentName(endpoint);
         span.setComponent(CAMEL_COMPONENT + scheme);
+        span.setTag(TagConstants.URL_SCHEME, scheme);
 
         // Including the endpoint URI provides access to any options that may
         // have been provided, for subsequent analysis

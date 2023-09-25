@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AbstractSpanDecoratorTest {
 
-    private static final String TEST_URI = "test:/uri";
+    private static final String TEST_URI = "test:/uri?query=hello";
 
     @Test
     public void testGetOperationName() {
@@ -78,6 +78,9 @@ public class AbstractSpanDecoratorTest {
 
         assertEquals("camel-test", span.tags().get(Tag.COMPONENT.name()));
         assertEquals("camel-test", span.tags().get(TagConstants.COMPONENT));
+        assertEquals("test", span.tags().get(TagConstants.URL_SCHEME));
+        assertEquals("uri", span.tags().get(TagConstants.URL_PATH));
+        assertEquals("query=hello", span.tags().get(TagConstants.URL_QUERY));
     }
 
     @Test
