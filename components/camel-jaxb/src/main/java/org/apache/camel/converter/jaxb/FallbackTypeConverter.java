@@ -181,6 +181,14 @@ public class FallbackTypeConverter {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
         }
 
+        // Check if the object is a JAXBElement of the correct type
+        if (value instanceof JAXBElement) {
+            JAXBElement<?> jaxbElement = (JAXBElement<?>) value;
+            if (type.isAssignableFrom(jaxbElement.getDeclaredType())) {
+                return castJaxbType(jaxbElement, type);
+            }
+        }
+
         Unmarshaller unmarshaller = getUnmarshaller(type);
 
         if (converter != null) {
