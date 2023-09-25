@@ -99,6 +99,8 @@ import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.app.ApplicationDefinition;
+import org.apache.camel.model.app.BeanConstructorDefinition;
+import org.apache.camel.model.app.BeanConstructorsDefinition;
 import org.apache.camel.model.app.BeanPropertiesDefinition;
 import org.apache.camel.model.app.BeanPropertyDefinition;
 import org.apache.camel.model.app.BeansDefinition;
@@ -1058,6 +1060,78 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "reverse": {
                     String val = asText(node);
                     target.setReverse(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.app.BeanConstructorDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "index", type = "number"),
+                    @YamlProperty(name = "value", type = "string", required = true)
+            }
+    )
+    public static class BeanConstructorDefinitionDeserializer extends YamlDeserializerBase<BeanConstructorDefinition> {
+        public BeanConstructorDefinitionDeserializer() {
+            super(BeanConstructorDefinition.class);
+        }
+
+        @Override
+        protected BeanConstructorDefinition newInstance() {
+            return new BeanConstructorDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(BeanConstructorDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "index": {
+                    String val = asText(node);
+                    target.setIndex(java.lang.Integer.valueOf(val));
+                    break;
+                }
+                case "value": {
+                    String val = asText(node);
+                    target.setValue(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.app.BeanConstructorsDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = @YamlProperty(name = "constructor", type = "array:org.apache.camel.model.app.BeanConstructorDefinition")
+    )
+    public static class BeanConstructorsDefinitionDeserializer extends YamlDeserializerBase<BeanConstructorsDefinition> {
+        public BeanConstructorsDefinitionDeserializer() {
+            super(BeanConstructorsDefinition.class);
+        }
+
+        @Override
+        protected BeanConstructorsDefinition newInstance() {
+            return new BeanConstructorsDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(BeanConstructorsDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "constructor": {
+                    java.util.List<org.apache.camel.model.app.BeanConstructorDefinition> val = asFlatList(node, org.apache.camel.model.app.BeanConstructorDefinition.class);
+                    target.setConstructors(val);
                     break;
                 }
                 default: {
@@ -12274,6 +12348,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.app.RegistryBeanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "constructors", type = "object"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "properties", type = "object"),
                     @YamlProperty(name = "type", type = "string", required = true)
@@ -12293,6 +12368,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RegistryBeanDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "constructors": {
+                    java.util.Map val = asMap(node);
+                    target.setConstructors(val);
+                    break;
+                }
                 case "name": {
                     String val = asText(node);
                     target.setName(val);

@@ -46,6 +46,9 @@ public class RegistryBeanDefinition implements ResourceAware {
     private String name;
     @XmlAttribute(required = true)
     private String type;
+    @XmlElement(name = "constructors")
+    @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
+    private Map<Integer, Object> constructors;
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
     private Map<String, Object> properties;
@@ -64,6 +67,14 @@ public class RegistryBeanDefinition implements ResourceAware {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Map<Integer, Object> getConstructors() {
+        return constructors;
+    }
+
+    public void setConstructors(Map<Integer, Object> constructors) {
+        this.constructors = constructors;
     }
 
     public Map<String, Object> getProperties() {

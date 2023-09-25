@@ -259,12 +259,39 @@ public class ModelParserTest {
         assertEquals("v2a", ((Map<String, Object>) b1.getProperties().get("nested")).get("p2"));
 
         assertEquals("b2", b2.getName());
-        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b1.getType());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b2.getType());
         assertEquals("v1", b2.getProperties().get("p1"));
         assertEquals("v2", b2.getProperties().get("p2"));
         assertNull(b2.getProperties().get("nested"));
         assertEquals("v1a", b2.getProperties().get("nested.p1"));
         assertEquals("v2a", b2.getProperties().get("nested.p2"));
+    }
+
+    @Test
+    public void testBeansWithConstructors() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "beansWithConstructors.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
+        assertNotNull(beans);
+        assertEquals(2, beans.getBeans().size());
+        assertTrue(beans.getSpringBeans().isEmpty());
+
+        RegistryBeanDefinition b1 = beans.getBeans().get(0);
+        RegistryBeanDefinition b2 = beans.getBeans().get(1);
+
+        assertEquals("b1", b1.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b1.getType());
+        assertEquals(2, b1.getConstructors().size());
+        assertEquals("c1", b1.getConstructors().get(0));
+        assertEquals("c2", b1.getConstructors().get(1));
+
+        assertEquals("b2", b2.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b2.getType());
+        assertEquals(1, b2.getConstructors().size());
+        assertEquals("c1", b2.getConstructors().get(0));
+        assertEquals("v1", b2.getProperties().get("p1"));
+        assertEquals("v2", b2.getProperties().get("p2"));
     }
 
     @Test

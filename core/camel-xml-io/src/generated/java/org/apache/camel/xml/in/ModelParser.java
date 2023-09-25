@@ -1640,11 +1640,12 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, (def, key) -> {
-            if ("properties".equals(key)) {
-                def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition()));
-                return true;
+            switch (key) {
+                case "constructors": def.setConstructors(new BeanConstructorsAdapter().unmarshal(doParseBeanConstructorsDefinition())); break;
+                case "properties": def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition())); break;
+                default: return false;
             }
-            return false;
+            return true;
         }, noValueHandler());
     }
     protected RestConfigurationDefinition doParseRestConfigurationDefinition() throws IOException, XmlPullParserException {
@@ -1685,6 +1686,26 @@ public class ModelParser extends BaseParser {
                 default: return false;
             }
             return true;
+        }, noValueHandler());
+    }
+    protected BeanConstructorDefinition doParseBeanConstructorDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BeanConstructorDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "index": def.setIndex(Integer.valueOf(val)); break;
+                case "value": def.setValue(val); break;
+                default: return false;
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
+    protected BeanConstructorsDefinition doParseBeanConstructorsDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BeanConstructorsDefinition(),
+            noAttributeHandler(), (def, key) -> {
+            if ("constructor".equals(key)) {
+                doAdd(doParseBeanConstructorDefinition(), def.getConstructors(), def::setConstructors);
+                return true;
+            }
+            return false;
         }, noValueHandler());
     }
     protected BeanPropertyDefinition doParseBeanPropertyDefinition() throws IOException, XmlPullParserException {

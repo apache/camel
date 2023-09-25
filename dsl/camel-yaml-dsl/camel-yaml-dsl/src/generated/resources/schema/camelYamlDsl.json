@@ -7895,6 +7895,31 @@
           }
         }
       },
+      "org.apache.camel.model.app.BeanConstructorDefinition" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "index" : {
+            "type" : "number"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "value" ]
+      },
+      "org.apache.camel.model.app.BeanConstructorsDefinition" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "constructor" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.BeanConstructorDefinition"
+            }
+          }
+        }
+      },
       "org.apache.camel.model.app.BeanPropertiesDefinition" : {
         "type" : "object",
         "additionalProperties" : false,
@@ -7998,6 +8023,9 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "constructors" : {
+            "type" : "object"
+          },
           "name" : {
             "type" : "string"
           },

@@ -314,6 +314,18 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             }
             buffer.write(String.format("    - name: %s%n", b.getName()));
             buffer.write(String.format("      type: \"%s\"%n", type));
+            if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
+                buffer.write(String.format("      constructors:%n"));
+                int counter = 0;
+                for (Map.Entry<Integer, Object> entry : b.getConstructors().entrySet()) {
+                    Integer key = entry.getKey();
+                    Object value = entry.getValue();
+                    if (key == null) {
+                        key = counter++;
+                    }
+                    buffer.write(String.format("        %d: \"%s\"%n", key, value));
+                }
+            }
             if (b.getProperties() != null && !b.getProperties().isEmpty()) {
                 buffer.write(String.format("      properties:%n"));
                 for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
