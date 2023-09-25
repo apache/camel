@@ -44,14 +44,14 @@ class CosmosDbDatabaseOperationsTest {
 
         // assert params
         CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> databaseOperations.createContainer(null, null, null, "CONSISTENT"));
+                .assertIllegalArgumentException(() -> databaseOperations.createContainer(null, null, null, null));
         CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> databaseOperations.createContainer("", null, null, "CONSISTENT"));
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer("", "", null, "CONSISTENT"));
+                .assertIllegalArgumentException(() -> databaseOperations.createContainer("", null, null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer("", "", null, null));
         CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> databaseOperations.createContainer("test", "", null, "CONSISTENT"));
+                .assertIllegalArgumentException(() -> databaseOperations.createContainer("test", "", null, null));
         CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> databaseOperations.createContainer("", "test", null, "CONSISTENT"));
+                .assertIllegalArgumentException(() -> databaseOperations.createContainer("", "test", null, null));
 
         // assert key path
         final CosmosContainerResponse returnedContainerResponseFirstCase
@@ -85,7 +85,7 @@ class CosmosDbDatabaseOperationsTest {
 
         // assert params
         CosmosDbTestUtils.assertIllegalArgumentException(
-                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations(null, null, null, "Consistent"));
+                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations(null, null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(
                 () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("", null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(

@@ -19,6 +19,8 @@ package org.apache.camel.component.azure.cosmosdb;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.azure.cosmos.models.IndexingMode;
+import com.azure.cosmos.models.IndexingPolicy;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -69,7 +71,7 @@ class CosmosDbEndpointTest extends CamelTestSupport {
         params.put("databaseEndpoint", "https://test.com:443");
         params.put("createDatabaseIfNotExists", "true");
         params.put("accountKey", "myKey");
-        params.put("indexingPolicy", "LAZY");
+        params.put("indexingPolicy", new IndexingPolicy().setIndexingMode(IndexingMode.LAZY));
 
         final CosmosDbEndpoint endpoint = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
                 .createEndpoint(uri, remaining, params);
@@ -78,7 +80,7 @@ class CosmosDbEndpointTest extends CamelTestSupport {
         assertEquals("myContainer", endpoint.getConfiguration().getContainerName());
         assertEquals("https://test.com:443", endpoint.getConfiguration().getDatabaseEndpoint());
         assertEquals("myKey", endpoint.getConfiguration().getAccountKey());
-        assertEquals("LAZY", endpoint.getConfiguration().getIndexingPolicy());
+        assertEquals("Lazy", endpoint.getConfiguration().getIndexingPolicy().getIndexingMode().toString());
         assertTrue(endpoint.getConfiguration().isCreateDatabaseIfNotExists());
 
     }

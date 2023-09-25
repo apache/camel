@@ -20,6 +20,7 @@ import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.models.ChangeFeedProcessorOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
+import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -66,8 +67,8 @@ public class CosmosDbConfiguration implements Cloneable {
     private boolean createDatabaseIfNotExists;
     @UriParam(label = "common", defaultValue = "false")
     private boolean createContainerIfNotExists;
-    @UriParam(label = "common", defaultValue = "CONSISTENT", enums = "CONSISTENT, LAZY, NONE")
-    private String indexingPolicy = "CONSISTENT";
+    @UriParam(label = "common, advanced")
+    private IndexingPolicy indexingPolicy;
     @UriParam(label = "common")
     private ThroughputProperties throughputProperties;
     @UriParam(label = "consumer", defaultValue = "false")
@@ -475,11 +476,11 @@ public class CosmosDbConfiguration implements Cloneable {
      * The CosmosDB Indexing Policy that will be set in case of container creation, this option is related to
      * {@link createLeaseContainerIfNotExists} and it will be taken into account when the latter is true.
      */
-    public String getIndexingPolicy() {
+    public IndexingPolicy getIndexingPolicy() {
         return indexingPolicy;
     }
 
-    public void setIndexingPolicy(String indexingPolicy) {
+    public void setIndexingPolicy(IndexingPolicy indexingPolicy) {
         this.indexingPolicy = indexingPolicy;
     }
 
