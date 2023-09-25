@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms;
 
+import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
@@ -31,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -83,6 +85,19 @@ public class ReconnectInOutProducerTest extends JmsTestSupport {
         assertEquals(responseText, responseObject);
         mc.close();
 
+    }
+
+    @Override
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
     }
 
     @Override

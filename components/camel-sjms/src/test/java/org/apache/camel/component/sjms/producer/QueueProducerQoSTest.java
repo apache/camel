@@ -38,6 +38,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
@@ -54,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
-public class QueueProducerQoSTest extends CamelTestSupport {
+public class QueueProducerQoSTest extends JmsTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(QueueProducerQoSTest.class);
 
     private static final String TEST_INONLY_DESTINATION_NAME = "queue.producer.test.qos.inonly.QueueProducerQoSTest";
@@ -73,6 +74,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     MockEndpoint mockExpiredAdvisory;
 
     protected Session session;
+    protected ActiveMQConnectionFactory connectionFactory;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
     @Test
@@ -146,12 +148,31 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     }
 
 
-    @ContextFixture
+/*    @ContextFixture
     public void configureComponent(CamelContext camelContext) {
-    }
-
+    }*/
 
     @Override
+    @ContextFixture
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        super.configureCamelContext(camelContext);
+    }
+
+/*    @Override
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+    }*/
+
+
+/*    @Override
     //@ContextFixture
     protected void configureCamelContext(CamelContext camelContext) throws JMSException {
 
@@ -164,6 +185,6 @@ public class QueueProducerQoSTest extends CamelTestSupport {
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
-    }
+    }*/
 
 }

@@ -21,11 +21,13 @@ import java.net.URL;
 import java.util.Properties;
 
 import jakarta.jms.Connection;
+import jakarta.jms.JMSException;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.Session;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,9 +38,14 @@ import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,28 +55,34 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 /**
  * A support class that builds up and tears down an ActiveMQ instance to be used for unit testing.
  */
+//@ContextFixture
 public class JmsTestSupport extends CamelTestSupport {
+
+    protected static ActiveMQConnectionFactory connectionFactory;
+    protected static Session session;
+
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected boolean addSjmsComponent = true;
 
-    @Produce
+    protected ConsumerTemplate consumer;
+
     protected ProducerTemplate template;
     protected String brokerUri;
     protected Properties properties;
-    protected ActiveMQConnectionFactory connectionFactory;
 
     private Connection connection;
-    private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
+
+    private static int counter;
 
     /**
      * Set up the Broker
      */
-    @Override
+/*    @Override
     protected void doPreSetup() throws Exception {
         deleteDirectory("target/activemq-data");
         properties = new Properties();
@@ -78,7 +91,7 @@ public class JmsTestSupport extends CamelTestSupport {
             properties.load(inStream);
         }
         brokerUri = service.serviceAddress();
-    }
+    }*/
 
     protected boolean useJmx() {
         return false;
@@ -114,7 +127,7 @@ public class JmsTestSupport extends CamelTestSupport {
     }
 
     public void setSession(Session session) {
-        this.session = session;
+        JmsTestSupport.session = session;
     }
 
     public Session getSession() {
@@ -151,20 +164,43 @@ public class JmsTestSupport extends CamelTestSupport {
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
     }
-
-    @Override
+    //@BeforeEach
+/*    @Override
     protected void configureCamelContext(CamelContext camelContext) throws Exception {
-        connectionFactory = new ActiveMQConnectionFactory(brokerUri);
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
 
-        setupFactoryExternal(connectionFactory);
-        connection = connectionFactory.createConnection();
+        Connection connection = connectionFactory.createConnection();
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        if (addSjmsComponent) {
-            SjmsComponent component = new SjmsComponent();
-            component.setConnectionFactory(connectionFactory);
-            camelContext.addComponent("sjms", component);
-        }
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+    }*/
+/*    @Override
+    @ContextFixture
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+*//*        counter++;
+        System.out.println(counter);*//*
+        configureJMSCamelContext(camelContext);
+    }*/
+
+    @Override
+    @ContextFixture
+    protected synchronized void configureCamelContext(CamelContext context) throws Exception {
+        configureJMSCamelContext(context);
     }
 
+    //@ContextFixture
+    protected static void configureJMSCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+    }
 }

@@ -40,19 +40,19 @@ import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class InOutQueueProducerTest extends CamelTestSupport {
+
+public class InOutQueueProducerTest extends JmsTestSupport {
 
     private DestinationCreationStrategy strategy = new DefaultDestinationCreationStrategy();
 
@@ -60,16 +60,14 @@ public class InOutQueueProducerTest extends CamelTestSupport {
 
     protected Session session;
 
-    @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    int counter = 0;
+
+/*    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();*/
 
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerTest";
 
     public InOutQueueProducerTest() {
-    }
-
-    protected boolean useJmx() {
-        return false;
     }
 
     @Test
@@ -129,22 +127,12 @@ public class InOutQueueProducerTest extends CamelTestSupport {
      *
      * @throws Exception
      */
+
     @Override
-    protected void configureCamelContext(CamelContext camelContext) throws Exception {
-        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
-
-        Connection connection = connectionFactory.createConnection();
-        connection.start();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-        SjmsComponent component = new SjmsComponent();
-        component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
-    }
-
-    public MessageConsumer createQueueConsumer(String destination) throws Exception {
-        return new Jms11ObjectFactory().createMessageConsumer(session,
-                strategy.createDestination(session, destination, false), null, false, null, true, false);
+    @ContextFixture
+    public void configureCamelContext(CamelContext camelContext) throws Exception {
+        //configureJMSCamelContext(camelContext);
+        super.configureCamelContext(camelContext);
     }
 
     @Override

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.tx;
 
+import jakarta.jms.Connection;
 import jakarta.jms.Session;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -31,6 +32,7 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -73,9 +75,15 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
 
     @Override
     protected void configureCamelContext(CamelContext camelContext) throws Exception {
-        super.configureCamelContext(camelContext);
-        SjmsComponent sjms = context.getComponent("sjms", SjmsComponent.class);
-        sjms.setClientId(CONNECTION_ID);
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
     }
 
     @Override

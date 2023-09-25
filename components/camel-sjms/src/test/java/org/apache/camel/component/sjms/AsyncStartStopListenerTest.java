@@ -25,21 +25,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+
 
 /**
  * Testing with async start listener
  */
 public class AsyncStartStopListenerTest extends JmsTestSupport {
-
-    protected ActiveMQConnectionFactory connectionFactory;
-
-    protected Session session;
-
-    @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testAsyncStartConsumer() throws Exception {
@@ -79,6 +76,12 @@ public class AsyncStartStopListenerTest extends JmsTestSupport {
         template.sendBody(uri, body1);
         template.sendBody(uri, body2);
         result.assertIsSatisfied();
+    }
+
+    @Override
+    @ContextFixture
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        //configureJMSCamelContext(camelContext);
     }
 
     @Override
