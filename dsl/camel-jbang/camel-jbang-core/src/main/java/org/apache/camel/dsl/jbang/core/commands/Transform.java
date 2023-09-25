@@ -16,12 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -35,7 +39,8 @@ public class Transform extends CamelCommand {
     List<String> files = new ArrayList<>();
 
     @CommandLine.Option(names = {
-            "--output" }, description = "File or directory to store transformed files", required = true)
+            "--output" },
+                        description = "File or directory to store transformed files. If none provide then output is printed to console.")
     private String output;
 
     @CommandLine.Option(names = { "--format" },
@@ -56,6 +61,14 @@ public class Transform extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+
+        String dump = output;
+        // if no output then we want to print to console, so we need to write to a hidden file, and dump that file afterwards
+        if (output == null) {
+            dump = Run.WORK_DIR + "/transform-output." + format;
+        }
+        final String target = dump;
+
         Run run = new Run(getMain()) {
             @Override
             protected void doAddInitialProperty(KameletMain main) {
@@ -64,7 +77,7 @@ public class Transform extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesLog", "false");
                 main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "" + resolvePlaceholders);
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "" + uriAsParameters);
-                main.addInitialProperty("camel.main.dumpRoutesOutput", output);
+                main.addInitialProperty("camel.main.dumpRoutesOutput", target);
             }
         };
         run.files = files;
@@ -73,7 +86,37 @@ public class Transform extends CamelCommand {
         if (exit != null && exit != 0) {
             return exit;
         }
+
+        if (output == null) {
+            // load target file and print to console
+            dump = waitForDumpFile(new File(target));
+            if (dump != null) {
+                System.out.println(dump);
+            }
+        }
+
         return 0;
+    }
+
+    protected String waitForDumpFile(File dumpFile) {
+        StopWatch watch = new StopWatch();
+        while (watch.taken() < 5000) {
+            try {
+                // give time for response to be ready
+                Thread.sleep(100);
+
+                if (dumpFile.exists()) {
+                    FileInputStream fis = new FileInputStream(dumpFile);
+                    String text = IOHelper.loadText(fis);
+                    IOHelper.close(fis);
+                    return text;
+                }
+
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     static class FilesConsumer extends ParameterConsumer<Transform> {
