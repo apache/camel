@@ -22,6 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,6 +52,7 @@ import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.scan.PackageScanHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import org.slf4j.Logger;
@@ -324,6 +327,21 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         if (type != null && !type.startsWith("#")) {
             type = "#class:" + type;
             try {
+                // property binding support has constructor arguments as part of the type
+                StringJoiner ctr = new StringJoiner(", ");
+                if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
+                    // need to sort constructor args based on index position
+                    Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
+                    for (Object val : sorted.values()) {
+                        String text = val.toString();
+                        if (!StringHelper.isQuoted(text)) {
+                            text = "\"" + text + "\"";
+                        }
+                        ctr.add(text);
+                    }
+                    type = type + "(" + ctr + ")";
+                }
+
                 final Object target = PropertyBindingSupport.resolveBean(getCamelContext(), type);
 
                 if (def.getProperties() != null && !def.getProperties().isEmpty()) {

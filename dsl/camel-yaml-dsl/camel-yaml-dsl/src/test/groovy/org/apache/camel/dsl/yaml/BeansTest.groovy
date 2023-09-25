@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyBean
+import org.apache.camel.dsl.yaml.support.model.MyCtrBean
 
 class BeansTest extends YamlTestSupport {
 
@@ -87,4 +88,47 @@ class BeansTest extends YamlTestSupport {
                 it.nested.foo == 'f3'
             }
     }
+
+    def "beans with constructor"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myCtr
+                    type: ${MyCtrBean.class.name}
+                    constructors:
+                      0: 'f1'
+                      1: 'f2'
+                    properties:
+                      age: 42 
+            """
+
+        then:
+        with(context.registry.lookupByName('myCtr'), MyCtrBean) {
+            it.field1 == 'f1'
+            it.field2 == 'f2'
+            it.age == 42
+        }
+    }
+
+    def "beans with constructor sorted"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myCtr
+                    type: ${MyCtrBean.class.name}
+                    constructors:
+                      1: 'f2'
+                      0: 'f1'
+                    properties:
+                      age: 43 
+            """
+
+        then:
+        with(context.registry.lookupByName('myCtr'), MyCtrBean) {
+            it.field1 == 'f1'
+            it.field2 == 'f2'
+            it.age == 43
+        }
+    }
+
 }

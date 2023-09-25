@@ -13598,10 +13598,21 @@ org.apache.camel.builder.RouteBuilder.
   </xs:complexType>
   <xs:complexType name="registryBeanDefinition">
     <xs:sequence>
+      <xs:element minOccurs="0" name="constructors" type="tns:beanConstructorsDefinition"/>
       <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="type" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="beanConstructorsDefinition">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="constructor" type="tns:beanConstructorDefinition"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="beanConstructorDefinition">
+    <xs:sequence/>
+    <xs:attribute name="index" type="xs:int"/>
+    <xs:attribute name="value" type="xs:string" use="required"/>
   </xs:complexType>
   <xs:complexType name="restConfigurationDefinition">
     <xs:sequence>

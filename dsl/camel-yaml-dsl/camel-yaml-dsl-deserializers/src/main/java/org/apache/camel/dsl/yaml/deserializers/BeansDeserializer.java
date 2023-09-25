@@ -19,7 +19,10 @@ package org.apache.camel.dsl.yaml.deserializers;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
@@ -33,6 +36,7 @@ import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
@@ -88,7 +92,25 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     }
 
     public Object newInstance(RegistryBeanDefinition bean, CamelContext context) throws Exception {
-        final Object target = PropertyBindingSupport.resolveBean(context, bean.getType());
+
+        String type = bean.getType();
+
+        // property binding support has constructor arguments as part of the type
+        StringJoiner ctr = new StringJoiner(", ");
+        if (bean.getConstructors() != null && !bean.getConstructors().isEmpty()) {
+            // need to sort constructor args based on index position
+            Map<Integer, Object> sorted = new TreeMap<>(bean.getConstructors());
+            for (Object val : sorted.values()) {
+                String text = val.toString();
+                if (!StringHelper.isQuoted(text)) {
+                    text = "\"" + text + "\"";
+                }
+                ctr.add(text);
+            }
+            type = type + "(" + ctr + ")";
+        }
+
+        final Object target = PropertyBindingSupport.resolveBean(context, type);
 
         if (bean.getProperties() != null && !bean.getProperties().isEmpty()) {
             PropertyBindingSupport.setPropertiesOnTarget(context, target, bean.getProperties());

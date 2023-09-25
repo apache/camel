@@ -2496,6 +2496,23 @@ public class ModelWriter extends BaseWriter {
         doWriteBeansDefinitionElements(def);
         endElement(name);
     }
+    protected void doWriteBeanConstructorDefinition(
+            String name,
+            BeanConstructorDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteAttribute("index", toString(def.getIndex()));
+        doWriteAttribute("value", def.getValue());
+        endElement(name);
+    }
+    protected void doWriteBeanConstructorsDefinition(
+            String name,
+            BeanConstructorsDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteList(null, "constructor", def.getConstructors(), this::doWriteBeanConstructorDefinition);
+        endElement(name);
+    }
     protected void doWriteBeanPropertiesDefinition(
             String name,
             BeanPropertiesDefinition def)
@@ -2551,6 +2568,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
+        doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
         endElement(name);
     }
