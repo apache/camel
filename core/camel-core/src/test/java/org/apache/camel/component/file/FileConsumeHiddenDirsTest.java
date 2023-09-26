@@ -28,12 +28,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Unit test for consuming hidden dir.
+ * Unit test for consuming hidden dirs.
  */
-public class FileConsumeHiddenDirTest extends ContextTestSupport {
+public class FileConsumeHiddenDirsTest extends ContextTestSupport {
 
     @Test
-    public void testConsumeHiddenFiles() throws Exception {
+    public void testConsumeHiddenDirs() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Report 123", "Report 456");
 
@@ -53,7 +53,7 @@ public class FileConsumeHiddenDirTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUri("?initialDelay=0&delay=10&delete=true&includeHiddenDir=true&recursive=true"))
+                from(fileUri("?initialDelay=0&delay=10&delete=true&includeHiddenDirs=true&recursive=true"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

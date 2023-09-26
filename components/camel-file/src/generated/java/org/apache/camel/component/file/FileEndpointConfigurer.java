@@ -93,8 +93,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "includeext":
         case "includeExt": target.setIncludeExt(property(camelContext, java.lang.String.class, value)); return true;
-        case "includehiddendir":
-        case "includeHiddenDir": target.setIncludeHiddenDir(property(camelContext, boolean.class, value)); return true;
+        case "includehiddendirs":
+        case "includeHiddenDirs": target.setIncludeHiddenDirs(property(camelContext, boolean.class, value)); return true;
         case "includehiddenfiles":
         case "includeHiddenFiles": target.setIncludeHiddenFiles(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
@@ -273,8 +273,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "include": return java.lang.String.class;
         case "includeext":
         case "includeExt": return java.lang.String.class;
-        case "includehiddendir":
-        case "includeHiddenDir": return boolean.class;
+        case "includehiddendirs":
+        case "includeHiddenDirs": return boolean.class;
         case "includehiddenfiles":
         case "includeHiddenFiles": return boolean.class;
         case "initialdelay":
@@ -454,8 +454,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "include": return target.getInclude();
         case "includeext":
         case "includeExt": return target.getIncludeExt();
-        case "includehiddendir":
-        case "includeHiddenDir": return target.isIncludeHiddenDir();
+        case "includehiddendirs":
+        case "includeHiddenDirs": return target.isIncludeHiddenDirs();
         case "includehiddenfiles":
         case "includeHiddenFiles": return target.isIncludeHiddenFiles();
         case "initialdelay":

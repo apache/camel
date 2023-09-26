@@ -64,7 +64,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("inProgressRepository");
         props.add("include");
         props.add("includeExt");
-        props.add("includeHiddenDir");
+        props.add("includeHiddenDirs");
         props.add("includeHiddenFiles");
         props.add("initialDelay");
         props.add("jailStartingDirectory");

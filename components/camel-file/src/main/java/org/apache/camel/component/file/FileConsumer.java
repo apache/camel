@@ -171,7 +171,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     private File[] listFiles(File directory) {
-        if (!getEndpoint().isIncludeHiddenDir() && directory.getName().startsWith(".")) {
+        if (!getEndpoint().isIncludeHiddenDirs() && directory.getName().startsWith(".")) {
             return null;
         }
         final File[] dirFiles = directory.listFiles();
@@ -322,7 +322,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             if (!name.startsWith(".")) {
                 return true;
             }
-            return getEndpoint().isIncludeHiddenDir() && !FileConstants.DEFAULT_SUB_FOLDER.equals(name);
+            return getEndpoint().isIncludeHiddenDirs() && !FileConstants.DEFAULT_SUB_FOLDER.equals(name);
         }
 
         if (getEndpoint().isIncludeHiddenFiles()) {

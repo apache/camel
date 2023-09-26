@@ -68,7 +68,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @UriParam(label = "consumer,advanced")
     private boolean includeHiddenFiles;
     @UriParam(label = "consumer,advanced")
-    private boolean includeHiddenDir;
+    private boolean includeHiddenDirs;
     @UriParam(label = "consumer,advanced")
     private boolean startingDirectoryMustExist;
     @UriParam(label = "consumer,advanced")
@@ -307,16 +307,16 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         this.includeHiddenFiles = includeHiddenFiles;
     }
 
-    public boolean isIncludeHiddenDir() {
-        return includeHiddenDir;
+    public boolean isIncludeHiddenDirs() {
+        return includeHiddenDirs;
     }
 
     /**
-     * Whether to accept hidden directory. Directory which names starts with dot is regarded as a hidden directory, and
-     * by default not included. Set this option to true to include hidden directory in the file consumer.
+     * Whether to accept hidden directories. Directories which names starts with dot is regarded as a hidden directory, and
+     * by default not included. Set this option to true to include hidden directories in the file consumer.
      */
-    public void setIncludeHiddenDir(boolean includeHiddenDir) {
-        this.includeHiddenDir = includeHiddenDir;
+    public void setIncludeHiddenDirs(boolean includeHiddenDirs) {
+        this.includeHiddenDirs = includeHiddenDirs;
     }
 
     public boolean isStartingDirectoryMustExist() {
