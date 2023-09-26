@@ -236,6 +236,10 @@ public class SpringXmlBeansHandler {
             rrd.setName(name);
             model.addRegistryBean(rrd);
 
+            // factory method
+            if (def.getFactoryMethodName() != null) {
+                rrd.setFactoryMethod(def.getFactoryMethodName());
+            }
             // constructor arguments
             if (def.hasConstructorArgumentValues()) {
                 Map<Integer, Object> constructors = new LinkedHashMap<>();

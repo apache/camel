@@ -2566,6 +2566,7 @@ public class ModelWriter extends BaseWriter {
             RegistryBeanDefinition def)
             throws IOException {
         startElement(name);
+        doWriteAttribute("factoryMethod", def.getFactoryMethod());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);

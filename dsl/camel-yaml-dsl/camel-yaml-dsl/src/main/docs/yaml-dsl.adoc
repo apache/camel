@@ -180,6 +180,58 @@ The properties of the bean can be defined using either a map or properties style
 The `beans` elements can only be used as the root element
 ====
 
+=== Creating bean using constructors
+
+When beans must be created with constructor arguments, then this is made easier in Camel 4.1 onwards.
+
+For example as shown below:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    constructors:
+      0: true
+      1: "Hello World"
+----
+
+The `constructors` is index based so the keys must be numbers starting from zero.
+
+TIP: You can use both constructors and properties.
+
+=== Creating beans from factory method
+
+A bean can also be created from a factory method (public static) as shown below:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    factoryMethod: createMyBean
+    constructors:
+      0: true
+      1: "Hello World"
+----
+
+When using `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyBean` should be as follows:
+
+[source,java]
+----
+public class MyBean {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static` and from the same class as the created class itself.
+
 == Configuring options on languages
 
 Some xref:components:languages:index.adoc[Languages] have additional configurations

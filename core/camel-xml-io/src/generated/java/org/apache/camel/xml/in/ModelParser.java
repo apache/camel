@@ -1634,6 +1634,7 @@ public class ModelParser extends BaseParser {
     protected RegistryBeanDefinition doParseRegistryBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new RegistryBeanDefinition(), (def, key, val) -> {
             switch (key) {
+                case "factoryMethod": def.setFactoryMethod(val); break;
                 case "name": def.setName(val); break;
                 case "type": def.setType(val); break;
                 default: return false;

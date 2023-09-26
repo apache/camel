@@ -295,6 +295,35 @@ public class ModelParserTest {
     }
 
     @Test
+    public void testBeansWithFactoryMethod() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "beansWithFactoryMethod.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
+        assertNotNull(beans);
+        assertEquals(2, beans.getBeans().size());
+        assertTrue(beans.getSpringBeans().isEmpty());
+
+        RegistryBeanDefinition b1 = beans.getBeans().get(0);
+        RegistryBeanDefinition b2 = beans.getBeans().get(1);
+
+        assertEquals("b1", b1.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b1.getType());
+        assertEquals("createMyBean", b1.getFactoryMethod());
+        assertEquals(2, b1.getConstructors().size());
+        assertEquals("c1", b1.getConstructors().get(0));
+        assertEquals("c2", b1.getConstructors().get(1));
+
+        assertEquals("b2", b2.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b2.getType());
+        assertEquals("createMyBean", b2.getFactoryMethod());
+        assertEquals(1, b2.getConstructors().size());
+        assertEquals("c1", b2.getConstructors().get(0));
+        assertEquals("v1", b2.getProperties().get("p1"));
+        assertEquals("v2", b2.getProperties().get("p2"));
+    }
+
+    @Test
     public void testSpringBeans() throws Exception {
         Path dir = getResourceFolder();
         Path path = new File(dir.toFile(), "beansWithSpringNS.xml").toPath();

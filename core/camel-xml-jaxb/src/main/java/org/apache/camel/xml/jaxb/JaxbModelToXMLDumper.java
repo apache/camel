@@ -337,7 +337,12 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             if (type.startsWith("#class:")) {
                 type = type.substring(7);
             }
-            buffer.write(String.format("    <bean name=\"%s\" type=\"%s\">%n", b.getName(), type));
+            String factoryMethod = b.getFactoryMethod();
+            if (factoryMethod != null) {
+                buffer.write(String.format("    <bean name=\"%s\" type=\"%s\" factoryMethod=\"%s\">%n", b.getName(), type, factoryMethod));
+            } else {
+                buffer.write(String.format("    <bean name=\"%s\" type=\"%s\">%n", b.getName(), type));
+            }
             if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
                 buffer.write(String.format("        <constructors>%n"));
                 for (Map.Entry<Integer, Object> entry : b.getConstructors().entrySet()) {
