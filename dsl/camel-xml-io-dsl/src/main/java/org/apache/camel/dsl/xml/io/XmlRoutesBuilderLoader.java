@@ -327,8 +327,10 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         if (type != null && !type.startsWith("#")) {
             type = "#class:" + type;
             try {
-                // factory method
-                if (def.getFactoryMethod() != null) {
+                // factory bean/method
+                if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
+                    type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
+                } else if (def.getFactoryMethod() != null) {
                     type = type + "#" + def.getFactoryMethod();
                 }
                 // property binding support has constructor arguments as part of the type

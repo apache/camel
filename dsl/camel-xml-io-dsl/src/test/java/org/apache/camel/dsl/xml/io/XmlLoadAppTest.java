@@ -145,7 +145,7 @@ public class XmlLoadAppTest {
     }
 
     @Test
-    public void testLoadCamelAppWithBeanFactory() throws Exception {
+    public void testLoadCamelAppWithBeanFactoryMethod() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
@@ -164,6 +164,29 @@ public class XmlLoadAppTest {
             y6.expectedBodiesReceived("Hello Moon. I am Camel and 43 years old!");
             context.createProducerTemplate().sendBody("direct:x6", "Moon");
             y6.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanFactoryBeanAndMethod() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app7.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r7"), "Loaded r7 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y7 = context.getEndpoint("mock:y7", MockEndpoint.class);
+            y7.expectedBodiesReceived("Hello Pluto. I am Camel and 44 years old!");
+            context.createProducerTemplate().sendBody("direct:x7", "Pluto");
+            y7.assertIsSatisfied();
         }
     }
 

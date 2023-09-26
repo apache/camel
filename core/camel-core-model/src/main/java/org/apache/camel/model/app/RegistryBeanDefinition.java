@@ -48,6 +48,8 @@ public class RegistryBeanDefinition implements ResourceAware {
     private String type;
     @XmlAttribute
     private String factoryMethod;
+    @XmlAttribute
+    private String factoryBean;
     @XmlElement(name = "constructors")
     @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
     private Map<Integer, Object> constructors;
@@ -77,6 +79,14 @@ public class RegistryBeanDefinition implements ResourceAware {
 
     public void setFactoryMethod(String factoryMethod) {
         this.factoryMethod = factoryMethod;
+    }
+
+    public String getFactoryBean() {
+        return factoryBean;
+    }
+
+    public void setFactoryBean(String factoryBean) {
+        this.factoryBean = factoryBean;
     }
 
     public Map<Integer, Object> getConstructors() {

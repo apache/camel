@@ -409,6 +409,11 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             }
 
             @Override
+            public <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod) {
+                return null;
+            }
+
+            @Override
             public <T> T newInstance(Class<T> type, boolean postProcessBean) {
                 return null;
             }

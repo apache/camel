@@ -16,39 +16,10 @@
  */
 package org.apache.camel.dsl.xml.io.beans;
 
-public class MyFacBean {
-
-    private String field1;
-    private String field2;
-    private int age;
+public class MyFacHelper {
 
     public static MyFacBean createBean(String field1, String field2) {
         return new MyFacBean(field1, field2);
-    }
-
-    MyFacBean(String field1, String field2) {
-        this.field1 = field1;
-        this.field2 = field2;
-    }
-
-    public String getField1() {
-        return field1;
-    }
-
-    public String getField2() {
-        return field2;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String hi(String body) {
-        return field1 + " " + body + ". I am " + field2 + " and " + age + " years old!";
     }
 
 }

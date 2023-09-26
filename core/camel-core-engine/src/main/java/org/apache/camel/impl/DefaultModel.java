@@ -631,6 +631,22 @@ public class DefaultModel implements Model {
             if (className != null && (factoryMethod != null || parameters != null)) {
                 final CamelContext camelContext = routeTemplateContext.getCamelContext();
                 final Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+                Class<?> fc = null;
+                if (factoryMethod != null) {
+                    String typeOrRef = StringHelper.before(factoryMethod, ":");
+                    if (typeOrRef != null) {
+                        // use another class with factory method
+                        factoryMethod = StringHelper.after(factoryMethod, ":");
+                        // special to support factory method parameters
+                        Object existing = camelContext.getRegistry().lookupByName(typeOrRef);
+                        if (existing != null) {
+                            fc = existing.getClass();
+                        } else {
+                            fc = camelContext.getClassResolver().resolveMandatoryClass(typeOrRef);
+                        }
+                    }
+                }
+                final Class<?> factoryClass = fc;
                 final String fqn = className;
                 final String fm = factoryMethod;
                 final String fp = parameters;
@@ -642,9 +658,10 @@ public class DefaultModel implements Model {
                         if (fm != null) {
                             if (fp != null) {
                                 // special to support factory method parameters
-                                local = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, fm, params);
+                                Class<?> target = factoryClass != null ? factoryClass : clazz;
+                                local = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, target, fm, params);
                             } else {
-                                local = camelContext.getInjector().newInstance(clazz, fm);
+                                local = camelContext.getInjector().newInstance(clazz, factoryClass, fm);
                             }
                             if (local == null) {
                                 throw new IllegalStateException(

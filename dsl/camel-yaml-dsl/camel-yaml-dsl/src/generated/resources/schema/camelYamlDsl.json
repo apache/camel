@@ -8026,6 +8026,9 @@
           "constructors" : {
             "type" : "object"
           },
+          "factoryBean" : {
+            "type" : "string"
+          },
           "factoryMethod" : {
             "type" : "string"
           },

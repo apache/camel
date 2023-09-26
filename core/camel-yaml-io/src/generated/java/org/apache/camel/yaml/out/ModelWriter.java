@@ -2569,6 +2569,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("factoryMethod", def.getFactoryMethod());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
+        doWriteAttribute("factoryBean", def.getFactoryBean());
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
         endElement(name);

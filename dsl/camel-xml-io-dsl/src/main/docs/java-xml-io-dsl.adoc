@@ -188,6 +188,40 @@ public class MyBean {
 
 NOTE: The factory method must be `public static` and from the same class as the created class itself.
 
+=== Creating beans from factory bean
+
+A bean can also be created from a factory bean as shown below:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean"
+          factoryBean="com.acme.MyHelper" factoryMethod="createMyBean">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+TIP: `factoryBean` can also refer to an existing bean by bean id instead of FQN classname.
+
+When using `factoryBean` and `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyHelper` should be as follows:
+
+[source,java]
+----
+public class MyHelper {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static`.
+
 
 == See Also
 

@@ -91,19 +91,21 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         beanCache.clear();
     }
 
-    public Object newInstance(RegistryBeanDefinition bean, CamelContext context) throws Exception {
+    public Object newInstance(RegistryBeanDefinition def, CamelContext context) throws Exception {
 
-        String type = bean.getType();
+        String type = def.getType();
 
-        // factory method
-        if (bean.getFactoryMethod() != null) {
-            type = type + "#" + bean.getFactoryMethod();
+        // factory bean/method
+        if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
+            type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
+        } else if (def.getFactoryMethod() != null) {
+            type = type + "#" + def.getFactoryMethod();
         }
         // property binding support has constructor arguments as part of the type
         StringJoiner ctr = new StringJoiner(", ");
-        if (bean.getConstructors() != null && !bean.getConstructors().isEmpty()) {
+        if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
             // need to sort constructor args based on index position
-            Map<Integer, Object> sorted = new TreeMap<>(bean.getConstructors());
+            Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
             for (Object val : sorted.values()) {
                 String text = val.toString();
                 if (!StringHelper.isQuoted(text)) {
@@ -116,8 +118,8 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
         final Object target = PropertyBindingSupport.resolveBean(context, type);
 
-        if (bean.getProperties() != null && !bean.getProperties().isEmpty()) {
-            PropertyBindingSupport.setPropertiesOnTarget(context, target, bean.getProperties());
+        if (def.getProperties() != null && !def.getProperties().isEmpty()) {
+            PropertyBindingSupport.setPropertiesOnTarget(context, target, def.getProperties());
         }
 
         return target;
