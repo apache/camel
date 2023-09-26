@@ -144,4 +144,27 @@ public class XmlLoadAppTest {
         }
     }
 
+    @Test
+    public void testLoadCamelAppWithBeanFactory() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app6.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r6"), "Loaded r6 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y6 = context.getEndpoint("mock:y6", MockEndpoint.class);
+            y6.expectedBodiesReceived("Hello Moon. I am Camel and 43 years old!");
+            context.createProducerTemplate().sendBody("direct:x6", "Moon");
+            y6.assertIsSatisfied();
+        }
+    }
+
 }

@@ -95,6 +95,10 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
         String type = bean.getType();
 
+        // factory method
+        if (bean.getFactoryMethod() != null) {
+            type = type + "#" + bean.getFactoryMethod();
+        }
         // property binding support has constructor arguments as part of the type
         StringJoiner ctr = new StringJoiner(", ");
         if (bean.getConstructors() != null && !bean.getConstructors().isEmpty()) {

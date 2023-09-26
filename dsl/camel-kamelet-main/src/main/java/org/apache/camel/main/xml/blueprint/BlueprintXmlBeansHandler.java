@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,9 +107,16 @@ public class BlueprintXmlBeansHandler {
         rrd.setType(XmlHelper.getAttribute(node, "class"));
         rrd.setName(name);
 
+        // factory method
+        String fm = XmlHelper.getAttribute(node, "factory-method");
+        if (fm != null) {
+            rrd.setFactoryMethod(fm);
+        }
         // constructor arguments
-        StringJoiner sj = new StringJoiner(", ");
+        Map<Integer, Object> constructors = new LinkedHashMap<>();
+        rrd.setConstructors(constructors);
         NodeList props = node.getChildNodes();
+        int index = 0;
         for (int i = 0; i < props.getLength(); i++) {
             Node child = props.item(i);
             // assume the args are in order (1, 2)
@@ -116,14 +124,14 @@ public class BlueprintXmlBeansHandler {
                 String val = XmlHelper.getAttribute(child, "value");
                 String ref = XmlHelper.getAttribute(child, "ref");
                 if (val != null) {
-                    sj.add("'" + extractValue(camelContext, val, false) + "'");
+                    constructors.put(index++, extractValue(camelContext, val, false));
                 } else if (ref != null) {
-                    sj.add("'#bean:" + extractValue(camelContext, ref, false) + "'");
+                    constructors.put(index++, "#bean:" + extractValue(camelContext, ref, false));
                 }
             }
         }
-        if (sj.length() > 0) {
-            rrd.setType("#class:" + rrd.getType() + "(" + sj + ")");
+        if (!constructors.isEmpty()) {
+            rrd.setConstructors(constructors);
         }
 
         // property values
@@ -202,6 +210,25 @@ public class BlueprintXmlBeansHandler {
                 type = "#class:" + type;
             }
             try {
+                // factory method
+                if (def.getFactoryMethod() != null) {
+                    type = type + "#" + def.getFactoryMethod();
+                }
+                // property binding support has constructor arguments as part of the type
+                StringJoiner ctr = new StringJoiner(", ");
+                if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
+                    // need to sort constructor args based on index position
+                    Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
+                    for (Object val : sorted.values()) {
+                        String text = val.toString();
+                        if (!StringHelper.isQuoted(text)) {
+                            text = "\"" + text + "\"";
+                        }
+                        ctr.add(text);
+                    }
+                    type = type + "(" + ctr + ")";
+                }
+
                 final Object target = PropertyBindingSupport.resolveBean(camelContext, type);
 
                 if (def.getProperties() != null && !def.getProperties().isEmpty()) {

@@ -157,6 +157,38 @@ If you use Camel 4.0, then constructor arguments must be defined in the `type` a
 </bean>
 ----
 
+=== Creating beans from factory method
+
+A bean can also be created from a factory method (public static) as shown below:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean" factoryMethod="createMyBean">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+When using `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyBean` should be as follows:
+
+[source,java]
+----
+public class MyBean {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static` and from the same class as the created class itself.
+
+
 == See Also
 
 See xref:manual:ROOT:dsl.adoc[DSL]

@@ -312,8 +312,12 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             if (type.startsWith("#class:")) {
                 type = type.substring(7);
             }
+            String factoryMethod = b.getFactoryMethod();
             buffer.write(String.format("    - name: %s%n", b.getName()));
             buffer.write(String.format("      type: \"%s\"%n", type));
+            if (factoryMethod != null) {
+                buffer.write(String.format("      factoryMethod: \"%s\"%n", factoryMethod));
+            }
             if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
                 buffer.write(String.format("      constructors:%n"));
                 int counter = 0;
