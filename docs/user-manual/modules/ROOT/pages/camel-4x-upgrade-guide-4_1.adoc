@@ -142,3 +142,21 @@ from("jetty:http://localhost:{{port}}/myapp/myservice?logException=true")
 
 The kebab-case style schema file,  `camel-yaml-dsl.json` has been removed from the distribution in favor of the camelCase style schema file, `camelYamlDsl.json`. While the Camel runtime stays supporting kebab-case style also for the moment, it is recommended to migrate to camelCase style. Any tooling should encourage users to use camelCase style.
 
+=== camel-tracing
+
+The `Tag` Enum containing constants for tagging spans has been deprecated.
+Instead,
+use constants from the `TagConstants` Class that align to Open Telemetry v1.21.0 semantic conventions.
+
+For example,
+instead of
+
+----
+span.setTag(Tag.URL_SCHEME, scheme);
+----
+
+use
+
+----
+span.setTag(TagConstants.URL_SCHEME, scheme);
+----
