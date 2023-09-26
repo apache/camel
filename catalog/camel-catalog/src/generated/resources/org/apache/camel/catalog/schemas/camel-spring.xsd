@@ -13604,6 +13604,7 @@ org.apache.camel.builder.RouteBuilder.
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="type" type="xs:string" use="required"/>
     <xs:attribute name="factoryMethod" type="xs:string"/>
+    <xs:attribute name="factoryBean" type="xs:string"/>
   </xs:complexType>
   <xs:complexType name="beanConstructorsDefinition">
     <xs:sequence>
