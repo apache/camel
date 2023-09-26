@@ -6,6 +6,11 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.0 to 4.1
 
+=== camel-api
+
+Add method `newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod)`
+to `org.apache.camel.spi.Injector`.
+
 === camel-management
 
 Dumping routes to JMX no longer includes `customId="true"` in the XML nodes.
