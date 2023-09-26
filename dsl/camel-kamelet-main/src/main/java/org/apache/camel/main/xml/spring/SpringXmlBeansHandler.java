@@ -243,6 +243,12 @@ public class SpringXmlBeansHandler {
             if (def.getFactoryMethodName() != null) {
                 rrd.setFactoryMethod(def.getFactoryMethodName());
             }
+            if (def.getInitMethodName() != null) {
+                rrd.setInitMethod(def.getInitMethodName());
+            }
+            if (def.getDestroyMethodName() != null) {
+                rrd.setDestroyMethod(def.getDestroyMethodName());
+            }
             // constructor arguments
             if (def.hasConstructorArgumentValues()) {
                 Map<Integer, Object> constructors = new LinkedHashMap<>();

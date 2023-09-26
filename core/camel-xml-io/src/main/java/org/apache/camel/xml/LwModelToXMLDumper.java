@@ -331,6 +331,12 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             if (b.getFactoryMethod() != null) {
                 buffer.write(String.format(" factory-method=\"%s\"", b.getFactoryMethod()));
             }
+            if (b.getInitMethod() != null) {
+                buffer.write(String.format(" init-method=\"%s\"", b.getInitMethod()));
+            }
+            if (b.getDestroyMethod() != null) {
+                buffer.write(String.format(" destroy-method=\"%s\"", b.getDestroyMethod()));
+            }
             buffer.write(">\n");
             if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
                 buffer.write(String.format("        <constructors>%n"));

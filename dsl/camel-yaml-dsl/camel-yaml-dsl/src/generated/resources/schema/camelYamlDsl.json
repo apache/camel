@@ -8026,10 +8026,16 @@
           "constructors" : {
             "type" : "object"
           },
+          "destroyMethod" : {
+            "type" : "string"
+          },
           "factoryBean" : {
             "type" : "string"
           },
           "factoryMethod" : {
+            "type" : "string"
+          },
+          "initMethod" : {
             "type" : "string"
           },
           "name" : {
