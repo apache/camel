@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test for PropertyBindingSupport
  */
-public class PropertyBindingSupportClassFactoryMethodTest {
+public class PropertyBindingSupportHelperClassFactoryMethodTest {
 
     @Test
     public void testFactory() throws Exception {
@@ -42,8 +42,9 @@ public class PropertyBindingSupportClassFactoryMethodTest {
                 .withCamelContext(context)
                 .withTarget(target)
                 .withProperty("name", "Donald")
-                .withProperty("myDriver",
-                        "#class:" + MyDriver.class.getName() + "#createDriver('localhost:2121', 'scott', 'tiger')")
+                .withProperty("myDriver", "#class:" + MyDriver.class.getName()
+                                          + "#" + MyDriverHelper.class.getName()
+                                          + ":createDriver('localhost:2121', 'scott', 'tiger')")
                 .withRemoveParameters(false).bind();
 
         assertEquals("Donald", target.getName());
@@ -73,7 +74,35 @@ public class PropertyBindingSupportClassFactoryMethodTest {
                 .withTarget(target)
                 .withProperty("name", "Donald")
                 .withProperty("myDriver",
-                        "#class:" + MyDriver.class.getName() + "#createDriver('{{myUrl}}', '{{myUsername}}', '{{myPassword}}')")
+                        "#class:" + MyDriver.class.getName()
+                                          + "#" + MyDriverHelper.class.getName()
+                                          + ":createDriver('{{myUrl}}', '{{myUsername}}', '{{myPassword}}')")
+                .withRemoveParameters(false).bind();
+
+        assertEquals("Donald", target.getName());
+        assertEquals("localhost:2121", target.getMyDriver().getUrl());
+        assertEquals("scott", target.getMyDriver().getUsername());
+        assertEquals("tiger", target.getMyDriver().getPassword());
+
+        context.stop();
+    }
+
+    @Test
+    public void testFactoryRef() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+
+        context.getRegistry().bind("myDriverHelper", new MyDriverHelper());
+
+        context.start();
+
+        MyApp target = new MyApp();
+
+        PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withTarget(target)
+                .withProperty("name", "Donald")
+                .withProperty("myDriver", "#class:" + MyDriver.class.getName()
+                                          + "#myDriverHelper:createDriver('localhost:2121', 'scott', 'tiger')")
                 .withRemoveParameters(false).bind();
 
         assertEquals("Donald", target.getName());
@@ -106,11 +135,7 @@ public class PropertyBindingSupportClassFactoryMethodTest {
         }
     }
 
-    public static class MyDriver {
-
-        private String url;
-        private String username;
-        private String password;
+    public static class MyDriverHelper {
 
         public static MyDriver createDriver(String url, String username, String password) {
             MyDriver driver = new MyDriver();
@@ -119,6 +144,14 @@ public class PropertyBindingSupportClassFactoryMethodTest {
             driver.password = password;
             return driver;
         }
+
+    }
+
+    public static class MyDriver {
+
+        private String url;
+        private String username;
+        private String password;
 
         public String getUrl() {
             return url;

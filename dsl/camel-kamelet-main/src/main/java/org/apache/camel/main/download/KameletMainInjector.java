@@ -57,6 +57,15 @@ public class KameletMainInjector implements Injector {
     }
 
     @Override
+    public <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod) {
+        boolean accept = acceptComponent(type);
+        if (!accept) {
+            return (T) delegate.newInstance(StubComponent.class);
+        }
+        return delegate.newInstance(type, factoryClass, factoryMethod);
+    }
+
+    @Override
     public <T> T newInstance(Class<T> type, boolean postProcessBean) {
         boolean accept = acceptComponent(type);
         if (!accept) {

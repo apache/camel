@@ -70,8 +70,10 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * the instance via a factory method then you specify the method as shown: #class:com.foo.MyClassType#myFactoryMethod.
  * And if the factory method requires parameters they can be specified as follows:
  * #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the instance via
- * constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello World', 5,
- * true)</li>.
+ * constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello World', 5, true).
+ * If the factory method is on another bean or class, then you must specify this as shown:
+ * #class:com.foo.MyClassType#com.foo.MyFactory:myFactoryMethod. Where com.foo.MyFactory either refers to an class name,
+ * or can refer to an existing bean by id, such as: #class:com.foo.MyClassType#myFactoryBean:myFactoryMethod.</li>.
  * <li>valueAs(type):value</li> - To declare that the value should be converted to the given type, such as
  * #valueAs(int):123 which indicates that the value 123 should be converted to an integer.
  * <li>ignore case - Whether to ignore case for property keys</li>
@@ -1372,10 +1374,25 @@ public final class PropertyBindingSupport {
             for (int i = 0; i < found.getParameterCount(); i++) {
                 Class<?> paramType = found.getParameterTypes()[i];
                 Object param = params[i];
-                Object val = camelContext.getTypeConverter().convertTo(paramType, param);
+                Object val = null;
+                // special as we may refer to other #bean or #type in the parameter
+                if (param instanceof String) {
+                    String str = param.toString();
+                    if (str.startsWith("#")) {
+                        Object bean = resolveBean(camelContext, param);
+                        if (bean != null) {
+                            val = bean;
+                        }
+                    }
+                }
                 // unquote text
                 if (val instanceof String) {
                     val = StringHelper.removeLeadingAndEndingQuotes((String) val);
+                }
+                if (val != null) {
+                    val = camelContext.getTypeConverter().tryConvertTo(paramType, val);
+                } else {
+                    val = camelContext.getTypeConverter().convertTo(paramType, param);
                 }
                 arr[i] = val;
             }
@@ -1558,11 +1575,24 @@ public final class PropertyBindingSupport {
             }
             Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(className);
             if (factoryMethod != null) {
-                if (parameters != null) {
+                Class<?> factoryClass = null;
+                String typeOrRef = StringHelper.before(factoryMethod, ":");
+                if (typeOrRef != null) {
+                    // use another class with factory method
+                    factoryMethod = StringHelper.after(factoryMethod, ":");
                     // special to support factory method parameters
-                    answer = newInstanceFactoryParameters(camelContext, type, factoryMethod, parameters);
+                    Object existing = camelContext.getRegistry().lookupByName(typeOrRef);
+                    if (existing != null) {
+                        factoryClass = existing.getClass();
+                    } else {
+                        factoryClass = camelContext.getClassResolver().resolveMandatoryClass(typeOrRef);
+                    }
+                }
+                if (parameters != null) {
+                    Class<?> target = factoryClass != null ? factoryClass : type;
+                    answer = newInstanceFactoryParameters(camelContext, target, factoryMethod, parameters);
                 } else {
-                    answer = camelContext.getInjector().newInstance(type, factoryMethod);
+                    answer = camelContext.getInjector().newInstance(type, factoryClass, factoryMethod);
                 }
                 if (answer == null) {
                     throw new IllegalStateException(

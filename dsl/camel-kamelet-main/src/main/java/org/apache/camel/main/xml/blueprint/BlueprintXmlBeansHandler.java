@@ -107,7 +107,11 @@ public class BlueprintXmlBeansHandler {
         rrd.setType(XmlHelper.getAttribute(node, "class"));
         rrd.setName(name);
 
-        // factory method
+        // factory bean/method
+        String fb = XmlHelper.getAttribute(node, "factory-ref");
+        if (fb != null) {
+            rrd.setFactoryBean(fb);
+        }
         String fm = XmlHelper.getAttribute(node, "factory-method");
         if (fm != null) {
             rrd.setFactoryMethod(fm);
@@ -210,8 +214,10 @@ public class BlueprintXmlBeansHandler {
                 type = "#class:" + type;
             }
             try {
-                // factory method
-                if (def.getFactoryMethod() != null) {
+                // factory bean/method
+                if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
+                    type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
+                } else if (def.getFactoryMethod() != null) {
                     type = type + "#" + def.getFactoryMethod();
                 }
                 // property binding support has constructor arguments as part of the type

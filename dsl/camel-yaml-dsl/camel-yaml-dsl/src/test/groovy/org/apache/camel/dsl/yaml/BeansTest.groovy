@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyBean
 import org.apache.camel.dsl.yaml.support.model.MyCtrBean
 import org.apache.camel.dsl.yaml.support.model.MyFacBean
+import org.apache.camel.dsl.yaml.support.model.MyFacHelper
 
 class BeansTest extends YamlTestSupport {
 
@@ -138,6 +139,29 @@ class BeansTest extends YamlTestSupport {
                 - beans:
                   - name: myFac
                     type: ${MyFacBean.class.name}
+                    factoryMethod: createBean
+                    constructors:
+                      0: 'fac1'
+                      1: 'fac2'
+                    properties:
+                      age: 43 
+            """
+
+        then:
+        with(context.registry.lookupByName('myFac'), MyFacBean) {
+            it.field1 == 'fac1'
+            it.field2 == 'fac2'
+            it.age == 43
+        }
+    }
+
+    def "beans with factory helper"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myFac
+                    type: ${MyFacBean.class.name}
+                    factoryBean: ${MyFacHelper.class.name}
                     factoryMethod: createBean
                     constructors:
                       0: 'fac1'

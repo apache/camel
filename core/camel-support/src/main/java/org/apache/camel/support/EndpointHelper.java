@@ -377,11 +377,27 @@ public final class EndpointHelper {
             className = StringHelper.before(className, "#");
         }
         Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+        Class<?> factoryClass = null;
+        if (factoryMethod != null) {
+            String typeOrRef = StringHelper.before(factoryMethod, ":");
+            if (typeOrRef != null) {
+                // use another class with factory method
+                factoryMethod = StringHelper.after(factoryMethod, ":");
+                // special to support factory method parameters
+                Object existing = camelContext.getRegistry().lookupByName(typeOrRef);
+                if (existing != null) {
+                    factoryClass = existing.getClass();
+                } else {
+                    factoryClass = camelContext.getClassResolver().resolveMandatoryClass(typeOrRef);
+                }
+            }
+        }
 
         if (factoryMethod != null && parameters != null) {
-            answer = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, factoryMethod, parameters);
+            Class<?> target = factoryClass != null ? factoryClass : clazz;
+            answer = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, target, factoryMethod, parameters);
         } else if (factoryMethod != null) {
-            answer = camelContext.getInjector().newInstance(type, factoryMethod);
+            answer = camelContext.getInjector().newInstance(type, factoryClass, factoryMethod);
         } else if (parameters != null) {
             answer = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, parameters);
         } else {

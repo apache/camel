@@ -236,7 +236,10 @@ public class SpringXmlBeansHandler {
             rrd.setName(name);
             model.addRegistryBean(rrd);
 
-            // factory method
+            // factory bean/method
+            if (def.getFactoryBeanName() != null) {
+                rrd.setFactoryBean(def.getFactoryBeanName());
+            }
             if (def.getFactoryMethodName() != null) {
                 rrd.setFactoryMethod(def.getFactoryMethodName());
             }

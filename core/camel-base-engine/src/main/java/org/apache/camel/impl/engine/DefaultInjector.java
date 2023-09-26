@@ -49,18 +49,25 @@ public class DefaultInjector implements Injector {
 
     @Override
     public <T> T newInstance(Class<T> type, String factoryMethod) {
+        return newInstance(type, null, factoryMethod);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod) {
+        Class<?> target = factoryClass != null ? factoryClass : type;
         T answer = null;
         try {
             // lookup factory method
-            Method fm = type.getMethod(factoryMethod);
-            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers()) && fm.getReturnType() == type) {
+            Method fm = target.getMethod(factoryMethod);
+            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers())
+                    && fm.getReturnType() != Void.class) {
                 Object obj = fm.invoke(null);
                 answer = type.cast(obj);
             }
             // inject camel context if needed
             CamelContextAware.trySetCamelContext(answer, camelContext);
         } catch (Exception e) {
-            throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + type, e);
+            throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + target, e);
         }
         return answer;
     }

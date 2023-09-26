@@ -232,6 +232,41 @@ public class MyBean {
 
 NOTE: The factory method must be `public static` and from the same class as the created class itself.
 
+=== Creating beans from factory bean
+
+A bean can also be created from a factory bean as shown below:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    factoryBean: com.acme.MyHelper
+    factoryMethod: createMyBean
+    constructors:
+      0: true
+      1: "Hello World"
+----
+
+TIP: `factoryBean` can also refer to an existing bean by bean id instead of FQN classname.
+
+When using `factoryBean` and `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyHelper` should be as follows:
+
+[source,java]
+----
+public class MyHelper {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static`.
+
 == Configuring options on languages
 
 Some xref:components:languages:index.adoc[Languages] have additional configurations
