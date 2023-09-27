@@ -1025,7 +1025,7 @@ public abstract class AbstractCamelCatalog {
                 }
             }
             // anything left over?
-            if (current.length() > 0) {
+            if (!current.isEmpty()) {
                 tokens.add(current.toString());
             }
         }

@@ -1686,7 +1686,7 @@ public final class PropertyBindingSupport {
                 sb.append(ch);
             }
         }
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             parts.add(sb.toString());
         }
 

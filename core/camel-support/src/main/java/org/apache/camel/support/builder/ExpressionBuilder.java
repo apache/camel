@@ -1452,7 +1452,7 @@ public class ExpressionBuilder {
                     if (o != null) {
                         String s = converter.tryConvertTo(String.class, exchange, o);
                         if (s != null) {
-                            if (sb.length() > 0) {
+                            if (!sb.isEmpty()) {
                                 sb.append(separator);
                             }
                             if (prefix != null) {

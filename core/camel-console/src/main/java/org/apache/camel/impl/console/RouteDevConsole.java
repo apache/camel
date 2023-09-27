@@ -65,7 +65,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         final boolean processors = "true".equals(options.getOrDefault(PROCESSORS, "false"));
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append("\n");
             }
             sb.append(String.format("    Id: %s", mrb.getRouteId()));

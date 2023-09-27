@@ -611,7 +611,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, "triggerParameters",
                     triggerParameters);
             PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, "jobParameters", jobParameters);
-            if (copy.size() > 0) {
+            if (!copy.isEmpty()) {
                 throw new FailedToCreateConsumerException(
                         getEndpoint(), "There are " + copy.size()
                                        + " scheduler parameters that couldn't be set on the endpoint."

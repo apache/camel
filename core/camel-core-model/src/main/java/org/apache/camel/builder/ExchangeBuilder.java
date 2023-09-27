@@ -111,7 +111,7 @@ public final class ExchangeBuilder {
 
         exchange.getMessage().setBody(body);
 
-        if (headers.size() > 0) {
+        if (!headers.isEmpty()) {
             exchange.getMessage().setHeaders(headers);
         }
         // setup the properties on the exchange

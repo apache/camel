@@ -272,7 +272,7 @@ public final class OgnlHelper {
         }
 
         // add remainder in buffer when reached end of data
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             methods.add(sb.toString());
         }
 

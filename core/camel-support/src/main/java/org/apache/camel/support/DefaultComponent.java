@@ -291,7 +291,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             param = PropertiesHelper.extractProperties(parameters, optionPrefix);
         }
 
-        if (param.size() > 0) {
+        if (!param.isEmpty()) {
             throw new ResolveEndpointFailedException(
                     uri, "There are " + param.size()
                          + " parameters that couldn't be set on the endpoint."
@@ -673,7 +673,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     protected String ifStartsWithReturnRemainder(String prefix, String text) {
         if (text.startsWith(prefix)) {
             String remainder = text.substring(prefix.length());
-            if (remainder.length() > 0) {
+            if (!remainder.isEmpty()) {
                 return remainder;
             }
         }

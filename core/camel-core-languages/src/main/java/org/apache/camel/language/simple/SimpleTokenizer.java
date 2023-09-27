@@ -179,7 +179,7 @@ public final class SimpleTokenizer {
                     continue;
                 }
             }
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 return new SimpleToken(new SimpleTokenType(TokenType.numericValue, sb.toString()), index);
             }
         }
