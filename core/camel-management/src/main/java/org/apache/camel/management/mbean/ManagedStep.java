@@ -25,7 +25,7 @@ import org.apache.camel.processor.StepProcessor;
 @ManagedResource(description = "Managed Step")
 public class ManagedStep extends ManagedProcessor implements ManagedStepMBean {
     // TODO processor is reported unused, if it is needed, then place @SuppressWarnings("unused")
-    private StepProcessor processor;
+    private final StepProcessor processor;
 
     public ManagedStep(CamelContext context, StepProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
