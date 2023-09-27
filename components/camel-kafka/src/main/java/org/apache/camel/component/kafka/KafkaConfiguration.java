@@ -103,8 +103,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", defaultValue = "1048576")
     private Integer maxPartitionFetchBytes = 1048576;
     // session.timeout.ms
-    @UriParam(label = "consumer", defaultValue = "10000")
-    private Integer sessionTimeoutMs = 10000;
+    @UriParam(label = "consumer", defaultValue = "45000")
+    private Integer sessionTimeoutMs = 45000;
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer maxPollRecords;
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
@@ -118,8 +118,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", defaultValue = KafkaConstants.PARTITIONER_RANGE_ASSIGNOR)
     private String partitionAssignor = KafkaConstants.PARTITIONER_RANGE_ASSIGNOR;
     // request.timeout.ms
-    @UriParam(label = "consumer", defaultValue = "40000")
-    private Integer consumerRequestTimeoutMs = 40000;
+    @UriParam(label = "consumer", defaultValue = "30000")
+    private Integer consumerRequestTimeoutMs = 30000;
     // auto.commit.interval.ms
     @UriParam(label = "consumer", defaultValue = "5000")
     private Integer autoCommitIntervalMs = 5000;
