@@ -170,7 +170,7 @@ public final class SimpleTokenizer {
                 }
                 // is it a dot or comma as part of a floating point number
                 boolean decimalSeparator = '.' == expression.charAt(index) || ',' == expression.charAt(index);
-                if (decimalSeparator && sb.length() > 0) {
+                if (decimalSeparator && !sb.isEmpty()) {
                     char ch = expression.charAt(index);
                     sb.append(ch);
                     index++;

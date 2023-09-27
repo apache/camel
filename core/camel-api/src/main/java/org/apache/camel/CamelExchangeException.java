@@ -57,13 +57,13 @@ public class CamelExchangeException extends CamelException {
             sb.append(message);
         }
         if (exchange != null) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(". ");
             }
             sb.append(exchange);
         }
         if (cause != null) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(". ");
             }
             sb.append("Caused by: [").append(cause.getClass().getName()).append(" - ")
