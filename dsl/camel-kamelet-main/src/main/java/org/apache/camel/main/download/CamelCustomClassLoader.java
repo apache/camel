@@ -14,32 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.java.joor;
+package org.apache.camel.main.download;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.camel.CamelContext;
 
-public class JavaJoorClassLoader extends ClassLoader {
+/**
+ * ClassLoader loading from any custom class loaders that may
+ * have been added to Camel {@link org.apache.camel.spi.ClassResolver}.
+ */
+public class CamelCustomClassLoader extends ClassLoader {
 
-    private final Map<String, Class<?>> classes = new HashMap<>();
+    private final CamelContext camelContext;
 
-    public JavaJoorClassLoader() {
-        super(JavaJoorClassLoader.class.getClassLoader());
+    public CamelCustomClassLoader(ClassLoader parent, CamelContext camelContext) {
+        super(parent);
+        this.camelContext = camelContext;
     }
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        Class<?> clazz = classes.get(name);
-        if (clazz != null) {
-            return clazz;
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        for (ClassLoader cl : camelContext.getClassResolver().getClassLoaders()) {
+            try {
+                return cl.loadClass(name);
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }
         }
         throw new ClassNotFoundException(name);
-    }
-
-    public void addClass(String name, Class<?> clazz) {
-        if (name != null && clazz != null) {
-            classes.put(name, clazz);
-        }
     }
 
 }

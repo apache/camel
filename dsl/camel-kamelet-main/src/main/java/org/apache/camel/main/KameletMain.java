@@ -34,6 +34,7 @@ import org.apache.camel.dsl.support.SourceLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.download.AutoConfigureDownloadListener;
 import org.apache.camel.main.download.BasePackageScanDownloadListener;
+import org.apache.camel.main.download.CamelCustomClassLoader;
 import org.apache.camel.main.download.CircuitBreakerDownloader;
 import org.apache.camel.main.download.CommandLineDependencyDownloader;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -325,6 +326,8 @@ public class KameletMain extends MainCommandLineSupport {
         if (getCamelContext() != null) {
             getCamelContext().stop();
         }
+        springXmlBeansHandler.stop();
+        blueprintXmlBeansHandler.stop();
     }
 
     @Override
@@ -343,7 +346,7 @@ public class KameletMain extends MainCommandLineSupport {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
         if (download) {
-            ClassLoader dynamicCL = createApplicationContextClassLoader();
+            ClassLoader dynamicCL = createApplicationContextClassLoader(answer);
             answer.setApplicationContextClassLoader(dynamicCL);
             PluginHelper.getPackageScanClassResolver(answer).addClassLoader(dynamicCL);
             PluginHelper.getPackageScanResourceResolver(answer).addClassLoader(dynamicCL);
@@ -566,8 +569,9 @@ public class KameletMain extends MainCommandLineSupport {
 
     @Override
     protected void autoconfigure(CamelContext camelContext) throws Exception {
+        ClassLoader cl = createApplicationContextClassLoader(camelContext);
         // create classloader that may include additional JARs
-        camelContext.setApplicationContextClassLoader(createApplicationContextClassLoader());
+        camelContext.setApplicationContextClassLoader(cl);
         // auto configure camel afterwards
         super.autoconfigure(camelContext);
     }
@@ -577,7 +581,7 @@ public class KameletMain extends MainCommandLineSupport {
         return new KameletAutowiredLifecycleStrategy(camelContext, stubPattern, silent);
     }
 
-    protected ClassLoader createApplicationContextClassLoader() {
+    protected ClassLoader createApplicationContextClassLoader(CamelContext camelContext) {
         if (classLoader == null) {
             // jars need to be added to dependency downloader classloader
             List<String> jars = new ArrayList<>();
@@ -600,6 +604,7 @@ public class KameletMain extends MainCommandLineSupport {
                     LOG.info("Additional files added to classpath: {}", String.join(", ", files));
                 }
             }
+            parentCL = new CamelCustomClassLoader(parentCL, camelContext);
             DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(parentCL);
             if (!jars.isEmpty()) {
                 for (String jar : jars) {
@@ -686,11 +691,6 @@ public class KameletMain extends MainCommandLineSupport {
     protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
         springXmlBeansHandler.createAndRegisterBeans(camelContext);
         blueprintXmlBeansHandler.createAndRegisterBeans(camelContext);
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        // TODO: manage BeanFactory as a field and clear the beans here
     }
 
     private static String getPid() {

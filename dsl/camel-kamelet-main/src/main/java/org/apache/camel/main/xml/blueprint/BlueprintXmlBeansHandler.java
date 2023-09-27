@@ -36,7 +36,9 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,7 @@ public class BlueprintXmlBeansHandler {
     private final Map<String, Node> delayedBeans = new LinkedHashMap<>();
     private final Map<String, Resource> resources = new LinkedHashMap<>();
     private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
+    private final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
 
     /**
      * Parses the XML documents and discovers blueprint beans, which will be created manually via Camel.
@@ -118,7 +121,7 @@ public class BlueprintXmlBeansHandler {
         }
         String im = XmlHelper.getAttribute(node, "init-method");
         if (im != null) {
-            rrd.setInitMethod(fm);
+            rrd.setInitMethod(im);
         }
         String dm = XmlHelper.getAttribute(node, "destroy-method");
         if (dm != null) {
@@ -248,12 +251,8 @@ public class BlueprintXmlBeansHandler {
                 if (def.getProperties() != null && !def.getProperties().isEmpty()) {
                     PropertyBindingSupport.setPropertiesOnTarget(camelContext, target, def.getProperties());
                 }
-                camelContext.getRegistry().unbind(name);
-                camelContext.getRegistry().bind(name, target);
 
-                // register bean in model
-                Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-                model.addRegistryBean(def);
+                bindBean(camelContext, def, name, target);
 
             } catch (Exception e) {
                 if (delayIfFailed) {
@@ -263,6 +262,51 @@ public class BlueprintXmlBeansHandler {
                 }
             }
         }
+    }
+
+    protected void bindBean(CamelContext camelContext, RegistryBeanDefinition def, String name, Object target)
+            throws Exception {
+        // destroy and unbind any existing bean
+        destroyBean(name, true);
+        camelContext.getRegistry().unbind(name);
+
+        // invoke init method and register bean
+        String initMethod = def.getInitMethod();
+        if (initMethod != null) {
+            ObjectHelper.invokeMethodSafe(initMethod, target);
+        }
+        camelContext.getRegistry().bind(name, target);
+
+        // remember to destroy bean on shutdown
+        if (def.getDestroyMethod() != null) {
+            beansToDestroy.put(name, new KeyValueHolder<>(target, def.getDestroyMethod()));
+        }
+
+        // register bean in model
+        Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+        model.addRegistryBean(def);
+    }
+
+    protected void destroyBean(String name, boolean remove) {
+        var holder = remove ? beansToDestroy.remove(name) : beansToDestroy.get(name);
+        if (holder != null) {
+            String destroyMethod = holder.getValue();
+            Object target = holder.getKey();
+            try {
+                ObjectHelper.invokeMethodSafe(destroyMethod, target);
+            } catch (Exception e) {
+                LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
+                        destroyMethod, target, e.getMessage(), e);
+            }
+        }
+    }
+
+    public void stop() {
+        // beans should trigger destroy methods on shutdown
+        for (String name : beansToDestroy.keySet()) {
+            destroyBean(name, false);
+        }
+        beansToDestroy.clear();
     }
 
 }

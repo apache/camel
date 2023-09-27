@@ -331,4 +331,8 @@ public class SpringXmlBeansHandler {
         return val;
     }
 
+    public void stop() {
+        // noop
+    }
+
 }

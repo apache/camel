@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -59,6 +60,15 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
             classLoaders = new LinkedHashSet<>();
         }
         classLoaders.add(classLoader);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<ClassLoader> getClassLoaders() {
+        if (classLoaders == null) {
+            return Collections.EMPTY_SET;
+        }
+        return Collections.unmodifiableSet(classLoaders);
     }
 
     @Override
