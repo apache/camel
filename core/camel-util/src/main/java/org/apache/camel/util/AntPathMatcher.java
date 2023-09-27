@@ -454,7 +454,7 @@ public class AntPathMatcher {
         while (st.hasMoreTokens()) {
             String token = st.nextToken();
             token = token.trim();
-            if (token.length() > 0) {
+            if (!token.isEmpty()) {
                 tokens.add(token);
             }
         }

@@ -234,7 +234,7 @@ public class XmlConverter {
                 // check the camelContext properties first
                 Properties properties
                         = CamelContextHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
-                if (properties.size() > 0) {
+                if (!properties.isEmpty()) {
                     toResult(source, new StreamResult(buffer), properties);
                     return buffer.toString();
                 }
@@ -258,7 +258,7 @@ public class XmlConverter {
                 // check the camelContext properties first
                 Properties properties = CamelContextHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX,
                         exchange.getContext());
-                if (properties.size() > 0) {
+                if (!properties.isEmpty()) {
                     toResult(source, new StreamResult(buffer), properties);
                     return buffer.toByteArray();
                 }
@@ -942,7 +942,7 @@ public class XmlConverter {
             StringBuilder featureString = new StringBuilder();
             // just log the configured feature
             for (String feature : features) {
-                if (featureString.length() != 0) {
+                if (!featureString.isEmpty()) {
                     featureString.append(", ");
                 }
                 featureString.append(feature);

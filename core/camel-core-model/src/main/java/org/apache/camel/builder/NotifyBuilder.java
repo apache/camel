@@ -1271,7 +1271,7 @@ public class NotifyBuilder {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (EventPredicateHolder eventPredicateHolder : predicates) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(".");
             }
             sb.append(eventPredicateHolder.toString());
@@ -1644,7 +1644,7 @@ public class NotifyBuilder {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             for (EventPredicate eventPredicate : predicates) {
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     sb.append(".");
                 }
                 sb.append(eventPredicate.toString());

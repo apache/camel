@@ -224,7 +224,7 @@ public class JndiContext implements Context, Serializable {
         }
         if (result instanceof JndiContext) {
             String prefix = getNameInNamespace();
-            if (prefix.length() > 0) {
+            if (!prefix.isEmpty()) {
                 prefix = prefix + SEPARATOR;
             }
             result = new JndiContext((JndiContext) result, environment, prefix + name);

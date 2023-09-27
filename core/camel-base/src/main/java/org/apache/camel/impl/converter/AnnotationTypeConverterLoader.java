@@ -259,7 +259,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         StringTokenizer iter = new StringTokenizer(line, ",");
         while (iter.hasMoreTokens()) {
             String name = iter.nextToken().trim();
-            if (name.length() > 0) {
+            if (!name.isEmpty()) {
                 packages.add(name);
             }
         }

@@ -484,7 +484,7 @@ public final class URISupport {
      */
     @Deprecated
     public static String createQueryString(Map<String, String> options, String ampersand, boolean encode) {
-        if (options.size() > 0) {
+        if (!options.isEmpty()) {
             StringBuilder rc = new StringBuilder();
             boolean first = true;
             for (String key : options.keySet()) {
@@ -873,7 +873,7 @@ public final class URISupport {
     public static String buildMultiValueQuery(String key, Iterable<Object> values) {
         StringBuilder sb = new StringBuilder();
         for (Object v : values) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append("&");
             }
             sb.append(key);

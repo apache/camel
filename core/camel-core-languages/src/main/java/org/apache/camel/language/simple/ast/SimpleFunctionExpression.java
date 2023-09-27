@@ -609,7 +609,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private String ifStartsWithReturnRemainder(String prefix, String text) {
         if (text.startsWith(prefix)) {
             String remainder = text.substring(prefix.length());
-            if (remainder.length() > 0) {
+            if (!remainder.isEmpty()) {
                 return remainder;
             }
         }
@@ -1495,7 +1495,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
 
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             return sb.toString();
         } else {
             return remainder;
