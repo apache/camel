@@ -40,12 +40,12 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     private final Map<String, BraintreeGateway> gateways;
 
     public BraintreeComponent() {
-        super(BraintreeEndpoint.class, BraintreeApiName.class, BraintreeApiCollection.getCollection());
+        super(BraintreeApiName.class, BraintreeApiCollection.getCollection());
         this.gateways = new HashMap<>();
     }
 
     public BraintreeComponent(CamelContext context) {
-        super(context, BraintreeEndpoint.class, BraintreeApiName.class, BraintreeApiCollection.getCollection());
+        super(context, BraintreeApiName.class, BraintreeApiCollection.getCollection());
         this.gateways = new HashMap<>();
     }
 

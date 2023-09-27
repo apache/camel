@@ -35,11 +35,11 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
     private static final Logger LOG = LoggerFactory.getLogger(AS2Component.class);
 
     public AS2Component() {
-        super(AS2Endpoint.class, AS2ApiName.class, AS2ApiCollection.getCollection());
+        super(AS2ApiName.class, AS2ApiCollection.getCollection());
     }
 
     public AS2Component(CamelContext context) {
-        super(context, AS2Endpoint.class, AS2ApiName.class, AS2ApiCollection.getCollection());
+        super(context, AS2ApiName.class, AS2ApiCollection.getCollection());
     }
 
     @Override

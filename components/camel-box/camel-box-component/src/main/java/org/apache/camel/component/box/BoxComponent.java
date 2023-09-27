@@ -36,11 +36,11 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
     BoxAPIConnection boxConnection;
 
     public BoxComponent() {
-        super(BoxEndpoint.class, BoxApiName.class, BoxApiCollection.getCollection());
+        super(BoxApiName.class, BoxApiCollection.getCollection());
     }
 
     public BoxComponent(CamelContext context) {
-        super(context, BoxEndpoint.class, BoxApiName.class, BoxApiCollection.getCollection());
+        super(context, BoxApiName.class, BoxApiCollection.getCollection());
     }
 
     @Override

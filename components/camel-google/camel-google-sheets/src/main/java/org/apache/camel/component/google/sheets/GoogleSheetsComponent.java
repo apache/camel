@@ -38,12 +38,12 @@ public class GoogleSheetsComponent
     private GoogleSheetsClientFactory clientFactory;
 
     public GoogleSheetsComponent() {
-        super(GoogleSheetsEndpoint.class, GoogleSheetsApiName.class, GoogleSheetsApiCollection.getCollection());
+        super(GoogleSheetsApiName.class, GoogleSheetsApiCollection.getCollection());
         registerExtension(new GoogleSheetsVerifierExtension("google-sheets"));
     }
 
     public GoogleSheetsComponent(CamelContext context) {
-        super(context, GoogleSheetsEndpoint.class, GoogleSheetsApiName.class, GoogleSheetsApiCollection.getCollection());
+        super(context, GoogleSheetsApiName.class, GoogleSheetsApiCollection.getCollection());
         registerExtension(new GoogleSheetsVerifierExtension("google-sheets", context));
     }
 
