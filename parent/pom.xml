@@ -335,7 +335,7 @@
         <micrometer-tracing-version>1.1.5</micrometer-tracing-version>
         <microprofile-config-version>3.0.3</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
-        <mina-version>2.2.2</mina-version>
+        <mina-version>2.2.3</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.5</minio-version>
