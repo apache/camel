@@ -57,7 +57,6 @@ public class WireTapAbortPolicyTest extends ContextTestSupport {
         }
     }
 
-    @Test
     @RepeatedTest(value = 1000)
     public void testSend() throws Exception {
         // hello must come first, as we have delay on the tapped route

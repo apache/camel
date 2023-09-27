@@ -156,7 +156,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         resultEndpoint.reset();
         resultEndpoint.expectedMessageCount(loopCount);
 
-        final boolean failedFlag[] = new boolean[1];
+        final boolean[] failedFlag = new boolean[1];
         failedFlag[0] = false;
 
         Thread[] threads = new Thread[threadCount];

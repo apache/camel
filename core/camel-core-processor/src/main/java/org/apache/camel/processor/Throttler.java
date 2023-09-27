@@ -76,14 +76,14 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     private final boolean shutdownAsyncExecutor;
 
     private volatile long timePeriodMillis;
-    private volatile long cleanPeriodMillis;
+    private final long cleanPeriodMillis;
     private String id;
     private String routeId;
     private Expression maxRequestsPerPeriodExpression;
     private boolean rejectExecution;
     private boolean asyncDelayed;
     private boolean callerRunsWhenRejected = true;
-    private Expression correlationExpression;
+    private final Expression correlationExpression;
     private final Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
 
     public Throttler(final CamelContext camelContext, final Expression maxRequestsPerPeriodExpression,

@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.resume.ConsumerListener;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -36,14 +35,12 @@ import org.apache.camel.support.AsyncProcessorSupport;
 public class PausableProcessor extends AsyncProcessorSupport
         implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware {
 
-    private final ConsumerListener<?, ?> consumerListener;
     private final AsyncProcessor processor;
     private CamelContext camelContext;
     private String id;
     private String routeId;
 
-    public PausableProcessor(ConsumerListener<?, ?> consumerListener, Processor processor) {
-        this.consumerListener = consumerListener;
+    public PausableProcessor(Processor processor) {
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
