@@ -38,11 +38,11 @@ public class GoogleDriveComponent
     private GoogleDriveClientFactory clientFactory;
 
     public GoogleDriveComponent() {
-        super(GoogleDriveEndpoint.class, GoogleDriveApiName.class, GoogleDriveApiCollection.getCollection());
+        super(GoogleDriveApiName.class, GoogleDriveApiCollection.getCollection());
     }
 
     public GoogleDriveComponent(CamelContext context) {
-        super(context, GoogleDriveEndpoint.class, GoogleDriveApiName.class, GoogleDriveApiCollection.getCollection());
+        super(context, GoogleDriveApiName.class, GoogleDriveApiCollection.getCollection());
     }
 
     @Override

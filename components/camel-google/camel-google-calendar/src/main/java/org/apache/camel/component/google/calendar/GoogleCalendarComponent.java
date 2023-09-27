@@ -37,11 +37,11 @@ public class GoogleCalendarComponent
     private GoogleCalendarClientFactory clientFactory;
 
     public GoogleCalendarComponent() {
-        super(GoogleCalendarEndpoint.class, GoogleCalendarApiName.class, GoogleCalendarApiCollection.getCollection());
+        super(GoogleCalendarApiName.class, GoogleCalendarApiCollection.getCollection());
     }
 
     public GoogleCalendarComponent(CamelContext context) {
-        super(context, GoogleCalendarEndpoint.class, GoogleCalendarApiName.class, GoogleCalendarApiCollection.getCollection());
+        super(context, GoogleCalendarApiName.class, GoogleCalendarApiCollection.getCollection());
     }
 
     @Override

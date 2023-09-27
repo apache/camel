@@ -37,12 +37,12 @@ public class GoogleMailComponent
     private GoogleMailClientFactory clientFactory;
 
     public GoogleMailComponent() {
-        super(GoogleMailEndpoint.class, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
+        super(GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
         registerExtension(new GoogleMailComponentVerifierExtension());
     }
 
     public GoogleMailComponent(CamelContext context) {
-        super(context, GoogleMailEndpoint.class, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
+        super(context, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
         registerExtension(new GoogleMailComponentVerifierExtension());
     }
 
