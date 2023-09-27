@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.SendDynamicAware;
@@ -59,7 +57,7 @@ public class SendDynamicAwareResolver {
         return null;
     }
 
-    private Class<?> findFactory(String name, CamelContext context) throws IOException {
+    private Class<?> findFactory(String name, CamelContext context) {
         if (factoryFinder == null) {
             factoryFinder = context.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
         }

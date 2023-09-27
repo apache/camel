@@ -1360,10 +1360,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
      *
      * @param  context   the camel context
      * @return           the profile
-     * @throws Exception is thrown if error creating the profile
      */
-    private ThreadPoolProfile asThreadPoolProfile(CamelContext context, ThreadPoolProfileDefinition definition)
-            throws Exception {
+    private ThreadPoolProfile asThreadPoolProfile(CamelContext context, ThreadPoolProfileDefinition definition) {
         ThreadPoolProfile answer = new ThreadPoolProfile();
         answer.setId(definition.getId());
         answer.setDefaultProfile(CamelContextHelper.parseBoolean(context, definition.getDefaultProfile()));
@@ -1474,7 +1472,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
     }
 
-    private String[] normalizePackages(T context, List<String> unnormalized) throws Exception {
+    private String[] normalizePackages(T context, List<String> unnormalized) {
         List<String> packages = new ArrayList<>();
         for (String name : unnormalized) {
             // it may use property placeholders

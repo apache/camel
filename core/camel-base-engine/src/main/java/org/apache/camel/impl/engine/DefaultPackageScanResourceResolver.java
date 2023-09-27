@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -261,8 +260,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             String subPattern,
             String parent,
             File location,
-            Set<Resource> resources)
-            throws FileNotFoundException {
+            Set<Resource> resources) {
         File[] files = location.listFiles();
         if (files == null || files.length == 0) {
             return;

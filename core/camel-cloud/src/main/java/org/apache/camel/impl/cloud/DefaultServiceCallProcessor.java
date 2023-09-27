@@ -192,7 +192,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         }
     }
 
-    private boolean execute(ServiceDefinition service, Exchange exchange, AsyncCallback callback) throws Exception {
+    private boolean execute(ServiceDefinition service, Exchange exchange, AsyncCallback callback) {
         final Message message = exchange.getIn();
         final String host = service.getHost();
         final int port = service.getPort();

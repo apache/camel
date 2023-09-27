@@ -1169,8 +1169,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     private void setRouteTemplateProperties(
             CamelContext camelContext, OrderedLocationProperties routeTemplateProperties,
-            OrderedLocationProperties autoConfiguredProperties)
-            throws Exception {
+            OrderedLocationProperties autoConfiguredProperties) {
 
         // store the route template parameters as a source and register it on the camel context
         PropertiesRouteTemplateParametersSource source = new PropertiesRouteTemplateParametersSource();
@@ -1193,8 +1192,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     private void setHealthCheckProperties(
             CamelContext camelContext, OrderedLocationProperties healthCheckProperties,
-            OrderedLocationProperties autoConfiguredProperties)
-            throws Exception {
+            OrderedLocationProperties autoConfiguredProperties) {
 
         HealthConfigurationProperties health = mainConfigurationProperties.health();
 
@@ -1301,8 +1299,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     private void setDevConsoleProperties(
             CamelContext camelContext, OrderedLocationProperties properties,
-            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
-            throws Exception {
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties) {
 
         // make defensive copy as we mutate the map
         Set<String> keys = new LinkedHashSet<>(properties.asMap().keySet());
@@ -1348,8 +1345,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     private void setVaultProperties(
             CamelContext camelContext, OrderedLocationProperties properties,
-            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
-            throws Exception {
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties) {
 
         if (mainConfigurationProperties.hasVaultConfiguration()) {
             camelContext.setVaultConfiguration(mainConfigurationProperties.vault());
@@ -1854,7 +1850,7 @@ public abstract class BaseMainSupport extends BaseService {
         return answer;
     }
 
-    private static MainHttpServerFactory resolveMainHttpServerFactory(CamelContext camelContext) throws Exception {
+    private static MainHttpServerFactory resolveMainHttpServerFactory(CamelContext camelContext) {
         // lookup in service registry first
         MainHttpServerFactory answer = camelContext.getRegistry().findSingleByType(MainHttpServerFactory.class);
         if (answer == null) {

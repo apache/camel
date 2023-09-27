@@ -552,7 +552,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
             }
         }
 
-        private void sendExchanges() throws Exception {
+        private void sendExchanges() {
             Iterator<Exchange> iter = collection.iterator();
             while (iter.hasNext()) {
                 Exchange exchange = iter.next();
