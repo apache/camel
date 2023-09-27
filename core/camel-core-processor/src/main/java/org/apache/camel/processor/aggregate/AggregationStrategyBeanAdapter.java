@@ -164,7 +164,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
      * @param  method the method
      * @return        true if valid, false to skip the method
      */
-    protected boolean isValidMethod(Method method) {
+    private boolean isValidMethod(Method method) {
         // must not be in the excluded list
         for (Method excluded : EXCLUDED_METHODS) {
             if (method.equals(excluded)) {

@@ -106,7 +106,7 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
         return answer;
     }
 
-    protected void propagateFailure(Exchange answer, Exchange newExchange) {
+    private void propagateFailure(Exchange answer, Exchange newExchange) {
         // if new exchange failed then propagate all the error related properties to the answer
         if (newExchange.isFailed() || newExchange.isRollbackOnly() || newExchange.isRollbackOnlyLast()
                 || newExchange.getExchangeExtension().isErrorHandlerHandledSet()
