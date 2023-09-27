@@ -731,7 +731,7 @@ public final class ObjectHelper {
         } else if (value.getClass().isArray()) {
             if (org.apache.camel.util.ObjectHelper.isPrimitiveArrayType(value.getClass())) {
                 final Object array = value;
-                return (Iterable<Object>) () -> new Iterator<Object>() {
+                return (Iterable<Object>) () -> new Iterator<>() {
                     private int idx;
 
                     public boolean hasNext() {
@@ -758,7 +758,7 @@ public final class ObjectHelper {
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
-            return (Iterable<Node>) () -> new Iterator<Node>() {
+            return (Iterable<Node>) () -> new Iterator<>() {
                 private int idx;
 
                 public boolean hasNext() {
@@ -812,7 +812,7 @@ public final class ObjectHelper {
             } else {
                 return (Iterable<Object>) () -> {
                     // use a plain iterator that returns the value as is as there are only a single value
-                    return new Iterator<Object>() {
+                    return new Iterator<>() {
                         private int idx;
 
                         public boolean hasNext() {

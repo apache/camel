@@ -50,7 +50,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         FIND_ANY_PATTERN = Pattern.compile("(?s).*");
     }
 
-    private static final Map<String, Pattern> CACHE = new LinkedHashMap<String, Pattern>() {
+    private static final Map<String, Pattern> CACHE = new LinkedHashMap<>() {
         @Override
         protected boolean removeEldestEntry(Entry<String, Pattern> eldest) {
             return size() >= 7;

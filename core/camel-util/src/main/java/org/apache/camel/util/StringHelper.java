@@ -390,7 +390,7 @@ public final class StringHelper {
         final int size = count;
         final String text = value;
 
-        return new Iterator<String>() {
+        return new Iterator<>() {
             int i;
             int pos;
 

@@ -199,7 +199,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         @Override
         public Iterator<ProcessorExchangePair> iterator() {
-            return new Iterator<ProcessorExchangePair>() {
+            return new Iterator<>() {
                 private final Processor processor = getProcessors().iterator().next();
                 private int index;
                 private boolean closed;

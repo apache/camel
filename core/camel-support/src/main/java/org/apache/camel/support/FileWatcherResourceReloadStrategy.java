@@ -222,7 +222,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
 
     private void registerRecursive(final WatchService watcher, final Path root, final WatchEvent.Modifier modifier)
             throws IOException {
-        Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(root, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                 WatchKey key = registerPathToWatcher(modifier, dir, watcher);

@@ -155,7 +155,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
             }
         }
 
-        Class<?> suppliedClass = classMap.computeIfAbsent(key, new Function<String, Class<?>>() {
+        Class<?> suppliedClass = classMap.computeIfAbsent(key, new Function<>() {
             @Override
             public Class<?> apply(String classKey) {
                 try {
