@@ -156,11 +156,6 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // no-op
-    }
-
-    @Override
     protected void doStop() throws Exception {
         // no-op
     }

@@ -300,8 +300,4 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         }
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

@@ -41,11 +41,6 @@ public class ManagedRouteController extends ManagedService implements ManagedRou
     }
 
     @Override
-    public void init(ManagementStrategy strategy) {
-        // do nothing
-    }
-
-    @Override
     public Collection<String> getControlledRoutes() {
         if (controller != null) {
             return controller.getControlledRoutes().stream()

@@ -249,10 +249,6 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     }
 
     @Override
-    protected void doStop() throws Exception {
-    }
-
-    @Override
     protected void doShutdown() throws Exception {
         if (shutdownAsyncExecutor && asyncExecutor != null) {
             camelContext.getExecutorServiceManager().shutdownNow(asyncExecutor);

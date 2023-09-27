@@ -76,13 +76,4 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
         return String.format("%s[type='%s']", this.getClass().getSimpleName(), type);
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // no-op
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // no-op
-    }
 }

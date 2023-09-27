@@ -100,13 +100,4 @@ public class SetPropertyProcessor extends AsyncProcessorSupport implements Trace
         return expression;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

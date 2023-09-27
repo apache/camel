@@ -145,13 +145,4 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

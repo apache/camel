@@ -78,13 +78,4 @@ public class ExchangePatternProcessor extends AsyncProcessorSupport implements I
         return id;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

@@ -478,11 +478,6 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doShutdown() throws Exception {
         if (executor != null) {
             // force shutting down as we are shutting down Camel

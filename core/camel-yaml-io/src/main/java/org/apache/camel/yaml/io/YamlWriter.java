@@ -94,11 +94,6 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
         }
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
-
     public void setUriAsParameters(boolean uriAsParameters) {
         this.uriAsParameters = uriAsParameters;
     }
