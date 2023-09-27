@@ -21,9 +21,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.util.IOHelper;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 final class TarUtils {
@@ -89,6 +94,34 @@ final class TarUtils {
             IOHelper.close(fis, baos);
         }
         return baos.toByteArray();
+    }
+
+    static class EntryMetadata {
+        public final long size;
+        public final boolean isDirectory;
+
+        public EntryMetadata(long size, boolean isDirectory) {
+            this.size = size;
+            this.isDirectory = isDirectory;
+        }
+    }
+
+    static Map<String, EntryMetadata> toEntries(byte[] tarFileBytes) throws IOException {
+        Map<String, EntryMetadata> ret = new HashMap<>();
+        try (ArchiveInputStream i = new TarArchiveInputStream(new ByteArrayInputStream(tarFileBytes))) {
+            ArchiveEntry entry = null;
+
+            while ((entry = i.getNextEntry()) != null) {
+                if (!i.canReadEntryData(entry)) {
+                    // log something?
+                    continue;
+                }
+
+                ret.put(entry.getName(), new EntryMetadata(entry.getSize(), entry.isDirectory()));
+            }
+        }
+
+        return ret;
     }
 
 }
