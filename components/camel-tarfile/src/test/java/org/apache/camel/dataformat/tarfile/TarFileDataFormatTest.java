@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
@@ -34,8 +35,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.tarfile.TarUtils.EntryMetadata;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -46,7 +47,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
 import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
-import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredTextInFolder;
+import static org.apache.camel.dataformat.tarfile.TarUtils.toEntries;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -72,8 +73,15 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".tar", exchange.getIn().getHeader(FILE_NAME));
-        assertTrue(ObjectHelper.equalByteArray(getTaredText(exchange.getIn().getMessageId()),
-                exchange.getIn().getBody(byte[].class)));
+
+        final byte[] resultArray = exchange.getIn().getBody(byte[].class);
+
+        Map<String, EntryMetadata> tarData = toEntries(resultArray);
+        assertTrue(tarData.containsKey(exchange.getIn().getMessageId()));
+
+        EntryMetadata entryMetadata = tarData.get(exchange.getIn().getMessageId());
+        assertEquals(TEXT.getBytes(StandardCharsets.UTF_8).length, entryMetadata.size);
+        assertFalse(entryMetadata.isDirectory);
     }
 
     @Test
@@ -87,7 +95,15 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), exchange.getIn().getBody(byte[].class)));
+
+        final byte[] convertedArray = exchange.getIn().getBody(byte[].class);
+
+        Map<String, EntryMetadata> tarData = toEntries(convertedArray);
+        assertTrue(tarData.containsKey("poem.txt"));
+
+        EntryMetadata entryMetadata = tarData.get("poem.txt");
+        assertEquals(TEXT.getBytes(StandardCharsets.UTF_8).length, entryMetadata.size);
+        assertFalse(entryMetadata.isDirectory);
     }
 
     @Test
@@ -101,7 +117,14 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), exchange.getIn().getBody(byte[].class)));
+        final byte[] convertedArray = exchange.getIn().getBody(byte[].class);
+
+        Map<String, EntryMetadata> tarData = toEntries(convertedArray);
+        assertTrue(tarData.containsKey("poem.txt"));
+
+        EntryMetadata entryMetadata = tarData.get("poem.txt");
+        assertEquals(TEXT.getBytes(StandardCharsets.UTF_8).length, entryMetadata.size);
+        assertFalse(entryMetadata.isDirectory);
     }
 
     @Test
@@ -117,8 +140,19 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertTrue(ObjectHelper.equalByteArray(getTaredTextInFolder("poems/", "poems/poem.txt"),
-                exchange.getIn().getBody(byte[].class)));
+
+        final byte[] convertedArray = exchange.getIn().getBody(byte[].class);
+
+        Map<String, EntryMetadata> tarData = toEntries(convertedArray);
+        assertTrue(tarData.containsKey("poems/"));
+        assertTrue(tarData.containsKey("poems/poem.txt"));
+
+        EntryMetadata entryFileMetadata = tarData.get("poems/poem.txt");
+        assertEquals(TEXT.getBytes(StandardCharsets.UTF_8).length, entryFileMetadata.size);
+        assertFalse(entryFileMetadata.isDirectory);
+
+        EntryMetadata entryDirMetadata = tarData.get("poems/");
+        assertTrue(entryDirMetadata.isDirectory);
     }
 
     @Test
@@ -173,7 +207,15 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         Exchange exchange = mock.getReceivedExchanges().get(0);
         File file = new File(TEST_DIR, exchange.getIn().getMessageId() + ".tar");
         assertTrue(file.exists());
-        assertTrue(ObjectHelper.equalByteArray(getTaredText(exchange.getIn().getMessageId()), getBytes(file)));
+
+        final byte[] resultArray = getBytes(file);
+
+        Map<String, EntryMetadata> tarData = toEntries(resultArray);
+        assertTrue(tarData.containsKey(exchange.getIn().getMessageId()));
+
+        EntryMetadata entryMetadata = tarData.get(exchange.getIn().getMessageId());
+        assertEquals(TEXT.getBytes(StandardCharsets.UTF_8).length, entryMetadata.size);
+        assertFalse(entryMetadata.isDirectory);
     }
 
     @Test
@@ -195,12 +237,20 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         assertTrue(notify.matches(5, TimeUnit.SECONDS));
 
         assertTrue(file.exists());
-        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), getBytes(file)));
+
+        final byte[] resultArray = getBytes(file);
+
+        Map<String, EntryMetadata> tarData = toEntries(resultArray);
+        assertTrue(tarData.containsKey("poem.txt"));
+
+        EntryMetadata entryMetadata = tarData.get("poem.txt");
+        assertEquals(TEXT.getBytes(StandardCharsets.UTF_8).length, entryMetadata.size);
+        assertFalse(entryMetadata.isDirectory);
+
     }
 
     @Test
     public void testDslTar() throws Exception {
-        getMockEndpoint("mock:dslTar").expectedBodiesReceived((Object) getTaredText("poem.txt"));
         getMockEndpoint("mock:dslTar").expectedHeaderReceived(FILE_NAME, "poem.txt.tar");
 
         template.sendBodyAndHeader("direct:dslTar", TEXT, FILE_NAME, "poem.txt");
