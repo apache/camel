@@ -113,4 +113,8 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         return null;
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        beansDeserializer.stop();
+    }
 }

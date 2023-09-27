@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,8 +36,11 @@ import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
@@ -51,7 +55,10 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
           })
 public class BeansDeserializer extends YamlDeserializerSupport implements ConstructNode {
 
+    public static final Logger LOG = LoggerFactory.getLogger(BeansDeserializer.class);
+
     private final Set<String> beanCache = new HashSet<>();
+    private final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
 
     @Override
     public Object construct(Node node) {
@@ -129,22 +136,19 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             CamelContext camelContext,
             List<RegistryBeanDefinition> delayedRegistrations,
             RegistryBeanDefinition def, boolean delayIfFailed) {
+
+        String name = def.getName();
+        String type = def.getType();
         try {
-            // to support hot reloading of beans then we need to unbind old existing first
-            String name = def.getName();
-            Object bean = newInstance(def, camelContext);
-            camelContext.getRegistry().unbind(name);
-            camelContext.getRegistry().bind(name, bean);
-
-            // register bean in model
-            Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-            model.addRegistryBean(def);
-
+            Object target = newInstance(def, camelContext);
+            bindBean(camelContext, def, name, target);
         } catch (Exception e) {
             if (delayIfFailed) {
                 delayedRegistrations.add(def);
             } else {
-                throw new RuntimeException(e);
+                String msg
+                        = name != null ? "Error creating bean: " + name + " of type: " + type : "Error creating bean: " + type;
+                throw new RuntimeException(msg, e);
             }
         }
     }
@@ -171,6 +175,54 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             }
             delayedRegistrations.clear();
         }
+    }
+
+    protected void bindBean(
+            CamelContext camelContext, RegistryBeanDefinition def,
+            String name, Object target)
+            throws Exception {
+
+        // destroy and unbind any existing bean
+        destroyBean(name, true);
+        camelContext.getRegistry().unbind(name);
+
+        // invoke init method and register bean
+        String initMethod = def.getInitMethod();
+        if (initMethod != null) {
+            org.apache.camel.support.ObjectHelper.invokeMethodSafe(initMethod, target);
+        }
+        camelContext.getRegistry().bind(name, target);
+
+        // remember to destroy bean on shutdown
+        if (def.getDestroyMethod() != null) {
+            beansToDestroy.put(name, new KeyValueHolder<>(target, def.getDestroyMethod()));
+        }
+
+        // register bean in model
+        Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+        model.addRegistryBean(def);
+    }
+
+    protected void destroyBean(String name, boolean remove) {
+        var holder = remove ? beansToDestroy.remove(name) : beansToDestroy.get(name);
+        if (holder != null) {
+            String destroyMethod = holder.getValue();
+            Object target = holder.getKey();
+            try {
+                org.apache.camel.support.ObjectHelper.invokeMethodSafe(destroyMethod, target);
+            } catch (Exception e) {
+                LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
+                        destroyMethod, target, e.getMessage(), e);
+            }
+        }
+    }
+
+    public void stop() throws Exception {
+        // beans should trigger destroy methods on shutdown
+        for (String name : beansToDestroy.keySet()) {
+            destroyBean(name, false);
+        }
+        beansToDestroy.clear();
     }
 
 }

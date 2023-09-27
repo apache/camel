@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.w3c.dom.Document;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
@@ -321,51 +322,57 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
      * {@link #doLoadRouteBuilder}), a failure may lead to delayed registration.
      */
     private void registerBeanDefinition(RegistryBeanDefinition def, boolean delayIfFailed) {
-        String type = def.getType();
         String name = def.getName();
-        if (name == null || name.isBlank()) {
-            name = type;
-        }
-        if (type != null && !type.startsWith("#")) {
-            type = "#class:" + type;
-            try {
-                // factory bean/method
-                if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
-                    type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
-                } else if (def.getFactoryMethod() != null) {
-                    type = type + "#" + def.getFactoryMethod();
-                }
-                // property binding support has constructor arguments as part of the type
-                StringJoiner ctr = new StringJoiner(", ");
-                if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
-                    // need to sort constructor args based on index position
-                    Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
-                    for (Object val : sorted.values()) {
-                        String text = val.toString();
-                        if (!StringHelper.isQuoted(text)) {
-                            text = "\"" + text + "\"";
-                        }
-                        ctr.add(text);
-                    }
-                    type = type + "(" + ctr + ")";
-                }
-
-                final Object target = PropertyBindingSupport.resolveBean(getCamelContext(), type);
-
-                if (def.getProperties() != null && !def.getProperties().isEmpty()) {
-                    PropertyBindingSupport.setPropertiesOnTarget(getCamelContext(), target, def.getProperties());
-                }
-
-                bindBean(def, name, target);
-
-            } catch (Exception e) {
-                if (delayIfFailed) {
-                    delayedRegistrations.add(def);
-                } else {
-                    LOG.warn("Error creating bean: {} due to: {}. This exception is ignored.", type, e.getMessage(), e);
-                }
+        String type = def.getType();
+        try {
+            Object target = newInstance(def, getCamelContext());
+            bindBean(def, name, target);
+        } catch (Exception e) {
+            if (delayIfFailed) {
+                delayedRegistrations.add(def);
+            } else {
+                String msg
+                        = name != null ? "Error creating bean: " + name + " of type: " + type : "Error creating bean: " + type;
+                throw new RuntimeException(msg, e);
             }
         }
+    }
+
+    public Object newInstance(RegistryBeanDefinition def, CamelContext context) throws Exception {
+
+        String type = def.getType();
+        if (!type.startsWith("#")) {
+            type = "#class:" + type;
+        }
+
+        // factory bean/method
+        if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
+            type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
+        } else if (def.getFactoryMethod() != null) {
+            type = type + "#" + def.getFactoryMethod();
+        }
+        // property binding support has constructor arguments as part of the type
+        StringJoiner ctr = new StringJoiner(", ");
+        if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
+            // need to sort constructor args based on index position
+            Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
+            for (Object val : sorted.values()) {
+                String text = val.toString();
+                if (!StringHelper.isQuoted(text)) {
+                    text = "\"" + text + "\"";
+                }
+                ctr.add(text);
+            }
+            type = type + "(" + ctr + ")";
+        }
+
+        final Object target = PropertyBindingSupport.resolveBean(context, type);
+
+        if (def.getProperties() != null && !def.getProperties().isEmpty()) {
+            PropertyBindingSupport.setPropertiesOnTarget(context, target, def.getProperties());
+        }
+
+        return target;
     }
 
     protected void bindBean(RegistryBeanDefinition def, String name, Object target) throws Exception {
