@@ -222,6 +222,44 @@ public class MyHelper {
 
 NOTE: The factory method must be `public static`.
 
+=== Using init and destroy methods on beans
+
+Sometimes beans need to do some initialization and cleanup work before a bean is ready to be used.
+For this you can use `initMethod` and `destroyMethod` that Camel triggers accordingly.
+
+Those methods must be public void and have no arguments, as shown below:
+
+[source,java]
+----
+public class MyBean {
+
+    public void initMe() {
+        // do init work here
+    }
+
+    public void destroyMe() {
+        // do cleanup work here
+    }
+
+}
+----
+
+You then have to declare those methods in XML DSL as follows:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean"
+          initMethod="initMe" destroyMethod="destroyMe">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+The init and destroy methods are optional, so a bean does not have to have both,
+for example you may only have destroy methods.
+
 
 == See Also
 

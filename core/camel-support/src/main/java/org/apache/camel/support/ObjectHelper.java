@@ -39,6 +39,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.Scanner;
 import org.apache.camel.util.StringHelper;
 
@@ -384,6 +385,37 @@ public final class ObjectHelper {
             answer = method.invoke(instance);
         }
         return answer;
+    }
+
+    /**
+     * A helper method to invoke a method via reflection in a safe way by allowing to invoke methods that are not
+     * accessible by default and wrap any exceptions as {@link RuntimeCamelException} instances
+     *
+     * @param  name       the method name
+     * @param  instance   the object instance (or null for static methods)
+     * @param  parameters the parameters to the method
+     * @return            the result of the method invocation
+     */
+    public static Object invokeMethodSafe(String name, Object instance, Object... parameters)
+            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+
+        // find method first
+        Class<?>[] arr = null;
+        if (parameters != null) {
+            arr = new Class[parameters.length];
+            for (int i = 0; i < parameters.length; i++) {
+                Object p = parameters[i];
+                if (p != null) {
+                    arr[i] = p.getClass();
+                }
+            }
+        }
+        Method m = ReflectionHelper.findMethod(instance.getClass(), name, arr);
+        if (m != null) {
+            return invokeMethodSafe(m, instance, parameters);
+        } else {
+            throw new NoSuchMethodException(name);
+        }
     }
 
     /**

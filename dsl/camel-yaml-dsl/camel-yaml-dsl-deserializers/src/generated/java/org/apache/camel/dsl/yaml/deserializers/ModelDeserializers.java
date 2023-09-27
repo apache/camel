@@ -12349,8 +12349,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "constructors", type = "object"),
+                    @YamlProperty(name = "destroy-method", type = "string"),
                     @YamlProperty(name = "factory-bean", type = "string"),
                     @YamlProperty(name = "factory-method", type = "string"),
+                    @YamlProperty(name = "init-method", type = "string"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "properties", type = "object"),
                     @YamlProperty(name = "type", type = "string", required = true)
@@ -12375,6 +12377,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setConstructors(val);
                     break;
                 }
+                case "destroy-method": {
+                    String val = asText(node);
+                    target.setDestroyMethod(val);
+                    break;
+                }
                 case "factory-bean": {
                     String val = asText(node);
                     target.setFactoryBean(val);
@@ -12383,6 +12390,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "factory-method": {
                     String val = asText(node);
                     target.setFactoryMethod(val);
+                    break;
+                }
+                case "init-method": {
+                    String val = asText(node);
+                    target.setInitMethod(val);
                     break;
                 }
                 case "name": {

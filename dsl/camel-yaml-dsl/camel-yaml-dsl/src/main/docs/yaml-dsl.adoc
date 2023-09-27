@@ -267,6 +267,45 @@ public class MyHelper {
 
 NOTE: The factory method must be `public static`.
 
+=== Using init and destroy methods on beans
+
+Sometimes beans need to do some initialization and cleanup work before a bean is ready to be used.
+For this you can use `initMethod` and `destroyMethod` that Camel triggers accordingly.
+
+Those methods must be public void and have no arguments, as shown below:
+
+[source,java]
+----
+public class MyBean {
+
+    public void initMe() {
+        // do init work here
+    }
+
+    public void destroyMe() {
+        // do cleanup work here
+    }
+
+}
+----
+
+You then have to declare those methods in YAML DSL as follows:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    initMethod: initMe
+    destroyMethod: destroyMe
+    constructors:
+      0: true
+      1: "Hello World"
+----
+
+The init and destroy methods are optional, so a bean does not have to have both,
+for example you may only have destroy methods.
+
 == Configuring options on languages
 
 Some xref:components:languages:index.adoc[Languages] have additional configurations
@@ -325,74 +364,4 @@ which demonstrate creating Camel Routes with YAML.
 Another way to find examples of YAML DSL is to look in https://github.com/apache/camel-kamelets[Camel Kamelets]
 where each Kamelet is defined using YAML.
 
-== Supported EIPs
 
-The following set of high level EIPs are supported in the yaml DSL language. For full details on their expected configuration, please refer to the https://github.com/apache/camel/blob/main/dsl/camel-yaml-dsl/camel-yaml-dsl/src/generated/resources/schema/camelYamlDsl.json[Camel YAML DSL specification].
-
-- Aggregate
-- Bean
-- Do Catch
-- Do Try
-- Do Finally
-- Choice
-- Circuit Breaker
-- Claim Check
-- Convert Body To
-- Delay
-- Dynamic Router
-- Enrich
-- Error Handler
-- Filter
-- From
-- Idempotent Consumer
-- Intercept
-- Intercept From
-- Intercept Send To Endpoint
-- Load Balance
-- Log
-- Loop
-- Marshal
-- Multicast
-- On Completion
-- On Exception
-- On Fallback
-- Otherwise
-- Pausable
-- Pipeline
-- Policy
-- Poll Enrich
-- Process
-- Recipient List
-- Remove Header
-- Remove Headers
-- Remove Property
-- Remove Properties
-- Resequence
-- Resumable
-- REST DSL
-- Rollback
-- Routing Slip
-- Saga
-- Sample
-- Script
-- Service Call
-- Set Body
-- Set Exchange Pattern
-- Set Header
-- Set Property
-- Sort
-- Split
-- Step
-- Stop
-- Threads
-- Throttle
-- Throw Exception
-- To
-- To Dynamic
-- Transacted
-- Transform
-- Unmarshal
-- Validate
-- When
-- When Skip Send To Endpoint
-- Wire Tap

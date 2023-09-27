@@ -2567,7 +2567,9 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteAttribute("factoryMethod", def.getFactoryMethod());
+        doWriteAttribute("initMethod", def.getInitMethod());
         doWriteAttribute("name", def.getName());
+        doWriteAttribute("destroyMethod", def.getDestroyMethod());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("factoryBean", def.getFactoryBean());
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);

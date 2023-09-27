@@ -116,6 +116,14 @@ public class BlueprintXmlBeansHandler {
         if (fm != null) {
             rrd.setFactoryMethod(fm);
         }
+        String im = XmlHelper.getAttribute(node, "init-method");
+        if (im != null) {
+            rrd.setInitMethod(fm);
+        }
+        String dm = XmlHelper.getAttribute(node, "destroy-method");
+        if (dm != null) {
+            rrd.setDestroyMethod(dm);
+        }
         // constructor arguments
         Map<Integer, Object> constructors = new LinkedHashMap<>();
         rrd.setConstructors(constructors);

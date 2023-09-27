@@ -47,6 +47,10 @@ public class RegistryBeanDefinition implements ResourceAware {
     @XmlAttribute(required = true)
     private String type;
     @XmlAttribute
+    private String initMethod;
+    @XmlAttribute
+    private String destroyMethod;
+    @XmlAttribute
     private String factoryMethod;
     @XmlAttribute
     private String factoryBean;
@@ -71,6 +75,22 @@ public class RegistryBeanDefinition implements ResourceAware {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getInitMethod() {
+        return initMethod;
+    }
+
+    public void setInitMethod(String initMethod) {
+        this.initMethod = initMethod;
+    }
+
+    public String getDestroyMethod() {
+        return destroyMethod;
+    }
+
+    public void setDestroyMethod(String destroyMethod) {
+        this.destroyMethod = destroyMethod;
     }
 
     public String getFactoryMethod() {

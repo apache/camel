@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyBean
 import org.apache.camel.dsl.yaml.support.model.MyCtrBean
+import org.apache.camel.dsl.yaml.support.model.MyDestroyBean
 import org.apache.camel.dsl.yaml.support.model.MyFacBean
 import org.apache.camel.dsl.yaml.support.model.MyFacHelper
 
@@ -178,5 +179,36 @@ class BeansTest extends YamlTestSupport {
         }
     }
 
+    def "beans with init destroy"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myBean
+                    type: ${MyDestroyBean.class.name}
+                    initMethod: initMe
+                    destroyMethod: destroyMe
+                    constructors:
+                      0: 'fac1'
+                      1: 'fac2'
+                    properties:
+                      age: 43 
+            """
+
+        then:
+
+        MyDestroyBean.initCalled.get() == true
+        MyDestroyBean.destroyCalled.get() == false
+
+        with(context.registry.lookupByName('myBean'), MyDestroyBean) {
+            it.field1 == 'fac1'
+            it.field2 == 'fac2'
+            it.age == 43
+        }
+
+        context.stop()
+
+        MyDestroyBean.initCalled.get() == true
+        MyDestroyBean.destroyCalled.get() == true
+    }
 
 }

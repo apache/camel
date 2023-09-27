@@ -18,6 +18,7 @@ package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.xml.io.beans.GreeterMessage;
+import org.apache.camel.dsl.xml.io.beans.MyDestroyBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesLoader;
@@ -25,7 +26,9 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlLoadAppTest {
 
@@ -187,6 +190,40 @@ public class XmlLoadAppTest {
             y7.expectedBodiesReceived("Hello Pluto. I am Camel and 44 years old!");
             context.createProducerTemplate().sendBody("direct:x7", "Pluto");
             y7.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanInitDestroy() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            assertFalse(MyDestroyBean.initCalled.get());
+            assertFalse(MyDestroyBean.destroyCalled.get());
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app8.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r8"), "Loaded r8 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y8 = context.getEndpoint("mock:y8", MockEndpoint.class);
+            y8.expectedBodiesReceived("Hello Neptun. I am Camel and 45 years old!");
+            context.createProducerTemplate().sendBody("direct:x8", "Neptun");
+            y8.assertIsSatisfied();
+
+            assertTrue(MyDestroyBean.initCalled.get());
+            assertFalse(MyDestroyBean.destroyCalled.get());
+
+            context.stop();
+
+            assertTrue(MyDestroyBean.initCalled.get());
+            assertTrue(MyDestroyBean.destroyCalled.get());
         }
     }
 
