@@ -111,7 +111,7 @@ public final class TimePatternConverter {
         }
         replaceSource = matcher.replaceFirst("");
 
-        if (replaceSource.length() > 0) {
+        if (!replaceSource.isEmpty()) {
             throw new IllegalArgumentException("Illegal characters: " + source);
         }
     }
