@@ -84,13 +84,4 @@ public class ScriptProcessor extends AsyncProcessorSupport implements Traceable,
         return expression;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

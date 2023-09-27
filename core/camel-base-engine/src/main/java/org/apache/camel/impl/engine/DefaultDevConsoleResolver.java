@@ -100,11 +100,6 @@ public class DefaultDevConsoleResolver extends ServiceSupport implements DevCons
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doStop() throws Exception {
         if (devConsoleFactory != null) {
             devConsoleFactory.clear();

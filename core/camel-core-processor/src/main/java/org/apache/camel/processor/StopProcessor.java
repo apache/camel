@@ -64,13 +64,4 @@ public class StopProcessor extends AsyncProcessorSupport implements IdAware, Rou
         this.routeId = routeId;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

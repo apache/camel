@@ -81,13 +81,4 @@ public class RemoveHeaderProcessor extends AsyncProcessorSupport implements Trac
         return headerName;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

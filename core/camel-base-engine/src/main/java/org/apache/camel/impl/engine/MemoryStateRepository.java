@@ -45,11 +45,6 @@ public class MemoryStateRepository extends ServiceSupport implements StateReposi
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doStop() throws Exception {
         cache.clear();
     }
