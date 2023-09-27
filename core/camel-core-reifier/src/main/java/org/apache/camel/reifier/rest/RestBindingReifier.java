@@ -193,7 +193,7 @@ public class RestBindingReifier extends AbstractReifier {
         setAdditionalConfiguration(config, outJson, "json.out.");
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, DataFormat dataFormat, String prefix) throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, DataFormat dataFormat, String prefix) {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties

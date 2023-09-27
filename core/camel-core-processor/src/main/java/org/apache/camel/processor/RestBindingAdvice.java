@@ -163,7 +163,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         return false;
     }
 
-    private void unmarshal(Exchange exchange, Map<String, Object> state) throws Exception {
+    private void unmarshal(Exchange exchange, Map<String, Object> state) {
         boolean isXml = false;
         boolean isJson = false;
 

@@ -16,12 +16,10 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.io.IOException;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.UriFactoryResolver;
@@ -69,9 +67,6 @@ public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryR
         Class<?> type;
         try {
             type = findFactory(name + "-endpoint", context);
-        } catch (NoFactoryAvailableException e) {
-            // its optional so its okay
-            type = null;
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no EndpointUriFactory registered for scheme: " + name, e);
         }
@@ -97,7 +92,7 @@ public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryR
         return answer;
     }
 
-    private Class<?> findFactory(String name, CamelContext context) throws IOException {
+    private Class<?> findFactory(String name, CamelContext context) {
         if (factoryFinder == null) {
             factoryFinder = context.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
         }

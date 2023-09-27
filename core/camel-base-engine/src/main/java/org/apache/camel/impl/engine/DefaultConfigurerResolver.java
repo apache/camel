@@ -16,11 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -111,8 +108,6 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
                     }
                 }
             }
-        } catch (NoFactoryAvailableException e) {
-            return null;
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no Configurer registered for scheme: " + name, e);
         }
@@ -154,7 +149,7 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         }
     }
 
-    private Class<?> findConfigurer(String name, CamelContext context) throws IOException {
+    private Class<?> findConfigurer(String name, CamelContext context) {
         if (factoryFinder == null) {
             factoryFinder = context.getCamelContextExtension().getFactoryFinder(ConfigurerResolver.RESOURCE_PATH);
         }

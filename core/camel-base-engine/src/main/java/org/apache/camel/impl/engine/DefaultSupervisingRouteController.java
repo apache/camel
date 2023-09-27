@@ -430,7 +430,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         }
     }
 
-    private void startNonSupervisedRoutes() throws Exception {
+    private void startNonSupervisedRoutes() {
         if (!isRunAllowed()) {
             return;
         }

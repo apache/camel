@@ -286,8 +286,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     // ******************************************
 
     private ServiceChooser retrieveServiceChooser(
-            CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function)
-            throws Exception {
+            CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) {
         ServiceChooser answer = null;
 
         ServiceCallConfigurationDefinition config = function.apply(camelContext);
