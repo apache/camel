@@ -227,7 +227,7 @@ public abstract class ApiMethodParser<T> {
         }
         allArguments.clear();
 
-        result.sort(new Comparator<ApiMethodModel>() {
+        result.sort(new Comparator<>() {
             @Override
             public int compare(ApiMethodModel model1, ApiMethodModel model2) {
                 final int nameCompare = model1.name.compareTo(model2.name);
