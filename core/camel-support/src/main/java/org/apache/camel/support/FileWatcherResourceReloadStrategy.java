@@ -292,6 +292,11 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         WatchEvent<Path> we = (WatchEvent<Path>) event;
                         Path path = we.context();
                         File file = pathToReload.resolve(path).toFile();
+                        LOG.trace("File watch-event: {} on file: {}", we, file);
+                        if (file.isDirectory()) {
+                            continue;
+                        }
+
                         String name = FileUtil.compactPath(file.getPath());
                         LOG.debug("Detected Modified/Created file: {}", name);
                         boolean accept = fileFilter == null || fileFilter.accept(file);
