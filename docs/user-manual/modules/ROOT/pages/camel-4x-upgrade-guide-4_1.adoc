@@ -125,6 +125,8 @@ The Camel-PDF component has been updated to Apache PDFBox 3.0.0 and the font par
 
 The `pipe` command has been renamed to `script`.
 
+The `--secrets-refresh` and `--secret-refresh-providers` have been removed, since they were logically incorrect in the export command context. More information at CAMEL-19927 issue.
+
 === camel-jetty / camel-servlet / camel-atmosphere-websocket / camel-http-common
 
 By default stack traces will not be included in HTTP responses,
@@ -169,3 +171,4 @@ span.setTag(TagConstants.URL_SCHEME, scheme);
 === camel-kafka
 
 The default value for `sessionTimeoutMs` has been updated to  `45000` ms, while the default value for `consumerRequestTimeoutMs` has been updated to `30000`. More information in CAMEL-19921 issue.
+

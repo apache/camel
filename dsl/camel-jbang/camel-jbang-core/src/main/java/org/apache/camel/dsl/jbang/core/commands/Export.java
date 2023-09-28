@@ -62,10 +62,6 @@ public class Export extends ExportBaseCommand {
                     = "true".equals(prop.getProperty("camel.jbang.gradleWrapper", this.gradleWrapper ? "true" : "false"));
             this.exportDir = prop.getProperty("camel.jbang.exportDir", this.exportDir);
             this.buildTool = prop.getProperty("camel.jbang.buildTool", this.buildTool);
-            this.secretsRefresh
-                    = "true".equals(prop.getProperty("camel.jbang.secretsRefresh", this.secretsRefresh ? "true" : "false"));
-            this.secretsRefreshProviders
-                    = prop.getProperty("camel.jbang.secretsRefreshProviders", this.secretsRefreshProviders);
             this.openapi = prop.getProperty("camel.jbang.openApi", this.openapi);
             this.repos = prop.getProperty("camel.jbang.repos", this.repos);
             this.mavenSettings = prop.getProperty("camel.jbang.maven-settings", this.mavenSettings);
@@ -123,8 +119,6 @@ public class Export extends ExportBaseCommand {
         cmd.buildTool = this.buildTool;
         cmd.quiet = this.quiet;
         cmd.additionalProperties = this.additionalProperties;
-        cmd.secretsRefresh = this.secretsRefresh;
-        cmd.secretsRefreshProviders = this.secretsRefreshProviders;
         cmd.openapi = this.openapi;
         cmd.packageName = this.packageName;
         cmd.exclude = this.exclude;
