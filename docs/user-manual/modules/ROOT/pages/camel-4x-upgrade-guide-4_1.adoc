@@ -8,8 +8,11 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 === camel-api
 
-Add method `newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod)`
+Added method `newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod)`
 to `org.apache.camel.spi.Injector`.
+
+Added `isIgnoreLoadingError` and `setIgnoreLoadingError` methods to `org.apache.camel.spi.RoutesLoader`,
+and `org.apache.camel.main.RoutesCollector`.
 
 === camel-management
 
