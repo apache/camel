@@ -3446,6 +3446,28 @@
                             </properties>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <reuseForks>true</reuseForks>
+                            <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <systemPropertyVariables>
+                                <visibleassertions.silence>true</visibleassertions.silence>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

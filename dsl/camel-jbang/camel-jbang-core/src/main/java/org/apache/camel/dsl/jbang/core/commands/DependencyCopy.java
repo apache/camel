@@ -57,8 +57,15 @@ public class DependencyCopy extends Export {
             } else {
                 outputDirectoryParameter += "../../" + outputDirectory;
             }
+            String mvnProgramCall;
+            if (FileUtil.isWindows()) {
+                mvnProgramCall = "cmd /c mvn";
+            } else {
+                mvnProgramCall = "mvn";
+            }
             Process p = Runtime.getRuntime()
-                    .exec("mvn dependency:copy-dependencies -DincludeScope=compile -DexcludeGroupIds=org.fusesource.jansi,org.apache.logging.log4j "
+                    .exec(mvnProgramCall
+                          + " dependency:copy-dependencies -DincludeScope=compile -DexcludeGroupIds=org.fusesource.jansi,org.apache.logging.log4j "
                           + outputDirectoryParameter,
                             null,
                             buildDir);
