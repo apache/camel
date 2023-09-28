@@ -532,7 +532,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                             }
                         }
                     });
-                    if (!sb.isEmpty()) {
+                    if (sb.length() > 0) {
                         String out = sb.toString();
                         if (html) {
                             ctx.response().putHeader("content-type", "text/html");
@@ -571,7 +571,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                             }
                         }
                     });
-                    if (!sb.isEmpty()) {
+                    if (sb.length() > 0) {
                         String out = sb.toString();
                         ctx.end(out);
                     } else if (!root.isEmpty()) {
@@ -592,20 +592,18 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     }
 
     protected void setupUploadConsole(final String dir) {
-        final Route upload = router.route("/q/upload/*")
+        final Route upload = router.route("/q/upload/:filename")
                 .method(HttpMethod.PUT)
                 // need body handler to handle file uploads
                 .handler(BodyHandler.create(true));
 
-        final Route uploadDelete = router.route("/q/upload/*");
+        final Route uploadDelete = router.route("/q/upload/:filename");
         uploadDelete.method(HttpMethod.DELETE);
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
-                // grab filename which is after /q/upload/
-                String name = ctx.request().path();
-                name = StringHelper.after(name, "/q/upload/");
+                String name = ctx.pathParam("filename");
                 if (name == null) {
                     ctx.response().setStatusCode(400);
                     ctx.end();
@@ -643,9 +641,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     File f = new File(dir, name);
                     boolean exists = f.isFile() && f.exists();
                     LOG.info("{} file: {}/{}", exists ? "Updating" : "Creating", dir, name);
-
-                    // if it has sub folders, then make sure folders exists
-                    f.mkdirs();
 
                     File tmp = new File(dir, name + ".tmp");
                     FileOutputStream fos = null;
