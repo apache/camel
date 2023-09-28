@@ -16,13 +16,20 @@
  */
 package org.apache.camel.xml.in;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -30,8 +37,6 @@ import java.util.stream.Stream;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
 
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.PropertyDefinition;
@@ -53,14 +58,7 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.w3c.dom.Document;
 
 public class ModelParserTest {
 
@@ -422,12 +420,8 @@ public class ModelParserTest {
     }
 
     private Path getResourceFolder() {
-        String url = getClass().getClassLoader().getResource("barInterceptorRoute.xml").toString();
-        if (url.startsWith("file:")) {
-            url = url.substring("file:".length(), url.indexOf("barInterceptorRoute.xml"));
-        } else if (url.startsWith("jar:file:")) {
-            url = url.substring("jar:file:".length(), url.indexOf('!'));
-        }
-        return Paths.get(url);
+        String childFileString = getClass().getClassLoader().getResource("barInterceptorRoute.xml").getFile();
+        File parentFile = new File(childFileString).getParentFile();
+        return parentFile.toPath();
     }
 }
