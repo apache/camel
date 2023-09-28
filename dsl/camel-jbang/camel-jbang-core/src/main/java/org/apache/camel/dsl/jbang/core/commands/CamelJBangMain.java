@@ -150,7 +150,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("version", new CommandLine(new VersionCommand(main))
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
                         .addSubcommand("set", new CommandLine(new VersionSet(main)))
-                        .addSubcommand("list", new CommandLine(new VersionList(main))));
+                        .addSubcommand("list", new CommandLine(new VersionList(main))))
+                .addSubcommand("sbom", new CommandLine(new SBOMGenerator(main)));
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();
