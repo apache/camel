@@ -16,14 +16,6 @@
  */
 package org.apache.camel.xml.in;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringReader;
@@ -37,6 +29,8 @@ import java.util.stream.Stream;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
 
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.PropertyDefinition;
@@ -58,7 +52,14 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ModelParserTest {
 
