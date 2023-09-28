@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -98,7 +97,8 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
     private static GenericFileExpressionRenamer<File> getDefaultCommitRenamer(CamelContext context) {
         // use context to lookup language to let it be loose coupled
         Language language = context.resolveLanguage("file");
-        Expression expression = language.createExpression(Paths.get("${file:parent}", FileConstants.DEFAULT_SUB_FOLDER, "${file:onlyname}").toString());
+        Expression expression
+                = language.createExpression("${file:parent}/" + FileConstants.DEFAULT_SUB_FOLDER + "/${file:onlyname}");
         return new GenericFileExpressionRenamer<>(expression);
     }
 

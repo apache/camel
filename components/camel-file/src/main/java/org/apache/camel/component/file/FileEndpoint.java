@@ -312,8 +312,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Whether to accept hidden directories. Directories which names starts with dot is regarded as a hidden directory, and
-     * by default not included. Set this option to true to include hidden directories in the file consumer.
+     * Whether to accept hidden directories. Directories which names starts with dot is regarded as a hidden directory,
+     * and by default not included. Set this option to true to include hidden directories in the file consumer.
      */
     public void setIncludeHiddenDirs(boolean includeHiddenDirs) {
         this.includeHiddenDirs = includeHiddenDirs;

@@ -163,7 +163,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                         loader.preParseRoute(resource);
                     } catch (Exception e) {
                         if (isIgnoreLoadingError()) {
-                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource, e.getMessage());
+                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource,
+                                    e.getMessage());
                         } else {
                             throw e;
                         }
@@ -200,7 +201,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                         }
                     } catch (Exception e) {
                         if (isIgnoreLoadingError()) {
-                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource, e.getMessage());
+                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource,
+                                    e.getMessage());
                         } else {
                             throw e;
                         }
