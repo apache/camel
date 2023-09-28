@@ -165,3 +165,7 @@ use
 ----
 span.setTag(TagConstants.URL_SCHEME, scheme);
 ----
+
+=== camel-kafka
+
+The default value for `sessionTimeoutMs` has been updated to  `45000` ms, while the default value for `consumerRequestTimeoutMs` has been updated to `30000`. More information in CAMEL-19921 issue.
