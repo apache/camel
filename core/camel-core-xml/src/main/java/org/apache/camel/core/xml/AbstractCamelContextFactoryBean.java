@@ -1358,8 +1358,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     /**
      * Creates a {@link ThreadPoolProfile} instance based on the definition.
      *
-     * @param  context   the camel context
-     * @return           the profile
+     * @param  context the camel context
+     * @return         the profile
      */
     private ThreadPoolProfile asThreadPoolProfile(CamelContext context, ThreadPoolProfileDefinition definition) {
         ThreadPoolProfile answer = new ThreadPoolProfile();

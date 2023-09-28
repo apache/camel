@@ -18,7 +18,6 @@ package org.apache.camel.spi;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Set;
 
