@@ -2092,10 +2092,43 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a> for catching certain exceptions and
      * handling them.
      *
+     * @param  exceptionType1 the first exception to catch
+     * @param  exceptionType2 the second exception to catch
+     * @return                the exception builder to configure
+     */
+    public OnExceptionDefinition onException(
+            Class<? extends Throwable> exceptionType1, Class<? extends Throwable> exceptionType2) {
+        OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptionType1, exceptionType2));
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a> for catching certain exceptions and
+     * handling them.
+     *
+     * @param  exceptionType1 the first exception to catch
+     * @param  exceptionType2 the second exception to catch
+     * @param  exceptionType3 the third exception to catch
+     * @return                the exception builder to configure
+     */
+    public OnExceptionDefinition onException(
+            Class<? extends Throwable> exceptionType1, Class<? extends Throwable> exceptionType2,
+            Class<? extends Throwable> exceptionType3) {
+        OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptionType1, exceptionType2, exceptionType3));
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a> for catching certain exceptions and
+     * handling them.
+     *
      * @param  exceptions list of exceptions to catch
      * @return            the exception builder to configure
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
+    @SafeVarargs
+    public final OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
         addOutput(answer);
         return answer;
