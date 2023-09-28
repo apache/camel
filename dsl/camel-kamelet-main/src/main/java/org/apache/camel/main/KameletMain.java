@@ -447,11 +447,14 @@ public class KameletMain extends MainCommandLineSupport {
         if (tracing) {
             configure().withBacklogTracing(true);
         }
-
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health) {
             configure().httpServer().withEnabled(true);
             configure().httpServer().withHealthCheckEnabled(true);
+        }
+        boolean ignoreLoading = "true".equals(getInitialProperties().get("camel.jbang.ignoreLoadingError"));
+        if (ignoreLoading) {
+            configure().withRoutesCollectorIgnoreLoadingError(true);
         }
         if (silent) {
             // silent should not include http server

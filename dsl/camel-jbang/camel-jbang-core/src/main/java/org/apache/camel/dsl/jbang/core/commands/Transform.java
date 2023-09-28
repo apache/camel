@@ -82,7 +82,7 @@ public class Transform extends CamelCommand {
         };
         run.files = files;
         run.maxSeconds = 1;
-        Integer exit = run.runSilent();
+        Integer exit = run.runTransform();
         if (exit != null && exit != 0) {
             return exit;
         }

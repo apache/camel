@@ -549,7 +549,9 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void configureRoutesLoader(CamelContext camelContext) {
         // use main based routes loader
-        camelContext.getCamelContextExtension().addContextPlugin(RoutesLoader.class, new DefaultRoutesLoader());
+        RoutesLoader loader = new DefaultRoutesLoader();
+        loader.setIgnoreLoadingError(mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
+        camelContext.getCamelContextExtension().addContextPlugin(RoutesLoader.class, loader);
     }
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
@@ -569,8 +571,10 @@ public abstract class BaseMainSupport extends BaseService {
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer();
 
+        routesCollector.setIgnoreLoadingError(mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
         if (mainConfigurationProperties.isRoutesCollectorEnabled()) {
             configurer.setRoutesCollector(routesCollector);
+            configurer.setIgnoreLoadingError(mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
         }
 
         configurer.setBeanPostProcessor(PluginHelper.getBeanPostProcessor(camelContext));

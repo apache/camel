@@ -128,6 +128,7 @@ public class Export extends ExportBaseCommand {
         cmd.openapi = this.openapi;
         cmd.packageName = this.packageName;
         cmd.exclude = this.exclude;
+        cmd.ignoreLoadingError = this.ignoreLoadingError;
         // run export
         return cmd.export();
     }

@@ -44,6 +44,18 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    private boolean ignoreLoadingError;
+
+    @Override
+    public boolean isIgnoreLoadingError() {
+        return ignoreLoadingError;
+    }
+
+    @Override
+    public void setIgnoreLoadingError(boolean ignoreLoadingError) {
+        this.ignoreLoadingError = ignoreLoadingError;
+    }
+
     @Override
     public Collection<RoutesBuilder> collectRoutesFromRegistry(
             CamelContext camelContext,
@@ -194,7 +206,11 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 builders.addAll(found);
             }
         } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
+            if (isIgnoreLoadingError()) {
+                log.warn("Loading resources error: {} due to: {}. This exception is ignored.", accepted, e.getMessage());
+            } else {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
         }
     }
 

@@ -2484,6 +2484,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.health`
 | Health check at /q/health on local HTTP server (port 8080 by default) when running standalone Camel
 
+|`camel.jbang.ignoreLoadingError`
+| Whether to ignore route loading and compilation errors (use this with care!)
+
 |===
 
 NOTE: These are options from the export command, so you can see mor details and default values using `camel export --help`.

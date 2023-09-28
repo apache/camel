@@ -63,7 +63,7 @@ class ExportCamelMain extends Export {
             if (!quiet && fresh) {
                 System.out.println("Generating fresh run data");
             }
-            int silent = runSilently();
+            int silent = runSilently(ignoreLoadingError);
             if (silent != 0) {
                 return silent;
             }

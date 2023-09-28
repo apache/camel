@@ -199,6 +199,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Will be quiet, only print when error occurs")
     boolean quiet;
 
+    @CommandLine.Option(names = { "--ignore-loading-error" },
+                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    protected boolean ignoreLoadingError;
+
     public ExportBaseCommand(CamelJBangMain main) {
         super(main);
     }
@@ -271,7 +275,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         return null;
     }
 
-    protected Integer runSilently() throws Exception {
+    protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
         run.profile = profile;
@@ -280,7 +284,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.files = files;
         run.exclude = exclude;
         run.openapi = openapi;
-        return run.runSilent();
+        return run.runSilent(ignoreLoadingError);
     }
 
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {

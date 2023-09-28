@@ -251,6 +251,10 @@ public class Run extends CamelCommand {
     @Option(names = { "--verbose" }, description = "Verbose output of startup activity (dependency resolution and downloading")
     boolean verbose;
 
+    @Option(names = { "--ignore-loading-error" },
+            description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    protected boolean ignoreLoadingError;
+
     public Run(CamelJBangMain main) {
         super(main);
     }
@@ -274,14 +278,19 @@ public class Run extends CamelCommand {
     }
 
     protected Integer runSilent() throws Exception {
+        return runSilent(false);
+    }
+
+    protected Integer runSilent(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
-        silentRun = true;
+        this.silentRun = true;
+        this.ignoreLoadingError = ignoreLoadingError;
         return run();
     }
 
     protected Integer runTransform() throws Exception {
         // just boot silently and exit
-        transformRun = true;
+        this.transformRun = true;
         return run();
     }
 
@@ -422,6 +431,9 @@ public class Run extends CamelCommand {
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
         }
+        if (ignoreLoadingError) {
+            writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
+        }
 
         if (gav != null) {
             writeSetting(main, profileProperties, "camel.jbang.gav", gav);
@@ -471,7 +483,6 @@ public class Run extends CamelCommand {
             main.setStubPattern("*");
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
-            main.addInitialProperty("camel.main.durationMaxSeconds", "1");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
         } else if (scriptRun) {
             // auto terminate if being idle
