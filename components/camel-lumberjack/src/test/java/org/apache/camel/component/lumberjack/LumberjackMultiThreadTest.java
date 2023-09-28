@@ -29,10 +29,12 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Isolated
 public class LumberjackMultiThreadTest extends CamelTestSupport {
 
     private static int port;
@@ -54,21 +56,24 @@ public class LumberjackMultiThreadTest extends CamelTestSupport {
 
     @Test
     public void shouldListenToMessages() throws Exception {
-        // We're expecting 25 messages with Maps
+        int concurrencyLevel = Math.min(Runtime.getRuntime().availableProcessors(), 4);
+
+        // We're expecting 25 messages with Maps for each thread
         MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedMessageCount(125);
+        mock.expectedMessageCount(25 * concurrencyLevel);
         mock.allMessages().body().isInstanceOf(Map.class);
 
         // When sending messages
         List<Integer> windows = Arrays.asList(15, 10);
 
-        // create 5 threads
+        // create a number of threads
         List<LumberjackThreadTest> threads = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+
+        for (int i = 0; i < concurrencyLevel; i++) {
             threads.add(new LumberjackThreadTest());
         }
 
-        // sending messages on 5 parallel sessions
+        // sending messages on all parallel sessions
         threads.stream().forEach(thread -> thread.start());
 
         // Then we should have the messages we're expecting
