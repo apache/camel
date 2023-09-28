@@ -35,6 +35,16 @@ public interface RoutesLoader extends CamelContextAware {
     String FACTORY = "routes-loader";
 
     /**
+     * Whether to ignore route loading and compilation errors (use this with care!)
+     */
+    boolean isIgnoreLoadingError();
+
+    /**
+     * Whether to ignore route loading and compilation errors (use this with care!)
+     */
+    void setIgnoreLoadingError(boolean ignoreLoadingError);
+
+    /**
      * Looks up a {@link RoutesBuilderLoader} in the registry or fallback to a factory finder mechanism if none found.
      *
      * @param  extension                the file extension for which a loader should be found.

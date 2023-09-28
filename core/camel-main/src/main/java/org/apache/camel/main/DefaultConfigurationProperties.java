@@ -112,6 +112,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private LoggingLevel beanIntrospectionLoggingLevel;
     private boolean contextReloadEnabled;
     private boolean routesCollectorEnabled = true;
+    private boolean routesCollectorIgnoreLoadingError;
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
     private String routesIncludePattern = "classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*";
@@ -1164,6 +1165,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRoutesCollectorEnabled(boolean routesCollectorEnabled) {
         this.routesCollectorEnabled = routesCollectorEnabled;
+    }
+
+    public boolean isRoutesCollectorIgnoreLoadingError() {
+        return routesCollectorIgnoreLoadingError;
+    }
+
+    /**
+     * Whether the routes collector should ignore any errors during loading and compiling routes.
+     *
+     * This is only intended for development or tooling.
+     */
+    public void setRoutesCollectorIgnoreLoadingError(boolean routesCollectorIgnoreLoadingError) {
+        this.routesCollectorIgnoreLoadingError = routesCollectorIgnoreLoadingError;
     }
 
     public String getJavaRoutesIncludePattern() {
@@ -2479,6 +2493,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRoutesCollectorEnabled(boolean routesCollectorEnabled) {
         this.routesCollectorEnabled = routesCollectorEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Whether the routes collector should ignore any errors during loading and compiling routes.
+     *
+     * This is only intended for development or tooling.
+     */
+    public T withRoutesCollectorIgnoreLoadingError(boolean routesCollectorIgnoreLoadingError) {
+        this.routesCollectorIgnoreLoadingError = routesCollectorIgnoreLoadingError;
         return (T) this;
     }
 

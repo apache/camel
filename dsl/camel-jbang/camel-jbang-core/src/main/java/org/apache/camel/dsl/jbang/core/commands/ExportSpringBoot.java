@@ -67,7 +67,7 @@ class ExportSpringBoot extends Export {
             if (!quiet) {
                 System.out.println("Generating fresh run data");
             }
-            int silent = runSilently();
+            int silent = runSilently(ignoreLoadingError);
             if (silent != 0) {
                 return silent;
             }

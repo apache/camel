@@ -19,8 +19,8 @@ package org.apache.camel.main.download;
 import org.apache.camel.CamelContext;
 
 /**
- * ClassLoader loading from any custom class loaders that may
- * have been added to Camel {@link org.apache.camel.spi.ClassResolver}.
+ * ClassLoader loading from any custom class loaders that may have been added to Camel
+ * {@link org.apache.camel.spi.ClassResolver}.
  */
 public class CamelCustomClassLoader extends ClassLoader {
 
