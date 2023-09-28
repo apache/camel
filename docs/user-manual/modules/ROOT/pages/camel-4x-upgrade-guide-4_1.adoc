@@ -127,7 +127,7 @@ The `pipe` command has been renamed to `script`.
 
 The `--secrets-refresh` and `--secret-refresh-providers` have been removed, since they were logically incorrect in the export command context. More information at CAMEL-19927 issue.
 
-The generated xml route, created using the command `camel init`, now uses `<camel>` as the root tag instead of `<route>`.
+The generated xml route, created using the command `camel init`, now uses `<camel>` as the root tag instead of `<routes>`.
 
 === camel-jetty / camel-servlet / camel-atmosphere-websocket / camel-http-common
 
