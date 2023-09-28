@@ -374,7 +374,8 @@ public class RoutesConfigurer {
                         loader.preParseRoute(resource);
                     } catch (Exception e) {
                         if (ignoreLoadingError) {
-                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource, e.getMessage());
+                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource,
+                                    e.getMessage());
                         } else {
                             throw e;
                         }
