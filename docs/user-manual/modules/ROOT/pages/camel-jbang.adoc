@@ -2169,6 +2169,10 @@ org.apache.camel.kamelets:camel-kamelets:0.9.3
 You can use the `camel dependency copy` command to copy the required JARs to a specific folder.
 This command reuses Maven by invoking the `mvn dependency:copy-dependencies` command.
 
+IMPORTANT: The `camel dependency copy` and `camel dependency list` uses Apache Maven,
+This requires having Apache Maven installed, and `mvn` command in PATH environment, so Camel JBang
+can invoke `mvn` command.
+
 By default, the JARs are copied to `lib` folder:
 
 [source,bash]
