@@ -573,7 +573,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param  exceptions list of exceptions to catch
      * @return            the builder
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
+    @SafeVarargs
+    public final OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition last = null;
         for (Class<? extends Throwable> ex : exceptions) {
             last = last == null ? onException(ex) : last.onException(ex);
