@@ -36,6 +36,10 @@
     <!-- embed Camel with routes -->
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
+        <!-- anything inside here such as this should be skipped during parsing -->
+        <propertyPlaceholder id="placeholder" location="classpath:sql.properties"/>
+
+        <!-- we only parse (currently) embedded routes etc. -->
         <route>
             <from uri="timer:xml?period={{time:1000}}"/>
             <setBody>

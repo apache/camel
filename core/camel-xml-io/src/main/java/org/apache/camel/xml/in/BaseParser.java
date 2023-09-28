@@ -164,7 +164,18 @@ public class BaseParser {
                     }
                 }
             } else if (event == XmlPullParser.END_TAG) {
-                return definition;
+                // we need to check first if the end tag is from
+                // and unexpected element which we should ignore,
+                // and continue parsing (special need for camel-xml-io-dsl)
+                String ns = parser.getNamespace();
+                String name = parser.getName();
+                boolean ignore = false;
+                if (supportsExternalNamespaces) {
+                    ignore = ignoreUnexpectedElement(ns, name);
+                }
+                if (!ignore) {
+                    return definition;
+                }
             } else {
                 throw new XmlPullParserException(
                         "expected START_TAG or END_TAG not " + XmlPullParser.TYPES[event], parser, null);
@@ -326,6 +337,10 @@ public class BaseParser {
 
     protected void handleUnexpectedText(String text) throws XmlPullParserException {
         throw new XmlPullParserException("Unexpected text '" + text + "'");
+    }
+
+    protected boolean ignoreUnexpectedElement(String namespace, String name) throws XmlPullParserException {
+        return false;
     }
 
     protected void expectTag(String name) throws XmlPullParserException, IOException {

@@ -823,6 +823,11 @@ public class MXParser implements XmlPullParser {
         }
     }
 
+    @Override
+    public String[] getNames() {
+        return elName;
+    }
+
     public String getPrefix() {
         if (eventType == START_TAG) {
             // return elPrefix[ depth - 1 ] ;
