@@ -65,8 +65,14 @@ public class SBOMGenerator extends Export {
             } else {
                 outputDirectoryParameter += "../../" + outputDirectory;
             }
+            String mvnProgramCall;
+            if (FileUtil.isWindows()) {
+                mvnProgramCall = "cmd /c mvn";
+            } else {
+                mvnProgramCall = "mvn";
+            }
             Process p = Runtime.getRuntime()
-                    .exec("mvn org.cyclonedx:cyclonedx-maven-plugin:" + pluginVersion + ":makeAggregateBom "
+                    .exec(mvnProgramCall + " org.cyclonedx:cyclonedx-maven-plugin:" + pluginVersion + ":makeAggregateBom "
                           + outputDirectoryParameter
                           + " -DoutputName="
                           + outputName,
