@@ -79,7 +79,11 @@ public class RestComponent extends HeaderFilterStrategyComponent {
         }
         answer.setHost(h);
 
-        parameters.put("headerFilterStrategy", getHeaderFilterStrategy());
+        // custom header filter strategy
+        if (getHeaderFilterStrategy() != null) {
+            parameters.put("headerFilterStrategy", getHeaderFilterStrategy());
+        }
+
         setProperties(answer, parameters);
         if (!parameters.isEmpty()) {
             // use only what remains and at this point parameters that have been used have been removed
