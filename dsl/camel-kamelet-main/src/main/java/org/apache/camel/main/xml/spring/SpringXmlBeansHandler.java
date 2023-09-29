@@ -234,6 +234,7 @@ public class SpringXmlBeansHandler {
             }
             rrd.setType(def.getBeanClassName());
             rrd.setName(name);
+            LOG.debug("Adding Spring <beans> XML bean: {} to DSL model", name);
             model.addRegistryBean(rrd);
 
             // factory bean/method

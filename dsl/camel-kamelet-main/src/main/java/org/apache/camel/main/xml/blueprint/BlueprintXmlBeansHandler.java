@@ -282,9 +282,16 @@ public class BlueprintXmlBeansHandler {
             beansToDestroy.put(name, new KeyValueHolder<>(target, def.getDestroyMethod()));
         }
 
+        addBeanToCamelModel(camelContext, name, def);
+    }
+
+    protected void addBeanToCamelModel(CamelContext camelContext, String name, RegistryBeanDefinition def) {
         // register bean in model
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-        model.addRegistryBean(def);
+        if (model != null) {
+            LOG.debug("Adding OSGi <blueprint> XML bean: {} to DSL model", name);
+            model.addRegistryBean(def);
+        }
     }
 
     protected void destroyBean(String name, boolean remove) {
