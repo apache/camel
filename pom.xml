@@ -28,7 +28,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>3.21.1-SNAPSHOT</version>
+    <version>3.21.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -116,7 +116,7 @@
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>1688242060</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1695560221</project.build.outputTimestamp>
 
         <maven-compiler-plugin-version>3.10.1</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
@@ -747,7 +747,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <source>8</source>
+                            <source>11</source>
                             <additionalOptions>${javadoc.opts}</additionalOptions>
                             <!-- disable Javadoc linting for buildung the release with Java 11 -->
                             <doclint>none</doclint>

@@ -57,7 +57,7 @@ public final class MllpProtocolConstants {
 
         /*
           These values are defined in the HL7 Spec, but currently not mapped to a Java charset
-
+        
           JAS2020
           JIS X 0202
           ISO IR6

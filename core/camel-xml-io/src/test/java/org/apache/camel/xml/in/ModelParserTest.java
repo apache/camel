@@ -60,7 +60,8 @@ public class ModelParserTest {
             = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = Arrays.asList("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = Arrays.asList("barTemplatedRoute.xml");
-    private static final List<String> ROUTE_CONFIGURATION_XMLS = Arrays.asList("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
+    private static final List<String> ROUTE_CONFIGURATION_XMLS
+            = Arrays.asList("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
     @Test
     public void testNoNamespace() throws Exception {
