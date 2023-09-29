@@ -9345,8 +9345,8 @@ that there is no header. The default value is false. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether or not the header must be read in the first line of the test document The default value is false. Default value:
-false
+Whether or not the header must be read in the first line of the test document. The default value is false. Default
+value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9373,7 +9373,7 @@ The String representation of an empty value.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The line separator of the files The default value is to use the JVM platform line separator.
+The line separator of the files. The default value is to use the JVM platform line separator.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9382,7 +9382,7 @@ The line separator of the files The default value is to use the JVM platform lin
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The normalized line separator of the files The default value is a new line character. Default value: \n
+The normalized line separator of the files. The default value is a new line character.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9401,7 +9401,7 @@ The comment symbol. The default value is #. Default value: #
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at
-one. The default value is false. Default value: false
+once. The default value is false. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
