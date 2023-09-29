@@ -55,6 +55,10 @@ public class Transform extends CamelCommand {
                         description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
     boolean uriAsParameters;
 
+    @CommandLine.Option(names = { "--ignore-loading-error" },
+                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    boolean ignoreLoadingError;
+
     public Transform(CamelJBangMain main) {
         super(main);
     }
@@ -82,7 +86,7 @@ public class Transform extends CamelCommand {
         };
         run.files = files;
         run.maxSeconds = 1;
-        Integer exit = run.runTransform();
+        Integer exit = run.runTransform(ignoreLoadingError);
         if (exit != null && exit != 0) {
             return exit;
         }

@@ -284,13 +284,13 @@ public class Run extends CamelCommand {
     protected Integer runSilent(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
         this.silentRun = true;
-        this.ignoreLoadingError = ignoreLoadingError;
         return run();
     }
 
-    protected Integer runTransform() throws Exception {
+    protected Integer runTransform(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
         this.transformRun = true;
+        this.ignoreLoadingError = ignoreLoadingError;
         return run();
     }
 
