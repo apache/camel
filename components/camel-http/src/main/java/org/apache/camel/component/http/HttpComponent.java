@@ -225,7 +225,22 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HttpCredentialsHelper credentialsProvider = new HttpCredentialsHelper();
         configurer = configureBasicAuthentication(parameters, configurer, credentialsProvider);
         configurer = configureHttpProxy(parameters, configurer, secure, credentialsProvider);
+        configurer = configureOAuth2Authentication(parameters, configurer);
 
+        return configurer;
+    }
+
+    private HttpClientConfigurer configureOAuth2Authentication(
+            Map<String, Object> parameters, HttpClientConfigurer configurer) {
+
+        String clientId = getParameter(parameters, "oauth2ClientId", String.class);
+        String clientSecret = getParameter(parameters, "oauth2ClientSecret", String.class);
+        String tokenEndpoint = getParameter(parameters, "oauth2TokenEndpoint", String.class);
+
+        if (clientId != null && clientSecret != null && tokenEndpoint != null) {
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new OAuth2ClientConfigurer(clientId, clientSecret, tokenEndpoint));
+        }
         return configurer;
     }
 

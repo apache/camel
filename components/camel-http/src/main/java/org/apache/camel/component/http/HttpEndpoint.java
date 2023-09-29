@@ -269,11 +269,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientBuilder.setUserAgent(userAgent);
         }
 
-        HttpClientConfigurer configurer = getHttpClientConfigurer();
-        if (configurer != null) {
-            configurer.configureHttpClient(clientBuilder);
-        }
-
         if (isBridgeEndpoint()) {
             // need to use noop cookiestore as we do not want to keep cookies in memory
             clientBuilder.setDefaultCookieStore(new NoopCookieStore());
@@ -283,7 +278,13 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientBuilder.setRedirectStrategy(DefaultRedirectStrategy.INSTANCE);
         }
 
+        HttpClientConfigurer configurer = getHttpClientConfigurer();
+        if (configurer != null) {
+            configurer.configureHttpClient(clientBuilder);
+        }
+
         LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
+
         return clientBuilder.build();
     }
 

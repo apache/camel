@@ -342,6 +342,26 @@ adding this URI option: `httpClient.cookieSpec=ignoreCookies`
 In order to avoid the `NonRepeatableRequestException`, you need to do the
 Preemptive Basic Authentication by adding the option: `authenticationPreemptive=true`
 
+== OAuth2 Support
+
+In order to get a access token from a Authorization Server and fill that in Authorization header to do requests to protected services, you will need to use `oauth2ClientId`, `oauth2ClientSecret` and  `oauth2TokenEndpoint` properties, and those should be defined as specified at RFC 6749 and provided by your Authorization Server.
+
+In below example camel will do a underlying request to `https://localhost:8080/realms/master/protocol/openid-connect/token` using provided credentials (client id and client secret), then will get `access_token` from response and lastly will fill it at `Authorization` header of request which will be done to `https://localhost:9090`.
+
+[source,java]
+------------------------------------------------------------------------------------
+String clientId = "my-client-id";
+String clientSecret = "my-client-secret";
+String tokenEndpoint = "https://localhost:8080/realms/master/protocol/openid-connect/token";
+
+from("direct:start")
+  .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint);
+------------------------------------------------------------------------------------
+
+NOTE: Camel only provide support for OAuth2 client credentials flow
+
+Important: Camel does not perform any validation in access token. It's up to the underlying service to validate it.
+
 == Advanced Usage
 
 If you need more control over the HTTP producer you should use the

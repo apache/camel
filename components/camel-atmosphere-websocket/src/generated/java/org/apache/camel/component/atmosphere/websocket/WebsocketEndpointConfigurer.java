@@ -25,6 +25,12 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "oauth2clientid":
+        case "oauth2ClientId": target.setOauth2ClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauth2clientsecret":
+        case "oauth2ClientSecret": target.setOauth2ClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauth2tokenendpoint":
+        case "oauth2TokenEndpoint": target.setOauth2TokenEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "sendtoall":
         case "sendToAll": target.setSendToAll(property(camelContext, boolean.class, value)); return true;
         case "usestreaming":
@@ -40,6 +46,12 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "bridgeEndpoint": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "oauth2clientid":
+        case "oauth2ClientId": return java.lang.String.class;
+        case "oauth2clientsecret":
+        case "oauth2ClientSecret": return java.lang.String.class;
+        case "oauth2tokenendpoint":
+        case "oauth2TokenEndpoint": return java.lang.String.class;
         case "sendtoall":
         case "sendToAll": return boolean.class;
         case "usestreaming":
@@ -56,6 +68,12 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "bridgeEndpoint": return target.isBridgeEndpoint();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "oauth2clientid":
+        case "oauth2ClientId": return target.getOauth2ClientId();
+        case "oauth2clientsecret":
+        case "oauth2ClientSecret": return target.getOauth2ClientSecret();
+        case "oauth2tokenendpoint":
+        case "oauth2TokenEndpoint": return target.getOauth2TokenEndpoint();
         case "sendtoall":
         case "sendToAll": return target.isSendToAll();
         case "usestreaming":

@@ -153,6 +153,12 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     private String authUsername;
     @UriParam(label = "producer,security", secret = true, description = "Authentication password")
     private String authPassword;
+    @UriParam(label = "producer,security", secret = true, description = "OAuth2 client id")
+    private String oauth2ClientId;
+    @UriParam(label = "producer,security", secret = true, description = "OAuth2 client secret")
+    private String oauth2ClientSecret;
+    @UriParam(label = "producer,security", description = "OAuth2 Token endpoint")
+    private String oauth2TokenEndpoint;
     @UriParam(label = "producer,security", description = "Authentication domain to use with NTML")
     private String authDomain;
     @UriParam(label = "producer,security", description = "Authentication host to use with NTML")
@@ -774,4 +780,38 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     public void setProxyAuthNtHost(String proxyAuthNtHost) {
         this.proxyAuthNtHost = proxyAuthNtHost;
     }
+
+    public String getOauth2ClientId() {
+        return this.oauth2ClientId;
+    }
+
+    /**
+     * OAuth2 Client id
+     */
+    public void setOauth2ClientId(String oauth2ClientId) {
+        this.oauth2ClientId = oauth2ClientId;
+    }
+
+    public String getOauth2ClientSecret() {
+        return this.oauth2ClientSecret;
+    }
+
+    /**
+     * OAuth2 Client secret
+     */
+    public void setOauth2ClientSecret(String oauth2ClientSecret) {
+        this.oauth2ClientSecret = oauth2ClientSecret;
+    }
+
+    public String getOauth2TokenEndpoint() {
+        return this.oauth2TokenEndpoint;
+    }
+
+    /**
+     * OAuth2 token endpoint
+     */
+    public void setOauth2TokenEndpoint(String oauth2TokenEndpoint) {
+        this.oauth2TokenEndpoint = oauth2TokenEndpoint;
+    }
+
 }
