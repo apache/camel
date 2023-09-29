@@ -639,6 +639,7 @@ public class KameletMain extends MainCommandLineSupport {
             } else {
                 routesLoader = new DependencyDownloaderRoutesLoader(camelContext);
             }
+            routesLoader.setIgnoreLoadingError(this.mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
 
             // use resolvers that can auto downloaded
             camelContext.getCamelContextExtension()

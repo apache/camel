@@ -37,6 +37,7 @@ import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StringHelper;
@@ -258,6 +259,11 @@ public class BlueprintXmlBeansHandler {
                 if (delayIfFailed) {
                     delayedRegistrations.add(def);
                 } else {
+                    boolean ignore = PluginHelper.getRoutesLoader(camelContext).isIgnoreLoadingError();
+                    if (ignore) {
+                        // still add bean if we are ignore loading as we want to know about all beans if possible
+                        addBeanToCamelModel(camelContext, name, def);
+                    }
                     LOG.warn("Error creating bean: {} due to: {}. This exception is ignored.", type, e.getMessage(), e);
                 }
             }
