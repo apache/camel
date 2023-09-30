@@ -84,7 +84,7 @@ public class Transform extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesOutput", target);
                 if (ignoreLoadingError) {
                     // turn off bean method validator if ignore loading error
-                    main.addInitialProperty("camel.language.bean.validate", "true");
+                    main.addInitialProperty("camel.language.bean.validate", "false");
                 }
             }
         };
