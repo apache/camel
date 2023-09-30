@@ -82,6 +82,10 @@ public class Transform extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "" + resolvePlaceholders);
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "" + uriAsParameters);
                 main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                if (ignoreLoadingError) {
+                    // turn off bean method validator if ignore loading error
+                    main.addInitialProperty("camel.language.bean.validate", "false");
+                }
             }
         };
         run.files = files;

@@ -12896,6 +12896,11 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            },
+            "validate" : {
+              "type" : "boolean",
+              "title" : "Validate",
+              "description" : "Whether to validate the bean has the configured method."
             }
           }
         } ]
