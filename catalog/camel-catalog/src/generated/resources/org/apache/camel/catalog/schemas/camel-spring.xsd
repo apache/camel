@@ -15791,6 +15791,15 @@ implementation. Default value: Singleton
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="validate" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to validate the bean has the configured method. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

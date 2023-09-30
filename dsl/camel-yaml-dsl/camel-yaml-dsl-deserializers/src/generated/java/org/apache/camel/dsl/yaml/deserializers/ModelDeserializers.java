@@ -9091,7 +9091,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ref", type = "string", description = "Reference to an existing bean (bean id) to lookup in the registry", displayName = "Ref"),
                     @YamlProperty(name = "result-type", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "scope", type = "enum:Singleton,Request,Prototype", defaultValue = "Singleton", description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time. When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean while processing a request and you want to call the same bean instance multiple times while processing the request. The bean does not have to be thread-safe as the instance is only called from the same request. When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope. So when using prototype scope then this depends on the bean registry implementation.", displayName = "Scope"),
-                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "validate", type = "boolean", description = "Whether to validate the bean has the configured method.", displayName = "Validate")
             }
     )
     public static class MethodCallExpressionDeserializer extends YamlDeserializerBase<MethodCallExpression> {
@@ -9146,6 +9147,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
+                    break;
+                }
+                case "validate": {
+                    String val = asText(node);
+                    target.setValidate(val);
                     break;
                 }
                 default: {

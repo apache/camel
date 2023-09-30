@@ -205,11 +205,11 @@ public interface ComponentCustomizer extends Ordered {
                 return this.condition != null
                         ? this.condition
                         : new BiPredicate<>() {
-                    @Override
-                    public boolean test(String s, Component language) {
-                        return true;
-                    }
-                };
+                            @Override
+                            public boolean test(String s, Component language) {
+                                return true;
+                            }
+                        };
             }
 
             if (condition == null) {

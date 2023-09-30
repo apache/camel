@@ -47,6 +47,9 @@ public class MethodCallExpression extends TypedExpressionDefinition {
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
     private String scope;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String validate;
 
     public MethodCallExpression() {
     }
@@ -96,6 +99,7 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         this.method = builder.method;
         this.beanTypeName = builder.beanTypeName;
         this.scope = builder.scope;
+        this.validate = builder.validate;
     }
 
     @Override
@@ -169,6 +173,17 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         this.scope = scope;
     }
 
+    public String getValidate() {
+        return validate;
+    }
+
+    /**
+     * Whether to validate the bean has the configured method.
+     */
+    public void setValidate(String validate) {
+        this.validate = validate;
+    }
+
     public Object getInstance() {
         return instance;
     }
@@ -214,6 +229,7 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         private String method;
         private String beanTypeName;
         private String scope;
+        private String validate;
 
         /**
          * Name of method to call
@@ -275,6 +291,22 @@ public class MethodCallExpression extends TypedExpressionDefinition {
          */
         public Builder scope(String scope) {
             this.scope = scope;
+            return this;
+        }
+
+        /**
+         * Whether to validate the bean has the configured method.
+         */
+        public Builder validate(String validate) {
+            this.validate = validate;
+            return this;
+        }
+
+        /**
+         * Whether to validate the bean has the configured method.
+         */
+        public Builder validate(boolean validate) {
+            this.validate = Boolean.toString(validate);
             return this;
         }
 

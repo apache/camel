@@ -205,11 +205,11 @@ public interface DataFormatCustomizer extends Ordered {
                 return this.condition != null
                         ? this.condition
                         : new BiPredicate<>() {
-                    @Override
-                    public boolean test(String s, DataFormat language) {
-                        return true;
-                    }
-                };
+                            @Override
+                            public boolean test(String s, DataFormat language) {
+                                return true;
+                            }
+                        };
             }
 
             if (condition == null) {

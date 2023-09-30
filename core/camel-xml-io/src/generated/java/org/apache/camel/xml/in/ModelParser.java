@@ -2853,6 +2853,7 @@ public class ModelParser extends BaseParser {
                 case "method": def.setMethod(val); break;
                 case "ref": def.setRef(val); break;
                 case "scope": def.setScope(val); break;
+                case "validate": def.setValidate(val); break;
                 default: return typedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

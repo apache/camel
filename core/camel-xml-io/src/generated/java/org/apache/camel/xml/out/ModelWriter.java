@@ -3930,6 +3930,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("method", def.getMethod());
         doWriteAttribute("scope", def.getScope());
         doWriteAttribute("beanType", def.getBeanTypeName());
+        doWriteAttribute("validate", def.getValidate());
         doWriteValue(def.getExpression());
         endElement(name);
     }
