@@ -202,6 +202,8 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
             Object validate = properties[5];
             if (validate != null) {
                 answer.setValidate(Boolean.parseBoolean(validate.toString()));
+            } else {
+                answer.setValidate(this.isValidate());
             }
         }
         answer.setResultType(property(Class.class, properties, 6, getResultType()));
