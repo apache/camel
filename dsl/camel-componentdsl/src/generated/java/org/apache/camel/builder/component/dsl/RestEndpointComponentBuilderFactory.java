@@ -187,6 +187,24 @@ public interface RestEndpointComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default RestEndpointComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     class RestEndpointComponentBuilderImpl
@@ -211,6 +229,7 @@ public interface RestEndpointComponentBuilderFactory {
             case "lazyStartProducer": ((RestComponent) component).setLazyStartProducer((boolean) value); return true;
             case "producerComponentName": ((RestComponent) component).setProducerComponentName((java.lang.String) value); return true;
             case "autowiredEnabled": ((RestComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "headerFilterStrategy": ((RestComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             default: return false;
             }
         }
