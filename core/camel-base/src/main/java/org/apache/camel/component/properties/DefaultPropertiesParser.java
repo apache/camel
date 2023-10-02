@@ -362,6 +362,10 @@ public class DefaultPropertiesParser implements PropertiesParser {
             }
 
             if (value == null) {
+                if (!optional && propertiesComponent != null && propertiesComponent.isIgnoreMissingProperty()) {
+                    // property is missing, but we should ignore this and return the placeholder unresolved
+                    return UNRESOLVED_PREFIX_TOKEN + key + UNRESOLVED_SUFFIX_TOKEN;
+                }
                 if (!optional) {
                     StringBuilder esb = new StringBuilder();
                     esb.append("Property with key [").append(key).append("] ");

@@ -33,6 +33,8 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         case "EnvironmentVariableMode": target.setEnvironmentVariableMode(property(camelContext, int.class, value)); return true;
         case "ignoremissinglocation":
         case "IgnoreMissingLocation": target.setIgnoreMissingLocation(property(camelContext, boolean.class, value)); return true;
+        case "ignoremissingproperty":
+        case "IgnoreMissingProperty": target.setIgnoreMissingProperty(property(camelContext, boolean.class, value)); return true;
         case "initialproperties":
         case "InitialProperties": target.setInitialProperties(property(camelContext, java.util.Properties.class, value)); return true;
         case "localproperties":
@@ -70,6 +72,8 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         case "EnvironmentVariableMode": return int.class;
         case "ignoremissinglocation":
         case "IgnoreMissingLocation": return boolean.class;
+        case "ignoremissingproperty":
+        case "IgnoreMissingProperty": return boolean.class;
         case "initialproperties":
         case "InitialProperties": return java.util.Properties.class;
         case "localproperties":
@@ -108,6 +112,8 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         case "EnvironmentVariableMode": return target.getEnvironmentVariableMode();
         case "ignoremissinglocation":
         case "IgnoreMissingLocation": return target.isIgnoreMissingLocation();
+        case "ignoremissingproperty":
+        case "IgnoreMissingProperty": return target.isIgnoreMissingProperty();
         case "initialproperties":
         case "InitialProperties": return target.getInitialProperties();
         case "localproperties":
