@@ -36,7 +36,6 @@
     <properties>
         <!-- Cassandra is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
-        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
