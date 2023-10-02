@@ -126,8 +126,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProcessorReifier.class);
-
     /**
      * Global option on {@link CamelContext#getGlobalOptions()} that tooling can use to disable all route processors,
      * which allows to startup Camel without wiring up and initializing all route EIPs that may use custom processors,
@@ -135,6 +133,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * startup, and being able to introspect CamelContext and the route models.
      */
     public static final String DISABLE_ALL_PROCESSORS = "DisableAllProcessors";
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessorReifier.class);
 
     // for custom reifiers
     private static final Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS

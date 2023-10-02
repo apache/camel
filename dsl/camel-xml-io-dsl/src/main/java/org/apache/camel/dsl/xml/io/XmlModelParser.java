@@ -45,7 +45,7 @@ public class XmlModelParser extends ModelParser {
 
     @Override
     protected boolean handleUnexpectedElement(String namespace, String name) throws XmlPullParserException {
-        if (isWithinCamelContext(namespace, name)) {
+        if (isWithinCamelContext(namespace, name) || isAriesBlueprint(namespace)) {
             return true;
         }
         return super.handleUnexpectedElement(namespace, name);
@@ -53,10 +53,17 @@ public class XmlModelParser extends ModelParser {
 
     @Override
     protected boolean ignoreUnexpectedElement(String namespace, String name) throws XmlPullParserException {
-        if (isWithinCamelContext(namespace, name)) {
+        if (isWithinCamelContext(namespace, name) || isAriesBlueprint(namespace)) {
             return true;
         }
         return super.ignoreUnexpectedElement(namespace, name);
+    }
+
+    private boolean isAriesBlueprint(String namespace) {
+        if (namespace != null && namespace.startsWith("http://aries.apache.org/blueprint/")) {
+            return true;
+        }
+        return false;
     }
 
     private boolean isWithinCamelContext(String namespace, String name) {

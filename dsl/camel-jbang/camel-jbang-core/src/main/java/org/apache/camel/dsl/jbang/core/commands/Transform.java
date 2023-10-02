@@ -83,6 +83,7 @@ public class Transform extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "" + uriAsParameters);
                 main.addInitialProperty("camel.main.dumpRoutesOutput", target);
                 main.addInitialProperty("camel.jbang.transform", "true");
+                main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
                 if (ignoreLoadingError) {
                     // turn off bean method validator if ignore loading error
                     main.addInitialProperty("camel.language.bean.validate", "false");
