@@ -78,7 +78,7 @@ from("debezium-postgres:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&
     .log("Event received from Debezium : ${body}")
     .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
     .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
-    .log("    the event occured upon this operation '${headers.CamelDebeziumSourceOperation}'")
+    .log("    the event occurred upon this operation '${headers.CamelDebeziumSourceOperation}'")
     .log("    on this database '${headers.CamelDebeziumSourceMetadata[db]}' and this table '${headers.CamelDebeziumSourceMetadata[table]}'")
     .log("    with the key ${headers.CamelDebeziumKey}")
     .log("    the previous value is ${headers.CamelDebeziumBefore}")

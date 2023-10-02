@@ -38,7 +38,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(PubSubApiConsumer.class);
     private final String topic;
     private final ReplayPreset initialReplayPreset;
-    private final String initialReplayId;
+    private String initialReplayId;
     private final SalesforceEndpoint endpoint;
 
     private final int batchSize;
@@ -46,6 +46,8 @@ public class PubSubApiConsumer extends DefaultConsumer {
     private Class<?> pojoClass;
     private PubSubApiClient pubSubClient;
     private Map<String, Class<?>> eventClassMap;
+
+    private boolean usePlainTextConnection = false;
 
     public PubSubApiConsumer(SalesforceEndpoint endpoint, Processor processor) throws ClassNotFoundException {
         super(endpoint, processor);
@@ -86,6 +88,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
                 endpoint.getComponent().getSession(), endpoint.getComponent().getLoginConfig(),
                 endpoint.getComponent().getPubSubHost(), endpoint.getComponent().getPubSubPort(),
                 endpoint.getConfiguration().getBackoffIncrement(), endpoint.getConfiguration().getMaxBackoff());
+        this.pubSubClient.setUsePlainTextConnection(this.usePlainTextConnection);
 
         ServiceHelper.startService(pubSubClient);
         pubSubClient.subscribe(this, initialReplayPreset, initialReplayId);
@@ -115,5 +118,21 @@ public class PubSubApiConsumer extends DefaultConsumer {
 
     public Class<?> getPojoClass() {
         return pojoClass;
+    }
+
+    // ability to use Plain Text (http) for test contexts
+    public void setUsePlainTextConnection(boolean usePlainTextConnection) {
+        this.usePlainTextConnection = usePlainTextConnection;
+    }
+
+
+    /**
+     * This updates the initial replay id. This will only take effect after the route is restarted, and should
+     * generally only be done while the route is stopped.
+     *
+     * @param initialReplayId
+     */
+    public void updateInitialReplayId(String initialReplayId) {
+        this.initialReplayId = initialReplayId;
     }
 }

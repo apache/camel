@@ -33,6 +33,7 @@ import io.restassured.specification.RequestSpecification;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.auth.properties.PropertyFileAuthentication;
@@ -58,6 +59,7 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.emptyString;
@@ -781,6 +783,64 @@ public class VertxPlatformHttpEngineTest {
                     .post("/rest/validate/body")
                     .then()
                     .statusCode(415);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLocalAddressHeader() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/local/address")
+                            .process(exchange -> {
+                                Message message = exchange.getMessage();
+                                SocketAddress address
+                                        = message.getHeader(VertxPlatformHttpConstants.LOCAL_ADDRESS, SocketAddress.class);
+                                message.setBody(address.hostAddress());
+                            });
+                }
+            });
+
+            context.start();
+
+            get("/local/address")
+                    .then()
+                    .statusCode(200)
+                    .body(notNullValue());
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRemoteAddressHeader() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/remote/address")
+                            .process(exchange -> {
+                                Message message = exchange.getMessage();
+                                SocketAddress address
+                                        = message.getHeader(VertxPlatformHttpConstants.REMOTE_ADDRESS, SocketAddress.class);
+                                message.setBody(address.hostAddress());
+                            });
+                }
+            });
+
+            context.start();
+
+            get("/remote/address")
+                    .then()
+                    .statusCode(200)
+                    .body(notNullValue());
         } finally {
             context.stop();
         }

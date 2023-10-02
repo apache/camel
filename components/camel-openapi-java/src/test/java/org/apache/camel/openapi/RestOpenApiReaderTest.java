@@ -182,7 +182,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(flatJson.contains(
                 "\"/tag/multiple/b\" : { \"get\" : { \"tags\" : [ \"Organisation\", \"Group B\" ], \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], "));
         assertTrue(flatJson.contains(
-                "\"tags\" : [ { \"name\" : \"Group B\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"/hello\" } ]"));
+                "\"tags\" : [ { \"name\" : \"/hello\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"Group B\" } ]"));
 
         context.stop();
     }
@@ -226,8 +226,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(
                 json.matches(".*\"/tag/multiple/b\" : \\{ \"get\" : .*\"tags\" : \\[ \"Organisation\", \"Group B\" ],.*"));
         assertTrue(json.contains(
-                "\"tags\" : [ { \"name\" : \"Group B\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"/hello\" } ]"));
-
+                "\"tags\" : [ { \"name\" : \"/hello\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"Group B\" } ]"));
         context.stop();
     }
 

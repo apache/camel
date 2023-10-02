@@ -99,6 +99,11 @@ public final class MultiCompile {
             }
         });
 
+        // only compile if there is any files to compile
+        if (files.isEmpty()) {
+            return result;
+        }
+
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
         try {

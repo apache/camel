@@ -95,6 +95,9 @@ public class PubSubApiClient extends ServiceSupport {
     private ManagedChannel channel;
     private boolean usePlainTextConnection = false;
 
+    private ReplayPreset initialReplayPreset;
+    private String initialReplayId;
+
     public PubSubApiClient(SalesforceSession session, SalesforceLoginConfig loginConfig, String pubSubHost,
                            int pubSubPort, long backoffIncrement, long maxBackoff) {
         this.session = session;
@@ -138,6 +141,8 @@ public class PubSubApiClient extends ServiceSupport {
 
     public void subscribe(PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId) {
         LOG.error("Starting subscribe {}", consumer.getTopic());
+        this.initialReplayPreset = replayPreset;
+        this.initialReplayId = initialReplayId;
         if (replayPreset == ReplayPreset.CUSTOM && initialReplayId == null) {
             throw new RuntimeException("initialReplayId is required for ReplayPreset.CUSTOM");
         }
@@ -335,12 +340,19 @@ public class PubSubApiClient extends ServiceSupport {
                 LOG.error("An unexpected error occurred.", throwable);
             }
             LOG.debug("Attempting subscribe after error");
-            if (replayId == null) {
-                LOG.warn("Not re-subscribing after error because replayId is null. Topic: {}",
-                        consumer.getTopic());
-                return;
+            resubscribeOnError();
+        }
+
+        private void resubscribeOnError() {
+            if (replayId != null) {
+                subscribe(consumer, ReplayPreset.CUSTOM, replayId);
+            } else {
+                if (initialReplayPreset == ReplayPreset.CUSTOM) {
+                    subscribe(consumer, initialReplayPreset, initialReplayId);
+                } else {
+                    subscribe(consumer, initialReplayPreset, null);
+                }
             }
-            subscribe(consumer, ReplayPreset.CUSTOM, replayId);
         }
 
         @Override

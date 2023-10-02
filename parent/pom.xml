@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>4.0.1-SNAPSHOT</version>
+        <version>4.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -176,7 +176,7 @@
         <google-api-services-sheets-version>v4-rev20230526-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20230612-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.34.1</google-oauth-client-version>
-        <google-cloud-bom-version>26.21.0</google-cloud-bom-version>
+        <google-cloud-bom-version>26.23.0</google-cloud-bom-version>
         <google-cloud-functions-bom-version>2.24.0</google-cloud-functions-bom-version>
         <google-cloud-secretmanager-bom-version>2.22.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>23.0.1</graaljs-version>
@@ -339,7 +339,7 @@
         <micrometer-tracing-version>1.1.4</micrometer-tracing-version>
         <microprofile-config-version>3.0.3</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
-        <mina-version>2.2.2</mina-version>
+        <mina-version>2.2.3</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.4</minio-version>
@@ -381,7 +381,7 @@
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.7.4</picocli-version>
         <plc4x-version>0.10.0</plc4x-version>
-        <pooled-jms-version>3.1.0</pooled-jms-version>
+        <pooled-jms-version>3.1.3</pooled-jms-version>
         <properties-maven-plugin-version>1.1.0</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.23.4</protobuf-version>
@@ -430,8 +430,8 @@
         <spring-vault-core-version>3.0.4</spring-vault-core-version>
         <spring-version>6.0.11</spring-version>
         <spring-rabbitmq-version>3.0.7</spring-rabbitmq-version>
-        <spring-security-version>6.1.3</spring-security-version>
-        <spring-ws-version>4.0.5</spring-ws-version>
+        <spring-security-version>6.1.4</spring-security-version>
+        <spring-ws-version>4.0.6</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>

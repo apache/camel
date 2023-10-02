@@ -31,11 +31,10 @@ import org.springframework.amqp.core.MessageProperties;
 public class DefaultMessagePropertiesConverter implements MessagePropertiesConverter {
 
     private final CamelContext camelContext;
-    private final HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy;
 
-    public DefaultMessagePropertiesConverter(CamelContext camelContext, HeaderFilterStrategy headerFilterStrategy) {
+    public DefaultMessagePropertiesConverter(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     @Override
@@ -179,6 +178,11 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
         }
 
         return answer;
+    }
+
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     private void appendOutputHeader(MessageProperties answer, String headerName, Object headerValue, Exchange ex) {
