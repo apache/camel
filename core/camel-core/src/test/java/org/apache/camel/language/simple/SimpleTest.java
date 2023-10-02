@@ -1976,13 +1976,13 @@ public class SimpleTest extends LanguageTestSupport {
 
         StringBuilder expectedJson = new StringBuilder();
         expectedJson.append("{");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\"firstName\": \"foo\",");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\"lastName\": \"bar\"");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("}");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
 
         exchange.getIn().setBody("{\"firstName\": \"foo\", \"lastName\": \"bar\"}");
         assertExpression("${prettyBody}", expectedJson.toString());
@@ -1991,25 +1991,25 @@ public class SimpleTest extends LanguageTestSupport {
 
         expectedJson = new StringBuilder();
         expectedJson.append("[");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t{");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\t\"firstName\": \"foo\",");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\t\"lastName\": \"bar\"");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t},");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t{");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\t\"firstName\": \"foo\",");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\t\"lastName\": \"bar\"");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t}");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("]");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
 
         exchange.getIn()
                 .setBody("[{\"firstName\": \"foo\", \"lastName\": \"bar\"},{\"firstName\": \"foo\", \"lastName\": \"bar\"}]");
@@ -2023,19 +2023,19 @@ public class SimpleTest extends LanguageTestSupport {
     public void testXMLPrettyPrint() throws Exception {
         StringBuilder expectedXml = new StringBuilder();
         expectedXml.append("<person>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("  <firstName>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("    foo");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("  </firstName>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("  <lastName>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("    bar");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("  </lastName>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("</person>");
 
         exchange.getIn().setBody("<person><firstName>foo</firstName><lastName>bar</lastName></person>");
