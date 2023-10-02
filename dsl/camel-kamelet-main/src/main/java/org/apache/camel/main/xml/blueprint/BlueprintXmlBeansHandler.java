@@ -175,12 +175,31 @@ public class BlueprintXmlBeansHandler {
                 String key = XmlHelper.getAttribute(child, "name");
                 String val = XmlHelper.getAttribute(child, "value");
                 String ref = XmlHelper.getAttribute(child, "ref");
-
-                // TODO: List/Map properties
                 if (key != null && val != null) {
                     properties.put(key, extractValue(camelContext, val, false));
                 } else if (key != null && ref != null) {
                     properties.put(key, extractValue(camelContext, "#bean:" + ref, false));
+                }
+                for (Node n : getChildNodes(child, "list")) {
+                    int j = 0;
+                    for (Node v : getChildNodes(n, "value")) {
+                        val = v.getTextContent();
+                        if (key != null && val != null) {
+                            String k = key + "[" + j + "]";
+                            properties.put(k, extractValue(camelContext, val, false));
+                        }
+                        j++;
+                    }
+                }
+                for (Node n : getChildNodes(child, "map")) {
+                    for (Node v : getChildNodes(n, "entry")) {
+                        String k = XmlHelper.getAttribute(v, "key");
+                        val = XmlHelper.getAttribute(v, "value");
+                        if (key != null && k != null && val != null) {
+                            k = key + "[" + k + "]";
+                            properties.put(k, extractValue(camelContext, val, false));
+                        }
+                    }
                 }
             }
         }
@@ -189,6 +208,18 @@ public class BlueprintXmlBeansHandler {
         }
 
         return rrd;
+    }
+
+    private static List<Node> getChildNodes(Node node, String name) {
+        List<Node> answer = new ArrayList<>();
+        NodeList list = node.getChildNodes();
+        for (int j = 0; j < list.getLength(); j++) {
+            Node entry = list.item(j);
+            if (name.equals(entry.getNodeName())) {
+                answer.add(entry);
+            }
+        }
+        return answer;
     }
 
     private void discoverBeans(CamelContext camelContext, String fileName, Document dom) {
