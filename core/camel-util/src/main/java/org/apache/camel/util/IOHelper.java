@@ -476,6 +476,34 @@ public final class IOHelper {
     }
 
     /**
+     * Loads the entire stream into memory as a String and returns the given line number.
+     * <p/>
+     * Warning, don't use for crazy big streams :)
+     */
+    public static String loadTextLine(InputStream in, int lineNumber) throws IOException {
+        int i = 0;
+        InputStreamReader isr = new InputStreamReader(in);
+        try {
+            BufferedReader reader = buffered(isr);
+            while (true) {
+                String line = reader.readLine();
+                if (line != null) {
+                    i++;
+                    if (i >= lineNumber) {
+                        return line;
+                    }
+                } else {
+                    break;
+                }
+            }
+        } finally {
+            close(isr, in);
+        }
+
+        return null;
+    }
+
+    /**
      * Appends the text to the file.
      */
     public static void appendText(String text, File file) throws IOException {
