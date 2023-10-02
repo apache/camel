@@ -33,11 +33,6 @@
     <name>Camel :: Cassandra CQL</name>
     <description>Cassandra CQL3 support</description>
 
-    <properties>
-        <!-- Cassandra is not available on this platform -->
-        <skipITs.s390x>true</skipITs.s390x>
-    </properties>
-
     <dependencies>
 
         <dependency>
