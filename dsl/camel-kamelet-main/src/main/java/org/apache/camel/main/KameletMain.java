@@ -62,6 +62,7 @@ import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
 import org.apache.camel.main.xml.blueprint.BlueprintXmlBeansHandler;
 import org.apache.camel.main.xml.spring.SpringXmlBeansHandler;
+import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
@@ -455,6 +456,13 @@ public class KameletMain extends MainCommandLineSupport {
         boolean ignoreLoading = "true".equals(getInitialProperties().get("camel.jbang.ignoreLoadingError"));
         if (ignoreLoading) {
             configure().withRoutesCollectorIgnoreLoadingError(true);
+        }
+        // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
+        boolean transform = "true".equals(getInitialProperties().get("camel.jbang.transform"));
+        if (transform) {
+            // we just want to transform, so disable all processors
+            answer.getGlobalOptions().put(ProcessorReifier.DISABLE_ALL_PROCESSORS, "true");
+            blueprintXmlBeansHandler.setTransform(true);
         }
         if (silent) {
             // silent should not include http server

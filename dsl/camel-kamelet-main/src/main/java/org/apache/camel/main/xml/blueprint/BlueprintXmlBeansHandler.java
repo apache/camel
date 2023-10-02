@@ -59,6 +59,15 @@ public class BlueprintXmlBeansHandler {
     private final Map<String, Resource> resources = new LinkedHashMap<>();
     private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
     private final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
+    private boolean transform;
+
+    public boolean isTransform() {
+        return transform;
+    }
+
+    public void setTransform(boolean transform) {
+        this.transform = transform;
+    }
 
     /**
      * Parses the XML documents and discovers blueprint beans, which will be created manually via Camel.
@@ -90,15 +99,21 @@ public class BlueprintXmlBeansHandler {
             String id = entry.getKey();
             Node n = entry.getValue();
             RegistryBeanDefinition def = createBeanModel(camelContext, id, n);
-            LOG.debug("Creating bean: {}", def.getName());
-            registerBeanDefinition(camelContext, def, true);
+            if (transform) {
+                // transform mode should only discover and remember bean in model
+                LOG.debug("Discovered bean: {}", def.getName());
+                addBeanToCamelModel(camelContext, def.getName(), def);
+            } else {
+                LOG.debug("Creating bean: {}", def.getName());
+                registerAndCreateBean(camelContext, def, true);
+            }
         }
 
         if (!delayedRegistrations.isEmpty()) {
             // some of the beans were not available yet, so we have to try register them now
             for (RegistryBeanDefinition def : delayedRegistrations) {
                 LOG.debug("Creating bean (2nd-try): {}", def.getName());
-                registerBeanDefinition(camelContext, def, false);
+                registerAndCreateBean(camelContext, def, false);
             }
             delayedRegistrations.clear();
         }
@@ -215,7 +230,7 @@ public class BlueprintXmlBeansHandler {
     /**
      * Try to instantiate bean from the definition.
      */
-    private void registerBeanDefinition(CamelContext camelContext, RegistryBeanDefinition def, boolean delayIfFailed) {
+    private void registerAndCreateBean(CamelContext camelContext, RegistryBeanDefinition def, boolean delayIfFailed) {
         String type = def.getType();
         String name = def.getName();
         if (name == null || name.isBlank()) {
