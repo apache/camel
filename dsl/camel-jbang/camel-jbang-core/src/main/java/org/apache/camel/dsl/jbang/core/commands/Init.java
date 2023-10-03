@@ -38,6 +38,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import static org.apache.camel.dsl.jbang.core.commands.Run.WORK_DIR;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
@@ -74,6 +75,16 @@ public class Init extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        int code = execute();
+        if (code == 0) {
+            // In case of successful execution, we create the working directory if it does not exist to help the tooling
+            // know that it is a Camel JBang project
+            createWorkingDirectoryIfAbsent();
+        }
+        return code;
+    }
+
+    private int execute() throws Exception {
         // is the file referring to an existing file on github/gist
         // then we should download the file to local for use
         if (file.startsWith("https://github.com/")) {
@@ -157,6 +168,13 @@ public class Init extends CamelCommand {
         }
         IOHelper.writeText(content, new FileOutputStream(target, false));
         return 0;
+    }
+
+    private void createWorkingDirectoryIfAbsent() {
+        File work = new File(WORK_DIR);
+        if (!work.exists()) {
+            work.mkdirs();
+        }
     }
 
     private int downloadFromGithub() throws Exception {
