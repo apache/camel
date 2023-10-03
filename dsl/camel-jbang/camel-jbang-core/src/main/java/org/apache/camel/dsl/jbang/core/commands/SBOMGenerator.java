@@ -27,22 +27,43 @@ import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "sbom",
-                     description = "Generate a CycloneDX SBOM for a specific project")
+                     description = "Generate a CycloneDX or SPDX SBOM for a specific project")
 public class SBOMGenerator extends Export {
 
     protected static final String EXPORT_DIR = ".camel-jbang/export";
 
+    protected static final String CYCLONEDX_FORMAT = "cyclonedx";
+
+    protected static final String SPDX_FORMAT = "spdx";
+
+    protected static final String SBOM_JSON_FORMAT = "json";
+
+    protected static final String SBOM_XML_FORMAT = "xml";
+
     @CommandLine.Option(names = { "--output-directory" }, description = "Directory where the SBOM will be saved",
                         defaultValue = ".")
-    protected String outputDirectory;
+    protected String outputDirectory = ".";
 
     @CommandLine.Option(names = { "--output-name" }, description = "Output name of the SBOM file",
                         defaultValue = "sbom")
-    protected String outputName;
+    protected String outputName = "sbom";
 
-    @CommandLine.Option(names = { "--plugin-version" }, description = "The CycloneDX Maven Plugin version",
+    @CommandLine.Option(names = { "--cyclonedx-plugin-version" }, description = "The CycloneDX Maven Plugin version",
                         defaultValue = "2.7.9")
-    protected String pluginVersion = "2.7.9";
+    protected String cyclonedxPluginVersion = "2.7.9";
+
+    @CommandLine.Option(names = { "--spdx-plugin-version" }, description = "The SPDX Maven Plugin version",
+                        defaultValue = "0.7.0")
+    protected String spdxPluginVersion = "0.7.0";
+
+    @CommandLine.Option(names = { "--sbom-format" }, description = "The SBOM format, possible values are cyclonedx or spdx",
+                        defaultValue = CYCLONEDX_FORMAT)
+    protected String sbomFormat = CYCLONEDX_FORMAT;
+
+    @CommandLine.Option(names = { "--sbom-output-format" },
+                        description = "The SBOM output format, possible values are json or xml",
+                        defaultValue = SBOM_JSON_FORMAT)
+    protected String sbomOutputFormat = SBOM_JSON_FORMAT;
 
     public SBOMGenerator(CamelJBangMain main) {
         super(main);
@@ -59,31 +80,64 @@ public class SBOMGenerator extends Export {
         Integer answer = doExport();
         if (answer == 0) {
             File buildDir = new File(EXPORT_DIR);
-            String outputDirectoryParameter = "-DoutputDirectory=";
-            if (Paths.get(outputDirectory).isAbsolute()) {
-                outputDirectoryParameter += outputDirectory;
-            } else {
-                outputDirectoryParameter += "../../" + outputDirectory;
-            }
             String mvnProgramCall;
             if (FileUtil.isWindows()) {
                 mvnProgramCall = "cmd /c mvn";
             } else {
                 mvnProgramCall = "mvn";
             }
-            Process p = Runtime.getRuntime()
-                    .exec(mvnProgramCall + " org.cyclonedx:cyclonedx-maven-plugin:" + pluginVersion + ":makeAggregateBom "
-                          + outputDirectoryParameter
-                          + " -DoutputName="
-                          + outputName,
-                            null,
-                            buildDir);
-            boolean done = p.waitFor(60, TimeUnit.SECONDS);
-            if (!done) {
-                answer = 1;
-            }
-            if (p.exitValue() != 0) {
-                answer = p.exitValue();
+            boolean done;
+            if (sbomFormat.equalsIgnoreCase(CYCLONEDX_FORMAT)) {
+                String outputDirectoryParameter = "-DoutputDirectory=";
+                if (Paths.get(outputDirectory).isAbsolute()) {
+                    outputDirectoryParameter += outputDirectory;
+                } else {
+                    outputDirectoryParameter += "../../" + outputDirectory;
+                }
+                Process p = Runtime.getRuntime()
+                        .exec(mvnProgramCall + " org.cyclonedx:cyclonedx-maven-plugin:" + cyclonedxPluginVersion
+                              + ":makeAggregateBom "
+                              + outputDirectoryParameter
+                              + " -DoutputName="
+                              + outputName
+                              + " -DoutputFormat="
+                              + sbomOutputFormat,
+                                null,
+                                buildDir);
+                done = p.waitFor(60, TimeUnit.SECONDS);
+                if (!done) {
+                    answer = 1;
+                }
+                if (p.exitValue() != 0) {
+                    answer = p.exitValue();
+                }
+            } else if (sbomFormat.equalsIgnoreCase(SPDX_FORMAT)) {
+                String outputDirectoryParameter = null;
+                String outputFormat = null;
+                if (Paths.get(outputDirectory).isAbsolute()) {
+                    outputDirectoryParameter = outputDirectory;
+                } else {
+                    outputDirectoryParameter = "../../" + outputDirectory;
+                }
+                if (sbomOutputFormat.equalsIgnoreCase(SBOM_JSON_FORMAT)) {
+                    outputFormat = "JSON";
+                } else if (sbomOutputFormat.equalsIgnoreCase(SBOM_XML_FORMAT)) {
+                    outputFormat = "RDF/XML";
+                }
+                Process p = Runtime.getRuntime()
+                        .exec(mvnProgramCall + " org.spdx:spdx-maven-plugin:" + spdxPluginVersion
+                              + ":createSPDX -DspdxFileName="
+                              + outputDirectoryParameter + File.separator + outputName + "." + sbomOutputFormat
+                              + " -DoutputFormat=" + outputFormat,
+                                null,
+                                buildDir);
+                done = p.waitFor(60, TimeUnit.SECONDS);
+                if (!done) {
+                    answer = 1;
+                }
+                if (p.exitValue() != 0) {
+                    answer = p.exitValue();
+                }
             }
             // cleanup dir after complete
             FileUtil.removeDir(buildDir);
