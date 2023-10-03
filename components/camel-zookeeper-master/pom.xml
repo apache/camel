@@ -34,7 +34,6 @@
 
     <properties>
         <!-- Zookeeper container is not available on this platform -->
-        <skipITs.s390x>true</skipITs.s390x>
         <skipITs.aarch64>true</skipITs.aarch64>
     </properties>
 
