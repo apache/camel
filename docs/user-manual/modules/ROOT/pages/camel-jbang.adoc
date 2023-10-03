@@ -185,6 +185,31 @@ camel run *
 
 TIP: The run goal can also detect files that are `properties`, such as `application.properties`.
 
+=== Running a Maven or Gradle based project
+
+Camel JBang is intended for flat-file based projects, where you run small integrations.
+However, Camel JBang may be used as a tool for migrating existing Maven or Gradle based projects.
+To make the migration easier, then JBang can do _best effort_ to run, export, or transform these projects.
+
+For example if you have a Maven based project, you can execute
+
+[source,bash]
+----
+camel run pom.xml
+----
+
+or for a Gradle project
+
+[source,bash]
+----
+camel run build.gradle
+----
+
+Camel JBang will then scan in `src/main/java` and `src/main/resources` for files to include (recursive).
+
+NOTE: Using `camel run pom.xml` is not intended as a fully compatible way of running an existing Maven based project.
+
+
 === Running Route from input parameter
 
 For very small Java routes then it is possible to provide the route as CLI argument, as shown below:

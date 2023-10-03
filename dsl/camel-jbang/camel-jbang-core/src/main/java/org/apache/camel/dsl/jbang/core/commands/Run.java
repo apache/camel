@@ -44,6 +44,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -515,6 +516,11 @@ public class Run extends CamelCommand {
             files.add(OPENAPI_GENERATED_FILE);
         }
 
+        // if we only run pom.xml/build.gradle then auto discover from the Maven/Gradle based project
+        if (files.size() == 1 && ("pom.xml".equals(files.get(0)) || "build.gradle".equals(files.get(0)))) {
+            files = scanMavenOrGradleProject();
+        }
+
         for (String file : files) {
             if (file.startsWith("clipboard") && !(new File(file).exists())) {
                 file = loadFromClipboard(file);
@@ -706,6 +712,28 @@ public class Run extends CamelCommand {
         } else {
             // run default in current JVM with same camel version
             return runKameletMain(main);
+        }
+    }
+
+    private static List<String> scanMavenOrGradleProject() {
+        List<String> answer = new ArrayList<>();
+        // scan as maven based project
+        Stream<Path> s = Stream.concat(walk(Path.of("src/main/java")), walk(Path.of("src/main/resources")));
+        s.filter(p -> p.toFile().isFile())
+                .map(p -> p.toFile().getPath())
+                .forEach(answer::add);
+        return answer;
+    }
+
+    public static Stream<Path> walk(Path dir) {
+        try {
+            if (Files.isDirectory(dir)) {
+                return Files.walk(dir);
+            } else {
+                return Stream.empty();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -1157,6 +1185,9 @@ public class Run extends CamelCommand {
     }
 
     private boolean skipFile(String name) {
+        // flatten file
+        name = FileUtil.stripPath(name);
+
         if (OPENAPI_GENERATED_FILE.equals(name)) {
             return false;
         }
@@ -1171,6 +1202,9 @@ public class Run extends CamelCommand {
         }
         if ("docker-compose.yml".equals(name) || "docker-compose.yaml".equals(name) || "compose.yml".equals(name)
                 || "compose.yaml".equals(name)) {
+            return true;
+        }
+        if (name.equals("NOTICE.txt") || name.equals("LICENSE.txt")) {
             return true;
         }
 
