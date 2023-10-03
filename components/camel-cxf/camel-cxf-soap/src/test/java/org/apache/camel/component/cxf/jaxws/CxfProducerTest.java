@@ -136,17 +136,17 @@ public class CxfProducerTest {
     public void testInvokingAWrongServer() throws Exception {
         Exchange reply = sendSimpleMessage(getWrongEndpointUri());
         assertNotNull(reply.getException(), "We should get the exception here");
-        assertTrue(reply.getException() instanceof ConnectException);
+        assertTrue(reply.getException().getCause() instanceof ConnectException);
 
         //Test the data format PAYLOAD
         reply = sendSimpleMessageWithPayloadMessage(getWrongEndpointUri() + "&dataFormat=PAYLOAD");
         assertNotNull(reply.getException(), "We should get the exception here");
-        assertTrue(reply.getException() instanceof ConnectException);
+        assertTrue(reply.getException().getCause() instanceof ConnectException);
 
         //Test the data format MESSAGE
         reply = sendSimpleMessageWithRawMessage(getWrongEndpointUri() + "&dataFormat=RAW");
         assertNotNull(reply.getException(), "We should get the exception here");
-        assertTrue(reply.getException() instanceof ConnectException);
+        assertTrue(reply.getException().getCause() instanceof ConnectException);
     }
 
     @Test
