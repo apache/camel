@@ -73,7 +73,7 @@ public class SslTest extends CamelSpringTestSupport {
     public void testInvokingNoTrustRoute() throws Exception {
         Exchange reply = sendJaxWsMessage("direct:noTrust");
         assertTrue(reply.isFailed(), "We expect the exception here");
-        Throwable e = reply.getException();
+        Throwable e = reply.getException().getCause();
         assertEquals("javax.net.ssl.SSLHandshakeException", e.getClass().getCanonicalName());
     }
 
