@@ -57,6 +57,11 @@ public class ExtraClassesClassLoader extends ClassLoader {
             String simple = StringHelper.afterLast(name, ".");
             if (simple != null) {
                 bytes = classes.get(simple);
+                // okay we now the real name, so move to FQN
+                if (bytes != null) {
+                    classes.put(name, bytes);
+                    classes.remove(simple);
+                }
             }
         }
 
