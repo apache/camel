@@ -59,6 +59,7 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
+import org.apache.camel.main.util.ExtraClassesClassLoader;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
 import org.apache.camel.main.xml.blueprint.BlueprintXmlBeansHandler;
 import org.apache.camel.main.xml.spring.SpringXmlBeansHandler;
@@ -601,6 +602,7 @@ public class KameletMain extends MainCommandLineSupport {
         if (classLoader == null) {
             // jars need to be added to dependency downloader classloader
             List<String> jars = new ArrayList<>();
+            List<String> classes = new ArrayList<>();
             // create class loader (that are download capable) only once
             // any additional files to add to classpath
             ClassLoader parentCL = KameletMain.class.getClassLoader();
@@ -611,9 +613,15 @@ public class KameletMain extends MainCommandLineSupport {
                 for (String s : arr) {
                     if (s.endsWith(".jar")) {
                         jars.add(s);
+                    } else if (s.endsWith(".class")) {
+                        classes.add(s);
                     } else {
                         files.add(s);
                     }
+                }
+                if (!classes.isEmpty()) {
+                    parentCL = new ExtraClassesClassLoader(parentCL, classes);
+                    LOG.info("Additional classes added to classpath: {}", String.join(", ", classes));
                 }
                 if (!files.isEmpty()) {
                     parentCL = new ExtraFilesClassLoader(parentCL, files);
