@@ -24,6 +24,9 @@ import java.util.Map;
 
 import org.apache.camel.util.StringHelper;
 
+/**
+ * Classloader used to load the extra .class that were present in the CLI arguments
+ */
 public class ExtraClassesClassLoader extends ClassLoader {
 
     private final Map<String, byte[]> classes = new HashMap<>();
