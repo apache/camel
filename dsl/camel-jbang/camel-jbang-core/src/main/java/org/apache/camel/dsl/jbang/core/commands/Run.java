@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -70,6 +71,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -447,17 +451,6 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.backlogTracing", "true");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
-        // merge existing dependencies with --deps
-        String deps = RuntimeUtil.getDependencies(profileProperties);
-        if (deps.isBlank()) {
-            deps = dependencies != null ? dependencies : "";
-        } else if (dependencies != null && !dependencies.equals(deps)) {
-            deps += "," + dependencies;
-        }
-        if (!deps.isBlank()) {
-            main.addInitialProperty("camel.jbang.dependencies", deps);
-            writeSettings("camel.jbang.dependencies", deps);
-        }
 
         // command line arguments
         if (property != null) {
@@ -518,7 +511,20 @@ public class Run extends CamelCommand {
 
         // if we only run pom.xml/build.gradle then auto discover from the Maven/Gradle based project
         if (files.size() == 1 && ("pom.xml".equals(files.get(0)) || "build.gradle".equals(files.get(0)))) {
+            // find source files
             files = scanMavenOrGradleProject();
+            // include extra dependencies from pom.xml
+            List<String> deps = scanMavenDependenciesFromPom();
+            for (String d : deps) {
+                if (dependencies == null) {
+                    dependencies = "";
+                }
+                if (dependencies.isBlank()) {
+                    dependencies = d;
+                } else {
+                    dependencies += "," + d;
+                }
+            }
         }
 
         for (String file : files) {
@@ -678,6 +684,18 @@ public class Run extends CamelCommand {
             writeSettings("camel.component.properties.location", loc);
         }
 
+        // merge existing dependencies with --deps
+        String deps = RuntimeUtil.getDependencies(profileProperties);
+        if (deps.isBlank()) {
+            deps = dependencies != null ? dependencies : "";
+        } else if (dependencies != null && !dependencies.equals(deps)) {
+            deps += "," + dependencies;
+        }
+        if (!deps.isBlank()) {
+            main.addInitialProperty("camel.jbang.dependencies", deps);
+            writeSettings("camel.jbang.dependencies", deps);
+        }
+
         // if we have a specific camel version then make sure we really need to switch
         if (camelVersion != null) {
             CamelCatalog catalog = new DefaultCamelCatalog();
@@ -715,8 +733,72 @@ public class Run extends CamelCommand {
         }
     }
 
-    private static List<String> scanMavenOrGradleProject() {
+    private static String findMavenProperty(File f, String placeholder) {
+        if (f.exists() && f.isFile()) {
+            // find additional dependencies form pom.xml
+            MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+            try {
+                Model model = mavenReader.read(new FileReader(f));
+                model.setPomFile(f);
+                String p = model.getProperties().getProperty(placeholder);
+                if (p != null) {
+                    return p;
+                } else if (model.getParent() != null) {
+                    p = model.getParent().getRelativePath();
+                    if (p != null) {
+                        String dir = FileUtil.onlyPath(f.getAbsolutePath());
+                        String parent = FileUtil.compactPath(dir + File.separatorChar + p);
+                        return findMavenProperty(new File(parent), placeholder);
+                    }
+                }
+            } catch (Exception ex) {
+                // ignore
+            }
+        }
+        return null;
+    }
+
+    private List<String> scanMavenDependenciesFromPom() {
         List<String> answer = new ArrayList<>();
+
+        File f = new File("pom.xml");
+        if (f.exists() && f.isFile()) {
+            // find additional dependencies form pom.xml
+            MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+            try {
+                Model model = mavenReader.read(new FileReader(f));
+                model.setPomFile(f);
+
+                for (Dependency d : model.getDependencies()) {
+                    String g = d.getGroupId();
+                    String scope = d.getScope();
+                    boolean accept = scope == null || "compile".equals(scope);
+                    // camel dependencies is automatic resolved
+                    if (accept && !g.startsWith("org.apache.camel")) {
+                        String v = d.getVersion();
+                        if (v != null && v.startsWith("${") && v.endsWith("}")) {
+                            // version uses placeholder, so try to find them
+                            v = v.substring(2, v.length() - 1);
+                            v = findMavenProperty(f, v);
+                        }
+                        if (v != null) {
+                            String gav = "mvn:" + g + ":" + d.getArtifactId() + ":" + v;
+                            if (!answer.contains(gav)) {
+                                answer.add(gav);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                // do something better here
+            }
+        }
+        return answer;
+    }
+
+    private List<String> scanMavenOrGradleProject() {
+        List<String> answer = new ArrayList<>();
+
         // scan as maven based project
         Stream<Path> s = Stream.concat(walk(Path.of("src/main/java")), walk(Path.of("src/main/resources")));
         s.filter(p -> p.toFile().isFile())
