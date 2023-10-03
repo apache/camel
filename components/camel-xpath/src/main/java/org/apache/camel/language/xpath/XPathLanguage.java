@@ -35,7 +35,7 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
     private QName resultQName;
     private Class<?> documentType;
     private XPathFactory xpathFactory;
-    private Boolean useSaxon;
+    private Boolean saxon;
     private String objectModelUri;
     private Boolean threadSafety;
     private Boolean logNamespaces;
@@ -97,12 +97,22 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         this.xpathFactory = xpathFactory;
     }
 
+    @Deprecated
     public void setUseSaxon(Boolean useSaxon) {
-        this.useSaxon = useSaxon;
+        setSaxon(useSaxon);
     }
 
+    @Deprecated
     public Boolean getUseSaxon() {
-        return useSaxon;
+        return getSaxon();
+    }
+
+    public Boolean getSaxon() {
+        return saxon;
+    }
+
+    public void setSaxon(Boolean saxon) {
+        this.saxon = saxon;
     }
 
     public String getObjectModelUri() {
@@ -150,7 +160,7 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         if (clazz != null) {
             builder.setResultType(clazz);
         }
-        Boolean bool = property(Boolean.class, properties, 3, useSaxon);
+        Boolean bool = property(Boolean.class, properties, 3, saxon);
         if (bool != null) {
             builder.setUseSaxon(bool);
             if (bool) {
@@ -215,6 +225,9 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
             case "usesaxon":
             case "useSaxon":
                 setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            case "saxon":
+                setSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
                 return true;
             case "objectmodeluri":
             case "objectModelUri":
