@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -171,11 +172,13 @@
                 <executions>
                     <execution>
                         <id>enforce-maven-version</id>
-                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>none
+                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
                     </execution>
                     <execution>
                         <id>enforce-java-version</id>
-                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>none
+                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
                     </execution>
                 </executions>
             </plugin>
@@ -185,7 +188,8 @@
                 <executions>
                     <execution>
                         <id>process-resource-bundles</id>
-                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>none
+                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
                     </execution>
                 </executions>
             </plugin>
@@ -195,7 +199,8 @@
                 <executions>
                     <execution>
                         <id>default-test</id>
-                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>none
+                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
                     </execution>
                 </executions>
             </plugin>
@@ -226,101 +231,107 @@
                     <version>${license-maven-plugin-version}</version>
                     <configuration>
                         <failIfUnknown>true</failIfUnknown>
-                        <header>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header.txt</header>
-                        <excludes>
-                            <exclude>release.properties</exclude>
-                            <exclude>**/pom.xml.tag</exclude>
-                            <exclude>**/pom.xml.releaseBackup</exclude>
-                            <exclude>**/*.MockMaker</exclude>
-                            <exclude>**/*.adm</exclude>
-                            <exclude>**/*.adoc.template</exclude>
-                            <exclude>**/*.adoc</exclude>
-                            <exclude>**/*.arff</exclude>
-                            <exclude>**/*.asn1</exclude>
-                            <exclude>**/*.avpr</exclude>
-                            <exclude>**/*.avsc</exclude>
-                            <exclude>**/*.bin</exclude>
-                            <exclude>**/*.cat</exclude>
-                            <exclude>**/*.cer</exclude>
-                            <exclude>**/*.chtml</exclude>
-                            <exclude>**/*.csv</exclude>
-                            <exclude>**/*.gpg</exclude>
-                            <exclude>**/*.graphql*</exclude>
-                            <exclude>**/*.ics</exclude>
-                            <exclude>**/*.joor</exclude>
-                            <exclude>**/*.jpeg</exclude>
-                            <exclude>**/*.jslt</exclude>
-                            <exclude>**/*.key</exclude>
-                            <exclude>**/*.keystore</exclude>
-                            <exclude>**/*.model</exclude>
-                            <exclude>**/*.mp3</exclude>
-                            <exclude>**/*.mp4</exclude>
-                            <exclude>**/*.p12</exclude>
-                            <exclude>**/*.params</exclude>
-                            <exclude>**/*.parquet</exclude>
-                            <exclude>**/*.pem</exclude>
-                            <exclude>**/*.pfx</exclude>
-                            <exclude>**/*.pgp</exclude>
-                            <exclude>**/*.tm</exclude>
-                            <exclude>**/*.truststore</exclude>
-                            <exclude>**/*.tt</exclude>
-                            <exclude>**/*.txt</exclude>
-                            <exclude>**/*.webp</exclude>
-                            <exclude>**/*.xquery</exclude>
-                            <exclude>**/*utf16.ftl</exclude>
-                            <exclude>**/*utf16.vm</exclude>
-                            <exclude>**/.eslint*</exclude>
-                            <exclude>**/.pnp*</exclude>
-                            <exclude>**/.yarn/**</exclude>
-                            <exclude>**/.yarnrc.yml</exclude>
-                            <exclude>**/CamelJBang.java</exclude>
-                            <exclude>**/LICENSE.txt</exclude>
-                            <exclude>**/LICENSE</exclude>
-                            <exclude>**/META-INF/cxf/**</exclude>
-                            <exclude>**/META-INF/groovy/**</exclude>
-                            <exclude>**/META-INF/kotlin/**</exclude>
-                            <exclude>**/META-INF/persistence*.xsd</exclude>
-                            <exclude>**/MySecondBarConfigurer.java</exclude>
-                            <exclude>**/MySecondFooConfigurer.java</exclude>
-                            <exclude>**/NOTICE.txt</exclude>
-                            <exclude>**/NOTICE</exclude>
-                            <exclude>**/README</exclude>
-                            <exclude>**/TestImpl*</exclude>
-                            <exclude>**/archetype-resources/**</exclude>
-                            <exclude>**/ca-openssl.cnf</exclude>
-                            <exclude>**/cacerts</exclude>
-                            <exclude>**/cxf.extension</exclude>
-                            <exclude>**/dhis.conf</exclude>
-                            <exclude>**/driver.conf</exclude>
-                            <exclude>**/expressions.spec</exclude>
-                            <exclude>**/git.config</exclude>
-                            <exclude>**/id_file</exclude>
-                            <exclude>**/id_rsa</exclude>
-                            <exclude>**/ignite/**</exclude>
-                            <exclude>**/it/resources/*.connectedApp</exclude>
-                            <exclude>**/it/resources/salesforce/**</exclude>
-                            <exclude>**/javamail.default.*</exclude>
-                            <exclude>**/kafka*.config</exclude>
-                            <exclude>**/known_hosts*</exclude>
-                            <exclude>**/leveldb.dat/**</exclude>
-                            <exclude>**/mosquitto.conf</exclude>
-                            <exclude>**/myjaas.config</exclude>
-                            <exclude>**/node_modules/**</exclude>
-                            <exclude>**/salesforce/dto/generated/**</exclude>
-                            <exclude>**/src/generated/**</exclude>
-                            <exclude>**/src/generated/**</exclude>
-                            <exclude>**/src/main/resources/templates/*.tmpl</exclude>
-                            <exclude>**/src/test/resources/generated/**</exclude>
-                            <exclude>**/test-kerb5.conf</exclude>
-                            <exclude>**/yarn.lock</exclude>
-                            <exclude>**/zkserver*.conf</exclude>
-                            <exclude>.mvn/**</exclude>
-                            <exclude>.sdkmanrc</exclude>
-                            <exclude>KEYS</exclude>
-                            <exclude>camel-sbom/*.xml</exclude>
-                            <exclude>doap.rdf</exclude>
-                            <exclude>mvnw*</exclude>
-                        </excludes>
+                        <licenseSets>
+                            <licenseSet>
+                                <header>
+                                    ${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header.txt
+                                </header>
+                                <excludes>
+                                    <exclude>release.properties</exclude>
+                                    <exclude>**/pom.xml.tag</exclude>
+                                    <exclude>**/pom.xml.releaseBackup</exclude>
+                                    <exclude>**/*.MockMaker</exclude>
+                                    <exclude>**/*.adm</exclude>
+                                    <exclude>**/*.adoc.template</exclude>
+                                    <exclude>**/*.adoc</exclude>
+                                    <exclude>**/*.arff</exclude>
+                                    <exclude>**/*.asn1</exclude>
+                                    <exclude>**/*.avpr</exclude>
+                                    <exclude>**/*.avsc</exclude>
+                                    <exclude>**/*.bin</exclude>
+                                    <exclude>**/*.cat</exclude>
+                                    <exclude>**/*.cer</exclude>
+                                    <exclude>**/*.chtml</exclude>
+                                    <exclude>**/*.csv</exclude>
+                                    <exclude>**/*.gpg</exclude>
+                                    <exclude>**/*.graphql*</exclude>
+                                    <exclude>**/*.ics</exclude>
+                                    <exclude>**/*.joor</exclude>
+                                    <exclude>**/*.jpeg</exclude>
+                                    <exclude>**/*.jslt</exclude>
+                                    <exclude>**/*.key</exclude>
+                                    <exclude>**/*.keystore</exclude>
+                                    <exclude>**/*.model</exclude>
+                                    <exclude>**/*.mp3</exclude>
+                                    <exclude>**/*.mp4</exclude>
+                                    <exclude>**/*.p12</exclude>
+                                    <exclude>**/*.params</exclude>
+                                    <exclude>**/*.parquet</exclude>
+                                    <exclude>**/*.pem</exclude>
+                                    <exclude>**/*.pfx</exclude>
+                                    <exclude>**/*.pgp</exclude>
+                                    <exclude>**/*.tm</exclude>
+                                    <exclude>**/*.truststore</exclude>
+                                    <exclude>**/*.tt</exclude>
+                                    <exclude>**/*.txt</exclude>
+                                    <exclude>**/*.webp</exclude>
+                                    <exclude>**/*.xquery</exclude>
+                                    <exclude>**/*utf16.ftl</exclude>
+                                    <exclude>**/*utf16.vm</exclude>
+                                    <exclude>**/.eslint*</exclude>
+                                    <exclude>**/.pnp*</exclude>
+                                    <exclude>**/.yarn/**</exclude>
+                                    <exclude>**/.yarnrc.yml</exclude>
+                                    <exclude>**/CamelJBang.java</exclude>
+                                    <exclude>**/LICENSE.txt</exclude>
+                                    <exclude>**/LICENSE</exclude>
+                                    <exclude>**/META-INF/cxf/**</exclude>
+                                    <exclude>**/META-INF/groovy/**</exclude>
+                                    <exclude>**/META-INF/kotlin/**</exclude>
+                                    <exclude>**/META-INF/persistence*.xsd</exclude>
+                                    <exclude>**/MySecondBarConfigurer.java</exclude>
+                                    <exclude>**/MySecondFooConfigurer.java</exclude>
+                                    <exclude>**/NOTICE.txt</exclude>
+                                    <exclude>**/NOTICE</exclude>
+                                    <exclude>**/README</exclude>
+                                    <exclude>**/TestImpl*</exclude>
+                                    <exclude>**/archetype-resources/**</exclude>
+                                    <exclude>**/ca-openssl.cnf</exclude>
+                                    <exclude>**/cacerts</exclude>
+                                    <exclude>**/cxf.extension</exclude>
+                                    <exclude>**/dhis.conf</exclude>
+                                    <exclude>**/driver.conf</exclude>
+                                    <exclude>**/expressions.spec</exclude>
+                                    <exclude>**/git.config</exclude>
+                                    <exclude>**/id_file</exclude>
+                                    <exclude>**/id_rsa</exclude>
+                                    <exclude>**/ignite/**</exclude>
+                                    <exclude>**/it/resources/*.connectedApp</exclude>
+                                    <exclude>**/it/resources/salesforce/**</exclude>
+                                    <exclude>**/javamail.default.*</exclude>
+                                    <exclude>**/kafka*.config</exclude>
+                                    <exclude>**/known_hosts*</exclude>
+                                    <exclude>**/leveldb.dat/**</exclude>
+                                    <exclude>**/mosquitto.conf</exclude>
+                                    <exclude>**/myjaas.config</exclude>
+                                    <exclude>**/node_modules/**</exclude>
+                                    <exclude>**/salesforce/dto/generated/**</exclude>
+                                    <exclude>**/src/generated/**</exclude>
+                                    <exclude>**/src/generated/**</exclude>
+                                    <exclude>**/src/main/resources/templates/*.tmpl</exclude>
+                                    <exclude>**/src/test/resources/generated/**</exclude>
+                                    <exclude>**/test-kerb5.conf</exclude>
+                                    <exclude>**/yarn.lock</exclude>
+                                    <exclude>**/zkserver*.conf</exclude>
+                                    <exclude>.mvn/**</exclude>
+                                    <exclude>.sdkmanrc</exclude>
+                                    <exclude>KEYS</exclude>
+                                    <exclude>camel-sbom/*.xml</exclude>
+                                    <exclude>doap.rdf</exclude>
+                                    <exclude>mvnw*</exclude>
+                                </excludes>
+                            </licenseSet>
+                        </licenseSets>
                         <mapping>
                             <Adapter>CAMEL_PROPERTIES_STYLE</Adapter>
                             <conf>SCRIPT_STYLE</conf>
@@ -367,8 +378,12 @@
                             <vm>CAMEL_PROPERTIES_STYLE</vm>
                         </mapping>
                         <headerDefinitions>
-                            <headerDefinition>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/license-properties-headerdefinition.xml</headerDefinition>
-                            <headerDefinition>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/ldif-properties-headerdefinition.xml</headerDefinition>
+                            <headerDefinition>
+                                ${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/license-properties-headerdefinition.xml
+                            </headerDefinition>
+                            <headerDefinition>
+                                ${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/ldif-properties-headerdefinition.xml
+                            </headerDefinition>
                         </headerDefinitions>
                     </configuration>
                 </plugin>
@@ -490,7 +505,9 @@
                             <exclude>**/file-sig-api.txt</exclude>
                             <exclude>**/Tasks__c.java</exclude>
                             <exclude>**/*.proto</exclude>
-                            <exclude>**/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension</exclude>
+                            <exclude>
+                                **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
+                            </exclude>
                             <exclude>**/META-INF/MANIFEST.MF</exclude>
                             <exclude>**/openapi.yaml</exclude>
                             <exclude>**/ignite/work/**/*</exclude>
@@ -544,7 +561,8 @@
                             </goals>
                             <configuration>
                                 <outputDirectory>${project.build.directory}</outputDirectory>
-                                <flattenedPomFilename>${project.artifactId}-${project.version}.pom</flattenedPomFilename>
+                                <flattenedPomFilename>${project.artifactId}-${project.version}.pom
+                                </flattenedPomFilename>
                                 <updatePomFile>true</updatePomFile>
                                 <pomElements>
                                     <build>keep</build>
@@ -724,7 +742,7 @@
                                 <phase>none</phase><!-- No need to even load the plugin during releases -->
                             </execution>
                         </executions>
-                     </plugin>
+                    </plugin>
                     <plugin>
                         <groupId>com.mycila</groupId>
                         <artifactId>license-maven-plugin</artifactId>
@@ -751,24 +769,24 @@
                             </execution>
                         </executions>
                     </plugin>
-                   <plugin>
-                   <groupId>org.cyclonedx</groupId>
-                   <artifactId>cyclonedx-maven-plugin</artifactId>
-                   <version>${cyclonedx-maven-plugin-version}</version>
-                   <inherited>false</inherited>
-                   <executions>
-                       <execution>
-                           <phase>package</phase>
-                           <goals>
-                               <goal>makeAggregateBom</goal>
-                           </goals>
-                      </execution>
-                   </executions>
-                   <configuration>
-                         <outputName>${project.artifactId}-${project.version}-sbom</outputName>
-                   </configuration>
-                </plugin>
-                    
+                    <plugin>
+                        <groupId>org.cyclonedx</groupId>
+                        <artifactId>cyclonedx-maven-plugin</artifactId>
+                        <version>${cyclonedx-maven-plugin-version}</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>makeAggregateBom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <outputName>${project.artifactId}-${project.version}-sbom</outputName>
+                        </configuration>
+                    </plugin>
+
                 </plugins>
             </build>
         </profile>
@@ -783,27 +801,27 @@
         <profile>
             <id>sbom</id>
             <build>
-            <plugins>
-                <plugin>
-                   <groupId>org.cyclonedx</groupId>
-                   <artifactId>cyclonedx-maven-plugin</artifactId>
-                   <version>${cyclonedx-maven-plugin-version}</version>
-                   <inherited>false</inherited>
-                   <configuration>
-                        <outputName>camel-sbom</outputName>
-                        <outputDirectory>${project.basedir}/camel-sbom/</outputDirectory>
-                        <excludeArtifactId>camel-allcomponents</excludeArtifactId>
-                   </configuration>
-                   <executions>
-                       <execution>
-                           <phase>package</phase>
-                           <goals>
-                               <goal>makeAggregateBom</goal>
-                           </goals>
-                      </execution>
-                   </executions>
-                </plugin>
-            </plugins>
+                <plugins>
+                    <plugin>
+                        <groupId>org.cyclonedx</groupId>
+                        <artifactId>cyclonedx-maven-plugin</artifactId>
+                        <version>${cyclonedx-maven-plugin-version}</version>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <outputName>camel-sbom</outputName>
+                            <outputDirectory>${project.basedir}/camel-sbom/</outputDirectory>
+                            <excludeArtifactId>camel-allcomponents</excludeArtifactId>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>makeAggregateBom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
         <profile>
