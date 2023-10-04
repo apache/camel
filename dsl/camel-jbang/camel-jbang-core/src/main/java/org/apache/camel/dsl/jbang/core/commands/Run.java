@@ -169,6 +169,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--jvm-debug" }, defaultValue = "false", description = "To enable JVM remote debug on localhost:4004")
     boolean jvmDebug;
 
+    @Option(names = { "--jvm-debug-port" }, description = "JVM remote debug port (default is 4004)")
+    int jvmDebugPort;
+
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
@@ -795,6 +798,7 @@ public class Run extends CamelCommand {
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
             jvmDebug = "true".equals(answer.getProperty("camel.jbang.jvmDebug", jvmDebug ? "true" : "false"));
+            jvmDebugPort = Integer.parseInt(answer.getProperty("camel.jbang.jvmDebugPort", String.valueOf(jvmDebugPort)));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
@@ -832,8 +836,13 @@ public class Run extends CamelCommand {
             jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
         }
         if (jvmDebug) {
-            jbangArgs.add("--debug"); // jbang --debug
+            if (jvmDebugPort > 0) {
+                jbangArgs.add("--debug=" + jvmDebugPort); // jbang --debug=port
+            } else {
+                jbangArgs.add("--debug"); // jbang --debug
+            }
             cmds.remove("--jvm-debug");
+            cmds.removeIf(s -> s.startsWith("--jvm-debug-port"));
         }
 
         if (repos != null) {
@@ -842,6 +851,9 @@ public class Run extends CamelCommand {
         jbangArgs.add("camel@apache/camel");
         jbangArgs.addAll(cmds);
 
+        if (verbose) {
+            System.out.println(jbangArgs);
+        }
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
         if (background) {
@@ -865,6 +877,9 @@ public class Run extends CamelCommand {
 
         cmds.add(0, "camel");
 
+        if (verbose) {
+            System.out.println(cmds);
+        }
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
         Process p = pb.start();
@@ -934,6 +949,9 @@ public class Run extends CamelCommand {
 
         jbangArgs.addAll(cmds);
 
+        if (verbose) {
+            System.out.println(jbangArgs);
+        }
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
         if (background) {
