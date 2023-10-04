@@ -131,7 +131,7 @@ public class RestEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The base path
+     * The base path, can use &#42; as path suffix to support wildcard HTTP route matching.
      */
     public void setPath(String path) {
         this.path = path;
