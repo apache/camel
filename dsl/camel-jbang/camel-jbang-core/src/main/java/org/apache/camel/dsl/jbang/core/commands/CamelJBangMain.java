@@ -129,6 +129,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("copy", new CommandLine(new DependencyCopy(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
+                .addSubcommand("sbom", new CommandLine(new SBOMGenerator(main)))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
                         .addSubcommand("component", new CommandLine(new CatalogComponent(main)))
                         .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(main)))
@@ -150,8 +151,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("version", new CommandLine(new VersionCommand(main))
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
                         .addSubcommand("set", new CommandLine(new VersionSet(main)))
-                        .addSubcommand("list", new CommandLine(new VersionList(main))))
-                .addSubcommand("sbom", new CommandLine(new SBOMGenerator(main)));
+                        .addSubcommand("list", new CommandLine(new VersionList(main))));
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();
