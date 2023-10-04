@@ -79,4 +79,23 @@ public class RestConsumerContextPathMatcherTest {
                 "/camel/a/b/3", consumerPaths);
         assertEquals(path.getConsumerPath(), "/camel/a/b/{c}");
     }
+
+    @Test
+    public void testRestConsumerContextPathMatcherWithWildcard() {
+        List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = new ArrayList<>();
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/*"));
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path1 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel", consumerPaths);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path2 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/foo", consumerPaths);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path3 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/foo/bar", consumerPaths);
+
+        assertEquals(path1.getConsumerPath(), "/camel/*");
+        assertEquals(path2.getConsumerPath(), "/camel/*");
+        assertEquals(path3.getConsumerPath(), "/camel/*");
+    }
 }
