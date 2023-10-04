@@ -71,7 +71,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
-    @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
+    @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported. The files must be written without backslash and UTF-8 character. It means that for Windows path, backslash must replaced by a forward slash.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     protected Path[] filePaths; // Defined only for file path completion; the field never used
 
