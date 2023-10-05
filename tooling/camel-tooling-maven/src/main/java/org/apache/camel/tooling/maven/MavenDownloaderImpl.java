@@ -266,6 +266,18 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     private AtomicInteger customRepositoryCounter = new AtomicInteger(1);
 
+    private Settings settings;
+
+    public MavenDownloaderImpl() {
+    }
+
+    public MavenDownloaderImpl(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession,
+                               Settings settings) {
+        this.repositorySystem = repositorySystem;
+        this.repositorySystemSession = repositorySystemSession;
+        this.settings = settings;
+    }
+
     @Override
     protected void doBuild() {
         // prepare all services that don't change when resolving Maven artifacts
@@ -288,17 +300,20 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // locations of settings.xml and settings-security.xml
         validateMavenSettingsLocations();
+        if (repositorySystem == null) {
+            repositorySystem = configureRepositorySystem(registry, systemProperties, mavenSettingsSecurity);
+        }
 
-        repositorySystem = configureRepositorySystem(registry, systemProperties, mavenSettingsSecurity);
+        // read the settings if not provided
+        Settings settings = this.settings == null
+                ? mavenConfiguration(registry, repositorySystem, systemProperties, mavenSettings) : this.settings;
 
-        // read the settings
-        Settings settings = mavenConfiguration(registry, repositorySystem, systemProperties, mavenSettings);
-
-        // prepare the Maven session (local repository was configured within the settings)
-        // this object is thread safe - it uses configurable download pool
-        repositorySystemSession = configureRepositorySystemSession(registry, systemProperties,
-                settings, new File(settings.getLocalRepository()));
-
+        if (repositorySystemSession == null) {
+            // prepare the Maven session (local repository was configured within the settings)
+            // this object is thread safe - it uses configurable download pool
+            repositorySystemSession = configureRepositorySystemSession(registry, systemProperties,
+                    settings, new File(settings.getLocalRepository()));
+        }
         defaultPolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
 
         // process repositories - both from settings.xml and from --repos option. All are subject to
