@@ -82,6 +82,7 @@ import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.tooling.maven.MavenGav;
 
 /**
@@ -347,6 +348,8 @@ public class KameletMain extends MainCommandLineSupport {
 
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
+        // setup backlog recorder from very start
+        answer.getCamelContextExtension().setStartupStepRecorder(new BacklogStartupStepRecorder());
         if (download) {
             ClassLoader dynamicCL = createApplicationContextClassLoader(answer);
             answer.setApplicationContextClassLoader(dynamicCL);
