@@ -326,16 +326,25 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             }
             buffer.write(String.format("    <bean name=\"%s\" type=\"%s\"", b.getName(), type));
             if (b.getFactoryBean() != null) {
-                buffer.write(String.format(" factory-bean=\"%s\"", b.getFactoryBean()));
+                buffer.write(String.format(" factoryBean=\"%s\"", b.getFactoryBean()));
             }
             if (b.getFactoryMethod() != null) {
-                buffer.write(String.format(" factory-method=\"%s\"", b.getFactoryMethod()));
+                buffer.write(String.format(" factoryMethod=\"%s\"", b.getFactoryMethod()));
             }
             if (b.getInitMethod() != null) {
-                buffer.write(String.format(" init-method=\"%s\"", b.getInitMethod()));
+                buffer.write(String.format(" initMethod=\"%s\"", b.getInitMethod()));
             }
             if (b.getDestroyMethod() != null) {
-                buffer.write(String.format(" destroy-method=\"%s\"", b.getDestroyMethod()));
+                buffer.write(String.format(" destroyMethod=\"%s\"", b.getDestroyMethod()));
+            }
+            if (b.getScriptLanguage() != null) {
+                buffer.write(String.format(" scriptLanguage=\"%s\"", b.getScriptLanguage()));
+            }
+            if (b.getScript() != null) {
+                buffer.write(String.format("        <script>%n"));
+                buffer.write(b.getScript());
+                buffer.write("\n");
+                buffer.write(String.format("        </script>%n"));
             }
             buffer.write(">\n");
             if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {

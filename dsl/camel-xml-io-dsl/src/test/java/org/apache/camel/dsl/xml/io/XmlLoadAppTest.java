@@ -227,4 +227,29 @@ public class XmlLoadAppTest {
         }
     }
 
+    @Test
+    public void testLoadCamelAppWithBeanScript() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app9.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r9"), "Loaded r9 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y8 = context.getEndpoint("mock:y9", MockEndpoint.class);
+            y8.expectedBodiesReceived("Hi World from groovy Uranus");
+            context.createProducerTemplate().sendBody("direct:x9", "I'm Uranus");
+            y8.assertIsSatisfied();
+
+            context.stop();
+        }
+    }
+
 }

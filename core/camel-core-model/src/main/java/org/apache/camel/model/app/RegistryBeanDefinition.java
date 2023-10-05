@@ -54,12 +54,18 @@ public class RegistryBeanDefinition implements ResourceAware {
     private String factoryMethod;
     @XmlAttribute
     private String factoryBean;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String scriptLanguage;
     @XmlElement(name = "constructors")
     @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
     private Map<Integer, Object> constructors;
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
     private Map<String, Object> properties;
+    @XmlElement(name = "script")
+    @Metadata(label = "advanced")
+    private String script;
 
     public String getName() {
         return name;
@@ -123,6 +129,22 @@ public class RegistryBeanDefinition implements ResourceAware {
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
+    }
+
+    public String getScriptLanguage() {
+        return scriptLanguage;
+    }
+
+    public void setScriptLanguage(String scriptLanguage) {
+        this.scriptLanguage = scriptLanguage;
+    }
+
+    public void setScript(String script) {
+        this.script = script;
+    }
+
+    public String getScript() {
+        return script;
     }
 
     @Override

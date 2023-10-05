@@ -13600,6 +13600,7 @@ org.apache.camel.builder.RouteBuilder.
     <xs:sequence>
       <xs:element minOccurs="0" name="constructors" type="tns:beanConstructorsDefinition"/>
       <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition"/>
+      <xs:element minOccurs="0" name="script" type="xs:string"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="type" type="xs:string" use="required"/>
@@ -13607,6 +13608,7 @@ org.apache.camel.builder.RouteBuilder.
     <xs:attribute name="destroyMethod" type="xs:string"/>
     <xs:attribute name="factoryMethod" type="xs:string"/>
     <xs:attribute name="factoryBean" type="xs:string"/>
+    <xs:attribute name="scriptLanguage" type="xs:string"/>
   </xs:complexType>
   <xs:complexType name="beanConstructorsDefinition">
     <xs:sequence>

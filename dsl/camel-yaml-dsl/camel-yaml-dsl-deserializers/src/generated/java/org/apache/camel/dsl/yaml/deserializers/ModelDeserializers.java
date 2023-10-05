@@ -12361,6 +12361,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "init-method", type = "string"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "properties", type = "object"),
+                    @YamlProperty(name = "script", type = "string"),
+                    @YamlProperty(name = "script-language", type = "string"),
                     @YamlProperty(name = "type", type = "string", required = true)
             }
     )
@@ -12411,6 +12413,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "properties": {
                     java.util.Map val = asMap(node);
                     target.setProperties(val);
+                    break;
+                }
+                case "script": {
+                    String val = asText(node);
+                    target.setScript(val);
+                    break;
+                }
+                case "script-language": {
+                    String val = asText(node);
+                    target.setScriptLanguage(val);
                     break;
                 }
                 case "type": {
