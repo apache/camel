@@ -386,6 +386,25 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * The custom metric tags will accept key-value pairs to customize the
+         * MBean object name which should be appended the end of regular name,
+         * each key would represent a tag for the MBean object name, and the
+         * corresponding value would be the value of that tag the key is. For
+         * example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param customMetricTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder customMetricTags(
+                java.lang.String customMetricTags) {
+            doSetProperty("customMetricTags", customMetricTags);
+            return this;
+        }
+        /**
          * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -860,23 +879,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder provideTransactionMetadata(
                 boolean provideTransactionMetadata) {
             doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
-            return this;
-        }
-        /**
-         * The maximum number of records that should be loaded into memory while
-         * streaming. A value of '0' uses the default JDBC fetch size.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 0
-         * Group: sqlserver
-         * 
-         * @param queryFetchSize the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder queryFetchSize(
-                int queryFetchSize) {
-            doSetProperty("queryFetchSize", queryFetchSize);
             return this;
         }
         /**
@@ -1459,6 +1461,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "columnIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setConverters((java.lang.String) value); return true;
+            case "customMetricTags": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setCustomMetricTags((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databaseInstance": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseInstance((java.lang.String) value); return true;
             case "databaseNames": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseNames((java.lang.String) value); return true;
@@ -1486,7 +1489,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setProvideTransactionMetadata((boolean) value); return true;
-            case "queryFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "schemaHistoryInternal": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternal((java.lang.String) value); return true;
             case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
