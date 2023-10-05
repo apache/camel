@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,16 +27,23 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.Language;
+import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -79,6 +87,10 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             if (!bean.getType().startsWith("#class:")) {
                 bean.setType("#class:" + bean.getType());
             }
+            if (bean.getScriptLanguage() != null || bean.getScript() != null) {
+                ObjectHelper.notNull(bean.getScriptLanguage(), "The bean script language must be set");
+                ObjectHelper.notNull(bean.getScript(), "The bean script must be set");
+            }
 
             // due to yaml-dsl is pre parsing beans which gets created eager
             // and then later beans can be parsed again such as from Camel K Integration CRD files
@@ -99,32 +111,69 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     }
 
     public Object newInstance(RegistryBeanDefinition def, CamelContext context) throws Exception {
+        Object target;
 
         String type = def.getType();
 
-        // factory bean/method
-        if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
-            type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
-        } else if (def.getFactoryMethod() != null) {
-            type = type + "#" + def.getFactoryMethod();
-        }
-        // property binding support has constructor arguments as part of the type
-        StringJoiner ctr = new StringJoiner(", ");
-        if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
-            // need to sort constructor args based on index position
-            Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
-            for (Object val : sorted.values()) {
-                String text = val.toString();
-                if (!StringHelper.isQuoted(text)) {
-                    text = "\"" + text + "\"";
-                }
-                ctr.add(text);
+        // script bean
+        if (def.getScriptLanguage() != null && def.getScript() != null) {
+            // create bean via the script
+            final Language lan = context.resolveLanguage(def.getScriptLanguage());
+            final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
+            String fqn = def.getType();
+            if (fqn.startsWith("#class:")) {
+                fqn = fqn.substring(7);
             }
-            type = type + "(" + ctr + ")";
+            final Class<?> clazz = context.getClassResolver().resolveMandatoryClass(fqn);
+            if (slan != null) {
+                // scripting language should be evaluated with context as binding
+                Map<String, Object> bindings = new HashMap<>();
+                bindings.put("context", context);
+                target = slan.evaluate(def.getScript(), bindings, clazz);
+            } else {
+                // exchange based languages needs a dummy exchange to be evaluated
+                ExchangeFactory ef = context.getCamelContextExtension().getExchangeFactory();
+                Exchange dummy = ef.create(false);
+                try {
+                    String text = ScriptHelper.resolveOptionalExternalScript(context, dummy, def.getScript());
+                    Expression exp = lan.createExpression(text);
+                    target = exp.evaluate(dummy, clazz);
+                } finally {
+                    ef.release(dummy);
+                }
+            }
+
+            // a bean must be created
+            if (target == null) {
+                throw new NoSuchBeanException(def.getName(), "Creating bean using script returned null");
+            }
+
+        } else {
+            // factory bean/method
+            if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
+                type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
+            } else if (def.getFactoryMethod() != null) {
+                type = type + "#" + def.getFactoryMethod();
+            }
+            // property binding support has constructor arguments as part of the type
+            StringJoiner ctr = new StringJoiner(", ");
+            if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
+                // need to sort constructor args based on index position
+                Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
+                for (Object val : sorted.values()) {
+                    String text = val.toString();
+                    if (!StringHelper.isQuoted(text)) {
+                        text = "\"" + text + "\"";
+                    }
+                    ctr.add(text);
+                }
+                type = type + "(" + ctr + ")";
+            }
+
+            target = PropertyBindingSupport.resolveBean(context, type);
         }
 
-        final Object target = PropertyBindingSupport.resolveBean(context, type);
-
+        // set optional properties on created bean
         if (def.getProperties() != null && !def.getProperties().isEmpty()) {
             PropertyBindingSupport.setPropertiesOnTarget(context, target, def.getProperties());
         }

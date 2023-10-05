@@ -2568,11 +2568,13 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteAttribute("factoryMethod", def.getFactoryMethod());
         doWriteAttribute("initMethod", def.getInitMethod());
+        doWriteAttribute("scriptLanguage", def.getScriptLanguage());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("destroyMethod", def.getDestroyMethod());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("factoryBean", def.getFactoryBean());
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
+        doWriteElement("script", def.getScript(), this::doWriteString);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
         endElement(name);
     }

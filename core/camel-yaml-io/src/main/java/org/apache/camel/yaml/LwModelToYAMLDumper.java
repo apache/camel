@@ -326,6 +326,12 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             if (b.getDestroyMethod() != null) {
                 buffer.write(String.format("      destroyMethod: \"%s\"%n", b.getDestroyMethod()));
             }
+            if (b.getScriptLanguage() != null) {
+                buffer.write(String.format("      scriptLanguage: \"%s\"%n", b.getScriptLanguage()));
+            }
+            if (b.getScript() != null) {
+                buffer.write(String.format("      script: \"%s\"%n", b.getScript()));
+            }
             if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
                 buffer.write(String.format("      constructors:%n"));
                 int counter = 0;

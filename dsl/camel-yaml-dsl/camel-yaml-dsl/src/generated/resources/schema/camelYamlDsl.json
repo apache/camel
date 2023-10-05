@@ -8044,6 +8044,12 @@
           "properties" : {
             "type" : "object"
           },
+          "script" : {
+            "type" : "string"
+          },
+          "scriptLanguage" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           }
