@@ -17,8 +17,10 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class MultipleCamelContextTest {
 
@@ -32,9 +34,9 @@ public class MultipleCamelContextTest {
         CamelContext camel1 = main.getApplicationContext().getBean("camel1", CamelContext.class);
         CamelContext camel2 = main.getApplicationContext().getBean("camel2", CamelContext.class);
 
-        Assertions.assertNotSame(camel1, camel2);
-        Assertions.assertEquals(2, camel1.getRoutesSize());
-        Assertions.assertEquals(3, camel2.getRoutesSize());
+        assertNotSame(camel1, camel2);
+        assertEquals(2, camel1.getRoutesSize());
+        assertEquals(3, camel2.getRoutesSize());
 
         main.stop();
     }
