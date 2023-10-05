@@ -1064,9 +1064,9 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBeanFactoryDefinitionAttributes(
             BeanFactoryDefinition<?, ?> def)
             throws IOException {
+        doWriteAttribute("scriptLanguage", def.getScriptLanguage());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
-        doWriteAttribute("beanType", def.getBeanType());
     }
     protected void doWriteBeanFactoryDefinitionElements(
             BeanFactoryDefinition<?, ?> def)

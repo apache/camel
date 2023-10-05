@@ -1093,8 +1093,8 @@ public class ModelParser extends BaseParser {
     protected <T extends BeanFactoryDefinition> AttributeHandler<T> beanFactoryDefinitionAttributeHandler() {
         return (def, key, val) -> {
             switch (key) {
-                case "beanType": def.setBeanType(val); break;
                 case "name": def.setName(val); break;
+                case "scriptLanguage": def.setScriptLanguage(val); break;
                 case "type": def.setType(val); break;
                 default: return false;
             }

@@ -3945,19 +3945,17 @@ Bean name.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl. #class or #type
-then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean The others are scripting
-languages that gives more power to create the bean with an inlined code in the script section, such as using groovy.
+What type to use for creating the bean (FQN classname). Can be prefixed with: #class or #type #class or #type then the
+bean is created via the fully qualified classname, such as #class:com.foo.MyBean.
 ]]>
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="beanType" type="xs:string">
+    <xs:attribute name="scriptLanguage" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-To set the type (fully qualified class name) of the returned bean created by the script. Knowing the type of the bean
-can be needed when dependency injection by type is in use, or when looking in registry via class type.
+The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.
 ]]>
         </xs:documentation>
       </xs:annotation>

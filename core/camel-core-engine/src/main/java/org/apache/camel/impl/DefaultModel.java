@@ -557,20 +557,22 @@ public class DefaultModel implements Model {
                     routeTemplateContext.bind(beanFactory.getName(), beanFactory.getBeanSupplier());
                 }
             }
-        } else if (beanFactory.getScript() != null) {
-            final String script = beanFactory.getScript();
+        } else if (beanFactory.getScript() != null && beanFactory.getScriptLanguage() != null) {
             final CamelContext camelContext = routeTemplateContext.getCamelContext();
-            final Language lan = camelContext.resolveLanguage(beanFactory.getType());
+            final Language lan = camelContext.resolveLanguage(beanFactory.getScriptLanguage());
             final Class<?> clazz;
-            if (beanFactory.getBeanType() != null) {
-                clazz = camelContext.getClassResolver().resolveMandatoryClass(beanFactory.getBeanType());
-            } else {
-                if (beanFactory.getBeanClass() != null) {
-                    clazz = beanFactory.getBeanClass();
-                } else {
-                    clazz = Object.class;
+            if (beanFactory.getBeanClass() != null) {
+                clazz = beanFactory.getBeanClass();
+            } else if (beanFactory.getType() != null) {
+                String fqn = beanFactory.getType();
+                if (fqn.contains(":")) {
+                    fqn = StringHelper.after(fqn, ":");
                 }
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(fqn);
+            } else {
+                clazz = Object.class;
             }
+            final String script = beanFactory.getScript();
             final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
             if (slan != null) {
                 // scripting language should be evaluated with route template context as binding
@@ -580,7 +582,7 @@ public class DefaultModel implements Model {
                     Map<String, Object> bindings = new HashMap<>();
                     // use rtx as the short-hand name, as context would imply its CamelContext
                     bindings.put("rtc", routeTemplateContext);
-                    Object local = slan.evaluate(script, bindings, clazz);
+                    Object local = slan.evaluate(script, bindings, Object.class);
                     if (!props.isEmpty()) {
                         PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
                     }
