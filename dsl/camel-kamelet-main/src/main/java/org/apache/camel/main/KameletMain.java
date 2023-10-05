@@ -557,10 +557,13 @@ public class KameletMain extends MainCommandLineSupport {
                 reloader.setPattern("*");
                 answer.addService(reloader);
 
-                // add source-dir as location for loading kamelets
+                // add source-dir as location for loading kamelets (if not already included)
                 String loc = this.initialProperties.getProperty("camel.component.kamelet.location");
-                loc = "file:" + sourceDir + "," + loc;
-                addInitialProperty("camel.component.kamelet.location", loc);
+                String target = "file:" + sourceDir + ",";
+                if (!loc.contains(target)) {
+                    loc = target + loc;
+                    addInitialProperty("camel.component.kamelet.location", loc);
+                }
             } else {
                 answer.addService(new DefaultContextReloadStrategy());
             }
