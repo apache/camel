@@ -16,41 +16,41 @@
  */
 package org.apache.camel.support.startup;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.apache.camel.StartupStep;
-import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Logging {@link org.apache.camel.spi.StartupStepRecorder} that outputs to log.
+ * {@link org.apache.camel.spi.StartupStepRecorder} that captures each step event.
  */
-public class LoggingStartupStepRecorder extends DefaultStartupStepRecorder {
+public class BacklogStartupStepRecorder extends DefaultStartupStepRecorder {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LoggingStartupStepRecorder.class);
+    private final List<StartupStep> steps = new ArrayList<>();
 
-    public LoggingStartupStepRecorder() {
+    public BacklogStartupStepRecorder() {
         setEnabled(true);
     }
 
     @Override
     protected void onEndStep(StartupStep step) {
-        if (LOG.isInfoEnabled()) {
-            String msg = logStep(step);
-            LOG.info(msg);
-        }
+        steps.add(step);
     }
 
-    protected String logStep(StartupStep step) {
-        long delta = step.getDuration();
-        String pad = StringHelper.padString(step.getLevel());
-        String out = String.format("%s", pad + step.getType());
-        String out2 = String.format("%6s ms", delta);
-        String out3 = String.format("%s(%s)", step.getDescription(), step.getName());
-        return String.format("%s : %s - %s", out2, out, out3);
+    @Override
+    public Stream<StartupStep> steps() {
+        return steps.stream();
+    }
+
+    @Override
+    public void doStop() throws Exception {
+        super.doStop();
+        steps.clear();
     }
 
     @Override
     public String toString() {
-        return "logging";
+        return "backlog";
     }
 }

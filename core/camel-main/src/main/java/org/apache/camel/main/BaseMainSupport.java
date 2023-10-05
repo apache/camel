@@ -74,6 +74,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.support.service.BaseService;
+import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -518,6 +519,8 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.getCamelContextExtension().getStartupStepRecorder().setEnabled(false);
         } else if ("logging".equals(mainConfigurationProperties.getStartupRecorder())) {
             camelContext.getCamelContextExtension().setStartupStepRecorder(new LoggingStartupStepRecorder());
+        } else if ("backlog".equals(mainConfigurationProperties.getStartupRecorder())) {
+            camelContext.getCamelContextExtension().setStartupStepRecorder(new BacklogStartupStepRecorder());
         } else if ("jfr".equals(mainConfigurationProperties.getStartupRecorder())
                 || "java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
                 || mainConfigurationProperties.getStartupRecorder() == null) {

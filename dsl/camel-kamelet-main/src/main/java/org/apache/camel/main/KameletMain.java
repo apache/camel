@@ -444,6 +444,7 @@ public class KameletMain extends MainCommandLineSupport {
         configure().withJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
         configure().withShutdownLogInflightExchangesOnTimeout(false);
         configure().withShutdownTimeout(10);
+        configure().withStartupRecorder("backlog");
 
         boolean tracing = "true".equals(getInitialProperties().get("camel.jbang.backlogTracing"));
         if (tracing) {
