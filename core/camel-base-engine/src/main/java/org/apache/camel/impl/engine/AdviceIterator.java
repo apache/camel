@@ -28,11 +28,13 @@ final class AdviceIterator {
     }
 
     static void runAfterTasks(List<? extends CamelInternalProcessorAdvice> advices, Object[] states, Exchange exchange) {
-        for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
+        int stateIndex = states.length - 1;
+
+        for (int i = advices.size() - 1; i >= 0; i--) {
             CamelInternalProcessorAdvice task = advices.get(i);
             Object state = null;
             if (task.hasState()) {
-                state = states[j--];
+                state = states[stateIndex--];
             }
             try {
                 task.after(exchange, state);
