@@ -14,6 +14,70 @@ to `org.apache.camel.spi.Injector`.
 Added `isIgnoreLoadingError` and `setIgnoreLoadingError` methods to `org.apache.camel.spi.RoutesLoader`,
 and `org.apache.camel.main.RoutesCollector`.
 
+=== XML and YAML DSL
+
+==== Creating beans from script
+
+In route templates (or kamelets), for advanced use cases, you are able to create beans from an inlined script.
+
+The name of the script was defined in `type`, but has been changed to a new `scriptLanguage` attribute.
+And `beanType` has been removed as you must use `type` instead.
+
+Before:
+
+[tabs]
+====
+XML::
++
+[source,xml]
+----
+    <bean name="myBean" type="groovy" beanType="com.foo.MyBean">
+        <script>
+          <!-- groovy code here to create the bean -->
+        </script>
+    </bean>
+----
+YAML::
++
+[source,yaml]
+----
+- beans:
+  - name: "myClient"
+    beanType: "com.foo.MyBean"
+    type: "groovy"
+    script: |
+      # groovy script here
+----
+====
+
+After:
+
+[tabs]
+====
+XML::
++
+[source,xml]
+----
+    <bean name="myBean" type="com.foo.MyBean"
+          scriptLanguage="groovy">
+        <script>
+          <!-- groovy code here to create the bean -->
+        </script>
+    </bean>
+----
+YAML::
++
+[source,yaml]
+----
+- beans:
+  - name: "myClient"
+    type: "com.foo.MyBean"
+    scriptLanguage: "groovy"
+    script: |
+      # groovy script here
+----
+====
+
 === camel-management
 
 Dumping routes to JMX no longer includes `customId="true"` in the XML nodes.

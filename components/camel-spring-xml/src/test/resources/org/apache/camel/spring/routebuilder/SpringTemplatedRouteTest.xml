@@ -40,7 +40,8 @@
             <bean name="myBean" type="#class:org.apache.camel.spring.routebuilder.SpringTemplatedRouteTest$MySpecialBean">
                 <property key="name" value="John"/>
             </bean>
-            <bean name="myScriptBean" type="bean">
+            <bean name="myScriptBean" type="org.apache.camel.spring.routebuilder.SpringTemplatedRouteTest$MyScriptBean"
+                  scriptLanguage="bean">
                 <script>org.apache.camel.spring.routebuilder.SpringTemplatedRouteTest$MyScriptBean?method=create</script>
             </bean>
         </templatedRoute>
