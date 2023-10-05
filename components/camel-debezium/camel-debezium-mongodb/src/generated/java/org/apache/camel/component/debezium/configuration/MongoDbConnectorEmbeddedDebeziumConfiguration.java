@@ -13,6 +13,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     private static final String LABEL_NAME = "consumer,mongodb";
     @UriParam(label = LABEL_NAME)
+    private String customMetricTags;
+    @UriParam(label = LABEL_NAME)
     private String mongodbConnectionString;
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
@@ -114,6 +116,20 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int mongodbHeartbeatFrequencyMs = 10000;
     @UriParam(label = LABEL_NAME)
     private String databaseIncludeList;
+
+    /**
+     * The custom metric tags will accept key-value pairs to customize the MBean
+     * object name which should be appended the end of regular name, each key
+     * would represent a tag for the MBean object name, and the corresponding
+     * value would be the value of that tag the key is. For example: k1=v1,k2=v2
+     */
+    public void setCustomMetricTags(String customMetricTags) {
+        this.customMetricTags = customMetricTags;
+    }
+
+    public String getCustomMetricTags() {
+        return customMetricTags;
+    }
 
     /**
      * Database connection string.
@@ -364,8 +380,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * A comma-separated list of regular expressions that match the database
-     * names for which changes are to be excluded
+     * A comma-separated list of regular expressions or literals that match the
+     * database names for which changes are to be excluded
      */
     public void setDatabaseExcludeList(String databaseExcludeList) {
         this.databaseExcludeList = databaseExcludeList;
@@ -445,8 +461,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * A comma-separated list of regular expressions that match the collection
-     * names for which changes are to be captured
+     * A comma-separated list of regular expressions or literals that match the
+     * collection names for which changes are to be captured
      */
     public void setCollectionIncludeList(String collectionIncludeList) {
         this.collectionIncludeList = collectionIncludeList;
@@ -588,8 +604,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * A comma-separated list of regular expressions that match the collection
-     * names for which changes are to be excluded
+     * A comma-separated list of regular expressions or literals that match the
+     * collection names for which changes are to be excluded
      */
     public void setCollectionExcludeList(String collectionExcludeList) {
         this.collectionExcludeList = collectionExcludeList;
@@ -744,8 +760,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * A comma-separated list of regular expressions that match the database
-     * names for which changes are to be captured
+     * A comma-separated list of regular expressions or literals that match the
+     * database names for which changes are to be captured
      */
     public void setDatabaseIncludeList(String databaseIncludeList) {
         this.databaseIncludeList = databaseIncludeList;
@@ -759,6 +775,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
         
+        addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "mongodb.connection.string", mongodbConnectionString);
         addPropertyIfNotNull(configBuilder, "mongodb.password", mongodbPassword);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
