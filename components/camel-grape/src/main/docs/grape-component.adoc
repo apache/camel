@@ -1,10 +1,11 @@
-= Grape Component
+= Grape Component (deprecated)
 :doctitle: Grape
 :shortname: grape
 :artifactid: camel-grape
 :description: Fetch, load and manage additional jars dynamically after Camel Context was started.
 :since: 2.16
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
