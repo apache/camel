@@ -46,11 +46,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.plc4x</groupId>
-            <artifactId>plc4j-connection-pool</artifactId>
-            <version>${plc4x-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.plc4x</groupId>
             <artifactId>plc4j-scraper</artifactId>
             <version>${plc4x-version}</version>
             <exclusions>
