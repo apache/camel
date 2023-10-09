@@ -74,6 +74,9 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String enableNoContentResponse;
+    @XmlAttribute
     @Metadata(label = "advanced")
     private String component;
 
@@ -282,6 +285,19 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      */
     public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public String getEnableNoContentResponse() {
+        return enableNoContentResponse;
+    }
+
+    /**
+     * Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body.
+     * <p/>
+     * The default value is false.
+     */
+    public void setEnableNoContentResponse(String enableNoContentResponse) {
+        this.enableNoContentResponse = enableNoContentResponse;
     }
 
     @Override

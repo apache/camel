@@ -79,6 +79,9 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String enableNoContentResponse;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String apiDocs;
     @XmlAttribute
@@ -260,6 +263,19 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
      */
     public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public String getEnableNoContentResponse() {
+        return enableNoContentResponse;
+    }
+
+    /**
+     * Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body.
+     * <p/>
+     * The default value is false.
+     */
+    public void setEnableNoContentResponse(String enableNoContentResponse) {
+        this.enableNoContentResponse = enableNoContentResponse;
     }
 
     public String getType() {

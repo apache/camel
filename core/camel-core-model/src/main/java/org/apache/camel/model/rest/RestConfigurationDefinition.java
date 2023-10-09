@@ -92,6 +92,9 @@ public class RestConfigurationDefinition {
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
+    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String enableNoContentResponse;
+    @XmlAttribute
     @Metadata(label = "consumer", javaType = "java.lang.Boolean", defaultValue = "false")
     private String inlineRoutes;
     @XmlAttribute
@@ -349,6 +352,19 @@ public class RestConfigurationDefinition {
      */
     public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public String getEnableNoContentResponse() {
+        return enableNoContentResponse;
+    }
+
+    /**
+     * Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body.
+     * <p/>
+     * The default value is false.
+     */
+    public void setEnableNoContentResponse(String enableNoContentResponse) {
+        this.enableNoContentResponse = enableNoContentResponse;
     }
 
     public String getInlineRoutes() {
@@ -700,6 +716,24 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To specify whether to enable the HTTP 204 (no Content) success status response code for a response that has an
+     * empty body.
+     */
+    public RestConfigurationDefinition enableNoContentResponse(boolean enableNoContentResponse) {
+        setEnableNoContentResponse(enableNoContentResponse ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * To specify whether to enable the HTTP 204 (no Content) success status response code for a response that has an
+     * empty body.
+     */
+    public RestConfigurationDefinition enableNoContentResponse(String enableNoContentResponse) {
+        setEnableNoContentResponse(enableNoContentResponse);
+        return this;
+    }
+
+    /**
      * Inline routes in rest-dsl which are linked using direct endpoints.
      *
      * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
@@ -917,6 +951,9 @@ public class RestConfigurationDefinition {
         }
         if (enableCORS != null) {
             target.setEnableCORS(CamelContextHelper.parseBoolean(context, enableCORS));
+        }
+        if (enableNoContentResponse != null) {
+            target.setEnableNoContentResponse(CamelContextHelper.parseBoolean(context, enableNoContentResponse));
         }
         if (inlineRoutes != null) {
             target.setInlineRoutes(CamelContextHelper.parseBoolean(context, inlineRoutes));
