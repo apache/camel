@@ -365,6 +365,25 @@ public interface DebeziumDb2ComponentBuilderFactory {
             return this;
         }
         /**
+         * The custom metric tags will accept key-value pairs to customize the
+         * MBean object name which should be appended the end of regular name,
+         * each key would represent a tag for the MBean object name, and the
+         * corresponding value would be the value of that tag the key is. For
+         * example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: db2
+         * 
+         * @param customMetricTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder customMetricTags(
+                java.lang.String customMetricTags) {
+            doSetProperty("customMetricTags", customMetricTags);
+            return this;
+        }
+        /**
          * The name of the database from which the connector should capture
          * changes.
          * 
@@ -1269,6 +1288,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "columnIncludeList": getOrCreateConfiguration((DebeziumDb2Component) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumDb2Component) component).setColumnPropagateSourceType((java.lang.String) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumDb2Component) component).setConverters((java.lang.String) value); return true;
+            case "customMetricTags": getOrCreateConfiguration((DebeziumDb2Component) component).setCustomMetricTags((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumDb2Component) component).setDatabaseDbname((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumDb2Component) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumDb2Component) component).setDatabasePassword((java.lang.String) value); return true;

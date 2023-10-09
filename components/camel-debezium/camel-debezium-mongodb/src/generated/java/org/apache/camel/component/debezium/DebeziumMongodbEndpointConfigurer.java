@@ -34,6 +34,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": target.getConfiguration().setCursorMaxAwaitTimeMs(property(camelContext, int.class, value)); return true;
+        case "custommetrictags":
+        case "customMetricTags": target.getConfiguration().setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseexcludelist":
         case "databaseExcludeList": target.getConfiguration().setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseincludelist":
@@ -168,6 +170,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "converters": return java.lang.String.class;
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": return int.class;
+        case "custommetrictags":
+        case "customMetricTags": return java.lang.String.class;
         case "databaseexcludelist":
         case "databaseExcludeList": return java.lang.String.class;
         case "databaseincludelist":
@@ -303,6 +307,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "converters": return target.getConfiguration().getConverters();
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": return target.getConfiguration().getCursorMaxAwaitTimeMs();
+        case "custommetrictags":
+        case "customMetricTags": return target.getConfiguration().getCustomMetricTags();
         case "databaseexcludelist":
         case "databaseExcludeList": return target.getConfiguration().getDatabaseExcludeList();
         case "databaseincludelist":

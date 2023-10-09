@@ -36,12 +36,6 @@ public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDef
             T target, String propertyKey,
             String propertyName, Node node) {
         switch (propertyKey) {
-            case "beanType":
-            case "bean-type": {
-                String val = asText(node);
-                target.setBeanType(val);
-                break;
-            }
             case "name": {
                 String val = asText(node);
                 target.setName(val);
@@ -55,6 +49,12 @@ public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDef
             }
             case "properties": {
                 target.setProperties(asMap(node));
+                break;
+            }
+            case "scriptLanguage":
+            case "script-language": {
+                String val = asText(node);
+                target.setScriptLanguage(val);
                 break;
             }
             case "script": {

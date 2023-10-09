@@ -35,13 +35,18 @@ public class LoggingStartupStepRecorder extends DefaultStartupStepRecorder {
     @Override
     protected void onEndStep(StartupStep step) {
         if (LOG.isInfoEnabled()) {
-            long delta = System.currentTimeMillis() - step.getBeginTime();
-            String pad = StringHelper.padString(step.getLevel());
-            String out = String.format("%s", pad + step.getType());
-            String out2 = String.format("%6s ms", delta);
-            String out3 = String.format("%s(%s)", step.getDescription(), step.getName());
-            LOG.info("{} : {} - {}", out2, out, out3);
+            String msg = logStep(step);
+            LOG.info(msg);
         }
+    }
+
+    protected String logStep(StartupStep step) {
+        long delta = step.getDuration();
+        String pad = StringHelper.padString(step.getLevel());
+        String out = String.format("%s", pad + step.getType());
+        String out2 = String.format("%6s ms", delta);
+        String out3 = String.format("%s(%s)", step.getDescription(), step.getName());
+        return String.format("%s : %s - %s", out2, out, out3);
     }
 
     @Override

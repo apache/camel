@@ -267,6 +267,26 @@ public class MyHelper {
 
 NOTE: The factory method must be `public static`.
 
+=== Creating beans using script language
+
+For advanced use-cases then Camel allows to inline a script language, such as groovy, java, javascript, etc, to create the bean.
+This gives flexibility to use a bit of programming to create and configure the bean.
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    scriptLanguage: groovy
+    script: >
+      // some groovy script here to create the bean
+      bean = ...
+      ...
+      return bean
+----
+
+NOTE: When using `script` then constructors and factory bean/method is not in use
+
 === Using init and destroy methods on beans
 
 Sometimes beans need to do some initialization and cleanup work before a bean is ready to be used.

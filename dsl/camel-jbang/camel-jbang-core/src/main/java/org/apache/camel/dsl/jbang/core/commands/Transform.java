@@ -29,7 +29,7 @@ import org.apache.camel.util.StopWatch;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "transform", description = "Transform Camel route to XML or YAML format", sortOptions = false)
+@Command(name = "transform", description = "Transform Camel routes to XML or YAML format", sortOptions = false)
 public class Transform extends CamelCommand {
 
     @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
@@ -52,7 +52,8 @@ public class Transform extends CamelCommand {
     boolean resolvePlaceholders;
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
+                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format"
+                                      + "and recommended to enable when using Apache Camel Karavan)")
     boolean uriAsParameters;
 
     @CommandLine.Option(names = { "--ignore-loading-error" },

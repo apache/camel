@@ -82,6 +82,7 @@ import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.tooling.maven.MavenGav;
 
 /**
@@ -347,6 +348,8 @@ public class KameletMain extends MainCommandLineSupport {
 
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
+        // setup backlog recorder from very start
+        answer.getCamelContextExtension().setStartupStepRecorder(new BacklogStartupStepRecorder());
         if (download) {
             ClassLoader dynamicCL = createApplicationContextClassLoader(answer);
             answer.setApplicationContextClassLoader(dynamicCL);
@@ -444,6 +447,7 @@ public class KameletMain extends MainCommandLineSupport {
         configure().withJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
         configure().withShutdownLogInflightExchangesOnTimeout(false);
         configure().withShutdownTimeout(10);
+        configure().withStartupRecorder("backlog");
 
         boolean tracing = "true".equals(getInitialProperties().get("camel.jbang.backlogTracing"));
         if (tracing) {
@@ -557,10 +561,13 @@ public class KameletMain extends MainCommandLineSupport {
                 reloader.setPattern("*");
                 answer.addService(reloader);
 
-                // add source-dir as location for loading kamelets
+                // add source-dir as location for loading kamelets (if not already included)
                 String loc = this.initialProperties.getProperty("camel.component.kamelet.location");
-                loc = "file:" + sourceDir + "," + loc;
-                addInitialProperty("camel.component.kamelet.location", loc);
+                String target = "file:" + sourceDir + ",";
+                if (!loc.contains(target)) {
+                    loc = target + loc;
+                    addInitialProperty("camel.component.kamelet.location", loc);
+                }
             } else {
                 answer.addService(new DefaultContextReloadStrategy());
             }

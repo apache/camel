@@ -43,7 +43,8 @@ class TemplatedRouteTest extends YamlTestSupport {
                         value: "foo"
                     beans:
                       - name: "myProcessor"
-                        type: "groovy"
+                        type: "${MyUppercaseProcessor.class.name}" 
+                        scriptLanguage: "groovy"
                         script: |
                             new ${MyUppercaseProcessor.class.name}()
                 - templatedRoute:
@@ -54,8 +55,8 @@ class TemplatedRouteTest extends YamlTestSupport {
                         value: "foo2"
                     beans:
                       - name: "myProcessor"
-                        type: "groovy"
-                        beanType: "org.apache.camel.Processor"
+                        type: "org.apache.camel.Processor"
+                        scriptLanguage: "groovy"
                         script: "new ${MyUppercaseProcessor.class.name}()"                 
             """
         withMock('mock:result') {
@@ -100,7 +101,8 @@ class TemplatedRouteTest extends YamlTestSupport {
                         value: "foo"
                     beans:
                       - name: "myProcessor"
-                        type: "groovy"
+                        type: "org.apache.camel.Processor"
+                        scriptLanguage: "groovy"
                         script: |
                             new ${MyUppercaseProcessor.class.name}()
                 - templatedRoute:
@@ -111,8 +113,8 @@ class TemplatedRouteTest extends YamlTestSupport {
                         value: "foo2"
                     beans:
                       - name: "myProcessor"
-                        type: "groovy"
-                        beanType: "org.apache.camel.Processor"
+                        type: "org.apache.camel.Processor"
+                        scriptLanguage: "groovy"
                         script: "new ${MyUppercaseProcessor.class.name}()"                 
             """
         withMock('mock:result') {

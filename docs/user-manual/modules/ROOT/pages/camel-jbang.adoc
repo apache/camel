@@ -2189,10 +2189,41 @@ org.apache.camel.kamelets:camel-kamelets-utils:0.9.3
 org.apache.camel.kamelets:camel-kamelets:0.9.3
 ----
 
+== Generating SBOM report
+
+[source,bash]
+
+You can generate a SBOM report of your integration by running the following command
+
+----
+camel sbom
+----
+
+By default it will generate a file named `sbom.json` in `cyclonedx` format.
+
+You can also choose to use an `spdx` format with the following command
+
+----
+camel sbom --sbom-format=spdx
+----
+
+You can also choose the target runtime as either _quarkus_ or _spring-boot_ as shown:
+
+----
+camel sbom --runtime=quarkus 
+----
+
+or 
+
+----
+camel sbom --runtime=spring-boot 
+----
+
+by default `camel-main` will be used
+
 === Copying dependency JARs to a specific directory
 
 You can use the `camel dependency copy` command to copy the required JARs to a specific folder.
-This command reuses Maven by invoking the `mvn dependency:copy-dependencies` command.
 
 IMPORTANT: The `camel dependency copy` and `camel dependency list` uses Apache Maven,
 This requires having Apache Maven installed, and `mvn` command in PATH environment, so Camel JBang

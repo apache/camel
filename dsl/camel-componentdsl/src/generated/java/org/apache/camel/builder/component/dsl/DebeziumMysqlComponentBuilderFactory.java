@@ -479,6 +479,25 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * The custom metric tags will accept key-value pairs to customize the
+         * MBean object name which should be appended the end of regular name,
+         * each key would represent a tag for the MBean object name, and the
+         * corresponding value would be the value of that tag the key is. For
+         * example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param customMetricTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder customMetricTags(
+                java.lang.String customMetricTags) {
+            doSetProperty("customMetricTags", customMetricTags);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match database
          * names to be excluded from monitoring.
          * 
@@ -1872,6 +1891,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "connectKeepAliveIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAliveIntervalMs((long) value); return true;
             case "connectTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectTimeoutMs((int) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConverters((java.lang.String) value); return true;
+            case "customMetricTags": getOrCreateConfiguration((DebeziumMySqlComponent) component).setCustomMetricTags((java.lang.String) value); return true;
             case "databaseExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databaseIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;

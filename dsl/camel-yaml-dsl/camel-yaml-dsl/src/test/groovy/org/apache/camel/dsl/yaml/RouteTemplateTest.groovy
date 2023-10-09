@@ -100,26 +100,8 @@ class RouteTemplateTest extends YamlTestSupport {
                             id: "myTemplate"
                             beans:
                               - name: "myProcessor"
-                                type: "groovy"
-                                script: "new ${MyUppercaseProcessor.class.name}()"
-                            from:
-                              uri: "direct:{{directName}}"
-                              steps:
-                                - process:
-                                    ref: "{{myProcessor}}"
-                        - from:
-                            uri: "direct:start"
-                            steps:
-                              - to: "direct:myId"
-                              - to: "mock:result"
-                    """),
-                asResource('script-bean-type', """
-                        - routeTemplate:
-                            id: "myTemplate"
-                            beans:
-                              - name: "myProcessor"
-                                type: "groovy"
-                                bean-type: "org.apache.camel.Processor"
+                                type: "${MyUppercaseProcessor.class.name}"
+                                scriptLanguage: "groovy"
                                 script: "new ${MyUppercaseProcessor.class.name}()"
                             from:
                               uri: "direct:{{directName}}"
@@ -137,7 +119,8 @@ class RouteTemplateTest extends YamlTestSupport {
                             id: "myTemplate"
                             beans:
                               - name: "myProcessor"
-                                type: "groovy"
+                                type: "org.apache.camel.Processor"
+                                scriptLanguage: "groovy"
                                 script: |
                                     new ${MyUppercaseProcessor.class.name}()
                             from:
@@ -339,7 +322,8 @@ class RouteTemplateTest extends YamlTestSupport {
                         id: "myTemplate"
                         beans:
                           - name: "myAgg"
-                            type: "joor"
+                            type: "org.apache.camel.AggregationStrategy"
+                            scriptLanguage: "joor"
                             script: "(e1, e2) -> { return e2.getMessage().getBody(); }"
                         from:
                           uri: "direct:route"
@@ -384,7 +368,8 @@ class RouteTemplateTest extends YamlTestSupport {
                         id: "myTemplate"
                         beans:
                           - name: "myAgg"
-                            type: "groovy"
+                            type: "org.apache.camel.AggregationStrategy"
+                            scriptLanguage: "groovy"
                             script: "class MaxAgg { int agg(int s1, int s2) { return Math.max(s1, s2) }}; new MaxAgg()"
                         from:
                           uri: "direct:route"

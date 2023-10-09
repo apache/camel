@@ -68,7 +68,7 @@
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.158</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.161</aws-java-sdk2-version>
         <aws-xray-version>2.14.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.17</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
@@ -118,7 +118,7 @@
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.5.2-jakarta4</datasonnet-mapper-version>
-        <debezium-version>2.3.4.Final</debezium-version>
+        <debezium-version>2.4.0.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.33</debezium-mysql-connector-version>
         <derby-version>10.16.1.1</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
@@ -226,7 +226,7 @@
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>2.0.0</java-util-version>
-        <jnats-version>2.16.14</jnats-version>
+        <jnats-version>2.17.0</jnats-version>
         <javacc-maven-plugin-version>3.0.1</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
@@ -341,7 +341,7 @@
         <minio-version>8.5.5</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.2.2</mockwebserver-version>
-        <mockito-version>3.12.4</mockito-version>
+        <mockito-version>5.2.0</mockito-version>
         <mongo-java-driver-version>4.10.2</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.13.9</msal4j-version>
@@ -375,7 +375,7 @@
         <pdfbox-version>3.0.0</pdfbox-version>
         <pgjdbc-driver-version>42.6.0</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
-        <picocli-version>4.7.4</picocli-version>
+        <picocli-version>4.7.5</picocli-version>
         <plc4x-version>0.10.0</plc4x-version>
         <pooled-jms-version>3.1.3</pooled-jms-version>
         <properties-maven-plugin-version>1.1.0</properties-maven-plugin-version>
@@ -2606,11 +2606,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-catalog-maven</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-catalog-maven-grape</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

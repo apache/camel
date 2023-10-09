@@ -306,7 +306,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         }
         RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
         def.setName(name);
-        def.setType(language);
+        def.setScriptLanguage(language);
         def.setScript(script);
         templateBeans.add(def);
         return this;
@@ -327,7 +327,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
         def.setName(name);
         def.setBeanType(type);
-        def.setType(language);
+        def.setScriptLanguage(language);
         def.setScript(script);
         templateBeans.add(def);
         return this;

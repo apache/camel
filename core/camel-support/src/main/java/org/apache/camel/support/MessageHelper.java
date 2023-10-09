@@ -24,6 +24,8 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Array;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -588,6 +590,14 @@ public final class MessageHelper {
             if (type != null) {
                 sb.append(" type=\"").append(type).append("\"");
             }
+            if (body instanceof Collection) {
+                long size = ((Collection<?>) body).size();
+                sb.append(" size=\"").append(size).append("\"");
+            }
+            if (body != null && body.getClass().isArray()) {
+                int size = Array.getLength(body);
+                sb.append(" size=\"").append(size).append("\"");
+            }
             if (body instanceof StreamCache) {
                 long pos = ((StreamCache) body).position();
                 if (pos != -1) {
@@ -995,6 +1005,14 @@ public final class MessageHelper {
             String type = ObjectHelper.classCanonicalName(body);
             if (type != null) {
                 jb.put("type", type);
+            }
+            if (body instanceof Collection) {
+                long size = ((Collection<?>) body).size();
+                jb.put("size", size);
+            }
+            if (body != null && body.getClass().isArray()) {
+                int size = Array.getLength(body);
+                jb.put("size", size);
             }
             if (body instanceof StreamCache) {
                 long pos = ((StreamCache) body).position();

@@ -14,8 +14,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private static final String LABEL_NAME = "consumer,sqlserver";
     @UriParam(label = LABEL_NAME)
     private String messageKeyColumns;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private int queryFetchSize = 0;
+    @UriParam(label = LABEL_NAME)
+    private String customMetricTags;
     @UriParam(label = LABEL_NAME, defaultValue = "source")
     private String signalEnabledChannels = "source";
     @UriParam(label = LABEL_NAME)
@@ -157,15 +157,17 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The maximum number of records that should be loaded into memory while
-     * streaming. A value of '0' uses the default JDBC fetch size.
+     * The custom metric tags will accept key-value pairs to customize the MBean
+     * object name which should be appended the end of regular name, each key
+     * would represent a tag for the MBean object name, and the corresponding
+     * value would be the value of that tag the key is. For example: k1=v1,k2=v2
      */
-    public void setQueryFetchSize(int queryFetchSize) {
-        this.queryFetchSize = queryFetchSize;
+    public void setCustomMetricTags(String customMetricTags) {
+        this.customMetricTags = customMetricTags;
     }
 
-    public int getQueryFetchSize() {
-        return queryFetchSize;
+    public String getCustomMetricTags() {
+        return customMetricTags;
     }
 
     /**
@@ -979,7 +981,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         final Configuration.Builder configBuilder = Configuration.create();
         
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
-        addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
+        addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "database.instance", databaseInstance);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);

@@ -21,13 +21,14 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(68);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
         props.add("columnIncludeList");
         props.add("columnPropagateSourceType");
         props.add("converters");
+        props.add("customMetricTags");
         props.add("databaseDbname");
         props.add("databaseHostname");
         props.add("databasePassword");
