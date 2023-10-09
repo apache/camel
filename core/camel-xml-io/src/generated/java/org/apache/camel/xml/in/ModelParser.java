@@ -1047,6 +1047,7 @@ public class ModelParser extends BaseParser {
                 case "consumes": def.setConsumes(val); break;
                 case "disabled": def.setDisabled(val); break;
                 case "enableCORS": def.setEnableCORS(val); break;
+                case "enableNoContentResponse": def.setEnableNoContentResponse(val); break;
                 case "path": def.setPath(val); break;
                 case "produces": def.setProduces(val); break;
                 case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); break;
@@ -1077,6 +1078,7 @@ public class ModelParser extends BaseParser {
                 case "component": def.setComponent(val); break;
                 case "consumes": def.setConsumes(val); break;
                 case "enableCORS": def.setEnableCORS(val); break;
+                case "enableNoContentResponse": def.setEnableNoContentResponse(val); break;
                 case "outType": def.setOutType(val); break;
                 case "produces": def.setProduces(val); break;
                 case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); break;
@@ -1665,6 +1667,7 @@ public class ModelParser extends BaseParser {
                 case "component": def.setComponent(val); break;
                 case "contextPath": def.setContextPath(val); break;
                 case "enableCORS": def.setEnableCORS(val); break;
+                case "enableNoContentResponse": def.setEnableNoContentResponse(val); break;
                 case "host": def.setHost(val); break;
                 case "hostNameResolver": def.setHostNameResolver(RestHostNameResolver.valueOf(val)); break;
                 case "inlineRoutes": def.setInlineRoutes(val); break;
@@ -3063,6 +3066,7 @@ public class ModelParser extends BaseParser {
                 case "deprecated": def.setDeprecated(val); break;
                 case "disabled": def.setDisabled(val); break;
                 case "enableCORS": def.setEnableCORS(val); break;
+                case "enableNoContentResponse": def.setEnableNoContentResponse(val); break;
                 case "outType": def.setOutType(val); break;
                 case "path": def.setPath(val); break;
                 case "produces": def.setProduces(val); break;

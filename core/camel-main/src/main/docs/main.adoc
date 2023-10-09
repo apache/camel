@@ -208,7 +208,7 @@ The camel.health supports 8 options, which are listed below.
 
 
 === Camel Rest-DSL configurations
-The camel.rest supports 27 options, which are listed below.
+The camel.rest supports 28 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -228,6 +228,7 @@ The camel.rest supports 27 options, which are listed below.
 | *camel.rest.corsHeaders* | Sets the CORS headers to use if CORS has been enabled. |  | Map
 | *camel.rest.dataFormat{zwsp}Properties* | Sets additional options on data format level |  | Map
 | *camel.rest.enableCORS* | To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response. This option is default false | false | boolean
+| *camel.rest.enableNoContent{zwsp}Response* | Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false. | false | boolean
 | *camel.rest.endpointProperties* | Sets additional options on endpoint level |  | Map
 | *camel.rest.host* | Sets the hostname to use by the REST consumer |  | String
 | *camel.rest.hostNameResolver* | Sets the resolver to use for resolving hostname | RestHostNameResolver.allLocalIp | RestHostNameResolver

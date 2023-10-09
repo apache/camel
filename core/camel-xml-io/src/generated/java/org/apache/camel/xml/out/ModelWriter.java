@@ -4349,6 +4349,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("outType", def.getOutType());
         doWriteAttribute("component", def.getComponent());
         doWriteAttribute("bindingMode", def.getBindingMode());
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse());
         doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode());
         doWriteAttribute("clientRequestValidation", def.getClientRequestValidation());
         doWriteAttribute("produces", def.getProduces());
@@ -4377,6 +4378,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("component", def.getComponent());
         doWriteAttribute("bindingMode", toString(def.getBindingMode()));
         doWriteAttribute("port", def.getPort());
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse());
         doWriteAttribute("xmlDataFormat", def.getXmlDataFormat());
         doWriteAttribute("apiVendorExtension", def.getApiVendorExtension());
         doWriteAttribute("apiComponent", def.getApiComponent());
@@ -4399,6 +4401,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("path", def.getPath());
         doWriteAttribute("bindingMode", def.getBindingMode());
         doWriteAttribute("apiDocs", def.getApiDocs());
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse());
         doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode());
         doWriteAttribute("clientRequestValidation", def.getClientRequestValidation());
         doWriteAttribute("produces", def.getProduces());
@@ -4480,6 +4483,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("routeId", def.getRouteId());
         doWriteAttribute("bindingMode", def.getBindingMode());
         doWriteAttribute("apiDocs", def.getApiDocs());
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse());
         doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode());
         doWriteAttribute("clientRequestValidation", def.getClientRequestValidation());
         doWriteAttribute("produces", def.getProduces());
