@@ -27,7 +27,9 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertiesLookupListener;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -38,6 +40,7 @@ import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.PropertiesSourceFactory;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PatternHelper;
@@ -169,6 +172,31 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public String parseUri(String uri, boolean keepUnresolvedOptional) {
         return parseUri(uri, propertiesLookup, keepUnresolvedOptional);
+    }
+
+    @Override
+    public String parseBeanPropertyPlaceholder(String uri) {
+        LOG.trace("Parsing uri {}", uri);
+
+        String[] parts = uri.split(":");
+        String[] beanNameAndMethodName = parts[2].split("\\.");
+        String beanName = beanNameAndMethodName[0];
+        String methodName = beanNameAndMethodName[1];
+
+        Registry registry = camelContext.getRegistry();
+        Object bean = registry.lookupByName(beanName);
+        if (bean == null) {
+            throw new NoSuchBeanException(beanName);
+        }
+
+        String answer = parts[0] + ":";
+        try {
+            answer += (String) org.apache.camel.support.ObjectHelper.invokeMethodSafe(methodName, bean);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+        LOG.trace("Parsed uri {} -> {}", uri, answer);
+        return answer;
     }
 
     @Override

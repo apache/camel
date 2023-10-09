@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -99,6 +100,9 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final Object lock = new Object();
 
     private volatile FactoryFinder bootstrapFactoryFinder;
+
+    private static final Pattern BEAN_PROPERTY_PLACEHOLDER_PATTERN
+            = Pattern.compile("^([a-zA-Z0-9]+):bean:[a-zA-Z0-9]+.[a-zA-Z0-9]+$");
 
     public DefaultCamelContextExtension(AbstractCamelContext camelContext) {
         this.camelContext = camelContext;
@@ -228,6 +232,12 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the parser will throw exception if property key was not found
             String answer = camelContext.getPropertiesComponent().parseUri(text, keepUnresolvedOptional);
+            logger().debug("Resolved text: {} -> {}", text, answer);
+            return answer;
+        }
+        if (text != null && BEAN_PROPERTY_PLACEHOLDER_PATTERN.matcher(text).matches()) {
+            // the parser will throw exception if bean was not found
+            String answer = camelContext.getPropertiesComponent().parseBeanPropertyPlaceholder(text);
             logger().debug("Resolved text: {} -> {}", text, answer);
             return answer;
         }

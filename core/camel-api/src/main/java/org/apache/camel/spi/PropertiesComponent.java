@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.StaticService;
 
@@ -75,6 +76,16 @@ public interface PropertiesComponent extends StaticService {
      * @throws IllegalArgumentException is thrown if error during parsing
      */
     String parseUri(String uri, boolean keepUnresolvedOptional);
+
+    /**
+     * Parses the input text with bean property placeholder function.
+     *
+     * @param  uri                 input text
+     * @return                     text with resolved property placeholders
+     * @throws NoSuchBeanException is thrown if the bean cannot be found.
+     * @throws Exception           if an internal processing error has occurred.
+     */
+    String parseBeanPropertyPlaceholder(String uri);
 
     /**
      * Looks up the property with the given key
