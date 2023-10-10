@@ -93,9 +93,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.infinispan.protostream</groupId>
-            <artifactId>sample-domain-implementation</artifactId>
-            <version>${protostream-version}</version>
+            <groupId>org.infinispan</groupId>
+            <artifactId>proto-sample-domain-implementation</artifactId>
+            <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
 
