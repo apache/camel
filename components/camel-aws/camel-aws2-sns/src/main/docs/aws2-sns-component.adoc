@@ -71,8 +71,8 @@ The order of evaluation for Default Credentials Provider is the following:
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
- - Amazon EC2 Instance profile credentials. 
- 
+ - Amazon EC2 Instance profile credentials.
+
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
 
 Only one of static, default and profile credentials could be used at the same time.
@@ -104,11 +104,11 @@ You can create a subscription of an SQS Queue to an SNS Topic in this way:
 [source,java]
 -------------------------------------------------
 from("direct:start")
-.to("aws2-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&subscribeSNStoSQS=true&queueUrl=https://sqs.eu-central-1.amazonaws.com/780410022472/test-camel");
+.to("aws2-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:eu-central-1:123456789012:test_camel");
 -------------------------------------------------
 
 The `#amazonSNSClient` refers to a `SnsClient` in the Registry.
-By specifying `subscribeSNStoSQS` to true and a `queueUrl` of an existing SQS Queue,
+By specifying `subscribeSNStoSQS` to true and a `queueArn` of an existing SQS Queue,
 you'll be able to subscribe your SQS Queue to your SNS Topic.
 
 At this point you can consume messages coming from SNS Topic through your SQS Queue
