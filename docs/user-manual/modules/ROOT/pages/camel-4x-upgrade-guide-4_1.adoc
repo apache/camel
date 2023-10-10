@@ -177,3 +177,7 @@ span.setTag(TagConstants.URL_SCHEME, scheme);
 
 The default value for `sessionTimeoutMs` has been updated to  `45000` ms, while the default value for `consumerRequestTimeoutMs` has been updated to `30000`. More information in CAMEL-19921 issue.
 
+=== camel-core, rest
+
+A new rest configuration option, `enableNoContentResponse`,
+allows HTTP 204 to be returned with an empty body if a Message contains an empty JSON object or empty XML root object when set to `true`.
