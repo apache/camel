@@ -13658,6 +13658,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -13764,6 +13769,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -13869,6 +13879,11 @@
           },
           "enableCors" : {
             "type" : "boolean"
+          },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
           },
           "id" : {
             "type" : "string",
@@ -14143,6 +14158,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -14249,6 +14269,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -14354,6 +14379,11 @@
           },
           "enableCors" : {
             "type" : "boolean"
+          },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
           },
           "id" : {
             "type" : "string",
@@ -14548,6 +14578,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -14673,6 +14708,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
+          },
           "endpointProperty" : {
             "type" : "array",
             "title" : "Endpoint Property",
@@ -14787,6 +14827,11 @@
           },
           "enableCors" : {
             "type" : "boolean"
+          },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body. The default value is false."
           },
           "get" : {
             "type" : "array",
