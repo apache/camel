@@ -18,11 +18,11 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PropertiesFunction;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 @org.apache.camel.spi.annotations.PropertiesFunction("bean")
 public class BeanPropertiesFunction implements PropertiesFunction, CamelContextAware {
@@ -35,19 +35,18 @@ public class BeanPropertiesFunction implements PropertiesFunction, CamelContextA
 
     @Override
     public String apply(String remainder) {
+        if (StringHelper.countChar(remainder, '.') != 1 || remainder.startsWith(".") || remainder.endsWith(".")) {
+            throw new IllegalArgumentException("BeanName and methodName should be separated by a dot.");
+        }
         String[] beanNameAndMethodName = remainder.split("\\.");
         String beanName = beanNameAndMethodName[0];
         String methodName = beanNameAndMethodName[1];
 
-        Registry registry = getCamelContext().getRegistry();
-        Object bean = registry.lookupByName(beanName);
-        if (bean == null) {
-            throw new NoSuchBeanException(beanName);
-        }
+        Object bean = CamelContextHelper.mandatoryLookup(camelContext, beanName);
 
         String answer = "";
         try {
-            answer += (String) ObjectHelper.invokeMethodSafe(methodName, bean);
+            answer += camelContext.getTypeConverter().convertTo(String.class, ObjectHelper.invokeMethodSafe(methodName, bean));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
