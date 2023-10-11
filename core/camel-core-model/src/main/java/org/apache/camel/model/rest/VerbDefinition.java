@@ -270,7 +270,7 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     }
 
     /**
-     * Whether to return the HTTP 204 (no Content) success status response code for a response that has an empty body.
+     * Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
      * <p/>
      * The default value is false.
      */
