@@ -25,6 +25,7 @@ import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.roaster.AnonymousMethodSource;
 import org.apache.camel.parser.roaster.StatementFieldSource;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.util.URISupport;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Block;
@@ -47,6 +48,7 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SimpleType;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Statement;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.StringLiteral;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.TextBlock;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Type;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -342,6 +344,8 @@ public final class CamelJavaParserHelper {
             boolean fields) {
         if (strings) {
             String uri = getLiteralValue(clazz, block, (Expression) arg);
+            // java 17 text block
+            uri = URISupport.textBlockToSingleLine(uri);
             if (!Strings.isNullOrEmpty(uri)) {
                 int position = ((Expression) arg).getStartPosition();
                 int len = ((Expression) arg).getLength();
@@ -591,6 +595,8 @@ public final class CamelJavaParserHelper {
             return String.valueOf(booleanLiteral.booleanValue());
         } else if (expression instanceof NumberLiteral numberLiteral) {
             return numberLiteral.getToken();
+        } else if (expression instanceof TextBlock textBlock) {
+            return textBlock.getLiteralValue();
         }
 
         // if it's a method invocation then add a dummy value assuming the method invocation will return a valid response
