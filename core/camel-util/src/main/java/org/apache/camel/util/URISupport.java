@@ -43,6 +43,10 @@ public final class URISupport {
     public static final char[] RAW_TOKEN_START = { '(', '{' };
     public static final char[] RAW_TOKEN_END = { ')', '}' };
 
+    // Java 17 text blocks have new lines with optional white space
+    private static final String TEXT_BLOCK_MARKER = System.lineSeparator();
+    private static final Pattern TEXT_BLOCK_PATTERN = Pattern.compile("\n\\s*");
+
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
@@ -84,6 +88,15 @@ public final class URISupport {
             sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
         }
         return sanitized;
+    }
+
+    public static String textBlockToSingleLine(String uri) {
+        // text blocks
+        if (uri != null && uri.contains(TEXT_BLOCK_MARKER)) {
+            uri = TEXT_BLOCK_PATTERN.matcher(uri).replaceAll("");
+            uri = uri.trim();
+        }
+        return uri;
     }
 
     /**
@@ -612,6 +625,8 @@ public final class URISupport {
      * @throws URISyntaxException is thrown if syntax error in the input uri
      */
     public static URI normalizeUriAsURI(String uri) throws URISyntaxException {
+        // java 17 text blocks to single line uri
+        uri = URISupport.textBlockToSingleLine(uri);
         return new URI(UnsafeUriCharactersEncoder.encode(uri, true));
     }
 
@@ -620,6 +635,9 @@ public final class URISupport {
      * values, or other unsafe URL characters, or have authority user/password, etc.
      */
     private static String doComplexNormalizeUri(String uri) throws URISyntaxException {
+        // java 17 text blocks to single line uri
+        uri = URISupport.textBlockToSingleLine(uri);
+
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
         String scheme = u.getScheme();
         String path = u.getSchemeSpecificPart();
