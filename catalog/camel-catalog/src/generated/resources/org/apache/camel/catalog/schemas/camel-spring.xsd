@@ -13867,6 +13867,16 @@ Whether to enable CORS headers in the HTTP response. The default value is false.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="enableNoContentResponse" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The
+default value is false. Default value: false
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="inlineRoutes" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
@@ -14023,6 +14033,16 @@ Status 400 if validation error. Default value: false
 <![CDATA[
 Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level
 The default value is false. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="enableNoContentResponse" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The
+default value is false. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14357,6 +14377,16 @@ Status 400 if validation error. Default value: false
 <![CDATA[
 Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level
 The default value is false. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="enableNoContentResponse" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The
+default value is false. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16225,6 +16255,16 @@ Status 400 if validation error. Default value: false
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to enable CORS headers in the HTTP response. The default value is false. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="enableNoContentResponse" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The
+default value is false. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
