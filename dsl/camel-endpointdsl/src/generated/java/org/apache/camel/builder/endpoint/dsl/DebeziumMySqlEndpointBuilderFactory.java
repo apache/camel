@@ -579,25 +579,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: mysql
-         * 
-         * @param customMetricTags the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMySqlEndpointBuilder customMetricTags(
-                String customMetricTags) {
-            doSetProperty("customMetricTags", customMetricTags);
-            return this;
-        }
-        /**
          * A comma-separated list of regular expressions that match database
          * names to be excluded from monitoring.
          * 

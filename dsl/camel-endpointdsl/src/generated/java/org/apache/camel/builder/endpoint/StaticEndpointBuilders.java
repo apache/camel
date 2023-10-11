@@ -5612,7 +5612,6 @@ public class StaticEndpointBuilders {
      * @param path defaultCoordinates
      * @return the dsl builder
      */
-    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.endpointBuilder("grape", path);
@@ -5636,7 +5635,6 @@ public class StaticEndpointBuilders {
      * @param path defaultCoordinates
      * @return the dsl builder
      */
-    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(
             String componentName,
             String path) {

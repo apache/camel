@@ -415,25 +415,6 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param customMetricTags the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverEndpointBuilder customMetricTags(
-                String customMetricTags) {
-            doSetProperty("customMetricTags", customMetricTags);
-            return this;
-        }
-        /**
          * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1169,6 +1150,40 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder provideTransactionMetadata(
                 String provideTransactionMetadata) {
             doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of '0' uses the default JDBC fetch size.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder queryFetchSize(
+                int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of '0' uses the default JDBC fetch size.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder queryFetchSize(
+                String queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
             return this;
         }
         /**

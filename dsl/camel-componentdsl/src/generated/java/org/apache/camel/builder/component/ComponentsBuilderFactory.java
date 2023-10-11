@@ -1627,7 +1627,6 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
-    @Deprecated
     static org.apache.camel.builder.component.dsl.GrapeComponentBuilderFactory.GrapeComponentBuilder grape() {
         return org.apache.camel.builder.component.dsl.GrapeComponentBuilderFactory.grape();
     }

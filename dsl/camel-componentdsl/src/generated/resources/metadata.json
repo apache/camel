@@ -2648,7 +2648,7 @@
     "name": "grape",
     "title": "Grape",
     "description": "Fetch, load and manage additional jars dynamically after Camel Context was started.",
-    "deprecated": true,
+    "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "management",
     "javaType": "org.apache.camel.component.grape.GrapeComponent",

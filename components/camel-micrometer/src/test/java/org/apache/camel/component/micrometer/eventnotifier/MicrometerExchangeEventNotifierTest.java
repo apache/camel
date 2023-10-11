@@ -55,8 +55,8 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
             @Override
             public Object evaluate(Exchange exchange) {
                 try {
-                    Awaitility.await().pollDelay(SLEEP, TimeUnit.MILLISECONDS).catchUncaughtExceptions().untilAsserted(
-                            () -> Assertions.assertThat(currentInflightExchanges()).isEqualTo(1.0D, withPrecision(0.1D)));
+                    Awaitility.await().pollDelay(SLEEP, TimeUnit.MILLISECONDS).catchUncaughtExceptions().untilAsserted(() ->
+                            Assertions.assertThat(currentInflightExchanges()).isEqualTo(1.0D, withPrecision(0.1D)));
                     return exchange.getIn().getBody();
                 } catch (Exception e) {
                     if (e.getCause() instanceof InterruptedException) {
