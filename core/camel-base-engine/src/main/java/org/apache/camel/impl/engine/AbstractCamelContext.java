@@ -775,8 +775,10 @@ public abstract class AbstractCamelContext extends BaseService
 
         LOG.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
 
-        // in case path has property placeholders then try to let property component resolve those
         if (!normalized) {
+            // java 17 text blocks to single line uri
+            uri = URISupport.textBlockToSingleLine(uri);
+            // in case path has property placeholders then try to let property component resolve those
             uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
         }
 
