@@ -62,4 +62,9 @@ public interface StartupStep {
      */
     long getBeginTime();
 
+    /**
+     * Gets the duration the step took (optional)
+     */
+    long getDuration();
+
 }

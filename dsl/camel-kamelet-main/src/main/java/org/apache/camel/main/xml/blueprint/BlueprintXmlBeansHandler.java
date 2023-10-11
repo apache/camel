@@ -37,6 +37,7 @@ import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StringHelper;
@@ -58,6 +59,15 @@ public class BlueprintXmlBeansHandler {
     private final Map<String, Resource> resources = new LinkedHashMap<>();
     private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
     private final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
+    private boolean transform;
+
+    public boolean isTransform() {
+        return transform;
+    }
+
+    public void setTransform(boolean transform) {
+        this.transform = transform;
+    }
 
     /**
      * Parses the XML documents and discovers blueprint beans, which will be created manually via Camel.
@@ -89,15 +99,21 @@ public class BlueprintXmlBeansHandler {
             String id = entry.getKey();
             Node n = entry.getValue();
             RegistryBeanDefinition def = createBeanModel(camelContext, id, n);
-            LOG.debug("Creating bean: {}", def.getName());
-            registerBeanDefinition(camelContext, def, true);
+            if (transform) {
+                // transform mode should only discover and remember bean in model
+                LOG.debug("Discovered bean: {}", def.getName());
+                addBeanToCamelModel(camelContext, def.getName(), def);
+            } else {
+                LOG.debug("Creating bean: {}", def.getName());
+                registerAndCreateBean(camelContext, def, true);
+            }
         }
 
         if (!delayedRegistrations.isEmpty()) {
             // some of the beans were not available yet, so we have to try register them now
             for (RegistryBeanDefinition def : delayedRegistrations) {
                 LOG.debug("Creating bean (2nd-try): {}", def.getName());
-                registerBeanDefinition(camelContext, def, false);
+                registerAndCreateBean(camelContext, def, false);
             }
             delayedRegistrations.clear();
         }
@@ -159,12 +175,31 @@ public class BlueprintXmlBeansHandler {
                 String key = XmlHelper.getAttribute(child, "name");
                 String val = XmlHelper.getAttribute(child, "value");
                 String ref = XmlHelper.getAttribute(child, "ref");
-
-                // TODO: List/Map properties
                 if (key != null && val != null) {
                     properties.put(key, extractValue(camelContext, val, false));
                 } else if (key != null && ref != null) {
                     properties.put(key, extractValue(camelContext, "#bean:" + ref, false));
+                }
+                for (Node n : getChildNodes(child, "list")) {
+                    int j = 0;
+                    for (Node v : getChildNodes(n, "value")) {
+                        val = v.getTextContent();
+                        if (key != null && val != null) {
+                            String k = key + "[" + j + "]";
+                            properties.put(k, extractValue(camelContext, val, false));
+                        }
+                        j++;
+                    }
+                }
+                for (Node n : getChildNodes(child, "map")) {
+                    for (Node v : getChildNodes(n, "entry")) {
+                        String k = XmlHelper.getAttribute(v, "key");
+                        val = XmlHelper.getAttribute(v, "value");
+                        if (key != null && k != null && val != null) {
+                            k = key + "[" + k + "]";
+                            properties.put(k, extractValue(camelContext, val, false));
+                        }
+                    }
                 }
             }
         }
@@ -173,6 +208,18 @@ public class BlueprintXmlBeansHandler {
         }
 
         return rrd;
+    }
+
+    private static List<Node> getChildNodes(Node node, String name) {
+        List<Node> answer = new ArrayList<>();
+        NodeList list = node.getChildNodes();
+        for (int j = 0; j < list.getLength(); j++) {
+            Node entry = list.item(j);
+            if (name.equals(entry.getNodeName())) {
+                answer.add(entry);
+            }
+        }
+        return answer;
     }
 
     private void discoverBeans(CamelContext camelContext, String fileName, Document dom) {
@@ -214,7 +261,7 @@ public class BlueprintXmlBeansHandler {
     /**
      * Try to instantiate bean from the definition.
      */
-    private void registerBeanDefinition(CamelContext camelContext, RegistryBeanDefinition def, boolean delayIfFailed) {
+    private void registerAndCreateBean(CamelContext camelContext, RegistryBeanDefinition def, boolean delayIfFailed) {
         String type = def.getType();
         String name = def.getName();
         if (name == null || name.isBlank()) {
@@ -258,6 +305,11 @@ public class BlueprintXmlBeansHandler {
                 if (delayIfFailed) {
                     delayedRegistrations.add(def);
                 } else {
+                    boolean ignore = PluginHelper.getRoutesLoader(camelContext).isIgnoreLoadingError();
+                    if (ignore) {
+                        // still add bean if we are ignore loading as we want to know about all beans if possible
+                        addBeanToCamelModel(camelContext, name, def);
+                    }
                     LOG.warn("Error creating bean: {} due to: {}. This exception is ignored.", type, e.getMessage(), e);
                 }
             }
@@ -282,9 +334,16 @@ public class BlueprintXmlBeansHandler {
             beansToDestroy.put(name, new KeyValueHolder<>(target, def.getDestroyMethod()));
         }
 
+        addBeanToCamelModel(camelContext, name, def);
+    }
+
+    protected void addBeanToCamelModel(CamelContext camelContext, String name, RegistryBeanDefinition def) {
         // register bean in model
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-        model.addRegistryBean(def);
+        if (model != null) {
+            LOG.debug("Adding OSGi <blueprint> XML bean: {} to DSL model", name);
+            model.addRegistryBean(def);
+        }
     }
 
     protected void destroyBean(String name, boolean remove) {

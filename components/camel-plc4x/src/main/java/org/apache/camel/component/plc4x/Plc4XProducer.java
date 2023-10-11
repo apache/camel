@@ -27,7 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcException;
-import org.apache.plc4x.java.api.exceptions.PlcInvalidFieldException;
+import org.apache.plc4x.java.api.exceptions.PlcInvalidTagException;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.apache.plc4x.java.api.messages.PlcWriteResponse;
 import org.slf4j.Logger;
@@ -82,7 +82,7 @@ public class Plc4XProducer extends DefaultAsyncProducer {
             Map<String, Map<String, Object>> tags = (Map<String, Map<String, Object>>) body;
             plcWriteRequest = plc4XEndpoint.buildPlcWriteRequest(tags);
         } else {
-            throw new PlcInvalidFieldException("The body must contain a Map<String,Map<String,Object>");
+            throw new PlcInvalidTagException("The body must contain a Map<String,Map<String,Object>");
         }
         CompletableFuture<? extends PlcWriteResponse> completableFuture = plcWriteRequest.execute();
         int currentlyOpenRequests = openRequests.incrementAndGet();

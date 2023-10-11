@@ -1064,9 +1064,9 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBeanFactoryDefinitionAttributes(
             BeanFactoryDefinition<?, ?> def)
             throws IOException {
+        doWriteAttribute("scriptLanguage", def.getScriptLanguage());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
-        doWriteAttribute("beanType", def.getBeanType());
     }
     protected void doWriteBeanFactoryDefinitionElements(
             BeanFactoryDefinition<?, ?> def)
@@ -2568,11 +2568,13 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteAttribute("factoryMethod", def.getFactoryMethod());
         doWriteAttribute("initMethod", def.getInitMethod());
+        doWriteAttribute("scriptLanguage", def.getScriptLanguage());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("destroyMethod", def.getDestroyMethod());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("factoryBean", def.getFactoryBean());
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
+        doWriteElement("script", def.getScript(), this::doWriteString);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
         endElement(name);
     }
@@ -3930,6 +3932,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("method", def.getMethod());
         doWriteAttribute("scope", def.getScope());
         doWriteAttribute("beanType", def.getBeanTypeName());
+        doWriteAttribute("validate", def.getValidate());
         doWriteValue(def.getExpression());
         endElement(name);
     }

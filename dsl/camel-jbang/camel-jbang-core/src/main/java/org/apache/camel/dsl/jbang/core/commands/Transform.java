@@ -29,7 +29,7 @@ import org.apache.camel.util.StopWatch;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "transform", description = "Transform Camel route to XML or YAML format", sortOptions = false)
+@Command(name = "transform", description = "Transform Camel routes to XML or YAML format", sortOptions = false)
 public class Transform extends CamelCommand {
 
     @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
@@ -52,8 +52,13 @@ public class Transform extends CamelCommand {
     boolean resolvePlaceholders;
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
+                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format"
+                                      + "and recommended to enable when using Apache Camel Karavan)")
     boolean uriAsParameters;
+
+    @CommandLine.Option(names = { "--ignore-loading-error" },
+                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    boolean ignoreLoadingError;
 
     public Transform(CamelJBangMain main) {
         super(main);
@@ -78,11 +83,17 @@ public class Transform extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "" + resolvePlaceholders);
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "" + uriAsParameters);
                 main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                main.addInitialProperty("camel.jbang.transform", "true");
+                main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+                if (ignoreLoadingError) {
+                    // turn off bean method validator if ignore loading error
+                    main.addInitialProperty("camel.language.bean.validate", "false");
+                }
             }
         };
         run.files = files;
         run.maxSeconds = 1;
-        Integer exit = run.runTransform();
+        Integer exit = run.runTransform(ignoreLoadingError);
         if (exit != null && exit != 0) {
             return exit;
         }

@@ -21,12 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 public class FileExclusiveReadLockCopyTest extends ContextTestSupport {
 
     private String fileUrl = fileUri("?readLock=fileLock&initialDelay=0&delay=10");
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     public void testCopy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

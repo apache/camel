@@ -49,6 +49,7 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
 import org.apache.camel.xml.io.XmlPullParserException;
+import org.apache.camel.xml.io.XmlPullParserLocationException;
 
 public class BaseParser {
 
@@ -100,6 +101,30 @@ public class BaseParser {
     }
 
     protected <T> T doParse(
+            T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler,
+            boolean supportsExternalNamespaces)
+            throws IOException, XmlPullParserException {
+
+        try {
+            return doParseXml(definition, attributeHandler, elementHandler, valueHandler, supportsExternalNamespaces);
+        } catch (Exception e) {
+            if (e instanceof XmlPullParserLocationException) {
+                throw e;
+            }
+            // wrap in XmlPullParserLocationException so we have line-precise error
+            String msg = e.getMessage();
+            Throwable cause = e;
+            if (e instanceof XmlPullParserException) {
+                if (e.getCause() != null) {
+                    cause = e.getCause();
+                    msg = e.getCause().getMessage();
+                }
+            }
+            throw new XmlPullParserLocationException(msg, resource, parser.getLineNumber(), parser.getColumnNumber(), cause);
+        }
+    }
+
+    protected <T> T doParseXml(
             T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler,
             boolean supportsExternalNamespaces)
             throws IOException, XmlPullParserException {

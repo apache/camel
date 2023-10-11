@@ -66,6 +66,7 @@ public class BeanExpression implements Expression, Predicate {
     private BeanHolder beanHolder;
     private boolean ognlMethod;
     private BeanScope scope = BeanScope.Singleton;
+    private boolean validate = true;
 
     public BeanExpression(Object bean, String method) {
         this.bean = bean;
@@ -110,6 +111,14 @@ public class BeanExpression implements Expression, Predicate {
 
     public void setScope(BeanScope scope) {
         this.scope = scope;
+    }
+
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public void setValidate(boolean validate) {
+        this.validate = validate;
     }
 
     public ParameterMappingStrategy getParameterMappingStrategy() {
@@ -169,13 +178,13 @@ public class BeanExpression implements Expression, Predicate {
         // lets see if we can do additional validation that the bean has valid method during creation of the expression
         Object target = beanHolder.getBean(null);
         if (method != null) {
-            validateHasMethod(context, target, type, method);
-
-            // validate OGNL if its invalid syntax
-            if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
-                throw new ExpressionIllegalSyntaxException(method);
+            if (validate) {
+                validateHasMethod(context, target, type, method);
+                // validate OGNL if its invalid syntax
+                if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
+                    throw new ExpressionIllegalSyntaxException(method);
+                }
             }
-
             ognlMethod = OgnlHelper.isValidOgnlExpression(method);
         }
     }

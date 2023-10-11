@@ -5,7 +5,7 @@ The Camel Report Maven Plugin supports the following goals
  - camel-report:validate - To validate your source code for invalid Camel endpoint uris
  - camel-report:route-coverage - To report the coverage of your Camel routes after unit testing
 
-== camel:validate
+== camel-report:validate
 
 For validating the source code for mis-configured Camel:
 
@@ -172,7 +172,7 @@ $mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -Dcamel.includeTe
 ----
 
 
-== camel:route-coverage
+== camel-report:route-coverage
 
 For generating a report of the coverage of your Camel routes from unit testing.
 In the same manner you can generate Java code coverage reports, then this is the same but for Camel routes.

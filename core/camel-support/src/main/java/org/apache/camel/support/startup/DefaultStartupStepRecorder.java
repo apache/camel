@@ -66,6 +66,11 @@ public class DefaultStartupStepRecorder extends ServiceSupport implements Startu
         }
 
         @Override
+        public long getDuration() {
+            return 0;
+        }
+
+        @Override
         public void endStep() {
             // noop
         }

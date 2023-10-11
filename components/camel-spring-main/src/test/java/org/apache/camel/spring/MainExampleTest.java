@@ -19,36 +19,47 @@ package org.apache.camel.spring;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class MainExampleTest {
 
     @Test
-    public void testMain() throws Exception {
-        Main main = new Main();
-        main.configure().addRoutesBuilder(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor())
-                        .to("file://target/mainTest");
-            }
+    public void testMain() {
+        assertDoesNotThrow(() -> {
+            Main main = new Main();
+            main.configure().addRoutesBuilder(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor())
+                            .to("file://target/mainTest");
+                }
+            });
+            main.start();
+
+            // run for 1 second
+            main.configure().setDurationMaxSeconds(1);
+
+            main.stop();
         });
-        main.start();
 
-        // run for 1 second
-        main.configure().setDurationMaxSeconds(1);
-
-        main.stop();
     }
 
     @Test
-    public void testFileApplicationContextUri() throws Exception {
-        Main main = new Main();
-        main.setFileApplicationContextUri("src/test/resources/org/apache/camel/spring/routingUsingProcessor.xml");
-        main.start();
+    public void testFileApplicationContextUri() {
 
-        // run for 1 second
-        main.configure().setDurationMaxSeconds(1);
+        assertDoesNotThrow(() -> {
+            Main main = new Main();
 
-        main.stop();
+            main.setFileApplicationContextUri("src/test/resources/org/apache/camel/spring/routingUsingProcessor.xml");
+            main.start();
+
+            // run for 1 second
+            main.configure().setDurationMaxSeconds(1);
+
+            main.stop();
+
+        });
+
     }
 
 }

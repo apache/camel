@@ -29,13 +29,12 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.plc4x.java.PlcDriverManager;
+import org.apache.plc4x.java.DefaultPlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
-import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class Plc4XEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
 
-    protected PlcDriverManager plcDriverManager;
+    protected DefaultPlcDriverManager plcDriverManager;
     protected PlcConnection connection;
 
     @UriPath
@@ -71,7 +70,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
 
     public Plc4XEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-        this.plcDriverManager = new PlcDriverManager();
+        this.plcDriverManager = new DefaultPlcDriverManager();
         this.uri = endpointUri.replaceFirst("plc4x:/?/?", "");
     }
 
@@ -93,7 +92,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
 
     public void setTrigger(String trigger) {
         this.trigger = trigger;
-        this.plcDriverManager = new PooledPlcDriverManager();
+        this.plcDriverManager = new DefaultPlcDriverManager();
     }
 
     public void setAutoReconnect(boolean autoReconnect) {
@@ -187,7 +186,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         if (tags != null) {
             for (Map.Entry<String, String> tag : tags.entrySet()) {
                 try {
-                    builder.addItem(tag.getKey(), tag.getValue());
+                    builder.addTagAddress(tag.getKey(), tag.getValue());
                 } catch (PlcIncompatibleDatatypeException e) {
                     LOGGER.warn("For consumer, please use Map<String,String>, currently using {}",
                             tags.getClass().getSimpleName());
@@ -212,12 +211,12 @@ public class Plc4XEndpoint extends DefaultEndpoint {
             String name = entry.getKey();
             String query = entry.getValue().keySet().iterator().next();
             Object value = entry.getValue().get(query);
-            builder.addItem(name, query, value);
+            builder.addTagAddress(name, query, value);
         }
         return builder.build();
     }
 
-    public PlcDriverManager getPlcDriverManager() {
+    public DefaultPlcDriverManager getPlcDriverManager() {
         return plcDriverManager;
     }
 

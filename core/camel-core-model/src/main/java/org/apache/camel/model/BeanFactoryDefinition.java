@@ -56,7 +56,7 @@ public abstract class BeanFactoryDefinition<
     private String type;
     @XmlAttribute
     @Metadata(label = "advanced")
-    private String beanType;
+    private String scriptLanguage;
     @XmlElement(name = "property")
     private List<PropertyDefinition> propertyDefinitions;
     @XmlElement(name = "properties")
@@ -86,36 +86,16 @@ public abstract class BeanFactoryDefinition<
     }
 
     /**
-     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     * What type to use for creating the bean (FQN classname). Can be prefixed with: #class or #type
      *
      * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
-     *
-     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
-     * section, such as using groovy.
      */
     public void setType(String type) {
         this.type = type;
     }
 
-    public String getBeanType() {
-        return beanType;
-    }
-
     /**
-     * To set the type (fully qualified class name) of the returned bean created by the script.
-     *
-     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
-     * registry via class type.
-     */
-    public void setBeanType(String beanType) {
-        this.beanType = beanType;
-    }
-
-    /**
-     * To set the type (fully qualified class name) of the returned bean created by the script.
-     *
-     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
-     * registry via class type.
+     * To set the type (fully qualified class name) to use for creating the bean.
      */
     public void setBeanType(Class<?> beanType) {
         this.beanClass = beanType;
@@ -165,6 +145,17 @@ public abstract class BeanFactoryDefinition<
         this.beanSupplier = beanSupplier;
     }
 
+    public String getScriptLanguage() {
+        return scriptLanguage;
+    }
+
+    /**
+     * The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.
+     */
+    public void setScriptLanguage(String scriptLanguage) {
+        this.scriptLanguage = scriptLanguage;
+    }
+
     /**
      * The script to execute that creates the bean when using scripting languages.
      *
@@ -183,12 +174,9 @@ public abstract class BeanFactoryDefinition<
     // ----------------------------------------------------
 
     /**
-     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     * What type to use for creating the bean. Can be one of: #class or #type
      *
      * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
-     *
-     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
-     * section, such as using groovy.
      */
     @SuppressWarnings("unchecked")
     public T type(String prefix, Class<?> type) {
@@ -197,21 +185,15 @@ public abstract class BeanFactoryDefinition<
                 prefix = prefix + ":";
             }
             setType(prefix + type.getName());
-        } else {
-            // its a script
-            setType(prefix);
         }
         setBeanType(type);
         return (T) this;
     }
 
     /**
-     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     * What type to use for creating the bean. Can be one of: #class or #type
      *
      * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
-     *
-     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
-     * section, such as using groovy.
      */
     @SuppressWarnings("unchecked")
     public T type(String type) {
@@ -246,29 +228,12 @@ public abstract class BeanFactoryDefinition<
     }
 
     /**
-     * To set the return type of the script (fully qualified class name).
+     * To set the type (fully qualified class name) to use for creating the bean.
      *
-     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
-     * registry via class type.
-     *
-     * @param type the fully qualified type of the returned bean from the script
+     * @param type the fully qualified type of the returned bean
      */
     @SuppressWarnings("unchecked")
     public T beanType(Class<?> type) {
-        setBeanType(type);
-        return (T) this;
-    }
-
-    /**
-     * To set the return type of the script (fully qualified class name).
-     *
-     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
-     * registry via class type.
-     *
-     * @param type the fully qualified type of the returned bean from the script
-     */
-    @SuppressWarnings("unchecked")
-    public T beanType(String type) {
         setBeanType(type);
         return (T) this;
     }
@@ -289,7 +254,8 @@ public abstract class BeanFactoryDefinition<
      * @param method the name of the method to call
      */
     public P bean(Class<?> type, String method) {
-        setType("bean");
+        setScriptLanguage("bean");
+        setBeanType(type);
         if (method != null) {
             setScript(type.getName() + "?method=" + method);
         } else {
@@ -307,7 +273,7 @@ public abstract class BeanFactoryDefinition<
      * @param script the script
      */
     public P groovy(String script) {
-        setType("groovy");
+        setScriptLanguage("groovy");
         setScript(script);
         return parent;
     }
@@ -321,9 +287,21 @@ public abstract class BeanFactoryDefinition<
      * @param script the script
      */
     public P joor(String script) {
-        setType("joor");
+        setScriptLanguage("joor");
         setScript(script);
         return parent;
+    }
+
+    /**
+     * Calls java (Java source that is runtime compiled to Java bytecode) for creating the local bean
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     *
+     * @param script the script
+     */
+    public P java(String script) {
+        return joor(script);
     }
 
     /**
@@ -336,7 +314,7 @@ public abstract class BeanFactoryDefinition<
      * @param script   the script
      */
     public P language(String language, String script) {
-        setType(language);
+        setScriptLanguage(language);
         setScript(script);
         return parent;
     }
@@ -350,7 +328,7 @@ public abstract class BeanFactoryDefinition<
      * @param script the script
      */
     public P mvel(String script) {
-        setType("mvel");
+        setScriptLanguage("mvel");
         setScript(script);
         return parent;
     }
@@ -364,7 +342,7 @@ public abstract class BeanFactoryDefinition<
      * @param script the script
      */
     public P ognl(String script) {
-        setType("ognl");
+        setScriptLanguage("ognl");
         setScript(script);
         return parent;
     }

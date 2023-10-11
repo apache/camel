@@ -16,7 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -136,7 +136,7 @@ public class Run extends CamelCommand {
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
             description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
-    String profile;
+    String profile = "application";
 
     @Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies)")
@@ -166,8 +166,10 @@ public class Run extends CamelCommand {
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @Option(names = { "--jvm-debug" }, defaultValue = "false", description = "To enable JVM remote debug on localhost:4004")
-    boolean jvmDebug;
+    @Option(names = { "--jvm-debug" }, parameterConsumer = DebugConsumer.class, paramLabel = "<true|false|port>",
+            description = "To enable JVM remote debugging on port 4004 by default. The supported values are true to " +
+                          "enable the remote debugging, false to disable the remote debugging or a number to use a custom port")
+    int jvmDebugPort;
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
@@ -284,13 +286,13 @@ public class Run extends CamelCommand {
     protected Integer runSilent(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
         this.silentRun = true;
-        this.ignoreLoadingError = ignoreLoadingError;
         return run();
     }
 
-    protected Integer runTransform() throws Exception {
+    protected Integer runTransform(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
         this.transformRun = true;
+        this.ignoreLoadingError = ignoreLoadingError;
         return run();
     }
 
@@ -298,6 +300,10 @@ public class Run extends CamelCommand {
         this.files.add(file);
         scriptRun = true;
         return run();
+    }
+
+    private boolean isDebugMode() {
+        return jvmDebugPort > 0;
     }
 
     private void writeSetting(KameletMain main, Properties existing, String key, String value) {
@@ -369,8 +375,9 @@ public class Run extends CamelCommand {
             String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
             if (routes == null) {
                 if (!silentRun) {
+                    String run = transformRun ? "transform" : "run";
                     System.err
-                            .println("Cannot run because " + getProfile()
+                            .println("Cannot " + run + " because " + getProfile()
                                      + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
                     return 1;
                 } else {
@@ -446,17 +453,6 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.backlogTracing", "true");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
-        // merge existing dependencies with --deps
-        String deps = RuntimeUtil.getDependencies(profileProperties);
-        if (deps.isBlank()) {
-            deps = dependencies != null ? dependencies : "";
-        } else if (dependencies != null && !dependencies.equals(deps)) {
-            deps += "," + dependencies;
-        }
-        if (!deps.isBlank()) {
-            main.addInitialProperty("camel.jbang.dependencies", deps);
-            writeSettings("camel.jbang.dependencies", deps);
-        }
 
         // command line arguments
         if (property != null) {
@@ -513,6 +509,28 @@ public class Run extends CamelCommand {
         // include generated openapi to files to run
         if (openapi != null) {
             files.add(OPENAPI_GENERATED_FILE);
+        }
+
+        // if we only run pom.xml/build.gradle then auto discover from the Maven/Gradle based project
+        if (files.size() == 1 && ("pom.xml".equals(files.get(0)) || "build.gradle".equals(files.get(0)))) {
+            // use a better name when running
+            if (name == null || "CamelJBang".equals(name)) {
+                name = RunHelper.mavenArtifactId();
+            }
+            // find source files
+            files = RunHelper.scanMavenOrGradleProject();
+            // include extra dependencies from pom.xml
+            List<String> deps = RunHelper.scanMavenDependenciesFromPom();
+            for (String d : deps) {
+                if (dependencies == null) {
+                    dependencies = "";
+                }
+                if (dependencies.isBlank()) {
+                    dependencies = d;
+                } else {
+                    dependencies += "," + d;
+                }
+            }
         }
 
         for (String file : files) {
@@ -672,6 +690,18 @@ public class Run extends CamelCommand {
             writeSettings("camel.component.properties.location", loc);
         }
 
+        // merge existing dependencies with --deps
+        String deps = RuntimeUtil.getDependencies(profileProperties);
+        if (deps.isBlank()) {
+            deps = dependencies != null ? dependencies : "";
+        } else if (dependencies != null && !dependencies.equals(deps)) {
+            deps += "," + dependencies;
+        }
+        if (!deps.isBlank()) {
+            main.addInitialProperty("camel.jbang.dependencies", deps);
+            writeSettings("camel.jbang.dependencies", deps);
+        }
+
         // if we have a specific camel version then make sure we really need to switch
         if (camelVersion != null) {
             CamelCatalog catalog = new DefaultCamelCatalog();
@@ -683,7 +713,7 @@ public class Run extends CamelCommand {
         }
 
         // okay we have validated all input and are ready to run
-        if (camelVersion != null || jvmDebug) {
+        if (camelVersion != null || isDebugMode()) {
             boolean custom = false;
             if (camelVersion != null) {
                 // run in another JVM with different camel version (foreground or background)
@@ -770,7 +800,7 @@ public class Run extends CamelCommand {
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
-            jvmDebug = "true".equals(answer.getProperty("camel.jbang.jvmDebug", jvmDebug ? "true" : "false"));
+            jvmDebugPort = parseJvmDebugPort(answer.getProperty("camel.jbang.jvmDebug", Integer.toString(jvmDebugPort)));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
@@ -782,6 +812,27 @@ public class Run extends CamelCommand {
             kameletsVersion = VersionHelper.extractKameletsVersion();
         }
         return answer;
+    }
+
+    /**
+     * Parses the JVM debug port from the given value.
+     * <p/>
+     * The value can be {@code true} to indicate a default port which is {@code 4004}, {@code false} to indicate no
+     * debug, or a number corresponding to a custom port.
+     *
+     * @param  value the value to parse.
+     *
+     * @return       the JVM debug port corresponding to the given value.
+     */
+    private static int parseJvmDebugPort(String value) {
+        if (value == null) {
+            return 0;
+        } else if (value.equals("true")) {
+            return 4004;
+        } else if (value.equals("false")) {
+            return 0;
+        }
+        return Integer.parseInt(value);
     }
 
     protected int runCamelVersion(KameletMain main) throws Exception {
@@ -807,9 +858,9 @@ public class Run extends CamelCommand {
         if (kameletsVersion != null) {
             jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
         }
-        if (jvmDebug) {
-            jbangArgs.add("--debug"); // jbang --debug
-            cmds.remove("--jvm-debug");
+        if (isDebugMode()) {
+            jbangArgs.add("--debug=" + jvmDebugPort); // jbang --debug=port
+            cmds.removeIf(arg -> arg.startsWith("--jvm-debug"));
         }
 
         if (repos != null) {
@@ -1157,6 +1208,9 @@ public class Run extends CamelCommand {
     }
 
     private boolean skipFile(String name) {
+        // flatten file
+        name = FileUtil.stripPath(name);
+
         if (OPENAPI_GENERATED_FILE.equals(name)) {
             return false;
         }
@@ -1171,6 +1225,9 @@ public class Run extends CamelCommand {
         }
         if ("docker-compose.yml".equals(name) || "docker-compose.yaml".equals(name) || "compose.yml".equals(name)
                 || "compose.yaml".equals(name)) {
+            return true;
+        }
+        if (name.equals("NOTICE.txt") || name.equals("LICENSE.txt")) {
             return true;
         }
 
@@ -1190,6 +1247,10 @@ public class Run extends CamelCommand {
         // skip dirs
         File f = new File(name);
         if (f.exists() && f.isDirectory()) {
+            return true;
+        }
+        
+        if (FileUtil.onlyExt(name) == null) {
             return true;
         }
 
@@ -1345,4 +1406,20 @@ public class Run extends CamelCommand {
         }
     }
 
+    static class DebugConsumer extends ParameterConsumer<Run> {
+        private static final Pattern DEBUG_ARG_VALUE_PATTERN = Pattern.compile("\\d+|true|false");
+
+        @Override
+        protected void doConsumeParameters(Stack<String> args, Run cmd) {
+            String arg = args.peek();
+            if (DEBUG_ARG_VALUE_PATTERN.asPredicate().test(arg)) {
+                // The value matches with the expected format so let's assume that it is a debug argument value
+                args.pop();
+            } else {
+                // Here we assume that the value is not a debug argument value so let's simply enable the debug mode
+                arg = "true";
+            }
+            cmd.jvmDebugPort = parseJvmDebugPort(arg);
+        }
+    }
 }

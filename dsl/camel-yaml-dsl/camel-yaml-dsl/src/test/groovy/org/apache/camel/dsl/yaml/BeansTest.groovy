@@ -22,6 +22,7 @@ import org.apache.camel.dsl.yaml.support.model.MyCtrBean
 import org.apache.camel.dsl.yaml.support.model.MyDestroyBean
 import org.apache.camel.dsl.yaml.support.model.MyFacBean
 import org.apache.camel.dsl.yaml.support.model.MyFacHelper
+import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 
 class BeansTest extends YamlTestSupport {
 
@@ -209,6 +210,23 @@ class BeansTest extends YamlTestSupport {
 
         MyDestroyBean.initCalled.get() == true
         MyDestroyBean.destroyCalled.get() == true
+    }
+
+    def "beans with script"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myBean
+                    type: ${MyBean.class.name}
+                    scriptLanguage: groovy
+                    script: "var b = new ${MyBean.class.name}(); b.field1 = 'script1'; b.field2 = 'script2'; return b"
+            """
+
+        then:
+        with(context.registry.lookupByName('myBean'), MyBean) {
+            it.field1 == 'script1'
+            it.field2 == 'script2'
+        }
     }
 
 }

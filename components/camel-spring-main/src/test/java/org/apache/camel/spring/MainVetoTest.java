@@ -18,23 +18,30 @@ package org.apache.camel.spring;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainVetoTest {
 
     @Test
-    public void testMain() throws Exception {
+    public void testMain() {
         // lets make a simple route
-        Main main = new Main();
-        main.configure().setDurationMaxSeconds(1);
-        main.configure().setDurationHitExitCode(99);
-        main.setApplicationContextUri("org/apache/camel/spring/MainVetoTest.xml");
+        assertDoesNotThrow(() -> {
+            Main main = new Main();
+            main.configure().setDurationMaxSeconds(1);
+            main.configure().setDurationHitExitCode(99);
+            main.setApplicationContextUri("org/apache/camel/spring/MainVetoTest.xml");
 
-        // should not hang as we veto fail
-        main.run();
+            // should not hang as we veto fail
+            main.run();
 
-        // should complete normally due veto
-        assertEquals(99, main.getExitCode());
+            // should complete normally due veto
+            assertEquals(99, main.getExitCode());
+
+        }
+
+        );
+
     }
 
 }

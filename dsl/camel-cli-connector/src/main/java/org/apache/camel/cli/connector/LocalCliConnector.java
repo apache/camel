@@ -324,6 +324,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
+            } else if ("startup-recorder".equals(action)) {
+                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                        .resolveById("startup-recorder");
+                if (dc != null) {
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
             } else if ("stub".equals(action)) {
                 String filter = root.getString("filter");
                 String limit = root.getString("limit");

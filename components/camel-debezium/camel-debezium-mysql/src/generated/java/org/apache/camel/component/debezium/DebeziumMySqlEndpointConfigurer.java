@@ -44,6 +44,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "connecttimeoutms":
         case "connectTimeoutMs": target.getConfiguration().setConnectTimeoutMs(property(camelContext, int.class, value)); return true;
         case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
+        case "custommetrictags":
+        case "customMetricTags": target.getConfiguration().setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseexcludelist":
         case "databaseExcludeList": target.getConfiguration().setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
@@ -242,6 +244,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "connecttimeoutms":
         case "connectTimeoutMs": return int.class;
         case "converters": return java.lang.String.class;
+        case "custommetrictags":
+        case "customMetricTags": return java.lang.String.class;
         case "databaseexcludelist":
         case "databaseExcludeList": return java.lang.String.class;
         case "databasehostname":
@@ -441,6 +445,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "connecttimeoutms":
         case "connectTimeoutMs": return target.getConfiguration().getConnectTimeoutMs();
         case "converters": return target.getConfiguration().getConverters();
+        case "custommetrictags":
+        case "customMetricTags": return target.getConfiguration().getCustomMetricTags();
         case "databaseexcludelist":
         case "databaseExcludeList": return target.getConfiguration().getDatabaseExcludeList();
         case "databasehostname":

@@ -19,25 +19,33 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainDummyTest {
 
     @Test
-    public void testMain() throws Exception {
-        Main main = new Main();
-        main.start();
+    public void testMain() {
 
-        // should also be a Camel
-        CamelContext camel = main.getApplicationContext().getBean(CamelContext.class);
-        assertNotNull(camel, "Camel should be in Spring");
+        assertDoesNotThrow(() -> {
+            Main main = new Main();
+            main.start();
 
-        DummyBean dummy = (DummyBean) main.getApplicationContext().getBean("dummy");
-        assertNotNull(dummy);
-        assertEquals("John Doe", dummy.getName());
+            // should also be a Camel
+            CamelContext camel = main.getApplicationContext().getBean(CamelContext.class);
+            assertNotNull(camel, "Camel should be in Spring");
 
-        main.stop();
+            DummyBean dummy = (DummyBean) main.getApplicationContext().getBean("dummy");
+            assertNotNull(dummy);
+            assertEquals("John Doe", dummy.getName());
+
+            main.stop();
+
+        }
+
+        );
+
     }
 
 }

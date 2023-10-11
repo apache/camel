@@ -3945,19 +3945,17 @@ Bean name.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl. #class or #type
-then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean The others are scripting
-languages that gives more power to create the bean with an inlined code in the script section, such as using groovy.
+What type to use for creating the bean (FQN classname). Can be prefixed with: #class or #type #class or #type then the
+bean is created via the fully qualified classname, such as #class:com.foo.MyBean.
 ]]>
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="beanType" type="xs:string">
+    <xs:attribute name="scriptLanguage" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-To set the type (fully qualified class name) of the returned bean created by the script. Knowing the type of the bean
-can be needed when dependency injection by type is in use, or when looking in registry via class type.
+The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -13600,6 +13598,7 @@ org.apache.camel.builder.RouteBuilder.
     <xs:sequence>
       <xs:element minOccurs="0" name="constructors" type="tns:beanConstructorsDefinition"/>
       <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition"/>
+      <xs:element minOccurs="0" name="script" type="xs:string"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="type" type="xs:string" use="required"/>
@@ -13607,6 +13606,7 @@ org.apache.camel.builder.RouteBuilder.
     <xs:attribute name="destroyMethod" type="xs:string"/>
     <xs:attribute name="factoryMethod" type="xs:string"/>
     <xs:attribute name="factoryBean" type="xs:string"/>
+    <xs:attribute name="scriptLanguage" type="xs:string"/>
   </xs:complexType>
   <xs:complexType name="beanConstructorsDefinition">
     <xs:sequence>
@@ -15787,6 +15787,15 @@ request. When using prototype scope, then the bean will be looked up or created 
 this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act
 as either singleton or prototype scope. So when using prototype scope then this depends on the bean registry
 implementation. Default value: Singleton
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="validate" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to validate the bean has the configured method. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>

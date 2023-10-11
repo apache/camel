@@ -50,6 +50,9 @@ import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.xml.io.XmlPullParserLocationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -60,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ModelParserTest {
 
@@ -418,6 +422,23 @@ public class ModelParserTest {
         assertEquals("mock:dead", dlc.getDeadLetterUri());
         assertFalse(dlc.hasRedeliveryPolicy());
         assertEquals("myPolicy", dlc.getRedeliveryPolicyRef());
+    }
+
+    @Test
+    public void testParseError() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile() + "/invalid", "convertBodyParseError.xml").toPath();
+        Resource resource = ResourceHelper.fromString("file:convertBodyParseError.xml", Files.readString(path));
+        try {
+            ModelParser parser = new ModelParser(resource, NAMESPACE);
+            parser.parseRoutesDefinition();
+            fail("Should throw exception");
+        } catch (XmlPullParserLocationException e) {
+            assertEquals(22, e.getLineNumber());
+            assertEquals(25, e.getColumnNumber());
+            assertEquals("file:convertBodyParseError.xml", e.getResource().getLocation());
+            assertTrue(e.getMessage().startsWith("Unexpected attribute '{}ref'"));
+        }
     }
 
     private Path getResourceFolder() {

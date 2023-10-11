@@ -1095,8 +1095,8 @@ public class ModelParser extends BaseParser {
     protected <T extends BeanFactoryDefinition> AttributeHandler<T> beanFactoryDefinitionAttributeHandler() {
         return (def, key, val) -> {
             switch (key) {
-                case "beanType": def.setBeanType(val); break;
                 case "name": def.setName(val); break;
+                case "scriptLanguage": def.setScriptLanguage(val); break;
                 case "type": def.setType(val); break;
                 default: return false;
             }
@@ -1641,6 +1641,7 @@ public class ModelParser extends BaseParser {
                 case "factoryMethod": def.setFactoryMethod(val); break;
                 case "initMethod": def.setInitMethod(val); break;
                 case "name": def.setName(val); break;
+                case "scriptLanguage": def.setScriptLanguage(val); break;
                 case "type": def.setType(val); break;
                 default: return false;
             }
@@ -1649,6 +1650,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "constructors": def.setConstructors(new BeanConstructorsAdapter().unmarshal(doParseBeanConstructorsDefinition())); break;
                 case "properties": def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition())); break;
+                case "script": def.setScript(doParseText()); break;
                 default: return false;
             }
             return true;
@@ -2856,6 +2858,7 @@ public class ModelParser extends BaseParser {
                 case "method": def.setMethod(val); break;
                 case "ref": def.setRef(val); break;
                 case "scope": def.setScope(val); break;
+                case "validate": def.setValidate(val); break;
                 default: return typedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

@@ -114,6 +114,7 @@ public class PropertiesComponent extends ServiceSupport
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
     private boolean ignoreMissingLocation;
+    private boolean ignoreMissingProperty;
     private boolean nestedPlaceholder = true;
     private String encoding;
     private boolean defaultFallbackEnabled = true;
@@ -173,7 +174,11 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public Optional<String> resolveProperty(String key) {
         try {
-            String value = parseUri(key, propertiesLookup, false);
+            boolean keep = isIgnoreMissingProperty();
+            String value = parseUri(key, propertiesLookup, keep);
+            if (value == null) {
+                return Optional.empty();
+            }
             return Optional.of(value);
         } catch (IllegalArgumentException e) {
             // property not found
@@ -466,6 +471,15 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
+    }
+
+    @ManagedAttribute(description = "Ignore missing location")
+    public boolean isIgnoreMissingProperty() {
+        return ignoreMissingProperty;
+    }
+
+    public void setIgnoreMissingProperty(boolean ignoreMissingProperty) {
+        this.ignoreMissingProperty = ignoreMissingProperty;
     }
 
     @ManagedAttribute(description = "Nested placeholder")

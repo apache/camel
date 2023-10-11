@@ -44,6 +44,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "columnPropagateSourceType": getOrCreateConfiguration(target).setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
+        case "custommetrictags":
+        case "customMetricTags": getOrCreateConfiguration(target).setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseinstance":
@@ -118,8 +120,6 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": getOrCreateConfiguration(target).setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
-        case "queryfetchsize":
-        case "queryFetchSize": getOrCreateConfiguration(target).setQueryFetchSize(property(camelContext, int.class, value)); return true;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "schemahistoryinternal":
@@ -199,6 +199,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "columnPropagateSourceType": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration.class;
         case "converters": return java.lang.String.class;
+        case "custommetrictags":
+        case "customMetricTags": return java.lang.String.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
         case "databaseinstance":
@@ -273,8 +275,6 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "pollIntervalMs": return long.class;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return boolean.class;
-        case "queryfetchsize":
-        case "queryFetchSize": return int.class;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return long.class;
         case "schemahistoryinternal":
@@ -355,6 +355,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "columnPropagateSourceType": return getOrCreateConfiguration(target).getColumnPropagateSourceType();
         case "configuration": return target.getConfiguration();
         case "converters": return getOrCreateConfiguration(target).getConverters();
+        case "custommetrictags":
+        case "customMetricTags": return getOrCreateConfiguration(target).getCustomMetricTags();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
         case "databaseinstance":
@@ -429,8 +431,6 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return getOrCreateConfiguration(target).isProvideTransactionMetadata();
-        case "queryfetchsize":
-        case "queryFetchSize": return getOrCreateConfiguration(target).getQueryFetchSize();
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
         case "schemahistoryinternal":
