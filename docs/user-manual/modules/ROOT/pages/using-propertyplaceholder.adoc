@@ -438,6 +438,7 @@ The xref:components::properties-component.adoc[Properties] component includes th
 
 * `env` - A function to lookup the property from OS environment variables
 * `sys` - A function to lookup the property from Java JVM system properties
+* `bean` - A function to lookup the property from the return value of bean's method
 * `service` - A function to lookup the property from OS environment variables using the service naming idiom
 * `service.name` - A function to lookup the property from OS environment variables using the service naming idiom returning the hostname part only
 * `service.port` - A function to lookup the property from OS environment variables using the service naming idiom returning the port part only
@@ -502,6 +503,20 @@ And we can use default values if the service has not been defined, for example t
 <route>
     <from uri="direct:start"/>
     <to uri="http://{{service:FOO:localhost:8080}}/myapp"/>
+</route>
+</camelContext>
+----
+
+The bean function is for looking up the property from the return value of bean's method.
+
+Assuming we have registered a bean named 'foo' that has a method called 'bar' that returns a directory name, then we can refer to the bean's method in the camel endpoint url, and use the FILE component to poll a directory:
+
+[source,xml]
+----
+<camelContext>
+<route>
+    <from uri="file:{{bean:foo.bar}}"/>
+    <to uri="direct:result"/>
 </route>
 </camelContext>
 ----
