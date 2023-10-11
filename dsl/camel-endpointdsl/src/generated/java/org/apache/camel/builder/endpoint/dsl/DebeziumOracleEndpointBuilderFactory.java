@@ -414,6 +414,25 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * The custom metric tags will accept key-value pairs to customize the
+         * MBean object name which should be appended the end of regular name,
+         * each key would represent a tag for the MBean object name, and the
+         * corresponding value would be the value of that tag the key is. For
+         * example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param customMetricTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder customMetricTags(
+                String customMetricTags) {
+            doSetProperty("customMetricTags", customMetricTags);
+            return this;
+        }
+        /**
          * The adapter to use when capturing changes from the database. Options
          * include: 'logminer': (the default) to capture changes using native
          * Oracle LogMiner; 'xstream' to capture changes using Oracle XStreams.
@@ -1161,6 +1180,22 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the XML configuration for the Infinispan 'global'
+         * configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferInfinispanCacheGlobal the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferInfinispanCacheGlobal(
+                String logMiningBufferInfinispanCacheGlobal) {
+            doSetProperty("logMiningBufferInfinispanCacheGlobal", logMiningBufferInfinispanCacheGlobal);
+            return this;
+        }
+        /**
          * Specifies the XML configuration for the Infinispan
          * 'processed-transactions' cache.
          * 
@@ -1847,6 +1882,67 @@ public interface DebeziumOracleEndpointBuilderFactory {
         default DebeziumOracleEndpointBuilder notificationSinkTopicName(
                 String notificationSinkTopicName) {
             doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
+            return this;
+        }
+        /**
+         * The hostname of the OpenLogReplicator network service.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlogreplicatorHost the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder openlogreplicatorHost(
+                String openlogreplicatorHost) {
+            doSetProperty("openlogreplicatorHost", openlogreplicatorHost);
+            return this;
+        }
+        /**
+         * The port of the OpenLogReplicator network service.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlogreplicatorPort the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder openlogreplicatorPort(
+                int openlogreplicatorPort) {
+            doSetProperty("openlogreplicatorPort", openlogreplicatorPort);
+            return this;
+        }
+        /**
+         * The port of the OpenLogReplicator network service.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlogreplicatorPort the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder openlogreplicatorPort(
+                String openlogreplicatorPort) {
+            doSetProperty("openlogreplicatorPort", openlogreplicatorPort);
+            return this;
+        }
+        /**
+         * The configured logical source name in the OpenLogReplicator
+         * configuration that is to stream changes.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlogreplicatorSource the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder openlogreplicatorSource(
+                String openlogreplicatorSource) {
+            doSetProperty("openlogreplicatorSource", openlogreplicatorSource);
             return this;
         }
         /**

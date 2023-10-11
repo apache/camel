@@ -3252,7 +3252,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code ListFileSystemsOptions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeListFileSystemsOptions}.
@@ -3267,7 +3267,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Duration} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeTimeout}.
          */
@@ -3282,7 +3282,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeOperation}.
          */
@@ -3296,7 +3296,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeFileSystemName}.
@@ -3311,7 +3311,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeDirectoryName}.
@@ -3326,7 +3326,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileName}.
          */
@@ -3353,7 +3353,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code PublicAccessType} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakePublicAccessType}.
@@ -3367,7 +3367,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code HttpHeaders} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeRawHttpHeaders}.
@@ -3383,7 +3383,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code DataLakeRequestConditions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeRequestCondition}.
@@ -3399,7 +3399,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code ListPathOptions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeListPathOptions}.
@@ -3413,7 +3413,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakePath}.
          */
@@ -3427,7 +3427,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeRecursive}.
          */
@@ -3441,7 +3441,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeMaxResults}.
@@ -3455,7 +3455,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeUserPrincipalNameReturned}.
@@ -3470,7 +3470,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeRegex}.
          */
@@ -3483,7 +3483,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileDir}.
          */
@@ -3496,7 +3496,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code AccessTier} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeAccessTier}.
@@ -3511,7 +3511,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code byte[]} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentMD5}.
@@ -3527,7 +3527,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code FileRange} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileRange}.
          */
@@ -3540,7 +3540,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code ParallelTransferOptions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeParallelTransferOptions}.
@@ -3554,7 +3554,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Set<OpenOption>} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeOpenOptions}.
@@ -3568,7 +3568,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code OffsetDateTime} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeAccessTierChangeTime}.
@@ -3582,7 +3582,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code ArchiveStatus} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeArchiveStatus}.
@@ -3596,7 +3596,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCacheControl}.
@@ -3610,7 +3610,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentDisposition}.
@@ -3624,7 +3624,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentEncoding}.
@@ -3638,7 +3638,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentLanguage}.
@@ -3652,7 +3652,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentType}.
@@ -3667,7 +3667,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code OffsetDateTime} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopyCompletionTime}.
@@ -3681,7 +3681,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code AzureStorageDataLakeCopyId}.
          */
@@ -3696,7 +3696,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopyProgress}.
@@ -3712,7 +3712,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopySource}.
@@ -3727,7 +3727,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * com.azure.storage.file.datalake.models.CopyStatusType} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopyStatus}.
@@ -3741,7 +3741,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopyStatusDescription}.
@@ -3755,7 +3755,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code OffsetDateTime} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCreationTime}.
@@ -3769,7 +3769,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeEncryptionKeySha256}.
@@ -3783,7 +3783,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code AzureStorageDataLakeETag}.
          */
@@ -3796,7 +3796,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileSize}.
          */
@@ -3809,7 +3809,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code OffsetDateTime} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeLastModified}.
@@ -3824,7 +3824,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * com.azure.storage.file.datalake.models.LeaseDurationType} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeLeaseDuration}.
@@ -3839,7 +3839,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * com.azure.storage.file.datalake.models.LeaseStateType} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeLeaseState}.
@@ -3854,7 +3854,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * com.azure.storage.file.datalake.models.LeaseStatusType} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeLeaseStatus}.
@@ -3868,7 +3868,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeIncrementalCopy}.
@@ -3882,7 +3882,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeServerEncrypted}.
@@ -3896,7 +3896,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeDownloadLinkExpiration}.
@@ -3910,7 +3910,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeDownloadLink}.
@@ -3924,7 +3924,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeFileOffset}.
@@ -3939,7 +3939,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeLeaseId}.
          */
@@ -3952,7 +3952,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code PathHttpHeaders} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakePathHttpHeaders}.
@@ -3967,7 +3967,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeRetainCommitedData}.
@@ -3982,7 +3982,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeClose}.
          */
@@ -3995,7 +3995,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakePosition}.
          */
@@ -4008,7 +4008,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeExpression}.
@@ -4023,7 +4023,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code FileQuerySerialization} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeInputSerialization}.
@@ -4038,7 +4038,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code FileQuerySerialization} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeOutputSerialization}.
@@ -4052,7 +4052,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Consumer<FileQueryError>} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeErrorConsumer}.
@@ -4066,7 +4066,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Consumer<FileQueryProgress>} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeProgressConsumer}.
@@ -4080,7 +4080,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code FileQueryOptions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeQueryOptions}.
@@ -4094,7 +4094,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakePermission}.
@@ -4108,7 +4108,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeUmask}.
          */
@@ -4121,7 +4121,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code DataLakeFileClient} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeFileClient}.
@@ -4135,7 +4135,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFlush}.
          */

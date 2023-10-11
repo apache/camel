@@ -1249,7 +1249,7 @@ public class Run extends CamelCommand {
         if (f.exists() && f.isDirectory()) {
             return true;
         }
-        
+
         if (FileUtil.onlyExt(name) == null) {
             return true;
         }
