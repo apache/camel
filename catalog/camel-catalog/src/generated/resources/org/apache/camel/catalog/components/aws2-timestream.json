@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-timestream",
     "title": "AWS Timestream",
-    "description": "A Camel Amazon Web Services TimeStream component",
+    "description": "Write records and execute queries on AWS time-series database",
     "deprecated": false,
     "firstVersion": "4.1.0",
     "label": "cloud,database",

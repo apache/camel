@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS Timestream</name>
-    <description>A Camel Amazon Web Services TimeStream component</description>
+    <description>Write records and execute queries on AWS time-series database</description>
 
     <properties>
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
