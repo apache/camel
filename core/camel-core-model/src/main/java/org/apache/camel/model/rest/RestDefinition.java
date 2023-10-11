@@ -79,6 +79,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String enableNoContentResponse;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String apiDocs;
     @XmlAttribute
@@ -250,6 +253,19 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public String getEnableNoContentResponse() {
+        return enableNoContentResponse;
+    }
+
+    /**
+     * Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
+     * <p/>
+     * The default value is false.
+     */
+    public void setEnableNoContentResponse(String enableNoContentResponse) {
+        this.enableNoContentResponse = enableNoContentResponse;
     }
 
     public String getApiDocs() {
@@ -621,6 +637,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition enableNoContentResponse(boolean enableNoContentResponse) {
+        if (getVerbs().isEmpty()) {
+            this.enableNoContentResponse = Boolean.toString(enableNoContentResponse);
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setEnableNoContentResponse(Boolean.toString(enableNoContentResponse));
+        }
+
+        return this;
+    }
+
     /**
      * Include or exclude the current Rest Definition in API documentation.
      * <p/>
@@ -907,6 +935,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 binding.setEnableCORS(verb.getEnableCORS());
             } else {
                 binding.setEnableCORS(getEnableCORS());
+            }
+            if (verb.getEnableNoContentResponse() != null) {
+                binding.setEnableNoContentResponse(verb.getEnableNoContentResponse());
+            } else {
+                binding.setEnableNoContentResponse(getEnableNoContentResponse());
             }
             for (ParamDefinition param : verb.getParams()) {
                 // register all the default values for the query and header parameters

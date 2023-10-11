@@ -13669,6 +13669,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -13775,6 +13780,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -13880,6 +13890,11 @@
           },
           "enableCors" : {
             "type" : "boolean"
+          },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
           },
           "id" : {
             "type" : "string",
@@ -14154,6 +14169,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -14260,6 +14280,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -14365,6 +14390,11 @@
           },
           "enableCors" : {
             "type" : "boolean"
+          },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
           },
           "id" : {
             "type" : "string",
@@ -14559,6 +14589,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -14684,6 +14719,11 @@
           "enableCors" : {
             "type" : "boolean"
           },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
+          },
           "endpointProperty" : {
             "type" : "array",
             "title" : "Endpoint Property",
@@ -14798,6 +14838,11 @@
           },
           "enableCors" : {
             "type" : "boolean"
+          },
+          "enableNoContentResponse" : {
+            "type" : "boolean",
+            "title" : "Enable No Content Response",
+            "description" : "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false."
           },
           "get" : {
             "type" : "array",

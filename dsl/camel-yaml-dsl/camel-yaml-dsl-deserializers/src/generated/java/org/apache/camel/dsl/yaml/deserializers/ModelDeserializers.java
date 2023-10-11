@@ -4550,6 +4550,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "out-type", type = "string", description = "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Out Type"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.ParamDefinition"),
@@ -4610,6 +4611,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "out-type": {
@@ -5933,6 +5939,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "out-type", type = "string", description = "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Out Type"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.ParamDefinition"),
@@ -5993,6 +6000,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "out-type": {
@@ -6381,6 +6393,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "out-type", type = "string", description = "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Out Type"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.ParamDefinition"),
@@ -6441,6 +6454,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "out-type": {
@@ -10672,6 +10690,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "out-type", type = "string", description = "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Out Type"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.ParamDefinition"),
@@ -10732,6 +10751,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "out-type": {
@@ -11131,6 +11155,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "out-type", type = "string", description = "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Out Type"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.ParamDefinition"),
@@ -11191,6 +11216,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "out-type": {
@@ -11639,6 +11669,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "out-type", type = "string", description = "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Out Type"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.ParamDefinition"),
@@ -11699,6 +11730,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "out-type": {
@@ -13153,6 +13189,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json", displayName = "Consumes"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "out-type", type = "string", description = "Sets the class name to use for binding from POJO to output for the outgoing data The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Out Type"),
                     @YamlProperty(name = "produces", type = "string", description = "To define the content type what the REST service produces (uses for output), such as application/xml or application/json", displayName = "Produces"),
@@ -13197,6 +13234,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "out-type": {
@@ -13264,6 +13306,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "cors-headers", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure custom CORS headers.", displayName = "Cors Headers"),
                     @YamlProperty(name = "data-format-property", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the data formats in use. For example set property prettyPrint to true to have json outputted in pretty mode. The properties can be prefixed to denote the option is only for either JSON or XML and for either the IN or the OUT. The prefixes are: json.in. json.out. xml.in. xml.out. For example a key with value xml.out.mustBeJAXBElement is only for the XML data format for the outgoing. A key without a prefix is a common key for all situations.", displayName = "Data Format Property"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "endpoint-property", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the rest endpoint in use.", displayName = "Endpoint Property"),
                     @YamlProperty(name = "host", type = "string", description = "The hostname to use for exposing the REST service.", displayName = "Host"),
                     @YamlProperty(name = "host-name-resolver", type = "enum:allLocalIp,localHostName,localIp", defaultValue = "allLocalIp", description = "If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service will be using.", displayName = "Host Name Resolver"),
@@ -13364,6 +13407,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "endpoint-property": {
@@ -13495,6 +13543,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
+                    @YamlProperty(name = "enable-no-content-response", type = "boolean", description = "Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. The default value is false.", displayName = "Enable No Content Response"),
                     @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetDefinition"),
                     @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadDefinition"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
@@ -13551,6 +13600,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
+                    break;
+                }
+                case "enable-no-content-response": {
+                    String val = asText(node);
+                    target.setEnableNoContentResponse(val);
                     break;
                 }
                 case "path": {

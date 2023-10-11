@@ -51,6 +51,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "DataFormatProperties": target.setDataFormatProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "enablecors":
         case "EnableCORS": target.setEnableCORS(property(camelContext, boolean.class, value)); return true;
+        case "enablenocontentresponse":
+        case "EnableNoContentResponse": target.setEnableNoContentResponse(property(camelContext, boolean.class, value)); return true;
         case "endpointproperties":
         case "EndpointProperties": target.setEndpointProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "host":
@@ -112,6 +114,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "DataFormatProperties": return java.util.Map.class;
         case "enablecors":
         case "EnableCORS": return boolean.class;
+        case "enablenocontentresponse":
+        case "EnableNoContentResponse": return boolean.class;
         case "endpointproperties":
         case "EndpointProperties": return java.util.Map.class;
         case "host":
@@ -174,6 +178,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "DataFormatProperties": return target.getDataFormatProperties();
         case "enablecors":
         case "EnableCORS": return target.isEnableCORS();
+        case "enablenocontentresponse":
+        case "EnableNoContentResponse": return target.isEnableNoContentResponse();
         case "endpointproperties":
         case "EndpointProperties": return target.getEndpointProperties();
         case "host":

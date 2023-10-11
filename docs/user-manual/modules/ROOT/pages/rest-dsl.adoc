@@ -507,6 +507,7 @@ The Rest DSL supports the following options:
 | *corsHeaders* | Sets the CORS headers to use if CORS has been enabled. |  | Map
 | *dataFormatProperties* | Sets additional options on data format level |  | Map
 | *enableCORS* | To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response. This option is default false | false | boolean
+| *enableNoContentResponse* | To specify whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. | false | boolean
 | *endpointProperties* | Sets additional options on endpoint level |  | Map
 | *host* | Sets the hostname to use by the REST consumer |  | String
 | *hostNameResolver* | Sets the resolver to use for resolving hostname | RestHostNameResolver.allLocalIp | RestHostNameResolver

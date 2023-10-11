@@ -67,6 +67,7 @@ public class RestConfiguration {
     private boolean clientRequestValidation;
     private boolean inlineRoutes;
     private boolean enableCORS;
+    private boolean enableNoContentResponse;
     private String jsonDataFormat;
     private String xmlDataFormat;
     private Map<String, Object> componentProperties;
@@ -417,6 +418,21 @@ public class RestConfiguration {
      */
     public void setEnableCORS(boolean enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public boolean isEnableNoContentResponse() {
+        return enableNoContentResponse;
+    }
+
+    /**
+     * Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
+     * <p/>
+     * The default value is <tt>false</tt>.
+     *
+     * @param enableNoContentResponse <tt>true</tt> to enable HTTP 204 response codes
+     */
+    public void setEnableNoContentResponse(boolean enableNoContentResponse) {
+        this.enableNoContentResponse = enableNoContentResponse;
     }
 
     public boolean isInlineRoutes() {
