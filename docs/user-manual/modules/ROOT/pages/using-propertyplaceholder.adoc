@@ -521,6 +521,8 @@ Assuming we have registered a bean named 'foo' that has a method called 'bar' th
 </camelContext>
 ----
 
+IMPORTANT: The method must be a public no-arg method (i.e. no parameters) and return a value such as a String, boolean, int.
+
 === Using Kubernetes property placeholder functions
 
 The `camel-kubernetes` component include the following functions:
