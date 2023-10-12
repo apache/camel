@@ -622,11 +622,11 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Whether to eager validate that broker host:port is valid and can be DNS resolved to known host during
-     * starting this consumer. If the validation fails then an exception is thrown which makes Camel fail fast.
+     * Whether to eager validate that broker host:port is valid and can be DNS resolved to known host during starting
+     * this consumer. If the validation fails then an exception is thrown which makes Camel fail fast.
      *
-     * Disabling this will postpone the validation after the consumer is started, and Camel will keep re-connecting
-     * in case of validation or DNS resolution error.
+     * Disabling this will postpone the validation after the consumer is started, and Camel will keep re-connecting in
+     * case of validation or DNS resolution error.
      */
     public void setPreValidateHostAndPort(boolean preValidateHostAndPort) {
         this.preValidateHostAndPort = preValidateHostAndPort;
