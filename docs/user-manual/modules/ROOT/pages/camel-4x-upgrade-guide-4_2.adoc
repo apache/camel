@@ -1,0 +1,15 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.1 to 4.2
+
+=== camel-kafka
+
+The consumer will now pre validate hostname:port and DNS resolution on startup, and fail-fast
+in case of mis-configuration or invalid hostname.
+
+This can be disabled by setting `preValidateHostAndPort=false`, which will postpone validation
+to consumer is started, and will instead re-connect endlessly (5 sec delay by default) until success.

@@ -68,6 +68,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new KafkaHeaderFilterStrategy();
 
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean preValidateHostAndPort = true;
     @UriParam(label = "consumer")
     private boolean topicIsPattern;
     @UriParam(label = "consumer")
@@ -613,6 +615,21 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         if (values != null && !values.isEmpty()) {
             props.put(key, values.stream().collect(Collectors.joining(",")));
         }
+    }
+
+    public boolean isPreValidateHostAndPort() {
+        return preValidateHostAndPort;
+    }
+
+    /**
+     * Whether to eager validate that broker host:port is valid and can be DNS resolved to known host during
+     * starting this consumer. If the validation fails then an exception is thrown which makes Camel fail fast.
+     *
+     * Disabling this will postpone the validation after the consumer is started, and Camel will keep re-connecting
+     * in case of validation or DNS resolution error.
+     */
+    public void setPreValidateHostAndPort(boolean preValidateHostAndPort) {
+        this.preValidateHostAndPort = preValidateHostAndPort;
     }
 
     public boolean isTopicIsPattern() {
