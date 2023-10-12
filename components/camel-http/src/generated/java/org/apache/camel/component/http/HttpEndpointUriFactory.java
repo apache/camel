@@ -22,7 +22,7 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(51);
+        Set<String> props = new HashSet<>(54);
         props.add("authDomain");
         props.add("authHost");
         props.add("authMethod");
@@ -55,6 +55,9 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("ignoreResponseBody");
         props.add("lazyStartProducer");
         props.add("maxTotalConnections");
+        props.add("oauth2ClientId");
+        props.add("oauth2ClientSecret");
+        props.add("oauth2TokenEndpoint");
         props.add("okStatusCodeRange");
         props.add("preserveHostHeader");
         props.add("proxyAuthDomain");
@@ -75,9 +78,11 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("userAgent");
         props.add("x509HostnameVerifier");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
+        Set<String> secretProps = new HashSet<>(6);
         secretProps.add("authPassword");
         secretProps.add("authUsername");
+        secretProps.add("oauth2ClientId");
+        secretProps.add("oauth2ClientSecret");
         secretProps.add("proxyAuthPassword");
         secretProps.add("proxyAuthUsername");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);

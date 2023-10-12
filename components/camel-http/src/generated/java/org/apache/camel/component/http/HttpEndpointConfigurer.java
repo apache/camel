@@ -83,6 +83,12 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
+        case "oauth2clientid":
+        case "oauth2ClientId": target.setOauth2ClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauth2clientsecret":
+        case "oauth2ClientSecret": target.setOauth2ClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauth2tokenendpoint":
+        case "oauth2TokenEndpoint": target.setOauth2TokenEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "okstatuscoderange":
         case "okStatusCodeRange": target.setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
         case "preservehostheader":
@@ -190,6 +196,12 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
+        case "oauth2clientid":
+        case "oauth2ClientId": return java.lang.String.class;
+        case "oauth2clientsecret":
+        case "oauth2ClientSecret": return java.lang.String.class;
+        case "oauth2tokenendpoint":
+        case "oauth2TokenEndpoint": return java.lang.String.class;
         case "okstatuscoderange":
         case "okStatusCodeRange": return java.lang.String.class;
         case "preservehostheader":
@@ -298,6 +310,12 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
+        case "oauth2clientid":
+        case "oauth2ClientId": return target.getOauth2ClientId();
+        case "oauth2clientsecret":
+        case "oauth2ClientSecret": return target.getOauth2ClientSecret();
+        case "oauth2tokenendpoint":
+        case "oauth2TokenEndpoint": return target.getOauth2TokenEndpoint();
         case "okstatuscoderange":
         case "okStatusCodeRange": return target.getOkStatusCodeRange();
         case "preservehostheader":
