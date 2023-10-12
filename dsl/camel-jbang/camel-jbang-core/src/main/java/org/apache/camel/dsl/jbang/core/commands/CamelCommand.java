@@ -144,7 +144,7 @@ public abstract class CamelCommand implements Callable<Integer> {
 
         @Override
         public void consumeParameters(Stack<String> args, ArgSpec argSpec, CommandSpec cmdSpec) {
-            if (args.isEmpty()) {
+            if (failIfEmptyArgs() && args.isEmpty()) {
                 throw new ParameterException(cmdSpec.commandLine(), "Error: missing required parameter");
             }
             T cmd = (T) cmdSpec.userObject();
@@ -152,6 +152,10 @@ public abstract class CamelCommand implements Callable<Integer> {
         }
 
         protected abstract void doConsumeParameters(Stack<String> args, T cmd);
+
+        protected boolean failIfEmptyArgs() {
+            return true;
+        }
     }
 
 }
