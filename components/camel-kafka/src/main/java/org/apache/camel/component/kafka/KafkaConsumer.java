@@ -40,6 +40,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.kafka.clients.ClientDnsLookup;
+import org.apache.kafka.clients.ClientUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,6 +150,15 @@ public class KafkaConsumer extends DefaultConsumer
         Pattern pattern = null;
         if (endpoint.getConfiguration().isTopicIsPattern()) {
             pattern = Pattern.compile(topic);
+        }
+
+        // validate configuration eager in case bad configuration
+        if (endpoint.getConfiguration().isPreValidateHostAndPort()) {
+            String brokers = getEndpoint().getConfiguration().getBrokers();
+            if (ObjectHelper.isEmpty(brokers)) {
+                throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option.");
+            }
+            ClientUtils.parseAndValidateAddresses(List.of(brokers.split(",")), ClientDnsLookup.USE_ALL_DNS_IPS.toString());
         }
 
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
