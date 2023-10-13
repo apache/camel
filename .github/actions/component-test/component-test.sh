@@ -34,12 +34,21 @@ function main() {
   for component in ${componentList}
   do
     if [[ ${component} = camel-* ]] ; then
-      pl="$pl,components/${component}"
+      componentPath="components/${component}"
     else
-      pl="$pl,components/camel-${component}"
+      componentPath="components/camel-${component}"
+    fi
+    if [[ -d "${componentPath}" ]] ; then
+      pl="$pl$(find "${componentPath}" -name pom.xml -exec dirname {} \; | sort | tr -s "\n" ",")"
     fi
   done
-  pl="${pl:1}"
+  len=${#pl}
+  if [[ "$len" -gt "0" ]] ; then
+    pl="${pl::len-1}"
+  else
+    echo "The components to test don't exist"
+    exit 1
+  fi
 
   if [[ ${fastBuild} = "true" ]] ; then
     echo "Launching a fast build against the projects ${pl} and their dependencies"
