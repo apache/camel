@@ -73,61 +73,9 @@ You should define a dedicated registry by providing
 a `MeterRegistry` bean. Micrometer registries primarily determine the backend monitoring system
 to be used. A `CompositeMeterRegistry` can be used to address more than one monitoring target.
 
-For example using Spring Java Configuration:
 
-[source,java]
-----
-@Configuration
-public static class MyConfig extends SingleRouteCamelConfiguration {
-
-    @Bean
-    @Override
-    public RouteBuilder route() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // define Camel routes here
-            }
-        };
-    }
-
-    @Bean(name = MicrometerConstants.METRICS_REGISTRY_NAME)
-    public MeterRegistry getMeterRegistry() {
-        CompositeMeterRegistry registry = ...;
-        registry.add(...);
-        // ...
-        return registry;
-    }
-}
-----
-
-Or using CDI:
-
-[source,java]
-----
-class MyBean extends RouteBuilder {
-
-    @Override
-    public void configure() {
-      from("...")
-          // Register the 'my-meter' meter in the MetricRegistry below
-          .to("micrometer:meter:my-meter");
-    }
-
-    @Produces
-    // If multiple MetricRegistry beans
-    // @Named(MicrometerConstants.METRICS_REGISTRY_NAME)
-    MetricRegistry registry() {
-        CompositeMeterRegistry registry = ...;
-        registry.add(...);
-        // ...
-        return registry;
-    }
-}
-----
 
 == Default Camel Metrics
-
 
 Some Camel specific metrics are available out of the box.
 
@@ -496,8 +444,7 @@ MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHi
 String json = service.dumpStatisticsAsJson();
 ----
 
-If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
-with `name=MicrometerMessageHistory`.
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree with `name=MicrometerMessageHistory`.
 
 
 == Micrometer event notification
@@ -537,9 +484,7 @@ See more details at Advanced configuration of CamelContext using Spring.
 
 == Exposing Micrometer statistics in JMX
 
-Micrometer uses `MeterRegistry` implementations in order to publish statistics. While in production scenarios
-it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for
-test or local deployments to publish statistics to JMX.
+Micrometer uses `MeterRegistry` implementations in order to publish statistics. While in production scenarios it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for test or local deployments to publish statistics to JMX.
 
 In order to achieve this, add the following dependency:
 
@@ -554,9 +499,12 @@ In order to achieve this, add the following dependency:
 
 and add a `JmxMeterRegistry` instance:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-
     @Bean(name = MicrometerConstants.METRICS_REGISTRY_NAME)
     public MeterRegistry getMeterRegistry() {
         CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
@@ -567,17 +515,32 @@ and add a `JmxMeterRegistry` instance:
            HierarchicalNameMapper.DEFAULT));
         return meterRegistry;
     }
-}
 ----
 
-The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into
-an MBean name.
+CDI::
++
+[source,java]
+----
+    @Produces
+    @Named(MicrometerConstants.METRICS_REGISTRY_NAME))
+    public MeterRegistry getMeterRegistry() {
+        CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
+        meterRegistry.add(...);
+        meterRegistry.add(new JmxMeterRegistry(
+           CamelJmxConfig.DEFAULT,
+           Clock.SYSTEM,
+           HierarchicalNameMapper.DEFAULT));
+        return meterRegistry;
+    }
+----
 
+====
+
+The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into an MBean name.
 
 == Using Camel Micrometer with Spring Boot
 
-When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot auto configuration
-will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
+When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot auto- configuration will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
 
 For example to capture data with Prometheus, you can add the following dependency:
 
