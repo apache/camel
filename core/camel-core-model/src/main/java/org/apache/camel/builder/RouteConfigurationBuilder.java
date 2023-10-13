@@ -97,6 +97,12 @@ public abstract class RouteConfigurationBuilder extends RouteBuilder implements 
         }
     }
 
+    @Override
+    protected void initializeCamelContext(CamelContext camelContext) {
+        super.initializeCamelContext(camelContext);
+        getRouteConfigurationCollection().setCamelContext(camelContext);
+    }
+
     protected void populateRoutesConfiguration() throws Exception {
         CamelContext camelContext = getContext();
         if (camelContext == null) {

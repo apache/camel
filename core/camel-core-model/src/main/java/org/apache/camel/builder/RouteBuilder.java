@@ -706,14 +706,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     // Implementation methods
     // -----------------------------------------------------------------------
+
     protected void checkInitialized() throws Exception {
         if (initialized.compareAndSet(false, true)) {
-            // Set the CamelContext ErrorHandler here
             CamelContext camelContext = getContext();
-            if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() != null) {
-                setErrorHandlerFactory(
-                        camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
-            }
+            initializeCamelContext(camelContext);
 
             List<RouteBuilderLifecycleStrategy> strategies = new ArrayList<>(lifecycleInterceptors);
             strategies.addAll(camelContext.getRegistry().findByType(RouteBuilderLifecycleStrategy.class));
@@ -737,6 +734,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 interceptor.afterConfigure(this);
             }
         }
+    }
+
+    protected void initializeCamelContext(CamelContext camelContext) {
+        // Set the CamelContext ErrorHandler here
+        if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() != null) {
+            setErrorHandlerFactory(
+                    camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
+        }
+        // inject camel context on collections
+        getRouteCollection().setCamelContext(camelContext);
+        getRestCollection().setCamelContext(camelContext);
+        getRouteTemplateCollection().setCamelContext(camelContext);
+        getTemplatedRouteCollection().setCamelContext(camelContext);
     }
 
     protected void populateTemplatedRoutes() throws Exception {
