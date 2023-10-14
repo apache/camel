@@ -598,6 +598,7 @@ final class IntrospectionSupport {
                 }
             }
 
+            boolean myself = false;
             try {
                 try {
                     // If the type is null or it matches the needed type, just use the value directly
@@ -620,6 +621,8 @@ final class IntrospectionSupport {
                         if ((parameterType == Boolean.class || parameterType == boolean.class) && ref instanceof String) {
                             String val = (String) ref;
                             if (!val.equalsIgnoreCase("true") && !val.equalsIgnoreCase("false")) {
+                                // this is our self
+                                myself = true;
                                 throw new IllegalArgumentException(
                                         "Cannot convert the String value: " + ref + " to type: " + parameterType
                                                                    + " as the value is not true or false");
@@ -650,7 +653,14 @@ final class IntrospectionSupport {
                     }
                 }
                 // ignore exceptions as there could be another setter method where we could type convert successfully
-            } catch (SecurityException | NoTypeConversionAvailableException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
+                // this can be either our own or while trying to set the property on the bean that fails in the 3rd party component
+                if (myself) {
+                    typeConversionFailed = e;
+                } else {
+                    throw e;
+                }
+            } catch (SecurityException | NoTypeConversionAvailableException e) {
                 typeConversionFailed = e;
             }
 
