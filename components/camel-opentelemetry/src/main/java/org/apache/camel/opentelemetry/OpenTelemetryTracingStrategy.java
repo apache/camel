@@ -48,8 +48,12 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
         }
 
         return new DelegateAsyncProcessor((Exchange exchange) -> {
+            Span span = null;
             OpenTelemetrySpanAdapter spanWrapper = (OpenTelemetrySpanAdapter) ActiveSpanManager.getSpan(exchange);
-            Span span = spanWrapper.getOpenTelemetrySpan();
+            if(spanWrapper != null){
+                span = spanWrapper.getOpenTelemetrySpan();
+            }
+           
             if (span == null) {
                 target.process(exchange);
                 return;
