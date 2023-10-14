@@ -1073,6 +1073,49 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to eager validate that broker host:port is valid and can be
+         * DNS resolved to known host during starting this consumer. If the
+         * validation fails then an exception is thrown which makes Camel fail
+         * fast. Disabling this will postpone the validation after the consumer
+         * is started, and Camel will keep re-connecting in case of validation
+         * or DNS resolution error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param preValidateHostAndPort the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder preValidateHostAndPort(
+                boolean preValidateHostAndPort) {
+            doSetProperty("preValidateHostAndPort", preValidateHostAndPort);
+            return this;
+        }
+        /**
+         * Whether to eager validate that broker host:port is valid and can be
+         * DNS resolved to known host during starting this consumer. If the
+         * validation fails then an exception is thrown which makes Camel fail
+         * fast. Disabling this will postpone the validation after the consumer
+         * is started, and Camel will keep re-connecting in case of validation
+         * or DNS resolution error.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param preValidateHostAndPort the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder preValidateHostAndPort(
+                String preValidateHostAndPort) {
+            doSetProperty("preValidateHostAndPort", preValidateHostAndPort);
+            return this;
+        }
+        /**
          * Set if KafkaConsumer will read from the beginning or the end on
          * startup: SeekPolicy.BEGINNING: read from the beginning.
          * SeekPolicy.END: read from the end.
