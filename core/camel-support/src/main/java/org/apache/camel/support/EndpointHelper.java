@@ -235,18 +235,29 @@ public final class EndpointHelper {
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
         uri = normalizeEndpointUri(uri);
 
-        // we need to test with and without scheme separators (//)
-        boolean match = PatternHelper.matchPattern(toggleUriSchemeSeparators(uri), pattern);
+        // do fast matching without regexp first
+        boolean match = doMatchEndpoint(uri, pattern, false);
         if (!match) {
-            match = PatternHelper.matchPattern(uri, pattern);
+            // this is slower as pattern is compiled as regexp
+            match = doMatchEndpoint(uri, pattern, true);
         }
-        if (!match && pattern != null && pattern.contains("?")) {
-            // try normalizing the pattern as a uri for exact matching, so parameters are ordered the same as in the endpoint uri
+        return match;
+    }
+
+    private static boolean doMatchEndpoint(String uri, String pattern, boolean regexp) {
+        String toggleUri = null;
+        boolean match = regexp ? PatternHelper.matchRegex(uri, pattern) : PatternHelper.matchPattern(uri, pattern);
+        if (!match) {
+            toggleUri = toggleUriSchemeSeparators(uri);
+            match = regexp ? PatternHelper.matchRegex(toggleUri, pattern) : PatternHelper.matchPattern(toggleUri, pattern);
+        }
+        if (!match && !regexp && pattern != null && pattern.contains("?")) {
+            // this is only need to be done once (in fast mode when regexp=false)
+            // try normalizing the pattern as an uri for exact matching, so parameters are ordered the same as in the endpoint uri
             try {
                 pattern = URISupport.normalizeUri(pattern);
                 // try both with and without scheme separators (//)
-                match = toggleUriSchemeSeparators(uri).equalsIgnoreCase(pattern);
-                return match || uri.equalsIgnoreCase(pattern);
+                return uri.equalsIgnoreCase(pattern) || toggleUri.equalsIgnoreCase(pattern);
             } catch (URISyntaxException e) {
                 // cannot normalize and original match failed
                 return false;
