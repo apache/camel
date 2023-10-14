@@ -221,7 +221,7 @@ public final class EndpointHelper {
      * @param  context the Camel context, if <tt>null</tt> then property placeholder resolution is skipped.
      * @param  uri     the endpoint uri
      * @param  pattern a pattern to match
-     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return         <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
     public static boolean matchEndpoint(CamelContext context, String uri, String pattern) {
         if (context != null) {
@@ -237,7 +237,9 @@ public final class EndpointHelper {
 
         // we need to test with and without scheme separators (//)
         boolean match = PatternHelper.matchPattern(toggleUriSchemeSeparators(uri), pattern);
-        match |= PatternHelper.matchPattern(uri, pattern);
+        if (!match) {
+            match = PatternHelper.matchPattern(uri, pattern);
+        }
         if (!match && pattern != null && pattern.contains("?")) {
             // try normalizing the pattern as a uri for exact matching, so parameters are ordered the same as in the endpoint uri
             try {
@@ -246,7 +248,7 @@ public final class EndpointHelper {
                 match = toggleUriSchemeSeparators(uri).equalsIgnoreCase(pattern);
                 return match || uri.equalsIgnoreCase(pattern);
             } catch (URISyntaxException e) {
-                //Can't normalize and original match failed
+                // cannot normalize and original match failed
                 return false;
             } catch (Exception e) {
                 throw new ResolveEndpointFailedException(uri, e);
@@ -278,7 +280,7 @@ public final class EndpointHelper {
      * Is the given parameter a reference parameter (starting with a # char)
      *
      * @param  parameter the parameter
-     * @return           <tt>true</tt> if its a reference parameter
+     * @return           <tt>true</tt> if it's a reference parameter
      */
     public static boolean isReferenceParameter(String parameter) {
         return parameter != null && parameter.trim().startsWith("#") && parameter.trim().length() > 1;
