@@ -569,6 +569,49 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth2 client id.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ClientId the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2ClientId(String oauth2ClientId) {
+            doSetProperty("oauth2ClientId", oauth2ClientId);
+            return this;
+        }
+        /**
+         * OAuth2 client secret.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ClientSecret the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2ClientSecret(String oauth2ClientSecret) {
+            doSetProperty("oauth2ClientSecret", oauth2ClientSecret);
+            return this;
+        }
+        /**
+         * OAuth2 Token endpoint.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2TokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2TokenEndpoint(
+                String oauth2TokenEndpoint) {
+            doSetProperty("oauth2TokenEndpoint", oauth2TokenEndpoint);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters. Important: Only one
          * instance of org.apache.camel.util.jsse.SSLContextParameters is
          * supported per HttpComponent. If you need to use 2 or more different

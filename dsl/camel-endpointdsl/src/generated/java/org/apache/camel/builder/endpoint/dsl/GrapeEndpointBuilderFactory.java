@@ -137,6 +137,7 @@ public interface GrapeEndpointBuilderFactory {
          * @param path defaultCoordinates
          * @return the dsl builder
          */
+        @Deprecated
         default GrapeEndpointBuilder grape(String path) {
             return GrapeEndpointBuilderFactory.endpointBuilder("grape", path);
         }
@@ -160,6 +161,7 @@ public interface GrapeEndpointBuilderFactory {
          * @param path defaultCoordinates
          * @return the dsl builder
          */
+        @Deprecated
         default GrapeEndpointBuilder grape(String componentName, String path) {
             return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -190,6 +192,7 @@ public interface GrapeEndpointBuilderFactory {
             return "GrapeCommand";
         }
     }
+    @Deprecated
     static GrapeEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
