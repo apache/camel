@@ -116,7 +116,7 @@ public final class PatternHelper {
      * @param  pattern a pattern to match
      * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
-    private static boolean matchRegex(String name, String pattern) {
+    public static boolean matchRegex(String name, String pattern) {
         // match by regular expression
         try {
             Pattern compiled = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
