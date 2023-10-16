@@ -1007,6 +1007,20 @@ For example. you can copy this to your clipboard and then run it afterwards:
 camel run clipboard.xml
 ----
 
+==== Run and reload from clipboard
+
+*Available since Camel 4.2*
+
+It is also possible to run from clipboard in _reload_ mode as shown:
+
+[source,bash]
+----
+camel run clipboard.xml --dev
+----
+
+Then you can quickly make changes and copy to clipboard, and Camel JBang will update while running.
+
+
 === Sending messages via Camel
 
 *Available since Camel 4*

@@ -76,6 +76,7 @@
         <box-java-sdk-version>4.6.0</box-java-sdk-version>
         <braintree-gateway-version>3.26.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.4.0</build-helper-maven-plugin-version>
+        <bytebuddy-version>1.14.9</bytebuddy-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.8</caffeine-version>
         <californium-version>2.8.0</californium-version>
@@ -211,7 +212,7 @@
         <icu4j-version>73.2</icu4j-version>
         <ignite-version>2.15.0</ignite-version>
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
-        <infinispan-version>14.0.18.Final</infinispan-version>
+        <infinispan-version>14.0.19.Final</infinispan-version>
         <influx-java-driver-version>2.23</influx-java-driver-version>
         <influx-client-java-driver-version>6.10.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
@@ -2802,12 +2803,22 @@
                 <artifactId>micrometer-tracing</artifactId>
                 <version>${micrometer-tracing-version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3-version}</version>
             </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${bytebuddy-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>${bytebuddy-version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
