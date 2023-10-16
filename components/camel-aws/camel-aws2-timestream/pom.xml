@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws2-timestream</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: AWS Timestream</name>
-    <description>A Camel Amazon Web Services TimeStream component</description>
+    <description>Write records and execute queries on AWS time-series database</description>
 
     <properties>
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>

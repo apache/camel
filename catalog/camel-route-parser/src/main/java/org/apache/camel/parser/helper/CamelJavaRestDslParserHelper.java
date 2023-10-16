@@ -44,6 +44,7 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.QualifiedName;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SimpleName;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.StringLiteral;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.TextBlock;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Type;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.VariableDeclarationStatement;
@@ -503,6 +504,8 @@ public final class CamelJavaRestDslParserHelper {
             return String.valueOf(((BooleanLiteral) expression).booleanValue());
         } else if (expression instanceof NumberLiteral) {
             return ((NumberLiteral) expression).getToken();
+        } else if (expression instanceof TextBlock textBlock) {
+            return textBlock.getLiteralValue();
         }
 
         // if it's a method invocation then add a dummy value assuming the method invocation will return a valid response

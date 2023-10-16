@@ -107,7 +107,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             return null;
         }
 
-        if (type.isInstance(value)) {
+        if (type.equals(value.getClass())) {
             // same instance
             return (T) value;
         }

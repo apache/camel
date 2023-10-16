@@ -42,6 +42,7 @@ public interface GrapeComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static GrapeComponentBuilder grape() {
         return new GrapeComponentBuilderImpl();
     }

@@ -12,7 +12,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
-    "version": "4.1.0-SNAPSHOT",
+    "version": "4.2.0-SNAPSHOT",
     "scheme": "http",
     "extendsScheme": "",
     "alternativeSchemes": "http,https",
@@ -132,7 +132,10 @@
     "authMethodPriority": { "index": 46, "kind": "parameter", "displayName": "Auth Method Priority", "group": "security", "label": "producer,security", "required": false, "type": "string", "javaType": "java.lang.String", "enum": [ "Basic", "Digest", "NTLM" ], "deprecated": false, "autowired": false, "secret": false, "description": "Which authentication method to prioritize to use, either as Basic, Digest or NTLM." },
     "authPassword": { "index": 47, "kind": "parameter", "displayName": "Auth Password", "group": "security", "label": "producer,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "Authentication password" },
     "authUsername": { "index": 48, "kind": "parameter", "displayName": "Auth Username", "group": "security", "label": "producer,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "Authentication username" },
-    "sslContextParameters": { "index": 49, "kind": "parameter", "displayName": "Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "org.apache.camel.support.jsse.SSLContextParameters", "deprecated": false, "autowired": false, "secret": false, "description": "To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need." },
-    "x509HostnameVerifier": { "index": 50, "kind": "parameter", "displayName": "X509 Hostname Verifier", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "javax.net.ssl.HostnameVerifier", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier" }
+    "oauth2ClientId": { "index": 49, "kind": "parameter", "displayName": "Oauth2 Client Id", "group": "security", "label": "producer,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "OAuth2 client id" },
+    "oauth2ClientSecret": { "index": 50, "kind": "parameter", "displayName": "Oauth2 Client Secret", "group": "security", "label": "producer,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "OAuth2 client secret" },
+    "oauth2TokenEndpoint": { "index": 51, "kind": "parameter", "displayName": "Oauth2 Token Endpoint", "group": "security", "label": "producer,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "OAuth2 Token endpoint" },
+    "sslContextParameters": { "index": 52, "kind": "parameter", "displayName": "Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "org.apache.camel.support.jsse.SSLContextParameters", "deprecated": false, "autowired": false, "secret": false, "description": "To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need." },
+    "x509HostnameVerifier": { "index": 53, "kind": "parameter", "displayName": "X509 Hostname Verifier", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "javax.net.ssl.HostnameVerifier", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier" }
   }
 }

@@ -1250,6 +1250,10 @@ public class Run extends CamelCommand {
             return true;
         }
 
+        if (FileUtil.onlyExt(name) == null) {
+            return true;
+        }
+
         String on = FileUtil.onlyName(name, true);
         on = on.toLowerCase(Locale.ROOT);
         if (on.startsWith("readme")) {
@@ -1407,7 +1411,7 @@ public class Run extends CamelCommand {
 
         @Override
         protected void doConsumeParameters(Stack<String> args, Run cmd) {
-            String arg = args.peek();
+            String arg = args.isEmpty() ? "" : args.peek();
             if (DEBUG_ARG_VALUE_PATTERN.asPredicate().test(arg)) {
                 // The value matches with the expected format so let's assume that it is a debug argument value
                 args.pop();
@@ -1416,6 +1420,11 @@ public class Run extends CamelCommand {
                 arg = "true";
             }
             cmd.jvmDebugPort = parseJvmDebugPort(arg);
+        }
+
+        @Override
+        protected boolean failIfEmptyArgs() {
+            return false;
         }
     }
 }

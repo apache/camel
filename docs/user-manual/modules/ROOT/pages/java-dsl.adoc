@@ -61,6 +61,24 @@ Then we use the xref:components:eips:choice-eip.adoc[Content Based Router] EIP
         .to("file:target/messages/others");
 -------------------------------------------------------
 
+=== Using Text Blocks for long URIs
+
+If you have very long endpoint xref:uris.adoc[uris], then you can declare those in Java text blocks, instead
+of breaking a String into multiple added elements:
+
+[source,java]
+----
+    from("""
+            debezium-postgres:customerEvents
+            ?databasePassword={{myPassword}}
+            &databaseDbname=myDB
+            &databaseHostname=myHost
+            &pollIntervalMs=2000
+            &queryFetchSize=100
+        """)
+        .to("kafka:cheese");
+----
+
 === Routes using Java lambda style
 
 Camel now supports to define Camel routes in Java DSL using Lambda style. This can be beneficial for microservices or serverless where

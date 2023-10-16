@@ -70,6 +70,9 @@ public class KafkaConsumerBadPortSupervisingHealthCheckIT extends KafkaHealthChe
         KafkaComponent kafka = new KafkaComponent(context);
         kafka.init();
         kafka.getConfiguration().setBrokers(service.getBootstrapServers() + 123);
+        // turn of pre validation so we startup and let supervising route controller handle this
+        // and we can see failure in health checks
+        kafka.getConfiguration().setPreValidateHostAndPort(false);
         context.addComponent("kafka", kafka);
     }
 

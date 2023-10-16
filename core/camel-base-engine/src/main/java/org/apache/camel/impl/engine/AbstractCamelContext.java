@@ -699,7 +699,20 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void removeEndpoint(Endpoint endpoint) throws Exception {
-        removeEndpoints(endpoint.getEndpointUri());
+        // optimize as uri on endpoint is already normalized
+        String uri = endpoint.getEndpointUri();
+        NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
+        Endpoint oldEndpoint = endpoints.remove(key);
+        if (oldEndpoint != null) {
+            try {
+                stopServices(oldEndpoint);
+            } catch (Exception e) {
+                LOG.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint, e);
+            }
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onEndpointRemove(oldEndpoint);
+            }
+        }
     }
 
     @Override
@@ -775,8 +788,10 @@ public abstract class AbstractCamelContext extends BaseService
 
         LOG.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
 
-        // in case path has property placeholders then try to let property component resolve those
         if (!normalized) {
+            // java 17 text blocks to single line uri
+            uri = URISupport.textBlockToSingleLine(uri);
+            // in case path has property placeholders then try to let property component resolve those
             uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
         }
 

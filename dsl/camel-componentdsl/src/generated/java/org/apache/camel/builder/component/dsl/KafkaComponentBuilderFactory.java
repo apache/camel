@@ -654,6 +654,27 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to eager validate that broker host:port is valid and can be
+         * DNS resolved to known host during starting this consumer. If the
+         * validation fails then an exception is thrown which makes Camel fail
+         * fast. Disabling this will postpone the validation after the consumer
+         * is started, and Camel will keep re-connecting in case of validation
+         * or DNS resolution error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param preValidateHostAndPort the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder preValidateHostAndPort(
+                boolean preValidateHostAndPort) {
+            doSetProperty("preValidateHostAndPort", preValidateHostAndPort);
+            return this;
+        }
+        /**
          * Set if KafkaConsumer will read from the beginning or the end on
          * startup: SeekPolicy.BEGINNING: read from the beginning.
          * SeekPolicy.END: read from the end.
@@ -2234,6 +2255,7 @@ public interface KafkaComponentBuilderFactory {
             case "partitionAssignor": getOrCreateConfiguration((KafkaComponent) component).setPartitionAssignor((java.lang.String) value); return true;
             case "pollOnError": getOrCreateConfiguration((KafkaComponent) component).setPollOnError((org.apache.camel.component.kafka.PollOnError) value); return true;
             case "pollTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setPollTimeoutMs((java.lang.Long) value); return true;
+            case "preValidateHostAndPort": getOrCreateConfiguration((KafkaComponent) component).setPreValidateHostAndPort((boolean) value); return true;
             case "seekTo": getOrCreateConfiguration((KafkaComponent) component).setSeekTo((org.apache.camel.component.kafka.SeekPolicy) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setSessionTimeoutMs((java.lang.Integer) value); return true;
             case "specificAvroReader": getOrCreateConfiguration((KafkaComponent) component).setSpecificAvroReader((boolean) value); return true;

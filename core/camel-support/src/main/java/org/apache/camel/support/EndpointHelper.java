@@ -221,7 +221,7 @@ public final class EndpointHelper {
      * @param  context the Camel context, if <tt>null</tt> then property placeholder resolution is skipped.
      * @param  uri     the endpoint uri
      * @param  pattern a pattern to match
-     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return         <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
     public static boolean matchEndpoint(CamelContext context, String uri, String pattern) {
         if (context != null) {
@@ -235,18 +235,31 @@ public final class EndpointHelper {
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
         uri = normalizeEndpointUri(uri);
 
-        // we need to test with and without scheme separators (//)
-        boolean match = PatternHelper.matchPattern(toggleUriSchemeSeparators(uri), pattern);
-        match |= PatternHelper.matchPattern(uri, pattern);
-        if (!match && pattern != null && pattern.contains("?")) {
-            // try normalizing the pattern as a uri for exact matching, so parameters are ordered the same as in the endpoint uri
+        // do fast matching without regexp first
+        boolean match = doMatchEndpoint(uri, pattern, false);
+        if (!match) {
+            // this is slower as pattern is compiled as regexp
+            match = doMatchEndpoint(uri, pattern, true);
+        }
+        return match;
+    }
+
+    private static boolean doMatchEndpoint(String uri, String pattern, boolean regexp) {
+        String toggleUri = null;
+        boolean match = regexp ? PatternHelper.matchRegex(uri, pattern) : PatternHelper.matchPattern(uri, pattern);
+        if (!match) {
+            toggleUri = toggleUriSchemeSeparators(uri);
+            match = regexp ? PatternHelper.matchRegex(toggleUri, pattern) : PatternHelper.matchPattern(toggleUri, pattern);
+        }
+        if (!match && !regexp && pattern != null && pattern.contains("?")) {
+            // this is only need to be done once (in fast mode when regexp=false)
+            // try normalizing the pattern as an uri for exact matching, so parameters are ordered the same as in the endpoint uri
             try {
                 pattern = URISupport.normalizeUri(pattern);
                 // try both with and without scheme separators (//)
-                match = toggleUriSchemeSeparators(uri).equalsIgnoreCase(pattern);
-                return match || uri.equalsIgnoreCase(pattern);
+                return uri.equalsIgnoreCase(pattern) || toggleUri.equalsIgnoreCase(pattern);
             } catch (URISyntaxException e) {
-                //Can't normalize and original match failed
+                // cannot normalize and original match failed
                 return false;
             } catch (Exception e) {
                 throw new ResolveEndpointFailedException(uri, e);
@@ -278,7 +291,7 @@ public final class EndpointHelper {
      * Is the given parameter a reference parameter (starting with a # char)
      *
      * @param  parameter the parameter
-     * @return           <tt>true</tt> if its a reference parameter
+     * @return           <tt>true</tt> if it's a reference parameter
      */
     public static boolean isReferenceParameter(String parameter) {
         return parameter != null && parameter.trim().startsWith("#") && parameter.trim().length() > 1;

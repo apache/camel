@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import org.apache.hc.client5.http.auth.AuthScope;
@@ -23,8 +24,9 @@ import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.utils.Base64;
 
-final class HttpCredentialsHelper {
+public final class HttpCredentialsHelper {
 
     private final CredentialsStore credentialsProvider;
 
@@ -38,6 +40,12 @@ final class HttpCredentialsHelper {
                 host,
                 Objects.requireNonNullElse(port, -1)), credentials);
         return credentialsProvider;
+    }
+
+    public static String generateBasicAuthHeader(String user, String pass) {
+        final String auth = user + ":" + pass;
+        final byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
+        return "Basic " + new String(encodedAuth);
     }
 
 }

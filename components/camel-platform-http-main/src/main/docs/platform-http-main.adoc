@@ -4,7 +4,7 @@
 :artifactid: camel-platform-http-main
 :description: Platform HTTP for standalone Camel Main applications
 :since: 4.0
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 
 *Since Camel {since}*
