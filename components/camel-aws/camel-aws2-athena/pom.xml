@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 Athena</name>
-    <description>A Camel Amazon Athena Web Service Component Version 2</description>
+    <description>Execute queries on AWS Athena Analysis service</description>
 
     <properties>
     </properties>
