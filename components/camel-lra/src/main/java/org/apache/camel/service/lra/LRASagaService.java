@@ -22,10 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.StaticService;
+import org.apache.camel.*;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.saga.CamelSagaCoordinator;
@@ -64,10 +61,15 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     }
 
     @Override
-    public CompletableFuture<CamelSagaCoordinator> newSaga() {
-        return client.newLRA()
+    public CompletableFuture<CamelSagaCoordinator> newSaga(Exchange exchange) {
+        return client.newLRA(exchange)
                 .thenApply(url -> new LRASagaCoordinator(LRASagaService.this, url));
     }
+
+    //    public CompletableFuture<CamelSagaCoordinator> newSaga(Exchange exchange) {
+    //        return client.newLRA(exchange)
+    //                .thenApply(url -> new LRASagaCoordinator(LRASagaService.this, url));
+    //    }
 
     @Override
     public CompletableFuture<CamelSagaCoordinator> getSaga(String id) {

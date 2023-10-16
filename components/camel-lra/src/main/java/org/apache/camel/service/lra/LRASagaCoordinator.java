@@ -45,17 +45,17 @@ public class LRASagaCoordinator implements CamelSagaCoordinator {
                 throw ex;
             });
         }
-        return sagaService.getClient().join(this.lraURL, sagaStep);
+        return sagaService.getClient().join(this.lraURL, sagaStep, exchange);
     }
 
     @Override
-    public CompletableFuture<Void> compensate() {
-        return sagaService.getClient().compensate(this.lraURL);
+    public CompletableFuture<Void> compensate(Exchange exchange) {
+        return sagaService.getClient().compensate(this.lraURL, exchange);
     }
 
     @Override
-    public CompletableFuture<Void> complete() {
-        return sagaService.getClient().complete(this.lraURL);
+    public CompletableFuture<Void> complete(Exchange exchange) {
+        return sagaService.getClient().complete(this.lraURL, exchange);
     }
 
     @Override

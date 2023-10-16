@@ -36,7 +36,7 @@ public class RequiresNewSagaProcessor extends SagaProcessor {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         getCurrentSagaCoordinator(exchange).whenComplete((existingCoordinator, ex) -> ifNotException(ex, exchange, callback,
-                () -> sagaService.newSaga().whenComplete((newCoordinator, ex2) -> ifNotException(ex2, exchange, true,
+                () -> sagaService.newSaga(exchange).whenComplete((newCoordinator, ex2) -> ifNotException(ex2, exchange, true,
                         newCoordinator, existingCoordinator, callback, () -> {
                             setCurrentSagaCoordinator(exchange, newCoordinator);
 

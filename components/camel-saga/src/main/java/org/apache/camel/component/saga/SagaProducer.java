@@ -62,9 +62,9 @@ public class SagaProducer extends DefaultAsyncProducer {
             return coordinator;
         }).thenCompose(coordinator -> {
             if (success) {
-                return coordinator.complete();
+                return coordinator.complete(exchange);
             } else {
-                return coordinator.compensate();
+                return coordinator.compensate(exchange);
             }
         }).whenComplete((res, ex) -> {
             if (ex != null) {
