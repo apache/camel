@@ -40,6 +40,10 @@ public final class ExtraFilesClassLoader extends ClassLoader {
 
     @Override
     public URL getResource(String name) {
+        // clip leading slash
+        if (name.startsWith("/")) {
+            name = name.substring(1);
+        }
         for (String f : files) {
             String source = f;
             // deal with adding files to classpath that are in src/main/resources
