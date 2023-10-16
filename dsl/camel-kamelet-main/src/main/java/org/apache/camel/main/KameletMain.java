@@ -59,6 +59,7 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
+import org.apache.camel.main.util.ClipboardReloadStrategy;
 import org.apache.camel.main.util.ExtraClassesClassLoader;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
 import org.apache.camel.main.xml.blueprint.BlueprintXmlBeansHandler;
@@ -73,6 +74,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RoutesLoader;
@@ -572,6 +574,16 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.addService(new DefaultContextReloadStrategy());
             }
 
+            // special for reloading enabled on clipboard
+            String reloadDir = getInitialProperties().getProperty("camel.main.routesIncludePattern");
+            if (reloadDir != null && reloadDir.startsWith("file:.camel-jbang/generated-clipboard")) {
+                String name = reloadDir.substring(5);
+                File file = new File(name);
+                ClipboardReloadStrategy reloader = new ClipboardReloadStrategy(file);
+                answer.addService(reloader);
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(answer);
+                scheduler.schedulePeriodTask(reloader, 2000);
+            }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
