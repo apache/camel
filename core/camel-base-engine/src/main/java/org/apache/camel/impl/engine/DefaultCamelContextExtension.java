@@ -37,6 +37,8 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.spi.BootstrapCloseable;
+import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -46,21 +48,32 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Tracer;
+import org.apache.camel.spi.TransformerRegistry;
+import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.PluginHelper;
@@ -91,6 +104,20 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile HeadersMapFactory headersMapFactory;
     private volatile boolean eventNotificationApplicable;
+    private volatile CamelContextNameStrategy nameStrategy;
+    private volatile ManagementNameStrategy managementNameStrategy;
+    private volatile PropertiesComponent propertiesComponent;
+    private volatile RestRegistryFactory restRegistryFactory;
+    private volatile RestConfiguration restConfiguration;
+    private volatile RestRegistry restRegistry;
+    private volatile ClassResolver classResolver;
+    private volatile MessageHistoryFactory messageHistoryFactory;
+    private volatile StreamCachingStrategy streamCachingStrategy;
+    private volatile InflightRepository inflightRepository;
+    private volatile UuidGenerator uuidGenerator;
+    private volatile Tracer tracer;
+    private volatile TransformerRegistry<TransformerKey> transformerRegistry;
+    private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
 
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
@@ -113,6 +140,51 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public String getName() {
         return camelContext.getNameStrategy().getName();
+    }
+
+    CamelContextNameStrategy getNameStrategy() {
+        if (nameStrategy == null) {
+            synchronized (lock) {
+                if (nameStrategy == null) {
+                    setNameStrategy(camelContext.createCamelContextNameStrategy());
+                }
+            }
+        }
+        return nameStrategy;
+    }
+
+    void setNameStrategy(CamelContextNameStrategy nameStrategy) {
+        this.nameStrategy = camelContext.getInternalServiceManager().addService(nameStrategy);
+    }
+
+    ManagementNameStrategy getManagementNameStrategy() {
+        if (managementNameStrategy == null) {
+            synchronized (lock) {
+                if (managementNameStrategy == null) {
+                    setManagementNameStrategy(camelContext.createManagementNameStrategy());
+                }
+            }
+        }
+        return managementNameStrategy;
+    }
+
+    void setManagementNameStrategy(ManagementNameStrategy managementNameStrategy) {
+        this.managementNameStrategy = camelContext.getInternalServiceManager().addService(managementNameStrategy);
+    }
+
+    PropertiesComponent getPropertiesComponent() {
+        if (propertiesComponent == null) {
+            synchronized (lock) {
+                if (propertiesComponent == null) {
+                    setPropertiesComponent(camelContext.createPropertiesComponent());
+                }
+            }
+        }
+        return propertiesComponent;
+    }
+
+    void setPropertiesComponent(PropertiesComponent propertiesComponent) {
+        this.propertiesComponent = camelContext.getInternalServiceManager().addService(propertiesComponent);
     }
 
     @Override
@@ -526,6 +598,172 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
         this.reactiveExecutor = camelContext.getInternalServiceManager().addService(reactiveExecutor, false);
+    }
+
+    RestRegistryFactory getRestRegistryFactory() {
+        if (restRegistryFactory == null) {
+            synchronized (lock) {
+                if (restRegistryFactory == null) {
+                    setRestRegistryFactory(camelContext.createRestRegistryFactory());
+                }
+            }
+        }
+        return restRegistryFactory;
+    }
+
+    void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
+        this.restRegistryFactory = camelContext.getInternalServiceManager().addService(restRegistryFactory);
+    }
+
+    RestRegistry getRestRegistry() {
+        if (restRegistry == null) {
+            synchronized (lock) {
+                if (restRegistry == null) {
+                    setRestRegistry(camelContext.createRestRegistry());
+                }
+            }
+        }
+        return restRegistry;
+    }
+
+    void setRestRegistry(RestRegistry restRegistry) {
+        this.restRegistry = camelContext.getInternalServiceManager().addService(restRegistry);
+    }
+
+    RestConfiguration getRestConfiguration() {
+        if (restConfiguration == null) {
+            synchronized (lock) {
+                if (restConfiguration == null) {
+                    setRestConfiguration(camelContext.createRestConfiguration());
+                }
+            }
+        }
+        return restConfiguration;
+    }
+
+    void setRestConfiguration(RestConfiguration restConfiguration) {
+        this.restConfiguration = restConfiguration;
+    }
+
+    ClassResolver getClassResolver() {
+        if (classResolver == null) {
+            synchronized (lock) {
+                if (classResolver == null) {
+                    setClassResolver(camelContext.createClassResolver());
+                }
+            }
+        }
+        return classResolver;
+    }
+
+    void setClassResolver(ClassResolver classResolver) {
+        this.classResolver = camelContext.getInternalServiceManager().addService(classResolver);
+    }
+
+    MessageHistoryFactory getMessageHistoryFactory() {
+        if (messageHistoryFactory == null) {
+            synchronized (lock) {
+                if (messageHistoryFactory == null) {
+                    setMessageHistoryFactory(camelContext.createMessageHistoryFactory());
+                }
+            }
+        }
+        return messageHistoryFactory;
+    }
+
+    void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
+        this.messageHistoryFactory = camelContext.getInternalServiceManager().addService(messageHistoryFactory);
+    }
+
+    StreamCachingStrategy getStreamCachingStrategy() {
+        if (streamCachingStrategy == null) {
+            synchronized (lock) {
+                if (streamCachingStrategy == null) {
+                    setStreamCachingStrategy(camelContext.createStreamCachingStrategy());
+                }
+            }
+        }
+        return streamCachingStrategy;
+    }
+
+    void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
+        this.streamCachingStrategy
+                = camelContext.getInternalServiceManager().addService(streamCachingStrategy, true, false, true);
+    }
+
+    InflightRepository getInflightRepository() {
+        if (inflightRepository == null) {
+            synchronized (lock) {
+                if (inflightRepository == null) {
+                    setInflightRepository(camelContext.createInflightRepository());
+                }
+            }
+        }
+        return inflightRepository;
+    }
+
+    void setInflightRepository(InflightRepository repository) {
+        this.inflightRepository = camelContext.getInternalServiceManager().addService(repository);
+    }
+
+    UuidGenerator getUuidGenerator() {
+        if (uuidGenerator == null) {
+            synchronized (lock) {
+                if (uuidGenerator == null) {
+                    setUuidGenerator(camelContext.createUuidGenerator());
+                }
+            }
+        }
+        return uuidGenerator;
+    }
+
+    void setUuidGenerator(UuidGenerator uuidGenerator) {
+        this.uuidGenerator = camelContext.getInternalServiceManager().addService(uuidGenerator);
+    }
+
+    Tracer getTracer() {
+        if (tracer == null) {
+            synchronized (lock) {
+                if (tracer == null) {
+                    setTracer(camelContext.createTracer());
+                }
+            }
+        }
+        return tracer;
+    }
+
+    void setTracer(Tracer tracer) {
+        this.tracer = camelContext.getInternalServiceManager().addService(tracer, true, false, true);
+    }
+
+    TransformerRegistry getTransformerRegistry() {
+        if (transformerRegistry == null) {
+            synchronized (lock) {
+                if (transformerRegistry == null) {
+                    setTransformerRegistry(camelContext.createTransformerRegistry());
+                }
+            }
+        }
+        return transformerRegistry;
+    }
+
+    void setTransformerRegistry(TransformerRegistry transformerRegistry) {
+        this.transformerRegistry = camelContext.getInternalServiceManager().addService(transformerRegistry);
+    }
+
+    ValidatorRegistry getValidatorRegistry() {
+        if (validatorRegistry == null) {
+            synchronized (lock) {
+                if (validatorRegistry == null) {
+                    setValidatorRegistry(camelContext.createValidatorRegistry());
+                }
+            }
+        }
+        return validatorRegistry;
+    }
+
+    public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
+        this.validatorRegistry = camelContext.getInternalServiceManager().addService(validatorRegistry);
     }
 
     @Override
