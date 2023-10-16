@@ -224,7 +224,6 @@ public abstract class AbstractCamelContext extends BaseService
     private String managementName;
     private ClassLoader applicationContextClassLoader;
     private boolean autoCreateComponents = true;
-    private volatile RestConfiguration restConfiguration;
     private volatile VaultConfiguration vaultConfiguration = new VaultConfiguration();
 
     private final List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
@@ -262,25 +261,12 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private volatile PropertiesComponent propertiesComponent;
-    private volatile CamelContextNameStrategy nameStrategy;
-    private volatile ManagementNameStrategy managementNameStrategy;
     private volatile TypeConverter typeConverter;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
-    private volatile RestRegistryFactory restRegistryFactory;
-    private volatile RestRegistry restRegistry;
-    private volatile ClassResolver classResolver;
-    private volatile MessageHistoryFactory messageHistoryFactory;
-    private volatile StreamCachingStrategy streamCachingStrategy;
-    private volatile InflightRepository inflightRepository;
     private volatile ShutdownStrategy shutdownStrategy;
     private volatile ExecutorServiceManager executorServiceManager;
-    private volatile UuidGenerator uuidGenerator;
     private volatile RouteController routeController;
-    private volatile Tracer tracer;
-    private volatile TransformerRegistry<TransformerKey> transformerRegistry;
-    private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
     private EndpointRegistry<NormalizedUri> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
@@ -435,36 +421,22 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public CamelContextNameStrategy getNameStrategy() {
-        if (nameStrategy == null) {
-            synchronized (lock) {
-                if (nameStrategy == null) {
-                    setNameStrategy(createCamelContextNameStrategy());
-                }
-            }
-        }
-        return nameStrategy;
+        return camelContextExtension.getNameStrategy();
     }
 
     @Override
     public void setNameStrategy(CamelContextNameStrategy nameStrategy) {
-        this.nameStrategy = internalServiceManager.addService(nameStrategy);
+        camelContextExtension.setNameStrategy(nameStrategy);
     }
 
     @Override
     public ManagementNameStrategy getManagementNameStrategy() {
-        if (managementNameStrategy == null) {
-            synchronized (lock) {
-                if (managementNameStrategy == null) {
-                    setManagementNameStrategy(createManagementNameStrategy());
-                }
-            }
-        }
-        return managementNameStrategy;
+        return camelContextExtension.getManagementNameStrategy();
     }
 
     @Override
     public void setManagementNameStrategy(ManagementNameStrategy managementNameStrategy) {
-        this.managementNameStrategy = internalServiceManager.addService(managementNameStrategy);
+        camelContextExtension.setManagementNameStrategy(managementNameStrategy);
     }
 
     @Override
@@ -1641,19 +1613,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public PropertiesComponent getPropertiesComponent() {
-        if (propertiesComponent == null) {
-            synchronized (lock) {
-                if (propertiesComponent == null) {
-                    setPropertiesComponent(createPropertiesComponent());
-                }
-            }
-        }
-        return propertiesComponent;
+        return camelContextExtension.getPropertiesComponent();
     }
 
     @Override
     public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
-        this.propertiesComponent = internalServiceManager.addService(propertiesComponent);
+        camelContextExtension.setPropertiesComponent(propertiesComponent);
     }
 
     protected void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
@@ -1689,19 +1654,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public RestConfiguration getRestConfiguration() {
-        if (restConfiguration == null) {
-            synchronized (lock) {
-                if (restConfiguration == null) {
-                    setRestConfiguration(createRestConfiguration());
-                }
-            }
-        }
-        return restConfiguration;
+        return camelContextExtension.getRestConfiguration();
     }
 
     @Override
     public void setRestConfiguration(RestConfiguration restConfiguration) {
-        this.restConfiguration = restConfiguration;
+        camelContextExtension.setRestConfiguration(restConfiguration);
     }
 
     @Override
@@ -3285,19 +3243,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public ClassResolver getClassResolver() {
-        if (classResolver == null) {
-            synchronized (lock) {
-                if (classResolver == null) {
-                    setClassResolver(createClassResolver());
-                }
-            }
-        }
-        return classResolver;
+        return camelContextExtension.getClassResolver();
     }
 
     @Override
     public void setClassResolver(ClassResolver classResolver) {
-        this.classResolver = internalServiceManager.addService(classResolver);
+        camelContextExtension.setClassResolver(classResolver);
     }
 
     @Override
@@ -3362,19 +3313,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public InflightRepository getInflightRepository() {
-        if (inflightRepository == null) {
-            synchronized (lock) {
-                if (inflightRepository == null) {
-                    setInflightRepository(createInflightRepository());
-                }
-            }
-        }
-        return inflightRepository;
+        return camelContextExtension.getInflightRepository();
     }
 
     @Override
     public void setInflightRepository(InflightRepository repository) {
-        this.inflightRepository = internalServiceManager.addService(repository);
+        camelContextExtension.setInflightRepository(repository);
     }
 
     @Override
@@ -3657,19 +3601,13 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public MessageHistoryFactory getMessageHistoryFactory() {
-        if (messageHistoryFactory == null) {
-            synchronized (lock) {
-                if (messageHistoryFactory == null) {
-                    setMessageHistoryFactory(createMessageHistoryFactory());
-                }
-            }
-        }
-        return messageHistoryFactory;
+        return camelContextExtension.getMessageHistoryFactory();
     }
 
     @Override
     public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
-        this.messageHistoryFactory = internalServiceManager.addService(messageHistoryFactory);
+        camelContextExtension.setMessageHistoryFactory(messageHistoryFactory);
+
         // enable message history if we set a custom factory
         setMessageHistory(true);
     }
@@ -3691,14 +3629,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public Tracer getTracer() {
-        if (tracer == null) {
-            synchronized (lock) {
-                if (tracer == null) {
-                    setTracer(createTracer());
-                }
-            }
-        }
-        return tracer;
+        return camelContextExtension.getTracer();
     }
 
     @Override
@@ -3707,7 +3638,8 @@ public abstract class AbstractCamelContext extends BaseService
         if (!isTracingStandby() && isStartingOrStarted()) {
             throw new IllegalStateException("Cannot set tracer on a started CamelContext");
         }
-        this.tracer = internalServiceManager.addService(tracer, true, false, true);
+
+        camelContextExtension.setTracer(tracer);
     }
 
     @Override
@@ -3752,53 +3684,32 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public UuidGenerator getUuidGenerator() {
-        if (uuidGenerator == null) {
-            synchronized (lock) {
-                if (uuidGenerator == null) {
-                    setUuidGenerator(createUuidGenerator());
-                }
-            }
-        }
-        return uuidGenerator;
+        return camelContextExtension.getUuidGenerator();
     }
 
     @Override
     public void setUuidGenerator(UuidGenerator uuidGenerator) {
-        this.uuidGenerator = internalServiceManager.addService(uuidGenerator);
+        camelContextExtension.setUuidGenerator(uuidGenerator);
     }
 
     @Override
     public StreamCachingStrategy getStreamCachingStrategy() {
-        if (streamCachingStrategy == null) {
-            synchronized (lock) {
-                if (streamCachingStrategy == null) {
-                    setStreamCachingStrategy(createStreamCachingStrategy());
-                }
-            }
-        }
-        return streamCachingStrategy;
+        return camelContextExtension.getStreamCachingStrategy();
     }
 
     @Override
     public void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
-        this.streamCachingStrategy = internalServiceManager.addService(streamCachingStrategy, true, false, true);
+        camelContextExtension.setStreamCachingStrategy(streamCachingStrategy);
     }
 
     @Override
     public RestRegistry getRestRegistry() {
-        if (restRegistry == null) {
-            synchronized (lock) {
-                if (restRegistry == null) {
-                    setRestRegistry(createRestRegistry());
-                }
-            }
-        }
-        return restRegistry;
+        return camelContextExtension.getRestRegistry();
     }
 
     @Override
     public void setRestRegistry(RestRegistry restRegistry) {
-        this.restRegistry = internalServiceManager.addService(restRegistry);
+        camelContextExtension.setRestRegistry(restRegistry);
     }
 
     protected RestRegistry createRestRegistry() {
@@ -3807,18 +3718,11 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public RestRegistryFactory getRestRegistryFactory() {
-        if (restRegistryFactory == null) {
-            synchronized (lock) {
-                if (restRegistryFactory == null) {
-                    setRestRegistryFactory(createRestRegistryFactory());
-                }
-            }
-        }
-        return restRegistryFactory;
+        return camelContextExtension.getRestRegistryFactory();
     }
 
     public void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
-        this.restRegistryFactory = internalServiceManager.addService(restRegistryFactory);
+        camelContextExtension.setRestRegistryFactory(restRegistryFactory);
     }
 
     @Override
@@ -3846,18 +3750,11 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public TransformerRegistry getTransformerRegistry() {
-        if (transformerRegistry == null) {
-            synchronized (lock) {
-                if (transformerRegistry == null) {
-                    setTransformerRegistry(createTransformerRegistry());
-                }
-            }
-        }
-        return transformerRegistry;
+        return camelContextExtension.getTransformerRegistry();
     }
 
     public void setTransformerRegistry(TransformerRegistry transformerRegistry) {
-        this.transformerRegistry = internalServiceManager.addService(transformerRegistry);
+        camelContextExtension.setTransformerRegistry(transformerRegistry);
     }
 
     @Override
@@ -3867,18 +3764,11 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public ValidatorRegistry getValidatorRegistry() {
-        if (validatorRegistry == null) {
-            synchronized (lock) {
-                if (validatorRegistry == null) {
-                    setValidatorRegistry(createValidatorRegistry());
-                }
-            }
-        }
-        return validatorRegistry;
+        return camelContextExtension.getValidatorRegistry();
     }
 
     public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
-        this.validatorRegistry = internalServiceManager.addService(validatorRegistry);
+        camelContextExtension.setValidatorRegistry(validatorRegistry);
     }
 
     @Override
