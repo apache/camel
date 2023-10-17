@@ -261,7 +261,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private volatile ShutdownStrategy shutdownStrategy;
     private volatile ExecutorServiceManager executorServiceManager;
     private EndpointRegistry<NormalizedUri> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
@@ -1077,6 +1076,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         // stop all routes in reverse order that they were started
         Comparator<RouteStartupOrder> comparator = Comparator.comparingInt(RouteStartupOrder::getStartupOrder);
+
+        final ShutdownStrategy shutdownStrategy = camelContextExtension.getShutdownStrategy();
         if (shutdownStrategy == null || shutdownStrategy.isShutdownRoutesInReverseOrder()) {
             comparator = comparator.reversed();
         }
@@ -1091,6 +1092,7 @@ public abstract class AbstractCamelContext extends BaseService
     public void removeAllRoutes() throws Exception {
         // stop all routes in reverse order that they were started
         Comparator<RouteStartupOrder> comparator = Comparator.comparingInt(RouteStartupOrder::getStartupOrder);
+        final ShutdownStrategy shutdownStrategy = getShutdownStrategy();
         if (shutdownStrategy == null || shutdownStrategy.isShutdownRoutesInReverseOrder()) {
             comparator = comparator.reversed();
         }
@@ -2131,7 +2133,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // init the shutdown strategy
-        this.shutdownStrategy = getShutdownStrategy();
+        final ShutdownStrategy shutdownStrategy = getShutdownStrategy();
         if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
             // verbose startup should let route controller do the route shutdown logging
             if (shutdownStrategy != null && shutdownStrategy.getLoggingLevel().ordinal() < LoggingLevel.INFO.ordinal()) {
@@ -2734,6 +2736,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     protected void doStop() throws Exception {
         stopWatch.restart();
+        final ShutdownStrategy shutdownStrategy = getShutdownStrategy();
 
         if (startupSummaryLevel != StartupSummaryLevel.Oneline && startupSummaryLevel != StartupSummaryLevel.Off) {
             if (shutdownStrategy != null && shutdownStrategy.getTimeUnit() != null) {
@@ -2908,6 +2911,7 @@ public abstract class AbstractCamelContext extends BaseService
             int forced = 0;
             List<String> lines = new ArrayList<>();
 
+            final ShutdownStrategy shutdownStrategy = camelContextExtension.getShutdownStrategy();
             if (shutdownStrategy != null && shutdownStrategy.isShutdownRoutesInReverseOrder()) {
                 routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder).reversed());
             } else {
@@ -3487,19 +3491,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public ShutdownStrategy getShutdownStrategy() {
-        if (shutdownStrategy == null) {
-            synchronized (lock) {
-                if (shutdownStrategy == null) {
-                    setShutdownStrategy(createShutdownStrategy());
-                }
-            }
-        }
-        return shutdownStrategy;
+        return camelContextExtension.getShutdownStrategy();
     }
 
     @Override
     public void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
-        this.shutdownStrategy = internalServiceManager.addService(shutdownStrategy);
+        camelContextExtension.setShutdownStrategy(shutdownStrategy);
     }
 
     @Override
