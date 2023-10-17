@@ -76,3 +76,23 @@ from("platform-http:proxy")
     .toD("http://"
         + "${headers." + Exchange.HTTP_HOST + "}");
 ----
+
+== Access to Request and Response
+
+The Vertx HTTP server has its own API abstraction for HTTP request/response objects which you can access via
+Camel `HttpMessage` as shown in the custom `Processor` below :
+
+[source,java]
+----
+.process(exchange -> {
+    // grab message as HttpMessage
+    HttpMessage message = exchange.getMessage(HttpMessage.class);
+    // use getRequest() / getResponse() to access Vertx directly
+    // you can add custom headers
+    message.getResponse().putHeader("beer", "Heineken");
+    // also access request details and use that in the code
+    String p = message.getRequest().path();
+    message.setBody("request path: " + p);
+});
+----
+
