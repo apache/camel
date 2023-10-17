@@ -91,6 +91,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "OauthToken": target.withOauthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthtokenprovider":
         case "OauthTokenProvider": target.withOauthTokenProvider(property(camelContext, io.fabric8.kubernetes.client.OAuthTokenProvider.class, value)); return true;
+        case "onlyhttpwatches":
+        case "OnlyHttpWatches": target.withOnlyHttpWatches(property(camelContext, boolean.class, value)); return true;
         case "password":
         case "Password": target.withPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxypassword":
@@ -202,6 +204,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "OauthToken": return java.lang.String.class;
         case "oauthtokenprovider":
         case "OauthTokenProvider": return io.fabric8.kubernetes.client.OAuthTokenProvider.class;
+        case "onlyhttpwatches":
+        case "OnlyHttpWatches": return boolean.class;
         case "password":
         case "Password": return java.lang.String.class;
         case "proxypassword":
@@ -314,6 +318,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "OauthToken": return target.getOauthToken();
         case "oauthtokenprovider":
         case "OauthTokenProvider": return target.getOauthTokenProvider();
+        case "onlyhttpwatches":
+        case "OnlyHttpWatches": return target.isOnlyHttpWatches();
         case "password":
         case "Password": return target.getPassword();
         case "proxypassword":
