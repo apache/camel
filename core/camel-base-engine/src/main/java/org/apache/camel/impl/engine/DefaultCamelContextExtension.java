@@ -124,6 +124,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile TypeConverter typeConverter;
+    private volatile RouteController routeController;
 
     private volatile Injector injector;
 
@@ -850,6 +851,25 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setInjector(Injector injector) {
         this.injector = camelContext.getInternalServiceManager().addService(injector);
+    }
+
+    void stopAndShutdownRouteController() {
+        ServiceHelper.stopAndShutdownService(this.routeController);
+    }
+
+    RouteController getRouteController() {
+        if (routeController == null) {
+            synchronized (lock) {
+                if (routeController == null) {
+                    setRouteController(camelContext.createRouteController());
+                }
+            }
+        }
+        return routeController;
+    }
+
+    void setRouteController(RouteController routeController) {
+        this.routeController = camelContext.getInternalServiceManager().addService(routeController);
     }
 
     @Override
