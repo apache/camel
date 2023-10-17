@@ -261,8 +261,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private volatile TypeConverter typeConverter;
-    private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
     private volatile ShutdownStrategy shutdownStrategy;
     private volatile ExecutorServiceManager executorServiceManager;
@@ -1555,43 +1553,32 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public TypeConverter getTypeConverter() {
-        return typeConverter;
+        return camelContextExtension.getTypeConverter();
     }
 
     public void setTypeConverter(TypeConverter typeConverter) {
-        this.typeConverter = internalServiceManager.addService(typeConverter);
+        camelContextExtension.setTypeConverter(typeConverter);
     }
 
+    /**
+     * Get a type converter or create a new one if unset
+     *
+     * @deprecated use DefaultCamelContextExtension#getOrCreateTypeConverter()
+     * @return     A type converter instance
+     */
+    @Deprecated(since = "4.2.0")
     protected TypeConverter getOrCreateTypeConverter() {
-        if (typeConverter == null) {
-            synchronized (lock) {
-                if (typeConverter == null) {
-                    setTypeConverter(createTypeConverter());
-                }
-            }
-        }
-        return typeConverter;
+        return camelContextExtension.getOrCreateTypeConverter();
     }
 
     @Override
     public TypeConverterRegistry getTypeConverterRegistry() {
-        if (typeConverterRegistry == null) {
-            synchronized (lock) {
-                if (typeConverterRegistry == null) {
-                    setTypeConverterRegistry(createTypeConverterRegistry());
-                }
-            }
-        }
-        return typeConverterRegistry;
+        return camelContextExtension.getTypeConverterRegistry();
     }
 
     @Override
     public void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
-        this.typeConverterRegistry = internalServiceManager.addService(typeConverterRegistry);
-        // some registries are also a type converter implementation
-        if (typeConverterRegistry instanceof TypeConverter) {
-            this.typeConverter = (TypeConverter) typeConverterRegistry;
-        }
+        camelContextExtension.setTypeConverterRegistry(typeConverterRegistry);
     }
 
     @Override
@@ -2124,7 +2111,7 @@ public abstract class AbstractCamelContext extends BaseService
         // Setup type converter eager as its highly in use and should not be lazy initialized
         if (eagerCreateTypeConverter()) {
             StartupStep step5 = startupStepRecorder.beginStep(CamelContext.class, null, "Setting up TypeConverter");
-            getOrCreateTypeConverter();
+            camelContextExtension.getOrCreateTypeConverter();
             startupStepRecorder.endStep(step5);
         }
 
@@ -2173,6 +2160,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // ensure additional type converters is loaded (either if enabled or we should use package scanning from the base)
         boolean load = loadTypeConverters || camelContextExtension.getBasePackageScan() != null;
+        final TypeConverter typeConverter = camelContextExtension.getTypeConverter();
         if (load && typeConverter instanceof AnnotationScanTypeConverters) {
             StartupStep step2 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan TypeConverters");
             ((AnnotationScanTypeConverters) typeConverter).scanTypeConverters();
@@ -2889,8 +2877,8 @@ public abstract class AbstractCamelContext extends BaseService
         InternalServiceManager.shutdownServices(this, camelContextExtension.getReactiveExecutor());
 
         // shutdown type converter and registry as late as possible
-        ServiceHelper.stopService(typeConverter);
-        ServiceHelper.stopService(typeConverterRegistry);
+        camelContextExtension.stopTypeConverter();
+        camelContextExtension.stopTypeConverterRegistry();
         ServiceHelper.stopService(camelContextExtension.getRegistry());
 
         // stop the lazy created so they can be re-created on restart
@@ -3180,8 +3168,8 @@ public abstract class AbstractCamelContext extends BaseService
      */
     protected void forceStopLazyInitialization() {
         injector = null;
-        typeConverterRegistry = null;
-        typeConverter = null;
+        camelContextExtension.resetTypeConverterRegistry();
+        camelContextExtension.resetTypeConverter();
     }
 
     /**
