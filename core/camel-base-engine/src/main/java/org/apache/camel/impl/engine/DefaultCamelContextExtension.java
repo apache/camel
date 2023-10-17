@@ -170,7 +170,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setNameStrategy(CamelContextNameStrategy nameStrategy) {
-        this.nameStrategy = camelContext.getInternalServiceManager().addService(nameStrategy);
+        this.nameStrategy = camelContext.getInternalServiceManager().addService(camelContext, nameStrategy);
     }
 
     ManagementNameStrategy getManagementNameStrategy() {
@@ -185,7 +185,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setManagementNameStrategy(ManagementNameStrategy managementNameStrategy) {
-        this.managementNameStrategy = camelContext.getInternalServiceManager().addService(managementNameStrategy);
+        this.managementNameStrategy = camelContext.getInternalServiceManager().addService(camelContext, managementNameStrategy);
     }
 
     PropertiesComponent getPropertiesComponent() {
@@ -200,7 +200,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setPropertiesComponent(PropertiesComponent propertiesComponent) {
-        this.propertiesComponent = camelContext.getInternalServiceManager().addService(propertiesComponent);
+        this.propertiesComponent = camelContext.getInternalServiceManager().addService(camelContext, propertiesComponent);
     }
 
     @Override
@@ -342,7 +342,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
-        this.managementMBeanAssembler = camelContext.getInternalServiceManager().addService(managementMBeanAssembler, false);
+        this.managementMBeanAssembler
+                = camelContext.getInternalServiceManager().addService(camelContext, managementMBeanAssembler, false);
     }
 
     void stopRegistry() {
@@ -526,7 +527,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
-        this.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
+        this.headersMapFactory = camelContext.getInternalServiceManager().addService(camelContext, headersMapFactory);
     }
 
     void initEagerMandatoryServices(boolean caseInsensitive, Supplier<HeadersMapFactory> headersMapFactorySupplier) {
@@ -579,7 +580,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager) {
-        this.exchangeFactoryManager = camelContext.getInternalServiceManager().addService(exchangeFactoryManager);
+        this.exchangeFactoryManager = camelContext.getInternalServiceManager().addService(camelContext, exchangeFactoryManager);
     }
 
     @Override
@@ -617,7 +618,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
-        this.reactiveExecutor = camelContext.getInternalServiceManager().addService(reactiveExecutor, false);
+        this.reactiveExecutor = camelContext.getInternalServiceManager().addService(camelContext, reactiveExecutor, false);
     }
 
     RestRegistryFactory getRestRegistryFactory() {
@@ -632,7 +633,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
-        this.restRegistryFactory = camelContext.getInternalServiceManager().addService(restRegistryFactory);
+        this.restRegistryFactory = camelContext.getInternalServiceManager().addService(camelContext, restRegistryFactory);
     }
 
     RestRegistry getRestRegistry() {
@@ -647,7 +648,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setRestRegistry(RestRegistry restRegistry) {
-        this.restRegistry = camelContext.getInternalServiceManager().addService(restRegistry);
+        this.restRegistry = camelContext.getInternalServiceManager().addService(camelContext, restRegistry);
     }
 
     RestConfiguration getRestConfiguration() {
@@ -677,7 +678,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setClassResolver(ClassResolver classResolver) {
-        this.classResolver = camelContext.getInternalServiceManager().addService(classResolver);
+        this.classResolver = camelContext.getInternalServiceManager().addService(camelContext, classResolver);
     }
 
     MessageHistoryFactory getMessageHistoryFactory() {
@@ -692,7 +693,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
-        this.messageHistoryFactory = camelContext.getInternalServiceManager().addService(messageHistoryFactory);
+        this.messageHistoryFactory = camelContext.getInternalServiceManager().addService(camelContext, messageHistoryFactory);
     }
 
     StreamCachingStrategy getStreamCachingStrategy() {
@@ -708,7 +709,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
         this.streamCachingStrategy
-                = camelContext.getInternalServiceManager().addService(streamCachingStrategy, true, false, true);
+                = camelContext.getInternalServiceManager().addService(camelContext, streamCachingStrategy, true, false, true);
     }
 
     InflightRepository getInflightRepository() {
@@ -723,7 +724,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setInflightRepository(InflightRepository repository) {
-        this.inflightRepository = camelContext.getInternalServiceManager().addService(repository);
+        this.inflightRepository = camelContext.getInternalServiceManager().addService(camelContext, repository);
     }
 
     UuidGenerator getUuidGenerator() {
@@ -738,7 +739,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setUuidGenerator(UuidGenerator uuidGenerator) {
-        this.uuidGenerator = camelContext.getInternalServiceManager().addService(uuidGenerator);
+        this.uuidGenerator = camelContext.getInternalServiceManager().addService(camelContext, uuidGenerator);
     }
 
     Tracer getTracer() {
@@ -753,7 +754,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setTracer(Tracer tracer) {
-        this.tracer = camelContext.getInternalServiceManager().addService(tracer, true, false, true);
+        this.tracer = camelContext.getInternalServiceManager().addService(camelContext, tracer, true, false, true);
     }
 
     TransformerRegistry getTransformerRegistry() {
@@ -768,7 +769,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setTransformerRegistry(TransformerRegistry transformerRegistry) {
-        this.transformerRegistry = camelContext.getInternalServiceManager().addService(transformerRegistry);
+        this.transformerRegistry = camelContext.getInternalServiceManager().addService(camelContext, transformerRegistry);
     }
 
     ValidatorRegistry getValidatorRegistry() {
@@ -783,7 +784,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
-        this.validatorRegistry = camelContext.getInternalServiceManager().addService(validatorRegistry);
+        this.validatorRegistry = camelContext.getInternalServiceManager().addService(camelContext, validatorRegistry);
     }
 
     void stopTypeConverterRegistry() {
@@ -811,7 +812,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
-        this.typeConverterRegistry = camelContext.getInternalServiceManager().addService(typeConverterRegistry);
+        this.typeConverterRegistry = camelContext.getInternalServiceManager().addService(camelContext, typeConverterRegistry);
     }
 
     void stopTypeConverter() {
@@ -827,7 +828,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setTypeConverter(TypeConverter typeConverter) {
-        this.typeConverter = camelContext.getInternalServiceManager().addService(typeConverter);
+        this.typeConverter = camelContext.getInternalServiceManager().addService(camelContext, typeConverter);
     }
 
     TypeConverter getOrCreateTypeConverter() {
@@ -857,7 +858,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setInjector(Injector injector) {
-        this.injector = camelContext.getInternalServiceManager().addService(injector);
+        this.injector = camelContext.getInternalServiceManager().addService(camelContext, injector);
     }
 
     void stopAndShutdownRouteController() {
@@ -876,7 +877,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setRouteController(RouteController routeController) {
-        this.routeController = camelContext.getInternalServiceManager().addService(routeController);
+        this.routeController = camelContext.getInternalServiceManager().addService(camelContext, routeController);
     }
 
     ShutdownStrategy getShutdownStrategy() {
@@ -891,7 +892,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
-        this.shutdownStrategy = camelContext.getInternalServiceManager().addService(shutdownStrategy);
+        this.shutdownStrategy = camelContext.getInternalServiceManager().addService(camelContext, shutdownStrategy);
     }
 
     ExecutorServiceManager getExecutorServiceManager() {
@@ -908,7 +909,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
-        this.executorServiceManager = camelContext.getInternalServiceManager().addService(executorServiceManager, false);
+        this.executorServiceManager
+                = camelContext.getInternalServiceManager().addService(camelContext, executorServiceManager, false);
     }
 
     @Override
@@ -980,7 +982,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public <T> void addContextPlugin(Class<T> type, T module) {
-        final T addedModule = camelContext.getInternalServiceManager().addService(module);
+        final T addedModule = camelContext.getInternalServiceManager().addService(camelContext, module);
         pluginManager.addContextPlugin(type, addedModule);
     }
 
@@ -992,7 +994,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private <T> T lazyInitAndAdd(Supplier<T> supplier) {
         T module = supplier.get();
 
-        return camelContext.getInternalServiceManager().addService(module);
+        return camelContext.getInternalServiceManager().addService(camelContext, module);
     }
 
     /*
