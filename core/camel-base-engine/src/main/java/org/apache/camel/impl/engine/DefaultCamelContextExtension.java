@@ -334,6 +334,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         this.managementMBeanAssembler = camelContext.getInternalServiceManager().addService(managementMBeanAssembler, false);
     }
 
+    void stopRegistry() {
+        ServiceHelper.stopService(registry);
+    }
+
     @Override
     public Registry getRegistry() {
         if (registry == null) {

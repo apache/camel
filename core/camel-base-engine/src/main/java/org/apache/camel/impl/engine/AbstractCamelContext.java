@@ -2879,7 +2879,7 @@ public abstract class AbstractCamelContext extends BaseService
         // shutdown type converter and registry as late as possible
         camelContextExtension.stopTypeConverter();
         camelContextExtension.stopTypeConverterRegistry();
-        ServiceHelper.stopService(camelContextExtension.getRegistry());
+        camelContextExtension.stopRegistry();
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
