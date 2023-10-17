@@ -261,7 +261,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private volatile Injector injector;
     private volatile ShutdownStrategy shutdownStrategy;
     private volatile ExecutorServiceManager executorServiceManager;
     private volatile RouteController routeController;
@@ -1583,19 +1582,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public Injector getInjector() {
-        if (injector == null) {
-            synchronized (lock) {
-                if (injector == null) {
-                    setInjector(createInjector());
-                }
-            }
-        }
-        return injector;
+        return camelContextExtension.getInjector();
     }
 
     @Override
     public void setInjector(Injector injector) {
-        this.injector = internalServiceManager.addService(injector);
+        camelContextExtension.setInjector(injector);
     }
 
     @Override
@@ -3167,7 +3159,7 @@ public abstract class AbstractCamelContext extends BaseService
      * Force clear lazy initialization so they can be re-created on restart
      */
     protected void forceStopLazyInitialization() {
-        injector = null;
+        camelContextExtension.resetInjector();
         camelContextExtension.resetTypeConverterRegistry();
         camelContextExtension.resetTypeConverter();
     }

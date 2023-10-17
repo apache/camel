@@ -50,6 +50,7 @@ import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -123,6 +124,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile TypeConverter typeConverter;
+
+    private volatile Injector injector;
 
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
@@ -828,6 +831,25 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             }
         }
         return typeConverter;
+    }
+
+    void resetInjector() {
+        injector = null;
+    }
+
+    Injector getInjector() {
+        if (injector == null) {
+            synchronized (lock) {
+                if (injector == null) {
+                    setInjector(camelContext.createInjector());
+                }
+            }
+        }
+        return injector;
+    }
+
+    void setInjector(Injector injector) {
+        this.injector = camelContext.getInternalServiceManager().addService(injector);
     }
 
     @Override
