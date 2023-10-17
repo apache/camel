@@ -64,12 +64,7 @@ public final class UnitOfWorkHelper {
 
         if (synchronizations.size() > 1) {
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-            List<Synchronization> copy = new ArrayList<>(synchronizations);
-
-            // reverse so we invoke it FILO style instead of FIFO
-            Collections.reverse(copy);
-            // and honor if any was ordered by sorting it accordingly
-            copy.sort(OrderedComparator.get());
+            final List<Synchronization> copy = safeCopy(synchronizations);
 
             boolean failed = exchange.isFailed();
 
@@ -101,6 +96,13 @@ public final class UnitOfWorkHelper {
     public static void beforeRouteSynchronizations(
             Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
+        final List<Synchronization> copy = safeCopy(synchronizations);
+
+        // invoke synchronization callbacks
+        invokeSynchronizationCallbacks(route, exchange, log, copy);
+    }
+
+    private static List<Synchronization> safeCopy(List<Synchronization> synchronizations) {
         List<Synchronization> copy = new ArrayList<>(synchronizations);
 
         if (copy.size() > 1) {
@@ -109,8 +111,10 @@ public final class UnitOfWorkHelper {
             // and honor if any was ordered by sorting it accordingly
             copy.sort(OrderedComparator.get());
         }
+        return copy;
+    }
 
-        // invoke synchronization callbacks
+    private static void invokeSynchronizationCallbacks(Route route, Exchange exchange, Logger log, List<Synchronization> copy) {
         for (Synchronization synchronization : copy) {
             final SynchronizationRouteAware routeSynchronization = synchronization.getRouteSynchronization();
             if (routeSynchronization != null) {
@@ -128,14 +132,7 @@ public final class UnitOfWorkHelper {
     public static void afterRouteSynchronizations(
             Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-        List<Synchronization> copy = new ArrayList<>(synchronizations);
-
-        if (copy.size() > 1) {
-            // reverse so we invoke it FILO style instead of FIFO
-            Collections.reverse(copy);
-            // and honor if any was ordered by sorting it accordingly
-            copy.sort(OrderedComparator.get());
-        }
+        final List<Synchronization> copy = safeCopy(synchronizations);
 
         // invoke synchronization callbacks
         for (Synchronization synchronization : copy) {

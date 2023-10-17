@@ -34,6 +34,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
@@ -343,56 +344,72 @@ public final class ExchangeHelper {
 
     private static void doCopyResults(Exchange result, Exchange source, boolean preserverPattern) {
         if (result == source) {
-            // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
-            // and the result is not failed
-            if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
-                // copy IN to OUT as we expect a OUT response
-                result.getOut().copyFrom(source.getIn());
-            }
+            copyFromOutMessageConditionally(result, source);
             return;
         }
 
         if (source.hasOut()) {
-            if (preserverPattern) {
-                // exchange pattern sensitive
-                Message resultMessage = getResultMessage(result);
-                resultMessage.copyFrom(source.getOut());
-            } else {
-                result.getOut().copyFrom(source.getOut());
-            }
+            copyFromOutMessage(result, source, preserverPattern);
         } else {
-            // no results so lets copy the last input
-            // as the final processor on a pipeline might not
-            // have created any OUT; such as a mock:endpoint
-            // so lets assume the last IN is the OUT
-            if (!preserverPattern && result.getPattern().isOutCapable()) {
-                // only set OUT if its OUT capable
-                result.getOut().copyFrom(source.getIn());
-            } else {
-                // if not replace IN instead to keep the MEP
-                result.getIn().copyFrom(source.getIn());
-                // clear any existing OUT as the result is on the IN
-                if (result.hasOut()) {
-                    result.setOut(null);
-                }
-            }
+            copyFromInMessage(result, source, preserverPattern);
         }
 
         if (source.hasProperties()) {
             result.getProperties().putAll(source.getProperties());
         }
-        source.getExchangeExtension().copyInternalProperties(result);
-        source.getExchangeExtension().copySafeCopyPropertiesTo(result.getExchangeExtension());
+
+        final ExchangeExtension sourceExtension = source.getExchangeExtension();
+        sourceExtension.copyInternalProperties(result);
+
+        final ExchangeExtension resultExtension = result.getExchangeExtension();
+        sourceExtension.copySafeCopyPropertiesTo(resultExtension);
 
         // copy over state
         result.setRouteStop(source.isRouteStop());
         result.setRollbackOnly(source.isRollbackOnly());
         result.setRollbackOnlyLast(source.isRollbackOnlyLast());
-        result.getExchangeExtension().setNotifyEvent(source.getExchangeExtension().isNotifyEvent());
-        result.getExchangeExtension().setRedeliveryExhausted(source.getExchangeExtension().isRedeliveryExhausted());
-        result.getExchangeExtension().setErrorHandlerHandled(source.getExchangeExtension().getErrorHandlerHandled());
+        resultExtension.setNotifyEvent(sourceExtension.isNotifyEvent());
+        resultExtension.setRedeliveryExhausted(sourceExtension.isRedeliveryExhausted());
+        resultExtension.setErrorHandlerHandled(sourceExtension.getErrorHandlerHandled());
 
         result.setException(source.getException());
+    }
+
+    private static void copyFromOutMessageConditionally(Exchange result, Exchange source) {
+        // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
+        // and the result is not failed
+        if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
+            // copy IN to OUT as we expect a OUT response
+            result.getOut().copyFrom(source.getIn());
+        }
+    }
+
+    private static void copyFromInMessage(Exchange result, Exchange source, boolean preserverPattern) {
+        // no results so lets copy the last input
+        // as the final processor on a pipeline might not
+        // have created any OUT; such as a mock:endpoint
+        // so lets assume the last IN is the OUT
+        if (!preserverPattern && result.getPattern().isOutCapable()) {
+            // only set OUT if its OUT capable
+            result.getOut().copyFrom(source.getIn());
+        } else {
+            // if not replace IN instead to keep the MEP
+            result.getIn().copyFrom(source.getIn());
+            // clear any existing OUT as the result is on the IN
+            if (result.hasOut()) {
+                result.setOut(null);
+            }
+        }
+    }
+
+    private static void copyFromOutMessage(Exchange result, Exchange source, boolean preserverPattern) {
+        if (preserverPattern) {
+            // exchange pattern sensitive
+            Message resultMessage = getResultMessage(result);
+            resultMessage.copyFrom(source.getOut());
+        } else {
+            result.getOut().copyFrom(source.getOut());
+        }
     }
 
     /**
