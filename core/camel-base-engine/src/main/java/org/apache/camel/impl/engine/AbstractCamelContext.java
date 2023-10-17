@@ -211,7 +211,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final ThreadLocal<Boolean> isLockModel = new ThreadLocal<>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
-    private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager(this);
+    private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private final StopWatch stopWatch = new StopWatch(false);
     private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(() -> new HashSet<>());
@@ -1043,7 +1043,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void startAllRoutes() throws Exception {
-        internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, true, false, false);
+        internalRouteStartupManager.doStartOrResumeRoutes(this, routeServices, true, true, false, false);
     }
 
     private void doStopRoutes(RouteController controller, Comparator<RouteStartupOrder> comparator) throws Exception {
@@ -1922,7 +1922,7 @@ public abstract class AbstractCamelContext extends BaseService
 
             // start the suspended routes (do not check for route clashes, and
             // indicate)
-            internalRouteStartupManager.doStartOrResumeRoutes(suspendedRouteServices, false, true, true, false);
+            internalRouteStartupManager.doStartOrResumeRoutes(this, suspendedRouteServices, false, true, true, false);
 
             // mark the route services as resumed (will be marked as started) as
             // well
@@ -2298,7 +2298,7 @@ public abstract class AbstractCamelContext extends BaseService
         // the method is called start but at this point it will only initialize (as context is starting up)
         startRouteDefinitions();
         // this will init route definitions and populate as route services which we can then initialize now
-        internalRouteStartupManager.doInitRoutes(routeServices);
+        internalRouteStartupManager.doInitRoutes(this, routeServices);
         startupStepRecorder.endStep(subStep);
 
         if (!lifecycleStrategies.isEmpty()) {
@@ -2381,7 +2381,7 @@ public abstract class AbstractCamelContext extends BaseService
             // invoke this logic to warm up the routes and if possible also
             // start the routes
             try {
-                internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, true, false, true);
+                internalRouteStartupManager.doStartOrResumeRoutes(this, routeServices, true, true, false, true);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
@@ -2710,7 +2710,8 @@ public abstract class AbstractCamelContext extends BaseService
             StartupStep subStep
                     = startupStepRecorder.beginStep(CamelContext.class, camelContextExtension.getName(), "Start Routes");
             EventHelper.notifyCamelContextRoutesStarting(this);
-            internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
+            internalRouteStartupManager.doStartOrResumeRoutes(this, routeServices, true, !doNotStartRoutesOnFirstStart, false,
+                    true);
             EventHelper.notifyCamelContextRoutesStarted(this);
             startupStepRecorder.endStep(subStep);
         }
@@ -2782,7 +2783,7 @@ public abstract class AbstractCamelContext extends BaseService
             boolean found = routeStartupOrder.stream().anyMatch(o -> o.getRoute().getId().equals(routeService.getId()));
             if (!found) {
                 LOG.debug("Route: {} which failed to startup will be stopped", routeService.getId());
-                routeStartupOrder.add(internalRouteStartupManager.doPrepareRouteToBeStarted(routeService));
+                routeStartupOrder.add(internalRouteStartupManager.doPrepareRouteToBeStarted(this, routeService));
             }
         }
 
@@ -3032,7 +3033,8 @@ public abstract class AbstractCamelContext extends BaseService
                     StartupStep step
                             = startupStepRecorder.beginStep(Route.class, routeService.getId(), "Start Route Services");
                     // this method will log the routes being started
-                    internalRouteStartupManager.safelyStartRouteServices(true, true, true, false, addingRoutes, routeService);
+                    internalRouteStartupManager.safelyStartRouteServices(this, true, true, true, false, addingRoutes,
+                            routeService);
                     // start route services if it was configured to auto startup
                     // and we are not adding routes
                     boolean isAutoStartup = routeService.isAutoStartup();
@@ -3063,7 +3065,7 @@ public abstract class AbstractCamelContext extends BaseService
             // resume the route service
             if (shouldStartRoutes()) {
                 // this method will log the routes being started
-                internalRouteStartupManager.safelyStartRouteServices(true, false, true, true, false, routeService);
+                internalRouteStartupManager.safelyStartRouteServices(this, true, false, true, true, false, routeService);
                 // must resume route service as well
                 routeService.resume();
             }
