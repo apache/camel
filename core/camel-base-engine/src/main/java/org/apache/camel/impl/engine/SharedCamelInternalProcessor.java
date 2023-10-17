@@ -160,9 +160,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
                     states[j++] = state;
                 }
             } catch (Exception e) {
-                exchange.setException(e);
-                originalCallback.done(true);
-                return true;
+                return handleException(exchange, originalCallback, e);
             }
         }
 
@@ -170,63 +168,77 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         AsyncCallback callback = new InternalCallback(states, exchange, originalCallback, resultProcessor);
 
         if (exchange.isTransacted()) {
-            // must be synchronized for transacted exchanges
-            if (LOG.isTraceEnabled()) {
-                if (exchange.isTransacted()) {
-                    LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}",
-                            exchange.getExchangeId(), exchange);
-                } else {
-                    LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}",
-                            exchange.getExchangeId(), exchange);
-                }
-            }
-            // ----------------------------------------------------------
-            // CAMEL END USER - DEBUG ME HERE +++ START +++
-            // ----------------------------------------------------------
-            try {
-                processor.process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-            // ----------------------------------------------------------
-            // CAMEL END USER - DEBUG ME HERE +++ END +++
-            // ----------------------------------------------------------
-            callback.done(true);
-            return true;
+            return processTransacted(exchange, processor, callback);
         } else {
-            final UnitOfWork uow = exchange.getUnitOfWork();
+            return processNonTransacted(exchange, processor, callback);
+        }
+    }
 
-            // do uow before processing and if a value is returned then the uow wants to be processed after in the same thread
-            AsyncCallback async = callback;
-            boolean beforeAndAfter = uow.isBeforeAfterProcess();
-            if (beforeAndAfter) {
-                async = uow.beforeProcess(processor, exchange, async);
-            }
+    private static boolean handleException(Exchange exchange, AsyncCallback originalCallback, Exception e) {
+        exchange.setException(e);
+        originalCallback.done(true);
+        return true;
+    }
 
-            // ----------------------------------------------------------
-            // CAMEL END USER - DEBUG ME HERE +++ START +++
-            // ----------------------------------------------------------
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
-            }
-            boolean sync = processor.process(exchange, async);
-            // ----------------------------------------------------------
-            // CAMEL END USER - DEBUG ME HERE +++ END +++
-            // ----------------------------------------------------------
+    private static boolean processNonTransacted(Exchange exchange, AsyncProcessor processor, AsyncCallback callback) {
+        final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // optimize to only do after uow processing if really needed
-            if (beforeAndAfter) {
-                // execute any after processor work (in current thread, not in the callback)
-                uow.afterProcess(processor, exchange, callback, sync);
-            }
+        // do uow before processing and if a value is returned then the uow wants to be processed after in the same thread
+        AsyncCallback async = callback;
+        boolean beforeAndAfter = uow.isBeforeAfterProcess();
+        if (beforeAndAfter) {
+            async = uow.beforeProcess(processor, exchange, async);
+        }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
-                        sync ? "synchronously" : "asynchronously",
+        // ----------------------------------------------------------
+        // CAMEL END USER - DEBUG ME HERE +++ START +++
+        // ----------------------------------------------------------
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+        }
+        boolean sync = processor.process(exchange, async);
+        // ----------------------------------------------------------
+        // CAMEL END USER - DEBUG ME HERE +++ END +++
+        // ----------------------------------------------------------
+
+        // optimize to only do after uow processing if really needed
+        if (beforeAndAfter) {
+            // execute any after processor work (in current thread, not in the callback)
+            uow.afterProcess(processor, exchange, callback, sync);
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+                    sync ? "synchronously" : "asynchronously",
+                    exchange.getExchangeId(), exchange);
+        }
+        return sync;
+    }
+
+    private static boolean processTransacted(Exchange exchange, AsyncProcessor processor, AsyncCallback callback) {
+        // must be synchronized for transacted exchanges
+        if (LOG.isTraceEnabled()) {
+            if (exchange.isTransacted()) {
+                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            } else {
+                LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}",
                         exchange.getExchangeId(), exchange);
             }
-            return sync;
         }
+        // ----------------------------------------------------------
+        // CAMEL END USER - DEBUG ME HERE +++ START +++
+        // ----------------------------------------------------------
+        try {
+            processor.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        // ----------------------------------------------------------
+        // CAMEL END USER - DEBUG ME HERE +++ END +++
+        // ----------------------------------------------------------
+        callback.done(true);
+        return true;
     }
 
     /**
