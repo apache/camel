@@ -199,15 +199,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         routesOrdered.sort(comparator);
 
         if (logger.shouldLog()) {
-            if (suspendOnly) {
-                String msg = String.format("Starting to graceful suspend %s routes (timeout %s %s)", routesOrdered.size(),
-                        timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
-                logger.log(msg);
-            } else {
-                String msg = String.format("Starting to graceful shutdown %s routes (timeout %s %s)", routesOrdered.size(),
-                        timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
-                logger.log(msg);
-            }
+            final String action = suspendOnly ? "suspend" : "shutdown";
+
+            String msg = String.format("Starting to graceful %s %s routes (timeout %s %s)", action, routesOrdered.size(),
+                    timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
+            logger.log(msg);
         }
 
         // use another thread to perform the shutdowns so we can support timeout
