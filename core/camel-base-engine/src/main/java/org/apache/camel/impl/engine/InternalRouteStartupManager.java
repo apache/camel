@@ -57,6 +57,7 @@ class InternalRouteStartupManager {
     private final ThreadLocal<Route> setupRoute = new ThreadLocal<>();
     private final AbstractCamelContext abstractCamelContext;
     private final CamelLogger routeLogger = new CamelLogger(LOG);
+    private int defaultRouteStartupOrder = 1000;
 
     public InternalRouteStartupManager(AbstractCamelContext abstractCamelContext) {
         this.abstractCamelContext = abstractCamelContext;
@@ -247,7 +248,7 @@ class InternalRouteStartupManager {
         Integer startupOrder = routeService.getRoute().getStartupOrder();
         if (startupOrder == null) {
             // auto assign a default startup order
-            startupOrder = abstractCamelContext.defaultRouteStartupOrder++;
+            startupOrder = defaultRouteStartupOrder++;
         }
 
         // create holder object that contains information about this route to be
@@ -466,6 +467,10 @@ class InternalRouteStartupManager {
         }
 
         return true;
+    }
+
+    int incrementRouteStartupOrder() {
+        return defaultRouteStartupOrder++;
     }
 
 }

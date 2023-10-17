@@ -197,8 +197,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected final InternalServiceManager internalServiceManager;
 
-    int defaultRouteStartupOrder = 1000;
-
     private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
@@ -1883,7 +1881,7 @@ public abstract class AbstractCamelContext extends BaseService
             Route route = entry.getValue().getRoute();
             Integer order = route.getStartupOrder();
             if (order == null) {
-                order = defaultRouteStartupOrder++;
+                order = internalRouteStartupManager.incrementRouteStartupOrder();
             }
             orders.add(new DefaultRouteStartupOrder(order, route, entry.getValue()));
         }
