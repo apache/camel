@@ -36,6 +36,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -72,11 +73,13 @@ import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +121,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile Tracer tracer;
     private volatile TransformerRegistry<TransformerKey> transformerRegistry;
     private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
+    private volatile TypeConverterRegistry typeConverterRegistry;
+    private volatile TypeConverter typeConverter;
 
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
@@ -764,6 +769,61 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
         this.validatorRegistry = camelContext.getInternalServiceManager().addService(validatorRegistry);
+    }
+
+    void stopTypeConverterRegistry() {
+        ServiceHelper.stopService(typeConverterRegistry);
+    }
+
+    void resetTypeConverterRegistry() {
+        typeConverterRegistry = null;
+    }
+
+    TypeConverterRegistry getTypeConverterRegistry() {
+        if (typeConverterRegistry == null) {
+            synchronized (lock) {
+                if (typeConverterRegistry == null) {
+                    setTypeConverterRegistry(camelContext.createTypeConverterRegistry());
+
+                    // some registries are also a type converter implementation
+                    if (typeConverterRegistry instanceof TypeConverter newTypeConverter) {
+                        setTypeConverter(newTypeConverter);
+                    }
+                }
+            }
+        }
+        return typeConverterRegistry;
+    }
+
+    void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
+        this.typeConverterRegistry = camelContext.getInternalServiceManager().addService(typeConverterRegistry);
+    }
+
+    void stopTypeConverter() {
+        ServiceHelper.stopService(typeConverter);
+    }
+
+    void resetTypeConverter() {
+        typeConverter = null;
+    }
+
+    TypeConverter getTypeConverter() {
+        return typeConverter;
+    }
+
+    void setTypeConverter(TypeConverter typeConverter) {
+        this.typeConverter = camelContext.getInternalServiceManager().addService(typeConverter);
+    }
+
+    TypeConverter getOrCreateTypeConverter() {
+        if (typeConverter == null) {
+            synchronized (lock) {
+                if (typeConverter == null) {
+                    setTypeConverter(camelContext.createTypeConverter());
+                }
+            }
+        }
+        return typeConverter;
     }
 
     @Override
