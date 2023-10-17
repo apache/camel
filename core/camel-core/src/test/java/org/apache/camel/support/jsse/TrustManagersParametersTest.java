@@ -27,9 +27,11 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated
 public class TrustManagersParametersTest extends AbstractJsseParametersTest {
 
     protected KeyStoreParameters createMinimalKeyStoreParameters() {

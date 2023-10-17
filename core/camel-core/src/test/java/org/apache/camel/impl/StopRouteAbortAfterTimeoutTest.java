@@ -24,9 +24,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated
 @DisabledOnOs(OS.WINDOWS)
 public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 

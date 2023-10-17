@@ -25,12 +25,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for expression option for file consumer.
  */
+@Isolated
 public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
     @Override

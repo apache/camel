@@ -20,10 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.resequencer.MessageRejectedException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  *
  */
+@Isolated
 public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
 
     @Test

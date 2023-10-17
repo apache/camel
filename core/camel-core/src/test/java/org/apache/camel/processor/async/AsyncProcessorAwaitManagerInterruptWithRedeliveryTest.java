@@ -29,12 +29,14 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Isolated
 public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncProcessorAwaitManagerInterruptWithRedeliveryTest.class);
 

@@ -17,10 +17,12 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  *
  */
+@Isolated
 public class ResequenceBatchNotIgnoreInvalidExchangesTest extends ResequenceStreamNotIgnoreInvalidExchangesTest {
 
     @Override
