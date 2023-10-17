@@ -70,6 +70,7 @@ import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
@@ -125,6 +126,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile TypeConverter typeConverter;
     private volatile RouteController routeController;
+    private volatile ShutdownStrategy shutdownStrategy;
 
     private volatile Injector injector;
 
@@ -870,6 +872,21 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setRouteController(RouteController routeController) {
         this.routeController = camelContext.getInternalServiceManager().addService(routeController);
+    }
+
+    ShutdownStrategy getShutdownStrategy() {
+        if (shutdownStrategy == null) {
+            synchronized (lock) {
+                if (shutdownStrategy == null) {
+                    setShutdownStrategy(camelContext.createShutdownStrategy());
+                }
+            }
+        }
+        return shutdownStrategy;
+    }
+
+    void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
+        this.shutdownStrategy = camelContext.getInternalServiceManager().addService(shutdownStrategy);
     }
 
     @Override
