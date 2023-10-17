@@ -83,6 +83,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,6 +132,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ExecutorServiceManager executorServiceManager;
 
     private volatile Injector injector;
+
+    private volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
 
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
@@ -920,12 +923,12 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public StartupStepRecorder getStartupStepRecorder() {
-        return camelContext.startupStepRecorder;
+        return startupStepRecorder;
     }
 
     @Override
     public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
-        camelContext.startupStepRecorder = startupStepRecorder;
+        this.startupStepRecorder = startupStepRecorder;
     }
 
     @Override

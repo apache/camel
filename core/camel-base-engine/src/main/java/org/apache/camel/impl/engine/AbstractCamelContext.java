@@ -174,7 +174,6 @@ import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -198,7 +197,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected final InternalServiceManager internalServiceManager;
 
-    volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     int defaultRouteStartupOrder = 1000;
 
     private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
@@ -511,6 +509,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (component != null && created.get() && autoStart && (isStarted() || isStarting())) {
                 // If the component is looked up after the context is started,
                 // lets start it up.
+                final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
                 StartupStep step = startupStepRecorder.beginStep(Component.class, name, "Start Component");
                 startService(component);
                 startupStepRecorder.endStep(step);
@@ -531,6 +530,8 @@ public abstract class AbstractCamelContext extends BaseService
     private Component initComponent(String name, boolean autoCreateComponents) {
         Component component = null;
         if (autoCreateComponents) {
+            final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
+
             StartupStep step = startupStepRecorder.beginStep(Component.class, name, "Resolve Component");
             try {
                 if (LOG.isDebugEnabled()) {
@@ -727,6 +728,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public Endpoint getEndpoint(String uri) {
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         StartupStep step = null;
         // only record startup step during startup (not started)
         if (!isStarted() && startupStepRecorder.isEnabled()) {
@@ -1153,7 +1155,8 @@ public abstract class AbstractCamelContext extends BaseService
             try {
                 RouteStartupOrder route = new DefaultRouteStartupOrder(1, routeService.getRoute(), routeService);
 
-                boolean completed = getShutdownStrategy().shutdown(this, route, timeout, timeUnit, abortAfterTimeout);
+                boolean completed = camelContextExtension.getShutdownStrategy().shutdown(this, route, timeout, timeUnit,
+                        abortAfterTimeout);
                 if (completed) {
                     // must stop route service as well
                     stopRouteService(routeService, false, loggingLevel);
@@ -1490,6 +1493,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     private Language doResolveLanguage(String name) {
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         StartupStep step = null;
         // only record startup step during startup (not started)
         if (!isStarted() && startupStepRecorder.isEnabled()) {
@@ -2038,11 +2042,13 @@ public abstract class AbstractCamelContext extends BaseService
         getCamelContextExtension().addContextPlugin(NodeIdFactory.class, createNodeIdFactory());
 
         // auto-detect step recorder from classpath if none has been explicit configured
+        StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         if (startupStepRecorder.getClass().getSimpleName().equals("DefaultStartupStepRecorder")) {
             StartupStepRecorder fr = camelContextExtension.getBootstrapFactoryFinder()
                     .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
             if (fr != null) {
                 LOG.debug("Discovered startup recorder: {} from classpath", fr);
+                camelContextExtension.setStartupStepRecorder(fr);
                 startupStepRecorder = fr;
             }
         }
@@ -2119,6 +2125,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         vetoed = null;
 
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Init CamelContext");
 
         // init the route controller
@@ -2336,6 +2343,7 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.warn("Starting CamelContext: {} after the context has been stopped is not recommended",
                     camelContextExtension.getName());
         }
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         StartupStep step
                 = startupStepRecorder.beginStep(CamelContext.class, camelContextExtension.getName(), "Start CamelContext");
 
@@ -2577,6 +2585,7 @@ public abstract class AbstractCamelContext extends BaseService
         startService(getManagementStrategy());
 
         // start lifecycle strategies
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         if (!lifecycleStrategies.isEmpty()) {
             StartupStep subStep
                     = startupStepRecorder.beginStep(CamelContext.class, camelContextExtension.getName(),
@@ -2878,6 +2887,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // ensure any recorder is stopped in case it was kept running
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         startupStepRecorder.stop();
 
         // and clear start date
@@ -3020,6 +3030,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // start the route service
                 routeServices.put(routeService.getId(), routeService);
                 if (shouldStartRoutes()) {
+                    final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
                     StartupStep step
                             = startupStepRecorder.beginStep(Route.class, routeService.getId(), "Start Route Services");
                     // this method will log the routes being started
@@ -3108,6 +3119,7 @@ public abstract class AbstractCamelContext extends BaseService
      * Force some lazy initialization to occur upfront before we start any components and create routes
      */
     protected void forceLazyInitialization() {
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, camelContextExtension.getName(),
                 "Start Mandatory Services");
         initEagerMandatoryServices();
@@ -3427,6 +3439,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     private DataFormat doResolveDataFormat(String name) {
         StartupStep step = null;
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
+
         // only record startup step during startup (not started)
         if (!isStarted() && startupStepRecorder.isEnabled()) {
             step = startupStepRecorder.beginStep(DataFormat.class, name, "Resolve DataFormat");
@@ -3462,6 +3476,7 @@ public abstract class AbstractCamelContext extends BaseService
     public DataFormat createDataFormat(String name) {
         StartupStep step = null;
         // only record startup step during startup (not started)
+        final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         if (!isStarted() && startupStepRecorder.isEnabled()) {
             step = startupStepRecorder.beginStep(DataFormat.class, name, "Create DataFormat");
         }
