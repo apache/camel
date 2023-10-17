@@ -114,7 +114,11 @@ public class RestConsumerContextPathMatcherTest {
         RestConsumerContextPathMatcher.ConsumerPath<?> path2 = RestConsumerContextPathMatcher.matchBestPath("GET",
                 "/camel/foo/bar", consumerPaths);
 
+        RestConsumerContextPathMatcher.ConsumerPath<?> path3 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/foo/bar/1", consumerPaths);
+
         assertEquals(path1.getConsumerPath(), "/camel/foo");
-        assertEquals(path2.getConsumerPath(), "/camel/*");
+        assertEquals(path2.getConsumerPath(), "/camel/foo/{id}");
+        assertEquals(path3.getConsumerPath(), "/camel/*");
     }
 }

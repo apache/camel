@@ -172,38 +172,28 @@ public final class RestConsumerContextPathMatcher {
             return answer;
         }
 
-        // then match by wildcard path
+        // then match by uri template path
         it = candidates.iterator();
+        List<ConsumerPath<T>> uriTemplateCandidates = new ArrayList<>();
         while (it.hasNext()) {
             ConsumerPath<T> consumer = it.next();
             // filter non matching paths
-            if (matchWildCard(requestPath, consumer.getConsumerPath())) {
-                answer = consumer;
-                break;
-            }
-        }
-
-        // then match by uri template path
-        it = candidates.iterator();
-        while (it.hasNext()) {
-            ConsumerPath<?> consumer = it.next();
-            // filter non matching paths
-            if (!matchRestPath(requestPath, consumer.getConsumerPath(), true)) {
-                it.remove();
+            if (matchRestPath(requestPath, consumer.getConsumerPath(), true)) {
+                uriTemplateCandidates.add(consumer);
             }
         }
 
         // if there is multiple candidates with uri template then pick anyone with the least number of uri template
         ConsumerPath<T> best = null;
         Map<Integer, List<ConsumerPath<T>>> pathMap = new HashMap<>();
-        if (candidates.size() > 1) {
-            it = candidates.iterator();
+        if (uriTemplateCandidates.size() > 1) {
+            it = uriTemplateCandidates.iterator();
             while (it.hasNext()) {
                 ConsumerPath<T> entry = it.next();
                 int curlyBraces = countCurlyBraces(entry.getConsumerPath());
                 if (curlyBraces > 0) {
-                    List<ConsumerPath<T>> consumerPathsLst = pathMap.computeIfAbsent(curlyBraces, key -> new ArrayList<>());
-                    consumerPathsLst.add(entry);
+                    List<ConsumerPath<T>> consumerPathsList = pathMap.computeIfAbsent(curlyBraces, key -> new ArrayList<>());
+                    consumerPathsList.add(entry);
                 }
             }
 
@@ -225,8 +215,19 @@ public final class RestConsumerContextPathMatcher {
         }
 
         // if there is one left then it's our answer
-        if (answer == null && candidates.size() == 1) {
-            answer = candidates.get(0);
+        if (answer == null && uriTemplateCandidates.size() == 1) {
+            return uriTemplateCandidates.get(0);
+        }
+
+        // last match by wildcard path
+        it = candidates.iterator();
+        while (it.hasNext()) {
+            ConsumerPath<T> consumer = it.next();
+            // filter non matching paths
+            if (matchWildCard(requestPath, consumer.getConsumerPath())) {
+                answer = consumer;
+                break;
+            }
         }
 
         return answer;
