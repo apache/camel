@@ -263,7 +263,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Map<String, String> globalOptions = new HashMap<>();
     private volatile ShutdownStrategy shutdownStrategy;
     private volatile ExecutorServiceManager executorServiceManager;
-    private volatile RouteController routeController;
     private EndpointRegistry<NormalizedUri> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
@@ -922,19 +921,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public RouteController getRouteController() {
-        if (routeController == null) {
-            synchronized (lock) {
-                if (routeController == null) {
-                    setRouteController(createRouteController());
-                }
-            }
-        }
-        return routeController;
+        return camelContextExtension.getRouteController();
     }
 
     @Override
     public void setRouteController(RouteController routeController) {
-        this.routeController = internalServiceManager.addService(routeController);
+        camelContextExtension.setRouteController(routeController);
     }
 
     @Override
@@ -2130,7 +2122,7 @@ public abstract class AbstractCamelContext extends BaseService
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Init CamelContext");
 
         // init the route controller
-        this.routeController = getRouteController();
+        final RouteController routeController = getRouteController();
         if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
             // verbose startup should let route controller do the route startup logging
             if (routeController.getLoggingLevel().ordinal() < LoggingLevel.INFO.ordinal()) {
@@ -2372,7 +2364,7 @@ public abstract class AbstractCamelContext extends BaseService
         stopWatch.restart();
 
         // Start the route controller
-        startService(this.routeController);
+        startService(camelContextExtension.getRouteController());
 
         doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
 
@@ -2759,7 +2751,7 @@ public abstract class AbstractCamelContext extends BaseService
         EventHelper.notifyCamelContextRoutesStopping(this);
 
         // Stop the route controller
-        ServiceHelper.stopAndShutdownService(this.routeController);
+        camelContextExtension.stopAndShutdownRouteController();
 
         // stop route inputs in the same order as they were started, so we stop
         // the very first inputs at first
