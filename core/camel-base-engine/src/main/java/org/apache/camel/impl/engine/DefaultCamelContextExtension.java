@@ -47,6 +47,7 @@ import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
@@ -127,6 +128,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile TypeConverter typeConverter;
     private volatile RouteController routeController;
     private volatile ShutdownStrategy shutdownStrategy;
+    private volatile ExecutorServiceManager executorServiceManager;
 
     private volatile Injector injector;
 
@@ -887,6 +889,23 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
         this.shutdownStrategy = camelContext.getInternalServiceManager().addService(shutdownStrategy);
+    }
+
+    ExecutorServiceManager getExecutorServiceManager() {
+        if (executorServiceManager == null) {
+            synchronized (lock) {
+                if (executorServiceManager == null) {
+                    setExecutorServiceManager(camelContext.createExecutorServiceManager());
+                }
+            }
+        }
+        return this.executorServiceManager;
+    }
+
+    void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
+        // special for executorServiceManager as want to stop it manually so
+        // false in stopOnShutdown
+        this.executorServiceManager = camelContext.getInternalServiceManager().addService(executorServiceManager, false);
     }
 
     @Override
