@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 DDB</name>
-    <description>A Camel Amazon DynamoDB Web Service Component Version 2</description>
+    <description>Store and retrieve data and events from Amazon DynamoDB service</description>
 
     <properties>
     </properties>
