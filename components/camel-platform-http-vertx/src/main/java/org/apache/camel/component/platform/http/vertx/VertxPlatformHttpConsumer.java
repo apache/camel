@@ -230,7 +230,16 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         final Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
 
-        final Message in = toCamelMessage(ctx, exchange);
+        // reuse existing http message if pooled
+        Message in = exchange.getIn();
+        if (in instanceof HttpMessage hm) {
+            hm.init(exchange, ctx.request(), ctx.response());
+        } else {
+            in = new HttpMessage(exchange, ctx.request(), ctx.response());
+            exchange.setMessage(in);
+        }
+        populateCamelMessage(ctx, exchange, in);
+
         final String charset = ctx.parsedHeaders().contentType().parameter("charset");
         if (charset != null) {
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
@@ -245,9 +254,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         return exchange;
     }
 
-    protected Message toCamelMessage(RoutingContext ctx, Exchange exchange) {
-        final Message result = exchange.getIn();
-
+    protected void populateCamelMessage(RoutingContext ctx, Exchange exchange, Message result) {
         final HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         populateCamelHeaders(ctx, result.getHeaders(), exchange, headerFilterStrategy);
         final String mimeType = ctx.parsedHeaders().contentType().value();
@@ -281,7 +288,6 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
                 result.setBody(null);
             }
         }
-        return result;
     }
 
     protected void populateAttachments(List<FileUpload> uploads, Message message) {
