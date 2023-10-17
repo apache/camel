@@ -201,7 +201,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     int defaultRouteStartupOrder = 1000;
 
-    private final Object lock = new Object();
     private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
@@ -261,7 +260,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private volatile ExecutorServiceManager executorServiceManager;
     private EndpointRegistry<NormalizedUri> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
@@ -2860,7 +2858,7 @@ public abstract class AbstractCamelContext extends BaseService
         // the route back as before
 
         // shutdown executor service, reactive executor last
-        InternalServiceManager.shutdownServices(this, executorServiceManager);
+        InternalServiceManager.shutdownServices(this, camelContextExtension.getExecutorServiceManager());
         InternalServiceManager.shutdownServices(this, camelContextExtension.getReactiveExecutor());
 
         // shutdown type converter and registry as late as possible
@@ -3551,21 +3549,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public ExecutorServiceManager getExecutorServiceManager() {
-        if (executorServiceManager == null) {
-            synchronized (lock) {
-                if (executorServiceManager == null) {
-                    setExecutorServiceManager(createExecutorServiceManager());
-                }
-            }
-        }
-        return this.executorServiceManager;
+        return camelContextExtension.getExecutorServiceManager();
     }
 
     @Override
     public void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
-        // special for executorServiceManager as want to stop it manually so
-        // false in stopOnShutdown
-        this.executorServiceManager = internalServiceManager.addService(executorServiceManager, false);
+        camelContextExtension.setExecutorServiceManager(executorServiceManager);
     }
 
     @Override
