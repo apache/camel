@@ -47,46 +47,45 @@ import org.slf4j.LoggerFactory;
 final class InternalServiceManager {
     private static final Logger LOG = LoggerFactory.getLogger(InternalServiceManager.class);
 
-    private final CamelContext camelContext;
     private final InternalRouteStartupManager internalRouteStartupManager;
 
     private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private final List<Service> services = new CopyOnWriteArrayList<>();
 
-    InternalServiceManager(CamelContext camelContext, InternalRouteStartupManager internalRouteStartupManager,
-                           List<StartupListener> startupListeners) {
+    InternalServiceManager(InternalRouteStartupManager internalRouteStartupManager, List<StartupListener> startupListeners) {
         /*
          Note: this is an internal API and not meant to be public, so it uses assertion for lightweight nullability
          checking for extremely unlikely scenarios that should be found during development time.
          */
-        assert camelContext != null : "the Camel context cannot be null";
         assert internalRouteStartupManager != null : "the internalRouteStartupManager cannot be null";
         assert startupListeners != null : "the startupListeners cannot be null";
 
-        this.camelContext = camelContext;
         this.internalRouteStartupManager = internalRouteStartupManager;
 
         startupListeners.add(deferStartupListener);
     }
 
-    public <T> T addService(T object) {
-        return addService(object, true);
+    public <T> T addService(CamelContext camelContext, T object) {
+        return addService(camelContext, object, true);
     }
 
-    public <T> T addService(T object, boolean stopOnShutdown) {
-        return addService(object, stopOnShutdown, true, true);
+    public <T> T addService(CamelContext camelContext, T object, boolean stopOnShutdown) {
+        return addService(camelContext, object, stopOnShutdown, true, true);
     }
 
-    public <T> T addService(T object, boolean stopOnShutdown, boolean forceStart, boolean useLifecycleStrategies) {
+    public <T> T addService(
+            CamelContext camelContext, T object, boolean stopOnShutdown, boolean forceStart, boolean useLifecycleStrategies) {
         try {
-            doAddService(object, stopOnShutdown, forceStart, useLifecycleStrategies);
+            doAddService(camelContext, object, stopOnShutdown, forceStart, useLifecycleStrategies);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return object;
     }
 
-    public void doAddService(Object object, boolean stopOnShutdown, boolean forceStart, boolean useLifecycleStrategies)
+    public void doAddService(
+            CamelContext camelContext, Object object, boolean stopOnShutdown, boolean forceStart,
+            boolean useLifecycleStrategies)
             throws Exception {
 
         if (object == null) {
@@ -147,14 +146,14 @@ final class InternalServiceManager {
                         ServiceHelper.startService(service);
                     } else {
                         ServiceHelper.initService(service);
-                        deferStartService(object, stopOnShutdown, true);
+                        deferStartService(camelContext, object, stopOnShutdown, true);
                     }
                 }
             }
         }
     }
 
-    public void deferStartService(Object object, boolean stopOnShutdown, boolean startEarly) {
+    public void deferStartService(CamelContext camelContext, Object object, boolean stopOnShutdown, boolean startEarly) {
         if (object instanceof Service) {
             Service service = (Service) object;
 
@@ -223,7 +222,7 @@ final class InternalServiceManager {
         return null;
     }
 
-    public void stopConsumers() {
+    public void stopConsumers(CamelContext camelContext) {
         for (Service service : services) {
             if (service instanceof Consumer) {
                 InternalServiceManager.shutdownServices(camelContext, service);
@@ -231,7 +230,7 @@ final class InternalServiceManager {
         }
     }
 
-    public void shutdownServices() {
+    public void shutdownServices(CamelContext camelContext) {
         InternalServiceManager.shutdownServices(camelContext, services);
         services.clear();
     }

@@ -305,7 +305,7 @@ public abstract class AbstractCamelContext extends BaseService
         // add the default bootstrap closer
         camelContextExtension.addBootstrap(new DefaultServiceBootstrapCloseable(this));
 
-        this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
+        this.internalServiceManager = new InternalServiceManager(internalRouteStartupManager, startupListeners);
 
         initPlugins();
 
@@ -1315,12 +1315,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception {
-        internalServiceManager.doAddService(object, stopOnShutdown, forceStart, true);
+        internalServiceManager.doAddService(this, object, stopOnShutdown, forceStart, true);
     }
 
     @Override
     public void addPrototypeService(Object object) throws Exception {
-        internalServiceManager.addService(object, false, true, false);
+        internalServiceManager.addService(this, object, false, true, false);
     }
 
     @Override
@@ -1357,7 +1357,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void deferStartService(Object object, boolean stopOnShutdown) throws Exception {
-        internalServiceManager.deferStartService(object, stopOnShutdown, false);
+        internalServiceManager.deferStartService(this, object, stopOnShutdown, false);
     }
 
     protected List<StartupListener> getStartupListeners() {
@@ -1824,7 +1824,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry) {
-        this.runtimeEndpointRegistry = internalServiceManager.addService(runtimeEndpointRegistry);
+        this.runtimeEndpointRegistry = internalServiceManager.addService(this, runtimeEndpointRegistry);
     }
 
     @Override
@@ -2246,7 +2246,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
         // and we needed to create endpoints up-front as it may be accessed before this context is started
-        endpoints = internalServiceManager.addService(createEndpointRegistry(endpoints));
+        endpoints = internalServiceManager.addService(this, createEndpointRegistry(endpoints));
 
         // optimised to not include runtimeEndpointRegistry unless startServices
         // is enabled or JMX statistics is in extended mode
@@ -2813,7 +2813,7 @@ public abstract class AbstractCamelContext extends BaseService
         // consumer (eg @Consumer)
         // which we need to stop after the routes, as a POJO consumer is
         // essentially a route also
-        internalServiceManager.stopConsumers();
+        internalServiceManager.stopConsumers(this);
 
         // the stop order is important
 
@@ -2837,7 +2837,7 @@ public abstract class AbstractCamelContext extends BaseService
         languages.clear();
 
         // shutdown services as late as possible (except type converters as they may be needed during the remainder of the stopping)
-        internalServiceManager.shutdownServices();
+        internalServiceManager.shutdownServices(this);
 
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -3595,7 +3595,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (isStartingOrStarted()) {
             throw new IllegalStateException("Cannot set debugger on a started CamelContext");
         }
-        this.debugger = internalServiceManager.addService(debugger, true, false, true);
+        this.debugger = internalServiceManager.addService(this, debugger, true, false, true);
     }
 
     @Override
