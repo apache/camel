@@ -75,12 +75,12 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
 
         if (tableName != null) {
             // update query strings from default table name to the new table name
-            tableExistsString = DEFAULT_TABLE_EXISTS_STRING.replaceFirst(DEFAULT_TABLENAME, tableName);
-            createString = DEFAULT_CREATE_STRING.replaceFirst(DEFAULT_TABLENAME, tableName);
-            queryString = DEFAULT_QUERY_STRING.replaceFirst(DEFAULT_TABLENAME, tableName);
-            insertString = DEFAULT_INSERT_STRING.replaceFirst(DEFAULT_TABLENAME, tableName);
-            deleteString = DEFAULT_DELETE_STRING.replaceFirst(DEFAULT_TABLENAME, tableName);
-            clearString = DEFAULT_CLEAR_STRING.replaceFirst(DEFAULT_TABLENAME, tableName);
+            tableExistsString = DEFAULT_TABLE_EXISTS_STRING.replace(DEFAULT_TABLENAME, tableName);
+            createString = DEFAULT_CREATE_STRING.replace(DEFAULT_TABLENAME, tableName);
+            queryString = DEFAULT_QUERY_STRING.replace(DEFAULT_TABLENAME, tableName);
+            insertString = DEFAULT_INSERT_STRING.replace(DEFAULT_TABLENAME, tableName);
+            deleteString = DEFAULT_DELETE_STRING.replace(DEFAULT_TABLENAME, tableName);
+            clearString = DEFAULT_CLEAR_STRING.replace(DEFAULT_TABLENAME, tableName);
         }
     }
 
