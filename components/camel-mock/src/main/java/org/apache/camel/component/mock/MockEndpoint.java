@@ -65,6 +65,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmlunit.assertj3.XmlAssert;
 
 /**
  * Test routes and mediation rules using mocks.
@@ -788,6 +789,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedBodiesReceived(final List<?> bodies) {
+        expectedBodiesReceived(bodies, false);
+    }
+
+    private void expectedBodiesReceivedAsSimilarXml(List<String> bodyList) {
+        expectedBodiesReceived(bodyList, true);
+    }
+
+    private void expectedBodiesReceived(final List<?> bodies, boolean checkSimilarXml) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
         this.actualBodyValues = new ArrayList<>();
@@ -804,7 +813,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 }
                 actualBody = extractActualValue(exchange, actualBody, expectedBody);
 
-                assertEquals("Body of message: " + i, expectedBody, actualBody);
+                if (checkSimilarXml) {
+                    XmlAssert.assertThat(actualBody).and(expectedBody).areSimilar();
+                } else {
+                    assertEquals("Body of message: " + i, expectedBody, actualBody);
+                }
             }
 
             public void run() {
@@ -866,6 +879,20 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void expectedBodiesReceived(Object... bodies) {
         List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         expectedBodiesReceived(bodyList);
+    }
+
+    /**
+     * Sets an expectation that the given body values are received by this endpoint. The body values are compared by
+     * `similar xml`, as opposition to equality.
+     * <p/>
+     * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect 3 messages,
+     * then there must be 3 bodies.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedBodiesReceivedAsSimilarXml(String... bodies) {
+        List<String> bodyList = new ArrayList<>(Arrays.asList(bodies));
+        expectedBodiesReceivedAsSimilarXml(bodyList);
     }
 
     /**
