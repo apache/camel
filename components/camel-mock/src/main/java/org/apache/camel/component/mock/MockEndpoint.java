@@ -111,8 +111,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile CountDownLatch latch;
     private volatile AssertionError failFastAssertionError;
     private volatile int expectedMinimumCount;
-    private volatile List<?> expectedBodyValues;
-    private volatile List<Object> actualBodyValues;
+    volatile List<?> expectedBodyValues;
+    volatile List<Object> actualBodyValues;
     private volatile Map<String, Object> expectedHeaderValues;
     private volatile Map<String, Object> actualHeaderValues;
     private volatile Map<String, Object> expectedPropertyValues;
@@ -788,34 +788,27 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedBodiesReceived(final List<?> bodies) {
+        expectedBodiesReceived(bodies, new ExpectedBodiesAssertionTask(this));
+    }
+
+    /**
+     * Adds an expectation that this endpoint receives the given body values in the specified order.
+     *  The check is done using the provided AssertionTask
+     * <p/>
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
+     * then there must be 3 values.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedBodiesReceived(final List<?> bodies, ExpectedBodiesAssertionTask expectedBodiesAssertionTask) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
         this.actualBodyValues = new ArrayList<>();
 
-        expects(new AssertionTask() {
-            @Override
-            public void assertOnIndex(int i) {
-                Exchange exchange = getReceivedExchange(i);
-
-                Object expectedBody = expectedBodyValues.get(i);
-                Object actualBody = null;
-                if (i < actualBodyValues.size()) {
-                    actualBody = actualBodyValues.get(i);
-                }
-                actualBody = extractActualValue(exchange, actualBody, expectedBody);
-
-                assertEquals("Body of message: " + i, expectedBody, actualBody);
-            }
-
-            public void run() {
-                for (int i = 0; i < expectedBodyValues.size(); i++) {
-                    assertOnIndex(i);
-                }
-            }
-        });
+        expects(expectedBodiesAssertionTask);
     }
 
-    private Object extractActualValue(Exchange exchange, Object actualValue, Object expectedValue) {
+    Object extractActualValue(Exchange exchange, Object actualValue, Object expectedValue) {
         if (actualValue == null) {
             return null;
         }
@@ -1883,7 +1876,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return true;
     }
 
-    private Exchange getReceivedExchange(int index) {
+    Exchange getReceivedExchange(int index) {
         if (index <= receivedExchanges.size() - 1) {
             return receivedExchanges.get(index);
         } else {

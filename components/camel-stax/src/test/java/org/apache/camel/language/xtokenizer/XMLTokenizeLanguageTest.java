@@ -16,8 +16,11 @@
  */
 package org.apache.camel.language.xtokenizer;
 
+import java.util.Arrays;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.stax.ExpectedBodiesComparedByXMLSimilarityAssertionTask;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -123,8 +126,10 @@ public class XMLTokenizeLanguageTest extends CamelTestSupport {
     public void testSendMoreParentsMessageToTokenize() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(
-                "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
-                "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>");
+                Arrays.asList(
+                        "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+                        "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>"),
+                new ExpectedBodiesComparedByXMLSimilarityAssertionTask(result));
 
         template
                 .sendBody("direct:start",
