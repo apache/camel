@@ -120,6 +120,22 @@ public interface ClasComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * Maximum cache size of internal cache for bean introspection. Setting
+         * a value of 0 or negative will disable the cache.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: advanced
+         * 
+         * @param beanInfoCacheSize the value to set
+         * @return the dsl builder
+         */
+        default ClasComponentBuilder beanInfoCacheSize(int beanInfoCacheSize) {
+            doSetProperty("beanInfoCacheSize", beanInfoCacheSize);
+            return this;
+        }
     }
 
     class ClasComponentBuilderImpl
@@ -140,6 +156,7 @@ public interface ClasComponentBuilderFactory {
             case "lazyStartProducer": ((ClassComponent) component).setLazyStartProducer((boolean) value); return true;
             case "scope": ((ClassComponent) component).setScope((org.apache.camel.BeanScope) value); return true;
             case "autowiredEnabled": ((ClassComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "beanInfoCacheSize": ((ClassComponent) component).setBeanInfoCacheSize((int) value); return true;
             default: return false;
             }
         }

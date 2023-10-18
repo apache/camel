@@ -58,7 +58,7 @@ The beginner examples are another powerful alternative pathway for getting start
 
 **Building**
 
-<https://camel.apache.org/building.html>
+<https://camel.apache.org/camel-core/contributing/>
 
 **Contributions**
 
