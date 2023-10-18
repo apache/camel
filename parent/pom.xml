@@ -2697,6 +2697,18 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-assertj3</artifactId>
+                <version>${xmlunit-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-core</artifactId>
+                <version>${xmlunit-version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <!-- Netty bom -->
             <dependency>

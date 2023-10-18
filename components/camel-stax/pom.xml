@@ -74,6 +74,11 @@
             <artifactId>camel-jaxb</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-assertj3</artifactId>
+            <scope>test</scope>
+       </dependency>
 
     </dependencies>
 
