@@ -63,8 +63,8 @@ public class StAXProcessor implements Processor {
             // InputSource is ignored anyway
             reader.parse((InputSource) null);
             if (ExchangeHelper.isOutCapable(exchange)) {
-                exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-                exchange.getOut().setBody(handler);
+                exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
+                exchange.getMessage().setBody(handler);
             } else {
                 exchange.getIn().setBody(handler);
             }
