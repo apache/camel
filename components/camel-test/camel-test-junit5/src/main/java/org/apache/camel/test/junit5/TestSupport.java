@@ -485,8 +485,9 @@ public final class TestSupport {
                 recursivelyDeleteDirectory(child);
             }
         }
-        boolean success = file.delete();
-        if (!success) {
+        try {
+            Files.delete(file.toPath());
+        } catch (IOException e) {
             LOG.warn("Deletion of file: {} failed", file.getAbsolutePath());
         }
     }
