@@ -420,17 +420,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         @Override
         public void run() {
             // can we still run
-            boolean run = true;
-            if (shutdownStrategy.isForceShutdown()) {
-                run = false;
-            }
-            if (run && isStoppingOrStopped()) {
-                run = false;
-            }
-            if (!run) {
+            if (shutdownStrategy.isForceShutdown() || isStoppingOrStopped()) {
                 runNotAllowed();
                 return;
             }
+
             if (exchange.getExchangeExtension().isInterrupted()) {
                 runInterrupted();
                 return;
@@ -439,11 +433,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // only new failure if the exchange has exception
             // and it has not been handled by the failure processor before
             // or not exhausted
-            boolean failure = exchange.getException() != null
+            final boolean failure = exchange.getException() != null
                     && !exchange.getExchangeExtension().isRedeliveryExhausted()
                     && !ExchangeHelper.isFailureHandled(exchange);
             // error handled bridged
-            boolean bridge = ExchangeHelper.isErrorHandlerBridge(exchange);
+            final boolean bridge = ExchangeHelper.isErrorHandlerBridge(exchange);
 
             if (failure || bridge) {
                 // previous processing cause an exception
