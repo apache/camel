@@ -162,31 +162,38 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
             // (see org.apache.camel.processor.CamelInternalProcessor.InternalCallback#done).
             // To solve this problem, a new synchronization is set on the exchange that is to be
             // processed
-            result.getExchangeExtension().addOnCompletion(new Synchronization() {
-                @Override
-                public void onComplete(Exchange exchange) {
-                    synchronizedExchange.consumed(result);
-                }
-
-                @Override
-                public void onFailure(Exchange exchange) {
-                    synchronizedExchange.consumed(result);
-                }
-            });
+            result.getExchangeExtension().addOnCompletion(newSynchronization(synchronizedExchange, result));
 
             // As the necessary post-processing of the exchange is done by the registered Synchronization,
             // we can suffice with a no-op AsyncCallback
             processor.process(result, NOOP_ASYNC_CALLBACK);
 
         } catch (Exception e) {
-            Exchange exchange = synchronizedExchange.getExchange();
+            handleException(synchronizedExchange, e);
+        }
+    }
 
-            if (exchange != null) {
-                getExceptionHandler().handleException("Error processing exchange",
-                        exchange, e);
-            } else {
-                getExceptionHandler().handleException(e);
+    private static Synchronization newSynchronization(SynchronizedExchange synchronizedExchange, Exchange result) {
+        return new Synchronization() {
+            @Override
+            public void onComplete(Exchange exchange) {
+                synchronizedExchange.consumed(result);
             }
+
+            @Override
+            public void onFailure(Exchange exchange) {
+                synchronizedExchange.consumed(result);
+            }
+        };
+    }
+
+    private void handleException(SynchronizedExchange synchronizedExchange, Exception e) {
+        Exchange exchange = synchronizedExchange.getExchange();
+
+        if (exchange != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, e);
+        } else {
+            getExceptionHandler().handleException(e);
         }
     }
 
