@@ -43,6 +43,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -420,12 +421,14 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             throw new IllegalStateException("Duplicate request path for " + endpointUri);
         }
         consumers.put(endpointUri, consumer);
+        RestConsumerContextPathMatcher.register(consumer.getPath());
     }
 
     @Override
     public void disconnect(HttpConsumer consumer) {
         log.debug("Disconnecting consumer: {}", consumer);
         consumers.remove(consumer.getEndpoint().getEndpointUri());
+        RestConsumerContextPathMatcher.unRegister(consumer.getPath());
     }
 
     @Override

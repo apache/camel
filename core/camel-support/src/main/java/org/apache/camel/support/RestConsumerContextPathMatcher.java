@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.OptionalInt;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ import java.util.stream.Collectors;
  * The {@link ConsumerPath} is used for the components to provide the details to the matcher.
  */
 public final class RestConsumerContextPathMatcher {
+
+    private static final Map<String, Pattern> PATH_PATTERN = new ConcurrentHashMap<>();
 
     private RestConsumerContextPathMatcher() {
     }
@@ -234,6 +237,33 @@ public final class RestConsumerContextPathMatcher {
     }
 
     /**
+     * Pre-compiled consumer path for wildcard match
+     * @param consumerPath a consumer path
+     */
+    public static void register(String consumerPath) {
+        // Convert URI template to a regex pattern
+        String regex = consumerPath
+                .replace("/", "\\/")
+                .replace("{", "(?<")
+                .replace("}", ">[^\\/]+)");
+
+        // Add support for wildcard * as path suffix
+        regex = regex.replace("*", ".*");
+
+        // Match the provided path against the regex pattern
+        Pattern pattern = Pattern.compile(regex);
+        PATH_PATTERN.put(consumerPath, pattern);
+    }
+
+    /**
+     * if the rest consumer is removed, we also remove pattern cache.
+     * @param consumerPath a consumer path
+     */
+    public static void unRegister(String consumerPath) {
+        PATH_PATTERN.remove(consumerPath);
+    }
+
+    /**
      *
      * @param  requestMethod The request method
      * @param  requestPath   The request path
@@ -356,17 +386,12 @@ public final class RestConsumerContextPathMatcher {
         if (!requestPath.endsWith("/")) {
             requestPath = requestPath + "/";
         }
-        // Convert URI template to a regex pattern
-        String regex = consumerPath
-                .replace("/", "\\/")
-                .replace("{", "(?<")
-                .replace("}", ">[^\\/]+)");
 
-        // Add support for wildcard * as path suffix
-        regex = regex.replace("*", ".*");
+        Pattern pattern = PATH_PATTERN.get(consumerPath);
+        if (pattern == null) {
+            return false;
+        }
 
-        // Match the provided path against the regex pattern
-        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(requestPath);
 
         return matcher.matches();
