@@ -121,7 +121,8 @@ public interface BeanComponentBuilderFactory {
             return this;
         }
         /**
-         * Maximum cache size of internal cache for bean introspection.
+         * Maximum cache size of internal cache for bean introspection. Setting
+         * a value of 0 or negative will disable the cache.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 

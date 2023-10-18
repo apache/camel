@@ -52,7 +52,7 @@ public class BeanComponent extends DefaultComponent {
     private BeanScope scope = BeanScope.Singleton;
 
     @Metadata(label = "advanced", defaultValue = "1000",
-              description = "Maximum cache size of internal cache for bean introspection.")
+              description = "Maximum cache size of internal cache for bean introspection. Setting a value of 0 or negative will disable the cache.")
     private int beanInfoCacheSize = 1000;
 
     public BeanComponent() {
@@ -62,7 +62,7 @@ public class BeanComponent extends DefaultComponent {
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (beanInfoCache == null) {
+        if (beanInfoCache == null && beanInfoCacheSize > 0) {
             LOG.debug("Creating BeanInfo with maximum cache size: {}", beanInfoCacheSize);
             beanInfoCache = LRUCacheFactory.newLRUSoftCache(beanInfoCacheSize);
         }
