@@ -32,17 +32,27 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
 
     protected static final String DEFAULT_TABLENAME = "CAMEL_MESSAGEPROCESSED";
+    protected static final String DEFAULT_TABLE_EXISTS_STRING = "SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0";
+    protected static final String DEFAULT_CREATE_STRING
+            = "CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), "
+              + "createdAt TIMESTAMP, PRIMARY KEY (processorName, messageId))";
+    protected static final String DEFAULT_QUERY_STRING
+            = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+    protected static final String DEFAULT_INSERT_STRING
+            = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
+    protected static final String DEFAULT_DELETE_STRING
+            = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+    protected static final String DEFAULT_CLEAR_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
 
     private boolean createTableIfNotExists = true;
     private String tableName;
 
-    private String tableExistsString = "SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0";
-    private String createString = "CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), "
-                                  + "createdAt TIMESTAMP, PRIMARY KEY (processorName, messageId))";
-    private String queryString = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
-    private String insertString = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
-    private String deleteString = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
-    private String clearString = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
+    private String tableExistsString = DEFAULT_TABLE_EXISTS_STRING;
+    private String createString = DEFAULT_CREATE_STRING;
+    private String queryString = DEFAULT_QUERY_STRING;
+    private String insertString = DEFAULT_INSERT_STRING;
+    private String deleteString = DEFAULT_DELETE_STRING;
+    private String clearString = DEFAULT_CLEAR_STRING;
 
     public JdbcMessageIdRepository() {
     }
@@ -65,12 +75,12 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
 
         if (tableName != null) {
             // update query strings from default table name to the new table name
-            tableExistsString = tableExistsString.replaceFirst(DEFAULT_TABLENAME, tableName);
-            createString = createString.replaceFirst(DEFAULT_TABLENAME, tableName);
-            queryString = queryString.replaceFirst(DEFAULT_TABLENAME, tableName);
-            insertString = insertString.replaceFirst(DEFAULT_TABLENAME, tableName);
-            deleteString = deleteString.replaceFirst(DEFAULT_TABLENAME, tableName);
-            clearString = clearString.replaceFirst(DEFAULT_TABLENAME, tableName);
+            tableExistsString = DEFAULT_TABLE_EXISTS_STRING.replace(DEFAULT_TABLENAME, tableName);
+            createString = DEFAULT_CREATE_STRING.replace(DEFAULT_TABLENAME, tableName);
+            queryString = DEFAULT_QUERY_STRING.replace(DEFAULT_TABLENAME, tableName);
+            insertString = DEFAULT_INSERT_STRING.replace(DEFAULT_TABLENAME, tableName);
+            deleteString = DEFAULT_DELETE_STRING.replace(DEFAULT_TABLENAME, tableName);
+            clearString = DEFAULT_CLEAR_STRING.replace(DEFAULT_TABLENAME, tableName);
         }
     }
 
