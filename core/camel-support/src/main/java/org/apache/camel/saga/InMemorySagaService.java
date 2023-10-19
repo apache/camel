@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -45,7 +46,7 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
     private long retryDelayInMilliseconds = DEFAULT_RETRY_DELAY_IN_MILLISECONDS;
 
     @Override
-    public CompletableFuture<CamelSagaCoordinator> newSaga() {
+    public CompletableFuture<CamelSagaCoordinator> newSaga(Exchange exchange) {
         ObjectHelper.notNull(camelContext, "camelContext");
 
         String uuid = camelContext.getUuidGenerator().generateUuid();

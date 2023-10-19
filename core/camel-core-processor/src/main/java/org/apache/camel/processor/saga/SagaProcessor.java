@@ -77,7 +77,7 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
         if (this.completionMode == SagaCompletionMode.AUTO) {
             if (exchange.getException() != null) {
                 if (coordinator != null) {
-                    coordinator.compensate().whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
+                    coordinator.compensate(exchange).whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
                         setCurrentSagaCoordinator(exchange, previousCoordinator);
                         callback.done(false);
                     }));
@@ -86,7 +86,7 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
                     callback.done(false);
                 }
             } else {
-                coordinator.complete().whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
+                coordinator.complete(exchange).whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
                     setCurrentSagaCoordinator(exchange, previousCoordinator);
                     callback.done(false);
                 }));

@@ -13,3 +13,13 @@ in case of mis-configuration or invalid hostname.
 
 This can be disabled by setting `preValidateHostAndPort=false`, which will postpone validation
 to consumer is started, and will instead re-connect endlessly (5 sec delay by default) until success.
+
+=== camel-saga, camel-lra
+
+The `org.apache.camel.service.lra.LRAClient` can now access `Exchange` to retrieve further context information. Therefore, there are following changes in interface methods
+- `org.apache.camel.saga.CamelSagaService.compensate()` changed to `org.apache.camel.saga.CamelSagaService.compensate(Exchange exchange)`
+- `org.apache.camel.saga.CamelSagaService.complete()` changed to `org.apache.camel.saga.CamelSagaService.complete(Exchange exchange)`
+- `org.apache.camel.saga.CamelSagaCoordinator.newSaga` is now `org.apache.camel.saga.CamelSagaCoordinator.newSaga(Exchange exchange)`
+to support the transport of `Exchange`.
+
+As result of interface changes also the known implementation classes and usages have been adopted.
