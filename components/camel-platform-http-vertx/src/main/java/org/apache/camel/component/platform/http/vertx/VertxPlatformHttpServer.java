@@ -183,7 +183,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
             subRouter.route().handler(createCorsHandler(configuration));
         }
 
-        router.mountSubRouter(configuration.getPath(), subRouter);
+        router.route(configuration.getPath() + "*").subRouter(subRouter);
 
         context.getRegistry().bind(
                 VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME,

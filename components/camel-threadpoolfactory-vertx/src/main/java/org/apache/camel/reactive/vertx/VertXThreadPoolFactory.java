@@ -133,10 +133,10 @@ public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements 
             LOG.trace("submit: {}", task);
             final CompletableFuture<?> answer = new CompletableFuture<>();
             // used by vertx
-            vertx.executeBlocking(future -> {
+            vertx.executeBlocking(() -> {
                 task.run();
-                future.complete();
-            }, res -> answer.complete(null));
+                return null;
+            }).onComplete(res -> answer.complete(null));
             return answer;
         }
 

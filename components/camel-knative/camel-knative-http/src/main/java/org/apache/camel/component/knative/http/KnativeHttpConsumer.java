@@ -191,25 +191,13 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         // from("knative:event/my.event")
         //        .to("http://{{env:PROJECT}}.{{env:NAMESPACE}}.svc.cluster.local/service");
         //
-        routingContext.vertx().executeBlocking(
-                promise -> {
-                    try {
-                        createUoW(exchange);
-                    } catch (Exception e) {
-                        promise.fail(e);
-                        return;
-                    }
-
-                    getAsyncProcessor().process(exchange, c -> {
-                        if (!exchange.isFailed()) {
-                            promise.complete();
-                        } else {
-                            promise.fail(exchange.getException());
-                        }
-                    });
-                },
-                false,
-                result -> {
+        routingContext.vertx().executeBlocking(() -> {
+            createUoW(exchange);
+            getAsyncProcessor().process(exchange);
+            return null;
+        },
+                false)
+                .onComplete(result -> {
                     try {
                         Throwable failure = null;
 
