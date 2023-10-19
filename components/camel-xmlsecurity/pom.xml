@@ -97,7 +97,6 @@
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>${xmlunit-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
