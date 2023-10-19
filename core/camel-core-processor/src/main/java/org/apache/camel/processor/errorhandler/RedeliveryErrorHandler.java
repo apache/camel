@@ -420,55 +420,28 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         @Override
         public void run() {
             // can we still run
-            boolean run = true;
-            if (shutdownStrategy.isForceShutdown()) {
-                run = false;
-            }
-            if (run && isStoppingOrStopped()) {
-                run = false;
-            }
-            if (!run) {
-                LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
-                if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException());
-                }
-                AsyncCallback cb = callback;
-                taskFactory.release(this);
-                cb.done(false);
+            if (shutdownStrategy.isForceShutdown() || isStoppingOrStopped()) {
+                runNotAllowed();
                 return;
             }
+
             if (exchange.getExchangeExtension().isInterrupted()) {
-                // mark the exchange to stop continue routing when interrupted
-                // as we do not want to continue routing (for example a task has been cancelled)
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Is exchangeId: {} interrupted? true", exchange.getExchangeId());
-                }
-                exchange.setRouteStop(true);
-                // we should not continue routing so call callback
-                AsyncCallback cb = callback;
-                taskFactory.release(this);
-                cb.done(false);
+                runInterrupted();
                 return;
             }
 
             // only new failure if the exchange has exception
             // and it has not been handled by the failure processor before
             // or not exhausted
-            boolean failure = exchange.getException() != null
+            final boolean failure = exchange.getException() != null
                     && !exchange.getExchangeExtension().isRedeliveryExhausted()
                     && !ExchangeHelper.isFailureHandled(exchange);
             // error handled bridged
-            boolean bridge = ExchangeHelper.isErrorHandlerBridge(exchange);
+            final boolean bridge = ExchangeHelper.isErrorHandlerBridge(exchange);
 
             if (failure || bridge) {
                 // previous processing cause an exception
-                handleException();
-                onExceptionOccurred();
-                prepareExchangeAfterFailure(exchange);
-                // we do not support redelivery so continue callback
-                AsyncCallback cb = callback;
-                taskFactory.release(this);
-                reactiveExecutor.schedule(cb);
+                handlePreviousFailure();
             } else if (first) {
                 // first time call the target processor
                 first = false;
@@ -479,6 +452,39 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 taskFactory.release(this);
                 reactiveExecutor.schedule(cb);
             }
+        }
+
+        private void handlePreviousFailure() {
+            handleException();
+            onExceptionOccurred();
+            prepareExchangeAfterFailure(exchange);
+            // we do not support redelivery so continue callback
+            AsyncCallback cb = callback;
+            taskFactory.release(this);
+            reactiveExecutor.schedule(cb);
+        }
+
+        private void runInterrupted() {
+            // mark the exchange to stop continue routing when interrupted
+            // as we do not want to continue routing (for example a task has been cancelled)
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Is exchangeId: {} interrupted? true", exchange.getExchangeId());
+            }
+            exchange.setRouteStop(true);
+            // we should not continue routing so call callback
+            AsyncCallback cb = callback;
+            taskFactory.release(this);
+            cb.done(false);
+        }
+
+        private void runNotAllowed() {
+            LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+            AsyncCallback cb = callback;
+            taskFactory.release(this);
+            cb.done(false);
         }
 
         protected void handleException() {

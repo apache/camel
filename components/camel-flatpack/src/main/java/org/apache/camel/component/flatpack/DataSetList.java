@@ -63,6 +63,8 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
 
     @Override
     public Iterator<Map<String, Object>> iterator() {
+        dataSet.goTop();
+
         return new Iterator<Map<String, Object>>() {
             Optional<Record> nextData = Optional.empty();
 

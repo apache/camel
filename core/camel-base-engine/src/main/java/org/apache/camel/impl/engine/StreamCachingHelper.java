@@ -45,12 +45,7 @@ final class StreamCachingHelper {
                 return sc;
             }
         } catch (Exception e) {
-            // lets allow Camels error handler to deal with stream cache failures
-            StreamCacheException tce = new StreamCacheException(null, e);
-            exchange.setException(tce);
-            // because this is stream caching error then we cannot use redelivery as the message body is corrupt
-            // so mark as redelivery exhausted
-            exchange.getExchangeExtension().setRedeliveryExhausted(true);
+            handleException(exchange, null, e);
         }
         // check if we somewhere failed due to a stream caching exception
         Throwable cause = exchange.getException();
@@ -76,15 +71,23 @@ final class StreamCachingHelper {
                 }
                 return sc;
             } catch (Exception e) {
-                // lets allow Camels error handler to deal with stream cache failures
-                StreamCacheException tce = new StreamCacheException(exchange.getMessage().getBody(), e);
-                exchange.setException(tce);
-                // because this is stream caching error then we cannot use redelivery as the message body is corrupt
-                // so mark as redelivery exhausted
-                exchange.getExchangeExtension().setRedeliveryExhausted(true);
+                handleException(exchange, e);
             }
         }
         return null;
+    }
+
+    private static void handleException(Exchange exchange, Exception e) {
+        handleException(exchange, exchange.getMessage().getBody(), e);
+    }
+
+    private static void handleException(Exchange exchange, Object value, Exception e) {
+        // lets allow Camels error handler to deal with stream cache failures
+        StreamCacheException tce = new StreamCacheException(value, e);
+        exchange.setException(tce);
+        // because this is stream caching error then we cannot use redelivery as the message body is corrupt
+        // so mark as redelivery exhausted
+        exchange.getExchangeExtension().setRedeliveryExhausted(true);
     }
 
 }

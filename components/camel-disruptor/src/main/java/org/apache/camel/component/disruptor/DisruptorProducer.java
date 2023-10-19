@@ -43,9 +43,10 @@ public class DisruptorProducer extends DefaultAsyncProducer {
     private final DisruptorEndpoint endpoint;
     private boolean blockWhenFull;
 
-    public DisruptorProducer(final DisruptorEndpoint endpoint,
-                             final WaitForTaskToComplete waitForTaskToComplete,
-                             final long timeout, boolean blockWhenFull) {
+    public DisruptorProducer(
+            final DisruptorEndpoint endpoint,
+            final WaitForTaskToComplete waitForTaskToComplete,
+            final long timeout, boolean blockWhenFull) {
         super(endpoint);
         this.waitForTaskToComplete = waitForTaskToComplete;
         this.timeout = timeout;
@@ -85,41 +86,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // we should wait for the reply so install a on completion so we know when its complete
-            copy.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                @Override
-                public void onDone(final Exchange response) {
-                    // check for timeout, which then already would have invoked the latch
-                    if (latch.getCount() == 0) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("{}. Timeout occurred so response will be ignored: {}", this,
-                                    response.getMessage());
-                        }
-                    } else {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("{} with response: {}", this,
-                                    response.getMessage());
-                        }
-                        try {
-                            ExchangeHelper.copyResults(exchange, response);
-                        } finally {
-                            // always ensure latch is triggered
-                            latch.countDown();
-                        }
-                    }
-                }
-
-                @Override
-                public boolean allowHandover() {
-                    // do not allow handover as we want to seda producer to have its completion triggered
-                    // at this point in the routing (at this leg), instead of at the very last (this ensure timeout is honored)
-                    return false;
-                }
-
-                @Override
-                public String toString() {
-                    return "onDone at endpoint: " + endpoint;
-                }
-            });
+            copy.getExchangeExtension().addOnCompletion(newOnCompletion(exchange, latch));
 
             doPublish(copy);
 
@@ -174,6 +141,42 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         // so we should just signal the callback we are done synchronously
         callback.done(true);
         return true;
+    }
+
+    private SynchronizationAdapter newOnCompletion(Exchange exchange, CountDownLatch latch) {
+        return new SynchronizationAdapter() {
+            @Override
+            public void onDone(final Exchange response) {
+                // check for timeout, which then already would have invoked the latch
+                if (latch.getCount() == 0) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
+                    }
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("{} with response: {}", this, response.getMessage());
+                    }
+                    try {
+                        ExchangeHelper.copyResults(exchange, response);
+                    } finally {
+                        // always ensure latch is triggered
+                        latch.countDown();
+                    }
+                }
+            }
+
+            @Override
+            public boolean allowHandover() {
+                // do not allow handover as we want to seda producer to have its completion triggered
+                // at this point in the routing (at this leg), instead of at the very last (this ensure timeout is honored)
+                return false;
+            }
+
+            @Override
+            public String toString() {
+                return "onDone at endpoint: " + endpoint;
+            }
+        };
     }
 
     private void doPublish(Exchange exchange) {

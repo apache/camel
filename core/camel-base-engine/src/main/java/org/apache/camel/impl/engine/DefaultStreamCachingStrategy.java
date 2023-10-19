@@ -260,21 +260,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         if (body != null) {
             boolean allowed = allowClasses == null && denyClasses == null;
             if (!allowed) {
-                Class<?> source = body.getClass();
-                if (denyClasses != null && allowClasses != null) {
-                    // deny takes precedence
-                    allowed = !isAssignableFrom(source, denyClasses);
-                    if (allowed) {
-                        allowed = isAssignableFrom(source, allowClasses);
-                    }
-                } else if (denyClasses != null) {
-                    allowed = !isAssignableFrom(source, denyClasses);
-                } else {
-                    allowed = isAssignableFrom(source, allowClasses);
-                }
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Cache stream from class: {} is {}", source, allowed ? "allowed" : "denied");
-                }
+                allowed = checkAllowDenyList(body);
             }
             if (allowed) {
                 cache = camelContext.getTypeConverter().convertTo(StreamCache.class, message.getExchange(), body);
@@ -285,18 +271,42 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 LOG.trace("Cached stream to {} -> {}", cache.inMemory() ? "memory" : "spool", cache);
             }
             if (statistics.isStatisticsEnabled()) {
-                try {
-                    if (cache.inMemory()) {
-                        statistics.updateMemory(cache.length());
-                    } else {
-                        statistics.updateSpool(cache.length());
-                    }
-                } catch (Exception e) {
-                    LOG.debug("Error updating cache statistics. This exception is ignored.", e);
-                }
+                computeStatistics(cache);
             }
         }
         return cache;
+    }
+
+    private boolean checkAllowDenyList(Object body) {
+        boolean allowed;
+        Class<?> source = body.getClass();
+        if (denyClasses != null && allowClasses != null) {
+            // deny takes precedence
+            allowed = !isAssignableFrom(source, denyClasses);
+            if (allowed) {
+                allowed = isAssignableFrom(source, allowClasses);
+            }
+        } else if (denyClasses != null) {
+            allowed = !isAssignableFrom(source, denyClasses);
+        } else {
+            allowed = isAssignableFrom(source, allowClasses);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Cache stream from class: {} is {}", source, allowed ? "allowed" : "denied");
+        }
+        return allowed;
+    }
+
+    private void computeStatistics(StreamCache cache) {
+        try {
+            if (cache.inMemory()) {
+                statistics.updateMemory(cache.length());
+            } else {
+                statistics.updateSpool(cache.length());
+            }
+        } catch (Exception e) {
+            LOG.debug("Error updating cache statistics. This exception is ignored.", e);
+        }
     }
 
     protected static boolean isAssignableFrom(Class<?> source, Collection<Class<?>> targets) {
