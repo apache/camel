@@ -69,11 +69,11 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
 
     @Override
     public CompletableFuture<CamelSagaCoordinator> getSaga(String id) {
-        CompletableFuture<CamelSagaCoordinator> coordinator = new CompletableFuture<>();
+        CompletableFuture<CamelSagaCoordinator> coordinator;
         try {
-            coordinator.complete(new LRASagaCoordinator(this, new URL(id)));
+            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, new URL(id)));
         } catch (Exception ex) {
-            coordinator.completeExceptionally(ex);
+            coordinator = CompletableFuture.failedFuture(ex);
         }
         return coordinator;
     }
