@@ -43,11 +43,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import org.apache.commons.io.IOUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.builder.Input;
-import org.xmlunit.diff.Diff;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 final class XJTestUtils {
 
@@ -161,24 +158,19 @@ final class XJTestUtils {
 
         final String expected = IOUtils.toString(referenceFile, StandardCharsets.UTF_8.name());
         final String result = byteArrayOutputStream.toString(StandardCharsets.UTF_8.name());
+        XmlAssert.assertThat(Input.fromString(expected))
+            .and(Input.fromString(result))
+            .ignoreElementContentWhitespace()
+            .withNodeFilter(toTest -> {
+                if (toTest instanceof Comment) {
+                    final Comment comment = (Comment) toTest;
+                    final String text = comment.getNodeValue();
 
-        final Diff diff = DiffBuilder
-                .compare(Input.fromString(expected))
-                .withTest(Input.fromString(result))
-                .ignoreElementContentWhitespace()
-                .withNodeFilter(toTest -> {
-                    if (toTest instanceof Comment) {
-                        final Comment comment = (Comment) toTest;
-                        final String text = comment.getNodeValue();
+                    return text == null || !text.contains("License");
+                }
 
-                        return text == null || !text.contains("License");
-                    }
-
-                    return true;
-                })
-                .checkForIdentical()
-                .build();
-
-        assertFalse(diff.hasDifferences(), "\nExpected: " + expected + "\n\nGot: " + result + "\n\nDiff: " + diff.toString());
+                return true;
+            })
+            .areIdentical();
     }
 }
