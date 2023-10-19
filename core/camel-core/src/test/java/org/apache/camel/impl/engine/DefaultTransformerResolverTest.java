@@ -51,7 +51,7 @@ class DefaultTransformerResolverTest {
 
     @Test
     public void shouldResolveDataTypeTransformers() throws Exception {
-        Transformer transformer = resolver.resolve(new TransformerKey("plain-text"), camelContext);
+        Transformer transformer = resolver.resolve(new TransformerKey("text-plain"), camelContext);
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(StringDataTypeTransformer.class, transformer.getClass());
 

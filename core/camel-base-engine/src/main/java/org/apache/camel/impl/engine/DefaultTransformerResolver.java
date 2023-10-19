@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation of {@link org.apache.camel.spi.TransformerResolver} which tries to find components by
  * using the URI scheme prefix and searching for a file of the URI scheme name in the
- * <b>META-INF/services/org/apache/camel/datatype/transformer/</b> directory on the classpath.
+ * <b>META-INF/services/org/apache/camel/transformer/</b> directory on the classpath.
  */
 public class DefaultTransformerResolver implements TransformerResolver<TransformerKey> {
 
-    public static final String DATA_TYPE_TRANSFORMER_RESOURCE_PATH = "META-INF/services/org/apache/camel/datatype/transformer/";
+    public static final String DATA_TYPE_TRANSFORMER_RESOURCE_PATH = "META-INF/services/org/apache/camel/transformer/";
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTransformerResolver.class);
 

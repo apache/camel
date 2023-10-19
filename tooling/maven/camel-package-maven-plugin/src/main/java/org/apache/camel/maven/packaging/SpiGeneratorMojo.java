@@ -145,16 +145,12 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                     pvals = annotation.value().asString();
                 }
                 for (String pval : pvals.split(",")) {
+                    pval = sanitizeFileName(pval);
                     StringBuilder sb = new StringBuilder();
                     sb.append("# ").append(GENERATED_MSG).append(NL).append("class=").append(className).append(NL);
                     if (ServiceFactory.JDK_SERVICE.equals(sfa.value().asString())) {
                         updateResource(resourcesOutputDir.toPath(),
                                 "META-INF/services/org/apache/camel/" + pval,
-                                sb.toString());
-                    } else if ("transformer".equals(sfa.value().asString())) {
-                        pval = cleanUpValue(pval);
-                        updateResource(resourcesOutputDir.toPath(),
-                                "META-INF/services/org/apache/camel/datatype/" + sfa.value().asString() + "/" + pval,
                                 sb.toString());
                     } else {
                         updateResource(resourcesOutputDir.toPath(),
@@ -166,10 +162,8 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private String cleanUpValue(String pval) {
-        return pval
-                .replace(":", "-")
-                .replace("+", "-");
+    private String sanitizeFileName(String fileName) {
+        return fileName.replaceAll("[^A-Za-z0-9-]", "-");
     }
 
     private boolean isLocal(String className) {
