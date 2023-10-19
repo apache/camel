@@ -52,7 +52,7 @@ public class Transform extends CamelCommand {
     boolean resolvePlaceholders;
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format"
+                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format "
                                       + "and recommended to enable when using Apache Camel Karavan)")
     boolean uriAsParameters;
 
