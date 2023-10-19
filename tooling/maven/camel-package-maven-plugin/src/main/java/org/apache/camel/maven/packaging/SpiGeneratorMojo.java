@@ -134,15 +134,29 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                 if (!isLocal(className)) {
                     continue;
                 }
-                String pvals = annotation.value().asString();
+                String pvals;
+                // @DataTypeTransformer uses name instead of value
+                if (annotation.value() == null) {
+                    pvals = annotation.values().stream()
+                            .filter(annotationValue -> "name".equals(annotationValue.name()))
+                            .map(name -> name.value().toString())
+                            .findFirst().get();
+                } else {
+                    pvals = annotation.value().asString();
+                }
                 for (String pval : pvals.split(",")) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("# ").append(GENERATED_MSG).append(NL).append("class=").append(className).append(NL);
                     if (ServiceFactory.JDK_SERVICE.equals(sfa.value().asString())) {
                         updateResource(resourcesOutputDir.toPath(),
                                 "META-INF/services/org/apache/camel/" + pval,
-                                "# " + GENERATED_MSG + NL + "class=" + className + NL);
+                                sb.toString());
+                    } else if ("transformer".equals(sfa.value().asString())) {
+                        pval = cleanUpValue(pval);
+                        updateResource(resourcesOutputDir.toPath(),
+                                "META-INF/services/org/apache/camel/datatype/" + sfa.value().asString() + "/" + pval,
+                                sb.toString());
                     } else {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("# ").append(GENERATED_MSG).append(NL).append("class=").append(className).append(NL);
                         updateResource(resourcesOutputDir.toPath(),
                                 "META-INF/services/org/apache/camel/" + sfa.value().asString() + "/" + pval,
                                 sb.toString());
@@ -150,6 +164,12 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
         }
+    }
+
+    private String cleanUpValue(String pval) {
+        return pval
+                .replace(":", "-")
+                .replace("+", "-");
     }
 
     private boolean isLocal(String className) {
