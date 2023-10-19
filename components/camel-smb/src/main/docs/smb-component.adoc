@@ -1,0 +1,57 @@
+= SMB Component
+:doctitle: SMB
+:shortname: smb
+:artifactid: camel-smb
+:description: SMB component which consumes natively from file shares using the Server Message Block (SMB, also known as Common Internet File System - CIFS) protocol
+:since: 4.2.0-SNAPSHOT
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Server Message Block (SMB) component provides a way to connect natively to SMB file shares, such as those provided by Microsoft Windows or https://www.samba.org/[Samba].
+
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-smb</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+smb:address[:port]/shareName[?options]
+----
+
+== Usage
+
+For instance, polling all the files from a SMB file share and reading their contents would look like this:
+
+[source,java]
+----
+private void process(Exchange exchange) throws IOException {
+    final File file = exchange.getMessage().getBody(File.class);
+    try (InputStream inputStream = file.getInputStream()) {
+        LOG.debug("Read exchange: {}, with contents: {}", file.getFileInformation(), new String(inputStream.readAllBytes()));
+    }
+}
+
+public void configure() {
+    fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(), service.userName(), service.password())
+        .process(this::process)
+        .to("mock:result");
+}
+----
+
+[NOTE]
+====
+Beware that the File object provided is not a java.io.File instance, but, instead a com.hierynomus.smbj.share.File instance.
+====
