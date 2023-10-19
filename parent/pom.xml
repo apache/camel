@@ -203,7 +203,7 @@
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.2</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
-        <httpcore-version>5.2.2</httpcore-version>
+        <httpcore-version>5.2.3</httpcore-version>
         <httpclient-version>5.2.1</httpclient-version>
         <httpcore4-version>4.4.16</httpcore4-version>
         <httpclient4-version>4.5.14</httpclient4-version>
@@ -214,14 +214,14 @@
         <icu4j-version>73.2</icu4j-version>
         <ignite-version>2.15.0</ignite-version>
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
-        <infinispan-version>14.0.18.Final</infinispan-version>
+        <infinispan-version>14.0.19.Final</infinispan-version>
         <influx-java-driver-version>2.23</influx-java-driver-version>
         <influx-client-java-driver-version>6.10.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.2</ivy-version>
         <jackson-jq-version>1.0.0-preview.20230409</jackson-jq-version>
-        <jackson2-version>2.15.2</jackson2-version>
+        <jackson2-version>2.15.3</jackson2-version>
         <jackrabbit-version>2.21.18</jackrabbit-version>
         <jasminb-jsonapi-version>0.12</jasminb-jsonapi-version>
         <jandex-version>3.1.2</jandex-version>
@@ -273,7 +273,7 @@
         <jolokia-version>1.7.2</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
-        <jooq-version>3.18.5</jooq-version>
+        <jooq-version>3.18.7</jooq-version>
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.21</johnzon-version>
         <jslt-version>0.1.14</jslt-version>
@@ -334,9 +334,9 @@
         <maven-surefire-report-plugin-version>3.1.2</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
-        <metrics-version>4.2.19</metrics-version>
-        <micrometer-version>1.11.3</micrometer-version>
-        <micrometer-tracing-version>1.1.4</micrometer-tracing-version>
+        <metrics-version>4.2.21</metrics-version>
+        <micrometer-version>1.11.5</micrometer-version>
+        <micrometer-tracing-version>1.1.6</micrometer-tracing-version>
         <microprofile-config-version>3.0.3</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <mina-version>2.2.3</mina-version>
@@ -426,9 +426,9 @@
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.0.3</spring-batch-version>
         <spring-data-redis-version>3.1.2</spring-data-redis-version>
-        <spring-ldap-version>3.1.1</spring-ldap-version>
+        <spring-ldap-version>3.1.2</spring-ldap-version>
         <spring-vault-core-version>3.0.4</spring-vault-core-version>
-        <spring-version>6.0.11</spring-version>
+        <spring-version>6.0.13</spring-version>
         <spring-rabbitmq-version>3.0.7</spring-rabbitmq-version>
         <spring-security-version>6.1.5</spring-security-version>
         <spring-ws-version>4.0.6</spring-ws-version>
