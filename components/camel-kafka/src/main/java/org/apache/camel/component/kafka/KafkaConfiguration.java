@@ -1438,7 +1438,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * immediately regardless of this setting, however if we have fewer than this many bytes accumulated for this
      * partition we will 'linger' for the specified time waiting for more records to show up. This setting defaults to 0
      * (i.e. no delay). Setting linger.ms=5, for example, would have the effect of reducing the number of requests sent
-     * but would add up to 5ms of latency to records sent in the absense of load.
+     * but would add up to 5ms of latency to records sent in the absence of load.
      */
     public void setLingerMs(Integer lingerMs) {
         this.lingerMs = lingerMs;
