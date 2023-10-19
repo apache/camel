@@ -62,6 +62,7 @@ public class RestRootHandler implements HttpHandler {
      */
     public void addConsumer(UndertowConsumer consumer) {
         consumers.add(consumer);
+        RestConsumerContextPathMatcher.register(consumer.getEndpoint().getHttpURI().getPath());
     }
 
     /**
@@ -69,6 +70,7 @@ public class RestRootHandler implements HttpHandler {
      */
     public void removeConsumer(UndertowConsumer consumer) {
         consumers.remove(consumer);
+        RestConsumerContextPathMatcher.unRegister(consumer.getEndpoint().getHttpURI().getPath());
     }
 
     /**

@@ -79,4 +79,50 @@ public class RestConsumerContextPathMatcherTest {
                 "/camel/a/b/3", consumerPaths);
         assertEquals(path.getConsumerPath(), "/camel/a/b/{c}");
     }
+
+    @Test
+    public void testRestConsumerContextPathMatcherWithWildcard() {
+        List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = new ArrayList<>();
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/myapp/info"));
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/myapp/{id}"));
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/myapp/order/*"));
+
+        RestConsumerContextPathMatcher.register("/camel/myapp/order/*");
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path1 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/myapp/info", consumerPaths);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path2 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/myapp/1", consumerPaths);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path3 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/myapp/order/foo", consumerPaths);
+
+        assertEquals(path1.getConsumerPath(), "/camel/myapp/info");
+        assertEquals(path2.getConsumerPath(), "/camel/myapp/{id}");
+        assertEquals(path3.getConsumerPath(), "/camel/myapp/order/*");
+    }
+
+    @Test
+    public void testRestConsumerContextPathMatcherOrder() {
+        List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = new ArrayList<>();
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/*"));
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/foo"));
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/foo/{id}"));
+
+        RestConsumerContextPathMatcher.register("/camel/*");
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path1 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/foo", consumerPaths);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path2 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/foo/bar", consumerPaths);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path3 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/foo/bar/1", consumerPaths);
+
+        assertEquals(path1.getConsumerPath(), "/camel/foo");
+        assertEquals(path2.getConsumerPath(), "/camel/foo/{id}");
+        assertEquals(path3.getConsumerPath(), "/camel/*");
+    }
 }

@@ -87,6 +87,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     @Override
     public void addConsumer(NettyHttpConsumer consumer) {
         consumers.add(new HttpServerChannelHandler(consumer));
+        RestConsumerContextPathMatcher.register(consumer.getConfiguration().getPath());
     }
 
     @Override
@@ -94,6 +95,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         for (HttpServerChannelHandler handler : consumers) {
             if (handler.getConsumer() == consumer) {
                 consumers.remove(handler);
+                RestConsumerContextPathMatcher.unRegister(consumer.getConfiguration().getPath());
             }
         }
     }
