@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -2112,6 +2111,10 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
+    /**
+     * Internal API to reset build time. Used by quarkus.
+     */
+    @SuppressWarnings("unused")
     protected void resetBuildTime() {
         // needed by camel-quarkus
         buildTaken = 0;
@@ -3286,15 +3289,6 @@ public abstract class AbstractCamelContext extends BaseService
         if (newDebugger != null) {
             setDebugger(newDebugger);
         }
-    }
-
-    private static String getJvmUptime() {
-        try {
-            return TimeUtils.printDuration(ManagementFactory.getRuntimeMXBean().getUptime());
-        } catch (Exception e) {
-            // ignore
-        }
-        return null;
     }
 
     @Override
