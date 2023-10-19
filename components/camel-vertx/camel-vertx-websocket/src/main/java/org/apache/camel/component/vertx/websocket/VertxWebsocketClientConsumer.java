@@ -57,30 +57,29 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
 
                 Vertx vertx = getEndpoint().getVertx();
                 vertx.setPeriodic(configuration.getReconnectInitialDelay(), configuration.getReconnectInterval(), timerId -> {
-                    vertx.executeBlocking(promise -> {
-                        try {
-                            configureWebSocketHandlers(getEndpoint().getWebSocket());
-                            vertx.cancelTimer(timerId);
-                            promise.complete();
-                        } catch (Exception e) {
-                            promise.fail(e);
-                        }
-                    }, false, result -> {
-                        if (result.failed()) {
-                            Throwable cause = result.cause();
-                            if (cause != null) {
-                                LOG.debug("WebSocket reconnect to {} failed due to {}", webSocket.remoteAddress(), cause);
-                            }
+                    vertx.executeBlocking(() -> {
+                        configureWebSocketHandlers(getEndpoint().getWebSocket());
+                        vertx.cancelTimer(timerId);
+                        return null;
+                    }, false)
+                            .onComplete(result -> {
+                                if (result.failed()) {
+                                    Throwable cause = result.cause();
+                                    if (cause != null) {
+                                        LOG.debug("WebSocket reconnect to {} failed due to {}", webSocket.remoteAddress(),
+                                                cause);
+                                    }
 
-                            if (configuration.getMaxReconnectAttempts() > 0) {
-                                if (reconnectAttempts.incrementAndGet() == configuration.getMaxReconnectAttempts()) {
-                                    LOG.warn("Reconnect max attempts ({}) exhausted. Giving up trying to reconnect to {}",
-                                            configuration.getMaxReconnectAttempts(), webSocket.remoteAddress());
-                                    vertx.cancelTimer(timerId);
+                                    if (configuration.getMaxReconnectAttempts() > 0) {
+                                        if (reconnectAttempts.incrementAndGet() == configuration.getMaxReconnectAttempts()) {
+                                            LOG.warn(
+                                                    "Reconnect max attempts ({}) exhausted. Giving up trying to reconnect to {}",
+                                                    configuration.getMaxReconnectAttempts(), webSocket.remoteAddress());
+                                            vertx.cancelTimer(timerId);
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                    });
+                            });
                 });
             }
         });
@@ -105,21 +104,12 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
 
     protected void processExchange(Exchange exchange) {
         Vertx vertx = getEndpoint().getVertx();
-        vertx.executeBlocking(
-                promise -> {
-                    try {
-                        createUoW(exchange);
-                    } catch (Exception e) {
-                        promise.fail(e);
-                        return;
-                    }
-
-                    getAsyncProcessor().process(exchange, c -> {
-                        promise.complete();
-                    });
-                },
-                false,
-                result -> {
+        vertx.executeBlocking(() -> {
+            createUoW(exchange);
+            getProcessor().process(exchange);
+            return null;
+        }, false)
+                .onComplete(result -> {
                     try {
                         if (result.failed()) {
                             Throwable cause = result.cause();

@@ -186,21 +186,13 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             exchange.getMessage().setHeader(Exchange.HTTP_HOST, httpHeaders.get("Host"));
             exchange.getMessage().removeHeader("Proxy-Connection");
         }
-        vertx.executeBlocking(
-                promise -> {
-                    try {
-                        createUoW(exchange);
-                    } catch (Exception e) {
-                        promise.fail(e);
-                        return;
-                    }
 
-                    getAsyncProcessor().process(exchange, c -> {
-                        promise.complete();
-                    });
-                },
-                false,
-                result -> {
+        vertx.executeBlocking(() -> {
+            createUoW(exchange);
+            getProcessor().process(exchange);
+            return null;
+        }, false)
+                .onComplete(result -> {
                     Throwable failure = null;
                     try {
                         if (result.succeeded()) {
