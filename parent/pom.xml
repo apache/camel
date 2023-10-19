@@ -2699,7 +2699,7 @@
             </dependency>
             <dependency>
                 <groupId>org.xmlunit</groupId>
-                <artifactId>xmlunit-core</artifactId>
+                <artifactId>xmlunit-assertj3</artifactId>
                 <version>${xmlunit-version}</version>
             </dependency>
 

@@ -38,8 +38,7 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xmlunit.builder.DiffBuilder;
-import org.xmlunit.diff.Diff;
+import org.xmlunit.assertj3.XmlAssert;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -162,10 +161,7 @@ public class TestHelper {
         assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
 
         // verify that the decrypted message matches what was sent
-        Diff xmlDiff = DiffBuilder.compare(fragment).withTest(inDoc).checkForIdentical().build();
-
-        assertFalse(xmlDiff.hasDifferences(),
-                "The decrypted document does not match the control document:\n" + xmlDiff.toString());
+        XmlAssert.assertThat(fragment).and(inDoc).areIdentical();
     }
 
     protected void testDecryption(CamelContext context) throws Exception {
