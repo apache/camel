@@ -23,6 +23,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.camel.spi.annotations.ServiceFactory;
+
 /**
  * Annotation to configure a data type transformer with either specifying its name or from/to data types.
  * <p/>
@@ -32,6 +34,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ ElementType.TYPE })
+@ServiceFactory("transformer")
 public @interface DataTypeTransformer {
 
     /**
