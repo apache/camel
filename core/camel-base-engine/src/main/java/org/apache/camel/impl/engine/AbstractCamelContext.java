@@ -195,7 +195,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
 
-    protected final InternalServiceManager internalServiceManager;
+    private final InternalServiceManager internalServiceManager;
 
     private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
@@ -219,7 +219,7 @@ public abstract class AbstractCamelContext extends BaseService
     private String managementName;
     private ClassLoader applicationContextClassLoader;
     private boolean autoCreateComponents = true;
-    private volatile VaultConfiguration vaultConfiguration = new VaultConfiguration();
+    private VaultConfiguration vaultConfiguration = new VaultConfiguration();
 
     private final List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     // special flags to control the first startup which can are special
