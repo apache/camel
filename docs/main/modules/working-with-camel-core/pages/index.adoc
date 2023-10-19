@@ -1,12 +1,5 @@
 = Working with Camel Core
 
-== Walk-troughs
-
-We have prepared these two guides to explain in greater detail a few of the concepts presented in the xref:getting-started:index.adoc[Getting Started With Camel] Guide.
-
-1. xref:manual::walk-through-an-example.adoc[Example Walk-through 1].
-2. xref:manual::walk-through-another-example.adoc[Example Walk-through 2].
-
 == Routes
 
 In Apache Camel, a _route_ is a set of processing steps that are applied to a message as it travels from a source to a destination. A route typically consists of a series of processing steps that are connected in a linear sequence.
