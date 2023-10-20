@@ -23,3 +23,10 @@ The `org.apache.camel.service.lra.LRAClient` can now access `Exchange` to retrie
 to support the transport of `Exchange`.
 
 As result of interface changes also the known implementation classes and usages have been adopted.
+
+=== camel-ignite
+
+The Apache Ignite project (v2.15) is not yet Java 21 compatible and therefore `camel-ignite` is not
+expected to function correctly if using Java 21.
+
+A new release of Apache Ignite is expected that will start to support Java 21.
