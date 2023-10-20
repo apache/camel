@@ -67,8 +67,8 @@ import org.jboss.jandex.DotName;
 public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     @Parameter(required = true)
     private File outputFile;
-    @Parameter(defaultValue = "true")
-    private boolean kebabCase = true;
+    @Parameter(defaultValue = "false")
+    private boolean kebabCase;
     @Parameter(defaultValue = "true")
     private boolean additionalProperties = true;
 

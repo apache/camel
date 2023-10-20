@@ -277,7 +277,6 @@
                             <goal>generate-yaml-schema</goal>
                         </goals>
                         <configuration>
-                            <kebabCase>false</kebabCase>
                             <additionalProperties>false</additionalProperties>
                             <outputFile>src/generated/resources/schema/camelYamlDsl.json</outputFile>
                         </configuration>
