@@ -11870,7 +11870,8 @@ public class StaticEndpointBuilders {
      * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
-     * The base path
+     * The base path, can use &#42; as path suffix to support wildcard HTTP
+     * route matching.
      * 
      * Path parameter: uriTemplate
      * The uri template
@@ -11898,7 +11899,8 @@ public class StaticEndpointBuilders {
      * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
-     * The base path
+     * The base path, can use &#42; as path suffix to support wildcard HTTP
+     * route matching.
      * 
      * Path parameter: uriTemplate
      * The uri template
