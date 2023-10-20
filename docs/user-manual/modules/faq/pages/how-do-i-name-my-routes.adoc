@@ -17,3 +17,16 @@ And in Spring XML using the `id` attribute:
     <to uri="mock:bar"/>
 </route>
 ----
+
+Same example for YAML using the `id` attribute:
+
+[source,yaml]
+----
+- route:
+    id: myRoute
+    from:
+        uri: direct:start
+        steps:        
+        - to:
+            uri: mock:bar
+----
