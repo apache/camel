@@ -265,7 +265,7 @@
     <icu4j-version>72.1</icu4j-version>
     <ignite-version>2.12.0</ignite-version>
     <impsort-maven-plugin-version>1.8.0</impsort-maven-plugin-version>
-    <infinispan-version>14.0.4.Final</infinispan-version>
+    <infinispan-version>14.0.19.Final</infinispan-version>
     <influx-client-java-driver-version>6.7.0</influx-client-java-driver-version>
     <influx-guava-version>20.0</influx-guava-version>
     <influx-java-driver-version>2.22</influx-java-driver-version>
@@ -408,9 +408,9 @@
     <maven-version>3.8.6</maven-version>
     <maven-wagon-version>3.5.2</maven-wagon-version>
     <maven-war-plugin-version>3.3.2</maven-war-plugin-version>
-    <metrics-version>4.2.19</metrics-version>
-    <micrometer-tracing-version>1.0.10</micrometer-tracing-version>
-    <micrometer-version>1.10.11</micrometer-version>
+    <metrics-version>4.2.21</metrics-version>
+    <micrometer-tracing-version>1.0.11</micrometer-tracing-version>
+    <micrometer-version>1.10.12</micrometer-version>
     <microprofile-config-version>2.0.1</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
@@ -522,7 +522,7 @@
     <spring-integration-version>5.5.19</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
     <spring-rabbitmq-version>2.4.8</spring-rabbitmq-version>
-    <spring-security-version>5.8.7</spring-security-version>
+    <spring-security-version>5.8.8</spring-security-version>
     <spring-vault-core-version>2.3.3</spring-vault-core-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
