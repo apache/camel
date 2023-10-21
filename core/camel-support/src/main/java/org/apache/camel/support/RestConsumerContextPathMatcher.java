@@ -238,6 +238,7 @@ public final class RestConsumerContextPathMatcher {
 
     /**
      * Pre-compiled consumer path for wildcard match
+     *
      * @param consumerPath a consumer path
      */
     public static void register(String consumerPath) {
@@ -257,6 +258,7 @@ public final class RestConsumerContextPathMatcher {
 
     /**
      * if the rest consumer is removed, we also remove pattern cache.
+     *
      * @param consumerPath a consumer path
      */
     public static void unRegister(String consumerPath) {
@@ -300,9 +302,9 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Matches the given request path with the configured consumer path
      *
-     * @param  requestPath  the request path
+     * @param  requestPath   the request path
      * @param  isUriTemplate the consumer path which may use { } tokens
-     * @return              <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @return               <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     private static boolean matchRestPath(String requestPath, String consumerPath, boolean isUriTemplate) {
         // deal with null parameters
