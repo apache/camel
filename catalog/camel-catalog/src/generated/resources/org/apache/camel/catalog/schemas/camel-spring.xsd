@@ -93,9 +93,7 @@ Spring specific DefaultCamelBeanPostProcessor which uses Spring BeanPostProcesso
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A grouping POJO (and related XML root element) that's historically associated with entire application (or its
-distinguished fragment). This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema
-and MX parser methods.
+Container for beans, routes, and more.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -141,7 +139,7 @@ Deprecated: null
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-If beans reminds Spring application too much, we can use camel.
+Root tag for Camel application, that can contain beans, routes, and more.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2299,7 +2297,7 @@ property.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Property key.
+The name of the property.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -2308,7 +2306,7 @@ Property key.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Property value.
+The property value.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -13573,13 +13571,20 @@ Uses a custom thread pool.
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[
-Component scanning definition(s). But unlike package/packageScan/contextScan, we're not scanning only for
-org.apache.camel.builder.RouteBuilder.
+Component scanning that can auto-discover Camel route builders from the classpath.
 ]]>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:registryBeanDefinition"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:registryBeanDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+List of bean.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:restConfiguration"/>

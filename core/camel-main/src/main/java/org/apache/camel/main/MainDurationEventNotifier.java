@@ -53,7 +53,6 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         }
     }
 
-
     private final CamelContext camelContext;
     private final int maxMessages;
     private final long maxIdleSeconds;
@@ -64,7 +63,6 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     private final LongAdder doneMessages;
     private volatile StopWatch watch;
     private volatile ScheduledExecutorService idleExecutorService;
-
 
     public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, long maxIdleSeconds,
                                      MainShutdownStrategy shutdownStrategy, boolean stopCamelContext,

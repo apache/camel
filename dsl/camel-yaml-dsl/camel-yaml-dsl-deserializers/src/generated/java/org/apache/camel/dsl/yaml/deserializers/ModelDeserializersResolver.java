@@ -22,8 +22,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "api-key": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "apiKey": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "org.apache.camel.model.rest.ApiKeyDefinition": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
-            case "camel": return new ModelDeserializers.ApplicationDefinitionDeserializer();
-            case "org.apache.camel.model.app.ApplicationDefinition": return new ModelDeserializers.ApplicationDefinitionDeserializer();
             case "avro": return new ModelDeserializers.AvroDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.AvroDataFormat": return new ModelDeserializers.AvroDataFormatDeserializer();
             case "barcode": return new ModelDeserializers.BarcodeDataFormatDeserializer();
@@ -41,8 +39,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.BeanDefinition": return new ModelDeserializers.BeanDefinitionDeserializer();
             case "org.apache.camel.model.app.BeanPropertiesDefinition": return new ModelDeserializers.BeanPropertiesDefinitionDeserializer();
             case "org.apache.camel.model.app.BeanPropertyDefinition": return new ModelDeserializers.BeanPropertyDefinitionDeserializer();
-            case "beans": return new ModelDeserializers.BeansDefinitionDeserializer();
-            case "org.apache.camel.model.app.BeansDefinition": return new ModelDeserializers.BeansDefinitionDeserializer();
             case "bearer-token": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "bearerToken": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "org.apache.camel.model.rest.BearerTokenDefinition": return new ModelDeserializers.BearerTokenDefinitionDeserializer();

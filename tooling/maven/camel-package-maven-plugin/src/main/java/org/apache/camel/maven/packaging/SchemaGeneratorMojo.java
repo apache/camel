@@ -81,6 +81,15 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     public static final DotName XML_ROOT_ELEMENT = DotName.createSimple(XmlRootElement.class.getName());
     public static final DotName XML_TYPE = DotName.createSimple(XmlType.class.getName());
 
+    // special for app package
+    private static final DotName APP_PACKAGE = DotName.createSimple("org.apache.camel.model.app");
+    private static final Map<String, String> APP_NAME_MAPPINGS = Map.of(
+            "BeanConstructorDefinition", "constructor",
+            "BeanConstructorsDefinition", "constructors",
+            "BeanPropertiesDefinition", "properties",
+            "BeanPropertyDefinition", "property",
+            "RegistryBeanDefinition", "bean");
+
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
     private static final String[] ONE_OF_LANGUAGES = new String[] {
@@ -150,12 +159,27 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 .filter(cpa -> cpa.target().asClass().name().toString().startsWith("org.apache.camel.model."))
                 .map(cpa -> cpa.target().asClass())
                 .collect(Collectors.toSet());
+
         if (!coreElements.isEmpty()) {
             getLog().info(String.format("Found %d core elements", coreElements.size()));
         }
 
+        // add special for bean DSL in app package
+        Set<ClassInfo> appElements = index.getClassesInPackage(APP_PACKAGE).stream()
+                .filter(cpa -> cpa.hasAnnotation(XML_TYPE))
+                .filter(cpa -> cpa.kind() == Kind.CLASS)
+                .collect(Collectors.toSet());
+
+        if (!coreElements.isEmpty()) {
+            getLog().info(String.format("Found %d app elements", appElements.size()));
+        }
+
+        Set<ClassInfo> classes = new TreeSet<>(Comparator.comparing(ClassInfo::name));
+        classes.addAll(coreElements);
+        classes.addAll(appElements);
+
         // we want them to be sorted
-        for (ClassInfo element : coreElements) {
+        for (ClassInfo element : classes) {
             processModelClass(element);
         }
 
@@ -189,10 +213,26 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
 
-        AnnotationValue annotationValue = element.classAnnotation(XML_ROOT_ELEMENT).value("name");
-        String aName = annotationValue != null ? annotationValue.asString() : null;
+        String aName = null;
+        if (element.hasAnnotation(XML_ROOT_ELEMENT)) {
+            AnnotationValue av = element.declaredAnnotation(XML_ROOT_ELEMENT).value("name");
+            aName = av != null ? av.asString() : null;
+        }
         if (Strings.isNullOrEmpty(aName) || "##default".equals(aName)) {
-            aName = element.classAnnotation(XML_TYPE).value("name").asString();
+            if (element.hasAnnotation(XML_TYPE)) {
+                AnnotationValue av = element.declaredAnnotation(XML_TYPE).value("name");
+                aName = av != null ? av.asString() : null;
+            }
+        }
+        if (aName == null) {
+            // special for app package
+            String sn = element.name().withoutPackagePrefix();
+            aName = APP_NAME_MAPPINGS.get(sn);
+        }
+        if (aName == null) {
+            getLog().warn(
+                    "Class is not annotated with @XmlRootElement or @XmlType. Skipping class: " + element.name().toString());
+            return;
         }
         final String name = aName;
 
@@ -238,7 +278,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 resourcesOutputDir.toPath(),
                 packageName.replace('.', '/') + "/" + fileName,
                 json);
-
     }
 
     private IndexView getIndex() {

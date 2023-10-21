@@ -1550,6 +1550,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -1600,6 +1601,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -3696,6 +3698,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -3705,6 +3708,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -3742,6 +3746,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -3761,6 +3766,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -3964,6 +3970,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -3978,6 +3985,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -3992,6 +4000,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -4001,6 +4010,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -4010,6 +4020,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -4019,6 +4030,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -4028,6 +4040,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -4049,6 +4062,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -4058,6 +4072,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)
@@ -4067,6 +4082,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Deprecated API.
+     *
      * @deprecated Use methods from the {@link ExtendedCamelContext}
      */
     @Deprecated(since = "4.2.0", forRemoval = true)

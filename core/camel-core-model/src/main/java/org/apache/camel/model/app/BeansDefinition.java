@@ -38,13 +38,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.ExternalSchemaElement;
 
 /**
- * <p>
- * A grouping POJO (and related XML root element) that's historically associated with "entire application" (or its
- * distinguished fragment).
- * </p>
- * <p>
- * This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods.
- * </p>
+ * Container for beans, routes, and more.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "beans")
@@ -63,10 +57,8 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeansDefinition {
 
-    /**
-     * Component scanning definition(s). But unlike package/packageScan/contextScan, we're not scanning only for
-     * org.apache.camel.builder.RouteBuilder.
-     */
+    // This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods
+
     @XmlElement(name = "component-scan")
     private List<ComponentScanDefinition> componentScanning = new ArrayList<>();
 
@@ -113,6 +105,9 @@ public class BeansDefinition {
         return componentScanning;
     }
 
+    /**
+     * Component scanning that can auto-discover Camel route builders from the classpath.
+     */
     public void setComponentScanning(List<ComponentScanDefinition> componentScanning) {
         this.componentScanning = componentScanning;
     }
@@ -121,6 +116,9 @@ public class BeansDefinition {
         return beans;
     }
 
+    /**
+     * List of bean
+     */
     public void setBeans(List<RegistryBeanDefinition> beans) {
         this.beans = beans;
     }
@@ -129,6 +127,9 @@ public class BeansDefinition {
         return springBeans;
     }
 
+    /**
+     * Spring XML beans
+     */
     public void setSpringBeans(List<Element> springBeans) {
         this.springBeans = springBeans;
     }
@@ -137,6 +138,9 @@ public class BeansDefinition {
         return blueprintBeans;
     }
 
+    /**
+     * Blueprint XML beans
+     */
     public void setBlueprintBeans(List<Element> blueprintBeans) {
         this.blueprintBeans = blueprintBeans;
     }
@@ -145,6 +149,9 @@ public class BeansDefinition {
         return restConfigurations;
     }
 
+    /**
+     * Camel Rest DSL Configuration
+     */
     public void setRestConfigurations(List<RestConfigurationDefinition> restConfigs) {
         this.restConfigurations = restConfigs;
     }
@@ -153,6 +160,9 @@ public class BeansDefinition {
         return rests;
     }
 
+    /**
+     * Camel Rest DSL
+     */
     public void setRests(List<RestDefinition> rests) {
         this.rests = rests;
     }
@@ -161,6 +171,9 @@ public class BeansDefinition {
         return routeConfigurations;
     }
 
+    /**
+     * Camel route configurations
+     */
     public void setRouteConfigurations(List<RouteConfigurationDefinition> routeConfigurations) {
         this.routeConfigurations = routeConfigurations;
     }
@@ -169,6 +182,9 @@ public class BeansDefinition {
         return routeTemplates;
     }
 
+    /**
+     * Camel route templates
+     */
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
     }
@@ -177,6 +193,9 @@ public class BeansDefinition {
         return templatedRoutes;
     }
 
+    /**
+     * Camel routes to be created from template
+     */
     public void setTemplatedRoutes(List<TemplatedRouteDefinition> templatedRoutes) {
         this.templatedRoutes = templatedRoutes;
     }
@@ -185,6 +204,9 @@ public class BeansDefinition {
         return routes;
     }
 
+    /**
+     * Camel routes
+     */
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
     }

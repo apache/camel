@@ -32,7 +32,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
     protected void doExecute() throws MojoFailureException, MojoExecutionException {
         // jandex
         invoke(PackageJandexMojo.class);
-        // generate-schema
+        // generate model json schema
         invoke(SchemaGeneratorMojo.class);
         // generate-type-converter-loader
         invoke(TypeConverterLoaderGeneratorMojo.class);

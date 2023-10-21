@@ -21,6 +21,12 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.spi.Metadata;
+
+/**
+ * Bean constructor argument
+ */
+@Metadata(label = "configuration")
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanConstructorDefinition {
@@ -35,7 +41,7 @@ public class BeanConstructorDefinition {
     }
 
     /**
-     * Constructor index
+     * Constructor argument index. The first argument must use index 0.
      */
     public void setIndex(Integer index) {
         this.index = index;
