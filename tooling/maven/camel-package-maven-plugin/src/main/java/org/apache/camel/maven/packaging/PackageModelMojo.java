@@ -68,6 +68,8 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
         try (Stream<Path> jsonFiles
                 = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model"))) {
             models = jsonFiles
+                    // special for app should not be in the summary
+                    .filter(p -> !p.getParent().getFileName().toString().endsWith("app"))
                     .map(p -> p.getFileName().toString())
                     // strip out .json from the name
                     .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))

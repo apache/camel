@@ -121,6 +121,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File modelsOutDir;
 
     /**
+     * The output directory for models-app catalog
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/models-app")
+    protected File modelsAppOutDir;
+
+    /**
      * The output directory for XML schemas catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/schemas")
@@ -352,6 +358,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
 
             executeModel();
+            executeModelApps();
             Set<String> components = executeComponents();
             Set<String> dataformats = executeDataFormats();
             Set<String> languages = executeLanguages();
@@ -381,8 +388,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // find all json files in camel-core
         Path coreDirTarget = modelDir.resolve("target/classes/org/apache/camel/model");
+        Path coreModelAppDirTarget = modelDir.resolve("target/classes/org/apache/camel/model/app");
         jsonFiles = allJsonFiles.stream()
                 .filter(p -> p.startsWith(coreDirTarget))
+                .filter(p -> !p.startsWith(coreModelAppDirTarget))
                 .collect(Collectors.toCollection(TreeSet::new));
         getLog().info("Found " + jsonFiles.size() + " model json files");
 
@@ -430,6 +439,39 @@ public class PrepareCatalogMojo extends AbstractMojo {
         FileUtil.updateFile(all, String.join("\n", modelNames) + "\n");
 
         printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
+    }
+
+    protected void executeModelApps() throws Exception {
+        Path modelDir = this.modelDir.toPath();
+        Path modelsOutDir = this.modelsAppOutDir.toPath();
+
+        getLog().info("================================================================================");
+        getLog().info("Copying all Camel model-app json descriptors");
+
+        // lets use sorted set/maps
+        Set<Path> jsonFiles;
+
+        // find all json files in camel-core
+        Path coreDirTarget = modelDir.resolve("target/classes/org/apache/camel/model/app");
+        jsonFiles = allJsonFiles.stream()
+                .filter(p -> p.startsWith(coreDirTarget))
+                .collect(Collectors.toCollection(TreeSet::new));
+        getLog().info("Found " + jsonFiles.size() + " model-app json files");
+
+        // make sure to create out dir
+        Files.createDirectories(modelsOutDir);
+
+        // Copy all descriptors
+        Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> modelsOutDir.resolve(p.getFileName()));
+        try (Stream<Path> stream = list(modelsOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
+        newJsons.forEach(this::copy);
+
+        Path all = modelsOutDir.resolve("../models-app.properties");
+        Set<String> modelNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        FileUtil.updateFile(all, String.join("\n", modelNames) + "\n");
     }
 
     protected Set<String> executeComponents() throws Exception {
