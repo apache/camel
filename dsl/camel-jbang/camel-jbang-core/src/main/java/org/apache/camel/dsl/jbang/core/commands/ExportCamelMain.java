@@ -255,7 +255,9 @@ class ExportCamelMain extends Export {
             if (port == -1) {
                 port = 8080;
             }
-            sb2.append(context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port)));
+            context2 = context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port));
+            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings));
+            sb2.append(context2);
         }
 
         context = context.replace("{{ .CamelKubernetesProperties }}", sb1.toString());

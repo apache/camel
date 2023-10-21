@@ -681,6 +681,17 @@ abstract class ExportBaseCommand extends CamelCommand {
         return -1;
     }
 
+    protected static String jibMavenPluginVersion(File settings) {
+        try {
+            List<String> lines = Files.readAllLines(settings.toPath());
+            return lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.0");
+        } catch (Exception e) {
+            // ignore
+        }
+        return "3.4.0";
+    }
+
     protected static void safeCopy(File source, File target, boolean override) throws Exception {
         if (!source.exists()) {
             return;

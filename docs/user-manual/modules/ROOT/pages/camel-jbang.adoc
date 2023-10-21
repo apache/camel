@@ -2382,6 +2382,8 @@ jkube.enricher.jkube-service.port=8080
 jkube.recreate=true
 ----
 
+TIP: You can specify the jib-maven-plugin version using the `camel.jbang.jib-maven-plugin-version` property in `application.properties`.
+
 You can find more details in the https://eclipse.dev/jkube/docs/[Eclipse JKube] and https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin[Jib] documentations.
 
 ===== Resource fragments
@@ -2545,6 +2547,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.ignoreLoadingError`
 | Whether to ignore route loading and compilation errors (use this with care!)
+
+|`camel.jbang.jib-maven-plugin-version`
+| Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options).
 
 |===
 
