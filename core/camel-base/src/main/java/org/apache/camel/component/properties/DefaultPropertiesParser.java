@@ -446,6 +446,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 }
             }
 
+            if (value == null) {
+                // custom lookup in spring boot or other runtimes
+                value = customLookup(key);
+                if (value != null) {
+                    log.debug("Found property (custom lookup): {} with value: {} to be used.", key, value);
+                }
+            }
+
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
@@ -461,7 +469,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 }
             }
 
-            // parse property may return null (such as when using spring boot and route templates)
+            // parse property may return null (such as when using route templates)
             String answer = parseProperty(key, value, properties);
             if (answer == null) {
                 answer = value;

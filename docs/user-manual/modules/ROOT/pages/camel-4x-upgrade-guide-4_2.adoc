@@ -38,3 +38,9 @@ The Apache Ignite project (v2.15) is not yet Java 21 compatible and therefore `c
 expected to function correctly if using Java 21.
 
 A new release of Apache Ignite is expected that will start to support Java 21.
+
+=== camel-spring-boot
+
+The `initialProperties` and `overrideProperties` on Camel `PropertiesComponent` will now
+take precedence over Spring Boot properties. This can be used for testing purpose,
+to allow overriding properties when using `CamelTestSupport` for unit testing.
