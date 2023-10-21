@@ -23,6 +23,12 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.spi.Metadata;
+
+/**
+ * Bean constructor arguments
+ */
+@Metadata(label = "configuration")
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanConstructorsDefinition {
@@ -34,6 +40,9 @@ public class BeanConstructorsDefinition {
         return constructors;
     }
 
+    /**
+     * Constructor arguments
+     */
     public void setConstructors(List<BeanConstructorDefinition> constructors) {
         this.constructors = constructors;
     }

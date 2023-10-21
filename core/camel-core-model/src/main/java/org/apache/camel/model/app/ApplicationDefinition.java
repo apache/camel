@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * If "beans" reminds Spring application too much, we can use "camel".
+ * Root tag for Camel application, that can contain beans, routes, and more.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "camel")
