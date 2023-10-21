@@ -6,6 +6,14 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.1 to 4.2
 
+=== camel-file
+
+The `readLock=changed` with using `readLockMinAge` has been restored to same behaviour as 3.x.
+
+For example using `readLockMinAge=5s` would pickup files that are older than 5 seconds from startup time.
+If you have many existing files on startup that are old, then Camel will now again be fast,
+and pickup these files immediately.
+
 === camel-kafka
 
 The consumer will now pre validate hostname:port and DNS resolution on startup, and fail-fast

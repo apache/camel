@@ -511,6 +511,17 @@ If the route or consumer is suspended then http status 503 is now returned inste
 The component was updated to use Twitter4j version 4.1.2, which https://twitter4j.org/2022/10/21/264[has moved the packages] used by a few of its classes. If accessing certain twitter-related data, such as the Twit status, you need to update the packages used from `twitter4j.Status` to `twitter4j.v1.Status`.
 
 
+== Upgrading Camel 4.0.1 to 4.0.2
+
+=== camel-file
+
+The `readLock=changed` with using `readLockMinAge` has been restored to same behaviour as 3.x.
+
+For example using `readLockMinAge=5s` would pickup files that are older than 5 seconds from startup time.
+If you have many existing files on startup that are old, then Camel will now again be fast,
+and pickup these files immediately.
+
+
 == Upgrading Camel 4.0.0 to 4.0.1
 
 === camel-aws2-sns
