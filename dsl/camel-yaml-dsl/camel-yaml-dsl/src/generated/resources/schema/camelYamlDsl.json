@@ -3783,12 +3783,12 @@
           "key" : {
             "type" : "string",
             "title" : "Key",
-            "description" : "Property key"
+            "description" : "The name of the property"
           },
           "value" : {
             "type" : "string",
             "title" : "Value",
-            "description" : "Property value"
+            "description" : "The property value."
           }
         },
         "required" : [ "key", "value" ]
@@ -7832,69 +7832,6 @@
         },
         "required" : [ "uri" ]
       },
-      "org.apache.camel.model.app.ApplicationDefinition" : {
-        "title" : "Camel",
-        "description" : "If beans reminds Spring application too much, we can use camel.",
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "bean" : {
-            "type" : "array",
-            "title" : "Bean",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
-            }
-          },
-          "componentScan" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.app.ComponentScanDefinition"
-            }
-          },
-          "rest" : {
-            "type" : "array",
-            "title" : "Rest",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
-            }
-          },
-          "restConfiguration" : {
-            "type" : "array",
-            "title" : "Rest Configuration",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestConfigurationDefinition"
-            }
-          },
-          "route" : {
-            "type" : "array",
-            "title" : "Route",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-            }
-          },
-          "routeConfiguration" : {
-            "type" : "array",
-            "title" : "Route Configuration",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteConfigurationDefinition"
-            }
-          },
-          "routeTemplate" : {
-            "type" : "array",
-            "title" : "Route Template",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
-            }
-          },
-          "templatedRoute" : {
-            "type" : "array",
-            "title" : "Templated Route",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
-            }
-          }
-        }
-      },
       "org.apache.camel.model.app.BeanConstructorDefinition" : {
         "type" : "object",
         "additionalProperties" : false,
@@ -7944,69 +7881,6 @@
           },
           "value" : {
             "type" : "string"
-          }
-        }
-      },
-      "org.apache.camel.model.app.BeansDefinition" : {
-        "title" : "Beans",
-        "description" : "A grouping POJO (and related XML root element) that's historically associated with entire application (or its distinguished fragment). This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods.",
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "bean" : {
-            "type" : "array",
-            "title" : "Bean",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
-            }
-          },
-          "componentScan" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.app.ComponentScanDefinition"
-            }
-          },
-          "rest" : {
-            "type" : "array",
-            "title" : "Rest",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
-            }
-          },
-          "restConfiguration" : {
-            "type" : "array",
-            "title" : "Rest Configuration",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestConfigurationDefinition"
-            }
-          },
-          "route" : {
-            "type" : "array",
-            "title" : "Route",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-            }
-          },
-          "routeConfiguration" : {
-            "type" : "array",
-            "title" : "Route Configuration",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteConfigurationDefinition"
-            }
-          },
-          "routeTemplate" : {
-            "type" : "array",
-            "title" : "Route Template",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
-            }
-          },
-          "templatedRoute" : {
-            "type" : "array",
-            "title" : "Templated Route",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
-            }
           }
         }
       },

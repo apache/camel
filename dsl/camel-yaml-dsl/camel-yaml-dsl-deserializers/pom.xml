@@ -140,6 +140,8 @@
                                 <bannedDefinition>org.apache.camel.model.RestsDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.RouteConfigurationDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.RouteConfigurationsDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.app.BeansDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.app.ApplicationDefinition</bannedDefinition>
                             </bannedDefinitions>
                             <additionalDefinitions>
                                 <!-- saga -->
