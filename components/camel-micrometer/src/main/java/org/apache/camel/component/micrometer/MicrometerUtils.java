@@ -24,6 +24,7 @@ import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,6 @@ public final class MicrometerUtils {
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerUtils.class);
 
     private MicrometerUtils() {
-
     }
 
     public static Meter.Type getByName(String meterName) {
@@ -86,6 +86,18 @@ public final class MicrometerUtils {
 
     public static MeterRegistry createMeterRegistry() {
         return new SimpleMeterRegistry();
+    }
+
+    /**
+     * Converts the name to the legacy name
+     *
+     * @param  name the name
+     * @return      in legacy format (camelCase)
+     */
+    public static String legacyName(String name) {
+        // "camel.route.policy" -> "camelRoutePolicy"
+        name = name.replace('.', '-');
+        return StringHelper.dashToCamelCase(name);
     }
 
     private static MeterRegistry getMeterRegistryFromCamelRegistry(

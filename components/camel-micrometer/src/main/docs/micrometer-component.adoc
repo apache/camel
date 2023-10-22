@@ -96,6 +96,27 @@ Some Camel specific metrics are available out of the box.
 |camel.route.policy.long.task |gauge + summary |Route long task metric
 |=====================================================
 
+=== Using legacy metrics naming
+
+In Camel 3.20 or older, then the naming of metrics are using _camelCase_ style.
+However, since Camel 3.21 onwards, the naming is using micrometer convention style (see table above).
+
+To use the legacy naming, then you can use the `LEGACY` naming from the `xxxNamingStrategy` interfaces.
+
+For example:
+
+[source,java]
+----
+MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
+factory.setNamingStrategy(MicrometerRoutePolicyNamingStrategy.LEGACY);
+----
+
+The naming style can be configured on:
+
+- `MicrometerRoutePolicyFactory`
+- `MicrometerExchangeEventNotifier`
+- `MicrometerRouteEventNotifier`
+- `MicrometerMessageHistoryFactory`
 
 
 == Usage of producers

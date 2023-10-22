@@ -22,6 +22,7 @@ import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
+import org.apache.camel.component.micrometer.MicrometerUtils;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
@@ -36,9 +37,27 @@ public interface MicrometerMessageHistoryNamingStrategy {
 
     Predicate<Meter.Id> MESSAGE_HISTORIES
             = id -> MicrometerMessageHistoryService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
+
+    /**
+     * Default naming strategy that uses micrometer naming convention.
+     */
     MicrometerMessageHistoryNamingStrategy DEFAULT = (route, node) -> DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
 
+    /**
+     * Naming strategy that uses the classic/legacy naming style (camelCase)
+     */
+    MicrometerMessageHistoryNamingStrategy LEGACY = new MicrometerMessageHistoryNamingStrategy() {
+        @Override
+        public String getName(Route route, NamedNode node) {
+            return MicrometerUtils.legacyName(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME);
+        }
+    };
+
     String getName(Route route, NamedNode node);
+
+    default String formatName(String name) {
+        return name;
+    }
 
     default Tags getTags(Route route, NamedNode node) {
         return Tags.of(
