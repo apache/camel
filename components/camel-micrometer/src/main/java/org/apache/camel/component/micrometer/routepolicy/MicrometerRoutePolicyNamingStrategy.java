@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Route;
+import org.apache.camel.component.micrometer.MicrometerUtils;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.*;
 
@@ -32,32 +33,54 @@ public interface MicrometerRoutePolicyNamingStrategy {
     Predicate<Meter.Id> ROUTE_POLICIES
             = id -> MicrometerRoutePolicyService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
 
+    /**
+     * Default naming strategy that uses micrometer naming convention.
+     */
     MicrometerRoutePolicyNamingStrategy DEFAULT = route -> DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+
+    /**
+     * Naming strategy that uses the classic/legacy naming style (camelCase)
+     */
+    MicrometerRoutePolicyNamingStrategy LEGACY = new MicrometerRoutePolicyNamingStrategy() {
+        @Override
+        public String getName(Route route) {
+            return formatName(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME);
+        }
+
+        @Override
+        public String formatName(String name) {
+            return MicrometerUtils.legacyName(name);
+        }
+    };
 
     String getName(Route route);
 
+    default String formatName(String name) {
+        return name;
+    }
+
     default String getExchangesSucceededName(Route route) {
-        return DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
+        return formatName(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME);
     }
 
     default String getExchangesFailedName(Route route) {
-        return DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
+        return formatName(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME);
     }
 
     default String getExchangesTotalName(Route route) {
-        return DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
+        return formatName(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME);
     }
 
     default String getFailuresHandledName(Route route) {
-        return DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME;
+        return formatName(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME);
     }
 
     default String getExternalRedeliveriesName(Route route) {
-        return DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME;
+        return formatName(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME);
     }
 
     default String getLongTaskName(Route route) {
-        return DEFAULT_CAMEL_ROUTE_POLICY_LONGMETER_NAME;
+        return formatName(DEFAULT_CAMEL_ROUTE_POLICY_LONGMETER_NAME);
     }
 
     default Tags getTags(Route route) {
