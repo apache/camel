@@ -49,13 +49,15 @@ public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Timer fooTimer = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME).tag(ROUTE_ID_TAG, "foo").timer();
+        Timer fooTimer
+                = meterRegistry.find(formatMetricName(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME)).tag(ROUTE_ID_TAG, "foo").timer();
         assertEquals(count / 2, fooTimer.count());
         assertTrue(fooTimer.mean(TimeUnit.MILLISECONDS) > DELAY_FOO);
         assertTrue(fooTimer.max(TimeUnit.MILLISECONDS) > DELAY_FOO);
         assertTrue(fooTimer.totalTime(TimeUnit.MILLISECONDS) > DELAY_FOO * count / 2);
 
-        Timer barTimer = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME).tag(ROUTE_ID_TAG, "bar").timer();
+        Timer barTimer
+                = meterRegistry.find(formatMetricName(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME)).tag(ROUTE_ID_TAG, "bar").timer();
         assertEquals(count / 2, barTimer.count());
         assertTrue(barTimer.mean(TimeUnit.MILLISECONDS) > DELAY_BAR);
         assertTrue(barTimer.max(TimeUnit.MILLISECONDS) > DELAY_BAR);
