@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.component.micrometer.MicrometerUtils;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LegacyMicrometerRoutePolicyTest extends MicrometerRoutePolicyTest {
 
@@ -29,6 +32,15 @@ public class LegacyMicrometerRoutePolicyTest extends MicrometerRoutePolicyTest {
 
     @Override
     protected String formatMetricName(String name) {
-        return MicrometerUtils.legacyName(name);
+        // use legacy name
+        return "CamelRoutePolicy";
+    }
+
+    @Test
+    public void testLegacyName() {
+        Assertions.assertEquals("CamelRoutePolicy",
+                MicrometerUtils.legacyName(MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME));
+        Assertions.assertEquals("CamelMessageHistory",
+                MicrometerUtils.legacyName(MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME));
     }
 }

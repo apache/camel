@@ -92,12 +92,14 @@ public final class MicrometerUtils {
      * Converts the name to the legacy name
      *
      * @param  name the name
-     * @return      in legacy format (camelCase)
+     * @return      in legacy format (CamelCase with upper cased first letter)
      */
     public static String legacyName(String name) {
         // "camel.route.policy" -> "camelRoutePolicy"
         name = name.replace('.', '-');
-        return StringHelper.dashToCamelCase(name);
+        name = StringHelper.dashToCamelCase(name);
+        // upper case first letter
+        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
 
     private static MeterRegistry getMeterRegistryFromCamelRegistry(
