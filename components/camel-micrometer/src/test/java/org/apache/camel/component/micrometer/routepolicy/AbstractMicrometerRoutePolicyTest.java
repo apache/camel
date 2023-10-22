@@ -51,6 +51,10 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
         return new MicrometerRoutePolicyFactory();
     }
 
+    protected String formatMetricName(String name) {
+        return name;
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
