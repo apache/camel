@@ -430,6 +430,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 return;
             }
 
+            if (isFailedOrBridged(exchange)) {
+                // previous processing cause an exception
+                handlePreviousFailure();
+            } else if (first) {
+                // first time call the target processor
+                handleFirst();
+            } else {
+                // we are done so continue callback
+                AsyncCallback cb = callback;
+                taskFactory.release(this);
+                reactiveExecutor.schedule(cb);
+            }
+        }
+
+        private static boolean isFailedOrBridged(Exchange exchange) {
             // only new failure if the exchange has exception
             // and it has not been handled by the failure processor before
             // or not exhausted
@@ -439,19 +454,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // error handled bridged
             final boolean bridge = ExchangeHelper.isErrorHandlerBridge(exchange);
 
-            if (failure || bridge) {
-                // previous processing cause an exception
-                handlePreviousFailure();
-            } else if (first) {
-                // first time call the target processor
-                first = false;
-                outputAsync.process(exchange, this);
-            } else {
-                // we are done so continue callback
-                AsyncCallback cb = callback;
-                taskFactory.release(this);
-                reactiveExecutor.schedule(cb);
-            }
+            return failure || bridge;
+        }
+
+        private void handleFirst() {
+            first = false;
+            outputAsync.process(exchange, this);
         }
 
         private void handlePreviousFailure() {

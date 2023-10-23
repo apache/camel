@@ -326,9 +326,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         if (exchange.isTransacted()) {
             return processTransacted(exchange, afterTask);
-        } else {
-            return processNonTransacted(exchange, afterTask);
         }
+
+        return processNonTransacted(exchange, afterTask);
     }
 
     private static boolean processShutdown(Exchange exchange, AsyncCallback originalCallback) {
@@ -364,11 +364,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         // CAMEL-18255: move uow.afterProcess handling to the callback
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
-                    sync ? "synchronously" : "asynchronously",
-                    exchange.getExchangeId(), exchange);
+            logExchangeContinuity(exchange, sync);
         }
         return sync;
+    }
+
+    private static void logExchangeContinuity(Exchange exchange, boolean sync) {
+        LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+                sync ? "synchronously" : "asynchronously",
+                exchange.getExchangeId(), exchange);
     }
 
     private AsyncCallback beforeProcess(Exchange exchange, CamelInternalTask afterTask) {
