@@ -399,7 +399,7 @@ public class MailBinding {
                     LOG.trace("Part #{}: LineCount: {}", i, part.getLineCount());
                 }
 
-                if (validDisposition(disposition, fileName)) {
+                if (validDisposition(disposition, fileName) || (fileName != null && !fileName.isEmpty())) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
                     if (handleDuplicateAttachmentNames != null) {
                         if (handleDuplicateAttachmentNames
