@@ -157,8 +157,7 @@ You can explicitly specify `file:` or `classpath:` loading. The two loading type
 
 Since Saxon 9.2, writing extension functions has been supplemented by a
 new mechanism, referred to
-as http://www.saxonica.com/html/documentation/extensibility/integratedfunctions[integrated
-extension functions] you can now easily use camel as shown in the below example:
+as https://www.saxonica.com/html/documentation12/extensibility/extension-functions.html[extension functions] you can now easily use camel as shown in the below example:
 
 [source,java]
 ----
