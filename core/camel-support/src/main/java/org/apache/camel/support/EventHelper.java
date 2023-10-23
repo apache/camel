@@ -689,10 +689,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCompletedEvent()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeCompletedEvent()) {
                 continue;
             }
 
@@ -735,10 +732,8 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -783,10 +778,8 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -831,10 +824,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -877,10 +867,8 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -923,10 +911,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSendingEvents()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeSendingEvents()) {
                 continue;
             }
 
@@ -969,10 +954,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeSentEvents()) {
                 continue;
             }
 
@@ -1483,10 +1465,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeAsyncProcessingStartedEvents()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeAsyncProcessingStartedEvents()) {
                 continue;
             }
 
@@ -1501,6 +1480,10 @@ public final class EventHelper {
             answer |= doNotifyEvent(notifier, event);
         }
         return answer;
+    }
+
+    private static boolean isDisabledOrIgnored(EventNotifier notifier) {
+        return notifier.isDisabled() || notifier.isIgnoreExchangeEvents();
     }
 
     private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
