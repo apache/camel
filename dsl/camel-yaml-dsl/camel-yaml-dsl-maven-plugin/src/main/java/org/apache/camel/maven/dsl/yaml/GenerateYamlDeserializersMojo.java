@@ -545,8 +545,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
             properties.add(
                     YamlProperties.annotation("description", "string")
-                            .withDescription(descriptor.description("id"))
-                            .withDisplayName(descriptor.displayName("id"))
+                            .withDescription(descriptor.description("description"))
+                            .withDisplayName(descriptor.displayName("description"))
                             .build());
         }
 
