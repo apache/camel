@@ -628,12 +628,6 @@
             "title" : "Precondition",
             "description" : "Indicates whether this Choice EIP is in precondition mode or not. If so its branches (when/otherwise) are evaluated during startup to keep at runtime only the branch that matched."
           },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
           "when" : {
             "type" : "array",
             "title" : "When",
