@@ -246,6 +246,18 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    public void testAttachmentWithNoDisposition() throws Exception {
+        sendTestMessage("disposition_none.txt", default_);
+
+        resultDefaultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
+        assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+
+        Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+        assertNotNull(attachments.get("test.jpg"));
+    }
+
     private void sendTestMessage(String filename, MailboxUser recipient) throws MessagingException, FileNotFoundException {
         MimeMessage message = populateMimeMessage(session, filename);
         message.setRecipients(Message.RecipientType.TO, recipient.getEmail());
