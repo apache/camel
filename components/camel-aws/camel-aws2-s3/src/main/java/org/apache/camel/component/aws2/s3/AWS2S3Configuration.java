@@ -142,7 +142,10 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Setup the partSize which is used in multi part upload, the default size is 25M.
+     * Setup the partSize which is used in multi-part upload, the default size is 25M.
+     *
+     * Camel will only do multi-part uploads for files that are larger than the part-size thresholds.
+     * Files that are smaller will be uploaded in a single operation.
      */
     public void setPartSize(long partSize) {
         this.partSize = partSize;
@@ -153,8 +156,10 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * If it is true, camel will upload the file with multi part format, the part size is decided by the option of
-     * `partSize`
+     * If it is true, camel will upload the file with multi-part format, the part size is decided by the partSize option.
+     *
+     * Camel will only do multi-part uploads for files that are larger than the part-size thresholds.
+     * Files that are smaller will be uploaded in a single operation.
      */
     public void setMultiPartUpload(boolean multiPartUpload) {
         this.multiPartUpload = multiPartUpload;

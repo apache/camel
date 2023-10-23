@@ -129,7 +129,7 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     public void processMultiPart(final Exchange exchange) throws Exception {
-        File filePayload = null;
+        File filePayload;
         Object obj = exchange.getIn().getMandatoryBody();
         // Need to check if the message body is WrappedFile
         if (obj instanceof WrappedFile) {
@@ -147,6 +147,17 @@ public class AWS2S3Producer extends DefaultProducer {
         if (contentLength == null || contentLength == 0) {
             contentLength = filePayload.length();
         }
+
+        long partSize = getConfiguration().getPartSize();
+        if (contentLength == 0 && contentLength < partSize) {
+            // optimize to do a single op if content length is known and < part size
+            LOG.debug("File size < partSize. Uploading file in single operation: {}", filePayload);
+            processSingleOp(exchange);
+            return;
+        }
+
+        LOG.debug("File size >= partSize. Uploading file using multi-part operation: {}", filePayload);
+
         objectMetadata.put("Content-Length", contentLength.toString());
 
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
@@ -198,13 +209,10 @@ public class AWS2S3Producer extends DefaultProducer {
 
         CreateMultipartUploadResponse initResponse
                 = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
-        //final long contentLength = Long.parseLong(objectMetadata.get("Content-Length"));
         List<CompletedPart> completedParts = new ArrayList<CompletedPart>();
-        long partSize = getConfiguration().getPartSize();
-        CompleteMultipartUploadResponse uploadResult = null;
+        CompleteMultipartUploadResponse uploadResult;
 
         long filePosition = 0;
-
         try {
             for (int part = 1; filePosition < contentLength; part++) {
                 partSize = Math.min(partSize, contentLength - filePosition);
