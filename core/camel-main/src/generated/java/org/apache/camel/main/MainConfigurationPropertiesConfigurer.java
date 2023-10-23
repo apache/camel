@@ -213,6 +213,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownTimeout": target.setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "sourcelocationenabled":
         case "SourceLocationEnabled": target.setSourceLocationEnabled(property(camelContext, boolean.class, value)); return true;
+        case "sslclientauthentication":
+        case "SslClientAuthentication": target.setSslClientAuthentication(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslenabled":
+        case "SslEnabled": target.setSslEnabled(property(camelContext, boolean.class, value)); return true;
+        case "sslkeystore":
+        case "SslKeyStore": target.setSslKeyStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeystorepassword":
+        case "SslKeystorePassword": target.setSslKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssltruststore":
+        case "SslTrustStore": target.setSslTrustStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssltruststorepassword":
+        case "SslTrustStorePassword": target.setSslTrustStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "startuprecorder":
         case "StartupRecorder": target.setStartupRecorder(property(camelContext, java.lang.String.class, value)); return true;
         case "startuprecorderdir":
@@ -474,6 +486,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownTimeout": return int.class;
         case "sourcelocationenabled":
         case "SourceLocationEnabled": return boolean.class;
+        case "sslclientauthentication":
+        case "SslClientAuthentication": return java.lang.String.class;
+        case "sslenabled":
+        case "SslEnabled": return boolean.class;
+        case "sslkeystore":
+        case "SslKeyStore": return java.lang.String.class;
+        case "sslkeystorepassword":
+        case "SslKeystorePassword": return java.lang.String.class;
+        case "ssltruststore":
+        case "SslTrustStore": return java.lang.String.class;
+        case "ssltruststorepassword":
+        case "SslTrustStorePassword": return java.lang.String.class;
         case "startuprecorder":
         case "StartupRecorder": return java.lang.String.class;
         case "startuprecorderdir":
@@ -736,6 +760,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownTimeout": return target.getShutdownTimeout();
         case "sourcelocationenabled":
         case "SourceLocationEnabled": return target.isSourceLocationEnabled();
+        case "sslclientauthentication":
+        case "SslClientAuthentication": return target.getSslClientAuthentication();
+        case "sslenabled":
+        case "SslEnabled": return target.isSslEnabled();
+        case "sslkeystore":
+        case "SslKeyStore": return target.getSslKeyStore();
+        case "sslkeystorepassword":
+        case "SslKeystorePassword": return target.getSslKeystorePassword();
+        case "ssltruststore":
+        case "SslTrustStore": return target.getSslTrustStore();
+        case "ssltruststorepassword":
+        case "SslTrustStorePassword": return target.getSslTrustStorePassword();
         case "startuprecorder":
         case "StartupRecorder": return target.getStartupRecorder();
         case "startuprecorderdir":
