@@ -73,12 +73,7 @@ public class LRAClientTest extends CamelTestSupport {
             }
         };
         Exchange exchange = Mockito.mock(Exchange.class);
-        try {
-            client.newLRA(exchange);
-            Assertions.fail("there should have been the special testing exception ExchangeRuntimeException");
-        } catch (ExchangeRuntimeException ex) {
-            Assertions.assertSame(exchange, ex.get());
-        }
+        Assertions.assertThrows(ExchangeRuntimeException.class, () -> client.newLRA(exchange));
     }
 
     @DisplayName("Tests whether LRAClient is calling prepareRequest with exchange from compensate()")
@@ -92,12 +87,8 @@ public class LRAClientTest extends CamelTestSupport {
             }
         };
         Exchange exchange = Mockito.mock(Exchange.class);
-        try {
-            client.complete(new URL("https://localhost/saga"), exchange);
-            Assertions.fail("there should have been the special testing exception ExchangeRuntimeException");
-        } catch (ExchangeRuntimeException ex) {
-            Assertions.assertSame(exchange, ex.get());
-        }
+        Assertions.assertThrows(ExchangeRuntimeException.class,
+                () -> client.compensate(new URL("https://localhost/saga"), exchange));
     }
 
     @DisplayName("Tests whether LRAClient is calling prepareRequest with exchange from complete()")
@@ -111,12 +102,8 @@ public class LRAClientTest extends CamelTestSupport {
             }
         };
         Exchange exchange = Mockito.mock(Exchange.class);
-        try {
-            client.complete(new URL("https://localhost/saga"), exchange);
-            Assertions.fail("there should have been the special testing exception ExchangeRuntimeException");
-        } catch (ExchangeRuntimeException ex) {
-            Assertions.assertSame(exchange, ex.get());
-        }
+        Assertions.assertThrows(ExchangeRuntimeException.class,
+                () -> client.complete(new URL("https://localhost/saga"), exchange));
     }
 
     @DisplayName("Tests prepare request works without exchange")
