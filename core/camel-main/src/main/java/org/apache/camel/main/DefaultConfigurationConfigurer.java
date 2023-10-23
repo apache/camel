@@ -89,6 +89,11 @@ import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
@@ -371,6 +376,36 @@ public final class DefaultConfigurationConfigurer {
                 src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
             }
             src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
+        }
+
+        if (config.isSslEnabled()) {
+            String password = config.getSslKeystorePassword();
+            KeyStoreParameters ksp = new KeyStoreParameters();
+            ksp.setResource(config.getSslKeyStore());
+            ksp.setPassword(password);
+
+            KeyManagersParameters kmp = new KeyManagersParameters();
+            kmp.setKeyPassword(password);
+            kmp.setKeyStore(ksp);
+
+            TrustManagersParameters tmp = null;
+            if (config.getSslTrustStore() != null) {
+                KeyStoreParameters tsp = new KeyStoreParameters();
+                tsp.setResource(config.getSslTrustStore());
+                tsp.setPassword(config.getSslTrustStorePassword());
+
+                tmp = new TrustManagersParameters();
+                tmp.setKeyStore(tsp);
+            }
+
+            SSLContextServerParameters scsp = new SSLContextServerParameters();
+            scsp.setClientAuthentication(config.getSslClientAuthentication());
+
+            SSLContextParameters sslContextParameters = new SSLContextParameters();
+            sslContextParameters.setKeyManagers(kmp);
+            sslContextParameters.setTrustManagers(tmp);
+            sslContextParameters.setServerParameters(scsp);
+            camelContext.setSSLContextParameters(sslContextParameters);
         }
     }
 
