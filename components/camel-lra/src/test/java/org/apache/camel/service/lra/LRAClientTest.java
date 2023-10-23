@@ -16,12 +16,18 @@
  */
 package org.apache.camel.service.lra;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class LRAClientTest extends CamelTestSupport {
 
@@ -56,6 +62,76 @@ public class LRAClientTest extends CamelTestSupport {
                 "no client should result in IllegalArgumentException");
     }
 
+    @DisplayName("Tests whether LRAClient is calling prepareRequest with exchange from newLRA()")
+    @Test
+    void testCallsPrepareRequestWithExchangeInNewLra() {
+        LRASagaService sagaService = new LRASagaService();
+        applyMockProperties(sagaService);
+        LRAClient client = new LRAClient(sagaService) {
+            protected HttpRequest.Builder prepareRequest(URI uri, Exchange exchange) {
+                throw new ExchangeRuntimeException(exchange);
+            }
+        };
+        Exchange exchange = Mockito.mock(Exchange.class);
+        try {
+            client.newLRA(exchange);
+            Assertions.fail("there should have been the special testing exception ExchangeRuntimeException");
+        } catch (ExchangeRuntimeException ex) {
+            Assertions.assertSame(exchange, ex.get());
+        }
+    }
+
+    @DisplayName("Tests whether LRAClient is calling prepareRequest with exchange from compensate()")
+    @Test
+    void testCallsPrepareRequestWithExchangeInCompensate() throws MalformedURLException {
+        LRASagaService sagaService = new LRASagaService();
+        applyMockProperties(sagaService);
+        LRAClient client = new LRAClient(sagaService) {
+            protected HttpRequest.Builder prepareRequest(URI uri, Exchange exchange) {
+                throw new ExchangeRuntimeException(exchange);
+            }
+        };
+        Exchange exchange = Mockito.mock(Exchange.class);
+        try {
+            client.complete(new URL("https://localhost/saga"), exchange);
+            Assertions.fail("there should have been the special testing exception ExchangeRuntimeException");
+        } catch (ExchangeRuntimeException ex) {
+            Assertions.assertSame(exchange, ex.get());
+        }
+    }
+
+    @DisplayName("Tests whether LRAClient is calling prepareRequest with exchange from complete()")
+    @Test
+    void testCallsPrepareRequestWithExchangeInComplete() throws MalformedURLException {
+        LRASagaService sagaService = new LRASagaService();
+        applyMockProperties(sagaService);
+        LRAClient client = new LRAClient(sagaService) {
+            protected HttpRequest.Builder prepareRequest(URI uri, Exchange exchange) {
+                throw new ExchangeRuntimeException(exchange);
+            }
+        };
+        Exchange exchange = Mockito.mock(Exchange.class);
+        try {
+            client.complete(new URL("https://localhost/saga"), exchange);
+            Assertions.fail("there should have been the special testing exception ExchangeRuntimeException");
+        } catch (ExchangeRuntimeException ex) {
+            Assertions.assertSame(exchange, ex.get());
+        }
+    }
+
+    @DisplayName("Tests prepare request works without exchange")
+    @Test
+    void testPrepareRequestWithoutExchange() throws Exception {
+        LRASagaService sagaService = new LRASagaService();
+        applyMockProperties(sagaService);
+        LRAClient client = new LRAClient(sagaService);
+        URI uri = new URI("https://lcoalhost/someURI");
+        HttpRequest.Builder expected = HttpRequest.newBuilder(uri);
+        HttpRequest.Builder actual = client.prepareRequest(uri, null);
+
+        Assertions.assertEquals(actual.build(), expected.build());
+    }
+
     private void applyMockProperties(LRASagaService sagaService) {
         sagaService.setCoordinatorUrl("mockCoordinatorUrl");
         sagaService.setLocalParticipantUrl("mockLocalParticipantUrl");
@@ -63,4 +139,15 @@ public class LRAClientTest extends CamelTestSupport {
         sagaService.setCoordinatorContextPath("mockCoordinatorContextPath");
     }
 
+    private static class ExchangeRuntimeException extends RuntimeException {
+        private Exchange exchange;
+
+        public ExchangeRuntimeException(Exchange exchange) {
+            this.exchange = exchange;
+        }
+
+        public Exchange get() {
+            return exchange;
+        }
+    }
 }
