@@ -1887,6 +1887,9 @@ You can then use the Integrated Development Environment (IDE) of your choice. Fo
 
 A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42qk[video] or this /blog/2022/05/start-camel-quarkus-application-with-camel-textual-debug-in-vscode/[blogpost].
 
+TIP: When exporting to Maven projects, then you can use the maven profile `camel.debug` that will include the `camel-debug` JAR
+to make it possible for Camel IDE tools to do Camel route debugging.
+
 ==== Health Checks
 
 The status of health checks can be accessed via Camel JBang from the CLI as follows:
