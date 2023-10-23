@@ -550,7 +550,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             .build());
         }
 
-        if (implementType(info, OUTPUT_NODE_CLASS)) {
+        if (shouldHaveSteps(info)) {
             caseAdded = true;
 
             setProperty.beginControlFlow("case \"steps\":");
@@ -1253,4 +1253,13 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         return true;
     }
+
+    private boolean shouldHaveSteps(ClassInfo info) {
+        // choice should not have steps
+        if ("ChoiceDefinition".equals(info.simpleName())) {
+            return false;
+        }
+        return implementType(info, OUTPUT_NODE_CLASS);
+    }
+
 }
