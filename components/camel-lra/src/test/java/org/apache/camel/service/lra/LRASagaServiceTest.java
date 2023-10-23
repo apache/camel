@@ -16,10 +16,15 @@
  */
 package org.apache.camel.service.lra;
 
+import java.net.URL;
+import java.util.concurrent.CompletableFuture;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class LRASagaServiceTest extends CamelTestSupport {
 
@@ -53,6 +58,23 @@ public class LRASagaServiceTest extends CamelTestSupport {
         Assertions.assertInstanceOf(AlternativeLRAClient.class, client, "client must be an instance of AlternativeLRAClient");
     }
 
+    @DisplayName("Tests whether newSaga(Exchange) is passing on Exchange to the client")
+    @Test
+    void testCallsClientWithExchange() throws Exception {
+        LRAClient client = Mockito.mock(LRAClient.class);
+        LRASagaService sagaService = new ClientMockingLRASagaService(client);
+        applyMockProperties(sagaService);
+        sagaService.setCamelContext(this.context());
+        sagaService.doStart();
+
+        Exchange exchange = Mockito.mock(Exchange.class);
+
+        CompletableFuture<URL> expected = CompletableFuture.failedFuture(new RuntimeException("failed"));
+        Mockito.when(client.newLRA(exchange)).thenReturn(expected);
+        sagaService.newSaga(exchange);
+        Mockito.verify(client).newLRA(exchange);
+    }
+
     private void applyMockProperties(LRASagaService sagaService) {
         sagaService.setCoordinatorUrl("mockCoordinatorUrl");
         sagaService.setLocalParticipantUrl("mockLocalParticipantUrl");
@@ -69,6 +91,19 @@ public class LRASagaServiceTest extends CamelTestSupport {
     private class AlternativeLRAClient extends LRAClient {
         public AlternativeLRAClient(LRASagaService sagaService) {
             super(sagaService);
+        }
+    }
+
+    private class ClientMockingLRASagaService extends LRASagaService {
+
+        private final LRAClient client;
+
+        public ClientMockingLRASagaService(LRAClient client) {
+            this.client = client;
+        }
+
+        protected LRAClient createLRAClient() {
+            return client;
         }
     }
 
