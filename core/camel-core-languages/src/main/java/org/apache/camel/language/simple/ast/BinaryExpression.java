@@ -138,27 +138,35 @@ public class BinaryExpression extends BaseSimpleNode {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Predicate predicate;
+
                 String name = rightExp.evaluate(exchange, String.class);
                 if (name == null || "null".equals(name)) {
-                    throw new SimpleIllegalSyntaxException(
-                            expression, right.getToken().getIndex(),
-                            operator + " operator cannot accept null. A class type must be provided.");
+                    throwMissingClass();
                 }
                 Class<?> rightType = camelContext.getClassResolver().resolveClass(name);
                 if (rightType == null) {
-                    throw new SimpleIllegalSyntaxException(
-                            expression, right.getToken().getIndex(),
-                            operator + " operator cannot find class with name: " + name);
+                    throwClassNotFound(name);
                 }
 
-                predicate = PredicateBuilder.isInstanceOf(leftExp, rightType);
+                Predicate predicate = PredicateBuilder.isInstanceOf(leftExp, rightType);
                 if (operator == BinaryOperatorType.NOT_IS) {
                     predicate = PredicateBuilder.not(predicate);
                 }
                 boolean answer = predicate.matches(exchange);
 
                 return camelContext.getTypeConverter().convertTo(type, answer);
+            }
+
+            private void throwClassNotFound(String name) {
+                throw new SimpleIllegalSyntaxException(
+                        expression, right.getToken().getIndex(),
+                        operator + " operator cannot find class with name: " + name);
+            }
+
+            private void throwMissingClass() {
+                throw new SimpleIllegalSyntaxException(
+                        expression, right.getToken().getIndex(),
+                        operator + " operator cannot accept null. A class type must be provided.");
             }
 
             @Override
