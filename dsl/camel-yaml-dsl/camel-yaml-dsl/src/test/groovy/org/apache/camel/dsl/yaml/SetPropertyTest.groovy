@@ -81,4 +81,29 @@ class SetPropertyTest extends YamlTestSupport {
             Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
         }
     }
+
+    def "kebab-case: set-property no validation"() {
+        when:
+        var route = '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - set-property:
+                              name: test
+                              expression:
+                                simple: "${body}"
+                          - to: "mock:result"
+                    '''
+        loadRoutesNoValidate(route)
+
+        then:
+        with(context.routeDefinitions[0].outputs[0], SetPropertyDefinition) {
+            name == 'test'
+
+            with(expression, ExpressionDefinition) {
+                language == 'simple'
+                expression == '${body}'
+            }
+        }
+    }
 }
