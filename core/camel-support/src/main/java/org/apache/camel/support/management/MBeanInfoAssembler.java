@@ -60,7 +60,7 @@ public class MBeanInfoAssembler implements Service {
     private final BeanIntrospection beanIntrospection;
 
     // use a cache to speedup gathering JMX MBeanInfo for known classes
-    // use a weak cache as we don't want the cache to keep around as it reference classes
+    // use a soft cache as we don't want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
     private Map<Class<?>, MBeanAttributesAndOperations> cache;
 
@@ -70,7 +70,7 @@ public class MBeanInfoAssembler implements Service {
 
     @Override
     public void start() {
-        cache = LRUCacheFactory.newLRUWeakCache(1000);
+        cache = LRUCacheFactory.newLRUSoftCache(1000);
     }
 
     @Override

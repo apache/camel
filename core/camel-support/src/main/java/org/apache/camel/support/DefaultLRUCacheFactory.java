@@ -129,18 +129,21 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
+    @Deprecated
     public <K, V> Map<K, V> createLRUWeakCache(int maximumCacheSize) {
         LOG.trace("Creating LRUWeakCache with maximumCacheSize: {}", maximumCacheSize);
         return new SimpleLRUCache<>(maximumCacheSize);
     }
 
     @Override
+    @Deprecated
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize);
     }
 
     @Override
+    @Deprecated
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
                 maximumCacheSize, stopOnEviction);
