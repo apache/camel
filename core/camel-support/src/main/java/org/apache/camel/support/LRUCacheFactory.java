@@ -290,6 +290,7 @@ public abstract class LRUCacheFactory {
      * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
+    @Deprecated
     public abstract <K, V> Map<K, V> createLRUWeakCache(int maximumCacheSize);
 
     /**
@@ -300,6 +301,7 @@ public abstract class LRUCacheFactory {
      * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
+    @Deprecated
     public abstract <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize);
 
     /**
@@ -311,6 +313,7 @@ public abstract class LRUCacheFactory {
      * @param  stopOnEviction           whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
+    @Deprecated
     public abstract <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction);
 
 }

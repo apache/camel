@@ -69,9 +69,9 @@ final class IntrospectionSupport {
     private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     // use a cache to speedup introspecting for known classes during startup
-    // use a weak cache as we don't want the cache to keep around as it reference classes
+    // use a soft cache as we don't want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
-    private static final Map<Class<?>, BeanIntrospection.ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
+    private static final Map<Class<?>, BeanIntrospection.ClassInfo> CACHE = LRUCacheFactory.newLRUSoftCache(1000);
     private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
     static {
