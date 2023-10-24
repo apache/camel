@@ -78,80 +78,57 @@ public final class ObjectHelper {
      */
     public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
         // sanity check
-        if (leftValue == null && rightValue == null) {
-            // they are equal
-            return true;
-        } else if (leftValue == null || rightValue == null) {
-            // only one of them is null so they are not equal
-            return false;
+        if (leftValue == null || rightValue == null) {
+            return evalNulls(leftValue, rightValue);
         }
 
         // optimize for common combinations of comparing numbers
-        if (leftValue instanceof String && rightValue instanceof String) {
-            String leftNum = (String) leftValue;
-            String rightNum = (String) rightValue;
-            if (isNumber(leftNum) && isNumber(rightNum)) {
-                // favour to use numeric comparison
-                Long num1 = Long.parseLong(leftNum);
-                Long num2 = Long.parseLong(rightNum);
-                return num1.compareTo(num2) == 0;
-            }
-            if (ignoreCase) {
-                return leftNum.compareToIgnoreCase(rightNum) == 0;
-            } else {
-                return leftNum.compareTo(rightNum) == 0;
-            }
-        } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
-            Integer leftNum = (Integer) leftValue;
-            Integer rightNum = (Integer) rightValue;
-            return leftNum.compareTo(rightNum) == 0;
-        } else if (leftValue instanceof Long && rightValue instanceof Long) {
-            Long leftNum = (Long) leftValue;
-            Long rightNum = (Long) rightValue;
-            return leftNum.compareTo(rightNum) == 0;
-        } else if (leftValue instanceof Double && rightValue instanceof Double) {
-            Double leftNum = (Double) leftValue;
-            Double rightNum = (Double) rightValue;
-            return leftNum.compareTo(rightNum) == 0;
-        } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
-                leftValue instanceof String && isNumber((String) leftValue)) {
-            if (rightValue instanceof Integer) {
-                Integer leftNum = Integer.valueOf((String) leftValue);
-                Integer rightNum = (Integer) rightValue;
-                return leftNum.compareTo(rightNum) == 0;
-            } else {
-                Long leftNum = Long.valueOf((String) leftValue);
-                Long rightNum = (Long) rightValue;
-                return leftNum.compareTo(rightNum) == 0;
-            }
+        if (leftValue instanceof String) {
+            return typeCoerceString(converter, leftValue, rightValue, ignoreCase);
         } else if (rightValue instanceof String &&
                 (leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue)) {
-            if (leftValue instanceof Integer) {
-                Integer leftNum = (Integer) leftValue;
-                Integer rightNum = Integer.valueOf((String) rightValue);
-                return leftNum.compareTo(rightNum) == 0;
-            } else {
-                Long leftNum = (Long) leftValue;
-                Long rightNum = Long.valueOf((String) rightValue);
-                return leftNum.compareTo(rightNum) == 0;
-            }
-        } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {
-            Double leftNum = Double.valueOf((String) leftValue);
-            Double rightNum = (Double) rightValue;
-            return leftNum.compareTo(rightNum) == 0;
-        } else if (rightValue instanceof Boolean && leftValue instanceof String) {
-            Boolean leftBool = Boolean.valueOf((String) leftValue);
-            Boolean rightBool = (Boolean) rightValue;
-            return leftBool.compareTo(rightBool) == 0;
+            return typeCoerceIntLong(leftValue, (String) rightValue);
+        } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
+            return integerPairComparison(leftValue, rightValue);
+        } else if (leftValue instanceof Long && rightValue instanceof Long) {
+            return longPairComparison(leftValue, rightValue);
+        } else if (leftValue instanceof Double && rightValue instanceof Double) {
+            return doublePairComparison(leftValue, rightValue);
         } else if (rightValue instanceof String && leftValue instanceof Boolean) {
-            Boolean leftBool = (Boolean) leftValue;
-            Boolean rightBool = Boolean.valueOf((String) rightValue);
-            return leftBool.compareTo(rightBool) == 0;
+            return booleanStringComparison((Boolean) leftValue, (String) rightValue);
         }
 
         // try without type coerce
-        boolean answer = org.apache.camel.util.ObjectHelper.equal(leftValue, rightValue, ignoreCase);
-        if (answer) {
+        return tryConverters(converter, leftValue, rightValue, ignoreCase);
+    }
+
+    private static boolean typeCoerceString(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
+        if (rightValue instanceof String) {
+            return typeCoerceStringPair((String) leftValue, (String) rightValue, ignoreCase);
+        } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
+                isNumber((String) leftValue)) {
+            return typeCoerceILString((String) leftValue, rightValue);
+        } else if (rightValue instanceof Double && isFloatingNumber((String) leftValue)) {
+            return stringDoubleComparison((String) leftValue, (Double) rightValue);
+        } else if (rightValue instanceof Boolean) {
+            return stringBooleanComparison(leftValue, rightValue);
+        }
+
+        return tryConverters(converter, leftValue, rightValue, ignoreCase);
+    }
+
+    private static boolean evalNulls(Object leftValue, Object rightValue) {
+        // they are equal
+        if (leftValue == rightValue) {
+            return true;
+        }
+        // only one of them is null so they are not equal
+        return false;
+    }
+
+    private static boolean tryConverters(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
+        final boolean isEqual = org.apache.camel.util.ObjectHelper.equal(leftValue, rightValue, ignoreCase);
+        if (isEqual) {
             return true;
         }
 
@@ -162,15 +139,84 @@ public final class ObjectHelper {
 
         // convert left to right
         Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
-        answer = org.apache.camel.util.ObjectHelper.equal(value, rightValue, ignoreCase);
-        if (answer) {
+        final boolean isEqualLeftToRight = org.apache.camel.util.ObjectHelper.equal(value, rightValue, ignoreCase);
+        if (isEqualLeftToRight) {
             return true;
         }
 
         // convert right to left
         value = converter.tryConvertTo(leftValue.getClass(), rightValue);
-        answer = org.apache.camel.util.ObjectHelper.equal(leftValue, value, ignoreCase);
-        return answer;
+        return org.apache.camel.util.ObjectHelper.equal(leftValue, value, ignoreCase);
+    }
+
+    private static boolean booleanStringComparison(Boolean leftBool, String rightValue) {
+        Boolean rightBool = Boolean.valueOf(rightValue);
+        return leftBool.compareTo(rightBool) == 0;
+    }
+
+    private static boolean doublePairComparison(Object leftValue, Object rightValue) {
+        return doublePairComparison((Double) leftValue, (Double) rightValue);
+    }
+
+    private static boolean doublePairComparison(Double leftValue, Double rightValue) {
+        return leftValue.compareTo(rightValue) == 0;
+    }
+
+    private static boolean longPairComparison(Object leftValue, Object rightValue) {
+        return longPairComparison((Long) leftValue, (Long) rightValue);
+    }
+
+    private static boolean longPairComparison(Long leftValue, Long rightValue) {
+        return leftValue.compareTo(rightValue) == 0;
+    }
+
+    private static boolean integerPairComparison(Object leftValue, Object rightValue) {
+        return integerPairComparison((Integer) leftValue, (Integer) rightValue);
+    }
+
+    private static boolean integerPairComparison(Integer leftValue, Integer rightValue) {
+        return leftValue.compareTo(rightValue) == 0;
+    }
+
+    private static boolean stringBooleanComparison(Object leftValue, Object rightValue) {
+        return stringBooleanComparison((String) leftValue, (Boolean) rightValue);
+    }
+
+    private static boolean stringBooleanComparison(String leftValue, Boolean rightValue) {
+        Boolean leftBool = Boolean.valueOf(leftValue);
+        return leftBool.compareTo(rightValue) == 0;
+    }
+
+    private static boolean stringDoubleComparison(String leftValue, Double rightValue) {
+        return doublePairComparison(Double.valueOf(leftValue), rightValue);
+    }
+
+    private static boolean typeCoerceIntLong(Object leftValue, String rightValue) {
+        if (leftValue instanceof Integer) {
+            return integerPairComparison((Integer) leftValue, Integer.valueOf(rightValue));
+        } else {
+            return longPairComparison((Long) leftValue, Long.valueOf(rightValue));
+        }
+    }
+
+    private static boolean typeCoerceILString(String leftValue, Object rightValue) {
+        if (rightValue instanceof Integer) {
+            return integerPairComparison(Integer.valueOf(leftValue), (Integer) rightValue);
+        } else {
+            return longPairComparison(Long.valueOf(leftValue), (Long) rightValue);
+        }
+    }
+
+    private static boolean typeCoerceStringPair(String leftNum, String rightNum, boolean ignoreCase) {
+        if (isNumber(leftNum) && isNumber(rightNum)) {
+            // favour to use numeric comparison
+            return longPairComparison(Long.parseLong(leftNum), Long.parseLong(rightNum));
+        }
+        if (ignoreCase) {
+            return leftNum.compareToIgnoreCase(rightNum) == 0;
+        } else {
+            return leftNum.compareTo(rightNum) == 0;
+        }
     }
 
     /**

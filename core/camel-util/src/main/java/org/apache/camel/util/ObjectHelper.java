@@ -1149,26 +1149,36 @@ public final class ObjectHelper {
         if (value instanceof Boolean) {
             return (Boolean) value;
         } else if (value instanceof String) {
-            String str = ((String) value).trim();
-            if (str.isEmpty()) {
-                return false;
-            } else if ("true".equalsIgnoreCase(str)) {
-                return true;
-            } else if ("false".equalsIgnoreCase(str)) {
-                return false;
-            }
+            return evaluateString((String) value);
         } else if (value instanceof NodeList) {
-            // is it an empty dom with empty attributes
-            if (value instanceof Node && ((Node) value).hasAttributes()) {
-                return true;
-            }
-            NodeList list = (NodeList) value;
-            return list.getLength() > 0;
+            return evaluateNodeList(value);
         } else if (value instanceof Collection) {
             // is it an empty collection
             return !((Collection<?>) value).isEmpty();
         }
         return value != null;
+    }
+
+    private static boolean evaluateString(String value) {
+        final String str = value.trim();
+        if (str.isEmpty()) {
+            return false;
+        } else if ("true".equalsIgnoreCase(str)) {
+            return true;
+        } else if ("false".equalsIgnoreCase(str)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static boolean evaluateNodeList(Object value) {
+        // is it an empty dom with empty attributes
+        if (value instanceof Node && ((Node) value).hasAttributes()) {
+            return true;
+        }
+        NodeList list = (NodeList) value;
+        return list.getLength() > 0;
     }
 
     /**
