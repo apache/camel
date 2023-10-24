@@ -46,7 +46,7 @@ public class STS2ComponentVerifierExtensionTest extends CamelTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
-        parameters.put("region", "l");
+        parameters.put("region", "eu-west-1");
         parameters.put("label", "test");
         parameters.put("operation", STS2Operations.assumeRole);
 
