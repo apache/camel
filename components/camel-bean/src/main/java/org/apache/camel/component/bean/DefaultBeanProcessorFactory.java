@@ -28,6 +28,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -205,6 +206,8 @@ public final class DefaultBeanProcessorFactory extends ServiceSupport
     @Override
     protected void doInit() throws Exception {
         parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+
         beanComponent = getCamelContext().getComponent("bean", BeanComponent.class);
+        ServiceHelper.initService(beanComponent);
     }
 }
