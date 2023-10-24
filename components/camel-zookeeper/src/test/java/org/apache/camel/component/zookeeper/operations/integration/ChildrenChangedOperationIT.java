@@ -22,6 +22,7 @@ import org.apache.zookeeper.ZooKeeper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ChildrenChangedOperationIT extends ZooKeeperITSupport {
 
@@ -62,6 +63,6 @@ public class ChildrenChangedOperationIT extends ZooKeeperITSupport {
         connection.getChildren(path, future, null);
 
         client.createPersistent(path + "/child3", null);
-        assertEquals(null, future.get());
+        assertNull(future.get());
     }
 }

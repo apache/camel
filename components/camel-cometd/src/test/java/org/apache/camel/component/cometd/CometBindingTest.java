@@ -33,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -90,7 +91,7 @@ public class CometBindingTest {
         assertEquals(EIGHT, result.getHeader(INTEGER_ATTR_NAME));
         assertEquals(THIRTY_FOUR, result.getHeader(LONG_ATTR_NAME));
         assertEquals(TWO_POINT_ONE, result.getHeader(DOUBLE_ATTR_NAME));
-        assertEquals(null, result.getHeader(FOO_ATTR_NAME));
+        assertNull(result.getHeader(FOO_ATTR_NAME));
         assertTrue((Boolean) result.getHeader(BOOLEAN_ATT_NAME));
     }
 
@@ -101,12 +102,12 @@ public class CometBindingTest {
 
         // assert
         assertEquals(1, result.getHeaders().size());
-        assertEquals(null, result.getHeader(STRING_ATTR_NAME));
-        assertEquals(null, result.getHeader(INTEGER_ATTR_NAME));
-        assertEquals(null, result.getHeader(LONG_ATTR_NAME));
-        assertEquals(null, result.getHeader(FOO_ATTR_NAME));
-        assertEquals(null, result.getHeader(DOUBLE_ATTR_NAME));
-        assertEquals(null, result.getHeader(BOOLEAN_ATT_NAME));
+        assertNull(result.getHeader(STRING_ATTR_NAME));
+        assertNull(result.getHeader(INTEGER_ATTR_NAME));
+        assertNull(result.getHeader(LONG_ATTR_NAME));
+        assertNull(result.getHeader(FOO_ATTR_NAME));
+        assertNull(result.getHeader(DOUBLE_ATTR_NAME));
+        assertNull(result.getHeader(BOOLEAN_ATT_NAME));
     }
 
     @Test

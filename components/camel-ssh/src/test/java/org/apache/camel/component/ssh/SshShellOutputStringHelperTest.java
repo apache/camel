@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SshShellOutputStringHelperTest {
@@ -29,7 +30,7 @@ public class SshShellOutputStringHelperTest {
         assertEquals("Hello ", SshShellOutputStringHelper.beforeLast("Hello World", "World"));
         assertEquals("Hello World ", SshShellOutputStringHelper.beforeLast("Hello World World", "World"));
         assertEquals("Hello ", SshShellOutputStringHelper.beforeLast("Hello World Again", "World"));
-        assertEquals(null, SshShellOutputStringHelper.beforeLast("Hello Again", "Foo"));
+        assertNull(SshShellOutputStringHelper.beforeLast("Hello Again", "Foo"));
 
         assertTrue(SshShellOutputStringHelper.beforeLast("mykey:ignore:hello", ":", "mykey:ignore"::equals).orElse(false));
         assertFalse(SshShellOutputStringHelper.beforeLast("ignore:ignore:world", ":", "mykey"::equals).orElse(false));
@@ -40,7 +41,7 @@ public class SshShellOutputStringHelperTest {
         assertEquals("foo bar' how are",
                 SshShellOutputStringHelper.betweenBeforeLast("Hello 'foo bar' how are' you", "'", "'"));
         assertEquals("foo bar", SshShellOutputStringHelper.betweenBeforeLast("Hello ${foo bar} how are you", "${", "}"));
-        assertEquals(null, SshShellOutputStringHelper.betweenBeforeLast("Hello ${foo bar} how are you", "'", "'"));
+        assertNull(SshShellOutputStringHelper.betweenBeforeLast("Hello ${foo bar} how are you", "'", "'"));
 
         assertTrue(SshShellOutputStringHelper.betweenBeforeLast("begin:mykey:end:end", "begin:", ":end", "mykey:end"::equals)
                 .orElse(false));

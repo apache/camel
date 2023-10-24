@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
@@ -25,6 +24,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpRedirectNoLocationTest extends BaseJettyTest {
@@ -37,9 +39,9 @@ public class HttpRedirectNoLocationTest extends BaseJettyTest {
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(302, cause.getStatusCode());
-            assertEquals(true, cause.isRedirectError());
-            assertEquals(false, cause.hasRedirectLocation());
-            assertEquals(null, cause.getRedirectLocation());
+            assertTrue(cause.isRedirectError());
+            assertFalse(cause.hasRedirectLocation());
+            assertNull(cause.getRedirectLocation());
         }
     }
 
@@ -48,11 +50,8 @@ public class HttpRedirectNoLocationTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
-                    }
-                });
+                from("jetty://http://localhost:{{port}}/test")
+                        .process(exchange -> exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302));
             }
         };
     }

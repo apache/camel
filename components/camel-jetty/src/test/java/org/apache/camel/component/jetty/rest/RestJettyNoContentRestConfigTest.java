@@ -26,7 +26,7 @@ import org.apache.camel.support.MessageHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
 
@@ -40,7 +40,7 @@ public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
         });
 
         assertEquals(204, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertTrue(exchange.getMessage().getBody() == null);
+        assertNull(exchange.getMessage().getBody());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
         });
 
         assertEquals(204, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertTrue(exchange.getMessage().getBody() == null);
+        assertNull(exchange.getMessage().getBody());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
         });
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertTrue(MessageHelper.extractBodyAsString(exchange.getMessage()).equals("[]"));
+        assertEquals("[]", MessageHelper.extractBodyAsString(exchange.getMessage()));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
         });
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertTrue(MessageHelper.extractBodyAsString(exchange.getMessage()).equals("[]"));
+        assertEquals("[]", MessageHelper.extractBodyAsString(exchange.getMessage()));
     }
 
     @Test

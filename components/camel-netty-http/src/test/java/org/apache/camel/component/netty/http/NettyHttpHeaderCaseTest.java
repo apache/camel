@@ -28,6 +28,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NettyHttpHeaderCaseTest extends BaseNettyTest {
 
@@ -58,9 +59,9 @@ public class NettyHttpHeaderCaseTest extends BaseNettyTest {
                     Map<String, Object> map = new LinkedHashMap<>(exchange.getIn().getHeaders());
 
                     assertEquals("123", map.get("OTHER"));
-                    assertEquals(null, map.get("other"));
+                    assertNull(map.get("other"));
                     assertEquals("Carlsberg", map.get("beer"));
-                    assertEquals(null, map.get("Beer"));
+                    assertNull(map.get("Beer"));
 
                     exchange.getMessage().setBody("Bye World");
                     exchange.getMessage().setHeader("MyCaseHeader", "aBc123");

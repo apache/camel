@@ -450,7 +450,7 @@ public class CsvDataFormatTest {
         dataFormat = new CsvDataFormat();
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertEquals(null, dataFormat.getTrim());
+        assertNull(dataFormat.getTrim());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrim());
 
@@ -478,7 +478,7 @@ public class CsvDataFormatTest {
         dataFormat = new CsvDataFormat();
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertEquals(null, dataFormat.getIgnoreHeaderCase());
+        assertNull(dataFormat.getIgnoreHeaderCase());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getIgnoreHeaderCase());
 
@@ -505,7 +505,7 @@ public class CsvDataFormatTest {
         dataFormat = new CsvDataFormat();
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertEquals(null, dataFormat.getTrailingDelimiter());
+        assertNull(dataFormat.getTrailingDelimiter());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrailingDelimiter());
 

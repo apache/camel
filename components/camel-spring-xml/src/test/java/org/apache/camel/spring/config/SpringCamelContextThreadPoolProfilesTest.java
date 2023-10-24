@@ -29,6 +29,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport {
 
@@ -45,9 +46,9 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         ThreadPoolProfile profile = context.getExecutorServiceManager().getThreadPoolProfile("low");
         assertEquals(1, profile.getPoolSize().intValue());
         assertEquals(5, profile.getMaxPoolSize().intValue());
-        assertEquals(null, profile.getKeepAliveTime());
-        assertEquals(null, profile.getMaxQueueSize());
-        assertEquals(null, profile.getRejectedPolicy());
+        assertNull(profile.getKeepAliveTime());
+        assertNull(profile.getMaxQueueSize());
+        assertNull(profile.getRejectedPolicy());
 
         // create a thread pool from low
         ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyLow", "low");
@@ -67,8 +68,8 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(50, profile.getPoolSize().intValue());
         assertEquals(100, profile.getMaxPoolSize().intValue());
         assertEquals(ThreadPoolRejectedPolicy.Abort, profile.getRejectedPolicy());
-        assertEquals(null, profile.getKeepAliveTime());
-        assertEquals(null, profile.getMaxQueueSize());
+        assertNull(profile.getKeepAliveTime());
+        assertNull(profile.getMaxQueueSize());
 
         // create a thread pool from big
         ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyBig", "big");

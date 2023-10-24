@@ -26,6 +26,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Disabled
 public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
@@ -57,10 +58,10 @@ public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
         // no source or route as its a shared thread pool
         String source = (String) mbeanServer.getAttribute(on, "SourceId");
-        assertEquals(null, source);
+        assertNull(source);
 
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        assertEquals(null, routeId);
+        assertNull(routeId);
     }
 
 }

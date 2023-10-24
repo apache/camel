@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSupport {
 
@@ -38,21 +39,21 @@ public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSu
 
         // Can't get something we have not put in...
         Exchange actual = repo1.get(context, "missing");
-        assertEquals(null, actual);
+        assertNull(actual);
 
         actual = repo2.get(context, "missing");
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // Store it..
         Exchange exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("counter:1");
         actual = repo1.add(context, "foo", exchange1);
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // Get it back..
         actual = repo1.get(context, "foo");
         assertEquals("counter:1", actual.getIn().getBody());
-        assertEquals(null, repo2.get(context, "foo"));
+        assertNull(repo2.get(context, "foo"));
 
         // Change it after reading the current exchange with version
         Exchange exchange2 = new DefaultExchange(context);
@@ -66,17 +67,17 @@ public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSu
         Exchange exchange3 = new DefaultExchange(context);
         exchange3.getIn().setBody("Hello World");
         actual = repo2.add(context, "bar", exchange3);
-        assertEquals(null, actual);
-        assertEquals(null, repo1.get(context, "bar"));
+        assertNull(actual);
+        assertNull(repo1.get(context, "bar"));
 
         // Get it back..
         actual = repo1.get(context, "foo");
         assertEquals("counter:2", actual.getIn().getBody());
-        assertEquals(null, repo2.get(context, "foo"));
+        assertNull(repo2.get(context, "foo"));
 
         actual = repo2.get(context, "bar");
         assertEquals("Hello World", actual.getIn().getBody());
-        assertEquals(null, repo1.get(context, "bar"));
+        assertNull(repo1.get(context, "bar"));
     }
 
     @Test

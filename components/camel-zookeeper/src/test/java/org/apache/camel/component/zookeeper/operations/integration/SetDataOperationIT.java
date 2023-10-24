@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SetDataOperationIT extends ZooKeeperITSupport {
 
@@ -63,7 +64,7 @@ public class SetDataOperationIT extends ZooKeeperITSupport {
         SetDataOperation operation = new SetDataOperation(connection, node, payload);
         operation.setVersion(version);
         OperationResult<byte[]> result = operation.get();
-        assertEquals(null, result.getException());
+        assertNull(result.getException());
         verifyNodeContainsData(node, payload);
         assertEquals(expectedVersion, result.getStatistics().getVersion());
     }
