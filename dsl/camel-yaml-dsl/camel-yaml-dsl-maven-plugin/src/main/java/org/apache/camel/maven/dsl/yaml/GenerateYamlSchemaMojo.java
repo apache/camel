@@ -473,6 +473,17 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                         }
                     }
 
+                    if (!kebabCase) {
+                        final String camelCased = StringHelper.dashToCamelCase(propertyName);
+                        if (annotations.stream().anyMatch(existing -> {
+                            String existingName = annotationValue(existing, "name").map(AnnotationValue::asString).orElse("");
+                            String existingCamelCased = StringHelper.dashToCamelCase(existingName);
+                            return existingCamelCased.equals(camelCased);
+                        })) {
+                            return;
+                        }
+                    }
+
                     if (propertyName.startsWith("__")) {
                         // reserved property, add it
                         annotations.add(property);

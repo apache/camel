@@ -847,8 +847,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -978,8 +976,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -1113,8 +1109,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -1352,8 +1346,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -1407,14 +1399,6 @@
             "properties" : {
               "datasonnet" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
-              }
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "exchangeProperty" ],
-            "properties" : {
-              "exchangeProperty" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.ExchangePropertyExpression"
               }
             }
           }, {
@@ -1712,8 +1696,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -1931,8 +1913,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -2438,8 +2418,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -3602,8 +3580,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -3839,8 +3815,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -4329,8 +4303,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -4996,8 +4968,6 @@
                 }, {
                   "required" : [ "exchangeProperty" ]
                 }, {
-                  "required" : [ "exchangeProperty" ]
-                }, {
                   "required" : [ "groovy" ]
                 }, {
                   "required" : [ "header" ]
@@ -5276,8 +5246,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -5392,8 +5360,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -5550,8 +5516,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -5672,8 +5636,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -5800,8 +5762,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -5921,8 +5881,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -6389,8 +6347,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -6724,8 +6680,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -7375,8 +7329,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -7516,8 +7468,6 @@
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
                 "required" : [ "groovy" ]
               }, {
                 "required" : [ "header" ]
@@ -7638,8 +7588,6 @@
                 "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -12201,14 +12149,6 @@
             "properties" : {
               "datasonnet" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
-              }
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "exchangeProperty" ],
-            "properties" : {
-              "exchangeProperty" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.ExchangePropertyExpression"
               }
             }
           }, {
