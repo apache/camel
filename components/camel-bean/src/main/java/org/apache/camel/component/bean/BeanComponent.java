@@ -92,7 +92,7 @@ public class BeanComponent extends DefaultComponent {
     }
 
     void addBeanInfoToCache(BeanInfoCacheKey key, BeanInfo beanInfo) {
-        if (beanInfoCache != null) {
+        if (beanInfoCache != null && beanInfo != null) {
             beanInfoCache.put(key, beanInfo);
         }
     }
