@@ -81,7 +81,9 @@ public class BeanComponent extends DefaultComponent {
     }
 
     void addBeanInfoToCache(BeanInfoCacheKey key, BeanInfo beanInfo) {
-        beanInfoCache.put(key, beanInfo);
+        if (beanInfo != null) {
+            beanInfoCache.put(key, beanInfo);
+        }
     }
 
     @Override
