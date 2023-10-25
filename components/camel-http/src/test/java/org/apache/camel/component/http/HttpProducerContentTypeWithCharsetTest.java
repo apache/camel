@@ -51,6 +51,7 @@ public class HttpProducerContentTypeWithCharsetTest extends BaseHttpTest {
                     String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
 
                     assertEquals(CONTENT_TYPE_WITH_CHARSET.replace(";", "; "), contentType);
+                    assertFalse(request.containsHeader(Exchange.CONTENT_ENCODING));
 
                     response.setEntity(new StringEntity(contentType, StandardCharsets.US_ASCII));
                     response.setCode(HttpStatus.SC_OK);

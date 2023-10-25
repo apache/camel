@@ -778,7 +778,7 @@ public class HttpProducer extends DefaultProducer {
                             contentType = ContentType.parse(contentType + ";charset=" + charset);
                         }
 
-                        answer = new StringEntity(content, contentType, charset, false);
+                        answer = new StringEntity(content, contentType, false);
                     }
 
                     // fallback as input stream
