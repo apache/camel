@@ -19,9 +19,12 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.util.OrderedProperties;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 
@@ -88,9 +91,28 @@ public final class RuntimeUtil {
     }
 
     public static void loadProperties(Properties properties, File file) throws IOException {
-        try (final FileInputStream fileInputStream = new FileInputStream(file)) {
-            properties.load(fileInputStream);
+        if (file.exists()) {
+            try (final FileInputStream fileInputStream = new FileInputStream(file)) {
+                properties.load(fileInputStream);
+            }
         }
+    }
+
+    public static List<String> loadPropertiesLines(File file) throws IOException {
+        List<String> lines = new ArrayList<>();
+        if (!file.exists()) {
+            return lines;
+        }
+
+        Properties prop = new OrderedProperties();
+        loadProperties(prop, file);
+        for (String k : prop.stringPropertyNames()) {
+            String v = prop.getProperty(k);
+            if (v != null) {
+                lines.add(k + "=" + v);
+            }
+        }
+        return lines;
     }
 
     public static String getDependencies(Properties properties) {

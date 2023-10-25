@@ -304,7 +304,7 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
-        List<String> lines = Files.readAllLines(settings.toPath());
+        List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
         boolean kamelets = lines.stream().anyMatch(l -> l.startsWith("kamelet="));
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
@@ -644,7 +644,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // there may be additional extra repositories
-        List<String> lines = Files.readAllLines(settings.toPath());
+        List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
         for (String line : lines) {
             if (line.startsWith("repository=")) {
                 String r = StringHelper.after(line, "repository=");
@@ -661,7 +661,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static boolean hasModeline(File settings) {
         try {
-            List<String> lines = Files.readAllLines(settings.toPath());
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             return lines.stream().anyMatch(l -> l.startsWith("modeline="));
         } catch (Exception e) {
             // ignore
@@ -671,7 +671,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static int httpServerPort(File settings) {
         try {
-            List<String> lines = Files.readAllLines(settings.toPath());
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             String port = lines.stream().filter(l -> l.startsWith("camel.jbang.platform-http.port="))
                     .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
             return Integer.parseInt(port);
@@ -683,7 +683,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static String jibMavenPluginVersion(File settings) {
         try {
-            List<String> lines = Files.readAllLines(settings.toPath());
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             return lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
                     .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.0");
         } catch (Exception e) {
