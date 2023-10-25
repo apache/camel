@@ -76,7 +76,7 @@ class ObjectHelperTest {
     void isFloatingNumberNonNumeric() {
         assertFalse(ObjectHelper.isFloatingNumber("ABC"));
         assertFalse(ObjectHelper.isFloatingNumber("-ABC"));
-        assertFalse(ObjectHelper.isFloatingNumber("ABC.0"));;
+        assertFalse(ObjectHelper.isFloatingNumber("ABC.0"));
         assertFalse(ObjectHelper.isFloatingNumber("-ABC.0"));
         assertFalse(ObjectHelper.isFloatingNumber("!@#$#$%@#$%"));
         // TODO: fix ... currently it returns true for this
@@ -100,6 +100,16 @@ class ObjectHelperTest {
         assertTrue(ObjectHelper.isFloatingNumber("-12.34"));
         assertTrue(ObjectHelper.isFloatingNumber("1.0"));
         assertTrue(ObjectHelper.isFloatingNumber("0.0"));
+    }
+
+    @Test
+    @DisplayName("Tests that isFloatingNumber returns true for invalid floats")
+    void isFloatingNumberInvalidFloats() {
+        assertFalse(ObjectHelper.isFloatingNumber("12..34"));
+        assertFalse(ObjectHelper.isFloatingNumber("-12..34"));
+        assertFalse(ObjectHelper.isFloatingNumber("1..0"));
+        assertFalse(ObjectHelper.isFloatingNumber("0..0"));
+        assertFalse(ObjectHelper.isFloatingNumber(".."));
     }
 
     @Test
