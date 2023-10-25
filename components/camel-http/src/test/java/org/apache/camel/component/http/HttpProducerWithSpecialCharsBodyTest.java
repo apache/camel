@@ -28,8 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.CHARSET_NAME;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -71,7 +70,7 @@ class HttpProducerWithSpecialCharsBodyTest {
         assertTrue(requestEntity instanceof StringEntity);
         StringEntity entity = (StringEntity) requestEntity;
         assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(), "Content type should be given content type and charset");
-        assertEquals(StandardCharsets.UTF_8.name(), entity.getContentEncoding(), "Content encoding should be given charset");
+        assertNull(entity.getContentEncoding(), "Content encoding should not be given");
         assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
                 new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
                 "Reading entity content with intended charset should result in the original (readable) message");
@@ -95,7 +94,7 @@ class HttpProducerWithSpecialCharsBodyTest {
         assertTrue(requestEntity instanceof StringEntity);
         StringEntity entity = (StringEntity) requestEntity;
         assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(), "Content type should be given content type and charset");
-        assertEquals(StandardCharsets.UTF_8.name(), entity.getContentEncoding(), "Content encoding should be given charset");
+        assertNull(entity.getContentEncoding(), "Content encoding should not be given");
         assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
                 new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
                 "Reading entity content with intended charset should result in the original (readable) message");
