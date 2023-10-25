@@ -63,7 +63,8 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
                         String accessToken = ((JsonObject) Jsoner.deserialize(responseString)).getString("access_token");
                         request.addHeader(HttpHeaders.AUTHORIZATION, accessToken);
                     } else {
-                        throw new HttpException("Received error response from token request with Status Code: " + response.getCode());
+                        throw new HttpException(
+                                "Received error response from token request with Status Code: " + response.getCode());
                     }
 
                 } catch (DeserializationException e) {
