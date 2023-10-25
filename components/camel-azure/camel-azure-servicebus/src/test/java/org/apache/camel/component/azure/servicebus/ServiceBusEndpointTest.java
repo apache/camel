@@ -52,6 +52,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         params.put("serviceBusType", ServiceBusType.topic);
         params.put("prefetchCount", 10);
         params.put("connectionString", "testString");
+        params.put("binary", "true");
 
         final ServiceBusEndpoint endpoint
                 = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
@@ -61,6 +62,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
         assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
         assertEquals("testString", endpoint.getConfiguration().getConnectionString());
+        assertEquals(false, endpoint.getConfiguration().isBinary());
     }
 
     @Test

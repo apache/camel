@@ -23,11 +23,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
+import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
 import org.apache.camel.component.azure.servicebus.operations.ServiceBusSenderOperations;
@@ -147,12 +149,16 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
             Mono<Void> sendMessageAsync;
 
-            if (exchange.getMessage().getBody() instanceof Iterable<?>) {
+            if (inputBody instanceof Iterable<?>) {
                 sendMessageAsync
                         = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<?>) inputBody),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
             } else {
-                sendMessageAsync = serviceBusSenderOperations.sendMessages(inputBody,
+                Object convertedBody = inputBody instanceof BinaryData ? inputBody :
+                        getConfiguration().isBinary() ? exchange.getMessage().getBody(byte[].class) :
+                        exchange.getMessage().getBody(String.class);
+
+                sendMessageAsync = serviceBusSenderOperations.sendMessages(convertedBody,
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
             }
 
@@ -170,15 +176,18 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
             Mono<List<Long>> scheduleMessagesAsync;
 
-            if (exchange.getMessage().getBody() instanceof Iterable<?>) {
+            if (inputBody instanceof Iterable<?>) {
                 scheduleMessagesAsync
                         = serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<?>) inputBody),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                                 applicationProperties);
             } else {
+                Object convertedBody = inputBody instanceof BinaryData ? inputBody :
+                        getConfiguration().isBinary() ? exchange.getMessage().getBody(byte[].class) :
+                                exchange.getMessage().getBody(String.class);
                 scheduleMessagesAsync
-                        = serviceBusSenderOperations.scheduleMessages(inputBody,
+                        = serviceBusSenderOperations.scheduleMessages(convertedBody,
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                                 applicationProperties);
@@ -190,7 +199,20 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     }
 
     private List<?> convertBodyToList(final Iterable<?> inputBody) {
-        return StreamSupport.stream(inputBody.spliterator(), false).toList();
+        return StreamSupport.stream(inputBody.spliterator(), false)
+                .map(this::convertMessageBody)
+                .toList();
+    }
+
+    private Object convertMessageBody(Object inputBody) {
+        TypeConverter typeConverter = getEndpoint().getCamelContext().getTypeConverter();
+        if (inputBody instanceof BinaryData) {
+            return inputBody;
+        } else if (getConfiguration().isBinary()) {
+            return typeConverter.convertTo(byte[].class, inputBody);
+        } else {
+            return typeConverter.convertTo(String.class, inputBody);
+        }
     }
 
     private <T> void subscribeToMono(
