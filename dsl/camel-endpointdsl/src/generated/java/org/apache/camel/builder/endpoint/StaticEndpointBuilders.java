@@ -738,7 +738,7 @@ public class StaticEndpointBuilders {
      * Path parameter: eventbusNameOrArn (required)
      * Event bus name or ARN
      * 
-     * @param path //eventbusNameOrArn
+     * @param path eventbusNameOrArn
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
@@ -760,7 +760,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path //eventbusNameOrArn
+     * @param path eventbusNameOrArn
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
@@ -1125,7 +1125,7 @@ public class StaticEndpointBuilders {
      * Path parameter: bucketNameOrArn (required)
      * Bucket name or ARN
      * 
-     * @param path //bucketNameOrArn
+     * @param path bucketNameOrArn
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
@@ -1147,7 +1147,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path //bucketNameOrArn
+     * @param path bucketNameOrArn
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
@@ -6465,7 +6465,7 @@ public class StaticEndpointBuilders {
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      * 
-     * @param path //httpUri
+     * @param path httpUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
@@ -6487,7 +6487,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path //httpUri
+     * @param path httpUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
@@ -6508,7 +6508,7 @@ public class StaticEndpointBuilders {
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      * 
-     * @param path //httpUri
+     * @param path httpUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder https(

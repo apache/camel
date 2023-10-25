@@ -1580,7 +1580,7 @@ public interface HttpEndpointBuilderFactory {
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path //httpUri
+         * @param path httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder http(String path) {
@@ -1601,7 +1601,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path //httpUri
+         * @param path httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder http(String componentName, String path) {
@@ -1620,7 +1620,7 @@ public interface HttpEndpointBuilderFactory {
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path //httpUri
+         * @param path httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder https(String path) {

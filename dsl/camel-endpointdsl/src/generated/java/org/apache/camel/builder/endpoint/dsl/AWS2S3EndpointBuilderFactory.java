@@ -3421,7 +3421,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Path parameter: bucketNameOrArn (required)
          * Bucket name or ARN
          * 
-         * @param path //bucketNameOrArn
+         * @param path bucketNameOrArn
          * @return the dsl builder
          */
         default AWS2S3EndpointBuilder aws2S3(String path) {
@@ -3442,7 +3442,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path //bucketNameOrArn
+         * @param path bucketNameOrArn
          * @return the dsl builder
          */
         default AWS2S3EndpointBuilder aws2S3(String componentName, String path) {
