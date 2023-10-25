@@ -47,7 +47,7 @@ public final class ServiceBusUtils {
     }
 
     public static Iterable<ServiceBusMessage> createServiceBusMessages(
-            final Iterable<Object> data, final Map<String, Object> applicationProperties) {
+            final Iterable<?> data, final Map<String, Object> applicationProperties) {
         return StreamSupport.stream(data.spliterator(), false)
                 .map(obj -> createServiceBusMessage(obj, applicationProperties))
                 .collect(Collectors.toList());

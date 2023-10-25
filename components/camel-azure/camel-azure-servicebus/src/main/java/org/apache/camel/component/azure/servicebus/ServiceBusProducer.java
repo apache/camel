@@ -147,12 +147,12 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
             Mono<Void> sendMessageAsync;
 
-            if (exchange.getMessage().getBody() instanceof Iterable) {
+            if (exchange.getMessage().getBody() instanceof Iterable<?>) {
                 sendMessageAsync
-                        = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<Object>) inputBody),
+                        = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<?>) inputBody),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
             } else {
-                sendMessageAsync = serviceBusSenderOperations.sendMessages(exchange.getMessage().getBody(String.class),
+                sendMessageAsync = serviceBusSenderOperations.sendMessages(inputBody,
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
             }
 
@@ -170,15 +170,15 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
             Mono<List<Long>> scheduleMessagesAsync;
 
-            if (exchange.getMessage().getBody() instanceof Iterable) {
+            if (exchange.getMessage().getBody() instanceof Iterable<?>) {
                 scheduleMessagesAsync
-                        = serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<Object>) inputBody),
+                        = serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<?>) inputBody),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                                 applicationProperties);
             } else {
                 scheduleMessagesAsync
-                        = serviceBusSenderOperations.scheduleMessages(exchange.getMessage().getBody(String.class),
+                        = serviceBusSenderOperations.scheduleMessages(inputBody,
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                                 applicationProperties);
@@ -189,10 +189,8 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         };
     }
 
-    private List<String> convertBodyToList(final Iterable<Object> inputBody) {
-        return StreamSupport.stream(inputBody.spliterator(), false)
-                .map(body -> getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, body))
-                .toList();
+    private List<?> convertBodyToList(final Iterable<?> inputBody) {
+        return StreamSupport.stream(inputBody.spliterator(), false).toList();
     }
 
     private <T> void subscribeToMono(

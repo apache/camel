@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.servicebus.integration.operations;
 
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -37,6 +38,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = "connectionString", matches = ".*",
                          disabledReason = "Make sure to supply azure servicebus connectionString, e.g:  mvn verify -DconnectionString=string")
@@ -93,6 +95,13 @@ public class ServiceBusSenderOperationsTest {
 
         assertTrue(exists, "test message body");
 
+        //test bytes
+        byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
+        operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue")).block();
+        final boolean exists2 = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), testByteBody));
+        assertTrue(exists2, "test byte body");
+
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
             operations.sendMessages(12345, null, null).block();
@@ -125,6 +134,26 @@ public class ServiceBusSenderOperationsTest {
         assertTrue(batch1Exists, "test message body 1");
         assertTrue(batch2Exists, "test message body 2");
         assertTrue(batch3Exists, "test message body 3");
+
+        //test bytes
+        final List<byte[]> inputBatch2 = new LinkedList<>();
+        byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
+        byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
+        inputBatch2.add(byteBody1);
+        inputBatch2.add(byteBody2);
+
+        operations.sendMessages(inputBatch2, null, null).block();
+        final Spliterator<ServiceBusReceivedMessage> receivedMessages2
+                = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
+
+        final boolean byteBody1Exists = StreamSupport.stream(receivedMessages2, false)
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), byteBody1));
+        final boolean byteBody2Exists = StreamSupport.stream(receivedMessages2, false)
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), byteBody2));
+
+        assertTrue(byteBody1Exists, "test byte body 1");
+        assertTrue(byteBody2Exists, "test byte body 2");
+
     }
 
     @Test
@@ -138,6 +167,13 @@ public class ServiceBusSenderOperationsTest {
                         .equals("testScheduleMessage"));
 
         assertTrue(exists, "test message body");
+
+        //test bytes
+        byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
+        operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null).block();
+        final boolean exists2 = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), testByteBody));
+        assertTrue(exists2, "test byte body");
 
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
@@ -174,5 +210,24 @@ public class ServiceBusSenderOperationsTest {
         assertTrue(batch1Exists, "test message body 1");
         assertTrue(batch2Exists, "test message body 2");
         assertTrue(batch3Exists, "test message body 3");
+
+        //test bytes
+        final List<byte[]> inputBatch2 = new LinkedList<>();
+        byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
+        byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
+        inputBatch2.add(byteBody1);
+        inputBatch2.add(byteBody2);
+
+        operations.scheduleMessages(inputBatch2, OffsetDateTime.now(), null, null).block();
+        final Spliterator<ServiceBusReceivedMessage> receivedMessages2
+                = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
+
+        final boolean byteBody1Exists = StreamSupport.stream(receivedMessages2, false)
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), byteBody1));
+        final boolean byteBody2Exists = StreamSupport.stream(receivedMessages2, false)
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), byteBody2));
+
+        assertTrue(byteBody1Exists, "test byte body 1");
+        assertTrue(byteBody2Exists, "test byte body 2");
     }
 }
