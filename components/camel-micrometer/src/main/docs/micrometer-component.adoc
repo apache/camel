@@ -364,7 +364,7 @@ from("direct:in")
 `MicrometerRoutePolicyFactory` allows to add a RoutePolicy for each
 route in order to exposes route utilization statistics using Micrometer.
 This factory can be used in Java and XML as the examples below
-demonstrates. 
+demonstrates.
 
 [NOTE]
 ====
@@ -426,7 +426,7 @@ with `name=MicrometerRoutePolicy`.
 `MicrometerMessageHistoryFactory` allows to use metrics to capture Message History performance
 statistics while routing messages. It works by using a Micrometer Timer for
 each node in all the routes. This factory can be used in Java and XML as
-the examples below demonstrates. 
+the examples below demonstrates.
 
 From Java you just set the factory to the `CamelContext` as shown below:
 
@@ -500,7 +500,7 @@ with `name=MicrometerEventNotifier`.
 
 `InstrumentedThreadPoolFactory` allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from inside of Camel.
-See more details at xref:threading-model.adoc[Threading Model].
+See more details at xref:manual::threading-model.adoc[Threading Model].
 
 
 == Exposing Micrometer statistics in JMX
