@@ -93,12 +93,21 @@ public final class JavadocUtil {
     }
 
     public static String pathParameterJavaDoc(ComponentModel model) {
+        String doc = null;
         int pos = model.getSyntax().indexOf(':');
         if (pos != -1) {
-            return model.getSyntax().substring(pos + 1);
+            doc = model.getSyntax().substring(pos + 1);
         } else {
-            return model.getSyntax();
+            doc = model.getSyntax();
         }
+
+        // remove leading non alpha symbols
+        char ch = doc.charAt(0);
+        while (!Character.isAlphabetic(ch)) {
+            doc = doc.substring(1);
+            ch = doc.charAt(0);
+        }
+        return doc;
     }
 
     public static String extractJavaDoc(String sourceCode, MethodSource<?> ms) throws IOException {
