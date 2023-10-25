@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -1282,10 +1283,22 @@ public class Run extends CamelCommand {
     private void writeSettings(String key, String value) {
         FileOutputStream fos = null;
         try {
+            // use java.util.Properties to ensure the value is escaped correctly
+            Properties prop = new Properties();
+            prop.setProperty(key, value);
+            StringWriter sw = new StringWriter();
+            prop.store(sw, null);
+
             fos = new FileOutputStream(WORK_DIR + "/" + RUN_SETTINGS_FILE, true);
-            String line = key + "=" + value;
-            fos.write(line.getBytes(StandardCharsets.UTF_8));
-            fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+
+            String[] lines = sw.toString().split(System.lineSeparator());
+            for (String line : lines) {
+                // properties store timestamp as comment which we want to skip
+                if (!line.startsWith("#")) {
+                    fos.write(line.getBytes(StandardCharsets.UTF_8));
+                    fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+                }
+            }
         } catch (Exception e) {
             // ignore
         } finally {
