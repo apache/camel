@@ -31,7 +31,9 @@ import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.tracing.SpanDecorator;
 
 public class OpenTelemetryTracingStrategy implements InterceptStrategy {
+
     private static final String UNNAMED = "unnamed";
+
     private final OpenTelemetryTracer tracer;
 
     public OpenTelemetryTracingStrategy(OpenTelemetryTracer tracer) {
