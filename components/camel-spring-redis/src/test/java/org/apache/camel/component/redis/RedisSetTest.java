@@ -28,6 +28,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -60,7 +61,7 @@ public class RedisSetTest extends RedisTestSupport {
                 RedisConstants.VALUE, "value");
 
         verify(setOperations).add("key", "value");
-        assertEquals(null, result);
+        assertNull(result);
 
     }
 

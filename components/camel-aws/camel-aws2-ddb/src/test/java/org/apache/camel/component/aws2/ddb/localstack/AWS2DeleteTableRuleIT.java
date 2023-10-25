@@ -29,6 +29,7 @@ import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AWS2DeleteTableRuleIT extends Aws2DDBBase {
 
@@ -59,7 +60,7 @@ public class AWS2DeleteTableRuleIT extends Aws2DDBBase {
                 exchange.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
             }
         });
-        assertEquals(null, exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS));
+        assertNull(exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS));
     }
 
     @Override

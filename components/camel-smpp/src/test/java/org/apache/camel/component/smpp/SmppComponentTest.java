@@ -27,9 +27,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppComponent</code>
@@ -37,11 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SmppComponentTest {
 
     private SmppComponent component;
-    private DefaultCamelContext context;
 
     @BeforeEach
     public void setUp() {
-        context = new DefaultCamelContext();
+        DefaultCamelContext context = new DefaultCamelContext();
         context.start();
         component = new SmppComponent(context);
         component.start();
@@ -82,7 +82,7 @@ public class SmppComponentTest {
         assertEquals("secret", smppEndpoint.getConfiguration().getPassword());
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getConnectionString());
         assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
-        assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
+        assertInstanceOf(SmppBinding.class, smppEndpoint.getBinding());
         assertNotNull(smppEndpoint.getCamelContext());
     }
 
@@ -100,7 +100,7 @@ public class SmppComponentTest {
         assertEquals("secret", smppEndpoint.getConfiguration().getPassword());
         assertEquals("smpps://smppclient@localhost:2775", smppEndpoint.getConnectionString());
         assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
-        assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
+        assertInstanceOf(SmppBinding.class, smppEndpoint.getBinding());
         assertNotNull(smppEndpoint.getCamelContext());
     }
 
@@ -118,7 +118,7 @@ public class SmppComponentTest {
         assertEquals("secret", smppEndpoint.getConfiguration().getPassword());
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getConnectionString());
         assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
-        assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
+        assertInstanceOf(SmppBinding.class, smppEndpoint.getBinding());
         assertNotNull(smppEndpoint.getCamelContext());
     }
 
@@ -131,8 +131,8 @@ public class SmppComponentTest {
                 = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=&serviceType=", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
 
-        assertEquals(null, smppEndpoint.getConfiguration().getSystemType());
-        assertEquals(null, smppEndpoint.getConfiguration().getServiceType());
+        assertNull(smppEndpoint.getConfiguration().getSystemType());
+        assertNull(smppEndpoint.getConfiguration().getServiceType());
     }
 
     @Test
@@ -147,7 +147,7 @@ public class SmppComponentTest {
         assertSame(configuration, smppEndpoint.getConfiguration());
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getConnectionString());
         assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
-        assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
+        assertInstanceOf(SmppBinding.class, smppEndpoint.getBinding());
         assertNotNull(smppEndpoint.getCamelContext());
     }
 
@@ -163,7 +163,7 @@ public class SmppComponentTest {
         assertSame(configuration, smppEndpoint.getConfiguration());
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getConnectionString());
         assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
-        assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
+        assertInstanceOf(SmppBinding.class, smppEndpoint.getBinding());
         assertNotNull(smppEndpoint.getCamelContext());
     }
 

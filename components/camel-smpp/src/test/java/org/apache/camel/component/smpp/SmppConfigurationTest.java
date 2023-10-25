@@ -55,7 +55,7 @@ public class SmppConfigurationTest {
         assertEquals("", configuration.getAddressRange());
         assertEquals(Integer.valueOf(60000), configuration.getEnquireLinkTimer());
         assertEquals("localhost", configuration.getHost());
-        assertEquals(null, configuration.getPassword());
+        assertNull(configuration.getPassword());
         assertEquals(Integer.valueOf(2775), configuration.getPort());
         assertEquals(0x01, configuration.getPriorityFlag());
         assertEquals(0x00, configuration.getProtocolId());
@@ -74,11 +74,11 @@ public class SmppConfigurationTest {
         assertEquals(false, configuration.isUsingSSL());
         assertEquals(5000, configuration.getInitialReconnectDelay());
         assertEquals(5000, configuration.getReconnectDelay());
-        assertEquals(null, configuration.getHttpProxyHost());
+        assertNull(configuration.getHttpProxyHost());
         assertEquals(Integer.valueOf(3128), configuration.getHttpProxyPort());
-        assertEquals(null, configuration.getHttpProxyUsername());
-        assertEquals(null, configuration.getHttpProxyPassword());
-        assertEquals(null, configuration.getSessionStateListener());
+        assertNull(configuration.getHttpProxyUsername());
+        assertNull(configuration.getHttpProxyPassword());
+        assertNull(configuration.getSessionStateListener());
         assertEquals(3, configuration.getPduProcessorDegree());
         assertEquals(100, configuration.getPduProcessorQueueCapacity());
         assertEquals(false, configuration.isSingleDLR());

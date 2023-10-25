@@ -88,6 +88,6 @@ public class ConverterTest {
         list.add("haha");
         exchange.getIn().setBody(list);
         String ret = exchange.getIn().getBody(String.class);
-        assertEquals(ret, "[hehe, haha]", "shouldn't miss list content");
+        assertEquals("[hehe, haha]", ret, "shouldn't miss list content");
     }
 }

@@ -58,7 +58,7 @@ public class LevelDBAggregationRepositoryRecoverExistingTest extends LevelDBTest
         Exchange exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("counter:1");
         Exchange actual = repo.add(context, "foo", exchange1);
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // Remove it, which makes it in the pre confirm stage
         repo.remove(context, "foo", exchange1);

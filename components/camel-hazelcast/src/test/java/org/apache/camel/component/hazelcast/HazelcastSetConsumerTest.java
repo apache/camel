@@ -34,6 +34,7 @@ import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
@@ -105,7 +106,7 @@ public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
     private void checkHeaders(Map<String, Object> headers, String action) {
         assertEquals(action, headers.get(HazelcastConstants.LISTENER_ACTION));
         assertEquals(HazelcastConstants.CACHE_LISTENER, headers.get(HazelcastConstants.LISTENER_TYPE));
-        assertEquals(null, headers.get(HazelcastConstants.OBJECT_ID));
+        assertNull(headers.get(HazelcastConstants.OBJECT_ID));
         assertNotNull(headers.get(HazelcastConstants.LISTENER_TIME));
     }
 }

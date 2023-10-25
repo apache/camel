@@ -23,8 +23,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify continuing using NOT same thread on the consumer side.
@@ -61,7 +61,7 @@ public class DisruptorShouldNotUseSameThreadTest extends CamelTestSupport {
                 from("disruptor:foo").process(new Processor() {
                     @Override
                     public void process(final Exchange exchange) {
-                        assertEquals(null, local.get());
+                        assertNull(local.get());
                         assertNotSame(id, Thread.currentThread().getId(), "Thread ids should not be same");
                     }
                 }).to("mock:result");

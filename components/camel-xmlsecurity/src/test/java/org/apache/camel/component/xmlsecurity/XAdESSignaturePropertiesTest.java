@@ -71,6 +71,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.xmlsecurity.XmlSignatureTest.checkThrownException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -967,7 +968,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         if (startsWith) {
             assertTrue(result.startsWith(expectedResult));
         } else if (NOT_EMPTY.equals(expectedResult)) {
-            assertTrue(!result.isEmpty(), "Not empty result for xpath " + xpathString + " expected");
+            assertFalse(result.isEmpty(), "Not empty result for xpath " + xpathString + " expected");
         } else {
             assertEquals(expectedResult, result);
         }
@@ -991,9 +992,8 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XPath xpath = xpathFactory.newXPath();
         NamespaceContext nc = new NamespaceContext() {
 
-            @SuppressWarnings("rawtypes")
             @Override
-            public Iterator getPrefixes(String namespaceURI) {
+            public Iterator<String> getPrefixes(String namespaceURI) {
                 return null;
             }
 

@@ -21,6 +21,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JdbcAggregationRepositoryTest extends AbstractJdbcAggregationTestSupport {
 
@@ -33,13 +34,13 @@ public class JdbcAggregationRepositoryTest extends AbstractJdbcAggregationTestSu
     public void testOperations() {
         // Can't get something we have not put in...
         Exchange actual = repo.get(context, "missing");
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // Store it..
         Exchange exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("counter:1");
         actual = repo.add(context, "foo", exchange1);
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // Get it back..
         actual = repo.get(context, "foo");
@@ -60,13 +61,13 @@ public class JdbcAggregationRepositoryTest extends AbstractJdbcAggregationTestSu
         // now remove it
         repo.remove(context, "foo", actual);
         actual = repo.get(context, "foo");
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // add it again
         exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("counter:3");
         actual = repo.add(context, "foo", exchange1);
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // Get it back..
         actual = repo.get(context, "foo");

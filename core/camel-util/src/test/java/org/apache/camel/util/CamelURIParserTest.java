@@ -36,7 +36,7 @@ public class CamelURIParserTest {
         String[] out1 = CamelURIParser.parseUri("direct:start");
         assertEquals("direct", out1[0]);
         assertEquals("start", out1[1]);
-        assertEquals(null, out1[2]);
+        assertNull(out1[2]);
     }
 
     @Test
@@ -67,22 +67,22 @@ public class CamelURIParserTest {
         String[] out1 = CamelURIParser.parseUri("file:/absolute");
         assertEquals("file", out1[0]);
         assertEquals("/absolute", out1[1]);
-        assertEquals(null, out1[2]);
+        assertNull(out1[2]);
 
         String[] out2 = CamelURIParser.parseUri("file:///absolute");
         assertEquals("file", out2[0]);
         assertEquals("/absolute", out2[1]);
-        assertEquals(null, out2[2]);
+        assertNull(out2[2]);
 
         String[] out3 = CamelURIParser.parseUri("file://relative");
         assertEquals("file", out3[0]);
         assertEquals("relative", out3[1]);
-        assertEquals(null, out3[2]);
+        assertNull(out3[2]);
 
         String[] out4 = CamelURIParser.parseUri("file:relative");
         assertEquals("file", out4[0]);
         assertEquals("relative", out4[1]);
-        assertEquals(null, out4[2]);
+        assertNull(out4[2]);
     }
 
     @Test
@@ -98,12 +98,12 @@ public class CamelURIParserTest {
         String[] out1 = CamelURIParser.parseUri("file:/");
         assertEquals("file", out1[0]);
         assertEquals("/", out1[1]);
-        assertEquals(null, out1[2]);
+        assertNull(out1[2]);
 
         String[] out2 = CamelURIParser.parseUri("file:///");
         assertEquals("file", out2[0]);
         assertEquals("/", out2[1]);
-        assertEquals(null, out2[2]);
+        assertNull(out2[2]);
     }
 
     @Test
@@ -111,12 +111,12 @@ public class CamelURIParserTest {
         String[] out1 = CamelURIParser.parseUri("file:relative");
         assertEquals("file", out1[0]);
         assertEquals("relative", out1[1]);
-        assertEquals(null, out1[2]);
+        assertNull(out1[2]);
 
         String[] out2 = CamelURIParser.parseUri("file:relative?");
         assertEquals("file", out2[0]);
         assertEquals("relative", out2[1]);
-        assertEquals(null, out2[2]);
+        assertNull(out2[2]);
     }
 
     @Test
@@ -124,7 +124,7 @@ public class CamelURIParserTest {
         String[] out1 = CamelURIParser.fastParseUri("file:relative");
         assertEquals("file", out1[0]);
         assertEquals("relative", out1[1]);
-        assertEquals(null, out1[2]);
+        assertNull(out1[2]);
 
         String[] out2 = CamelURIParser.fastParseUri("file://relative");
         assertEquals(CamelURIParser.URI_ALREADY_NORMALIZED, out2);
