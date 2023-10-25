@@ -62,7 +62,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
         assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
         assertEquals("testString", endpoint.getConfiguration().getConnectionString());
-        assertEquals(false, endpoint.getConfiguration().isBinary());
+        assertEquals(true, endpoint.getConfiguration().isBinary());
     }
 
     @Test

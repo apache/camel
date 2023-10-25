@@ -154,9 +154,9 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                         = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<?>) inputBody),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
             } else {
-                Object convertedBody = inputBody instanceof BinaryData ? inputBody :
-                        getConfiguration().isBinary() ? exchange.getMessage().getBody(byte[].class) :
-                        exchange.getMessage().getBody(String.class);
+                Object convertedBody = inputBody instanceof BinaryData ? inputBody
+                        : getConfiguration().isBinary() ? exchange.getMessage().getBody(byte[].class)
+                        : exchange.getMessage().getBody(String.class);
 
                 sendMessageAsync = serviceBusSenderOperations.sendMessages(convertedBody,
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
@@ -183,9 +183,9 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                                 applicationProperties);
             } else {
-                Object convertedBody = inputBody instanceof BinaryData ? inputBody :
-                        getConfiguration().isBinary() ? exchange.getMessage().getBody(byte[].class) :
-                                exchange.getMessage().getBody(String.class);
+                Object convertedBody = inputBody instanceof BinaryData ? inputBody
+                        : getConfiguration().isBinary() ? exchange.getMessage().getBody(byte[].class)
+                        : exchange.getMessage().getBody(String.class);
                 scheduleMessagesAsync
                         = serviceBusSenderOperations.scheduleMessages(convertedBody,
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),

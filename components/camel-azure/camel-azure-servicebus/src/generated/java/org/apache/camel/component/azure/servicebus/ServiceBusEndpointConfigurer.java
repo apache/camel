@@ -25,6 +25,7 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "amqpRetryOptions": target.getConfiguration().setAmqpRetryOptions(property(camelContext, com.azure.core.amqp.AmqpRetryOptions.class, value)); return true;
         case "amqptransporttype":
         case "amqpTransportType": target.getConfiguration().setAmqpTransportType(property(camelContext, com.azure.core.amqp.AmqpTransportType.class, value)); return true;
+        case "binary": target.getConfiguration().setBinary(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientoptions":
@@ -87,6 +88,7 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "amqpRetryOptions": return com.azure.core.amqp.AmqpRetryOptions.class;
         case "amqptransporttype":
         case "amqpTransportType": return com.azure.core.amqp.AmqpTransportType.class;
+        case "binary": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientoptions":
@@ -145,6 +147,7 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "amqpRetryOptions": return target.getConfiguration().getAmqpRetryOptions();
         case "amqptransporttype":
         case "amqpTransportType": return target.getConfiguration().getAmqpTransportType();
+        case "binary": return target.getConfiguration().isBinary();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientoptions":
