@@ -16,8 +16,6 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
@@ -65,17 +63,8 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
 
         if (logger == null) {
-            // first - try to lookup single instance in the registry, just like
-            // LogComponent
-            Map<String, Logger> availableLoggers = findByTypeWithName(Logger.class);
-            if (availableLoggers.size() == 1) {
-                logger = availableLoggers.values().iterator().next();
-                LOG.debug("Using custom Logger: {}", logger);
-            } else if (availableLoggers.size() > 1) {
-                // we should log about this somewhere...
-                LOG.debug("More than one {} instance found in the registry. Falling back to create logger by name.",
-                        Logger.class.getName());
-            }
+            // first - try to lookup single instance in the registry, just like LogComponent
+            logger = findSingleByType(Logger.class);
         }
 
         if (logger == null) {

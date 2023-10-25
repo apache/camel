@@ -308,8 +308,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             if (getCamelContext() != null && type.isAssignableFrom(getCamelContext().getClass())) {
                 return getCamelContext();
             }
-            Set<?> found = getCamelContext() != null ? getCamelContext().getRegistry().findByType(type) : null;
-            if (found == null || found.isEmpty()) {
+            Object found = getCamelContext() != null ? getCamelContext().getRegistry().findSingleByType(type) : null;
+            if (found == null) {
                 // this may be a common type so lets check this first
                 if (getCamelContext() != null && type.isAssignableFrom(Registry.class)) {
                     return getCamelContext().getRegistry();
@@ -338,12 +338,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     return answer;
                 }
                 throw new NoSuchBeanException(null, type.getName());
-            } else if (found.size() > 1) {
-                throw new NoSuchBeanException(
-                        "Found " + found.size() + " beans of type: " + type + ". Only one bean expected.");
             } else {
-                // we found only one
-                return found.iterator().next();
+                return found;
             }
         } else {
             return CamelContextHelper.mandatoryLookup(getCamelContext(), name, type);
@@ -367,12 +363,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         // create an instance of type
         Object bean = null;
         if (map == null) {
-            Set<?> instances = ecc.getRegistry().findByType(type);
-            if (instances.size() == 1) {
-                bean = instances.iterator().next();
-            } else if (instances.size() > 1) {
-                return null;
-            } else {
+            bean = ecc.getRegistry().findSingleByType(type);
+            if (bean == null) {
                 // attempt to create a new instance
                 try {
                     bean = ecc.getInjector().newInstance(type);
