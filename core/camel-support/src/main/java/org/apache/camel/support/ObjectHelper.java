@@ -343,45 +343,61 @@ public final class ObjectHelper {
      * Checks whether the text is an integer number
      */
     public static boolean isNumber(String text) {
-        if (text == null || text.isEmpty()) {
+        final int startPos = findStartPosition(text);
+        if (startPos < 0) {
             return false;
         }
-        if (text.equals("-")) {
-            return false;
-        }
-        for (int i = 0; i < text.length(); i++) {
+
+        for (int i = startPos; i < text.length(); i++) {
             char ch = text.charAt(i);
-            if (i == 0 && ch == '-') {
-                // skip leading negative
-            } else if (!Character.isDigit(ch)) {
+            if (!Character.isDigit(ch)) {
                 return false;
             }
         }
         return true;
     }
 
+    private static int findStartPosition(String text) {
+        if (text == null || text.isEmpty()) {
+            // invalid
+            return -1;
+        }
+
+        int startPos = 0;
+        if (text.charAt(0) == '-') {
+            if (text.length() == 1) {
+                // invalid
+                return -1;
+            }
+
+            // skip leading negative
+            startPos = 1;
+        }
+
+        return startPos;
+    }
+
     /**
      * Checks whether the text is a float point number
      */
     public static boolean isFloatingNumber(String text) {
-        if (text == null || text.isEmpty()) {
+        final int startPos = findStartPosition(text);
+        if (startPos < 0) {
             return false;
         }
-        if (text.equals("-")) {
-            return false;
-        }
+
         boolean dots = false;
-        for (int i = 0; i < text.length(); i++) {
+        for (int i = startPos; i < text.length(); i++) {
             char ch = text.charAt(i);
-            if (i == 0 && ch == '-') {
-                // skip leading negative
-            } else if (ch == '.') {
-                if (dots) {
+            if (!Character.isDigit(ch)) {
+                if (ch == '.') {
+                    if (dots) {
+                        return false;
+                    }
+                    dots = true;
+                } else {
                     return false;
                 }
-                dots = true;
-            } else if (!Character.isDigit(ch)) {
-                return false;
             }
         }
         return true;
