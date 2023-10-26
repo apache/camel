@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.primary;
 
+import java.util.Set;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchBeanTypeException;
 import org.apache.camel.model.ModelCamelContext;
@@ -63,6 +65,15 @@ public class FindSingleByTypeTest extends ContextTestSupport {
         // should not find anything
         Object o = context.getRegistry().findSingleByType(UuidGenerator.class);
         Assertions.assertNull(o);
+    }
+
+    @Test
+    public void testFindByType() {
+        // should find primary
+        Set<Customer> set = context.getRegistry().findByType(Customer.class);
+
+        // should find both beans
+        Assertions.assertEquals(2, set.size());
     }
 
     @Test
