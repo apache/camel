@@ -34,12 +34,12 @@ public class MainSSLTest {
     public void testMainSSLParameters() throws Exception {
         Main main = new Main();
 
-        main.addInitialProperty("camel.main.sslEnabled", "true");
-        main.addInitialProperty("camel.main.sslKeyStore", "server.jks");
-        main.addInitialProperty("camel.main.sslKeystorePassword", "security");
-        main.addInitialProperty("camel.main.sslTrustStore", "client.jks");
-        main.addInitialProperty("camel.main.sslTrustStorePassword", "storepass");
-        main.addInitialProperty("camel.main.sslClientAuthentication", "REQUIRE");
+        main.addInitialProperty("camel.main.ssl.enabled", "true");
+        main.addInitialProperty("camel.main.ssl.keyStore", "server.jks");
+        main.addInitialProperty("camel.main.ssl.keystorePassword", "security");
+        main.addInitialProperty("camel.main.ssl.trustStore", "client.jks");
+        main.addInitialProperty("camel.main.ssl.trustStorePassword", "storepass");
+        main.addInitialProperty("camel.main.ssl.clientAuthentication", "REQUIRE");
 
         main.start();
 
@@ -76,58 +76,16 @@ public class MainSSLTest {
     }
 
     @Test
-    public void testMainDefaultSSLParameters() throws Exception {
-        Main main = new Main();
-
-        main.addInitialProperty("camel.main.sslEnabled", "true");
-        main.addInitialProperty("camel.main.sslKeyStore", "server.jks");
-        main.addInitialProperty("camel.main.sslTrustStore", "client.jks");
-
-        main.start();
-
-        CamelContext context = main.getCamelContext();
-        assertNotNull(context);
-
-        SSLContextParameters sslParams = context.getSSLContextParameters();
-        assertNotNull(sslParams);
-
-        KeyManagersParameters kmp = sslParams.getKeyManagers();
-        assertNotNull(kmp);
-
-        Assertions.assertEquals("changeit", kmp.getKeyPassword());
-
-        KeyStoreParameters ksp = kmp.getKeyStore();
-        assertNotNull(ksp);
-
-        Assertions.assertEquals("server.jks", ksp.getResource());
-        Assertions.assertEquals("changeit", ksp.getPassword());
-
-        TrustManagersParameters tmp = sslParams.getTrustManagers();
-        assertNotNull(tmp);
-
-        KeyStoreParameters tsp = tmp.getKeyStore();
-        Assertions.assertEquals("client.jks", tsp.getResource());
-        Assertions.assertEquals("changeit", tsp.getPassword());
-
-        SSLContextServerParameters scsp = sslParams.getServerParameters();
-        assertNotNull(scsp);
-
-        Assertions.assertEquals(ClientAuthentication.NONE.name(), scsp.getClientAuthentication());
-
-        main.stop();
-    }
-
-    @Test
     public void testMainSSLParametersFluent() throws Exception {
         Main main = new Main();
 
-        main.configure()
-                .withSslEnabled(true)
-                .withSslKeyStore("server.jks")
-                .withSslKeystorePassword("security")
-                .withSslTrustStore("client.jks")
-                .withSslTrustStorePassword("storepass")
-                .withSslClientAuthentication("REQUIRE");
+        main.configure().sslConfig()
+                .withEnabled(true)
+                .withKeyStore("server.jks")
+                .withKeystorePassword("security")
+                .withTrustStore("client.jks")
+                .withTrustStorePassword("storepass")
+                .withClientAuthentication("REQUIRE");
 
         main.start();
 

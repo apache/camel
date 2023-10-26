@@ -16,24 +16,24 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
-import org.apache.camel.main.Main;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.main.Main;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.junit.jupiter.api.Test;
 
-public class MainVertxWebsocketSSLTest extends VertxWebSocketTestSupport  {
+public class MainVertxWebsocketSSLTest extends VertxWebSocketTestSupport {
 
     @Test
     public void testGlobalServerSSLContextParameters() throws Exception {
 
         Main main = new Main();
-        main.configure().setSslEnabled(true);
-        main.configure().setSslKeyStore("server.jks");
-        main.configure().setSslKeystorePassword("security");
-        main.configure().setSslTrustStore("client.jks");
-        main.configure().setSslTrustStorePassword("storepass");
-        main.configure().setSslClientAuthentication(ClientAuthentication.REQUIRE.name());
+        main.configure().sslConfig().setEnabled(true);
+        main.configure().sslConfig().setKeyStore("server.jks");
+        main.configure().sslConfig().setKeystorePassword("security");
+        main.configure().sslConfig().setTrustStore("client.jks");
+        main.configure().sslConfig().setTrustStorePassword("storepass");
+        main.configure().sslConfig().setClientAuthentication(ClientAuthentication.REQUIRE.name());
         main.addProperty("camel.component.vertx-websocket.useglobalsslcontextparameters", "true");
 
         main.configure().addRoutesBuilder(new RouteBuilder() {

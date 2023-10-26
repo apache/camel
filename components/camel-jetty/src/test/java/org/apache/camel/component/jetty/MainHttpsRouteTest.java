@@ -28,8 +28,8 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.main.Main;
+import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,10 +68,11 @@ public class MainHttpsRouteTest extends BaseJettyTest {
     @Test
     public void testHelloEndpoint() throws Exception {
         Main main = new Main();
-        main.configure().setSslEnabled(true);
-        main.configure().setSslKeyStore(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
-        main.configure().setSslKeystorePassword("changeit");
-        main.configure().setSslClientAuthentication(ClientAuthentication.WANT.name());
+        main.configure().sslConfig().setEnabled(true);
+        main.configure().sslConfig().setKeyStore(
+                this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
+        main.configure().sslConfig().setKeystorePassword("changeit");
+        main.configure().sslConfig().setClientAuthentication(ClientAuthentication.WANT.name());
         main.addProperty("camel.component.jetty.useglobalsslcontextparameters", "true");
 
         main.configure().addRoutesBuilder(new RouteBuilder() {
