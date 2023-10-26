@@ -36,7 +36,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
-import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoSuchBeanTypeException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
@@ -337,7 +337,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     }
                     return answer;
                 }
-                throw new NoSuchBeanException(null, type.getName());
+                throw new NoSuchBeanTypeException(type);
             } else {
                 return found;
             }
