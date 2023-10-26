@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
@@ -334,13 +333,7 @@ public final class EndpointHelper {
             try {
                 value = value.substring(6);
                 Class<?> clazz = context.getClassResolver().resolveMandatoryClass(value);
-                Set<?> set = context.getRegistry().findByType(clazz);
-                if (set.size() == 1) {
-                    answer = set.iterator().next();
-                } else if (set.size() > 1) {
-                    throw new NoSuchBeanException(
-                            value, "Found " + set.size() + " beans of type: " + clazz + ". Only 1 bean instance is supported.");
-                }
+                answer = context.getRegistry().mandatoryFindSingleByType(clazz);
             } catch (ClassNotFoundException e) {
                 throw new NoSuchBeanException(value, e);
             }

@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -31,7 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
@@ -701,16 +699,9 @@ public class DefaultModel implements Model {
         } else if (beanFactory.getType() != null && beanFactory.getType().startsWith("#type:")) {
             final CamelContext camelContext = routeTemplateContext.getCamelContext();
             Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(beanFactory.getType().substring(6));
-            Set<?> found = camelContext.getRegistry().findByType(clazz);
-            if (found == null || found.isEmpty()) {
-                throw new NoSuchBeanException(null, clazz.getName());
-            } else if (found.size() > 1) {
-                throw new NoSuchBeanException(
-                        "Found " + found.size() + " beans of type: " + clazz + ". Only one bean expected.");
-            } else {
-                // do not set properties when using #type as it uses an existing shared bean
-                routeTemplateContext.bind(beanFactory.getName(), clazz, found.iterator().next());
-            }
+            Object found = camelContext.getRegistry().mandatoryFindSingleByType(clazz);
+            // do not set properties when using #type as it uses an existing shared bean
+            routeTemplateContext.bind(beanFactory.getName(), clazz, found);
         } else {
             // invalid syntax for the local bean, so lets report an exception
             throw new IllegalArgumentException(

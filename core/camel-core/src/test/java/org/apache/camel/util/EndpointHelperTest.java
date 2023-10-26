@@ -250,7 +250,7 @@ public class EndpointHelperTest extends ContextTestSupport {
                     AuthorizationPolicy.class);
             fail("Should throw exception");
         } catch (NoSuchBeanException e) {
-            assertTrue(e.getMessage().contains("Found 2 beans"));
+            // expected
         }
     }
 

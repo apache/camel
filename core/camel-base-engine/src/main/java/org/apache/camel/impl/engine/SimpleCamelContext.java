@@ -619,10 +619,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
         Tracer tracer = null;
         if (getRegistry() != null) {
             // lookup in registry
-            Map<String, Tracer> map = getRegistry().findByTypeWithName(Tracer.class);
-            if (map.size() == 1) {
-                tracer = map.values().iterator().next();
-            }
+            tracer = getRegistry().findSingleByType(Tracer.class);
         }
         if (tracer == null) {
             tracer = getCamelContextExtension().getContextPlugin(Tracer.class);

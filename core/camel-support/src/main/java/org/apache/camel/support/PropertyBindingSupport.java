@@ -855,18 +855,7 @@ public final class PropertyBindingSupport {
                     }
                 }
                 if (parameterType != null) {
-                    Set<?> types = context.getRegistry().findByType(parameterType);
-                    if (types.size() == 1) {
-                        value = types.iterator().next();
-                    } else if (types.size() > 1) {
-                        throw new IllegalStateException(
-                                "Cannot select single type: " + parameterType + " as there are " + types.size()
-                                                        + " beans in the registry with this type");
-                    } else {
-                        throw new IllegalStateException(
-                                "Cannot select single type: " + parameterType
-                                                        + " as there are no beans in the registry with this type");
-                    }
+                    value = context.getRegistry().mandatoryFindSingleByType(parameterType);
                 }
             }
         }
@@ -1611,17 +1600,7 @@ public final class PropertyBindingSupport {
             // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
             String typeName = strval.substring(6);
             Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(typeName);
-            Set<?> types = camelContext.getRegistry().findByType(type);
-            if (types.size() == 1) {
-                answer = types.iterator().next();
-            } else if (types.size() > 1) {
-                throw new IllegalStateException(
-                        "Cannot select single type: " + typeName + " as there are " + types.size()
-                                                + " beans in the registry with this type");
-            } else {
-                throw new IllegalStateException(
-                        "Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
-            }
+            answer = camelContext.getRegistry().mandatoryFindSingleByType(type);
         } else if (strval.startsWith("#bean:")) {
             String key = strval.substring(6);
             answer = CamelContextHelper.mandatoryLookup(camelContext, key);

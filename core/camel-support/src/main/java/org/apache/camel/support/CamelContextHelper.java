@@ -214,6 +214,14 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Look up a bean of the give type in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext} or
+     * throws {@link org.apache.camel.NoSuchBeanTypeException} if not a single bean was found.
+     */
+    public static <T> T mandatoryFindSingleByType(CamelContext camelContext, Class<T> type) {
+        return camelContext.getRegistry().mandatoryFindSingleByType(type);
+    }
+
+    /**
      * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext} or throws
      * {@link NoSuchBeanException} if not found.
      */
