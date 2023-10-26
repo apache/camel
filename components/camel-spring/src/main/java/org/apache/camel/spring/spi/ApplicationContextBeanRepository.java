@@ -21,10 +21,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoSuchBeanTypeException;
 import org.apache.camel.spi.BeanRepository;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+import org.springframework.beans.factory.config.NamedBeanHolder;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -83,4 +86,25 @@ public class ApplicationContextBeanRepository implements BeanRepository {
         return BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, type);
     }
 
+    @Override
+    public <T> T findSingleByType(Class<T> type) {
+        try {
+            NamedBeanHolder<T> holder = applicationContext.getAutowireCapableBeanFactory().resolveNamedBean(type);
+            return holder.getBeanInstance();
+        } catch (NoSuchBeanDefinitionException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public <T> T mandatoryFindSingleByType(Class<T> type) {
+        try {
+            NamedBeanHolder<T> holder = applicationContext.getAutowireCapableBeanFactory().resolveNamedBean(type);
+            return holder.getBeanInstance();
+        } catch (NoUniqueBeanDefinitionException e) {
+            throw new NoSuchBeanTypeException(type, e.getNumberOfBeansFound());
+        } catch (NoSuchBeanDefinitionException e) {
+            throw new NoSuchBeanTypeException(type);
+        }
+    }
 }
