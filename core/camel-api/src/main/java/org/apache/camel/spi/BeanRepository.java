@@ -88,12 +88,11 @@ public interface BeanRepository {
      *              found.
      */
     default <T> T mandatoryFindSingleByType(Class<T> type) {
-        Set<T> set = findByType(type);
-        if (set.size() == 1) {
-            return set.iterator().next();
-        } else {
-            throw new NoSuchBeanTypeException(type, set.size());
+        T answer = findSingleByType(type);
+        if (answer == null) {
+            throw new NoSuchBeanTypeException(type);
         }
+        return answer;
     }
 
     /**

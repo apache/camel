@@ -27,7 +27,7 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
 
     private static final boolean PRINT_STACK_TRACE = false;
     private int total = 100;
-    private int failAt = 75;
+    private int failAt = 80;
 
     @Test
     public void testStackSize() throws Exception {

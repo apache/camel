@@ -64,6 +64,10 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
               description = "Configures the Spring JdbcTemplate with the key/values from the Map")
     private Map<String, Object> templateOptions;
 
+    public SqlStoredEndpoint(String uri, SqlStoredComponent component) {
+        super(uri, component);
+    }
+
     public SqlStoredEndpoint(String uri, SqlStoredComponent component, JdbcTemplate jdbcTemplate) {
         super(uri, component);
         setJdbcTemplate(jdbcTemplate);

@@ -343,6 +343,32 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     }
 
     @Override
+    public <T> T findSingleByType(Class<T> type) {
+        T found = null;
+
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            found = local.findSingleByType(type);
+        }
+
+        if (found == null && repositories != null) {
+            for (BeanRepository r : repositories) {
+                found = r.findSingleByType(type);
+            }
+        }
+
+        if (found == null) {
+            found = supplierRegistry.findSingleByType(type);
+        }
+        if (found == null) {
+            found = fallbackRegistry.findSingleByType(type);
+        }
+
+        return found;
+    }
+
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
         if (supplierRegistry instanceof Closeable) {
