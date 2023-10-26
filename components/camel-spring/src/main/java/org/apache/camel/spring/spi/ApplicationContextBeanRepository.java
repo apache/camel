@@ -87,6 +87,8 @@ public class ApplicationContextBeanRepository implements BeanRepository {
     @Override
     public <T> T findSingleByType(Class<T> type) {
         try {
+            // this API allows to support @Primary beans that should take precedence in
+            // case there are 2+ beans of the same type.
             NamedBeanHolder<T> holder = applicationContext.getAutowireCapableBeanFactory().resolveNamedBean(type);
             return holder.getBeanInstance();
         } catch (NoSuchBeanDefinitionException e) {
