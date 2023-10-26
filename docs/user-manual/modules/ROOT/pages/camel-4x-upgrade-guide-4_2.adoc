@@ -39,8 +39,21 @@ expected to function correctly if using Java 21.
 
 A new release of Apache Ignite is expected that will start to support Java 21.
 
-=== camel-spring-boot
+=== camel-spring & camel-spring-boot
+
+==== Autowiring Primary beans
+
+Camel will now take into account `@Primary` beans from Spring when autowiring by type.
+For example a JDBC `DataSource` in the SQL component will now use the `@Primary` data source
+when multiple data sources are defined.
+
+Previously Camel would not autowire if there are 2 or more beans for a given type.
+
+NOTE: This is a change in behaviour, that can affect your applications when upgrading.
+
+==== Properties
 
 The `initialProperties` and `overrideProperties` on Camel `PropertiesComponent` will now
 take precedence over Spring Boot properties. This can be used for testing purpose,
 to allow overriding properties when using `CamelTestSupport` for unit testing.
+
