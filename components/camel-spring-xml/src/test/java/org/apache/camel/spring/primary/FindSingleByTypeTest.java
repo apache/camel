@@ -83,12 +83,8 @@ public class FindSingleByTypeTest extends ContextTestSupport {
         Assertions.assertEquals("Donald", c.name());
 
         // should not find anything
-        try {
-            context.getRegistry().mandatoryFindSingleByType(UuidGenerator.class);
-            Assertions.fail("Should throw exception");
-        } catch (NoSuchBeanTypeException e) {
-            // expected
-        }
+        Assertions.assertThrows(NoSuchBeanTypeException.class,
+                () -> context.getRegistry().mandatoryFindSingleByType(UuidGenerator.class));
     }
 
 }
