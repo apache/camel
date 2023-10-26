@@ -59,6 +59,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private RestConfigurationProperties restConfigurationProperties;
     private VaultConfigurationProperties vaultConfigurationProperties;
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
+    private MainSSLConfigurationProperties mainSslConfigurationProperties;
 
     @Override
     public void close() {
@@ -93,6 +94,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (httpServerConfigurationProperties != null) {
             httpServerConfigurationProperties.close();
             httpServerConfigurationProperties = null;
+        }
+        if (mainSslConfigurationProperties != null) {
+            mainSslConfigurationProperties.close();
+            mainSslConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -156,6 +161,24 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasHttpServerConfiguration() {
         return httpServerConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Main SSL.
+     */
+    public MainSSLConfigurationProperties sslConfig() {
+        if (mainSslConfigurationProperties == null) {
+            mainSslConfigurationProperties = new MainSSLConfigurationProperties(this);
+        }
+
+        return mainSslConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Main SSL configuration specified.
+     */
+    public boolean hasMainSslConfiguration() {
+        return mainSslConfigurationProperties != null;
     }
 
     /**

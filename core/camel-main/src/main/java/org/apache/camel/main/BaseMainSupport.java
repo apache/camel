@@ -73,6 +73,11 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
@@ -948,6 +953,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
         OrderedLocationProperties globalOptions = new OrderedLocationProperties();
         OrderedLocationProperties httpServerProperties = new OrderedLocationProperties();
+        OrderedLocationProperties mainSslProperties = new OrderedLocationProperties();
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
             if (key.startsWith("camel.context.")) {
@@ -1028,6 +1034,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 httpServerProperties.put(loc, optionKey(option), value);
+            } else if (key.startsWith("camel.main.ssl.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(15);
+                validateOptionAndValue(key, option, value);
+                mainSslProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1099,6 +1111,12 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        if (!mainSslProperties.isEmpty() || mainConfigurationProperties.hasMainSslConfiguration()) {
+            LOG.debug("Auto-configuring Main SSL from loaded properties: {}", mainSslProperties.size());
+            setMainSslProperties(camelContext, mainSslProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
 
         // configure which requires access to the model
         MainSupportModelConfigurer.configureModelCamelContext(camelContext, mainConfigurationProperties,
@@ -1143,6 +1161,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!healthProperties.isEmpty()) {
             healthProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.health.{}={}", k, v);
+            });
+        }
+        if (!mainSslProperties.isEmpty()) {
+            mainSslProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.main.ssl.{}={}", k, v);
             });
         }
         if (!routeTemplateProperties.isEmpty()) {
@@ -1390,6 +1413,48 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    private void setMainSslProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties) {
+
+        MainSSLConfigurationProperties sslConfig = mainConfigurationProperties.sslConfig();
+        setPropertiesOnTarget(camelContext, sslConfig, properties, "camel.main.ssl.",
+                failIfNotSet, true, autoConfiguredProperties);
+
+        if (!sslConfig.isEnabled()) {
+            return;
+        }
+
+        String password = sslConfig.getKeystorePassword();
+        KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setResource(sslConfig.getKeyStore());
+        ksp.setPassword(password);
+
+        KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setKeyPassword(password);
+        kmp.setKeyStore(ksp);
+
+        TrustManagersParameters tmp = null;
+        if (sslConfig.getTrustStore() != null) {
+            KeyStoreParameters tsp = new KeyStoreParameters();
+            tsp.setResource(sslConfig.getTrustStore());
+            tsp.setPassword(sslConfig.getTrustStorePassword());
+
+            tmp = new TrustManagersParameters();
+            tmp.setKeyStore(tsp);
+        }
+
+        SSLContextServerParameters scsp = new SSLContextServerParameters();
+        scsp.setClientAuthentication(sslConfig.getClientAuthentication());
+
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setKeyManagers(kmp);
+        sslContextParameters.setTrustManagers(tmp);
+        sslContextParameters.setServerParameters(scsp);
+
+        camelContext.setSSLContextParameters(sslContextParameters);
+    }
+
     private void bindBeansToRegistry(
             CamelContext camelContext, OrderedLocationProperties properties,
             String optionPrefix, boolean failIfNotSet, boolean logSummary, boolean ignoreCase,
@@ -1577,6 +1642,10 @@ public abstract class BaseMainSupport extends BaseService {
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
                 validateOptionAndValue(key, option, value);
+                // ignore main props for configuring CamelContext, e.g. camel.main.ssl.xxx
+                if (option.indexOf('.') > 0) {
+                    continue;
+                }
                 String loc = prop.getLocation(key);
                 properties.put(loc, optionKey(option), value);
             }

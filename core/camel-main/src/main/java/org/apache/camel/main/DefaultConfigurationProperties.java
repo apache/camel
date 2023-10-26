@@ -159,15 +159,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private String startupRecorderProfile = "default";
     private long startupRecorderDuration;
     private String startupRecorderDir;
-    private boolean sslEnabled;
-    private String sslKeyStore;
-    @Metadata(defaultValue = "changeit")
-    private String sslKeystorePassword = "changeit";
-    private String sslTrustStore;
-    @Metadata(defaultValue = "changeit")
-    private String sslTrustStorePassword = "changeit";
-    @Metadata(defaultValue = "NONE", enums = "NONE,WANT,REQUIRE")
-    private String sslClientAuthentication = "NONE";
 
     // getter and setters
     // --------------------------------------------------------------
@@ -1748,72 +1739,6 @@ public abstract class DefaultConfigurationProperties<T> {
         this.startupRecorderDir = startupRecorderDir;
     }
 
-    public boolean isSslEnabled() {
-        return sslEnabled;
-    }
-
-    /**
-     * Enable SSL in your Camel application.
-     */
-    public void setSslEnabled(boolean sslEnabled) {
-        this.sslEnabled = sslEnabled;
-    }
-
-    public String getSslKeyStore() {
-        return sslKeyStore;
-    }
-
-    /**
-     * Sets the SSL Keystore resource.
-     */
-    public void setSslKeyStore(String sslKeyStore) {
-        this.sslKeyStore = sslKeyStore;
-    }
-
-    public String getSslKeystorePassword() {
-        return sslKeystorePassword;
-    }
-
-    /**
-     * Sets the SSL Keystore password.
-     */
-    public void setSslKeystorePassword(String sslKeystorePassword) {
-        this.sslKeystorePassword = sslKeystorePassword;
-    }
-
-    public String getSslTrustStore() {
-        return sslTrustStore;
-    }
-
-    /**
-     * Sets the SSL Truststore resource.
-     */
-    public void setSslTrustStore(String sslTrustStore) {
-        this.sslTrustStore = sslTrustStore;
-    }
-
-    public String getSslTrustStorePassword() {
-        return sslTrustStorePassword;
-    }
-
-    /**
-     * Sets the SSL Truststore password.
-     */
-    public void setSslTrustStorePassword(String sslTrustStorePassword) {
-        this.sslTrustStorePassword = sslTrustStorePassword;
-    }
-
-    public String getSslClientAuthentication() {
-        return sslClientAuthentication;
-    }
-
-    /**
-     * Sets the configuration options for server-side client-authentication requirements
-     */
-    public void setSslClientAuthentication(String sslClientAuthentication) {
-        this.sslClientAuthentication = sslClientAuthentication;
-    }
-
     // fluent builders
     // --------------------------------------------------------------
 
@@ -3023,51 +2948,4 @@ public abstract class DefaultConfigurationProperties<T> {
         return (T) this;
     }
 
-    /**
-     * Enables SSL in your Camel application.
-     */
-    public T withSslEnabled(boolean sslEnabled) {
-        this.sslEnabled = sslEnabled;
-        return (T) this;
-    }
-
-    /**
-     * Set the SSL Keystore.
-     */
-    public T withSslKeyStore(String sslKeyStore) {
-        this.sslKeyStore = sslKeyStore;
-        return (T) this;
-    }
-
-    /**
-     * Sets the SSL Keystore password.
-     */
-    public T withSslKeystorePassword(String sslKeystorePassword) {
-        this.sslKeystorePassword = sslKeystorePassword;
-        return (T) this;
-    }
-
-    /**
-     * Sets the SSL Truststore.
-     */
-    public T withSslTrustStore(String sslTrustStore) {
-        this.sslTrustStore = sslTrustStore;
-        return (T) this;
-    }
-
-    /**
-     * Sets the SSL Truststore password.
-     */
-    public T withSslTrustStorePassword(String sslTrustStorePassword) {
-        this.sslTrustStorePassword = sslTrustStorePassword;
-        return (T) this;
-    }
-
-    /**
-     * Sets the configuration options for server-side client-authentication requirements
-     */
-    public T withSslClientAuthentication(String sslClientAuthentication) {
-        this.sslClientAuthentication = sslClientAuthentication;
-        return (T) this;
-    }
 }
