@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -155,7 +158,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
             } else {
                 Object convertedBody = inputBody instanceof BinaryData ? inputBody
-                        : getConfiguration().isBinary() ? exchange.getMessage().getBody(byte[].class)
+                        : getConfiguration().isBinary() ? convertBodyToBinary(exchange)
                         : exchange.getMessage().getBody(String.class);
 
                 sendMessageAsync = serviceBusSenderOperations.sendMessages(convertedBody,
@@ -184,7 +187,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                                 applicationProperties);
             } else {
                 Object convertedBody = inputBody instanceof BinaryData ? inputBody
-                        : getConfiguration().isBinary() ? exchange.getMessage().getBody(byte[].class)
+                        : getConfiguration().isBinary() ? convertBodyToBinary(exchange)
                         : exchange.getMessage().getBody(String.class);
                 scheduleMessagesAsync
                         = serviceBusSenderOperations.scheduleMessages(convertedBody,
@@ -204,12 +207,33 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                 .toList();
     }
 
+    private Object convertBodyToBinary(Exchange exchange) {
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof InputStream) {
+            return BinaryData.fromStream((InputStream) body);
+        } else if (body instanceof Path) {
+            return BinaryData.fromFile((Path) body);
+        } else if (body instanceof File) {
+            return BinaryData.fromFile(((File) body).toPath());
+        } else {
+            return BinaryData.fromBytes(exchange.getMessage().getBody(byte[].class));
+        }
+    }
+
     private Object convertMessageBody(Object inputBody) {
         TypeConverter typeConverter = getEndpoint().getCamelContext().getTypeConverter();
         if (inputBody instanceof BinaryData) {
             return inputBody;
         } else if (getConfiguration().isBinary()) {
-            return typeConverter.convertTo(byte[].class, inputBody);
+            if (inputBody instanceof InputStream) {
+                return BinaryData.fromStream((InputStream) inputBody);
+            } else if (inputBody instanceof Path) {
+                return BinaryData.fromFile((Path) inputBody);
+            } else if (inputBody instanceof File) {
+                return BinaryData.fromFile(((File) inputBody).toPath());
+            } else {
+                return typeConverter.convertTo(byte[].class, inputBody);
+            }
         } else {
             return typeConverter.convertTo(String.class, inputBody);
         }

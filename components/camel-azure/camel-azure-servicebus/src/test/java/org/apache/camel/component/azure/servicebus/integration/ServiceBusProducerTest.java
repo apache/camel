@@ -185,7 +185,8 @@ class ServiceBusProducerTest extends BaseCamelServiceBusTestSupport {
                 = receiverAsyncClient.receiveMessages().toIterable().spliterator();
 
         final boolean batch2Exists = StreamSupport.stream(receivedMessages2, false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), testByteBody));
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(),
+                        testByteBody));
 
         assertTrue(batch2Exists);
     }

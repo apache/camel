@@ -99,7 +99,8 @@ public class ServiceBusSenderOperationsTest {
         byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
         operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue")).block();
         final boolean exists2 = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), testByteBody));
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(),
+                        testByteBody));
         assertTrue(exists2, "test byte body");
 
         // test if we have something other than string or byte[]
@@ -172,7 +173,8 @@ public class ServiceBusSenderOperationsTest {
         byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
         operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null).block();
         final boolean exists2 = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), testByteBody));
+                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(),
+                        testByteBody));
         assertTrue(exists2, "test byte body");
 
         // test if we have something other than string or byte[]
