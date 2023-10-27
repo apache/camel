@@ -36,7 +36,9 @@ import org.slf4j.LoggerFactory;
 public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatchUpdatesConsumer.class);
-    HashMap<Long, Issue> watchedIssues;
+    private static final int SEARCH_MAX_PER_QUERY = 50;
+    private static final int SEARCH_START_AT = 0;
+    final HashMap<Long, Issue> watchedIssues = new HashMap<>();
     List<String> watchedFieldsList;
     String watchedIssuesKeys;
 
@@ -49,13 +51,13 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        initIssues();
+        List<Issue> issues = getIssues(getEndpoint().getJql(), SEARCH_START_AT, SEARCH_MAX_PER_QUERY,
+                getEndpoint().getMaxResults());
+        initIssues(issues);
     }
 
-    private void initIssues() {
-        watchedIssues = new HashMap<>();
-        List<Issue> issues = getIssues(getEndpoint().getJql(), 0, 50,
-                getEndpoint().getMaxResults());
+    private void initIssues(List<Issue> issues) {
+        watchedIssues.clear();
         issues.forEach(i -> watchedIssues.put(i.getId(), i));
         watchedIssuesKeys = issues.stream()
                 .map(Issue::getKey)
@@ -64,13 +66,14 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     @Override
     protected int doPoll() throws Exception {
-        List<Issue> issues = getIssues(getEndpoint().getJql(), 0, 50,
+        List<Issue> issues = getIssues(getEndpoint().getJql(), SEARCH_START_AT, SEARCH_MAX_PER_QUERY,
                 getEndpoint().getMaxResults());
-        if (watchedIssues.values().size() != issues.size()) {
-            init();
-        }
         for (Issue issue : issues) {
             checkIfIssueChanged(issue);
+        }
+        if (watchedIssues.values().size() != issues.size()) {
+            // Rebuild the map of issues being watched
+            initIssues(issues);
         }
         return 0;
     }
