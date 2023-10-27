@@ -196,7 +196,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "stepwise": target.getConfiguration().setStepwise(property(camelContext, boolean.class, value)); return true;
         case "streamdownload":
         case "streamDownload": target.getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tempfilename":
         case "tempFileName": target.setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "tempprefix":
@@ -399,7 +398,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "stepwise": return boolean.class;
         case "streamdownload":
         case "streamDownload": return boolean.class;
-        case "synchronous": return boolean.class;
         case "tempfilename":
         case "tempFileName": return java.lang.String.class;
         case "tempprefix":
@@ -603,7 +601,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "stepwise": return target.getConfiguration().isStepwise();
         case "streamdownload":
         case "streamDownload": return target.getConfiguration().isStreamDownload();
-        case "synchronous": return target.isSynchronous();
         case "tempfilename":
         case "tempFileName": return target.getTempFileName();
         case "tempprefix":
