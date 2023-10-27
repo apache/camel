@@ -148,6 +148,11 @@
             <artifactId>camel-jaxb</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-main</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- testing with ok http client -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

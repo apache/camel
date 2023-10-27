@@ -173,6 +173,21 @@ The camel.server supports 10 options, which are listed below.
 |===
 
 
+=== Camel SSL configurations
+The camel.ssl supports 6 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.ssl.clientAuthentication* | Sets the configuration for server-side client-authentication requirements | NONE | String
+| *camel.ssl.enabled* | Enables SSL in your Camel application. | false | boolean
+| *camel.ssl.keyStore* | Sets the SSL Keystore resource. |  | String
+| *camel.ssl.keystorePassword* | Sets the SSL Keystore password. |  | String
+| *camel.ssl.trustStore* | Sets the SSL Truststore resource. |  | String
+| *camel.ssl.trustStorePassword* | Sets the SSL Truststore password. |  | String
+|===
+
+
 === Camel Thread Pool configurations
 The camel.threadpool supports 8 options, which are listed below.
 
