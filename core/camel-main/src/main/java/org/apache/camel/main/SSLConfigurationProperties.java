@@ -21,10 +21,10 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Global configuration for Main SSL.
+ * Global configuration for SSL.
  */
 @Configurer(bootstrap = true)
-public class MainSSLConfigurationProperties implements BootstrapCloseable {
+public class SSLConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
 
@@ -41,7 +41,7 @@ public class MainSSLConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "NONE", enums = "NONE,WANT,REQUIRE")
     private String clientAuthentication = "NONE";
 
-    public MainSSLConfigurationProperties(MainConfigurationProperties parent) {
+    public SSLConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
     }
 
@@ -123,49 +123,49 @@ public class MainSSLConfigurationProperties implements BootstrapCloseable {
     /**
      * Enables SSL in your Camel application.
      */
-    public MainSSLConfigurationProperties withEnabled(boolean enabled) {
+    public SSLConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
-        return (MainSSLConfigurationProperties) this;
+        return (SSLConfigurationProperties) this;
     }
 
     /**
      * Sets the SSL Keystore.
      */
-    public MainSSLConfigurationProperties withKeyStore(String keyStore) {
+    public SSLConfigurationProperties withKeyStore(String keyStore) {
         this.keyStore = keyStore;
-        return (MainSSLConfigurationProperties) this;
+        return (SSLConfigurationProperties) this;
     }
 
     /**
      * Sets the SSL Keystore password.
      */
-    public MainSSLConfigurationProperties withKeystorePassword(String keystorePassword) {
+    public SSLConfigurationProperties withKeystorePassword(String keystorePassword) {
         this.keystorePassword = keystorePassword;
-        return (MainSSLConfigurationProperties) this;
+        return (SSLConfigurationProperties) this;
     }
 
     /**
      * Sets the SSL Truststore.
      */
-    public MainSSLConfigurationProperties withTrustStore(String trustStore) {
+    public SSLConfigurationProperties withTrustStore(String trustStore) {
         this.trustStore = trustStore;
-        return (MainSSLConfigurationProperties) this;
+        return (SSLConfigurationProperties) this;
     }
 
     /**
      * Sets the SSL Truststore password.
      */
-    public MainSSLConfigurationProperties withTrustStorePassword(String trustStorePassword) {
+    public SSLConfigurationProperties withTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
-        return (MainSSLConfigurationProperties) this;
+        return (SSLConfigurationProperties) this;
     }
 
     /**
      * Sets the configuration for server-side client-authentication requirements
      */
-    public MainSSLConfigurationProperties withClientAuthentication(String clientAuthentication) {
+    public SSLConfigurationProperties withClientAuthentication(String clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
-        return (MainSSLConfigurationProperties) this;
+        return (SSLConfigurationProperties) this;
     }
 
 }

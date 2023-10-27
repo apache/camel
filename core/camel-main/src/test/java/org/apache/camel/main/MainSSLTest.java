@@ -34,12 +34,12 @@ public class MainSSLTest {
     public void testMainSSLParameters() throws Exception {
         Main main = new Main();
 
-        main.addInitialProperty("camel.main.ssl.enabled", "true");
-        main.addInitialProperty("camel.main.ssl.keyStore", "server.jks");
-        main.addInitialProperty("camel.main.ssl.keystorePassword", "security");
-        main.addInitialProperty("camel.main.ssl.trustStore", "client.jks");
-        main.addInitialProperty("camel.main.ssl.trustStorePassword", "storepass");
-        main.addInitialProperty("camel.main.ssl.clientAuthentication", "REQUIRE");
+        main.addInitialProperty("camel.ssl.enabled", "true");
+        main.addInitialProperty("camel.ssl.keyStore", "server.jks");
+        main.addInitialProperty("camel.ssl.keystorePassword", "security");
+        main.addInitialProperty("camel.ssl.trustStore", "client.jks");
+        main.addInitialProperty("camel.ssl.trustStorePassword", "storepass");
+        main.addInitialProperty("camel.ssl.clientAuthentication", "REQUIRE");
 
         main.start();
 

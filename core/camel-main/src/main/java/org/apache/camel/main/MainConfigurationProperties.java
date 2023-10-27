@@ -59,7 +59,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private RestConfigurationProperties restConfigurationProperties;
     private VaultConfigurationProperties vaultConfigurationProperties;
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
-    private MainSSLConfigurationProperties mainSslConfigurationProperties;
+    private SSLConfigurationProperties sslConfigurationProperties;
 
     @Override
     public void close() {
@@ -95,9 +95,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             httpServerConfigurationProperties.close();
             httpServerConfigurationProperties = null;
         }
-        if (mainSslConfigurationProperties != null) {
-            mainSslConfigurationProperties.close();
-            mainSslConfigurationProperties = null;
+        if (sslConfigurationProperties != null) {
+            sslConfigurationProperties.close();
+            sslConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -164,21 +164,21 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * To configure Main SSL.
+     * To configure SSL.
      */
-    public MainSSLConfigurationProperties sslConfig() {
-        if (mainSslConfigurationProperties == null) {
-            mainSslConfigurationProperties = new MainSSLConfigurationProperties(this);
+    public SSLConfigurationProperties sslConfig() {
+        if (sslConfigurationProperties == null) {
+            sslConfigurationProperties = new SSLConfigurationProperties(this);
         }
 
-        return mainSslConfigurationProperties;
+        return sslConfigurationProperties;
     }
 
     /**
-     * Whether there has been any Main SSL configuration specified.
+     * Whether there has been any SSL configuration specified.
      */
-    public boolean hasMainSslConfiguration() {
-        return mainSslConfigurationProperties != null;
+    public boolean hasSslConfiguration() {
+        return sslConfigurationProperties != null;
     }
 
     /**

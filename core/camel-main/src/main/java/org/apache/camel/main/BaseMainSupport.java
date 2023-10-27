@@ -953,7 +953,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
         OrderedLocationProperties globalOptions = new OrderedLocationProperties();
         OrderedLocationProperties httpServerProperties = new OrderedLocationProperties();
-        OrderedLocationProperties mainSslProperties = new OrderedLocationProperties();
+        OrderedLocationProperties sslProperties = new OrderedLocationProperties();
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
             if (key.startsWith("camel.context.")) {
@@ -1034,12 +1034,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 httpServerProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.main.ssl.")) {
+            } else if (key.startsWith("camel.ssl.")) {
                 // grab the value
                 String value = prop.getProperty(key);
-                String option = key.substring(15);
+                String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
-                mainSslProperties.put(loc, optionKey(option), value);
+                sslProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1111,9 +1111,9 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
-        if (!mainSslProperties.isEmpty() || mainConfigurationProperties.hasMainSslConfiguration()) {
-            LOG.debug("Auto-configuring Main SSL from loaded properties: {}", mainSslProperties.size());
-            setMainSslProperties(camelContext, mainSslProperties,
+        if (!sslProperties.isEmpty() || mainConfigurationProperties.hasSslConfiguration()) {
+            LOG.debug("Auto-configuring SSL from loaded properties: {}", sslProperties.size());
+            setSslProperties(camelContext, sslProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
@@ -1163,9 +1163,9 @@ public abstract class BaseMainSupport extends BaseService {
                 LOG.warn("Property not auto-configured: camel.health.{}={}", k, v);
             });
         }
-        if (!mainSslProperties.isEmpty()) {
-            mainSslProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.main.ssl.{}={}", k, v);
+        if (!sslProperties.isEmpty()) {
+            sslProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.ssl.{}={}", k, v);
             });
         }
         if (!routeTemplateProperties.isEmpty()) {
@@ -1413,12 +1413,12 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    private void setMainSslProperties(
+    private void setSslProperties(
             CamelContext camelContext, OrderedLocationProperties properties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties) {
 
-        MainSSLConfigurationProperties sslConfig = mainConfigurationProperties.sslConfig();
-        setPropertiesOnTarget(camelContext, sslConfig, properties, "camel.main.ssl.",
+        SSLConfigurationProperties sslConfig = mainConfigurationProperties.sslConfig();
+        setPropertiesOnTarget(camelContext, sslConfig, properties, "camel.ssl.",
                 failIfNotSet, true, autoConfiguredProperties);
 
         if (!sslConfig.isEnabled()) {
@@ -1642,10 +1642,6 @@ public abstract class BaseMainSupport extends BaseService {
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
                 validateOptionAndValue(key, option, value);
-                // ignore main props for configuring CamelContext, e.g. camel.main.ssl.xxx
-                if (option.indexOf('.') > 0) {
-                    continue;
-                }
                 String loc = prop.getLocation(key);
                 properties.put(loc, optionKey(option), value);
             }
