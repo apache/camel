@@ -42,8 +42,8 @@ public class ServiceBusSenderOperations {
             final Object data,
             final ServiceBusTransactionContext context,
             final Map<String, Object> applicationProperties) {
-        if (data instanceof Iterable) {
-            return sendMessages((Iterable<Object>) data, context, applicationProperties);
+        if (data instanceof Iterable<?>) {
+            return sendMessages((Iterable<?>) data, context, applicationProperties);
         }
 
         return sendMessage(data, context, applicationProperties);
@@ -58,15 +58,15 @@ public class ServiceBusSenderOperations {
             throw new IllegalArgumentException("To schedule a message, you need to set scheduledEnqueueTime.");
         }
 
-        if (data instanceof Iterable) {
-            return scheduleMessages((Iterable<Object>) data, scheduledEnqueueTime, context, applicationProperties);
+        if (data instanceof Iterable<?>) {
+            return scheduleMessages((Iterable<?>) data, scheduledEnqueueTime, context, applicationProperties);
         }
 
         return scheduleMessage(data, scheduledEnqueueTime, context, applicationProperties);
     }
 
     private Mono<Void> sendMessages(
-            final Iterable<Object> data,
+            final Iterable<?> data,
             final ServiceBusTransactionContext context,
             final Map<String, Object> applicationProperties) {
         final Iterable<ServiceBusMessage> messages = ServiceBusUtils.createServiceBusMessages(data, applicationProperties);
@@ -108,7 +108,7 @@ public class ServiceBusSenderOperations {
     }
 
     private Mono<List<Long>> scheduleMessages(
-            final Iterable<Object> data, final OffsetDateTime scheduledEnqueueTime,
+            final Iterable<?> data, final OffsetDateTime scheduledEnqueueTime,
             final ServiceBusTransactionContext context,
             final Map<String, Object> applicationProperties) {
         final Iterable<ServiceBusMessage> messages = ServiceBusUtils.createServiceBusMessages(data, applicationProperties);

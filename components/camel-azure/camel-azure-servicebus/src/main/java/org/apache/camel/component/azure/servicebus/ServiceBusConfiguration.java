@@ -85,6 +85,8 @@ public class ServiceBusConfiguration implements Cloneable {
     private ServiceBusTransactionContext serviceBusTransactionContext;
     @UriParam(label = "producer")
     private OffsetDateTime scheduledEnqueueTime;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean binary;
 
     /**
      * Selected topic name or the queue name, that is depending on serviceBusType config. For example if
@@ -338,6 +340,17 @@ public class ServiceBusConfiguration implements Cloneable {
 
     public void setPeekNumMaxMessages(Integer peekNumMaxMessages) {
         this.peekNumMaxMessages = peekNumMaxMessages;
+    }
+
+    /**
+     * Set binary mode. If true, message body will be sent as byte[]. By default, it is false.
+     */
+    public boolean isBinary() {
+        return binary;
+    }
+
+    public void setBinary(boolean binary) {
+        this.binary = binary;
     }
 
     // *************************************************

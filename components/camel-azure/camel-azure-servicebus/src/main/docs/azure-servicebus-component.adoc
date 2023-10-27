@@ -62,7 +62,7 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 === Message Body
-In the producer, this component accepts message body of `String` type or `List<String>` to send batch messages.
+In the producer, this component accepts message body of `String`, `byte[]` and `BinaryData` types or `List<String>`, `List<byte[]>` and `List<BinaryData>` to send batch messages.
 
 In the consumer, the returned message body will be of type `String.
 
