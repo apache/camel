@@ -55,8 +55,10 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     public static final String MOUNT_PATH_SECRETS = "camel.kubernetes-config.mount-path-secrets";
 
     // use camel-k ENV for mount paths
-    public static final String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
-    public static final String ENV_MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
+    public static final String JVM_PROP_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
+    public static final String ENV_MOUNT_PATH_CONFIGMAPS = "CAMEL_K_MOUNT_PATH_CONFIGMAPS";
+    public static final String JVM_PROP_MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
+    public static final String ENV_MOUNT_PATH_SECRETS = "CAMEL_K_MOUNT_PATH_SECRETS";
     private static final Logger LOG = LoggerFactory.getLogger(BasePropertiesFunction.class);
 
     private static final AtomicBoolean LOGGED = new AtomicBoolean();
@@ -87,11 +89,12 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         }
         if (mountPathConfigMaps == null) {
             mountPathConfigMaps = camelContext.getPropertiesComponent().resolveProperty(MOUNT_PATH_CONFIGMAPS)
-                    .orElseGet(() -> System.getProperty(ENV_MOUNT_PATH_CONFIGMAPS, System.getenv(ENV_MOUNT_PATH_CONFIGMAPS)));
+                    .orElseGet(
+                            () -> System.getProperty(JVM_PROP_MOUNT_PATH_CONFIGMAPS, System.getenv(ENV_MOUNT_PATH_CONFIGMAPS)));
         }
         if (mountPathSecrets == null) {
             mountPathSecrets = camelContext.getPropertiesComponent().resolveProperty(MOUNT_PATH_SECRETS)
-                    .orElseGet(() -> System.getProperty(ENV_MOUNT_PATH_SECRETS, System.getenv(ENV_MOUNT_PATH_SECRETS)));
+                    .orElseGet(() -> System.getProperty(JVM_PROP_MOUNT_PATH_SECRETS, System.getenv(ENV_MOUNT_PATH_SECRETS)));
         }
         if (clientEnabled && client == null) {
             client = CamelContextHelper.findSingleByType(camelContext, KubernetesClient.class);
