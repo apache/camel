@@ -101,12 +101,12 @@ abstract class ExportBaseCommand extends CamelCommand {
     String exclude;
 
     @CommandLine.Option(names = { "--maven-settings" },
-                        description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies."
+                        description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
                                       + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
     @CommandLine.Option(names = { "--maven-settings-security" },
-                        description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
+                        description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
     @CommandLine.Option(names = { "--main-classname" },

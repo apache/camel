@@ -151,13 +151,13 @@ public class Run extends CamelCommand {
     String gav;
 
     @Option(names = { "--maven-settings" },
-            description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies."
+            description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
                           +
                           " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
     @Option(names = { "--maven-settings-security" },
-            description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
+            description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
