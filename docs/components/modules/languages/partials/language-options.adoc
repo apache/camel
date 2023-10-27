@@ -1,6 +1,6 @@
 :tablespec: width="100%",cols="2a,1m,1m,6a",options="header"
 :cellformats: 'util.boldLink(path[2], "language_option", value.group) \
-|util.defaultValue(value.defaultValue) \
+|util.valueAsString(value.defaultValue) \
 |util.pascalCase(value.type) \
 |util.description(value)'
 include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]']

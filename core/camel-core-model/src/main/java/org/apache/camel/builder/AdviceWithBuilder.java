@@ -120,8 +120,9 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
         if (maxDeep == 0) {
             // disable it
             this.maxDeep = -1;
+        } else {
+            this.maxDeep = maxDeep;
         }
-        this.maxDeep = maxDeep;
         return this;
     }
 

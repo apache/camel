@@ -59,7 +59,7 @@ public abstract class CsvMarshaller {
         }
 
         String header = dataFormat.getHeader();
-        if (header != null) {
+        if (header != null && !header.isEmpty()) {
             String[] columns = header.split(",");
             return new FixedColumnsMarshaller(format, columns);
         }

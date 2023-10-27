@@ -14,22 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.language.simple;
 
-import java.lang.reflect.Method;
+public class MyCloneBean implements Cloneable {
 
-/**
- * Used by {@link BeanInfo} for resolving a given type to adapt to various runtimes.
- */
-public interface BeanInfoTypeResolver {
+    private int myField;
 
-    /**
-     * Resolve the type and method
-     *
-     * @param  type           the type
-     * @param  explicitMethod optional method
-     * @return                an array with resolve type and method (if anything is changed) otherwise null is returned
-     */
-    Object[] resolve(Class<?> type, Method explicitMethod);
+    public MyCloneBean() {
+    }
+
+    public MyCloneBean(int myField) {
+        this.myField = myField;
+    }
+
+    public MyCloneBean(MyCloneBean other) {
+        this.myField = other.myField;
+    }
+
+    public int getMyField() {
+        return myField;
+    }
+
+    @Override
+    public MyCloneBean clone() {
+        return new MyCloneBean(this);
+    }
+
+    public MyCloneBean deepCopy() {
+        return new MyCloneBean(this.myField);
+    }
 
 }

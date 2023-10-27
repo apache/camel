@@ -4127,14 +4127,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Which operation to use
-     * There are 31 enums and the value can be one of: events, stats, auth,
+     * There are 37 enums and the value can be one of: events, stats, auth,
      * info, ping, version, imagebuild, imagecreate, imageinspect, imagelist,
-     * imagepull, imagepushimageremove, imagesearch, imagetag, containerattach,
-     * containercommit, containercopyfile, containercreate,
-     * containerdiffinspectcontainer, containerkill, containerlist,
+     * imagepull, imagepush, imageremove, imagesearch, imagetag,
+     * containerattach, containercommit, containercopyfile, containercreate,
+     * containerdiff, inspectcontainer, containerkill, containerlist,
      * containerlog, containerpause, containerrestart, containerremove,
-     * containerstartcontainerstop, containertop, containerunpause,
-     * containerwait, execcreate, execstart
+     * containerstart, containerstop, containertop, containerunpause,
+     * containerwait, execcreate, execstart, networkconnect, networkcreate,
+     * networkremove
      * 
      * @param path operation
      * @return the dsl builder
@@ -4155,14 +4156,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Which operation to use
-     * There are 31 enums and the value can be one of: events, stats, auth,
+     * There are 37 enums and the value can be one of: events, stats, auth,
      * info, ping, version, imagebuild, imagecreate, imageinspect, imagelist,
-     * imagepull, imagepushimageremove, imagesearch, imagetag, containerattach,
-     * containercommit, containercopyfile, containercreate,
-     * containerdiffinspectcontainer, containerkill, containerlist,
+     * imagepull, imagepush, imageremove, imagesearch, imagetag,
+     * containerattach, containercommit, containercopyfile, containercreate,
+     * containerdiff, inspectcontainer, containerkill, containerlist,
      * containerlog, containerpause, containerrestart, containerremove,
-     * containerstartcontainerstop, containertop, containerunpause,
-     * containerwait, execcreate, execstart
+     * containerstart, containerstop, containertop, containerunpause,
+     * containerwait, execcreate, execstart, networkconnect, networkcreate,
+     * networkremove
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -10208,8 +10210,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * There are 6 enums and the value can be one of: COUNTER, GAUGE,
-     * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
+     * There are 3 enums and the value can be one of: counter,
+     * distribution_summary, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -10237,8 +10239,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * There are 6 enums and the value can be one of: COUNTER, GAUGE,
-     * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
+     * There are 3 enums and the value can be one of: counter,
+     * distribution_summary, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics

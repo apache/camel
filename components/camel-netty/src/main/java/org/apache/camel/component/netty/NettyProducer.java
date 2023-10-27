@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -53,9 +54,13 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.PoolableObjectFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.PooledObjectState;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,24 +108,26 @@ public class NettyProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         if (configuration.isProducerPoolEnabled()) {
             // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
-            GenericObjectPool.Config config = new GenericObjectPool.Config();
-            config.maxActive = configuration.getProducerPoolMaxActive();
-            config.minIdle = configuration.getProducerPoolMinIdle();
-            config.maxIdle = configuration.getProducerPoolMaxIdle();
+            GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+            config.setMaxTotal(configuration.getProducerPoolMaxTotal());
+            config.setMinIdle(configuration.getProducerPoolMinIdle());
+            config.setMaxIdle(configuration.getProducerPoolMaxIdle());
+            config.setBlockWhenExhausted(configuration.isProducerPoolBlockWhenExhausted());
+            config.setMaxWait(Duration.ofMillis(configuration.getProducerPoolMaxWait()));
             // we should test on borrow to ensure the channel is still valid
-            config.testOnBorrow = true;
-            // only evict channels which are no longer valid
-            config.testWhileIdle = true;
+            config.setTestOnBorrow(true);
+            // idle channels can be evicted
+            config.setTestWhileIdle(false);
             // run eviction every 30th second
-            config.timeBetweenEvictionRunsMillis = 30 * 1000L;
-            config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
-            config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
-            pool = new GenericObjectPool<>(new NettyProducerPoolableObjectFactory(this), config);
+            config.setTimeBetweenEvictionRuns(Duration.ofSeconds(30));
+            config.setMinEvictableIdleTime(Duration.ofMillis(configuration.getProducerPoolMinEvictableIdle()));
+            pool = new GenericObjectPool(new NettyProducerPoolableObjectFactory(this), config);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
-                        "Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
-                        config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool);
+                        "Created NettyProducer pool[maxTotal={}, minIdle={}, maxIdle={}, minEvictableIdleDuration={}] -> {}",
+                        config.getMaxTotal(), config.getMaxIdle(), config.getMaxIdle(), config.getMinEvictableIdleDuration(),
+                        pool);
             }
         } else {
             pool = new SharedSingletonObjectPool<>(new NettyProducerPoolableObjectFactory(this));
@@ -545,7 +552,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 LOG.trace("Putting channel back to pool {}", channel);
                 pool.returnObject(channelFuture);
             } else {
-                // and if its not active then invalidate it
+                // and if it's not active then invalidate it
                 LOG.trace("Invalidating channel from pool {}", channel);
                 pool.invalidateObject(channelFuture);
             }
@@ -594,7 +601,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     /**
      * Object factory to create {@link Channel} used by the pool.
      */
-    private final class NettyProducerPoolableObjectFactory implements PoolableObjectFactory<ChannelFuture> {
+    private final class NettyProducerPoolableObjectFactory implements PooledObjectFactory<ChannelFuture> {
         private NettyProducer producer;
 
         public NettyProducerPoolableObjectFactory(NettyProducer producer) {
@@ -602,19 +609,27 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public ChannelFuture makeObject() throws Exception {
-            ChannelFuture channelFuture = openConnection().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    notifyChannelOpen(future);
+        public void activateObject(PooledObject<ChannelFuture> p) throws Exception {
+            ChannelFuture channelFuture = p.getObject();
+            LOG.trace("activateObject channel request: {}", channelFuture);
+
+            PooledObjectState state = p.getState();
+            if (channelFuture.isSuccess() && producer.getConfiguration().getRequestTimeout() > 0) {
+                LOG.trace("Reset the request timeout as we activate the channel");
+                Channel channel = channelFuture.channel();
+
+                ChannelHandler handler = channel.pipeline().get("timeout");
+                if (handler == null) {
+                    ChannelHandler timeout
+                            = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+                    channel.pipeline().addBefore("handler", "timeout", timeout);
                 }
-            });
-            LOG.trace("Requested channel: {}", channelFuture);
-            return channelFuture;
+            }
         }
 
         @Override
-        public void destroyObject(ChannelFuture channelFuture) throws Exception {
+        public void destroyObject(PooledObject<ChannelFuture> p) throws Exception {
+            ChannelFuture channelFuture = p.getObject();
             LOG.trace("Destroying channel request: {}", channelFuture);
             channelFuture.addListener(new ChannelFutureListener() {
                 @Override
@@ -630,7 +645,15 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public boolean validateObject(ChannelFuture channelFuture) {
+        public void passivateObject(PooledObject<ChannelFuture> p) throws Exception {
+            // noop
+            ChannelFuture channelFuture = p.getObject();
+            LOG.trace("passivateObject channel request: {}", channelFuture);
+        }
+
+        @Override
+        public boolean validateObject(PooledObject<ChannelFuture> p) {
+            ChannelFuture channelFuture = p.getObject();
             // we need a connecting or connected channel to be valid
             if (!channelFuture.isDone()) {
                 LOG.trace("Validating connecting channel request: {} -> {}", channelFuture, true);
@@ -647,27 +670,17 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public void activateObject(ChannelFuture channelFuture) {
-            LOG.trace("activateObject channel request: {}", channelFuture);
-
-            if (channelFuture.isSuccess() && producer.getConfiguration().getRequestTimeout() > 0) {
-                LOG.trace("reset the request timeout as we activate the channel");
-                Channel channel = channelFuture.channel();
-
-                ChannelHandler handler = channel.pipeline().get("timeout");
-                if (handler == null) {
-                    ChannelHandler timeout
-                            = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
-                    channel.pipeline().addBefore("handler", "timeout", timeout);
+        public PooledObject<ChannelFuture> makeObject() throws Exception {
+            ChannelFuture channelFuture = openConnection().addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    notifyChannelOpen(future);
                 }
-            }
+            });
+            LOG.trace("Requested channel: {}", channelFuture);
+            return new DefaultPooledObject<>(channelFuture);
         }
 
-        @Override
-        public void passivateObject(ChannelFuture channelFuture) {
-            // noop
-            LOG.trace("passivateObject channel request: {}", channelFuture);
-        }
     }
 
     /**

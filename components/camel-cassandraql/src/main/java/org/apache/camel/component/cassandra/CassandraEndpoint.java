@@ -153,6 +153,12 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
 
         sessionBuilder.withLocalDatacenter(datacenter);
         sessionBuilder.withKeyspace(keyspace);
+
+        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
+        if (classLoader != null) {
+            sessionBuilder.withClassLoader(classLoader);
+        }
+
         return sessionBuilder;
     }
 

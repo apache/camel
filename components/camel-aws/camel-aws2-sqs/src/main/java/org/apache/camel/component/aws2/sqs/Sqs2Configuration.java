@@ -55,6 +55,10 @@ public class Sqs2Configuration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
+    @UriParam(label = "producer")
+    private Integer delaySeconds;
+    @UriParam(label = "advanced")
+    private boolean delayQueue;
 
     // consumer properties
     @UriParam(label = "consumer", defaultValue = "true")
@@ -81,15 +85,8 @@ public class Sqs2Configuration implements Cloneable {
     private boolean serverSideEncryptionEnabled;
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-    @UriParam(label = "advanced")
-    private String queueUrl;
 
     // producer properties
-    @UriParam(label = "producer")
-    private Integer delaySeconds;
-    // producer properties
-    @UriParam(label = "advanced")
-    private boolean delayQueue;
     @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
     @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId",
@@ -99,6 +96,8 @@ public class Sqs2Configuration implements Cloneable {
     private Sqs2Operations operation;
     @UriParam(label = "producer", defaultValue = ",")
     private String batchSeparator = ",";
+    @UriParam(label = "producer", defaultValue = "WARN", enums = "WARN,WARN_ONCE,IGNORE,FAIL")
+    private String messageHeaderExceededLimit = "WARN";
 
     // queue properties
     @UriParam(label = "queue")
@@ -109,6 +108,8 @@ public class Sqs2Configuration implements Cloneable {
     private Integer receiveMessageWaitTimeSeconds;
     @UriParam(label = "queue")
     private String policy;
+    @UriParam(label = "queue")
+    private String queueUrl;
 
     // dead letter queue properties
     @UriParam(label = "queue")
@@ -588,12 +589,29 @@ public class Sqs2Configuration implements Cloneable {
         this.batchSeparator = batchSeparator;
     }
 
+    public String getMessageHeaderExceededLimit() {
+        return messageHeaderExceededLimit;
+    }
+
+    /**
+     * What to do if sending to AWS SQS has more messages than AWS allows (currently only maximum 10 message headers is
+     * allowed).
+     *
+     * WARN will log a WARN about the limit is for each additional header, so the message can be sent to AWS. WARN_ONCE
+     * will only log one time a WARN about the limit is hit, and drop additional headers, so the message can be sent to
+     * AWS. IGNORE will ignore (no logging) and drop additional headers, so the message can be sent to AWS. FAIL will
+     * cause an exception to be thrown and the message is not sent to AWS.
+     */
+    public void setMessageHeaderExceededLimit(String messageHeaderExceededLimit) {
+        this.messageHeaderExceededLimit = messageHeaderExceededLimit;
+    }
+
     public boolean isOverrideEndpoint() {
         return overrideEndpoint;
     }
 
     /**
-     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * Set the need for overriding the endpoint. This option needs to be used in combination with uriEndpointOverride
      * option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {

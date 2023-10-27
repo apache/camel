@@ -14,9 +14,9 @@
 *{component-header}*
 
 The LDAP component allows you to perform searches in LDAP servers
-using filters as the message payload. +
- This component uses standard JNDI (`javax.naming` package) to access
-the server.
+using filters as the message payload.
+
+This component uses standard JNDI (`javax.naming` package) to access the server.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -59,15 +59,14 @@ include::partial$component-endpoint-options.adoc[]
 
 == Result
 
-The result is returned in the Out body as a
-`ArrayList<javax.naming.directory.SearchResult>` object.
+The result is returned to Out body as a `List<javax.naming.directory.SearchResult>` object.
 
 == DirContext
 
 The URI, `ldap:ldapserver`, references a Spring bean with the ID,
 `ldapserver`. The `ldapserver` bean may be defined as follows:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------
 <bean id="ldapserver" class="javax.naming.directory.InitialDirContext" scope="prototype">
   <constructor-arg>
@@ -93,6 +92,16 @@ or that the context supports concurrency. In the Spring framework,
 up.
 ====
 
+== Security concerns related to LDAP injection
+
+IMPORTANT: The camel-ldap component uses the message body as filter the search results.
+Therefore, the message body should be protected from LDAP injection. To assist with this,
+you can use `org.apache.camel.component.ldap.LdapHelper` utility class that has method(s)
+to escape string values to be LDAP injection safe.
+
+See the following link
+for information about https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html[LDAP Injection].
+
 == Samples
 
 Following on from the Spring configuration above, the code sample below
@@ -101,26 +110,22 @@ Name is then extracted from the response.
 
 [source,java]
 ----------------------------------------------------------
-ProducerTemplate<Exchange> template = exchange
-  .getContext().createProducerTemplate();
+ProducerTemplate template = exchange.getContext().createProducerTemplate();
 
-Collection<?> results = (Collection<?>) (template
-  .sendBody(
+Collection results = template.sendBody(
     "ldap:ldapserver?base=ou=mygroup,ou=groups,ou=system",
-    "(member=uid=huntc,ou=users,ou=system)"));
+    "(member=uid=huntc,ou=users,ou=system)", Collection.class);
 
 if (results.size() > 0) {
   // Extract what we need from the device's profile
 
-  Iterator<?> resultIter = results.iterator();
-  SearchResult searchResult = (SearchResult) resultIter
-      .next();
-  Attributes attributes = searchResult
-      .getAttributes();
+  Iterator> resultIter = results.iterator();
+  SearchResult searchResult = (SearchResult) resultIter.next();
+  Attributes attributes = searchResult.getAttributes();
   Attribute deviceCNAttr = attributes.get("cn");
   String deviceCN = (String) deviceCNAttr.get();
-
-  ...
+  // ...
+}
 ----------------------------------------------------------
 
 If no specific filter is required - for example, you just need to look
@@ -190,7 +195,6 @@ the InitialDirContext bean - see below sample.
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
                  http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
-
 
     <sslContextParameters xmlns="http://camel.apache.org/schema/blueprint"
                           id="sslContextParameters">
@@ -268,8 +272,6 @@ public class CustomSocketFactory extends SSLSocketFactory {
 
     /**
      * Getter for the SocketFactory
-     *
-     * @return
      */
     public static SocketFactory getDefault() {
         return new CustomSocketFactory();
@@ -311,7 +313,6 @@ public class CustomSocketFactory extends SSLSocketFactory {
     }
 }
 -----------------------------------------------------------------------------------------------------
-
 
 
 include::spring-boot:partial$starter.adoc[]

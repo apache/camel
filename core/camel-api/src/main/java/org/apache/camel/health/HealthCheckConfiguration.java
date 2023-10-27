@@ -29,8 +29,11 @@ public class HealthCheckConfiguration implements Cloneable {
 
     private String parent;
     private boolean enabled = true;
+    @Deprecated
     private long interval;
+    @Deprecated
     private int failureThreshold;
+    @Deprecated
     private int successThreshold;
 
     // *************************************************
@@ -61,6 +64,7 @@ public class HealthCheckConfiguration implements Cloneable {
         this.enabled = enabled;
     }
 
+    @Deprecated
     public long getInterval() {
         return interval;
     }
@@ -68,10 +72,12 @@ public class HealthCheckConfiguration implements Cloneable {
     /**
      * Set the check interval in milli seconds.
      */
+    @Deprecated
     public void setInterval(long interval) {
         this.interval = interval;
     }
 
+    @Deprecated
     public int getFailureThreshold() {
         return failureThreshold;
     }
@@ -79,10 +85,12 @@ public class HealthCheckConfiguration implements Cloneable {
     /**
      * Set the number of failure before reporting the service as un-healthy.
      */
+    @Deprecated
     public void setFailureThreshold(int failureThreshold) {
         this.failureThreshold = failureThreshold;
     }
 
+    @Deprecated
     public int getSuccessThreshold() {
         return successThreshold;
     }
@@ -90,6 +98,7 @@ public class HealthCheckConfiguration implements Cloneable {
     /**
      * Set the number of success before reporting the service as healthy.
      */
+    @Deprecated
     public void setSuccessThreshold(int successThreshold) {
         this.successThreshold = successThreshold;
     }
@@ -152,27 +161,32 @@ public class HealthCheckConfiguration implements Cloneable {
             return this;
         }
 
+        @Deprecated
         public Builder interval(Duration interval) {
             this.interval = interval.toMillis();
             return this;
         }
 
+        @Deprecated
         public Builder interval(String interval) {
             return ObjectHelper.isNotEmpty(interval)
                     ? interval(TimeUtils.toMilliSeconds(interval))
                     : this;
         }
 
+        @Deprecated
         public Builder interval(long interval) {
             this.interval = interval;
             return this;
         }
 
+        @Deprecated
         public Builder failureThreshold(int failureThreshold) {
             this.failureThreshold = failureThreshold;
             return this;
         }
 
+        @Deprecated
         public Builder successThreshold(int successThreshold) {
             this.successThreshold = successThreshold;
             return this;

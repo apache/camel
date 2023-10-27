@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.14.2-SNAPSHOT</version>
+        <version>3.14.10-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-netty</artifactId>
@@ -75,9 +75,9 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
-            <version>${commons-pool-version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>${commons-pool2-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -89,6 +89,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-management</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-main</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

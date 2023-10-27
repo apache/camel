@@ -30,6 +30,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,34 +107,27 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
     private Map<String, WebSocketBase> getConnectedPeers(Exchange exchange) throws Exception {
         Map<String, WebSocketBase> connectedPeers = new HashMap<>();
         VertxWebsocketEndpoint endpoint = getEndpoint();
+        Message message = exchange.getMessage();
 
-        String connectionKey = exchange.getMessage().getHeader(VertxWebsocketConstants.CONNECTION_KEY, String.class);
-        if (connectionKey != null) {
-            if (endpoint.isManagedPort()) {
+        boolean isSendToAll = message.getHeader(VertxWebsocketConstants.SEND_TO_ALL,
+                endpoint.getConfiguration().isSendToAll(), boolean.class);
+        if (isSendToAll) {
+            // Try to find all peers connected to an existing vertx-websocket consumer
+            Map<String, ServerWebSocket> peers = endpoint.findPeersForHostPort();
+            if (ObjectHelper.isNotEmpty(peers)) {
+                connectedPeers.putAll(peers);
+            }
+        } else {
+            String connectionKey = message.getHeader(VertxWebsocketConstants.CONNECTION_KEY, String.class);
+            if (connectionKey != null && endpoint.isManagedPort()) {
                 Stream.of(connectionKey.split(","))
                         .forEach(key -> connectedPeers.put(key, endpoint.findPeerForConnectionKey(key)));
             } else {
                 // The producer is invoking an external server not managed by camel
                 connectedPeers.put(UUID.randomUUID().toString(), endpoint.getWebSocket(exchange));
             }
-        } else {
-            connectedPeers.put(UUID.randomUUID().toString(), endpoint.getWebSocket(exchange));
-        }
-
-        if (isSendToAll(exchange.getMessage())) {
-            // Try to find all peers connected to an existing vertx-websocket consumer
-            Map<String, ServerWebSocket> peers = endpoint.findPeersForHostPort();
-            if (peers != null) {
-                peers.forEach(connectedPeers::put);
-            }
         }
 
         return connectedPeers;
-    }
-
-    private boolean isSendToAll(Message message) {
-        Boolean value = message.getHeader(VertxWebsocketConstants.SEND_TO_ALL, getEndpoint().getConfiguration().isSendToAll(),
-                Boolean.class);
-        return value == null ? false : value;
     }
 }

@@ -25,6 +25,7 @@ import java.util.Properties;
 import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -39,6 +40,11 @@ public class DropboxTestSupport extends CamelTestSupport {
     protected final Properties properties;
     protected String workdir;
     protected String token;
+    protected String apiKey;
+    protected String apiSecret;
+    protected String refreshToken;
+    protected Long expireIn;
+
     private DbxClientV2 client;
 
     protected DropboxTestSupport() {
@@ -46,9 +52,14 @@ public class DropboxTestSupport extends CamelTestSupport {
 
         workdir = properties.getProperty("workDir");
         token = properties.getProperty("accessToken");
+        refreshToken = properties.getProperty("refreshToken");
+        apiKey = properties.getProperty("apiKey");
+        apiSecret = properties.getProperty("apiSecret");
+        expireIn = Long.valueOf(properties.getProperty("expireIn"));
 
         DbxRequestConfig config = DbxRequestConfig.newBuilder(properties.getProperty("clientIdentifier")).build();
-        client = new DbxClientV2(config, token);
+        DbxCredential credential = new DbxCredential(token, expireIn, refreshToken, apiKey, apiSecret);
+        client = new DbxClientV2(config, credential);
 
     }
 

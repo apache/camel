@@ -65,8 +65,10 @@ class VertxWebsocketResultHandler {
             } else {
                 final StringBuilder msg = new StringBuilder("Sending message to multiple WebSocket peers failed:");
                 for (Map.Entry<String, Throwable> entry : errors.entrySet()) {
-                    msg.append("\n  connection key: ").append(entry.getKey())
-                            .append(", cause: " + entry.getValue().getMessage());
+                    msg.append("\n  connection key: ")
+                            .append(entry.getKey())
+                            .append(", cause: ")
+                            .append(entry.getValue().getMessage());
                 }
                 exchange.setException(new CamelExecutionException(msg.toString(), exchange));
             }

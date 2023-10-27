@@ -176,7 +176,7 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
                 return outputDest;
             }
 
-            return new File(outputDest, fileName);
+            return outputDest;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         }

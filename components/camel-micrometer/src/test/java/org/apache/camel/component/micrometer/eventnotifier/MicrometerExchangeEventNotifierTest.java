@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.eventNotifier;
+package org.apache.camel.component.micrometer.eventnotifier;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +22,6 @@ import io.micrometer.core.instrument.Timer;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.micrometer.eventnotifier.AbstractMicrometerEventNotifier;
-import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEventNotifier;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
@@ -43,7 +41,8 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
     @Override
     protected AbstractMicrometerEventNotifier<?> getEventNotifier() {
         MicrometerExchangeEventNotifier eventNotifier = new MicrometerExchangeEventNotifier();
-        eventNotifier.setNamingStrategy((exchange, endpoint) -> endpoint.getEndpointUri());
+        // use sanitized uri to not reveal sensitive information
+        eventNotifier.setNamingStrategy((exchange, endpoint) -> endpoint.toString());
         return eventNotifier;
     }
 

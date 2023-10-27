@@ -30,7 +30,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     @Metadata(label = "advanced")
     private Object fhirContext;
     @XmlAttribute
-    @Metadata(enums = "DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4", defaultValue = "DSTU3")
+    @Metadata(enums = "DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5", defaultValue = "R4")
     private String fhirVersion;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
@@ -104,7 +104,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     }
 
     /**
-     * The version of FHIR to use. Possible values are: DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4
+     * The version of FHIR to use. Possible values are: DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5
      */
     public void setFhirVersion(String fhirVersion) {
         this.fhirVersion = fhirVersion;

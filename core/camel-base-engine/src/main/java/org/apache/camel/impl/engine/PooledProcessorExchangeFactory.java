@@ -70,10 +70,11 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
-            // reset exchange for reuse
-            PooledExchange ee = (PooledExchange) answer;
-            ee.reset(System.currentTimeMillis());
         }
+
+        // reset exchange for reuse
+        PooledExchange ee = (PooledExchange) answer;
+        ee.reset(System.currentTimeMillis());
 
         ExchangeHelper.copyResults(answer, exchange);
         return answer;
@@ -95,10 +96,11 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
-            // reset exchange for reuse
-            PooledExchange ee = (PooledExchange) answer;
-            ee.reset(System.currentTimeMillis());
         }
+
+        // reset exchange for reuse
+        PooledExchange ee = (PooledExchange) answer;
+        ee.reset(System.currentTimeMillis());
 
         ExchangeHelper.copyResults(answer, exchange);
         // do not reuse message id on copy
@@ -125,19 +127,21 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
-            // reset exchange for reuse
-            PooledExchange ee = (PooledExchange) answer;
-            ee.reset(System.currentTimeMillis());
         }
+
+        // reset exchange for reuse
+        PooledExchange ee = (PooledExchange) answer;
+        ee.reset(System.currentTimeMillis());
+
         return answer;
     }
 
     @Override
     public boolean release(Exchange exchange) {
         try {
-            // done exchange before returning back to pool
+            // done exchange before returning to pool
             PooledExchange ee = (PooledExchange) exchange;
-            ee.done(true);
+            ee.done();
 
             // only release back in pool if reset was success
             boolean inserted = pool.offer(exchange);

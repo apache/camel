@@ -23,14 +23,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -101,9 +99,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         Map<String, String> objectMetadata = determineMetadata(exchange);
 
-        File filePayload;
         InputStream is;
-        ByteArrayOutputStream baos = null;
         Object obj = exchange.getIn().getMandatoryBody();
 
         // Need to check if the message body is WrappedFile
@@ -111,50 +107,46 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             obj = ((WrappedFile<?>) obj).getFile();
         }
         if (obj instanceof File) {
-            filePayload = (File) obj;
+            File filePayload = (File) obj;
             is = new FileInputStream(filePayload);
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
-            baos = determineLengthInputStream(is);
-
-            if (objectMetadata.containsKey(Exchange.CONTENT_LENGTH)) {
-                if (objectMetadata.get("Content-Length").equals("0")
-                        && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                    LOG.debug(
-                            "The content length is not defined. It needs to be determined by reading the data into memory");
-                    objectMetadata.put("Content-Length", String.valueOf(baos.size()));
-                    is = new ByteArrayInputStream(baos.toByteArray());
-                } else {
-                    if (ObjectHelper.isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                        objectMetadata.put("Content-Length",
-                                exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
-                    }
-                }
-            }
         }
+        // Handle Content-Length if not already set
+        is = setContentLength(objectMetadata, is);
 
         Blob createdBlob;
         BlobId blobId = BlobId.of(bucketName, objectName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMetadata(objectMetadata).build();
-        if (baos.size() > 1_000_000) {
-            // When content is not available or large (1MB or more) it is recommended
-            // to write it in chunks via the blob's channel writer.
-            try (WriteChannel writer = storage.writer(blobInfo)) {
-                writer.write(ByteBuffer.wrap(baos.toByteArray()));
-            }
-            createdBlob = storage.get(blobId);
-        } else {
-            byte[] bytes = baos.toByteArray();
-            // create the blob in one request.
-            createdBlob = storage.create(blobInfo, bytes);
-        }
-
+        // According to documentation, this internally uses a WriteChannel
+        createdBlob = storage.createFrom(blobInfo, is);
         LOG.trace("created createdBlob [{}]", createdBlob);
         Message message = getMessageForResponse(exchange);
         message.setBody(createdBlob);
 
-        IOHelper.close(baos);
         IOHelper.close(is);
+    }
+
+    /**
+     * If no content-length header was found, calculate length by reading the content.
+     * 
+     * @param  objectMetadata Metadata set from Exchange headers
+     * @param  is             InputStream to read the Exchange body content
+     * @return                the original InputStream if Content-Length is set or a ByteArrayInputStream if the
+     *                        original stream was read to determine the length.
+     * @throws IOException    if the InputStream cannot be read.
+     */
+    private InputStream setContentLength(Map<String, String> objectMetadata, InputStream is) throws IOException {
+        if (!objectMetadata.containsKey(Exchange.CONTENT_LENGTH) ||
+                objectMetadata.get(Exchange.CONTENT_LENGTH).equals("0")) {
+            LOG.debug(
+                    "The content length is not defined. It needs to be determined by reading the data into memory");
+            ByteArrayOutputStream baos = determineLengthInputStream(is);
+            objectMetadata.put("Content-Length", String.valueOf(baos.size()));
+            return new ByteArrayInputStream(baos.toByteArray());
+        } else {
+            return is;
+        }
     }
 
     private ByteArrayOutputStream determineLengthInputStream(InputStream is) throws IOException {
@@ -173,6 +165,9 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         Long contentLength = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_LENGTH, Long.class);
         if (contentLength != null) {
             objectMetadata.put("Content-Length", String.valueOf(contentLength));
+        } else if (ObjectHelper.isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+            objectMetadata.put("Content-Length",
+                    exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
         }
 
         String contentType = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_TYPE, String.class);

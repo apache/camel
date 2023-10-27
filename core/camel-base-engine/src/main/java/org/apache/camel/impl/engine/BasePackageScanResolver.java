@@ -39,6 +39,13 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
     private CamelContext camelContext;
 
     public BasePackageScanResolver() {
+        initialize();
+    }
+
+    /**
+     * Performs overridable initialization logic for the package scan resolver
+     */
+    public void initialize() {
         try {
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             if (ccl != null) {

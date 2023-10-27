@@ -28,6 +28,7 @@ import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * HTTP based {@link org.apache.camel.spi.SendDynamicAware} which allows to optimise HTTP components with the toD
@@ -153,34 +154,49 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             }
         }
 
-        // favour using java.net.URI for parsing into host, context-path and authority
+        // must include :// in scheme to be parsable via java.net.URI
+        int colon = u.indexOf(':');
+        if (colon != -1) {
+            String before = StringHelper.before(u, ":");
+            String after = StringHelper.after(u, ":");
+            if (!after.startsWith("//")) {
+                u = before + "://" + after;
+            }
+        }
+
         try {
+            // favour using java.net.URI for parsing into host, context-path and authority
+            u = UnsafeUriCharactersEncoder.encode(u);
             URI parse = new URI(u);
             String host = parse.getHost();
             String path = parse.getPath();
             String authority = parse.getAuthority();
+
+            // we want host to include port
+            int port = parse.getPort();
+            if (port > 0 && port != 80 && port != 443) {
+                host += ":" + port;
+            }
+
             // if the path is just a trailing slash then skip it (eg it must be longer than just the slash itself)
             if (path != null && path.length() > 1) {
-                int port = parse.getPort();
-                if (port > 0 && port != 80 && port != 443) {
-                    host += ":" + port;
-                }
                 // remove double slash for path
                 while (path.startsWith("//")) {
                     path = path.substring(1);
                 }
-                if (!httpComponent) {
-                    // include scheme for components that are not camel-http
-                    String scheme = parse.getScheme();
-                    if (scheme != null) {
-                        host = scheme + "://" + host;
-                    }
-                }
-                return new String[] { host, path, authority };
             }
+
+            // include scheme for components that are not camel-http
+            if (!httpComponent) {
+                String scheme = parse.getScheme();
+                if (scheme != null) {
+                    host = scheme + "://" + host;
+                }
+            }
+
+            return new String[] { host, path, authority };
         } catch (URISyntaxException e) {
             // ignore
-            return new String[] { u, null, null };
         }
 
         // no context path

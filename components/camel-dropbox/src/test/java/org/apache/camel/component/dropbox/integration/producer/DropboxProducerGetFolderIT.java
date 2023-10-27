@@ -79,17 +79,28 @@ public class DropboxProducerGetFolderIT extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://get?accessToken={{accessToken}}&remotePath=" + workdir)
+                        .to("dropbox://get?accessToken={{accessToken}}" +
+                            "&expireIn={{expireIn}}" +
+                            "&refreshToken={{refreshToken}}" +
+                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
+                            "&remotePath=" + workdir)
                         .to("mock:result");
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
-                        .to("dropbox://get?accessToken={{accessToken}}")
+                        .to("dropbox://get?accessToken={{accessToken}}" +
+                            "&expireIn={{expireIn}}" +
+                            "&refreshToken={{refreshToken}}" +
+                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
                         .to("mock:result");
 
                 from("direct:start3")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
-                        .to("dropbox://get?accessToken={{accessToken}}&remotePath=/aWrongPath")
+                        .to("dropbox://get?accessToken={{accessToken}}" +
+                            "&expireIn={{expireIn}}" +
+                            "&refreshToken={{refreshToken}}" +
+                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
+                            "&remotePath=/aWrongPath")
                         .to("mock:result");
 
             }

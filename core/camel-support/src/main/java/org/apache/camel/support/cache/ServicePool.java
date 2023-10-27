@@ -79,7 +79,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     /**
      * This callback is invoked by LRUCache from a separate background cleanup thread. Therefore we mark the entries to
      * be evicted from this thread only, and then let SinglePool and MultiPool handle the evictions (stop the
-     * producer/consumer safely) when they are acquiring/releases producers/consumers. If we sop the producer/consumer
+     * producer/consumer safely) when they are acquiring/releases producers/consumers. If we stop the producer/consumer
      * from the LRUCache background thread we can have a race condition with a pooled producer may have been acquired at
      * the same time its being evicted.
      */
@@ -88,6 +88,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         Pool<S> p = pool.get(e);
         if (p != null) {
             p.evict(s);
+            if (capacity > 0 && pool.size() > capacity) {
+                // the pool is growing too large, so we need to stop (stop will remove itself from pool)
+                p.stop();
+            }
         } else {
             // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
             ServicePool.stop(s);
@@ -166,15 +170,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             ((LRUCache) cache).cleanUp();
         }
         pool.values().forEach(Pool::cleanUp);
-    }
-
-    @Override
-    protected void doBuild() throws Exception {
-        // eager load classes
-        SinglePool dummy = new SinglePool();
-        LOG.trace("Loaded {}", dummy.getClass().getName());
-        MultiplePool dummy2 = new MultiplePool();
-        LOG.trace("Loaded {}", dummy2.getClass().getName());
     }
 
     @Override

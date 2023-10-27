@@ -598,6 +598,25 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the value for the blockWhenExhausted configuration attribute. It
+         * determines whether to block when the borrowObject() method is invoked
+         * when the pool is exhausted (the maximum number of active objects has
+         * been reached).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolBlockWhenExhausted the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder producerPoolBlockWhenExhausted(
+                boolean producerPoolBlockWhenExhausted) {
+            doSetProperty("producerPoolBlockWhenExhausted", producerPoolBlockWhenExhausted);
+            return this;
+        }
+        /**
          * Whether producer pool is enabled or not. Important: If you turn this
          * off then a single shared connection is used for the producer, also if
          * you are doing request/reply. That means there is a potential issue
@@ -624,24 +643,6 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the cap on the number of objects that can be allocated by the
-         * pool (checked out to clients, or idle awaiting checkout) at a given
-         * time. Use a negative value for no limit.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: producer (advanced)
-         * 
-         * @param producerPoolMaxActive the value to set
-         * @return the dsl builder
-         */
-        default NettyComponentBuilder producerPoolMaxActive(
-                int producerPoolMaxActive) {
-            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
-            return this;
-        }
-        /**
          * Sets the cap on the number of idle instances in the pool.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -655,6 +656,43 @@ public interface NettyComponentBuilderFactory {
         default NettyComponentBuilder producerPoolMaxIdle(
                 int producerPoolMaxIdle) {
             doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            return this;
+        }
+        /**
+         * Sets the cap on the number of objects that can be allocated by the
+         * pool (checked out to clients, or idle awaiting checkout) at a given
+         * time. Use a negative value for no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxTotal the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder producerPoolMaxTotal(
+                int producerPoolMaxTotal) {
+            doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
+            return this;
+        }
+        /**
+         * Sets the maximum duration (value in millis) the borrowObject() method
+         * should block before throwing an exception when the pool is exhausted
+         * and producerPoolBlockWhenExhausted is true. When less than 0, the
+         * borrowObject() method may block indefinitely.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxWait the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder producerPoolMaxWait(
+                long producerPoolMaxWait) {
+            doSetProperty("producerPoolMaxWait", producerPoolMaxWait);
             return this;
         }
         /**
@@ -1012,16 +1050,14 @@ public interface NettyComponentBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
          * @param decoders the value to set
          * @return the dsl builder
          */
-        default NettyComponentBuilder decoders(
-                java.util.List<io.netty.channel.ChannelHandler> decoders) {
+        default NettyComponentBuilder decoders(java.lang.String decoders) {
             doSetProperty("decoders", decoders);
             return this;
         }
@@ -1049,16 +1085,14 @@ public interface NettyComponentBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
          * @param encoders the value to set
          * @return the dsl builder
          */
-        default NettyComponentBuilder encoders(
-                java.util.List<io.netty.channel.ChannelHandler> encoders) {
+        default NettyComponentBuilder encoders(java.lang.String encoders) {
             doSetProperty("encoders", encoders);
             return this;
         }
@@ -1374,9 +1408,11 @@ public interface NettyComponentBuilderFactory {
             case "clientInitializerFactory": getOrCreateConfiguration((NettyComponent) component).setClientInitializerFactory((org.apache.camel.component.netty.ClientInitializerFactory) value); return true;
             case "correlationManager": getOrCreateConfiguration((NettyComponent) component).setCorrelationManager((org.apache.camel.component.netty.NettyCamelStateCorrelationManager) value); return true;
             case "lazyChannelCreation": getOrCreateConfiguration((NettyComponent) component).setLazyChannelCreation((boolean) value); return true;
+            case "producerPoolBlockWhenExhausted": getOrCreateConfiguration((NettyComponent) component).setProducerPoolBlockWhenExhausted((boolean) value); return true;
             case "producerPoolEnabled": getOrCreateConfiguration((NettyComponent) component).setProducerPoolEnabled((boolean) value); return true;
-            case "producerPoolMaxActive": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxActive((int) value); return true;
             case "producerPoolMaxIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxIdle((int) value); return true;
+            case "producerPoolMaxTotal": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxTotal((int) value); return true;
+            case "producerPoolMaxWait": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxWait((long) value); return true;
             case "producerPoolMinEvictableIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMinEvictableIdle((long) value); return true;
             case "producerPoolMinIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMinIdle((int) value); return true;
             case "udpConnectionlessSending": getOrCreateConfiguration((NettyComponent) component).setUdpConnectionlessSending((boolean) value); return true;
@@ -1397,9 +1433,9 @@ public interface NettyComponentBuilderFactory {
             case "allowDefaultCodec": getOrCreateConfiguration((NettyComponent) component).setAllowDefaultCodec((boolean) value); return true;
             case "autoAppendDelimiter": getOrCreateConfiguration((NettyComponent) component).setAutoAppendDelimiter((boolean) value); return true;
             case "decoderMaxLineLength": getOrCreateConfiguration((NettyComponent) component).setDecoderMaxLineLength((int) value); return true;
-            case "decoders": getOrCreateConfiguration((NettyComponent) component).setDecoders((java.util.List) value); return true;
+            case "decoders": getOrCreateConfiguration((NettyComponent) component).setDecoders((java.lang.String) value); return true;
             case "delimiter": getOrCreateConfiguration((NettyComponent) component).setDelimiter((org.apache.camel.component.netty.TextLineDelimiter) value); return true;
-            case "encoders": getOrCreateConfiguration((NettyComponent) component).setEncoders((java.util.List) value); return true;
+            case "encoders": getOrCreateConfiguration((NettyComponent) component).setEncoders((java.lang.String) value); return true;
             case "encoding": getOrCreateConfiguration((NettyComponent) component).setEncoding((java.lang.String) value); return true;
             case "textline": getOrCreateConfiguration((NettyComponent) component).setTextline((boolean) value); return true;
             case "enabledProtocols": getOrCreateConfiguration((NettyComponent) component).setEnabledProtocols((java.lang.String) value); return true;

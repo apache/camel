@@ -66,8 +66,8 @@ For example in order to call the function `myCamelFunction` from the project `my
 
 [source,java]
 --------------------------------------------------------------------------------
-from("google-functions://myCamelFunction?project=myProject&location=us-central1&operation=callFunction&serviceAccountKey=/home/user/Downloads/my-key.json")
-  .to("direct:test");
+from("direct:start")
+    .to("google-functions://myCamelFunction?project=myProject&location=us-central1&operation=callFunction&serviceAccountKey=/home/user/Downloads/my-key.json");
 --------------------------------------------------------------------------------
 
 
@@ -129,8 +129,8 @@ If you need to have more control over the `client` instance configuration, you c
 
 [source,java]
 --------------------------------------------------------------------------------
-from("google-functions://myCamelFunction?client=#myClient")
-    .to("mock:result");
+from("direct:start")
+    .to("google-functions://myCamelFunction?client=#myClient");
 --------------------------------------------------------------------------------
 
 === Google Functions Producer Operation examples
@@ -179,16 +179,18 @@ from("direct:start")
 [source,java]
 --------------------------------------------------------------------------------
 //generate download url
-from("direct:start").to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=generateDownloadUrl")
-.log("body:${body}")
-.to("mock:result");
+from("direct:start")
+    .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=generateDownloadUrl")
+    .log("body:${body}")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 - GenerateUploadUrl: this operation generate a signed URL for uploading a function source code.
 
 [source,java]
 --------------------------------------------------------------------------------
-from("direct:start").to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=generateUploadUrl")
+from("direct:start")
+    .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=generateUploadUrl")
     .log("body:${body}")
     .to("mock:result");
 --------------------------------------------------------------------------------
@@ -203,7 +205,8 @@ from("direct:start")
       exchange.getIn().setHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, "com.example.Example");
       exchange.getIn().setHeader(GoogleCloudFunctionsConstants.RUNTIME, "java11");
       exchange.getIn().setHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL, "gs://myBucket/source.zip");
-    }).to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=createFunction")
+    })
+    .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=createFunction")
     .log("body:${body}")
     .to("mock:result");
 --------------------------------------------------------------------------------
@@ -213,14 +216,15 @@ from("direct:start")
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
-.process(exchange -> {
-  UpdateFunctionRequest request = UpdateFunctionRequest.newBuilder()
-    .setFunction(CloudFunction.newBuilder().build())
-    .setUpdateMask(FieldMask.newBuilder().build()).build();
-  exchange.getIn().setBody(request);
-}).to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=updateFunction&pojoRequest=true")
-.log("body:${body}")
-.to("mock:result");
+    .process(exchange -> {
+      UpdateFunctionRequest request = UpdateFunctionRequest.newBuilder()
+        .setFunction(CloudFunction.newBuilder().build())
+        .setUpdateMask(FieldMask.newBuilder().build()).build();
+      exchange.getIn().setBody(request);
+    })
+    .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=updateFunction&pojoRequest=true")
+    .log("body:${body}")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 - deleteFunction: this operation Deletes a function with the given name from the specified project.
@@ -228,9 +232,9 @@ from("direct:start")
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
-.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=deleteFunction")
-.log("body:${body}")
-.to("mock:result");
+    .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=deleteFunction")
+    .log("body:${body}")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 

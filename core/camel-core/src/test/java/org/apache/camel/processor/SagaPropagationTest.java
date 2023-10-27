@@ -67,7 +67,7 @@ public class SagaPropagationTest extends ContextTestSupport {
         context.createFluentProducerTemplate().to("direct:supports").request();
 
         assertListSize(sagaIds, 2);
-        assertNonNullSagaIds(2);
+        assertNonNullSagaIds(1);
     }
 
     @Test

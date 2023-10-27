@@ -237,7 +237,7 @@ public abstract class FhirDataFormat extends ServiceSupport implements DataForma
             FhirVersionEnum version = FhirVersionEnum.valueOf(fhirVersion);
             fhirContext = new FhirContext(version);
         } else if (fhirContext == null) {
-            fhirContext = FhirContext.forDstu3();
+            fhirContext = FhirContext.forR4();
         }
         if (ObjectHelper.isNotEmpty(parserOptions)) {
             fhirContext.setParserOptions(parserOptions);

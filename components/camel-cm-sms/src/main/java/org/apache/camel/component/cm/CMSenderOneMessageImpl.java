@@ -228,7 +228,7 @@ public class CMSenderOneMessageImpl implements CMSender {
 
                     if (line.contains(CMConstants.ERROR_UNKNOWN)) {
                         throw new UnknownErrorException();
-                    } else if (line.contains(CMConstants.ERROR_NO_ACCOUNT)) {
+                    } else if (line.contains(CMConstants.ERROR_NO_ACCOUNT) || line.contains(CMConstants.ERROR_NO_USER)) {
                         throw new NoAccountFoundForProductTokenException();
                     } else if (line.contains(CMConstants.ERROR_INSUFICIENT_BALANCE)) {
                         throw new InsufficientBalanceException();

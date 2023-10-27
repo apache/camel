@@ -40,7 +40,9 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -454,6 +456,46 @@ public class VertxPlatformHttpEngineTest {
     }
 
     @Test
+    public void testRestCORSWitchConsumes() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+
+                @Override
+                public void configure() {
+                    restConfiguration().component("platform-http").enableCORS(true);
+
+                    rest("/rest")
+                            .post()
+                            .consumes("application/json")
+                            .to("direct:rest");
+
+                    from("direct:rest")
+                            .setBody(simple("Hello ${body}"));
+                }
+            });
+
+            context.start();
+
+            final String origin = "http://custom.origin.quarkus";
+
+            given()
+                    .header("Origin", origin)
+                    .when()
+                    .options("/rest")
+                    .then()
+                    .statusCode(204)
+                    .header("Access-Control-Allow-Origin", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN)
+                    .header("Access-Control-Allow-Methods", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS)
+                    .header("Access-Control-Allow-Headers", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS)
+                    .header("Access-Control-Max-Age", RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testBodyClientRequestValidation() throws Exception {
         final CamelContext context = createCamelContext();
 
@@ -551,6 +593,41 @@ public class VertxPlatformHttpEngineTest {
         } finally {
             context.stop();
             vertx.close();
+        }
+    }
+
+    @Test
+    public void testInvalidContentTypeClientRequestValidation() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    restConfiguration()
+                            .component("platform-http")
+                            .bindingMode(RestBindingMode.json)
+                            .clientRequestValidation(true);
+
+                    rest("/rest")
+                            .post("/validate/body").consumes("text/plain").produces("application/json")
+                            .to("direct:rest");
+                    from("direct:rest")
+                            .setBody(simple("Hello ${body}"));
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .body("{\"name\": \"Donald\"}")
+                    .contentType("application/json")
+                    .post("/rest/validate/body")
+                    .then()
+                    .statusCode(415);
+        } finally {
+            context.stop();
         }
     }
 

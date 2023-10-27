@@ -110,9 +110,13 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
             exchange.adapt(ExtendedExchange.class).setFromRouteId(route.getId());
         }
 
-        UnitOfWork uow = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()
-                .createUnitOfWork(exchange);
-        exchange.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+        // create uow (however for pooled exchanges then the uow is pre-created)
+        UnitOfWork uow = exchange.getUnitOfWork();
+        if (uow == null) {
+            uow = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()
+                    .createUnitOfWork(exchange);
+            exchange.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+        }
         return uow;
     }
 
@@ -140,7 +144,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         if (exchange != null) {
             if (!autoRelease && exchange instanceof PooledExchange) {
                 // if not auto release we must manually force done
-                ((PooledExchange) exchange).done(true);
+                ((PooledExchange) exchange).done();
             }
             exchangeFactory.release(exchange);
         }
@@ -259,11 +263,13 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
         private final DefaultConsumer consumer;
         private final Exchange exchange;
+        private final boolean pooled;
         private final boolean autoRelease;
 
         public DefaultConsumerCallback(DefaultConsumer consumer, Exchange exchange, boolean autoRelease) {
             this.consumer = consumer;
             this.exchange = exchange;
+            this.pooled = exchange instanceof PooledExchange;
             this.autoRelease = autoRelease;
         }
 
@@ -276,7 +282,10 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
                             exchange.getException());
                 }
             } finally {
-                consumer.releaseExchange(exchange, autoRelease);
+                if (!autoRelease) {
+                    // must release if not auto released
+                    consumer.releaseExchange(exchange, autoRelease);
+                }
             }
         }
 

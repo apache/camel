@@ -62,8 +62,6 @@ public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSuppo
             template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
         }
 
-        assertEquals(5, kafkaIdempotentRepository.getDuplicateCount());
-
         assertEquals(5, mockOut.getReceivedCounter());
         assertEquals(10, mockBefore.getReceivedCounter());
     }
@@ -84,11 +82,6 @@ public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSuppo
                 // no-op; expected
             }
         }
-
-        assertEquals(4, kafkaIdempotentRepository.getDuplicateCount()); // id{0}
-                                                                       // is
-                                                                       // not a
-                                                                       // duplicate
 
         assertEquals(6, mockOut.getReceivedCounter()); // id{0} goes through the
                                                       // idempotency check

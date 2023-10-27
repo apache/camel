@@ -162,6 +162,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "processstrategy":
         case "processStrategy": target.setProcessStrategy(property(camelContext, org.apache.camel.component.file.GenericFileProcessStrategy.class, value)); return true;
         case "proxy": target.setProxy(property(camelContext, com.jcraft.jsch.Proxy.class, value)); return true;
+        case "publickeyacceptedalgorithms":
+        case "publicKeyAcceptedAlgorithms": target.getConfiguration().setPublicKeyAcceptedAlgorithms(property(camelContext, java.lang.String.class, value)); return true;
         case "readlock":
         case "readLock": target.setReadLock(property(camelContext, java.lang.String.class, value)); return true;
         case "readlockcheckinterval":
@@ -211,6 +213,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverAliveCountMax": target.getConfiguration().setServerAliveCountMax(property(camelContext, int.class, value)); return true;
         case "serveraliveinterval":
         case "serverAliveInterval": target.getConfiguration().setServerAliveInterval(property(camelContext, int.class, value)); return true;
+        case "serverhostkeys":
+        case "serverHostKeys": target.getConfiguration().setServerHostKeys(property(camelContext, java.lang.String.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
         case "sotimeout":
         case "soTimeout": target.getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
@@ -388,6 +392,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "processstrategy":
         case "processStrategy": return org.apache.camel.component.file.GenericFileProcessStrategy.class;
         case "proxy": return com.jcraft.jsch.Proxy.class;
+        case "publickeyacceptedalgorithms":
+        case "publicKeyAcceptedAlgorithms": return java.lang.String.class;
         case "readlock":
         case "readLock": return java.lang.String.class;
         case "readlockcheckinterval":
@@ -437,6 +443,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverAliveCountMax": return int.class;
         case "serveraliveinterval":
         case "serverAliveInterval": return int.class;
+        case "serverhostkeys":
+        case "serverHostKeys": return java.lang.String.class;
         case "shuffle": return boolean.class;
         case "sotimeout":
         case "soTimeout": return int.class;
@@ -615,6 +623,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "processstrategy":
         case "processStrategy": return target.getProcessStrategy();
         case "proxy": return target.getProxy();
+        case "publickeyacceptedalgorithms":
+        case "publicKeyAcceptedAlgorithms": return target.getConfiguration().getPublicKeyAcceptedAlgorithms();
         case "readlock":
         case "readLock": return target.getReadLock();
         case "readlockcheckinterval":
@@ -664,6 +674,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverAliveCountMax": return target.getConfiguration().getServerAliveCountMax();
         case "serveraliveinterval":
         case "serverAliveInterval": return target.getConfiguration().getServerAliveInterval();
+        case "serverhostkeys":
+        case "serverHostKeys": return target.getConfiguration().getServerHostKeys();
         case "shuffle": return target.isShuffle();
         case "sotimeout":
         case "soTimeout": return target.getConfiguration().getSoTimeout();

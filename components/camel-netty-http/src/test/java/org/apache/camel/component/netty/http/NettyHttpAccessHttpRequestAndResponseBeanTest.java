@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import java.nio.charset.Charset;
+import java.util.concurrent.TimeUnit;
 
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -28,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.NettyConverter;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest {
@@ -37,10 +39,11 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
         getMockEndpoint("mock:input").expectedBodiesReceived("World", "Camel");
 
         String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
-        assertEquals("Bye World", out);
+
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Bye World", out));
 
         String out2 = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Camel", String.class);
-        assertEquals("Bye Camel", out2);
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Bye Camel", out2));
 
         assertMockEndpointsSatisfied();
     }

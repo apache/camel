@@ -149,7 +149,7 @@ mutation AddBook($bookInput: BookInput) {
 }
 ----
 
-[source,java
+[source,java]
 ----
 @BindToRegistry("addBookMutationVariables")
 public JsonObject addBookMutationVariables() {

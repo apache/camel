@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.14.2-SNAPSHOT</version>
+        <version>3.14.10-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jms</artifactId>
@@ -75,6 +75,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+            <version>${commons-pool2-version}</version>
             <scope>provided</scope>
         </dependency>
 

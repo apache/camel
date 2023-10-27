@@ -259,7 +259,11 @@ public class DefaultUnitOfWork implements UnitOfWork {
             // pooled exchange has its own done logic which will reset this uow for reuse
             // so do not call onDone
             try {
-                ((PooledExchange) exchange).done(false);
+                PooledExchange pooled = (PooledExchange) exchange;
+                // only trigger done if we should auto-release
+                if (pooled.isAutoRelease()) {
+                    ((PooledExchange) exchange).done();
+                }
             } catch (Throwable e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during exchange done. This exception will be ignored.", e);
@@ -352,8 +356,8 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
-        // no wrapping needed
-        return callback;
+        // CAMEL-18255: support running afterProcess from the async callback
+        return isBeforeAfterProcess() ? new UnitOfWorkCallback(callback, processor) : callback;
     }
 
     @Override
@@ -372,5 +376,27 @@ public class DefaultUnitOfWork implements UnitOfWork {
     @Override
     public String toString() {
         return "DefaultUnitOfWork";
+    }
+
+    private final class UnitOfWorkCallback implements AsyncCallback {
+
+        private final AsyncCallback delegate;
+        private final Processor processor;
+
+        private UnitOfWorkCallback(AsyncCallback delegate, Processor processor) {
+            this.delegate = delegate;
+            this.processor = processor;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            delegate.done(doneSync);
+            afterProcess(processor, exchange, delegate, doneSync);
+        }
+
+        @Override
+        public String toString() {
+            return delegate.toString();
+        }
     }
 }

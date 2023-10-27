@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.14.2-SNAPSHOT</version>
+        <version>3.14.10-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hl7</artifactId>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>${hapi-version}</version>
+            <version>${hapi-base-version}</version>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>

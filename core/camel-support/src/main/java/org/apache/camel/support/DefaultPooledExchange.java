@@ -31,7 +31,7 @@ import org.apache.camel.PooledExchange;
 public final class DefaultPooledExchange extends AbstractExchange implements PooledExchange {
 
     private OnDoneTask onDone;
-    private Class originalInClassType;
+    private Class<?> originalInClassType;
     private Message originalOut;
     private final ExchangePattern originalPattern;
     private boolean autoRelease;
@@ -79,8 +79,8 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
         this.onDone = task;
     }
 
-    public void done(boolean forced) {
-        if (created > 0 && (forced || autoRelease)) {
+    public void done() {
+        if (created > 0) {
             this.created = 0; // by setting to 0 we also flag that this exchange is done and needs to be reset to use again
             this.properties.clear();
             // reset array by copying over from empty which is a very fast JVM optimized operation

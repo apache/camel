@@ -29,8 +29,8 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
-import org.hl7.fhir.dstu3.model.HumanName;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
             context = new DefaultCamelContext();
         }
 
-        this.fhirContext = new FhirContext(FhirVersionEnum.DSTU3);
+        this.fhirContext = new FhirContext(FhirVersionEnum.R4);
         // Set proxy so that FHIR resource URLs returned by the server are using the correct host and port
         this.fhirContext.getRestfulClientFactory().setProxy(service.getHost(), service.getPort());
         this.fhirClient = this.fhirContext.newRestfulGenericClient(service.getServiceBaseURL());

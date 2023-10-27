@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.eventNotifier;
+package org.apache.camel.component.micrometer.eventnotifier;
 
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
@@ -25,7 +25,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
-import org.apache.camel.component.micrometer.eventnotifier.AbstractMicrometerEventNotifier;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
 abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {

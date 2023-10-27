@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.14.2-SNAPSHOT</version>
+        <version>3.14.10-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-rabbitmq</artifactId>
@@ -42,12 +42,6 @@
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit</artifactId>
             <version>${spring-rabbitmq-version}</version>
-        </dependency>
-        <!-- TODO: avoid custom pool -->
-        <dependency>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
-            <version>${commons-pool-version}</version>
         </dependency>
 
         <!-- test infra -->

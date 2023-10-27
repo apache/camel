@@ -24,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultMessage;
 import org.springframework.messaging.Message;
 
+import static org.apache.camel.support.MessageHelper.copyBody;
+
 /**
  * The Message {@link DefaultMessage} implementation for accessing the SpringIntegrationMessage
  */
@@ -75,7 +77,7 @@ public class SpringIntegrationMessage extends DefaultMessage {
         }
 
         setMessageId(that.getMessageId());
-        setBody(that.getBody());
+        copyBody(that, this);
         super.getHeaders().putAll(that.getHeaders());
         if (that instanceof SpringIntegrationMessage) {
             SpringIntegrationMessage orig = (SpringIntegrationMessage) that;

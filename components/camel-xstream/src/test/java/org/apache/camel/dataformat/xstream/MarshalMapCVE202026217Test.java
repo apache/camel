@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.xstream;
 
 import java.util.HashMap;
 
+import com.thoughtworks.xstream.security.ForbiddenClassException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,12 +26,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Marshal tests with Map. Related to https://x-stream.github.io/CVE-2020-26217.html
@@ -54,25 +55,7 @@ public class MarshalMapCVE202026217Test extends CamelTestSupport {
         Exception exception = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndProperty("direct:in", body, Exchange.CHARSET_NAME, "ISO-8859-1"));
 
-        assertTrue(exception.getCause().getMessage().contains("ForbiddenClassException"));
-    }
-
-    @Test
-    @EnabledOnJre({ JRE.JAVA_8 })
-    public void testMarshalListJDK8() throws Exception {
-
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("<?xml version='1.0' encoding='ISO-8859-1'?>"
-                                    + "<map><entry><string>Test</string><string>21</string></entry></map>");
-
-        HashMap<Object, Object> body = new HashMap<Object, Object>();
-        body.put("Test", "21");
-
-        Exception exception = assertThrows(CamelExecutionException.class,
-                () -> template.sendBodyAndProperty("direct:in", body, Exchange.CHARSET_NAME, "ISO-8859-1"));
-
-        assertTrue(exception.getCause().getMessage().contains("ForbiddenClassException"));
-
+        Assertions.assertInstanceOf(ForbiddenClassException.class, exception.getCause());
     }
 
     @Override

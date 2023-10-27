@@ -206,16 +206,22 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      */
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // Create the redelivery task object for this exchange (optimize to only create task can do redelivery or not)
-        Runnable task = taskFactory.acquire(exchange, callback);
+        try {
+            // Create the redelivery task object for this exchange (optimize to only create task can do redelivery or not)
+            Runnable task = taskFactory.acquire(exchange, callback);
 
-        // Run it
-        if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleQueue(task);
-        } else {
-            reactiveExecutor.scheduleMain(task);
+            // Run it
+            if (exchange.isTransacted()) {
+                reactiveExecutor.scheduleQueue(task);
+            } else {
+                reactiveExecutor.scheduleMain(task);
+            }
+            return false;
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
-        return false;
     }
 
     @Override
@@ -494,7 +500,18 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     }
                 }
                 if (!found) {
-                    e.addSuppressed(previous);
+                    // okay before adding suppression then we must be sure its not referring to same method
+                    // which otherwise can lead to add the same exception over and over again
+                    StackTraceElement[] ste1 = e.getStackTrace();
+                    StackTraceElement[] ste2 = previous.getStackTrace();
+                    boolean same = false;
+                    if (ste1 != null && ste2 != null && ste1.length > 0 && ste2.length > 0) {
+                        same = ste1[0].getClassName().equals(ste2[0].getClassName())
+                                && ste1[0].getLineNumber() == ste2[0].getLineNumber();
+                    }
+                    if (!same) {
+                        e.addSuppressed(previous);
+                    }
                 }
             }
 
@@ -978,7 +995,18 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     }
                 }
                 if (!found) {
-                    e.addSuppressed(previous);
+                    // okay before adding suppression then we must be sure its not referring to same method
+                    // which otherwise can lead to add the same exception over and over again
+                    StackTraceElement[] ste1 = e.getStackTrace();
+                    StackTraceElement[] ste2 = previous.getStackTrace();
+                    boolean same = false;
+                    if (ste1 != null && ste2 != null && ste1.length > 0 && ste2.length > 0) {
+                        same = ste1[0].getClassName().equals(ste2[0].getClassName())
+                                && ste1[0].getLineNumber() == ste2[0].getLineNumber();
+                    }
+                    if (!same) {
+                        e.addSuppressed(previous);
+                    }
                 }
             }
 

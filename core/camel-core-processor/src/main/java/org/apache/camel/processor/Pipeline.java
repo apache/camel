@@ -175,15 +175,21 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // create task which has state used during routing
-        PooledExchangeTask task = taskFactory.acquire(exchange, callback);
+        try {
+            // create task which has state used during routing
+            PooledExchangeTask task = taskFactory.acquire(exchange, callback);
 
-        if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleQueue(task);
-        } else {
-            reactiveExecutor.scheduleMain(task);
+            if (exchange.isTransacted()) {
+                reactiveExecutor.scheduleQueue(task);
+            } else {
+                reactiveExecutor.scheduleMain(task);
+            }
+            return false;
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
-        return false;
     }
 
     @Override

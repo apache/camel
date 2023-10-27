@@ -33,7 +33,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.FileUtil;
@@ -101,17 +100,10 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Sqs2Consumer sqsConsumer = new Sqs2Consumer(this, processor);
-        configureConsumer(sqsConsumer);
-        sqsConsumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
-        DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
-        scheduler.setDelay(sqsConsumer.getDelay());
-        scheduler.setUseFixedDelay(sqsConsumer.isUseFixedDelay());
-        scheduler.setInitialDelay(sqsConsumer.getInitialDelay());
-        scheduler.setTimeUnit(sqsConsumer.getTimeUnit());
-        scheduler.setConcurrentConsumers(configuration.getConcurrentConsumers());
-        sqsConsumer.setScheduler(scheduler);
-        return sqsConsumer;
+        Sqs2Consumer consumer = new Sqs2Consumer(this, processor);
+        configureConsumer(consumer);
+        consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
+        return consumer;
     }
 
     private boolean isDefaultAwsHost() {
@@ -174,24 +166,30 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 queueUrl = getQueueUrlResult.queueUrl();
             } else {
                 // check whether the queue already exists
-                boolean done = false;
-                while (!done) {
-                    ListQueuesResponse listQueuesResult = client.listQueues();
+                String queueNamePath = "/" + configuration.getQueueName();
+                ListQueuesRequest.Builder listQueuesRequestBuilder
+                        = ListQueuesRequest.builder().maxResults(1000).queueNamePrefix(configuration.getQueueName());
 
+                for (;;) {
+                    ListQueuesResponse listQueuesResult = client.listQueues(listQueuesRequestBuilder.build());
                     for (String url : listQueuesResult.queueUrls()) {
-                        if (url.endsWith("/" + configuration.getQueueName())) {
+                        if (url.endsWith(queueNamePath)) {
                             queueUrl = url;
                             LOG.trace("Queue available at '{}'.", queueUrl);
                             break;
                         }
                     }
 
-                    if (listQueuesResult.nextToken() == null) {
-                        done = true;
+                    if (queueUrl != null) {
+                        break;
                     }
 
                     String token = listQueuesResult.nextToken();
-                    listQueuesResult = client.listQueues(ListQueuesRequest.builder().nextToken(token).build());
+                    if (token == null) {
+                        break;
+                    }
+
+                    listQueuesRequestBuilder = listQueuesRequestBuilder.nextToken(token);
                 }
             }
         }

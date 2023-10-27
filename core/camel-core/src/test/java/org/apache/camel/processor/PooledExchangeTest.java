@@ -27,8 +27,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
+import org.apache.camel.spi.PooledObjectFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class PooledExchangeTest extends ContextTestSupport {
@@ -38,23 +41,35 @@ public class PooledExchangeTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
-        return context;
+        ExtendedCamelContext ecc = (ExtendedCamelContext) super.createCamelContext();
+        ecc.setExchangeFactory(new PooledExchangeFactory());
+        ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
+        ecc.getExchangeFactory().setStatisticsEnabled(true);
+        ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
+
+        return ecc;
     }
 
     @Test
     public void testSameExchange() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedPropertyValuesReceivedInAnyOrder("myprop", 1, 3);
-        mock.expectedHeaderValuesReceivedInAnyOrder("myheader", 2, 4);
+        mock.expectedMessageCount(3);
+        mock.expectedPropertyValuesReceivedInAnyOrder("myprop", 1, 3, 5);
+        mock.expectedHeaderValuesReceivedInAnyOrder("myheader", 2, 4, 6);
         mock.message(0).header("first").isEqualTo(true);
         mock.message(1).header("first").isNull();
+        mock.message(2).header("first").isNull();
 
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
+
+        PooledObjectFactory.Statistics stat
+                = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+        assertEquals(1, stat.getCreatedCounter());
+        assertEquals(2, stat.getAcquiredCounter());
+        assertEquals(3, stat.getReleasedCounter());
+        assertEquals(0, stat.getDiscardedCounter());
     }
 
     @Override
@@ -62,7 +77,7 @@ public class PooledExchangeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?period=1&delay=1&repeatCount=2").noAutoStartup()
+                from("timer:foo?period=1&delay=1&repeatCount=3").noAutoStartup()
                         .setProperty("myprop", counter::incrementAndGet)
                         .setHeader("myheader", counter::incrementAndGet)
                         .process(new Processor() {

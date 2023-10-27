@@ -163,6 +163,9 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
 
     @Test
     public void testSendToAll() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(0);
+
         int expectedResultCount = 5;
         CountDownLatch latch = new CountDownLatch(expectedResultCount);
         List<String> results = new ArrayList<>();
@@ -175,6 +178,15 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                 }
             });
         }
+
+        // Open a connection on path /test-other to ensure the 'send to all' operation
+        // only targeted peers connected on path /test
+        openWebSocketConnection("localhost", port, "/test-other", message -> {
+            synchronized (latch) {
+                results.add(message + " " + latch.getCount());
+                latch.countDown();
+            }
+        });
 
         template.sendBody("vertx-websocket:localhost:" + port + "/test?sendToAll=true", "Hello World");
 
@@ -184,10 +196,15 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         for (int i = 1; i <= expectedResultCount; i++) {
             assertTrue(results.contains("Hello World " + i));
         }
+
+        mockEndpoint.assertIsSatisfied(TimeUnit.SECONDS.toMillis(1));
     }
 
     @Test
     public void testSendToAllWithHeader() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(0);
+
         int expectedResultCount = 5;
         CountDownLatch latch = new CountDownLatch(expectedResultCount);
         List<String> results = new ArrayList<>();
@@ -200,6 +217,15 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                 }
             });
         }
+
+        // Open a connection on path /test-other to ensure the 'send to all' operation
+        // only targeted peers connected on path /test
+        openWebSocketConnection("localhost", port, "/test-other", message -> {
+            synchronized (latch) {
+                results.add(message + " " + latch.getCount());
+                latch.countDown();
+            }
+        });
 
         template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
                 VertxWebsocketConstants.SEND_TO_ALL, true);
@@ -210,6 +236,8 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         for (int i = 1; i <= expectedResultCount; i++) {
             assertTrue(results.contains("Hello World " + i));
         }
+
+        mockEndpoint.assertIsSatisfied(TimeUnit.SECONDS.toMillis(1));
     }
 
     @Test
@@ -250,6 +278,9 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                 fromF("vertx-websocket:localhost:%d/test", port)
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
+
+                fromF("vertx-websocket:localhost:%d/test-other", port)
+                        .setBody(simple("Hello ${body}"));
 
                 from("vertx-websocket://greeting")
                         .setBody(simple("Hello ${body}"))

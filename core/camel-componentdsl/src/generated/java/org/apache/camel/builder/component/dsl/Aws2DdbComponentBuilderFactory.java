@@ -98,6 +98,23 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the initial Describe table operation in the DDB Endpoint
+         * must be done, or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param enabledInitialDescribeTable the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder enabledInitialDescribeTable(
+                boolean enabledInitialDescribeTable) {
+            doSetProperty("enabledInitialDescribeTable", enabledInitialDescribeTable);
+            return this;
+        }
+        /**
          * Attribute name when creating table.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -420,6 +437,7 @@ public interface Aws2DdbComponentBuilderFactory {
             case "amazonDDBClient": getOrCreateConfiguration((Ddb2Component) component).setAmazonDDBClient((software.amazon.awssdk.services.dynamodb.DynamoDbClient) value); return true;
             case "configuration": ((Ddb2Component) component).setConfiguration((org.apache.camel.component.aws2.ddb.Ddb2Configuration) value); return true;
             case "consistentRead": getOrCreateConfiguration((Ddb2Component) component).setConsistentRead((boolean) value); return true;
+            case "enabledInitialDescribeTable": getOrCreateConfiguration((Ddb2Component) component).setEnabledInitialDescribeTable((boolean) value); return true;
             case "keyAttributeName": getOrCreateConfiguration((Ddb2Component) component).setKeyAttributeName((java.lang.String) value); return true;
             case "keyAttributeType": getOrCreateConfiguration((Ddb2Component) component).setKeyAttributeType((java.lang.String) value); return true;
             case "keyScalarType": getOrCreateConfiguration((Ddb2Component) component).setKeyScalarType((java.lang.String) value); return true;

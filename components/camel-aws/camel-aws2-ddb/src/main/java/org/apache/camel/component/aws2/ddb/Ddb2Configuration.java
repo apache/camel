@@ -67,6 +67,8 @@ public class Ddb2Configuration implements Cloneable {
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+    @UriParam(defaultValue = "true")
+    private boolean enabledInitialDescribeTable = true;
 
     public String getAccessKey() {
         return accessKey;
@@ -278,6 +280,17 @@ public class Ddb2Configuration implements Cloneable {
 
     public Boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
+    }
+
+    public boolean isEnabledInitialDescribeTable() {
+        return enabledInitialDescribeTable;
+    }
+
+    /**
+     * Set whether the initial Describe table operation in the DDB Endpoint must be done, or not.
+     */
+    public void setEnabledInitialDescribeTable(boolean enabledInitialDescribeTable) {
+        this.enabledInitialDescribeTable = enabledInitialDescribeTable;
     }
 
     // *************************************************

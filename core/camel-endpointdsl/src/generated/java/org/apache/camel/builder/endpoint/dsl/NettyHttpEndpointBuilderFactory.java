@@ -17,7 +17,6 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
@@ -490,26 +489,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param decoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointConsumerBuilder decoders(List<Object> decoders) {
-            doSetProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * A list of decoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -526,26 +506,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param encoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointConsumerBuilder encoders(List<Object> encoders) {
-            doSetProperty("encoders", encoders);
-            return this;
-        }
-        /**
-         * A list of encoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2823,26 +2784,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param decoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointProducerBuilder decoders(List<Object> decoders) {
-            doSetProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * A list of decoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2859,26 +2801,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param encoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointProducerBuilder encoders(List<Object> encoders) {
-            doSetProperty("encoders", encoders);
-            return this;
-        }
-        /**
-         * A list of encoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -3279,6 +3202,45 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the value for the blockWhenExhausted configuration attribute. It
+         * determines whether to block when the borrowObject() method is invoked
+         * when the pool is exhausted (the maximum number of active objects has
+         * been reached).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolBlockWhenExhausted the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolBlockWhenExhausted(
+                boolean producerPoolBlockWhenExhausted) {
+            doSetProperty("producerPoolBlockWhenExhausted", producerPoolBlockWhenExhausted);
+            return this;
+        }
+        /**
+         * Sets the value for the blockWhenExhausted configuration attribute. It
+         * determines whether to block when the borrowObject() method is invoked
+         * when the pool is exhausted (the maximum number of active objects has
+         * been reached).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolBlockWhenExhausted the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolBlockWhenExhausted(
+                String producerPoolBlockWhenExhausted) {
+            doSetProperty("producerPoolBlockWhenExhausted", producerPoolBlockWhenExhausted);
+            return this;
+        }
+        /**
          * Whether producer pool is enabled or not. Important: If you turn this
          * off then a single shared connection is used for the producer, also if
          * you are doing request/reply. That means there is a potential issue
@@ -3332,42 +3294,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the cap on the number of objects that can be allocated by the
-         * pool (checked out to clients, or idle awaiting checkout) at a given
-         * time. Use a negative value for no limit.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: producer (advanced)
-         * 
-         * @param producerPoolMaxActive the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
-                int producerPoolMaxActive) {
-            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
-            return this;
-        }
-        /**
-         * Sets the cap on the number of objects that can be allocated by the
-         * pool (checked out to clients, or idle awaiting checkout) at a given
-         * time. Use a negative value for no limit.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: producer (advanced)
-         * 
-         * @param producerPoolMaxActive the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
-                String producerPoolMaxActive) {
-            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
-            return this;
-        }
-        /**
          * Sets the cap on the number of idle instances in the pool.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -3397,6 +3323,80 @@ public interface NettyHttpEndpointBuilderFactory {
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxIdle(
                 String producerPoolMaxIdle) {
             doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            return this;
+        }
+        /**
+         * Sets the cap on the number of objects that can be allocated by the
+         * pool (checked out to clients, or idle awaiting checkout) at a given
+         * time. Use a negative value for no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxTotal the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxTotal(
+                int producerPoolMaxTotal) {
+            doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
+            return this;
+        }
+        /**
+         * Sets the cap on the number of objects that can be allocated by the
+         * pool (checked out to clients, or idle awaiting checkout) at a given
+         * time. Use a negative value for no limit.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxTotal the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxTotal(
+                String producerPoolMaxTotal) {
+            doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
+            return this;
+        }
+        /**
+         * Sets the maximum duration (value in millis) the borrowObject() method
+         * should block before throwing an exception when the pool is exhausted
+         * and producerPoolBlockWhenExhausted is true. When less than 0, the
+         * borrowObject() method may block indefinitely.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxWait the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxWait(
+                long producerPoolMaxWait) {
+            doSetProperty("producerPoolMaxWait", producerPoolMaxWait);
+            return this;
+        }
+        /**
+         * Sets the maximum duration (value in millis) the borrowObject() method
+         * should block before throwing an exception when the pool is exhausted
+         * and producerPoolBlockWhenExhausted is true. When less than 0, the
+         * borrowObject() method may block indefinitely.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxWait the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxWait(
+                String producerPoolMaxWait) {
+            doSetProperty("producerPoolMaxWait", producerPoolMaxWait);
             return this;
         }
         /**
@@ -4421,26 +4421,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param decoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointBuilder decoders(List<Object> decoders) {
-            doSetProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * A list of decoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -4457,26 +4438,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param encoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointBuilder encoders(List<Object> encoders) {
-            doSetProperty("encoders", encoders);
-            return this;
-        }
-        /**
-         * A list of encoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 

@@ -18,13 +18,14 @@ package org.apache.camel.component.netty;
 
 import java.util.NoSuchElementException;
 
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.PoolableObjectFactory;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An {@link org.apache.commons.pool.ObjectPool} that uses a single shared instance.
+ * An {@link org.apache.commons.pool2.ObjectPool} that uses a single shared instance.
  * <p/>
  * This implementation will always return <tt>1</tt> in {@link #getNumActive()} and return <tt>0</tt> in
  * {@link #getNumIdle()}.
@@ -32,37 +33,11 @@ import org.slf4j.LoggerFactory;
 public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedSingletonObjectPool.class);
-    private final PoolableObjectFactory<T> factory;
-    private volatile T t;
+    private final PooledObjectFactory<T> factory;
+    private volatile PooledObject<T> t;
 
-    public SharedSingletonObjectPool(PoolableObjectFactory<T> factory) {
+    public SharedSingletonObjectPool(PooledObjectFactory<T> factory) {
         this.factory = factory;
-    }
-
-    @Override
-    public synchronized T borrowObject() throws Exception, NoSuchElementException, IllegalStateException {
-        if (t != null) {
-            // ensure the object is validate before we borrow it
-            if (!factory.validateObject(t)) {
-                invalidateObject(t);
-                LOG.info("Recreating new connection as current connection is invalid: {}", t);
-                t = null;
-            }
-        }
-        if (t == null) {
-            t = factory.makeObject();
-        }
-        return t;
-    }
-
-    @Override
-    public void returnObject(T obj) throws Exception {
-        // noop
-    }
-
-    @Override
-    public void invalidateObject(T obj) throws Exception {
-        t = null;
     }
 
     @Override
@@ -71,13 +46,19 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
     }
 
     @Override
-    public int getNumIdle() throws UnsupportedOperationException {
-        return 0;
-    }
-
-    @Override
-    public int getNumActive() throws UnsupportedOperationException {
-        return 1;
+    public synchronized T borrowObject() throws Exception, NoSuchElementException, IllegalStateException {
+        if (t != null) {
+            // ensure the object is validate before we borrow it
+            if (!factory.validateObject(t)) {
+                invalidateObject(t.getObject());
+                LOG.info("Recreating new connection as current connection is invalid: {}", t);
+                t = null;
+            }
+        }
+        if (t == null) {
+            t = factory.makeObject();
+        }
+        return t.getObject();
     }
 
     @Override
@@ -86,12 +67,28 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         t = null;
     }
 
     @Override
-    public void setFactory(PoolableObjectFactory<T> factory) throws IllegalStateException, UnsupportedOperationException {
+    public int getNumActive() {
+        return 1;
+    }
+
+    @Override
+    public int getNumIdle() {
+        return 0;
+    }
+
+    @Override
+    public void invalidateObject(T obj) throws Exception {
+        t = null;
+    }
+
+    @Override
+    public void returnObject(T obj) throws Exception {
         // noop
     }
+
 }

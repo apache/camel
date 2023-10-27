@@ -67,6 +67,7 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
             exchange.getIn().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, coordinator.getId());
         } else {
             exchange.getIn().removeHeader(Exchange.SAGA_LONG_RUNNING_ACTION);
+            exchange.getMessage().removeHeader(Exchange.SAGA_LONG_RUNNING_ACTION);
         }
     }
 

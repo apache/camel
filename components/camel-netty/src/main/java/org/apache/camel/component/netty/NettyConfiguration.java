@@ -51,6 +51,9 @@ import org.slf4j.LoggerFactory;
 public class NettyConfiguration extends NettyServerBootstrapConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
+    private transient List<ChannelHandler> encodersList = new ArrayList<>();
+    private transient List<ChannelHandler> decodersList = new ArrayList<>();
+
     @UriParam(label = "producer")
     private long requestTimeout;
     @UriParam(defaultValue = "true")
@@ -66,9 +69,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam(label = "codec")
     private String encoding;
     @UriParam(label = "codec")
-    private List<ChannelHandler> encoders = new ArrayList<>();
+    private String encoders;
     @UriParam(label = "codec")
-    private List<ChannelHandler> decoders = new ArrayList<>();
+    private String decoders;
     @UriParam(label = "common, security", defaultValue = "false")
     private boolean hostnameVerification;
     @UriParam
@@ -94,13 +97,17 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean usingExecutorService = true;
     @UriParam(label = "producer,advanced", defaultValue = "-1")
-    private int producerPoolMaxActive = -1;
+    private int producerPoolMaxTotal = -1;
     @UriParam(label = "producer,advanced")
     private int producerPoolMinIdle;
     @UriParam(label = "producer,advanced", defaultValue = "100")
     private int producerPoolMaxIdle = 100;
     @UriParam(label = "producer,advanced", defaultValue = "" + 5 * 60 * 1000L)
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
+    @UriParam(label = "producer,advanced", defaultValue = "-1")
+    private long producerPoolMaxWait = -1;
+    @UriParam(label = "producer,advanced", defaultValue = "true")
+    private boolean producerPoolBlockWhenExhausted = true;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean producerPoolEnabled = true;
     @UriParam(label = "producer,advanced")
@@ -123,10 +130,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         try {
             NettyConfiguration answer = (NettyConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelHandler> encodersCopy = new ArrayList<>(encoders);
-            answer.setEncoders(encodersCopy);
-            List<ChannelHandler> decodersCopy = new ArrayList<>(decoders);
-            answer.setDecoders(decodersCopy);
+            answer.setEncodersAsList(new ArrayList<>(getEncodersAsList()));
+            answer.setDecodersAsList(new ArrayList<>(getDecodersAsList()));
             return answer;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -135,7 +140,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void validateConfiguration() {
         // validate that the encoders is either shareable or is a handler factory
-        for (ChannelHandler encoder : encoders) {
+        for (ChannelHandler encoder : encodersList) {
             if (encoder instanceof ChannelHandlerFactory) {
                 continue;
             }
@@ -148,7 +153,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         }
 
         // validate that the decoders is either shareable or is a handler factory
-        for (ChannelHandler decoder : decoders) {
+        for (ChannelHandler decoder : decodersList) {
             if (decoder instanceof ChannelHandlerFactory) {
                 continue;
             }
@@ -191,7 +196,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
             setPort(uri.getPort());
         }
 
-        ssl = component.getAndRemoveOrResolveReferenceParameter(parameters, "ssl", boolean.class, false);
+        ssl = component.getAndRemoveOrResolveReferenceParameter(parameters, "ssl", boolean.class, ssl);
         sslHandler = component.getAndRemoveOrResolveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
         passphrase = component.getAndRemoveOrResolveReferenceParameter(parameters, "passphrase", String.class, passphrase);
         keyStoreFormat = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreFormat", String.class,
@@ -208,10 +213,18 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         // set custom encoders and decoders first
         List<ChannelHandler> referencedEncoders
                 = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);
-        addToHandlersList(encoders, referencedEncoders, ChannelHandler.class);
+        addToHandlersList(encodersList, referencedEncoders, ChannelHandler.class);
         List<ChannelHandler> referencedDecoders
                 = component.resolveAndRemoveReferenceListParameter(parameters, "decoders", ChannelHandler.class, null);
-        addToHandlersList(decoders, referencedDecoders, ChannelHandler.class);
+        addToHandlersList(decodersList, referencedDecoders, ChannelHandler.class);
+
+        // set custom encoders and decoders from config
+        List<ChannelHandler> configEncoders
+                = EndpointHelper.resolveReferenceListParameter(component.getCamelContext(), encoders, ChannelHandler.class);
+        addToHandlersList(encodersList, configEncoders, ChannelHandler.class);
+        List<ChannelHandler> configDecoders
+                = EndpointHelper.resolveReferenceListParameter(component.getCamelContext(), decoders, ChannelHandler.class);
+        addToHandlersList(decodersList, configDecoders, ChannelHandler.class);
 
         // then set parameters with the help of the camel context type converters
         // and use configurer to avoid any reflection calls
@@ -233,36 +246,36 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         }
 
         // add default encoders and decoders
-        if (encoders.isEmpty() && decoders.isEmpty()) {
+        if (encodersList.isEmpty() && decodersList.isEmpty()) {
             if (isAllowDefaultCodec()) {
                 if ("udp".equalsIgnoreCase(protocol)) {
-                    encoders.add(ChannelHandlerFactories.newDatagramPacketEncoder());
+                    encodersList.add(ChannelHandlerFactories.newDatagramPacketEncoder());
                 }
                 // are we textline or byte array
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
-                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
+                    encodersList.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
                     ByteBuf[] delimiters
                             = delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter();
-                    decoders.add(
+                    decodersList.add(
                             ChannelHandlerFactories.newDelimiterBasedFrameDecoder(decoderMaxLineLength, delimiters, protocol));
-                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
+                    decodersList.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
 
                     LOG.debug(
                             "Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                             charset, delimiter, decoderMaxLineLength);
 
                 } else if ("udp".equalsIgnoreCase(protocol) && isUdpByteArrayCodec()) {
-                    encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
-                    decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
+                    encodersList.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
+                    decodersList.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
                 } else {
                     // Fall back to allowing Strings to be serialized only
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
-                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
-                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
+                    encodersList.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
+                    decodersList.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
                 }
                 if ("udp".equalsIgnoreCase(protocol)) {
-                    decoders.add(ChannelHandlerFactories.newDatagramPacketDecoder());
+                    decodersList.add(ChannelHandlerFactories.newDatagramPacketDecoder());
                 }
             } else {
                 LOG.debug("No encoders and decoders will be used");
@@ -382,8 +395,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.encoding = encoding;
     }
 
-    public List<ChannelHandler> getDecoders() {
-        return decoders;
+    public List<ChannelHandler> getDecodersAsList() {
+        return decodersList;
+    }
+
+    public void setDecodersAsList(List<ChannelHandler> decoders) {
+        this.decodersList = decoders;
     }
 
     /**
@@ -391,11 +408,27 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.
      */
     public void setDecoders(List<ChannelHandler> decoders) {
+        this.decodersList = decoders;
+    }
+
+    /**
+     * A list of decoders to be used. You can use a String which have values separated by comma, and have the values be
+     * looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.
+     */
+    public void setDecoders(String decoders) {
         this.decoders = decoders;
     }
 
-    public List<ChannelHandler> getEncoders() {
-        return encoders;
+    public String getDecoders() {
+        return decoders;
+    }
+
+    public List<ChannelHandler> getEncodersAsList() {
+        return encodersList;
+    }
+
+    public void setEncodersAsList(List<ChannelHandler> encoders) {
+        this.encodersList = encoders;
     }
 
     /**
@@ -403,15 +436,27 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.
      */
     public void setEncoders(List<ChannelHandler> encoders) {
+        this.encodersList = encoders;
+    }
+
+    /**
+     * A list of encoders to be used. You can use a String which have values separated by comma, and have the values be
+     * looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.
+     */
+    public void setEncoders(String encoders) {
         this.encoders = encoders;
+    }
+
+    public String getEncoders() {
+        return encoders;
     }
 
     /**
      * Adds a custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
      */
     public void addEncoder(ChannelHandler encoder) {
-        if (!encoders.contains(encoder)) {
-            encoders.add(encoder);
+        if (!encodersList.contains(encoder)) {
+            encodersList.add(encoder);
         }
     }
 
@@ -419,8 +464,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * Adds a custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
      */
     public void addDecoder(ChannelHandler decoder) {
-        if (!decoders.contains(decoder)) {
-            decoders.add(decoder);
+        if (!decodersList.contains(decoder)) {
+            decodersList.add(decoder);
         }
     }
 
@@ -574,16 +619,16 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.usingExecutorService = usingExecutorService;
     }
 
-    public int getProducerPoolMaxActive() {
-        return producerPoolMaxActive;
+    public int getProducerPoolMaxTotal() {
+        return producerPoolMaxTotal;
     }
 
     /**
      * Sets the cap on the number of objects that can be allocated by the pool (checked out to clients, or idle awaiting
      * checkout) at a given time. Use a negative value for no limit.
      */
-    public void setProducerPoolMaxActive(int producerPoolMaxActive) {
-        this.producerPoolMaxActive = producerPoolMaxActive;
+    public void setProducerPoolMaxTotal(int producerPoolMaxTotal) {
+        this.producerPoolMaxTotal = producerPoolMaxTotal;
     }
 
     public int getProducerPoolMinIdle() {
@@ -619,6 +664,32 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      */
     public void setProducerPoolMinEvictableIdle(long producerPoolMinEvictableIdle) {
         this.producerPoolMinEvictableIdle = producerPoolMinEvictableIdle;
+    }
+
+    public long getProducerPoolMaxWait() {
+        return producerPoolMaxWait;
+    }
+
+    /**
+     * Sets the maximum duration (value in millis) the borrowObject() method should block before throwing an exception
+     * when the pool is exhausted and producerPoolBlockWhenExhausted is true. When less than 0, the borrowObject()
+     * method may block indefinitely.
+     */
+    public void setProducerPoolMaxWait(long producerPoolMaxWait) {
+        this.producerPoolMaxWait = producerPoolMaxWait;
+    }
+
+    public boolean isProducerPoolBlockWhenExhausted() {
+        return producerPoolBlockWhenExhausted;
+    }
+
+    /**
+     * Sets the value for the blockWhenExhausted configuration attribute. It determines whether to block when the
+     * borrowObject() method is invoked when the pool is exhausted (the maximum number of "active" objects has been
+     * reached).
+     */
+    public void setProducerPoolBlockWhenExhausted(boolean producerPoolBlockWhenExhausted) {
+        this.producerPoolBlockWhenExhausted = producerPoolBlockWhenExhausted;
     }
 
     public boolean isProducerPoolEnabled() {

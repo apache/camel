@@ -39,6 +39,7 @@ public class DebeziumMySqlComponentTest {
         params.put("databaseServerName", "test");
         params.put("databaseServerId", "1234");
         params.put("databaseHistoryFileFilename", "/db_history_file_test");
+        params.put("additionalProperties.database.connectionTimeZone", "CET");
 
         final String remaining = "test_name";
         final String uri = "debezium:mysql?name=test_name&offsetStorageFileName=/test&"
@@ -62,6 +63,7 @@ public class DebeziumMySqlComponentTest {
             assertEquals("test", configuration.getDatabaseServerName());
             assertEquals(1234L, configuration.getDatabaseServerId());
             assertEquals("/db_history_file_test", configuration.getDatabaseHistoryFileFilename());
+            assertEquals("CET", configuration.getAdditionalProperties().get("database.connectionTimeZone"));
         }
     }
 

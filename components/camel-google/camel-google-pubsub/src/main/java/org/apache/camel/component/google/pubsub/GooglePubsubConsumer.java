@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -54,7 +55,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
-        this.subscribers = new LinkedList<>();
+        this.subscribers = Collections.synchronizedList(new LinkedList<>());
 
         String loggerId = endpoint.getLoggerId();
 
@@ -80,9 +81,11 @@ public class GooglePubsubConsumer extends DefaultConsumer {
         super.doStop();
         localLog.info("Stopping Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
 
-        if (subscribers != null && !subscribers.isEmpty()) {
-            localLog.info("Stopping subscribers for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
-            subscribers.forEach(AbstractApiService::stopAsync);
+        synchronized (subscribers) {
+            if (!subscribers.isEmpty()) {
+                localLog.info("Stopping subscribers for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
+                subscribers.forEach(AbstractApiService::stopAsync);
+            }
         }
 
         if (executor != null) {

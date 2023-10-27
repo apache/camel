@@ -458,27 +458,30 @@ public class ResilienceProcessor extends AsyncProcessorSupport
         // Camel error handler
         exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
 
-        CircuitBreakerFallbackTask fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, callback);
-        CircuitBreakerTask task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
-        Callable<Exchange> callable;
-
-        if (timeLimiter != null) {
-            Supplier<CompletableFuture<Exchange>> futureSupplier;
-            if (executorService == null) {
-                futureSupplier = () -> CompletableFuture.supplyAsync(task);
-            } else {
-                futureSupplier = () -> CompletableFuture.supplyAsync(task, executorService);
-            }
-            callable = TimeLimiter.decorateFutureSupplier(timeLimiter, futureSupplier);
-        } else {
-            callable = task;
-        }
-        if (bulkhead != null) {
-            callable = Bulkhead.decorateCallable(bulkhead, callable);
-        }
-
-        callable = CircuitBreaker.decorateCallable(circuitBreaker, callable);
+        CircuitBreakerFallbackTask fallbackTask = null;
+        CircuitBreakerTask task = null;
         try {
+            fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, callback);
+            task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
+            final CircuitBreakerTask ftask = task; // annoying final java thingy!
+            Callable<Exchange> callable;
+
+            if (timeLimiter != null) {
+                Supplier<CompletableFuture<Exchange>> futureSupplier;
+                if (executorService == null) {
+                    futureSupplier = () -> CompletableFuture.supplyAsync(ftask);
+                } else {
+                    futureSupplier = () -> CompletableFuture.supplyAsync(ftask, executorService);
+                }
+                callable = TimeLimiter.decorateFutureSupplier(timeLimiter, futureSupplier);
+            } else {
+                callable = task;
+            }
+            if (bulkhead != null) {
+                callable = Bulkhead.decorateCallable(bulkhead, callable);
+            }
+
+            callable = CircuitBreaker.decorateCallable(circuitBreaker, callable);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing exchange: {} using circuit breaker: {}", exchange.getExchangeId(), id);
             }
@@ -486,8 +489,12 @@ public class ResilienceProcessor extends AsyncProcessorSupport
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
-            taskFactory.release(task);
-            fallbackTaskFactory.release(fallbackTask);
+            if (task != null) {
+                taskFactory.release(task);
+            }
+            if (fallbackTask != null) {
+                fallbackTaskFactory.release(fallbackTask);
+            }
         }
 
         if (LOG.isTraceEnabled()) {

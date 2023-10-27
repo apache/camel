@@ -87,9 +87,9 @@ public class TransitionIssueProducerTest extends CamelTestSupport {
         when(issueRestClient.getIssue(any())).then(inv -> Promises.promise(issue));
         when(issueRestClient.transition(any(Issue.class), any(TransitionInput.class))).then(inv -> {
             URI doneStatusUri = URI.create(TEST_JIRA_URL + "/rest/api/2/status/1");
-            URI doneResolutionUri = URI.create(TEST_JIRA_URL + "/rest/api/2/resolution/1");
+            URI doneResolutionUri = URI.create(TEST_JIRA_URL + "/rest/api/2/resolution/31");
             Status status = new Status(doneStatusUri, 1L, "Done", "Done", null, null);
-            Resolution resolution = new Resolution(doneResolutionUri, 1L, "Resolution", "Resolution");
+            Resolution resolution = new Resolution(doneResolutionUri, 31L, "Resolution", "Resolution");
             issue = transitionIssueDone(issue, status, resolution);
             return null;
         });
@@ -117,7 +117,7 @@ public class TransitionIssueProducerTest extends CamelTestSupport {
             public void configure() throws IOException {
                 from("direct:start")
                         .setHeader(ISSUE_KEY, () -> KEY + "-1")
-                        .setHeader(ISSUE_TRANSITION_ID, () -> 31)
+                        .setHeader(ISSUE_TRANSITION_ID, () -> 3)
                         .to("jira://transitionIssue?jiraUrl=" + JIRA_CREDENTIALS)
                         .to(mockResult);
             }

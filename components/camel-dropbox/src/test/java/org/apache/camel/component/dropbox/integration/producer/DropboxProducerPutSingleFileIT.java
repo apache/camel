@@ -101,7 +101,11 @@ public class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://put?accessToken={{accessToken}}&remotePath=" + workdir + "/" + FILENAME)
+                        .to("dropbox://put?accessToken={{accessToken}}" +
+                            "&expireIn={{expireIn}}" +
+                            "&refreshToken={{refreshToken}}" +
+                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
+                            "&remotePath=" + workdir + "/" + FILENAME)
                         .to("mock:result");
             }
         };

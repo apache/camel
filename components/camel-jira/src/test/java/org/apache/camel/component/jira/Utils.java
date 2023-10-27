@@ -169,6 +169,11 @@ public final class Utils {
         return new Worklog(selfUri, issueUri, null, null, comment, now, null, null, minutesSpent, null);
     }
 
+    public static BasicComponent createBasicComponent(Long id, String name) {
+        URI compUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/11/component/1");
+        return new BasicComponent(compUri, id, name, name + " description");
+    }
+
     private static Map<String, URI> buildUserAvatarUris(String user, Long avatarId) throws Exception {
         final ImmutableMap.Builder<String, URI> builder = ImmutableMap.builder();
         builder.put(S48_48, buildUserAvatarUri(user, avatarId));

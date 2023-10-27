@@ -45,7 +45,7 @@ public interface PooledExchange extends ExtendedExchange {
      * <p/>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
-    void done(boolean forced);
+    void done();
 
     /**
      * Resets the exchange for reuse with the given created timestamp;

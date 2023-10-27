@@ -17,6 +17,7 @@
 package org.apache.camel.component.sql;
 
 import java.sql.Connection;
+import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -250,7 +251,13 @@ public class SqlProducer extends DefaultProducer {
 
     private void populateStatement(PreparedStatement ps, Exchange exchange, String sql, String preparedQuery)
             throws SQLException {
-        int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
+        int expected;
+        if (parametersCount > 0) {
+            expected = parametersCount;
+        } else {
+            ParameterMetaData meta = ps.getParameterMetaData();
+            expected = meta != null ? meta.getParameterCount() : 0;
+        }
 
         // only populate if really needed
         if (alwaysPopulateStatement || expected > 0) {

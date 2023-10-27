@@ -485,6 +485,7 @@ public class AWS2S3Producer extends DefaultProducer {
                         = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(res);
+                populateMetadata(res, message);
             }
         } else {
             final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
@@ -494,6 +495,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setBody(res);
+            populateMetadata(res, message);
         }
     }
 
@@ -628,7 +630,27 @@ public class AWS2S3Producer extends DefaultProducer {
             objectMetadata.put("Content-Md5", contentMD5);
         }
 
+        Map<String, String> metadata = exchange.getIn().getHeader(AWS2S3Constants.METADATA, Map.class);
+        if (metadata != null) {
+            objectMetadata.putAll(metadata);
+        }
+
         return objectMetadata;
+    }
+
+    private static void populateMetadata(ResponseInputStream<GetObjectResponse> res, Message message) {
+        message.setHeader(AWS2S3Constants.E_TAG, res.response().eTag());
+        message.setHeader(AWS2S3Constants.VERSION_ID, res.response().versionId());
+        message.setHeader(AWS2S3Constants.CONTENT_TYPE, res.response().contentType());
+        message.setHeader(AWS2S3Constants.CONTENT_LENGTH, res.response().contentLength());
+        message.setHeader(AWS2S3Constants.CONTENT_ENCODING, res.response().contentEncoding());
+        message.setHeader(AWS2S3Constants.CONTENT_DISPOSITION, res.response().contentDisposition());
+        message.setHeader(AWS2S3Constants.CACHE_CONTROL, res.response().cacheControl());
+        message.setHeader(AWS2S3Constants.SERVER_SIDE_ENCRYPTION, res.response().serverSideEncryption());
+        message.setHeader(AWS2S3Constants.EXPIRATION_TIME, res.response().expiration());
+        message.setHeader(AWS2S3Constants.REPLICATION_STATUS, res.response().replicationStatus());
+        message.setHeader(AWS2S3Constants.STORAGE_CLASS, res.response().storageClass());
+        message.setHeader(AWS2S3Constants.METADATA, res.response().metadata());
     }
 
     protected AWS2S3Configuration getConfiguration() {

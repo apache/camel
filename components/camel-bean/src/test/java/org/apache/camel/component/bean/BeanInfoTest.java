@@ -41,18 +41,6 @@ import static org.mockito.Mockito.lenient;
 @ExtendWith(MockitoExtension.class)
 public class BeanInfoTest {
 
-    public static class MyClass {
-        @Handler
-        public void myMethod() {
-        }
-    }
-
-    public static class MyDerivedClass extends MyClass {
-        @Override
-        public void myMethod() {
-        }
-    }
-
     @Mock
     private CamelContext context;
 
@@ -72,45 +60,97 @@ public class BeanInfoTest {
     }
 
     @Test
-    public void testHandlerClass() throws Exception {
-        BeanInfo info = new BeanInfo(
-                context, MyClass.class.getMethod("myMethod"),
-                ParameterMappingStrategyHelper.createParameterMappingStrategy(context),
-                context.getComponent("bean", BeanComponent.class));
+    public void testHandlerClass() {
+        BeanInfo info = new BeanInfo(context, MyClass.class);
         assertTrue(info.hasAnyMethodHandlerAnnotation());
     }
 
     @Test
-    public void testHandlerOnSyntheticProxy() throws Exception {
-        Object proxy = new ByteBuddy()
-                .subclass(MyClass.class)
-                .modifiers(SyntheticState.SYNTHETIC, Visibility.PUBLIC, Ownership.STATIC)
-                .method(named("myMethod"))
-                .intercept(MethodDelegation.to(
-                        new Object() {
-                            @RuntimeType
-                            public void intercept() throws Exception {
-                            }
-                        }))
-                .make()
-                .load(getClass().getClassLoader())
-                .getLoaded()
-                .getDeclaredConstructor()
-                .newInstance();
-        BeanInfo info = new BeanInfo(
-                context, proxy.getClass().getMethod("myMethod"),
-                ParameterMappingStrategyHelper.createParameterMappingStrategy(context),
-                context.getComponent("bean", BeanComponent.class));
+    public void testHandlerOnSyntheticProxy() {
+        Object proxy = buildProxyObject();
+
+        BeanInfo info = new BeanInfo(context, proxy.getClass());
         assertTrue(info.hasAnyMethodHandlerAnnotation());
     }
 
     @Test
-    public void testHandlerOnDerived() throws Exception {
-        BeanInfo info = new BeanInfo(
-                context, MyDerivedClass.class.getMethod("myMethod"),
-                ParameterMappingStrategyHelper.createParameterMappingStrategy(context),
-                context.getComponent("bean", BeanComponent.class));
+    public void testHandlerOnDerived() {
+        BeanInfo info = new BeanInfo(context, MyDerivedClass.class);
         assertFalse(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    @Test
+    public void testHandlerInFunctionalInterfaceWithLambda() {
+        MyHandlerInterface mhi = (MyHandlerInterface) () -> null;
+
+        BeanInfo info = new BeanInfo(context, mhi.getClass());
+        assertTrue(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    @Test
+    public void testHandlerInFunctionalInterfaceWithMethodReference() {
+        MyClass myClass = new MyClass();
+        MyHandlerInterface mhi = (MyHandlerInterface) myClass::myOtherMethod;
+        BeanInfo info = new BeanInfo(context, mhi.getClass());
+        assertTrue(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    @Test
+    public void testHandlerInFunctionalInterfaceWithAnonymousInnerClass() {
+        MyHandlerInterface mhi = new MyHandlerInterface() {
+            @Override
+            public String myMethod() {
+                return "";
+            }
+        };
+
+        BeanInfo info = new BeanInfo(context, mhi.getClass());
+        assertTrue(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    private Object buildProxyObject() {
+        try {
+            return new ByteBuddy()
+                    .subclass(MyClass.class)
+                    .modifiers(SyntheticState.SYNTHETIC, Visibility.PUBLIC, Ownership.STATIC)
+                    .method(named("myMethod"))
+                    .intercept(MethodDelegation.to(
+                            new Object() {
+                                @RuntimeType
+                                public void intercept() {
+                                }
+                            }))
+                    .make()
+                    .load(getClass().getClassLoader())
+                    .getLoaded()
+                    .getDeclaredConstructor()
+                    .newInstance();
+
+        } catch (Exception ignored) {
+            return new Object();
+        }
+    }
+
+    public static class MyClass {
+        @Handler
+        public void myMethod() {
+        }
+
+        public String myOtherMethod() {
+            return "";
+        }
+    }
+
+    public static class MyDerivedClass extends MyClass {
+        @Override
+        public void myMethod() {
+        }
+    }
+
+    @FunctionalInterface
+    public interface MyHandlerInterface {
+        @Handler
+        String myMethod();
     }
 
 }

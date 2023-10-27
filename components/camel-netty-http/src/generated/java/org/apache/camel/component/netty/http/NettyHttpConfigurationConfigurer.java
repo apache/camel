@@ -56,7 +56,9 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "decodermaxlinelength":
         case "DecoderMaxLineLength": target.setDecoderMaxLineLength(property(camelContext, int.class, value)); return true;
         case "decoders":
-        case "Decoders": target.setDecoders(property(camelContext, java.util.List.class, value)); return true;
+        case "Decoders": target.setDecoders(property(camelContext, java.lang.String.class, value)); return true;
+        case "decodersaslist":
+        case "DecodersAsList": target.setDecodersAsList(property(camelContext, java.util.List.class, value)); return true;
         case "delimiter":
         case "Delimiter": target.setDelimiter(property(camelContext, org.apache.camel.component.netty.TextLineDelimiter.class, value)); return true;
         case "disablestreamcache":
@@ -68,7 +70,9 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "enabledprotocols":
         case "EnabledProtocols": target.setEnabledProtocols(property(camelContext, java.lang.String.class, value)); return true;
         case "encoders":
-        case "Encoders": target.setEncoders(property(camelContext, java.util.List.class, value)); return true;
+        case "Encoders": target.setEncoders(property(camelContext, java.lang.String.class, value)); return true;
+        case "encodersaslist":
+        case "EncodersAsList": target.setEncodersAsList(property(camelContext, java.util.List.class, value)); return true;
         case "encoding":
         case "Encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "host":
@@ -115,12 +119,16 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port":
         case "Port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": target.setProducerPoolBlockWhenExhausted(property(camelContext, boolean.class, value)); return true;
         case "producerpoolenabled":
         case "ProducerPoolEnabled": target.setProducerPoolEnabled(property(camelContext, boolean.class, value)); return true;
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": target.setProducerPoolMaxActive(property(camelContext, int.class, value)); return true;
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": target.setProducerPoolMaxIdle(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": target.setProducerPoolMaxTotal(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": target.setProducerPoolMaxWait(property(camelContext, long.class, value)); return true;
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": target.setProducerPoolMinEvictableIdle(property(camelContext, long.class, value)); return true;
         case "producerpoolminidle":
@@ -239,7 +247,9 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "decodermaxlinelength":
         case "DecoderMaxLineLength": return int.class;
         case "decoders":
-        case "Decoders": return java.util.List.class;
+        case "Decoders": return java.lang.String.class;
+        case "decodersaslist":
+        case "DecodersAsList": return java.util.List.class;
         case "delimiter":
         case "Delimiter": return org.apache.camel.component.netty.TextLineDelimiter.class;
         case "disablestreamcache":
@@ -251,7 +261,9 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "enabledprotocols":
         case "EnabledProtocols": return java.lang.String.class;
         case "encoders":
-        case "Encoders": return java.util.List.class;
+        case "Encoders": return java.lang.String.class;
+        case "encodersaslist":
+        case "EncodersAsList": return java.util.List.class;
         case "encoding":
         case "Encoding": return java.lang.String.class;
         case "host":
@@ -298,12 +310,16 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "Path": return java.lang.String.class;
         case "port":
         case "Port": return int.class;
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": return boolean.class;
         case "producerpoolenabled":
         case "ProducerPoolEnabled": return boolean.class;
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": return int.class;
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": return int.class;
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": return int.class;
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": return long.class;
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": return long.class;
         case "producerpoolminidle":
@@ -424,6 +440,8 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "DecoderMaxLineLength": return target.getDecoderMaxLineLength();
         case "decoders":
         case "Decoders": return target.getDecoders();
+        case "decodersaslist":
+        case "DecodersAsList": return target.getDecodersAsList();
         case "delimiter":
         case "Delimiter": return target.getDelimiter();
         case "disablestreamcache":
@@ -436,6 +454,8 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "EnabledProtocols": return target.getEnabledProtocols();
         case "encoders":
         case "Encoders": return target.getEncoders();
+        case "encodersaslist":
+        case "EncodersAsList": return target.getEncodersAsList();
         case "encoding":
         case "Encoding": return target.getEncoding();
         case "host":
@@ -482,12 +502,16 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "Path": return target.getPath();
         case "port":
         case "Port": return target.getPort();
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": return target.isProducerPoolBlockWhenExhausted();
         case "producerpoolenabled":
         case "ProducerPoolEnabled": return target.isProducerPoolEnabled();
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": return target.getProducerPoolMaxActive();
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": return target.getProducerPoolMaxIdle();
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": return target.getProducerPoolMaxTotal();
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": return target.getProducerPoolMaxWait();
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": return target.getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":
@@ -571,10 +595,10 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "decoders":
-        case "Decoders": return io.netty.channel.ChannelHandler.class;
-        case "encoders":
-        case "Encoders": return io.netty.channel.ChannelHandler.class;
+        case "decodersaslist":
+        case "DecodersAsList": return io.netty.channel.ChannelHandler.class;
+        case "encodersaslist":
+        case "EncodersAsList": return io.netty.channel.ChannelHandler.class;
         case "options":
         case "Options": return java.lang.Object.class;
         default: return null;

@@ -108,7 +108,7 @@ class MyBean extends RouteBuilder {
     public void configure() {
       from("...")
           // Register the 'my-meter' meter in the MetricRegistry below
-          .to("metrics:meter:my-meter");
+          .to("micrometer:meter:my-meter");
     }
 
     @Produces
@@ -150,7 +150,7 @@ For example
 from("direct:in")
     .setHeader(MicrometerConstants.HEADER_METRIC_NAME, constant("new.name"))
     .setHeader(MicrometerConstants.HEADER_METRIC_TAGS, constant(Tags.of("dynamic-key", "dynamic-value")))
-    .to("metrics:counter:name.not.used?tags=key=value")
+    .to("micrometer:counter:name.not.used?tags=key=value")
     .to("direct:out");
 ----
 

@@ -45,6 +45,10 @@ public class DropboxComponentVerifierExtensionTest extends CamelTestSupport {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("accessToken", "l");
+        parameters.put("expireIn", "1000");
+        parameters.put("refreshToken", "l");
+        parameters.put("apiKey", "a");
+        parameters.put("apiSecret", "s");
         parameters.put("clientIdentifier", "k");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
@@ -60,6 +64,10 @@ public class DropboxComponentVerifierExtensionTest extends CamelTestSupport {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("accessToken", "l");
+        parameters.put("expireIn", "1000");
+        parameters.put("refreshToken", "l");
+        parameters.put("apiKey", "a");
+        parameters.put("apiSecret", "s");
         parameters.put("clientIdentifier", "k");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);

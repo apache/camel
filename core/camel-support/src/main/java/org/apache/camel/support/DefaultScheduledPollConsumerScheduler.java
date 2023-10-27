@@ -175,8 +175,9 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         if (futures.isEmpty()) {
             if (isUseFixedDelay()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
-                            currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
+                    LOG.debug("Scheduling {} consumers poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
+                            concurrentConsumers, currentInitialDelay, currentDelay,
+                            getTimeUnit().name().toLowerCase(Locale.ENGLISH),
                             consumer.getEndpoint());
                 }
                 for (int i = 0; i < concurrentConsumers; i++) {
@@ -185,8 +186,9 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
                 }
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
-                            currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
+                    LOG.debug("Scheduling {} consumers poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
+                            concurrentConsumers, currentInitialDelay, currentDelay,
+                            getTimeUnit().name().toLowerCase(Locale.ENGLISH),
                             consumer.getEndpoint());
                 }
                 for (int i = 0; i < concurrentConsumers; i++) {

@@ -35,7 +35,9 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -310,26 +312,15 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         // Need to apply the SqsHeaderFilterStrategy this time
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         // add all sqs message attributes as camel message headers so that
-        // knowledge of
-        // the Sqs class MessageAttributeValue will not leak to the client
+        // knowledge of the Sqs class MessageAttributeValue will not leak to the client
         for (Map.Entry<String, MessageAttributeValue> entry : msg.messageAttributes().entrySet()) {
             String header = entry.getKey();
-            Object value = translateValue(entry.getValue());
+            Object value = Sqs2MessageHelper.fromMessageAttributeValue(entry.getValue());
             if (!headerFilterStrategy.applyFilterToExternalHeaders(header, value, exchange)) {
                 message.setHeader(header, value);
             }
         }
         return exchange;
-    }
-
-    private static Object translateValue(MessageAttributeValue mav) {
-        Object result = null;
-        if (mav.stringValue() != null) {
-            result = mav.stringValue();
-        } else if (mav.binaryValue() != null) {
-            result = mav.binaryValue();
-        }
-        return result;
     }
 
     @Override
@@ -338,6 +329,17 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             sqsConsumerToString = "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sqsConsumerToString;
+    }
+
+    @Override
+    protected void afterConfigureScheduler(ScheduledPollConsumerScheduler scheduler, boolean newScheduler) {
+        if (newScheduler && scheduler instanceof DefaultScheduledPollConsumerScheduler) {
+            DefaultScheduledPollConsumerScheduler ds = (DefaultScheduledPollConsumerScheduler) scheduler;
+            ds.setConcurrentConsumers(getConfiguration().getConcurrentConsumers());
+            // if using concurrent consumers then resize pool to be at least same size
+            int ps = Math.max(ds.getPoolSize(), getConfiguration().getConcurrentConsumers());
+            ds.setPoolSize(ps);
+        }
     }
 
     @Override

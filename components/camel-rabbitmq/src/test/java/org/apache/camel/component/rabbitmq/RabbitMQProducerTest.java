@@ -33,7 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.ReflectionHelper;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -216,9 +216,8 @@ public class RabbitMQProducerTest {
         assertNotNull(channelPool);
         assertTrue(channelPool instanceof GenericObjectPool);
         GenericObjectPool<Channel> genericObjectPool = (GenericObjectPool<Channel>) channelPool;
-        assertEquals(123, genericObjectPool.getMaxActive());
-        assertEquals(123, genericObjectPool.getMaxIdle());
-        assertEquals(321L, genericObjectPool.getMaxWait());
+        assertEquals(123, genericObjectPool.getMaxTotal());
+        assertEquals(321L, genericObjectPool.getMaxWaitDuration().toMillis());
     }
 
     private static class Something {

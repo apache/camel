@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +33,10 @@ import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.SessionState;
@@ -125,6 +131,24 @@ public final class SmppUtils {
             // should never happen
             return year;
         }
+    }
+
+    /**
+     * Returns the payload of a deliverSm
+     *
+     * @param  deliverSm
+     * @return           the shortMessage, by first looking in the shortMessage field of the deliver_sm and if its null
+     *                   or empty, fallbacks to the optional parameter "MESSAGE_PAYLOAD".
+     */
+    public static byte[] getMessageBody(DeliverSm deliverSm) {
+        byte[] body = deliverSm.getShortMessage();
+        if (body == null || body.length == 0) {
+            OptionalParameter param = deliverSm.getOptionalParameter(Tag.MESSAGE_PAYLOAD);
+            if (param instanceof OctetString) {
+                body = ((OctetString) param).getValue();
+            }
+        }
+        return body;
     }
 
     public static boolean is8Bit(Alphabet alphabet) {
@@ -317,6 +341,35 @@ public final class SmppUtils {
             LOG.warn("The reconnect service did not finish executing within the timeout");
 
             service.shutdownNow();
+        }
+    }
+
+    /**
+     * This method would try to decode the bytes provided a dataCoding.
+     *
+     * Supports: US_ASCII, ISO_8859_1, UTF_16_BE alphabet values
+     *
+     * @param  body                         Body of the message in bytes
+     * @param  dataCoding                   The data coding value
+     * @param  defaultEncoding              The default encoding
+     * @return                              null if body is null or 8bit encoded, or the decoded body on success
+     * @throws UnsupportedEncodingException when the default encoding is unsupported
+     */
+    public static String decodeBody(byte[] body, byte dataCoding, String defaultEncoding)
+            throws UnsupportedEncodingException {
+        Alphabet alphabet = Alphabet.parseDataCoding(dataCoding);
+        if (body == null || SmppUtils.is8Bit(alphabet)) {
+            return null;
+        }
+        switch (alphabet) {
+            case ALPHA_IA5:
+                return new String(body, StandardCharsets.US_ASCII);
+            case ALPHA_LATIN1:
+                return new String(body, StandardCharsets.ISO_8859_1);
+            case ALPHA_UCS2:
+                return new String(body, StandardCharsets.UTF_16BE);
+            default:
+                return new String(body, defaultEncoding);
         }
     }
 }

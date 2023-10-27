@@ -36,6 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.MessageHelper.copyBody;
+
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
  */
@@ -113,7 +115,7 @@ public class SjmsMessage extends DefaultMessage {
         }
 
         // copy body and fault flag
-        setBody(that.getBody());
+        copyBody(that, this);
 
         // we have already cleared the headers
         if (that.hasHeaders()) {

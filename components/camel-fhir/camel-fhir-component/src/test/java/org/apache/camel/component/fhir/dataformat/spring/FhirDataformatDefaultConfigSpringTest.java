@@ -50,7 +50,7 @@ public class FhirDataformatDefaultConfigSpringTest extends CamelSpringTestSuppor
     }
 
     private void assertDefaultConfig(FhirDataFormat fhirJson) {
-        assertEquals(FhirVersionEnum.DSTU3, fhirJson.getFhirContext().getVersion().getVersion());
+        assertEquals(FhirVersionEnum.R4, fhirJson.getFhirContext().getVersion().getVersion());
         assertNull(fhirJson.getDontEncodeElements());
         assertNull(fhirJson.getDontStripVersionsFromReferencesAtPaths());
         assertNull(fhirJson.getEncodeElements());

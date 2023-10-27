@@ -104,6 +104,7 @@ public class PahoMqtt5SendDynamicAware extends ServiceSupport implements SendDyn
 
     private String parseTopicName(String uri) {
         // strip query
+        uri = uri.replaceFirst(scheme + "://", ":");
         int pos = uri.indexOf('?');
         if (pos != -1) {
             uri = uri.substring(0, pos);

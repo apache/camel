@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected SalesforceComponent component;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -46,7 +47,7 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
 
     protected void createComponent() throws Exception {
         // create the component
-        SalesforceComponent component = new SalesforceComponent();
+        component = new SalesforceComponent();
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
         config.setApiVersion(System.getProperty("apiVersion", salesforceApiVersionToUse()));
         component.setConfig(config);

@@ -62,7 +62,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
 
-        List<ChannelHandler> decoders = producer.getConfiguration().getDecoders();
+        List<ChannelHandler> decoders = producer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
             if (decoder instanceof ChannelHandlerFactory) {
@@ -72,7 +72,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
             addToPipeline("decoder-" + x, channelPipeline, decoder);
         }
 
-        List<ChannelHandler> encoders = producer.getConfiguration().getEncoders();
+        List<ChannelHandler> encoders = producer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
             if (encoder instanceof ChannelHandlerFactory) {

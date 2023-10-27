@@ -93,7 +93,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
 
         pipeline.addLast("http", new HttpClientCodec());
 
-        List<ChannelHandler> encoders = producer.getConfiguration().getEncoders();
+        List<ChannelHandler> encoders = producer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
             if (encoder instanceof ChannelHandlerFactory) {
@@ -103,7 +103,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             pipeline.addLast("encoder-" + x, encoder);
         }
 
-        List<ChannelHandler> decoders = producer.getConfiguration().getDecoders();
+        List<ChannelHandler> decoders = producer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
             if (decoder instanceof ChannelHandlerFactory) {

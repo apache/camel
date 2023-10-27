@@ -93,6 +93,10 @@ public class SalesforceLoginConfig {
      */
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
+        if (loginUrl != null) {
+            // strip trailing slash
+            this.loginUrl = loginUrl.endsWith("/") ? loginUrl.substring(0, loginUrl.length() - 1) : loginUrl;
+        }
     }
 
     public String getClientId() {
@@ -227,6 +231,9 @@ public class SalesforceLoginConfig {
     }
 
     public void validate() {
+        if (lazyLogin) {
+            return;
+        }
         ObjectHelper.notNull(loginUrl, "loginUrl");
         ObjectHelper.notNull(clientId, "clientId");
 

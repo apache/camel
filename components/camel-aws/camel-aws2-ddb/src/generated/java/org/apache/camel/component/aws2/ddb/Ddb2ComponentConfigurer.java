@@ -37,6 +37,8 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ddb.Ddb2Configuration.class, value)); return true;
         case "consistentread":
         case "consistentRead": getOrCreateConfiguration(target).setConsistentRead(property(camelContext, boolean.class, value)); return true;
+        case "enabledinitialdescribetable":
+        case "enabledInitialDescribeTable": getOrCreateConfiguration(target).setEnabledInitialDescribeTable(property(camelContext, boolean.class, value)); return true;
         case "keyattributename":
         case "keyAttributeName": getOrCreateConfiguration(target).setKeyAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "keyattributetype":
@@ -88,6 +90,8 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": return org.apache.camel.component.aws2.ddb.Ddb2Configuration.class;
         case "consistentread":
         case "consistentRead": return boolean.class;
+        case "enabledinitialdescribetable":
+        case "enabledInitialDescribeTable": return boolean.class;
         case "keyattributename":
         case "keyAttributeName": return java.lang.String.class;
         case "keyattributetype":
@@ -135,6 +139,8 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": return target.getConfiguration();
         case "consistentread":
         case "consistentRead": return getOrCreateConfiguration(target).isConsistentRead();
+        case "enabledinitialdescribetable":
+        case "enabledInitialDescribeTable": return getOrCreateConfiguration(target).isEnabledInitialDescribeTable();
         case "keyattributename":
         case "keyAttributeName": return getOrCreateConfiguration(target).getKeyAttributeName();
         case "keyattributetype":
