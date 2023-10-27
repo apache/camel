@@ -447,7 +447,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                 // if fallback can promote then let it be promoted to a first class type converter
                 if (fallback.isCanPromote()) {
                     // add it as a known type converter since we found a fallback that could do it
-                    addTypeConverter(type, value.getClass(), fallback.getFallbackTypeConverter());
+                    addOrReplaceTypeConverter(tc, typeConvertible);
                 }
                 // return converted value
                 return rc;
@@ -484,6 +484,11 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         LOG.trace("Adding type converter: {}", typeConverter);
         final TypeConvertible<?, ?> typeConvertible = new TypeConvertible<>(fromType, toType);
+
+        addOrReplaceTypeConverter(typeConverter, typeConvertible);
+    }
+
+    private void addOrReplaceTypeConverter(TypeConverter typeConverter, TypeConvertible<?, ?> typeConvertible) {
         TypeConverter converter = converters.get(typeConvertible);
 
         if (converter == MISS_CONVERTER) {
@@ -501,23 +506,30 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
             // if converter is not null then a duplicate exists
             if (converter != null) {
-                if (typeConverterExists == TypeConverterExists.Override) {
-                    CamelLogger logger = new CamelLogger(LOG, typeConverterExistsLoggingLevel);
-                    logger.log("Overriding type converter from: " + converter + " to: " + typeConverter);
-                } else if (typeConverterExists == TypeConverterExists.Ignore) {
-                    CamelLogger logger = new CamelLogger(LOG, typeConverterExistsLoggingLevel);
-                    logger.log("Ignoring duplicate type converter from: " + converter + " to: " + typeConverter);
-                    add = false;
-                } else {
-                    // we should fail
-                    throw new TypeConverterExistsException(toType, fromType);
-                }
+                add = onTypeConverterExists(typeConverter, typeConvertible, converter);
             }
 
             if (add) {
                 converters.put(typeConvertible, typeConverter);
             }
         }
+    }
+
+    private boolean onTypeConverterExists(
+            TypeConverter typeConverter, TypeConvertible<?, ?> typeConvertible, TypeConverter converter) {
+        if (typeConverterExists == TypeConverterExists.Override) {
+            CamelLogger logger = new CamelLogger(LOG, typeConverterExistsLoggingLevel);
+            logger.log("Overriding type converter from: " + converter + " to: " + typeConverter);
+
+            return true;
+        } else if (typeConverterExists == TypeConverterExists.Ignore) {
+            CamelLogger logger = new CamelLogger(LOG, typeConverterExistsLoggingLevel);
+            logger.log("Ignoring duplicate type converter from: " + converter + " to: " + typeConverter);
+            return false;
+        }
+
+        // we should fail
+        throw new TypeConverterExistsException(typeConvertible.getTo(), typeConvertible.getFrom());
     }
 
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
