@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.kafka.common;
 public final class KafkaProperties {
     public static final String KAFKA_BOOTSTRAP_SERVERS = "kafka.bootstrap.servers";
     public static final String KAFKA_ZOOKEEPER_ADDRESS = "kafka.zookeeper.address";
+    public static final String KAFKA_CONTAINER = "kafka.container";
 
     private KafkaProperties() {
 
