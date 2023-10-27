@@ -155,8 +155,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
 
     protected void handleRequest(RoutingContext ctx) {
         if (isSuspended()) {
-            ctx.response().setStatusCode(503);
-            ctx.end();
+            handleSuspend(ctx);
             return;
         }
 
@@ -181,10 +180,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         //
 
         if (getEndpoint().isHttpProxy()) {
-            exchange.getExchangeExtension().setStreamCacheDisabled(true);
-            final MultiMap httpHeaders = ctx.request().headers();
-            exchange.getMessage().setHeader(Exchange.HTTP_HOST, httpHeaders.get("Host"));
-            exchange.getMessage().removeHeader("Proxy-Connection");
+            handleProxy(ctx, exchange);
         }
 
         vertx.executeBlocking(() -> {
@@ -216,6 +212,18 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
                         releaseExchange(exchange, false);
                     }
                 });
+    }
+
+    private static void handleSuspend(RoutingContext ctx) {
+        ctx.response().setStatusCode(503);
+        ctx.end();
+    }
+
+    private static void handleProxy(RoutingContext ctx, Exchange exchange) {
+        exchange.getExchangeExtension().setStreamCacheDisabled(true);
+        final MultiMap httpHeaders = ctx.request().headers();
+        exchange.getMessage().setHeader(Exchange.HTTP_HOST, httpHeaders.get("Host"));
+        exchange.getMessage().removeHeader("Proxy-Connection");
     }
 
     protected Exchange toExchange(RoutingContext ctx) {
@@ -251,34 +259,45 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         populateCamelHeaders(ctx, result.getHeaders(), exchange, headerFilterStrategy);
         final String mimeType = ctx.parsedHeaders().contentType().value();
         final boolean isMultipartFormData = "multipart/form-data".equals(mimeType);
+
         if ("application/x-www-form-urlencoded".equals(mimeType) || isMultipartFormData) {
-            final MultiMap formData = ctx.request().formAttributes();
-            final Map<String, Object> body = new HashMap<>();
-            for (String key : formData.names()) {
-                for (String value : formData.getAll(key)) {
-                    if (headerFilterStrategy != null
-                            && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
-                        appendHeader(result.getHeaders(), key, value);
-                        appendHeader(body, key, value);
-                    }
+            populateMultiFormData(ctx, exchange, result, headerFilterStrategy, isMultipartFormData);
+        } else {
+            populateDefaultMessage(ctx, result);
+        }
+    }
+
+    private static void populateDefaultMessage(RoutingContext ctx, Message result) {
+        final RequestBody requestBody = ctx.body();
+        final Buffer body = requestBody.buffer();
+        if (body != null) {
+            result.setBody(body);
+        } else {
+            result.setBody(null);
+        }
+    }
+
+    private void populateMultiFormData(
+            RoutingContext ctx, Exchange exchange, Message result, HeaderFilterStrategy headerFilterStrategy,
+            boolean isMultipartFormData) {
+        final MultiMap formData = ctx.request().formAttributes();
+        final Map<String, Object> body = new HashMap<>();
+        for (String key : formData.names()) {
+            for (String value : formData.getAll(key)) {
+                if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
+                    appendHeader(result.getHeaders(), key, value);
+                    appendHeader(body, key, value);
                 }
             }
+        }
 
-            if (!body.isEmpty()) {
-                result.setBody(body);
-            }
+        if (!body.isEmpty()) {
+            result.setBody(body);
+        }
 
-            if (isMultipartFormData) {
-                populateAttachments(ctx.fileUploads(), result);
-            }
-        } else {
-            final RequestBody requestBody = ctx.body();
-            final Buffer body = requestBody.buffer();
-            if (body != null) {
-                result.setBody(body);
-            } else {
-                result.setBody(null);
-            }
+        if (isMultipartFormData) {
+            populateAttachments(ctx.fileUploads(), result);
         }
     }
 
