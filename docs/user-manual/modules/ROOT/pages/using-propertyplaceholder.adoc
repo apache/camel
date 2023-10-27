@@ -549,7 +549,7 @@ The configuration of the _month path_ are used by the given order:
 1. Reading configuration property with keys `camel.kubernetes-config.mount-path-configmaps`
 and `camel.kubernetes-config.mount-path-secrets`.
 2. Use JVM system property with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
-3. Use OS ENV variable with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
+3. Use OS ENV variable with key `CAMEL_K_MOUNT_PATH_CONFIGMAPS` and `CAMEL_K_MOUNT_PATH_SECRETS` (Camel K compatible).
 
 For example to use `/etc/camel/resources/` as mount path, you can configure this in the `application.properties`:
 
