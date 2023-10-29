@@ -186,6 +186,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public boolean isSuspendedMode() {
+        return backlogDebugger.isSuspendMode();
+    }
+
+    @Override
     public boolean isSingleStepMode() {
         return backlogDebugger.isSingleStepMode();
     }

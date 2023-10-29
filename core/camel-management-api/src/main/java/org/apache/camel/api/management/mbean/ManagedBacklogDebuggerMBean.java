@@ -83,6 +83,9 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Starts single step debugging from the suspended breakpoint at the given node id")
     void stepBreakpoint(String nodeId);
 
+    @ManagedAttribute(description = "Suspended mode will suspend all exchanges until a remote debugger is attached")
+    boolean isSuspendedMode();
+
     @ManagedAttribute(description = "Whether currently in step mode")
     boolean isSingleStepMode();
 

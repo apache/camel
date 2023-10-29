@@ -200,6 +200,10 @@ public final class BacklogDebugger extends ServiceSupport {
         return breakpoints.containsKey(nodeId);
     }
 
+    public boolean isSuspendMode() {
+        return suspendMode;
+    }
+
     public boolean isSingleStepMode() {
         return singleStepExchangeId != null;
     }
