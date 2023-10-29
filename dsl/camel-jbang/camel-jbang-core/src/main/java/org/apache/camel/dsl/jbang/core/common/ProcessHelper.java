@@ -46,11 +46,11 @@ public final class ProcessHelper {
                 return mc;
             }
         }
-        String cl = ph.info().commandLine().orElse("");
+        String cl = ph != null ? ph.info().commandLine().orElse("") : "";
 
         // this may be a maven plugin run that spawns a child process where Camel actually runs (link to child)
         String mvn = extractMavenPluginName(cl);
-        if (mvn != null) {
+        if (mvn != null && ph != null) {
             // is camel running in any of the children?
             boolean camel = ph.children().anyMatch(ch -> !extractName(root, ch).isEmpty());
             if (camel) {
@@ -66,7 +66,7 @@ public final class ProcessHelper {
 
         // this may be a maven plugin run that spawns a child process where Camel actually runs (link to parent)
         mvn = extractMavenPluginName(cl);
-        if (mvn == null && ph.parent().isPresent()) {
+        if (mvn == null && ph != null && ph.parent().isPresent()) {
             // try parent as it may spawn a sub process
             String clp = ph.parent().get().info().commandLine().orElse("");
             mvn = extractMavenPluginName(clp);

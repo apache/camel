@@ -116,6 +116,7 @@ public class Run extends CamelCommand {
     boolean debugRun;
 
     private File logFile;
+    long spawnPid;
 
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -899,12 +900,14 @@ public class Run extends CamelCommand {
         pb.command(jbangArgs);
         if (background) {
             Process p = pb.start();
+            this.spawnPid = p.pid();
             System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
                                + ") in background with PID: " + p.pid());
             return 0;
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
+            this.spawnPid = p.pid();
             // wait for that process to exit as we run in foreground
             return p.waitFor();
         }
@@ -921,6 +924,7 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
         Process p = pb.start();
+        this.spawnPid = p.pid();
         System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
         return 0;
     }
@@ -940,6 +944,7 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
         Process p = pb.start();
+        this.spawnPid = p.pid();
         System.out.println("Debugging Camel integration: " + name + " in background with PID: " + p.pid());
         return 0;
     }
@@ -1010,12 +1015,14 @@ public class Run extends CamelCommand {
         pb.command(jbangArgs);
         if (background) {
             Process p = pb.start();
+            this.spawnPid = p.pid();
             System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
                                + ") in background with PID: " + p.pid());
             return 0;
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
+            this.spawnPid = p.pid();
             // wait for that process to exit as we run in foreground
             return p.waitFor();
         }

@@ -34,6 +34,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
+
 @Command(name = "context",
          description = "Top status of Camel integrations",
          sortOptions = false)
