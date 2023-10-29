@@ -110,9 +110,10 @@ public class Run extends CamelCommand {
     private static final Pattern CLASS_PATTERN = Pattern.compile(
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
-    private boolean silentRun;
-    private boolean scriptRun;
-    private boolean transformRun;
+    boolean silentRun;
+    boolean scriptRun;
+    boolean transformRun;
+    boolean debugRun;
 
     private File logFile;
 
@@ -299,7 +300,12 @@ public class Run extends CamelCommand {
 
     protected Integer runScript(String file) throws Exception {
         this.files.add(file);
-        scriptRun = true;
+        this.scriptRun = true;
+        return run();
+    }
+
+    protected Integer runDebug() throws Exception {
+        this.debugRun = true;
         return run();
     }
 
@@ -376,7 +382,12 @@ public class Run extends CamelCommand {
             String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
             if (routes == null) {
                 if (!silentRun) {
-                    String run = transformRun ? "transform" : "run";
+                    String run = "run";
+                    if (transformRun) {
+                        run = "transform";
+                    } else if (debugRun) {
+                        run = "debug";
+                    }
                     System.err
                             .println("Cannot " + run + " because " + getProfile()
                                      + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
@@ -474,6 +485,16 @@ public class Run extends CamelCommand {
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        } else if (debugRun) {
+            main.addInitialProperty("camel.jbang.debug", "true");
+            // include camel-debug as dependency
+            if (dependencies == null) {
+                dependencies = "camel:debug";
+            } else if (!dependencies.contains("camel-debug") && !dependencies.contains("camel:debug")) {
+                dependencies += ",camel:debug";
+            }
+            // need to run in background, so we can use current process for debug terminal
+            background = true;
         } else if (transformRun) {
             main.setSilent(true);
             // enable stub in silent mode so we do not use real components
@@ -715,6 +736,7 @@ public class Run extends CamelCommand {
 
         // okay we have validated all input and are ready to run
         if (camelVersion != null || isDebugMode()) {
+            // TODO: debug camel specific version
             boolean custom = false;
             if (camelVersion != null) {
                 // run in another JVM with different camel version (foreground or background)
@@ -731,6 +753,9 @@ public class Run extends CamelCommand {
                 // apache camel distribution or remote debug enabled
                 return runCamelVersion(main);
             }
+        } else if (debugRun) {
+            // spawn new JVM to debug in background
+            return runDebug(main);
         } else if (background) {
             // spawn new JVM to run in background
             return runBackground(main);
@@ -897,6 +922,25 @@ public class Run extends CamelCommand {
         pb.command(cmds);
         Process p = pb.start();
         System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+        return 0;
+    }
+
+    protected int runDebug(KameletMain main) throws Exception {
+        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+
+        // debug should be run
+        cmds.remove(0);
+        cmds.add(0, "run");
+
+        cmds.remove("--background=true");
+        cmds.remove("--background");
+
+        cmds.add(0, "camel");
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(cmds);
+        Process p = pb.start();
+        System.out.println("Debugging Camel integration: " + name + " in background with PID: " + p.pid());
         return 0;
     }
 
