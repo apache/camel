@@ -99,6 +99,7 @@ public class KameletMain extends MainCommandLineSupport {
     private String repos;
     private boolean fresh;
     private boolean verbose;
+    private boolean debug;
     private String mavenSettings;
     private String mavenSettingsSecurity;
     private String stubPattern;
@@ -347,6 +348,7 @@ public class KameletMain extends MainCommandLineSupport {
     @Override
     protected CamelContext createCamelContext() {
         this.verbose = "true".equals(getInitialProperties().get("camel.jbang.verbose"));
+        this.debug = "true".equals(getInitialProperties().get("camel.jbang.debug"));
 
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
@@ -391,6 +393,10 @@ public class KameletMain extends MainCommandLineSupport {
             mainConfigurationProperties.setAutowiredEnabled(false);
             // and turn off fail fast as we stub components
             mainConfigurationProperties.setAutoConfigurationFailFast(false);
+        }
+        if (debug) {
+            // TODO: debug node id to add as breakpoint
+            
         }
 
         String info = startupInfo();

@@ -73,6 +73,9 @@ public class Debug extends Run {
             installHangupInterceptor();
         }
 
+        // attach debugger
+        attachDebugger(spawnPid);
+
         do {
             clearScreen();
             exit = doWatch();
@@ -83,6 +86,10 @@ public class Debug extends Run {
         } while (exit == 0);
 
         return 0;
+    }
+
+    private void attachDebugger(long spawnPid) {
+
     }
 
     protected int doWatch() {

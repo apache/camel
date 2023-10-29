@@ -941,6 +941,9 @@ public class Run extends CamelCommand {
 
         cmds.add(0, "camel");
 
+        // suspend debugger, so we attach
+        cmds.add("-Dorg.apache.camel.debugger.suspend=true");
+
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
         Process p = pb.start();
