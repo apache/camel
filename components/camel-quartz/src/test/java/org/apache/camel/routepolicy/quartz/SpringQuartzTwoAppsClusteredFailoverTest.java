@@ -72,7 +72,7 @@ public class SpringQuartzTwoAppsClusteredFailoverTest {
         log.warn("Crashed...");
 
         // wait long enough until the second app takes it over...
-        Awaitility.await().untilAsserted(() ->{
+        Awaitility.await().untilAsserted(() -> {
             CamelContext camel2 = app2.getBean("camelContext2-" + getClass().getSimpleName(), CamelContext.class);
 
             MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);

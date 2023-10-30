@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.quartz;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;

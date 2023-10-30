@@ -73,7 +73,9 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
 
     public static ContainerLocalKafkaService kafka2Container() {
         KafkaContainer container
-                = new KafkaContainer(DockerImageName.parse(System.getProperty("kafka.container", KAFKA2_IMAGE_NAME)).asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA2_IMAGE_NAME));
+                = new KafkaContainer(
+                        DockerImageName.parse(System.getProperty("kafka.container", KAFKA2_IMAGE_NAME))
+                                .asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA2_IMAGE_NAME));
         container = container.withEmbeddedZookeeper();
 
         return new ContainerLocalKafkaService(container);
@@ -81,7 +83,9 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
 
     public static ContainerLocalKafkaService kafka3Container() {
         KafkaContainer container
-                = new KafkaContainer(DockerImageName.parse(System.getProperty("kafka.container", KAFKA3_IMAGE_NAME)).asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME));
+                = new KafkaContainer(
+                        DockerImageName.parse(System.getProperty("kafka.container", KAFKA3_IMAGE_NAME))
+                                .asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME));
         container = container.withEmbeddedZookeeper();
 
         return new ContainerLocalKafkaService(container);

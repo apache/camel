@@ -211,11 +211,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     continue;
                 } else if (file.getName().contains("ThreadPoolConfigurationProperties")) {
                     prefix = "camel.threadpool.";
-                }
-                else if (file.getName().contains("SSLConfigurationProperties")) {
+                } else if (file.getName().contains("SSLConfigurationProperties")) {
                     prefix = "camel.ssl.";
-                }
-                else {
+                } else {
                     prefix = "camel.main.";
                 }
                 final String namePrefix = prefix;

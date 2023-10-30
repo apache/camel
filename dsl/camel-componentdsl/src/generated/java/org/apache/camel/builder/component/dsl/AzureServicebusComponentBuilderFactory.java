@@ -340,6 +340,22 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
+         * Set binary mode. If true, message body will be sent as byte. By
+         * default, it is false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder binary(boolean binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -539,6 +555,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "serviceBusReceiveMode": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusReceiveMode((com.azure.messaging.servicebus.models.ServiceBusReceiveMode) value); return true;
             case "subQueue": getOrCreateConfiguration((ServiceBusComponent) component).setSubQueue((com.azure.messaging.servicebus.models.SubQueue) value); return true;
             case "subscriptionName": getOrCreateConfiguration((ServiceBusComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "binary": getOrCreateConfiguration((ServiceBusComponent) component).setBinary((boolean) value); return true;
             case "lazyStartProducer": ((ServiceBusComponent) component).setLazyStartProducer((boolean) value); return true;
             case "producerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setProducerOperation((org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition) value); return true;
             case "scheduledEnqueueTime": getOrCreateConfiguration((ServiceBusComponent) component).setScheduledEnqueueTime((java.time.OffsetDateTime) value); return true;
