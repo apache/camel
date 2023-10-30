@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import jakarta.activation.DataHandler;
 
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
@@ -183,35 +184,44 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             handleProxy(ctx, exchange);
         }
 
-        vertx.executeBlocking(() -> {
-            createUoW(exchange);
-            getProcessor().process(exchange);
-            return null;
-        }, false)
-                .onComplete(result -> {
-                    Throwable failure = null;
-                    try {
-                        if (result.succeeded()) {
-                            try {
-                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy(), muteExceptions);
-                            } catch (Exception e) {
-                                failure = e;
-                            }
-                        } else {
-                            failure = result.cause();
-                        }
+        vertx.executeBlocking(() -> processRequest(exchange), false)
+                .onComplete(result -> processResult(ctx, result, exchange));
+    }
 
-                        if (failure != null) {
-                            getExceptionHandler().handleException(
-                                    "Failed handling platform-http endpoint " + getEndpoint().getPath(),
-                                    failure);
-                            ctx.fail(failure);
-                        }
-                    } finally {
-                        doneUoW(exchange);
-                        releaseExchange(exchange, false);
-                    }
-                });
+    private void processResult(
+            RoutingContext ctx, AsyncResult<Object> result, Exchange exchange) {
+        Throwable failure = null;
+        try {
+            if (result.succeeded()) {
+                try {
+                    writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy(), muteExceptions);
+                } catch (Exception e) {
+                    failure = e;
+                }
+            } else {
+                failure = result.cause();
+            }
+
+            if (failure != null) {
+                handleFailure(ctx, failure);
+            }
+        } finally {
+            doneUoW(exchange);
+            releaseExchange(exchange, false);
+        }
+    }
+
+    private void handleFailure(RoutingContext ctx, Throwable failure) {
+        getExceptionHandler().handleException(
+                "Failed handling platform-http endpoint " + getEndpoint().getPath(),
+                failure);
+        ctx.fail(failure);
+    }
+
+    private Object processRequest(Exchange exchange) throws Exception {
+        createUoW(exchange);
+        getProcessor().process(exchange);
+        return null;
     }
 
     private static void handleSuspend(RoutingContext ctx) {
