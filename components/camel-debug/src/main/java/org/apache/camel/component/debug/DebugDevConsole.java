@@ -68,6 +68,12 @@ public class DebugDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Breakpoint: %s", n));
                 }
             }
+            if (backlog.isSingleStepMode()) {
+                sb.append("\n\nSteps:");
+                for (String n : backlog.getSuspendedBreakpointNodeIds()) {
+                    sb.append(String.format("\n    Step: %s (suspended)", n));
+                }
+            }
         }
 
         return sb.toString();
@@ -86,7 +92,11 @@ public class DebugDevConsole extends AbstractDevConsole {
         } else if ("resume".equalsIgnoreCase(command)) {
             backlog.resumeAll();
         } else if ("step".equalsIgnoreCase(command)) {
-            backlog.step();
+            if (breakpoint != null) {
+                backlog.stepBreakpoint(breakpoint);
+            } else {
+                backlog.step();
+            }
         } else if ("add".equalsIgnoreCase(command) && breakpoint != null) {
             backlog.addBreakpoint(breakpoint);
         } else if ("remove".equalsIgnoreCase(command)) {
@@ -132,6 +142,17 @@ public class DebugDevConsole extends AbstractDevConsole {
             }
             if (!arr.isEmpty()) {
                 root.put("breakpoints", arr);
+            }
+
+            arr = new JsonArray();
+            for (String n : backlog.getSuspendedBreakpointNodeIds()) {
+                JsonObject jo = new JsonObject();
+                jo.put("nodeId", n);
+                jo.put("suspended", true);
+                arr.add(jo);
+            }
+            if (!arr.isEmpty()) {
+                root.put("steps", arr);
             }
         }
 
