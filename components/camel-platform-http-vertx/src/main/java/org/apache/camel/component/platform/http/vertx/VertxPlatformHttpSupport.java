@@ -35,6 +35,7 @@ import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
@@ -204,19 +205,28 @@ public final class VertxPlatformHttpSupport {
         } else if (body instanceof Buffer) {
             response.end((Buffer) body);
         } else {
-            final TypeConverter tc = camelExchange.getContext().getTypeConverter();
-            // Try to convert to ByteBuffer for performance reason
-            final ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
-            if (bb != null) {
-                final Buffer b = Buffer.buffer(bb.capacity());
-                b.setBytes(0, bb);
-                response.end(b);
-            } else {
-                // Otherwise fallback to most generic InputStream conversion
-                final InputStream is = tc.mandatoryConvertTo(InputStream.class, camelExchange, body);
-                writeResponseAs(response, is);
-            }
+            writeResponseAsFallback(camelExchange, body, response);
         }
+    }
+
+    private static void writeResponseAsFallback(Exchange camelExchange, Object body, HttpServerResponse response)
+            throws NoTypeConversionAvailableException, IOException {
+        final TypeConverter tc = camelExchange.getContext().getTypeConverter();
+        // Try to convert to ByteBuffer for performance reason
+        final ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
+        if (bb != null) {
+            writeResponseAs(response, bb);
+        } else {
+            // Otherwise fallback to most generic InputStream conversion
+            final InputStream is = tc.mandatoryConvertTo(InputStream.class, camelExchange, body);
+            writeResponseAs(response, is);
+        }
+    }
+
+    private static void writeResponseAs(HttpServerResponse response, ByteBuffer bb) {
+        final Buffer b = Buffer.buffer(bb.capacity());
+        b.setBytes(0, bb);
+        response.end(b);
     }
 
     private static void writeResponseAs(HttpServerResponse response, InputStream is) throws IOException {
