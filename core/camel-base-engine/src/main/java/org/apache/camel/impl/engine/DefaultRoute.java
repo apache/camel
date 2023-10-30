@@ -397,6 +397,18 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    public void setDebuggingBreakpoints(String debugBreakpoints) {
+        // can only set this on context level
+        camelContext.setDebuggingBreakpoints(debugBreakpoints);
+    }
+
+    @Override
+    public String getDebuggingBreakpoints() {
+        // can only set this on context level
+        return camelContext.getDebuggingBreakpoints();
+    }
+
+    @Override
     public void setMessageHistory(Boolean messageHistory) {
         this.messageHistory = messageHistory;
     }

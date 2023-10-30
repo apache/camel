@@ -65,15 +65,22 @@ import org.slf4j.LoggerFactory;
 public final class BacklogDebugger extends ServiceSupport {
 
     /**
-     * The name of the environment variable that contains the value of the flag indicating whether the
+     * The name of the OS environment variable that contains the value of the flag indicating whether the
      * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
      */
     public static final String SUSPEND_MODE_ENV_VAR_NAME = "CAMEL_DEBUGGER_SUSPEND";
+
     /**
      * The name of the system property that contains the value of the flag indicating whether the
      * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
      */
     public static final String SUSPEND_MODE_SYSTEM_PROP_NAME = "org.apache.camel.debugger.suspend";
+
+    /**
+     * Special breakpoint id token to automatically add breakpoint for every first node in every route
+     */
+    public static final String BREAKPOINT_FIRST_ROUTES = "FIRST_ROUTES";
+
     private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
 
     private long fallbackTimeout = 300;
@@ -132,11 +139,23 @@ public final class BacklogDebugger extends ServiceSupport {
      * @param camelContext the camel context
      * @param suspendMode  Indicates whether the <i>suspend mode</i> is enabled or not. If {@code true} the message
      *                     processing is immediately suspended until the {@link #attach()} is called.
+     * @param breakpoints  optional starting breakpoints
      */
-    private BacklogDebugger(CamelContext camelContext, boolean suspendMode) {
+    private BacklogDebugger(CamelContext camelContext, boolean suspendMode, String breakpoints) {
         this.camelContext = camelContext;
         this.debugger = new DefaultDebugger(camelContext);
         this.suspendMode = suspendMode;
+
+        // add starting breakpoints
+        if (breakpoints != null) {
+            for (String b : breakpoints.split(",")) {
+                b = b.trim();
+                if (!BREAKPOINT_FIRST_ROUTES.equals(b)) {
+                    addBreakpoint(b);
+                }
+            }
+        }
+
         detach();
     }
 
@@ -151,7 +170,7 @@ public final class BacklogDebugger extends ServiceSupport {
      * @return         a new backlog debugger
      */
     public static BacklogDebugger createDebugger(CamelContext context) {
-        return new BacklogDebugger(context, resolveSuspendMode());
+        return new BacklogDebugger(context, resolveSuspendMode(), resolveStartingBreakpoint(context));
     }
 
     /**
@@ -241,6 +260,13 @@ public final class BacklogDebugger extends ServiceSupport {
     private static boolean resolveSuspendMode() {
         final String value = System.getenv(SUSPEND_MODE_ENV_VAR_NAME);
         return value == null ? Boolean.getBoolean(SUSPEND_MODE_SYSTEM_PROP_NAME) : Boolean.parseBoolean(value);
+    }
+
+    /**
+     * Resolves the starting breakpoint(s)
+     */
+    private static String resolveStartingBreakpoint(CamelContext context) {
+        return context.getDebuggingBreakpoints();
     }
 
     /**
@@ -536,8 +562,8 @@ public final class BacklogDebugger extends ServiceSupport {
     /**
      * Gets the exchanged suspended at the given breakpoint id or null if there is none at that id.
      *
-     * @param  id  node id for the breakpoint
-     * @return     the suspended exchange or null if there isn't one suspended at the given breakpoint.
+     * @param  id node id for the breakpoint
+     * @return    the suspended exchange or null if there isn't one suspended at the given breakpoint.
      */
     public Exchange getSuspendedExchange(String id) {
         SuspendedExchange suspendedExchange = suspendedBreakpoints.get(id);
@@ -547,8 +573,8 @@ public final class BacklogDebugger extends ServiceSupport {
     /**
      * Gets the trace event for the suspended exchange at the given breakpoint id or null if there is none at that id.
      *
-     * @param  id  node id for the breakpoint
-     * @return     the trace event or null if there isn't one suspended at the given breakpoint.
+     * @param  id node id for the breakpoint
+     * @return    the trace event or null if there isn't one suspended at the given breakpoint.
      */
     public BacklogTracerEventMessage getSuspendedBreakpointMessage(String id) {
         return suspendedBreakpointMessages.get(id);
@@ -629,7 +655,7 @@ public final class BacklogDebugger extends ServiceSupport {
         debugCounter.set(0);
     }
 
-    public StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
+    public StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition, boolean first) {
         suspendIfNeeded();
         if (isEnabled() && (hasBreakpoint(definition.getId()) || isSingleStepMode())) {
             StopWatch watch = new StopWatch();

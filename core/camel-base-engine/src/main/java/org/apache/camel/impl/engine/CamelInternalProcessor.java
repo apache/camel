@@ -753,16 +753,18 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final BacklogDebugger backlogDebugger;
         private final Processor target;
         private final NamedNode definition;
+        private final boolean first;
 
-        public BacklogDebuggerAdvice(BacklogDebugger backlogDebugger, Processor target, NamedNode definition) {
+        public BacklogDebuggerAdvice(BacklogDebugger backlogDebugger, Processor target, NamedNode definition, boolean first) {
             this.backlogDebugger = backlogDebugger;
             this.target = target;
             this.definition = definition;
+            this.first = first;
         }
 
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
-            return backlogDebugger.beforeProcess(exchange, target, definition);
+            return backlogDebugger.beforeProcess(exchange, target, definition, first);
         }
 
         @Override

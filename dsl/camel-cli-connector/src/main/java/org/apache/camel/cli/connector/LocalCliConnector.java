@@ -272,6 +272,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         rr.onReload("Camel CLI");
                     }
                 }
+            } else if ("debug".equals(action)) {
+                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                        .resolveById("debug");
+                if (dc != null) {
+                    String cmd = root.getString("command");
+                    String bp = root.getString("breakpoint");
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("command", cmd, "breakpoint", bp));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
             } else if ("reset-stats".equals(action)) {
                 ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
                 if (mcc != null) {

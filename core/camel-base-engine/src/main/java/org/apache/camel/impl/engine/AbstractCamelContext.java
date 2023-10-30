@@ -235,6 +235,7 @@ public abstract class AbstractCamelContext extends BaseService
     private String tracingLoggingFormat;
     private Boolean modeline = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
+    private String debugBreakpoints;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
@@ -1727,6 +1728,14 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public Boolean isDebugging() {
         return debug;
+    }
+
+    public void setDebuggingBreakpoints(String debugBreakpoints) {
+        this.debugBreakpoints = debugBreakpoints;
+    }
+
+    public String getDebuggingBreakpoints() {
+        return debugBreakpoints;
     }
 
     @Override

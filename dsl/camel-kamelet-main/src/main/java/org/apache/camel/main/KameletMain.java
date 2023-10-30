@@ -394,10 +394,6 @@ public class KameletMain extends MainCommandLineSupport {
             // and turn off fail fast as we stub components
             mainConfigurationProperties.setAutoConfigurationFailFast(false);
         }
-        if (debug) {
-            // TODO: debug node id to add as breakpoint
-            
-        }
 
         String info = startupInfo();
         if (info != null) {

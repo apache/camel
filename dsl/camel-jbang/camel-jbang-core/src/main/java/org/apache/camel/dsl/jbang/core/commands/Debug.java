@@ -44,7 +44,9 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
 
-    // TODO: option to select route/node to start debugging
+    @CommandLine.Option(names = { "--breakpoint" },
+                        description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
+    String breakpoint;
 
     @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true",
                         description = "Whether to stop the running Camel on exit")
@@ -73,9 +75,6 @@ public class Debug extends Run {
             installHangupInterceptor();
         }
 
-        // attach debugger
-        attachDebugger(spawnPid);
-
         do {
             clearScreen();
             exit = doWatch();
@@ -88,10 +87,6 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void attachDebugger(long spawnPid) {
-
-    }
-
     protected int doWatch() {
         if (spawnPid == 0) {
             return 0;
@@ -102,6 +97,8 @@ public class Debug extends Run {
 
         // empty line
         System.out.println();
+
+        // show debug status
 
         return 0;
     }

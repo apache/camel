@@ -67,6 +67,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ContextReloadEnabled": target.setContextReloadEnabled(property(camelContext, boolean.class, value)); return true;
         case "debugging":
         case "Debugging": target.setDebugging(property(camelContext, boolean.class, value)); return true;
+        case "debuggingbreakpoints":
+        case "DebuggingBreakpoints": target.setDebuggingBreakpoints(property(camelContext, java.lang.String.class, value)); return true;
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "devconsoleenabled":
@@ -328,6 +330,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ContextReloadEnabled": return boolean.class;
         case "debugging":
         case "Debugging": return boolean.class;
+        case "debuggingbreakpoints":
+        case "DebuggingBreakpoints": return java.lang.String.class;
         case "description":
         case "Description": return java.lang.String.class;
         case "devconsoleenabled":
@@ -590,6 +594,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ContextReloadEnabled": return target.isContextReloadEnabled();
         case "debugging":
         case "Debugging": return target.isDebugging();
+        case "debuggingbreakpoints":
+        case "DebuggingBreakpoints": return target.getDebuggingBreakpoints();
         case "description":
         case "Description": return target.getDescription();
         case "devconsoleenabled":

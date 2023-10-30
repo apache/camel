@@ -488,14 +488,6 @@ public class Run extends CamelCommand {
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
         } else if (debugRun) {
             main.addInitialProperty("camel.jbang.debug", "true");
-            // include camel-debug as dependency
-            if (dependencies == null) {
-                dependencies = "camel:debug";
-            } else if (!dependencies.contains("camel-debug") && !dependencies.contains("camel:debug")) {
-                dependencies += ",camel:debug";
-            }
-            // need to run in background, so we can use current process for debug terminal
-            background = true;
         } else if (transformRun) {
             main.setSilent(true);
             // enable stub in silent mode so we do not use real components
@@ -939,13 +931,44 @@ public class Run extends CamelCommand {
         cmds.remove("--background=true");
         cmds.remove("--background");
 
-        cmds.add(0, "camel");
+        // add camel:debug as dependency
+        boolean found = false;
+        for (int i = 0; i < cmds.size(); i++) {
+            String c = cmds.get(i);
+            if (c.startsWith("--deps=") || c.startsWith("--dep=")) {
+                // need to add camel:debug if missing
+                if (!c.contains("camel-debug") && !c.contains("camel:debug")) {
+                    c = c + ",camel:debug";
+                    cmds.set(i, c);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found) {
+            cmds.add("--deps=camel:debug");
+        }
 
-        // suspend debugger, so we attach
-        cmds.add("-Dorg.apache.camel.debugger.suspend=true");
+        // auto set starting breakpoints
+        found = false;
+        for (int i = 0; i < cmds.size(); i++) {
+            String c = cmds.get(i);
+            if (c.startsWith("--p=") || c.startsWith("--prop=") || c.startsWith("--property=")) {
+                c = ",camel.main.debuggingBreakpoints=FIRST_ROUTES";
+                cmds.set(i, c);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            cmds.add("--prop=camel.main.debuggingBreakpoints=FIRST_ROUTES");
+        }
+
+        cmds.add(0, "camel");
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
+
         Process p = pb.start();
         this.spawnPid = p.pid();
         System.out.println("Debugging Camel integration: " + name + " in background with PID: " + p.pid());

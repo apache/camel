@@ -101,6 +101,22 @@ public interface RuntimeConfiguration {
     Boolean isDebugging();
 
     /**
+     * Allows to pre-configure breakpoints (node ids) to use with debugger on startup.
+     * Multiple ids can be separated by comma. Use special value FIRST_ROUTES to
+     * add a breakpoint for the first node for every route, in other words this makes it easy to debug from the
+     * beginning of every route without knowing the exact node ids.
+     */
+    void setDebuggingBreakpoints(String debugBreakpoints);
+
+    /**
+     * Allows to pre-configure breakpoints (node ids) to use with debugger on startup.
+     * Multiple ids can be separated by comma. Use special value FIRST_ROUTES to
+     * add a breakpoint for the first node for every route, in other words this makes it easy to debug from the
+     * beginning of every route without knowing the exact node ids.
+     */
+    String getDebuggingBreakpoints();
+
+    /**
      * Sets whether message history is enabled or not (default is disabled).
      *
      * @param messageHistory whether message history is enabled

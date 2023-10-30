@@ -314,6 +314,7 @@ public final class DefaultConfigurationConfigurer {
         if (config.isDebugging()) {
             camelContext.setDebugging(true);
         }
+        camelContext.setDebuggingBreakpoints(config.getDebuggingBreakpoints());
         if (config.isMessageHistory()) {
             camelContext.setMessageHistory(true);
         }
