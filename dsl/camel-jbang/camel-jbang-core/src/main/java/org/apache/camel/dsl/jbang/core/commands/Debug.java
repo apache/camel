@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -99,8 +100,29 @@ public class Debug extends Run {
         System.out.println();
 
         // show debug status
+        printDebugStatus(spawnPid);
 
         return 0;
+    }
+
+    private void printDebugStatus(long pid) {
+        // ensure output file is deleted before executing action
+        File outputFile = getOutputFile(Long.toString(pid));
+        FileUtil.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "debug");
+        File f = getActionFile(Long.toString(pid));
+        try {
+            IOHelper.writeText(root.toJson(), f);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        JsonObject jo = waitForOutputFile(outputFile);
+        if (jo != null) {
+            // print details on screen
+        }
     }
 
     private void printContextStatus() {
@@ -306,6 +328,27 @@ public class Debug extends Run {
             since = ph.info().startInstant().get().toEpochMilli();
         }
         return since;
+    }
+
+    protected JsonObject waitForOutputFile(File outputFile) {
+        StopWatch watch = new StopWatch();
+        while (watch.taken() < 5000) {
+            try {
+                // give time for response to be ready
+                Thread.sleep(100);
+
+                if (outputFile.exists()) {
+                    FileInputStream fis = new FileInputStream(outputFile);
+                    String text = IOHelper.loadText(fis);
+                    IOHelper.close(fis);
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
+
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
 }

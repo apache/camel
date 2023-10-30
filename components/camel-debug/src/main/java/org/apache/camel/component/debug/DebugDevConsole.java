@@ -22,6 +22,7 @@ import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -40,7 +41,7 @@ public class DebugDevConsole extends AbstractDevConsole {
         String command = (String) options.get(COMMAND);
         String breakpoint = (String) options.get(BREAKPOINT);
 
-        if (command != null) {
+        if (ObjectHelper.isNotEmpty(command)) {
             doCommand(command, breakpoint);
             return "";
         }
@@ -97,15 +98,15 @@ public class DebugDevConsole extends AbstractDevConsole {
         } else if ("resume".equalsIgnoreCase(command)) {
             backlog.resumeAll();
         } else if ("step".equalsIgnoreCase(command)) {
-            if (breakpoint != null) {
+            if (ObjectHelper.isNotEmpty(breakpoint)) {
                 backlog.stepBreakpoint(breakpoint);
             } else {
                 backlog.step();
             }
-        } else if ("add".equalsIgnoreCase(command) && breakpoint != null) {
+        } else if ("add".equalsIgnoreCase(command) && ObjectHelper.isNotEmpty(breakpoint)) {
             backlog.addBreakpoint(breakpoint);
         } else if ("remove".equalsIgnoreCase(command)) {
-            if (breakpoint != null) {
+            if (ObjectHelper.isNotEmpty(breakpoint)) {
                 backlog.removeBreakpoint(breakpoint);
             } else {
                 backlog.removeAllBreakpoints();
@@ -120,7 +121,7 @@ public class DebugDevConsole extends AbstractDevConsole {
         String command = (String) options.get(COMMAND);
         String breakpoint = (String) options.get(BREAKPOINT);
 
-        if (command != null) {
+        if (ObjectHelper.isNotEmpty(command)) {
             doCommand(command, breakpoint);
             return root;
         }
