@@ -536,12 +536,22 @@ public final class BacklogDebugger extends ServiceSupport {
     /**
      * Gets the exchanged suspended at the given breakpoint id or null if there is none at that id.
      *
-     * @param  id - node id for the breakpoint
-     * @return    The suspended exchange or null if there isn't one suspended at the given breakpoint.
+     * @param  id  node id for the breakpoint
+     * @return     the suspended exchange or null if there isn't one suspended at the given breakpoint.
      */
     public Exchange getSuspendedExchange(String id) {
         SuspendedExchange suspendedExchange = suspendedBreakpoints.get(id);
         return suspendedExchange == null ? null : suspendedExchange.getExchange();
+    }
+
+    /**
+     * Gets the trace event for the suspended exchange at the given breakpoint id or null if there is none at that id.
+     *
+     * @param  id  node id for the breakpoint
+     * @return     the trace event or null if there isn't one suspended at the given breakpoint.
+     */
+    public BacklogTracerEventMessage getSuspendedBreakpointMessage(String id) {
+        return suspendedBreakpointMessages.get(id);
     }
 
     public void disableBreakpoint(String nodeId) {

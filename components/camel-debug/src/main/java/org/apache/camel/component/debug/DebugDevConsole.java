@@ -19,6 +19,7 @@ package org.apache.camel.component.debug;
 import java.util.Map;
 
 import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
@@ -68,10 +69,14 @@ public class DebugDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Breakpoint: %s", n));
                 }
             }
-            if (backlog.isSingleStepMode()) {
-                sb.append("\n\nSteps:");
-                for (String n : backlog.getSuspendedBreakpointNodeIds()) {
-                    sb.append(String.format("\n    Step: %s (suspended)", n));
+            sb.append("\n\nSuspended:");
+            for (String n : backlog.getSuspendedBreakpointNodeIds()) {
+                sb.append(String.format("\n    Node: %s (suspended)", n));
+                BacklogTracerEventMessage trace = backlog.getSuspendedBreakpointMessage(n);
+                if (trace != null) {
+                    sb.append("\n");
+                    sb.append(trace.toXml(8));
+                    sb.append("\n");
                 }
             }
         }
@@ -146,13 +151,14 @@ public class DebugDevConsole extends AbstractDevConsole {
 
             arr = new JsonArray();
             for (String n : backlog.getSuspendedBreakpointNodeIds()) {
-                JsonObject jo = new JsonObject();
-                jo.put("nodeId", n);
-                jo.put("suspended", true);
-                arr.add(jo);
+                BacklogTracerEventMessage t = backlog.getSuspendedBreakpointMessage(n);
+                if (t != null) {
+                    JsonObject to = (JsonObject) t.asJSon();
+                    arr.add(to);
+                }
             }
             if (!arr.isEmpty()) {
-                root.put("steps", arr);
+                root.put("suspended", arr);
             }
         }
 
