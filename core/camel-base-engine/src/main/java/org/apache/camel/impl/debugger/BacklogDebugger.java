@@ -99,9 +99,10 @@ public final class BacklogDebugger extends ServiceSupport {
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
+    private boolean includeExchangeProperties = true;
 
     /**
-     * A suspend {@link Exchange} at a breakpoint.
+     * An suspend {@link Exchange} at a breakpoint.
      */
     private static final class SuspendedExchange {
         private final Exchange exchange;
@@ -415,7 +416,7 @@ public final class BacklogDebugger extends ServiceSupport {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is updating message header on exchangeId: "
-                       + se.getExchange().getExchangeId() + " with header: " + headerName + " and value: " + value);
+                       + se.getExchange().getExchangeId() + " with key: " + headerName + " and value: " + value);
             if (type == null) {
                 se.getExchange().getMessage().setHeader(headerName, value);
             } else {
@@ -423,6 +424,43 @@ public final class BacklogDebugger extends ServiceSupport {
                         = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
                 se.getExchange().getMessage().setHeader(headerName, convertedValue);
             }
+            refreshBacklogTracerEventMessage(nodeId, se);
+        }
+    }
+
+    public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value)
+            throws NoTypeConversionAvailableException {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            Class<?> oldType = se.getExchange().getMessage().getHeader(exchangePropertyName) == null
+                    ? null : se.getExchange().getMessage().getHeader(exchangePropertyName).getClass();
+            setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value, oldType);
+        }
+    }
+
+    public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, Class<?> type)
+            throws NoTypeConversionAvailableException {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            logger.log("Breakpoint at node " + nodeId + " is updating exchange property on exchangeId: "
+                       + se.getExchange().getExchangeId() + " with key: " + exchangePropertyName + " and value: " + value);
+            if (type == null) {
+                se.getExchange().setProperty(exchangePropertyName, value);
+            } else {
+                Object convertedValue
+                        = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
+                se.getExchange().setProperty(exchangePropertyName, convertedValue);
+            }
+            refreshBacklogTracerEventMessage(nodeId, se);
+        }
+    }
+
+    public void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName) {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            logger.log("Breakpoint at node " + nodeId + " is removing exchange property on exchangeId: "
+                       + se.getExchange().getExchangeId() + " with key: " + exchangePropertyName);
+            se.getExchange().removeProperty(exchangePropertyName);
             refreshBacklogTracerEventMessage(nodeId, se);
         }
     }
@@ -546,6 +584,14 @@ public final class BacklogDebugger extends ServiceSupport {
         this.bodyIncludeFiles = bodyIncludeFiles;
     }
 
+    public boolean isIncludeExchangeProperties() {
+        return includeExchangeProperties;
+    }
+
+    public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
+        this.includeExchangeProperties = includeExchangeProperties;
+    }
+
     public String dumpTracedMessagesAsXml(String nodeId) {
         logger.log("Dump trace message from breakpoint " + nodeId);
         BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
@@ -553,6 +599,15 @@ public final class BacklogDebugger extends ServiceSupport {
             return null;
         }
         return msg.toXml(0);
+    }
+
+    public String dumpTracedMessagesAsJSon(String nodeId) {
+        logger.log("Dump trace message from breakpoint " + nodeId);
+        BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
+        if (msg == null) {
+            return null;
+        }
+        return msg.toJSon(0);
     }
 
     public long getDebugCounter() {
@@ -623,7 +678,8 @@ public final class BacklogDebugger extends ServiceSupport {
      * @return          the XML
      */
     private String dumpAsXml(Exchange exchange) {
-        return MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(), isBodyIncludeFiles(),
+        return MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 2, isBodyIncludeStreams(),
+                isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars());
     }
 
@@ -634,7 +690,8 @@ public final class BacklogDebugger extends ServiceSupport {
      * @return          the JSon
      */
     private String dumpAsJSon(Exchange exchange) {
-        return MessageHelper.dumpAsJSon(exchange.getIn(), true, 2, isBodyIncludeStreams(), isBodyIncludeFiles(),
+        return MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 2, isBodyIncludeStreams(),
+                isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars(), true);
     }
 

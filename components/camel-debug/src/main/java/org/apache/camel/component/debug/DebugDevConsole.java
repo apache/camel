@@ -27,12 +27,23 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole("debug")
 public class DebugDevConsole extends AbstractDevConsole {
 
+    public static final String COMMAND = "command";
+    public static final String BREAKPOINT = "breakpoint";
+
     public DebugDevConsole() {
         super("camel", "debug", "Debug", "Camel route debugger");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
+        String command = (String) options.get(COMMAND);
+        String breakpoint = (String) options.get(BREAKPOINT);
+
+        if (command != null) {
+            doCommand(command, breakpoint);
+            return "";
+        }
+
         StringBuilder sb = new StringBuilder();
 
         BacklogDebugger backlog = getCamelContext().hasService(BacklogDebugger.class);
@@ -62,9 +73,42 @@ public class DebugDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
+    private void doCommand(String command, String breakpoint) {
+        BacklogDebugger backlog = getCamelContext().hasService(BacklogDebugger.class);
+        if (backlog == null) {
+            return;
+        }
+
+        if ("attach".equalsIgnoreCase(command)) {
+            backlog.attach();
+        } else if ("detach".equalsIgnoreCase(command)) {
+            backlog.detach();
+        } else if ("resume".equalsIgnoreCase(command)) {
+            backlog.resumeAll();
+        } else if ("step".equalsIgnoreCase(command)) {
+            backlog.step();
+        } else if ("add".equalsIgnoreCase(command) && breakpoint != null) {
+            backlog.addBreakpoint(breakpoint);
+        } else if ("remove".equalsIgnoreCase(command)) {
+            if (breakpoint != null) {
+                backlog.removeBreakpoint(breakpoint);
+            } else {
+                backlog.removeAllBreakpoints();
+            }
+        }
+    }
+
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
+
+        String command = (String) options.get(COMMAND);
+        String breakpoint = (String) options.get(BREAKPOINT);
+
+        if (command != null) {
+            doCommand(command, breakpoint);
+            return root;
+        }
 
         BacklogDebugger backlog = getCamelContext().hasService(BacklogDebugger.class);
         if (backlog != null) {
