@@ -44,9 +44,9 @@ public final class XmlFixture {
 
     public static void assertXMLIgnorePrefix(String aMessage, Source aExpected, Source aActual) throws Exception {
         XmlAssert.assertThat(aExpected).and(aActual)
-            .ignoreComments()
-            .ignoreWhitespace()
-            .areSimilar();
+                .ignoreComments()
+                .ignoreWhitespace()
+                .areSimilar();
     }
 
     public static void dump(Source aActual)

@@ -93,6 +93,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "sastoken":
+        case "sasToken": target.getConfiguration().setSasToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
         case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
@@ -195,6 +197,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "repeatCount": return long.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "sastoken":
+        case "sasToken": return java.lang.String.class;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
         case "scheduler": return java.lang.Object.class;
@@ -293,6 +297,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
         case "runLoggingLevel": return target.getRunLoggingLevel();
+        case "sastoken":
+        case "sasToken": return target.getConfiguration().getSasToken();
         case "scheduledexecutorservice":
         case "scheduledExecutorService": return target.getScheduledExecutorService();
         case "scheduler": return target.getScheduler();

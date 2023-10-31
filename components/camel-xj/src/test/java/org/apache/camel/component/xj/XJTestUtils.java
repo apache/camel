@@ -159,18 +159,18 @@ final class XJTestUtils {
         final String expected = IOUtils.toString(referenceFile, StandardCharsets.UTF_8.name());
         final String result = byteArrayOutputStream.toString(StandardCharsets.UTF_8.name());
         XmlAssert.assertThat(Input.fromString(expected))
-            .and(Input.fromString(result))
-            .ignoreElementContentWhitespace()
-            .withNodeFilter(toTest -> {
-                if (toTest instanceof Comment) {
-                    final Comment comment = (Comment) toTest;
-                    final String text = comment.getNodeValue();
+                .and(Input.fromString(result))
+                .ignoreElementContentWhitespace()
+                .withNodeFilter(toTest -> {
+                    if (toTest instanceof Comment) {
+                        final Comment comment = (Comment) toTest;
+                        final String text = comment.getNodeValue();
 
-                    return text == null || !text.contains("License");
-                }
+                        return text == null || !text.contains("License");
+                    }
 
-                return true;
-            })
-            .areIdentical();
+                    return true;
+                })
+                .areIdentical();
     }
 }
