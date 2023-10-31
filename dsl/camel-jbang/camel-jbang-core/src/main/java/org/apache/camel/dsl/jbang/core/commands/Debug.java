@@ -55,7 +55,9 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 public class Debug extends Run {
 
     // TODO: Run should remove options that it does not support
-    // TODO: create JMX connector on|off
+    // TODO: Exception on startup should print to console
+    // TODO: step should show "last" with green/red success/failed
+    // TODO: show exception (like tracer)
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
@@ -300,6 +302,10 @@ public class Debug extends Run {
                 } else {
                     System.out.println(msg);
                 }
+            }
+            for (int i = row.code.size(); i < 11; i++) {
+                // empty lines so source code has same height
+                System.out.println();
             }
             System.out.println();
         }

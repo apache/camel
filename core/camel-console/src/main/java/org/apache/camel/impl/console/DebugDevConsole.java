@@ -39,6 +39,7 @@ public class DebugDevConsole extends AbstractDevConsole {
 
     public static final String COMMAND = "command";
     public static final String BREAKPOINT = "breakpoint";
+    public static final String CODE_LIMIT = "codeLimit";
 
     public DebugDevConsole() {
         super("camel", "debug", "Debug", "Camel route debugger");
@@ -129,6 +130,7 @@ public class DebugDevConsole extends AbstractDevConsole {
 
         String command = (String) options.get(COMMAND);
         String breakpoint = (String) options.get(BREAKPOINT);
+        String codeLimit = (String) options.getOrDefault(CODE_LIMIT, "5");
 
         if (ObjectHelper.isNotEmpty(command)) {
             doCommand(command, breakpoint);
@@ -171,7 +173,7 @@ public class DebugDevConsole extends AbstractDevConsole {
                     String rid = to.getString("routeId");
                     String loc = to.getString("location");
                     if (rid != null) {
-                        List<JsonObject> code = enrichSourceCode(rid, loc);
+                        List<JsonObject> code = enrichSourceCode(rid, loc, Integer.parseInt(codeLimit));
                         if (code != null && !code.isEmpty()) {
                             to.put("code", code);
                         }
@@ -186,7 +188,7 @@ public class DebugDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    private List<JsonObject> enrichSourceCode(String routeId, String location) {
+    private List<JsonObject> enrichSourceCode(String routeId, String location, int lines) {
         Route route = getCamelContext().getRoute(routeId);
         if (route == null) {
             return null;
@@ -205,11 +207,11 @@ public class DebugDevConsole extends AbstractDevConsole {
                 line = Integer.parseInt(location);
             }
             LineNumberReader reader = new LineNumberReader(resource.getReader());
-            for (int i = 1; i < line + 3; i++) {
+            for (int i = 1; i < line + lines; i++) {
                 String t = reader.readLine();
                 if (t != null) {
-                    int low = line - 2;
-                    int high = line + 4;
+                    int low = line - lines - 1;
+                    int high = line + lines + 1;
                     if (i >= low && i <= high) {
                         JsonObject c = new JsonObject();
                         c.put("line", i);
