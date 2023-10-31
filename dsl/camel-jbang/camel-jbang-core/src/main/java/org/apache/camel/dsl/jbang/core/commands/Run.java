@@ -939,24 +939,6 @@ public class Run extends CamelCommand {
         cmds.add("--prop=camel.debug.breakpoints=FIRST_ROUTES");
         cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
 
-        // add camel:debug as dependency (has console)
-        boolean found = false;
-        for (int i = 0; i < cmds.size(); i++) {
-            String c = cmds.get(i);
-            if (c.startsWith("--deps=") || c.startsWith("--dep=")) {
-                // need to add camel:debug if missing
-                if (!c.contains("camel-debug") && !c.contains("camel:debug")) {
-                    c = c + ",camel:debug";
-                    cmds.set(i, c);
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if (!found) {
-            cmds.add("--deps=camel:debug");
-        }
-
         cmds.add(0, "camel");
 
         ProcessBuilder pb = new ProcessBuilder();
