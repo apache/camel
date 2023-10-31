@@ -54,6 +54,10 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
 
+    // TODO: Run should remove options that it does not support
+    // TODO: Exit quit on shutdown and breakpoint suspended
+    // TODO: camel.debug.xx to configure more debugger options in camel-main / CSB
+
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
     String breakpoint;
