@@ -931,6 +931,9 @@ public class Run extends CamelCommand {
         cmds.remove("--background=true");
         cmds.remove("--background");
 
+        // TODO: remove args that are not supported by run
+        cmds.remove("--source");
+
         // add camel:debug as dependency
         boolean found = false;
         for (int i = 0; i < cmds.size(); i++) {

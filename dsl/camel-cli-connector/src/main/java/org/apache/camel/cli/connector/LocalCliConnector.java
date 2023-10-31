@@ -93,6 +93,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File actionFile;
     private File outputFile;
     private File traceFile;
+    private File debugFile;
     private long traceFilePos; // keep track of trace offset
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
@@ -154,6 +155,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             actionFile = createLockFile(lockFile.getName() + "-action.json");
             outputFile = createLockFile(lockFile.getName() + "-output.json");
             traceFile = createLockFile(lockFile.getName() + "-trace.json");
+            debugFile = createLockFile(lockFile.getName() + "-debug.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI enabled (local)");
         } else {
@@ -640,6 +642,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         traceFilePos = json.getLong("uid");
                     }
                 }
+                DevConsole dc13 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                        .resolveById("debug");
+                if (dc13 != null) {
+                    JsonObject json = (JsonObject) dc13.call(DevConsole.MediaType.JSON);
+                    // store debugs in a special file
+                    LOG.trace("Updating debug file: {}", debugFile);
+                    String data = json.toJson() + System.lineSeparator();
+                    IOHelper.writeText(data, debugFile);
+                }
             }
             // various details
             JsonObject services = collectServices();
@@ -816,6 +827,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (traceFile != null) {
             FileUtil.deleteFile(traceFile);
+        }
+        if (debugFile != null) {
+            FileUtil.deleteFile(debugFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);

@@ -16,15 +16,23 @@
  */
 package org.apache.camel.component.debug;
 
+import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Route;
 import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracerEventMessage;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 @DevConsole("debug")
 public class DebugDevConsole extends AbstractDevConsole {
@@ -156,6 +164,16 @@ public class DebugDevConsole extends AbstractDevConsole {
                 if (t != null) {
                     JsonObject to = (JsonObject) t.asJSon();
                     arr.add(to);
+
+                    // enrich with source code +/- 3 lines around location
+                    String rid = to.getString("routeId");
+                    String loc = to.getString("location");
+                    if (rid != null) {
+                        List<JsonObject> code = enrichSourceCode(rid, loc);
+                        if (code != null && !code.isEmpty()) {
+                            to.put("code", code);
+                        }
+                    }
                 }
             }
             if (!arr.isEmpty()) {
@@ -164,5 +182,48 @@ public class DebugDevConsole extends AbstractDevConsole {
         }
 
         return root;
+    }
+
+    private List<JsonObject> enrichSourceCode(String routeId, String location) {
+        Route route = getCamelContext().getRoute(routeId);
+        if (route == null) {
+            return null;
+        }
+        Resource resource = route.getSourceResource();
+        if (resource == null) {
+            return null;
+        }
+
+        List<JsonObject> code = new ArrayList<>();
+
+        location = StringHelper.afterLast(location, ":");
+        int line = -1;
+        try {
+            if (location != null) {
+                line = Integer.parseInt(location);
+            }
+            LineNumberReader reader = new LineNumberReader(resource.getReader());
+            for (int i = 1; i < line + 3; i++) {
+                String t = reader.readLine();
+                if (t != null) {
+                    int low = line - 2;
+                    int high = line + 4;
+                    if (i >= low && i <= high) {
+                        JsonObject c = new JsonObject();
+                        c.put("line", i);
+                        if (line == i) {
+                            c.put("match", true);
+                        }
+                        c.put("code", Jsoner.escape(t));
+                        code.add(c);
+                    }
+                }
+            }
+            IOHelper.close(reader);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return code;
     }
 }

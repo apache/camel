@@ -16,21 +16,30 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -53,8 +62,47 @@ public class Debug extends Run {
                         description = "Whether to stop the running Camel on exit")
     boolean stopOnExit = true;
 
-    // context status
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+                        description = "Print timestamp.")
+    boolean timestamp = true;
+
+    @CommandLine.Option(names = { "--ago" },
+                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    boolean ago;
+
+    @CommandLine.Option(names = { "--mask" },
+                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask;
+
+    @CommandLine.Option(names = { "--source" },
+                        description = "Prefer to display source filename/code instead of IDs")
+    boolean source;
+
+    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
+                        description = "Show exchange properties in traced messages")
+    boolean showExchangeProperties;
+
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+                        description = "Show message headers in traced messages")
+    boolean showHeaders = true;
+
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+                        description = "Show message body in traced messages")
+    boolean showBody = true;
+
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+                        description = "Show exception and stacktrace for failed messages")
+    boolean showException = true;
+
+    @CommandLine.Option(names = { "--pretty" },
+                        description = "Pretty print message body when using JSon or XML format")
+    boolean pretty;
+
+    private MessageTableHelper tableHelper;
+
+    // status
     private Row contextRow = new Row();
+    private SuspendedRow suspendedRow = new SuspendedRow();
 
     public Debug(CamelJBangMain main) {
         super(main);
@@ -76,14 +124,44 @@ public class Debug extends Run {
             installHangupInterceptor();
         }
 
+        tableHelper = new MessageTableHelper();
+        tableHelper.setPretty(pretty);
+        tableHelper.setLoggingColor(loggingColor);
+        tableHelper.setShowExchangeProperties(showExchangeProperties);
+
+        // read input
+        final AtomicBoolean quit = new AtomicBoolean();
+        final Console c = System.console();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                do {
+                    String line = c.readLine();
+                    if (line != null) {
+                        line = line.trim();
+                        if (line.isEmpty()) {
+                            // continue breakpoint
+                            if (suspendedRow != null) {
+                                sendDebugCommand(spawnPid, "step", suspendedRow.nodeId);
+                            } else {
+                                sendDebugCommand(spawnPid, "step", null);
+                            }
+                        } else if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
+                            quit.set(true);
+                        }
+                    }
+                } while (!quit.get());
+            }
+        }, "ReadConsole");
+        t.start();
+
         do {
-            clearScreen();
             exit = doWatch();
             if (exit == 0) {
-                // use 2-sec delay to refresh
-                Thread.sleep(2000);
+                // use half-sec delay to refresh
+                Thread.sleep(500);
             }
-        } while (exit == 0);
+        } while (exit == 0 && !quit.get());
 
         return 0;
     }
@@ -93,40 +171,215 @@ public class Debug extends Run {
             return 0;
         }
 
+        // buffer before writing to screen
+        StringWriter sw = new StringWriter();
+
         updateContextStatus(spawnPid);
-        printContextStatus();
-
+        sw.append(getContextStatusTable());
         // empty line
-        System.out.println();
+        sw.append("\n");
 
-        // show debug status
-        printDebugStatus(spawnPid);
+        printDebugStatus(spawnPid, sw);
 
         return 0;
     }
 
-    private void printDebugStatus(long pid) {
+    private void sendDebugCommand(long pid, String command, String breakpoint) {
         // ensure output file is deleted before executing action
         File outputFile = getOutputFile(Long.toString(pid));
         FileUtil.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "debug");
+        if (command != null) {
+            root.put("command", command);
+        }
+        if (breakpoint != null) {
+            root.put("breakpoint", breakpoint);
+        }
         File f = getActionFile(Long.toString(pid));
         try {
             IOHelper.writeText(root.toJson(), f);
         } catch (Exception e) {
             // ignore
         }
+    }
 
-        JsonObject jo = waitForOutputFile(outputFile);
+    private void printDebugStatus(long pid, StringWriter buffer) {
+        JsonObject jo = loadDebug(pid);
         if (jo != null) {
-            // print details on screen
+            List<SuspendedRow> rows = new ArrayList<>();
+            JsonArray arr = jo.getCollection("suspended");
+            if (arr != null) {
+                for (Object o : arr) {
+                    SuspendedRow row = new SuspendedRow();
+                    row.pid = String.valueOf(pid);
+                    row.name = "TODO";//pid.name;
+                    jo = (JsonObject) o;
+                    row.uid = jo.getLong("uid");
+                    row.first = jo.getBoolean("first");
+                    row.last = jo.getBoolean("last");
+                    row.location = jo.getString("location");
+                    row.routeId = jo.getString("routeId");
+                    row.nodeId = jo.getString("nodeId");
+                    String uri = jo.getString("endpointUri");
+                    if (uri != null) {
+                        row.endpoint = new JsonObject();
+                        if (mask) {
+                            uri = URISupport.sanitizeUri(uri);
+                        }
+                        row.endpoint.put("endpoint", uri);
+                    }
+                    Long ts = jo.getLong("timestamp");
+                    if (ts != null) {
+                        row.timestamp = ts;
+                    }
+                    row.elapsed = jo.getLong("elapsed");
+                    row.failed = jo.getBoolean("failed");
+                    row.done = jo.getBoolean("done");
+                    row.threadName = jo.getString("threadName");
+                    row.message = jo.getMap("message");
+                    row.exception = jo.getMap("exception");
+                    row.exchangeId = row.message.getString("exchangeId");
+                    row.exchangePattern = row.message.getString("exchangePattern");
+                    // we should exchangeId/pattern elsewhere
+                    row.message.remove("exchangeId");
+                    row.message.remove("exchangePattern");
+                    if (!showExchangeProperties) {
+                        row.message.remove("exchangeProperties");
+                    }
+                    if (!showHeaders) {
+                        row.message.remove("headers");
+                    }
+                    if (!showBody) {
+                        row.message.remove("body");
+                    }
+                    if (!showException) {
+                        row.exception = null;
+                    }
+                    List<JsonObject> lines = jo.getCollection("code");
+                    if (lines != null) {
+                        for (JsonObject line : lines) {
+                            Code code = new Code();
+                            code.line = line.getInteger("line");
+                            code.match = line.getBooleanOrDefault("match", false);
+                            code.code = line.getString("code");
+                            row.code.add(code);
+                        }
+                    }
+                    rows.add(row);
+                }
+            }
+
+            clearScreen();
+            // top header
+            System.out.println(buffer.toString());
+            // suspended breakpoints
+            for (SuspendedRow row : rows) {
+                printSuspendedRow(row);
+                this.suspendedRow = row;
+            }
         }
     }
 
-    private void printContextStatus() {
-        System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(contextRow), Arrays.asList(
+    private void printSuspendedRow(SuspendedRow row) {
+        if (!row.code.isEmpty()) {
+            String loc = LoggerHelper.stripSourceLocationLineNumber(row.location);
+            System.out.printf("Source: %s%n", loc);
+            System.out.println("--------------------------------------------------------------------------------");
+            for (int i = 0; i < row.code.size(); i++) {
+                Code code = row.code.get(i);
+                String c = Jsoner.unescape(code.code);
+                String arrow = code.match ? "-->" : "   ";
+                String msg = String.format("%4d: %s %s", code.line, arrow, c);
+                if (loggingColor && code.match) {
+                    AnsiConsole.out().println(Ansi.ansi().bgRed().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
+                } else {
+                    System.out.println(msg);
+                }
+            }
+            System.out.println();
+        }
+
+        if (timestamp) {
+            String ts;
+            if (ago) {
+                ts = String.format("%12s", TimeUtils.printSince(row.timestamp) + " ago");
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                ts = sdf.format(new Date(row.timestamp));
+            }
+            if (loggingColor) {
+                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+            } else {
+                System.out.print(ts);
+            }
+            System.out.print("  ");
+        }
+        // pid
+        String p = String.format("%5.5s", row.pid);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
+            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+        } else {
+            System.out.print(p);
+            System.out.print(" --- ");
+        }
+        // thread name
+        String tn = row.threadName;
+        if (tn.length() > 25) {
+            tn = tn.substring(tn.length() - 25);
+        }
+        tn = String.format("[%25.25s]", tn);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
+        } else {
+            System.out.print(tn);
+        }
+        System.out.print(" ");
+        // node ids or source location
+        String ids;
+        if (source) {
+            ids = row.location;
+        } else {
+            ids = row.routeId + "/" + getId(row);
+        }
+        if (ids.length() > 40) {
+            ids = ids.substring(ids.length() - 40);
+        }
+        ids = String.format("%40.40s", ids);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
+        } else {
+            System.out.print(ids);
+        }
+        System.out.print(" : ");
+        // uuid
+        String u = String.format("%5.5s", row.uid);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(u).reset());
+        } else {
+            System.out.print(u);
+        }
+        System.out.print(" - ");
+        // status
+        System.out.print(getStatus(row));
+        // elapsed
+        String e = getElapsed(row);
+        if (e != null) {
+            if (loggingColor) {
+                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+            } else {
+                System.out.print("(" + e + ")");
+            }
+        }
+        System.out.println();
+        System.out.println(getDataAsTable(row));
+        System.out.println();
+    }
+
+    private String getContextStatusTable() {
+        return AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(contextRow), Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
@@ -144,7 +397,7 @@ public class Debug extends Run {
                 new Column().header("INFLIGHT").with(r -> r.inflight),
                 new Column().header("LAST").with(r -> r.last),
                 new Column().header("DELTA").with(this::getDelta),
-                new Column().header("SINCE-LAST").with(this::getSinceLast))));
+                new Column().header("SINCE-LAST").with(this::getSinceLast)));
     }
 
     private void clearScreen() {
@@ -171,6 +424,21 @@ public class Debug extends Run {
     JsonObject loadStatus(long pid) {
         try {
             File f = getStatusFile(Long.toString(pid));
+            if (f != null && f.exists()) {
+                FileInputStream fis = new FileInputStream(f);
+                String text = IOHelper.loadText(fis);
+                IOHelper.close(fis);
+                return (JsonObject) Jsoner.deserialize(text);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+        return null;
+    }
+
+    JsonObject loadDebug(long pid) {
+        try {
+            File f = getDebugFile(Long.toString(pid));
             if (f != null && f.exists()) {
                 FileInputStream fis = new FileInputStream(f);
                 String text = IOHelper.loadText(fis);
@@ -349,6 +617,93 @@ public class Debug extends Run {
             }
         }
         return null;
+    }
+
+    private String getDataAsTable(SuspendedRow r) {
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.message, r.exception);
+    }
+
+    private String getStatus(SuspendedRow r) {
+        if (r.first) {
+            String s = "Created";
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
+            } else {
+                return "Input";
+            }
+        } else if (r.last) {
+            String done = r.exception != null ? "Completed (exception)" : "Completed (success)";
+            if (loggingColor) {
+                return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(done).reset().toString();
+            } else {
+                return done;
+            }
+        }
+        if (!r.done) {
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.BLUE).a("Breakpoint").reset().toString();
+            } else {
+                return "Breakpoint";
+            }
+        } else if (r.failed) {
+            String fail = r.exception != null ? "Exception" : "Failed";
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.RED).a(fail).reset().toString();
+            } else {
+                return fail;
+            }
+        } else {
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.GREEN).a("Processed").reset().toString();
+            } else {
+                return "Processed";
+            }
+        }
+    }
+
+    private String getId(SuspendedRow r) {
+        if (r.first) {
+            return "*-->";
+        } else if (r.last) {
+            return "*<--";
+        } else {
+            return r.nodeId;
+        }
+    }
+
+    private String getElapsed(SuspendedRow r) {
+        if (!r.first) {
+            return TimeUtils.printDuration(r.elapsed, true);
+        }
+        return null;
+    }
+
+    private static class SuspendedRow {
+        String pid;
+        String name;
+        boolean first;
+        boolean last;
+        long uid;
+        String exchangeId;
+        String exchangePattern;
+        String threadName;
+        String location;
+        String routeId;
+        String nodeId;
+        long timestamp;
+        long elapsed;
+        boolean done;
+        boolean failed;
+        JsonObject endpoint;
+        JsonObject message;
+        JsonObject exception;
+        List<Code> code = new ArrayList<>();
+    }
+
+    private static class Code {
+        int line;
+        String code;
+        boolean match;
     }
 
 }
