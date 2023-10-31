@@ -54,7 +54,6 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
 
-    // TODO: Run should remove options that it does not support
     // TODO: Exception on startup should print to console
     // TODO: step should show "last" with green/red success/failed
     // TODO: show exception (like tracer)

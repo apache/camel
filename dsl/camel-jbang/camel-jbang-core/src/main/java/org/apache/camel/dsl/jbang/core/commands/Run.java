@@ -67,6 +67,7 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
@@ -921,6 +922,16 @@ public class Run extends CamelCommand {
         return 0;
     }
 
+    private void removeDebugOnlyOptions(List<String> cmds) {
+        ReflectionHelper.doWithFields(Debug.class, fc -> {
+            cmds.removeIf(c -> {
+                String n1 = "--" + fc.getName();
+                String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
+                return c.startsWith(n1) || c.startsWith(n2);
+            });
+        });
+    }
+
     protected int runDebug(KameletMain main) throws Exception {
         List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
 
@@ -931,8 +942,8 @@ public class Run extends CamelCommand {
         cmds.remove("--background=true");
         cmds.remove("--background");
 
-        // TODO: remove args that are not supported by run
-        cmds.remove("--source");
+        // remove args from debug that are not supported by run
+        removeDebugOnlyOptions(cmds);
 
         // enable light-weight debugger (not camel-debug JAR that is for IDEA/VSCode tooling with remote JMX)
         cmds.add("--prop=camel.debug.enabled=true");
