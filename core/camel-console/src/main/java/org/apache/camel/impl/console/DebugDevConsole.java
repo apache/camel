@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.debug;
+package org.apache.camel.impl.console;
 
 import java.io.LineNumberReader;
 import java.util.ArrayList;
