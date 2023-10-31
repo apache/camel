@@ -30,8 +30,9 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
 import org.apache.camel.spi.InterceptStrategy;
@@ -319,7 +320,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         }
         if (debugger == null && createIfAbsent) {
             // fallback to use the default debugger
-            debugger = BacklogDebugger.createDebugger(camelContext);
+            // TODO: use factory so we avoid direct dependency on impl
+            debugger = DefaultBacklogDebugger.createDebugger(camelContext);
         }
         return debugger;
     }

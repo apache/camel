@@ -50,10 +50,11 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -1493,7 +1494,7 @@ public abstract class BaseMainSupport extends BaseService {
         // enable debugger on camel
         camelContext.setDebugging(true);
 
-        BacklogDebugger debugger = BacklogDebugger.createDebugger(camelContext);
+        BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
         debugger.setInitialBreakpoints(config.getBreakpoints());
         debugger.setBodyMaxChars(config.getBodyMaxChars());
         debugger.setBodyIncludeStreams(config.isBodyIncludeStreams());

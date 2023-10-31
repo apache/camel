@@ -32,7 +32,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
-import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.LoggerHelper;
@@ -44,9 +44,9 @@ import org.apache.camel.util.URISupport;
 public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     private final CamelContext camelContext;
-    private final BacklogDebugger backlogDebugger;
+    private final DefaultBacklogDebugger backlogDebugger;
 
-    public ManagedBacklogDebugger(CamelContext camelContext, BacklogDebugger backlogDebugger) {
+    public ManagedBacklogDebugger(CamelContext camelContext, DefaultBacklogDebugger backlogDebugger) {
         this.camelContext = camelContext;
         this.backlogDebugger = backlogDebugger;
     }
@@ -59,7 +59,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return camelContext;
     }
 
-    public BacklogDebugger getBacklogDebugger() {
+    public DefaultBacklogDebugger getBacklogDebugger() {
         return backlogDebugger;
     }
 

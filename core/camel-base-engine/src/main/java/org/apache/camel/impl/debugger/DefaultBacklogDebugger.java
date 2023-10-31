@@ -34,6 +34,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
@@ -50,19 +51,7 @@ import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which can be used from JMX with
- * {@link org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean}.
- * <p/>
- * This implementation allows setting breakpoints (with or without a condition) and inspect the {@link Exchange} dumped
- * in XML in {@link BacklogTracerEventMessage} format. There is operations to resume suspended breakpoints to continue
- * routing the {@link Exchange}. There is also step functionality, so you can single step a given {@link Exchange}.
- * <p/>
- * This implementation will only break the first {@link Exchange} that arrives to a breakpoint. If Camel routes using
- * concurrency then sub-sequent {@link Exchange} will continue to be routed, if their breakpoint already holds a
- * suspended {@link Exchange}.
- */
-public final class BacklogDebugger extends ServiceSupport {
+public final class DefaultBacklogDebugger extends ServiceSupport implements BacklogDebugger {
 
     /**
      * The name of the OS environment variable that contains the value of the flag indicating whether the
@@ -76,12 +65,7 @@ public final class BacklogDebugger extends ServiceSupport {
      */
     public static final String SUSPEND_MODE_SYSTEM_PROP_NAME = "org.apache.camel.debugger.suspend";
 
-    /**
-     * Special breakpoint id token to automatically add breakpoint for every first node in every route
-     */
-    public static final String BREAKPOINT_FIRST_ROUTES = "FIRST_ROUTES";
-
-    private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultBacklogDebugger.class);
 
     private long fallbackTimeout = 300;
     private final CamelContext camelContext;
@@ -136,7 +120,7 @@ public final class BacklogDebugger extends ServiceSupport {
      * @param suspendMode  Indicates whether the <i>suspend mode</i> is enabled or not. If {@code true} the message
      *                     processing is immediately suspended until the {@link #attach()} is called.
      */
-    private BacklogDebugger(CamelContext camelContext, boolean suspendMode) {
+    private DefaultBacklogDebugger(CamelContext camelContext, boolean suspendMode) {
         this.camelContext = camelContext;
         this.debugger = new DefaultDebugger(camelContext);
         this.suspendMode = suspendMode;
@@ -154,7 +138,7 @@ public final class BacklogDebugger extends ServiceSupport {
      * @return         a new backlog debugger
      */
     public static BacklogDebugger createDebugger(CamelContext context) {
-        return new BacklogDebugger(context, resolveSuspendMode());
+        return new DefaultBacklogDebugger(context, resolveSuspendMode());
     }
 
     /**
@@ -163,29 +147,31 @@ public final class BacklogDebugger extends ServiceSupport {
      * @return the backlog debugger or null if none can be found
      */
     public static BacklogDebugger getBacklogDebugger(CamelContext context) {
-        return context.hasService(BacklogDebugger.class);
+        return context.hasService(DefaultBacklogDebugger.class);
     }
 
+    @Override
     public String getInitialBreakpoints() {
         return initialBreakpoints;
     }
 
-    /**
-     * Sets initial breakpoints to set on startup
-     */
+    @Override
     public void setInitialBreakpoints(String initialBreakpoints) {
         this.initialBreakpoints = initialBreakpoints;
     }
 
+    @Override
     public String getLoggingLevel() {
         return loggingLevel.name();
     }
 
+    @Override
     public void setLoggingLevel(String level) {
         loggingLevel = LoggingLevel.valueOf(level);
         logger.setLevel(loggingLevel);
     }
 
+    @Override
     public void enableDebugger() {
         logger.log("Enabling Camel debugger");
         try {
@@ -196,6 +182,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void disableDebugger() {
         logger.log("Disabling Camel debugger");
         try {
@@ -207,30 +194,32 @@ public final class BacklogDebugger extends ServiceSupport {
         clearBreakpoints();
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled.get();
     }
 
+    @Override
     public boolean hasBreakpoint(String nodeId) {
         return breakpoints.containsKey(nodeId);
     }
 
+    @Override
     public void setSuspendMode(boolean suspendMode) {
         this.suspendMode = suspendMode;
     }
 
+    @Override
     public boolean isSuspendMode() {
         return suspendMode;
     }
 
+    @Override
     public boolean isSingleStepMode() {
         return singleStepExchangeId != null;
     }
 
-    /**
-     * Attach the debugger which will resume the message processing in case the <i>suspend mode</i> is enabled. Do
-     * nothing otherwise.
-     */
+    @Override
     public void attach() {
         if (suspendMode) {
             logger.log("A debugger has been attached");
@@ -238,10 +227,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
-    /**
-     * Detach the debugger which will suspend the message processing in case the <i>suspend mode</i> is enabled. Do
-     * nothing otherwise.
-     */
+    @Override
     public void detach() {
         if (suspendMode) {
             logger.log("Waiting for a debugger to attach");
@@ -304,6 +290,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void addBreakpoint(String nodeId) {
         NodeBreakpoint breakpoint = breakpoints.get(nodeId);
         if (breakpoint == null) {
@@ -316,6 +303,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void addConditionalBreakpoint(String nodeId, String language, String predicate) {
         Predicate condition = camelContext.resolveLanguage(language).createPredicate(predicate);
         NodeBreakpoint breakpoint = breakpoints.get(nodeId);
@@ -335,6 +323,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void removeBreakpoint(String nodeId) {
         logger.log("Removing breakpoint " + nodeId);
         // when removing a break point then ensure latches is cleared and counted down so we wont have hanging threads
@@ -349,6 +338,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void removeAllBreakpoints() {
         // stop single stepping
         singleStepExchangeId = null;
@@ -358,15 +348,18 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public Set<String> getBreakpoints() {
         return new LinkedHashSet<>(breakpoints.keySet());
     }
 
+    @Override
     public void resumeBreakpoint(String nodeId) {
         resumeBreakpoint(nodeId, false);
     }
 
-    private void resumeBreakpoint(String nodeId, boolean stepMode) {
+    @Override
+    public void resumeBreakpoint(String nodeId, boolean stepMode) {
         logger.log("Resume breakpoint " + nodeId);
 
         if (!stepMode && singleStepExchangeId != null) {
@@ -382,6 +375,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void setMessageBodyOnBreakpoint(String nodeId, Object body) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
@@ -396,6 +390,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void setMessageBodyOnBreakpoint(String nodeId, Object body, Class<?> type) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
@@ -416,6 +411,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void removeMessageBodyOnBreakpoint(String nodeId) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
@@ -426,6 +422,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value)
             throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
@@ -436,6 +433,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, Class<?> type)
             throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
@@ -453,6 +451,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value)
             throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
@@ -463,6 +462,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, Class<?> type)
             throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
@@ -480,6 +480,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
@@ -490,14 +491,17 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public long getFallbackTimeout() {
         return fallbackTimeout;
     }
 
+    @Override
     public void setFallbackTimeout(long fallbackTimeout) {
         this.fallbackTimeout = fallbackTimeout;
     }
 
+    @Override
     public void removeMessageHeaderOnBreakpoint(String nodeId, String headerName) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
@@ -508,6 +512,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void resumeAll() {
         logger.log("Resume all");
         // stop single stepping
@@ -523,6 +528,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void stepBreakpoint(String nodeId) {
         // if we are already in single step mode, then infer stepping
         if (isSingleStepMode()) {
@@ -543,6 +549,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void step() {
         for (String node : getSuspendedBreakpointNodeIds()) {
             // remember to remove the dumped message as its no longer in need
@@ -554,6 +561,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public Set<String> getSuspendedBreakpointNodeIds() {
         return new LinkedHashSet<>(suspendedBreakpoints.keySet());
     }
@@ -569,16 +577,12 @@ public final class BacklogDebugger extends ServiceSupport {
         return suspendedExchange == null ? null : suspendedExchange.getExchange();
     }
 
-    /**
-     * Gets the trace event for the suspended exchange at the given breakpoint id or null if there is none at that id.
-     *
-     * @param  id node id for the breakpoint
-     * @return    the trace event or null if there isn't one suspended at the given breakpoint.
-     */
+    @Override
     public BacklogTracerEventMessage getSuspendedBreakpointMessage(String id) {
         return suspendedBreakpointMessages.get(id);
     }
 
+    @Override
     public void disableBreakpoint(String nodeId) {
         logger.log("Disable breakpoint " + nodeId);
         NodeBreakpoint breakpoint = breakpoints.get(nodeId);
@@ -587,6 +591,7 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public void enableBreakpoint(String nodeId) {
         logger.log("Enable breakpoint " + nodeId);
         NodeBreakpoint breakpoint = breakpoints.get(nodeId);
@@ -595,38 +600,47 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
+    @Override
     public int getBodyMaxChars() {
         return bodyMaxChars;
     }
 
+    @Override
     public void setBodyMaxChars(int bodyMaxChars) {
         this.bodyMaxChars = bodyMaxChars;
     }
 
+    @Override
     public boolean isBodyIncludeStreams() {
         return bodyIncludeStreams;
     }
 
+    @Override
     public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
         this.bodyIncludeStreams = bodyIncludeStreams;
     }
 
+    @Override
     public boolean isBodyIncludeFiles() {
         return bodyIncludeFiles;
     }
 
+    @Override
     public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
         this.bodyIncludeFiles = bodyIncludeFiles;
     }
 
+    @Override
     public boolean isIncludeExchangeProperties() {
         return includeExchangeProperties;
     }
 
+    @Override
     public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
         this.includeExchangeProperties = includeExchangeProperties;
     }
 
+    @Override
     public String dumpTracedMessagesAsXml(String nodeId) {
         logger.log("Dump trace message from breakpoint " + nodeId);
         BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
@@ -636,6 +650,7 @@ public final class BacklogDebugger extends ServiceSupport {
         return msg.toXml(0);
     }
 
+    @Override
     public String dumpTracedMessagesAsJSon(String nodeId) {
         logger.log("Dump trace message from breakpoint " + nodeId);
         BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
@@ -645,10 +660,12 @@ public final class BacklogDebugger extends ServiceSupport {
         return msg.toJSon(0);
     }
 
+    @Override
     public long getDebugCounter() {
         return debugCounter.get();
     }
 
+    @Override
     public void resetDebugCounter() {
         logger.log("Reset debug counter");
         debugCounter.set(0);
@@ -675,7 +692,7 @@ public final class BacklogDebugger extends ServiceSupport {
         if (initialBreakpoints != null) {
             for (String b : initialBreakpoints.split(",")) {
                 b = b.trim();
-                if (!BacklogDebugger.BREAKPOINT_FIRST_ROUTES.equals(b)) {
+                if (!DefaultBacklogDebugger.BREAKPOINT_FIRST_ROUTES.equals(b)) {
                     // FIRST_ROUTES are special and handled elsewhere
                     addBreakpoint(b);
                 }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Route;
-import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
