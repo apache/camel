@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -40,8 +39,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -474,13 +471,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
                     if (object instanceof ManagementStrategyFactory) {
                         factory = (ManagementStrategyFactory) object;
                     }
-                }
-                // detect if camel-debug is on classpath that enables debugging
-                DebuggerFactory df
-                        = getBootstrapFactoryFinder().newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
-                if (df != null) {
-                    logger().info("Detected: {} JAR (Enabling Camel Debugging)", df);
-                    camelContext.enableDebugging(df);
                 }
             } catch (Exception e) {
                 logger().warn("Cannot create JmxManagementStrategyFactory. Will fallback and disable JMX.", e);

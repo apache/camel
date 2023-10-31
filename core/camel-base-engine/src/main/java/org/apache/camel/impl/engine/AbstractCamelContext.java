@@ -75,6 +75,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -2228,6 +2229,20 @@ public abstract class AbstractCamelContext extends BaseService
                 // force start cli connector early as otherwise it will be deferred until context is started
                 // but, we want status available during startup phase
                 ServiceHelper.startService(connector);
+            }
+        }
+        // auto-detect camel-debug on classpath (if debugger has not been explicit added)
+        if (getDebugger() == null && hasService(BacklogDebugger.class) == null) {
+            // detect if camel-debug is on classpath that enables debugging
+            DebuggerFactory df = getCamelContextExtension().getBootstrapFactoryFinder()
+                    .newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
+            if (df != null) {
+                LOG.info("Detected: {} JAR (Enabling Camel Debugging)", df);
+                setDebugging(true);
+                Debugger newDebugger = df.createDebugger(this);
+                if (newDebugger != null) {
+                    setDebugger(newDebugger);
+                }
             }
         }
 

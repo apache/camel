@@ -93,16 +93,12 @@ public final class BacklogDebugger extends ServiceSupport {
     private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, SuspendedExchange> suspendedBreakpoints = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<>();
-    /**
-     * Indicates whether the <i>suspend mode</i> is enabled or not.
-     */
-    private final boolean suspendMode;
-    /**
-     * The reference to the {@code CountDownLatch} used to suspend Camel from processing the incoming messages when the
-     * <i>suspend mode</i> is enabled.
-     */
+
     private final AtomicReference<CountDownLatch> suspend = new AtomicReference<>();
     private volatile String singleStepExchangeId;
+
+    private boolean suspendMode;
+    private String initialBreakpoints;
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
@@ -139,23 +135,11 @@ public final class BacklogDebugger extends ServiceSupport {
      * @param camelContext the camel context
      * @param suspendMode  Indicates whether the <i>suspend mode</i> is enabled or not. If {@code true} the message
      *                     processing is immediately suspended until the {@link #attach()} is called.
-     * @param breakpoints  optional starting breakpoints
      */
-    private BacklogDebugger(CamelContext camelContext, boolean suspendMode, String breakpoints) {
+    private BacklogDebugger(CamelContext camelContext, boolean suspendMode) {
         this.camelContext = camelContext;
         this.debugger = new DefaultDebugger(camelContext);
         this.suspendMode = suspendMode;
-
-        // add starting breakpoints
-        if (breakpoints != null) {
-            for (String b : breakpoints.split(",")) {
-                b = b.trim();
-                if (!BREAKPOINT_FIRST_ROUTES.equals(b)) {
-                    addBreakpoint(b);
-                }
-            }
-        }
-
         detach();
     }
 
@@ -170,7 +154,7 @@ public final class BacklogDebugger extends ServiceSupport {
      * @return         a new backlog debugger
      */
     public static BacklogDebugger createDebugger(CamelContext context) {
-        return new BacklogDebugger(context, resolveSuspendMode(), resolveStartingBreakpoint(context));
+        return new BacklogDebugger(context, resolveSuspendMode());
     }
 
     /**
@@ -180,6 +164,17 @@ public final class BacklogDebugger extends ServiceSupport {
      */
     public static BacklogDebugger getBacklogDebugger(CamelContext context) {
         return context.hasService(BacklogDebugger.class);
+    }
+
+    public String getInitialBreakpoints() {
+        return initialBreakpoints;
+    }
+
+    /**
+     * Sets initial breakpoints to set on startup
+     */
+    public void setInitialBreakpoints(String initialBreakpoints) {
+        this.initialBreakpoints = initialBreakpoints;
     }
 
     public String getLoggingLevel() {
@@ -218,6 +213,10 @@ public final class BacklogDebugger extends ServiceSupport {
 
     public boolean hasBreakpoint(String nodeId) {
         return breakpoints.containsKey(nodeId);
+    }
+
+    public void setSuspendMode(boolean suspendMode) {
+        this.suspendMode = suspendMode;
     }
 
     public boolean isSuspendMode() {
@@ -667,6 +666,21 @@ public final class BacklogDebugger extends ServiceSupport {
 
     public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
         // noop
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (initialBreakpoints != null) {
+            for (String b : initialBreakpoints.split(",")) {
+                b = b.trim();
+                if (!BacklogDebugger.BREAKPOINT_FIRST_ROUTES.equals(b)) {
+                    // FIRST_ROUTES are special and handled elsewhere
+                    addBreakpoint(b);
+                }
+            }
+        }
     }
 
     @Override

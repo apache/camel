@@ -60,6 +60,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private VaultConfigurationProperties vaultConfigurationProperties;
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
     private SSLConfigurationProperties sslConfigurationProperties;
+    private DebuggerConfigurationProperties debuggerConfigurationProperties;
 
     @Override
     public void close() {
@@ -98,6 +99,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (sslConfigurationProperties != null) {
             sslConfigurationProperties.close();
             sslConfigurationProperties = null;
+        }
+        if (debuggerConfigurationProperties != null) {
+            debuggerConfigurationProperties.close();
+            debuggerConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -175,10 +180,28 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * To configure Debugger.
+     */
+    public DebuggerConfigurationProperties debuggerConfig() {
+        if (debuggerConfigurationProperties == null) {
+            debuggerConfigurationProperties = new DebuggerConfigurationProperties(this);
+        }
+
+        return debuggerConfigurationProperties;
+    }
+
+    /**
      * Whether there has been any SSL configuration specified.
      */
     public boolean hasSslConfiguration() {
         return sslConfigurationProperties != null;
+    }
+
+    /**
+     * Whether there has been any Debugger configuration specified.
+     */
+    public boolean hasDebuggerConfiguration() {
+        return debuggerConfigurationProperties != null;
     }
 
     /**

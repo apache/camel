@@ -934,7 +934,12 @@ public class Run extends CamelCommand {
         // TODO: remove args that are not supported by run
         cmds.remove("--source");
 
-        // add camel:debug as dependency
+        // enable light-weight debugger (not camel-debug JAR that is for IDEA/VSCode tooling with remote JMX)
+        cmds.add("--prop=camel.debug.enabled=true");
+        cmds.add("--prop=camel.debug.breakpoints=FIRST_ROUTES");
+        cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
+
+        // add camel:debug as dependency (has console)
         boolean found = false;
         for (int i = 0; i < cmds.size(); i++) {
             String c = cmds.get(i);
@@ -950,21 +955,6 @@ public class Run extends CamelCommand {
         }
         if (!found) {
             cmds.add("--deps=camel:debug");
-        }
-
-        // auto set starting breakpoints
-        found = false;
-        for (int i = 0; i < cmds.size(); i++) {
-            String c = cmds.get(i);
-            if (c.startsWith("--p=") || c.startsWith("--prop=") || c.startsWith("--property=")) {
-                c = ",camel.main.debuggingBreakpoints=FIRST_ROUTES";
-                cmds.set(i, c);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            cmds.add("--prop=camel.main.debuggingBreakpoints=FIRST_ROUTES");
         }
 
         cmds.add(0, "camel");

@@ -71,8 +71,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
-    private boolean debugging;
-    private String debuggingBreakpoints;
     private boolean backlogTracing;
     private boolean backlogTracingStandby;
     private boolean backlogTracingTemplates;
@@ -696,33 +694,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setTracingLoggingFormat(String format) {
         tracingLoggingFormat = format;
-    }
-
-    public boolean isDebugging() {
-        return debugging;
-    }
-
-    /**
-     * Sets whether debugging is enabled or not.
-     *
-     * Default is false.
-     */
-    public void setDebugging(boolean debugging) {
-        this.debugging = debugging;
-    }
-
-    public String getDebuggingBreakpoints() {
-        return debuggingBreakpoints;
-    }
-
-    /**
-     * Allows to pre-configure breakpoints (node ids) to use with debugger on startup.
-     * Multiple ids can be separated by comma. Use special value FIRST_ROUTES to
-     * add a breakpoint for the first node for every route, in other words this makes it easy to debug from the
-     * beginning of every route without knowing the exact node ids.
-     */
-    public void setDebuggingBreakpoints(String debuggingBreakpoints) {
-        this.debuggingBreakpoints = debuggingBreakpoints;
     }
 
     public boolean isBacklogTracing() {
@@ -2469,27 +2440,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withTracingLoggingFormat(String format) {
         this.tracingLoggingFormat = format;
-        return (T) this;
-    }
-
-    /**
-     * Sets whether debugging is enabled or not.
-     *
-     * Default is false.
-     */
-    public T withDebugging(boolean debugging) {
-        this.debugging = debugging;
-        return (T) this;
-    }
-
-    /**
-     * Allows to pre-configure breakpoints (node ids) to use with debugger on startup.
-     * Multiple ids can be separated by comma. Use special value FIRST_ROUTES to
-     * add a breakpoint for the first node for every route, in other words this makes it easy to debug from the
-     * beginning of every route without knowing the exact node ids.
-     */
-    public T withDebuggingBreakpoints(String debuggingBreakpoints) {
-        this.debuggingBreakpoints = debuggingBreakpoints;
         return (T) this;
     }
 

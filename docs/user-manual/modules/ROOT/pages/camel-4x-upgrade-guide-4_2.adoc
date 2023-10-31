@@ -6,6 +6,10 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.1 to 4.2
 
+=== camel-main
+
+The option `camel.main.debugger` has been renamed to `camel.debug.enabled`.
+
 === camel-file
 
 The `readLock=changed` with using `readLockMinAge` has been restored to same behaviour as 3.x.

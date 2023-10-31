@@ -63,9 +63,10 @@ public class DebugDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Suspended Mode: %s", backlog.isSuspendMode()));
             sb.append(String.format("\n    Fallback Timeout: %ss", backlog.getFallbackTimeout())); // is in seconds
             sb.append(String.format("\n    Logging Level: %s", backlog.getLoggingLevel()));
+            sb.append(String.format("\n    Include Exchange Properties: %s", backlog.isIncludeExchangeProperties()));
             sb.append(String.format("\n    Include Files: %s", backlog.isBodyIncludeFiles()));
             sb.append(String.format("\n    Include Streams: %s", backlog.isBodyIncludeStreams()));
-            sb.append(String.format("\n    Body Max Chars: %s", backlog.getBodyMaxChars()));
+            sb.append(String.format("\n    Max Chars: %s", backlog.getBodyMaxChars()));
 
             sb.append("\n\nBreakpoints:");
             sb.append(String.format("\n    Debug Counter: %s", backlog.getDebugCounter()));
@@ -140,9 +141,10 @@ public class DebugDevConsole extends AbstractDevConsole {
             root.put("suspendedMode", backlog.isSuspendMode());
             root.put("fallbackTimeout", backlog.getFallbackTimeout());
             root.put("loggingLevel", backlog.getLoggingLevel());
-            root.put("bodyIncludeFiles", backlog.isBodyIncludeFiles());
-            root.put("bodyIncludeStreams", backlog.isBodyIncludeStreams());
-            root.put("bodyMaxChars", backlog.getBodyMaxChars());
+            root.put("includeExchangeProperties", backlog.isIncludeExchangeProperties());
+            root.put("includeFiles", backlog.isBodyIncludeFiles());
+            root.put("includeStreams", backlog.isBodyIncludeStreams());
+            root.put("maxChars", backlog.getBodyMaxChars());
             root.put("debugCounter", backlog.getDebugCounter());
             root.put("singleStepMode", backlog.isSingleStepMode());
 
