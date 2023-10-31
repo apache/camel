@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.support.cache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The test class for {@link DefaultLRUCacheFactory}.
+ * The test class for {@link SimpleLRUCache}.
  */
-class DefaultLRUCacheFactoryTest {
+class SimpleLRUCacheTest {
 
     private final List<String> consumed = new ArrayList<>();
-    private final DefaultLRUCacheFactory.SimpleLRUCache<String, String> map
-            = (DefaultLRUCacheFactory.SimpleLRUCache<String, String>) new DefaultLRUCacheFactory().<String,
-                    String> createLRUCache(3, consumed::add);
+    private final SimpleLRUCache<String, String> map = new SimpleLRUCache<>(16, 3, consumed::add);
 
     @Test
     void forbiddenOperations() {
