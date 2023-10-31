@@ -53,18 +53,6 @@ import org.slf4j.LoggerFactory;
 
 public final class DefaultBacklogDebugger extends ServiceSupport implements BacklogDebugger {
 
-    /**
-     * The name of the OS environment variable that contains the value of the flag indicating whether the
-     * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
-     */
-    public static final String SUSPEND_MODE_ENV_VAR_NAME = "CAMEL_DEBUGGER_SUSPEND";
-
-    /**
-     * The name of the system property that contains the value of the flag indicating whether the
-     * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
-     */
-    public static final String SUSPEND_MODE_SYSTEM_PROP_NAME = "org.apache.camel.debugger.suspend";
-
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBacklogDebugger.class);
 
     private long fallbackTimeout = 300;

@@ -40,6 +40,18 @@ import java.util.Set;
 public interface BacklogDebugger extends StatefulService {
 
     /**
+     * The name of the OS environment variable that contains the value of the flag indicating whether the
+     * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
+     */
+    String SUSPEND_MODE_ENV_VAR_NAME = "CAMEL_DEBUGGER_SUSPEND";
+
+    /**
+     * The name of the system property that contains the value of the flag indicating whether the
+     * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
+     */
+    String SUSPEND_MODE_SYSTEM_PROP_NAME = "org.apache.camel.debugger.suspend";
+
+    /**
      * Special breakpoint id token to automatically add breakpoint for every first node in every route
      */
     String BREAKPOINT_FIRST_ROUTES = "FIRST_ROUTES";
