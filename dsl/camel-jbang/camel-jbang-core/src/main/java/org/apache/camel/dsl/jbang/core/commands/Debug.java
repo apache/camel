@@ -57,6 +57,10 @@ public class Debug extends Run {
     // TODO: Exception on startup should print to console
     // TODO: step should show "last" with green/red success/failed
     // TODO: show exception (like tracer)
+    // TODO: faster (no refresh)
+    // TODO: Show "Running..." when hitting enter
+    // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
+    // TODO: option to show source or not
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
