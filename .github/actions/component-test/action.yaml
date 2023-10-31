@@ -40,7 +40,12 @@ runs:
       uses: ./.github/actions/install-mvnd
     - name: maven build
       shell: bash
-      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" true build.log
+      run: ${{ github.action_path }}/component-test.sh
+      env:
+        MAVEN_BINARY: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd
+        COMMENT_BODY: ${{ inputs.comment-body }}
+        FAST_BUILD: "true"
+        LOG_FILE: build.log
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
@@ -49,7 +54,12 @@ runs:
         path: build.log
     - name: maven test
       shell: bash
-      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" false tests.log
+      run: ${{ github.action_path }}/component-test.sh
+      env:
+        MAVEN_BINARY: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd
+        COMMENT_BODY: ${{ inputs.comment-body }}
+        FAST_BUILD: "false"
+        LOG_FILE: build.log
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
