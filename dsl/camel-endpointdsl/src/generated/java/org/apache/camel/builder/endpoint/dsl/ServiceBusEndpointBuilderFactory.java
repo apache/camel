@@ -917,6 +917,39 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set binary mode. If true, message body will be sent as byte. By
+         * default, it is false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder binary(boolean binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
+         * Set binary mode. If true, message body will be sent as byte. By
+         * default, it is false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder binary(String binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
          * Sets the desired operation to be used in the producer.
          * 
          * The option is a:

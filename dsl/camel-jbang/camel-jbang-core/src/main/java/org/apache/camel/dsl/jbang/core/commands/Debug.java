@@ -60,12 +60,12 @@ import static org.apache.camel.util.IOHelper.buffered;
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
 
-    // TODO: step should show "last" with green/red success/failed
     // TODO: show exception (like tracer)
     // TODO: faster (no refresh)
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
     // TODO: option to show source or not
     // TODO: option to include message history in debug console output (allows to show trace path)
+    // TODO: show exchange properties (not working)
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
