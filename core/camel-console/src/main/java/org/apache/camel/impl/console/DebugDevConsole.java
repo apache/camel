@@ -169,13 +169,16 @@ public class DebugDevConsole extends AbstractDevConsole {
                     JsonObject to = (JsonObject) t.asJSon();
                     arr.add(to);
 
-                    // enrich with source code +/- 3 lines around location
-                    String rid = to.getString("routeId");
-                    String loc = to.getString("location");
-                    if (rid != null) {
-                        List<JsonObject> code = enrichSourceCode(rid, loc, Integer.parseInt(codeLimit));
-                        if (code != null && !code.isEmpty()) {
-                            to.put("code", code);
+                    // enrich with source code +/- lines around location
+                    int limit = Integer.parseInt(codeLimit);
+                    if (limit > 0) {
+                        String rid = to.getString("routeId");
+                        String loc = to.getString("location");
+                        if (rid != null) {
+                            List<JsonObject> code = enrichSourceCode(rid, loc, limit);
+                            if (code != null && !code.isEmpty()) {
+                                to.put("code", code);
+                            }
                         }
                     }
                 }
@@ -201,17 +204,17 @@ public class DebugDevConsole extends AbstractDevConsole {
         List<JsonObject> code = new ArrayList<>();
 
         location = StringHelper.afterLast(location, ":");
-        int line = -1;
+        int line = 0;
         try {
             if (location != null) {
                 line = Integer.parseInt(location);
             }
             LineNumberReader reader = new LineNumberReader(resource.getReader());
-            for (int i = 1; i < line + lines; i++) {
+            for (int i = 1; i <= line + lines; i++) {
                 String t = reader.readLine();
                 if (t != null) {
-                    int low = line - lines - 1;
-                    int high = line + lines + 1;
+                    int low = line - lines + 2; // grab more of the following code than previous code (+2)
+                    int high = line + lines + 1 + 2;
                     if (i >= low && i <= high) {
                         JsonObject c = new JsonObject();
                         c.put("line", i);

@@ -63,7 +63,6 @@ public class Debug extends Run {
     // TODO: faster (no refresh)
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
     // TODO: option to show source or not
-    // TODO: option to include message history in debug console output (allows to show trace path)
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
@@ -285,9 +284,9 @@ public class Debug extends Run {
             sw.write(System.lineSeparator());
         }
         sw.write(System.lineSeparator());
-        updateContextStatus(spawnPid);
-        sw.append(getContextStatusTable());
-        sw.write(System.lineSeparator());
+        //        updateContextStatus(spawnPid);
+        //        sw.append(getContextStatusTable());
+        //        sw.write(System.lineSeparator());
         printDebugStatus(spawnPid, sw);
 
         return 0;
