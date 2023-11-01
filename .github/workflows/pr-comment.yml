@@ -32,7 +32,7 @@ jobs:
       matrix:
         java: [ '17' ]
     steps:
-      - uses: peter-evans/create-or-update-comment@v3
+      - uses: peter-evans/create-or-update-comment@v3.1.0
         with:
           issue-number: ${{ context.issue.number }}
           body: |
