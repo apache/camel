@@ -42,7 +42,6 @@ import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -66,6 +65,7 @@ public class Debug extends Run {
     // TODO: faster (no refresh)
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
     // TODO: option to show source or not
+    // TODO: option to include message history in debug console output (allows to show trace path)
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
@@ -238,6 +238,7 @@ public class Debug extends Run {
         cmds.add("--prop=camel.debug.enabled=true");
         cmds.add("--prop=camel.debug.breakpoints=FIRST_ROUTES");
         cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
+        cmds.add("--prop=camel.debug.singleStepLast=true");
 
         cmds.add(0, "camel");
 
@@ -400,10 +401,20 @@ public class Debug extends Run {
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
                 String c = Jsoner.unescape(code.code);
-                String arrow = code.match ? "-->" : "   ";
+                String arrow = "    ";
+                if (code.match) {
+                    if (row.first) {
+                        arrow = "*-->";
+                    } else if (row.last) {
+                        arrow = "<--*";
+                    } else {
+                        arrow = "--->";
+                    }
+                }
                 String msg = String.format("%4d: %s %s", code.line, arrow, c);
                 if (loggingColor && code.match) {
-                    AnsiConsole.out().println(Ansi.ansi().bgRed().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
+                    Ansi.Color col = row.last ? Ansi.Color.GREEN : Ansi.Color.RED;
+                    AnsiConsole.out().println(Ansi.ansi().bg(col).a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {
                     System.out.println(msg);
                 }
@@ -710,27 +721,6 @@ public class Debug extends Run {
             since = ph.info().startInstant().get().toEpochMilli();
         }
         return since;
-    }
-
-    protected JsonObject waitForOutputFile(File outputFile) {
-        StopWatch watch = new StopWatch();
-        while (watch.taken() < 5000) {
-            try {
-                // give time for response to be ready
-                Thread.sleep(100);
-
-                if (outputFile.exists()) {
-                    FileInputStream fis = new FileInputStream(outputFile);
-                    String text = IOHelper.loadText(fis);
-                    IOHelper.close(fis);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
-
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return null;
     }
 
     private String getDataAsTable(SuspendedRow r) {

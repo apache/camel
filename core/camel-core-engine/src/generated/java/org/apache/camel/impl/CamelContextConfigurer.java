@@ -43,8 +43,6 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "Debugger": target.setDebugger(property(camelContext, org.apache.camel.spi.Debugger.class, value)); return true;
         case "debugging":
         case "Debugging": target.setDebugging(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "debuggingbreakpoints":
-        case "DebuggingBreakpoints": target.setDebuggingBreakpoints(property(camelContext, java.lang.String.class, value)); return true;
         case "delayer":
         case "Delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
         case "devconsole":
@@ -164,8 +162,6 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "Debugger": return org.apache.camel.spi.Debugger.class;
         case "debugging":
         case "Debugging": return java.lang.Boolean.class;
-        case "debuggingbreakpoints":
-        case "DebuggingBreakpoints": return java.lang.String.class;
         case "delayer":
         case "Delayer": return java.lang.Long.class;
         case "devconsole":
@@ -286,8 +282,6 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "Debugger": return target.getDebugger();
         case "debugging":
         case "Debugging": return target.isDebugging();
-        case "debuggingbreakpoints":
-        case "DebuggingBreakpoints": return target.getDebuggingBreakpoints();
         case "delayer":
         case "Delayer": return target.getDelayer();
         case "devconsole":

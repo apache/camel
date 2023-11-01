@@ -35,6 +35,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeExchangeProperties": target.setIncludeExchangeProperties(property(camelContext, boolean.class, value)); return true;
         case "logginglevel":
         case "LoggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "singlesteplast":
+        case "SingleStepLast": target.setSingleStepLast(property(camelContext, boolean.class, value)); return true;
         case "waitforattach":
         case "WaitForAttach": target.setWaitForAttach(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -58,6 +60,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeExchangeProperties": return boolean.class;
         case "logginglevel":
         case "LoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "singlesteplast":
+        case "SingleStepLast": return boolean.class;
         case "waitforattach":
         case "WaitForAttach": return boolean.class;
         default: return null;
@@ -82,6 +86,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeExchangeProperties": return target.isIncludeExchangeProperties();
         case "logginglevel":
         case "LoggingLevel": return target.getLoggingLevel();
+        case "singlesteplast":
+        case "SingleStepLast": return target.isSingleStepLast();
         case "waitforattach":
         case "WaitForAttach": return target.isWaitForAttach();
         default: return null;

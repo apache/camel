@@ -75,6 +75,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -2232,11 +2233,13 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
         // auto-detect camel-debug on classpath (if debugger has not been explicit added)
+        boolean debuggerDetected = false;
         if (getDebugger() == null && hasService(BacklogDebugger.class) == null) {
             // detect if camel-debug is on classpath that enables debugging
             DebuggerFactory df = getCamelContextExtension().getBootstrapFactoryFinder()
                     .newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
             if (df != null) {
+                debuggerDetected = true;
                 LOG.info("Detected: {} JAR (Enabling Camel Debugging)", df);
                 setDebugging(true);
                 Debugger newDebugger = df.createDebugger(this);
@@ -2244,6 +2247,12 @@ public abstract class AbstractCamelContext extends BaseService
                     setDebugger(newDebugger);
                 }
             }
+        }
+        if (!debuggerDetected && isDebugging()) {
+            // debugging enabled by camel-debug was not auto-detected from classpath
+            // so install default debugger
+            BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(this);
+            addService(backlog);
         }
 
         addService(getManagementStrategy(), false);
@@ -2305,6 +2314,9 @@ public abstract class AbstractCamelContext extends BaseService
                 getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
             }
             addService(runtimeEndpointRegistry, true, true);
+        }
+        // setup debugger if not already installed
+        if (isDebugging() && getDebugger() == null) {
         }
 
         bindDataFormats();

@@ -37,6 +37,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
     @Metadata
     private String breakpoints;
+    @Metadata
+    private boolean singleStepLast;
     @Metadata(defaultValue = "131072")
     private int bodyMaxChars = 128 * 1024;
     @Metadata
@@ -104,6 +106,18 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public void setBreakpoints(String breakpoints) {
         this.breakpoints = breakpoints;
+    }
+
+    public boolean isSingleStepLast() {
+        return singleStepLast;
+    }
+
+    /**
+     * In single step mode, then when the exchange is complete, then simulate a breakpoint as last, that allows to
+     * suspend and watch the exchange when complete (you can see message body as response, failed exception etc).
+     */
+    public void setSingleStepLast(boolean singleStepLast) {
+        this.singleStepLast = singleStepLast;
     }
 
     public int getBodyMaxChars() {
@@ -184,6 +198,15 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withBreakpoints(String breakpoints) {
         this.breakpoints = breakpoints;
+        return (DebuggerConfigurationProperties) this;
+    }
+
+    /**
+     * In single step mode, then when the exchange is complete, then simulate a breakpoint as last, that allows to
+     * suspend and watch the exchange when complete (you can see message body as response, failed exception etc).
+     */
+    public DebuggerConfigurationProperties withSingleStepLast(boolean singleStepLast) {
+        this.singleStepLast = singleStepLast;
         return (DebuggerConfigurationProperties) this;
     }
 

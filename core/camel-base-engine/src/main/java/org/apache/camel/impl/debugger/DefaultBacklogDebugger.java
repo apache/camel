@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -71,6 +72,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     private boolean suspendMode;
     private String initialBreakpoints;
+    private boolean singleStepLast;
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
@@ -233,13 +235,6 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private static boolean resolveSuspendMode() {
         final String value = System.getenv(SUSPEND_MODE_ENV_VAR_NAME);
         return value == null ? Boolean.getBoolean(SUSPEND_MODE_SYSTEM_PROP_NAME) : Boolean.parseBoolean(value);
-    }
-
-    /**
-     * Resolves the starting breakpoint(s)
-     */
-    private static String resolveStartingBreakpoint(CamelContext context) {
-        return context.getDebuggingBreakpoints();
     }
 
     /**
@@ -589,6 +584,16 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     @Override
+    public boolean isSingleStepLast() {
+        return singleStepLast;
+    }
+
+    @Override
+    public void setSingleStepLast(boolean singleStepLast) {
+        this.singleStepLast = singleStepLast;
+    }
+
+    @Override
     public int getBodyMaxChars() {
         return bodyMaxChars;
     }
@@ -896,14 +901,60 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
         @Override
         public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
-            // when the exchange is complete, we need to turn off single step mode if we were debug stepping the exchange
             if (event instanceof ExchangeCompletedEvent) {
                 String completedId = event.getExchange().getExchangeId();
-
-                if (singleStepExchangeId != null && singleStepExchangeId.equals(completedId)) {
+                try {
+                    if (singleStepLast && singleStepExchangeId != null && singleStepExchangeId.equals(completedId)) {
+                        doCompleted(exchange, definition);
+                    }
+                } finally {
                     logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");
                     singleStepExchangeId = null;
                 }
+            }
+        }
+
+        private void doCompleted(Exchange exchange, NamedNode definition) {
+            // create pseudo-last step in single step mode
+            long timestamp = System.currentTimeMillis();
+            String toNode = CamelContextHelper.getRouteId(definition);
+            String routeId = CamelContextHelper.getRouteId(definition);
+            String exchangeId = exchange.getExchangeId();
+            String messageAsXml = dumpAsXml(exchange);
+            String messageAsJSon = dumpAsJSon(exchange);
+            long uid = debugCounter.incrementAndGet();
+            NamedRoute route = CamelContextHelper.getRoute(definition);
+            String source = LoggerHelper.getLineNumberLoggerName(route);
+
+            BacklogTracerEventMessage msg
+                    = new DefaultBacklogTracerEventMessage(
+                            false, true, uid, timestamp, source, routeId, toNode, exchangeId, false, false,
+                            messageAsXml,
+                            messageAsJSon);
+            suspendedBreakpointMessages.put(toNode, msg);
+
+            // suspend at this breakpoint
+            SuspendedExchange se = new SuspendedExchange(exchange, new CountDownLatch(1));
+            suspendedBreakpoints.put(toNode, se);
+
+            // now wait until we should continue
+            logger.log(
+                    String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
+                            exchange.getExchangeId()));
+            try {
+                boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
+                if (!hit) {
+                    logger.log(
+                            String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
+                                    exchange.getExchangeId()),
+                            LoggingLevel.WARN);
+                } else {
+                    logger.log(String.format("StepBreakpoint at node %s is continued exchangeId: %s", toNode,
+                            exchange.getExchangeId()));
+                }
+            } catch (InterruptedException e) {
+                // ignore
+                Thread.currentThread().interrupt();
             }
         }
     }

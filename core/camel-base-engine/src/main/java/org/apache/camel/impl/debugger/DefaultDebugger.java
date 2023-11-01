@@ -205,6 +205,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
 
     @Override
     public void stopSingleStepExchange(String exchangeId) {
+        // completed so we need a "last" event
         singleSteps.remove(exchangeId);
     }
 

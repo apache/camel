@@ -16,14 +16,14 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Set;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StatefulService;
 import org.apache.camel.util.StopWatch;
-
-import java.util.Set;
 
 /**
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which can be used from JMX with
@@ -214,12 +214,14 @@ public interface BacklogDebugger extends StatefulService {
     void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName);
 
     /**
-     * Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used for waiting for a message to arrive at a given breakpoint.
+     * Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used
+     * for waiting for a message to arrive at a given breakpoint.
      */
     long getFallbackTimeout();
 
     /**
-     * Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used for waiting for a message to arrive at a given breakpoint.
+     * Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used
+     * for waiting for a message to arrive at a given breakpoint.
      */
     void setFallbackTimeout(long fallbackTimeout);
 
@@ -229,7 +231,8 @@ public interface BacklogDebugger extends StatefulService {
     void resumeAll();
 
     /**
-     * To start single step mode from a suspended breakpoint at the given node. Then invoke {@link #step()} to step to next node in the route.
+     * To start single step mode from a suspended breakpoint at the given node. Then invoke {@link #step()} to step to
+     * next node in the route.
      */
     void stepBreakpoint(String nodeId);
 
@@ -246,8 +249,8 @@ public interface BacklogDebugger extends StatefulService {
     /**
      * Gets the trace event for the suspended exchange at the given breakpoint id or null if there is none at that id.
      *
-     * @param id node id for the breakpoint
-     * @return the trace event or null if there isn't one suspended at the given breakpoint.
+     * @param  id node id for the breakpoint
+     * @return    the trace event or null if there isn't one suspended at the given breakpoint.
      */
     BacklogTracerEventMessage getSuspendedBreakpointMessage(String id);
 
@@ -260,6 +263,18 @@ public interface BacklogDebugger extends StatefulService {
      * Enables a breakpoint
      */
     void enableBreakpoint(String nodeId);
+
+    /**
+     * In single step mode, then when the exchange is complete, then simulate a breakpoint as last, that allows to
+     * suspend and watch the exchange when complete (you can see message body as response, failed exception etc).
+     */
+    boolean isSingleStepLast();
+
+    /**
+     * In single step mode, then when the exchange is complete, then simulate a breakpoint as last, that allows to
+     * suspend and watch the exchange when complete (you can see message body as response, failed exception etc).
+     */
+    void setSingleStepLast(boolean singleStepLast);
 
     /**
      * To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size.

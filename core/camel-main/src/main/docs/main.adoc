@@ -173,7 +173,7 @@ The camel.server supports 10 options, which are listed below.
 
 
 === Camel Debugger configurations
-The camel.debug supports 8 options, which are listed below.
+The camel.debug supports 9 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -185,6 +185,7 @@ The camel.debug supports 8 options, which are listed below.
 | *camel.debug.enabled* | Enables Debugger in your Camel application. | false | boolean
 | *camel.debug.includeExchange{zwsp}Properties* | Whether to include the exchange properties in the traced message | true | boolean
 | *camel.debug.loggingLevel* | The debugger logging level to use when logging activity. | INFO | LoggingLevel
+| *camel.debug.singleStepLast* | In single step mode, then when the exchange is complete, then simulate a breakpoint as last, that allows to suspend and watch the exchange when complete (you can see message body as response, failed exception etc). | false | boolean
 | *camel.debug.waitForAttach* | Whether the debugger should suspend on startup, and wait for a remote debugger to attach. This is what the IDEA and VSCode tooling is using. | false | boolean
 |===
 

@@ -37,7 +37,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
-import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.BacklogDebugger;
@@ -789,11 +788,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final Debugger debugger;
         private final Processor target;
         private final NamedNode definition;
+        private final NamedRoute routeDefinition;
 
-        public DebuggerAdvice(Debugger debugger, Processor target, NamedNode definition) {
+        public DebuggerAdvice(Debugger debugger, Processor target, NamedNode definition, NamedRoute routeDefinition) {
             this.debugger = debugger;
             this.target = target;
             this.definition = definition;
+            this.routeDefinition = routeDefinition;
         }
 
         @Override
