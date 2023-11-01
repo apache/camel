@@ -24,11 +24,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,11 +61,9 @@ import static org.apache.camel.util.IOHelper.buffered;
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
 
-    // TODO: Exception on startup should print to console
     // TODO: step should show "last" with green/red success/failed
     // TODO: show exception (like tracer)
     // TODO: faster (no refresh)
-    // TODO: Show "Running..." when hitting enter
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
     // TODO: option to show source or not
 
@@ -118,9 +114,9 @@ public class Debug extends Run {
     private MessageTableHelper tableHelper;
 
     // status
-    private boolean initialWait;
     private InputStream spawnOutput;
-    private Deque<String> logBuffer = new ArrayDeque<>(10);
+    private InputStream spawnError;
+    private List<String> logBuffer = new ArrayList<>(100);
     private Row contextRow = new Row();
     private SuspendedRow suspendedRow = new SuspendedRow();
 
@@ -162,14 +158,10 @@ public class Debug extends Run {
                         while (true) {
                             String line = reader.readLine();
                             if (line != null) {
-                                while (logBuffer.size() > 10) {
-                                    logBuffer.removeFirst();
+                                while (logBuffer.size() >= 100) {
+                                    logBuffer.remove(0);
                                 }
-                                boolean added = logBuffer.offer(line);
-                                if (!added) {
-                                    logBuffer.remove();
-                                    logBuffer.add(line);
-                                }
+                                logBuffer.add(line);
                             } else {
                                 break;
                             }
@@ -204,12 +196,24 @@ public class Debug extends Run {
         }, "ReadInput");
         t2.start();
 
+        // give time for process to start
+        Thread.sleep(250);
+
         do {
             exit = doWatch();
+            if (exit == -1) {
+                // maybe failed on startup, so dump log buffer
+                for (String line : logBuffer) {
+                    System.out.println(line);
+                }
+                // any error
+                String text = IOHelper.loadText(spawnError);
+                System.out.println(text);
+                return -1;
+            }
             if (exit == 0) {
                 // use half-sec delay to refresh
                 Thread.sleep(500);
-                initialWait = false;
             }
         } while (exit == 0 && !quit.get());
 
@@ -242,6 +246,7 @@ public class Debug extends Run {
 
         Process p = pb.start();
         this.spawnOutput = p.getInputStream();
+        this.spawnError = p.getErrorStream();
         this.spawnPid = p.pid();
         System.out.println("Debugging Camel integration: " + name + " with PID: " + p.pid());
         return 0;
@@ -263,17 +268,20 @@ public class Debug extends Run {
         }
 
         // does the process still exists?
-        if (!initialWait) {
-            ProcessHandle ph = ProcessHandle.of(spawnPid).orElse(null);
-            if (ph == null || !ph.isAlive()) {
-                return -1;
-            }
+        ProcessHandle ph = ProcessHandle.of(spawnPid).orElse(null);
+        if (ph == null || !ph.isAlive()) {
+            return -1;
         }
 
         // buffer before writing to screen
         StringWriter sw = new StringWriter();
-        // log output
-        for (String line : logBuffer) {
+        // log last 10 lines
+        int start = Math.max(logBuffer.size() - 10, 0);
+        for (int i = start; i < 10; i++) {
+            String line = "";
+            if (i < logBuffer.size()) {
+                line = logBuffer.get(i);
+            }
             sw.write(line);
             sw.write(System.lineSeparator());
         }
