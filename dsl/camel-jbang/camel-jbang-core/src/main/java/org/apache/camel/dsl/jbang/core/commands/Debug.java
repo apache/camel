@@ -206,7 +206,7 @@ public class Debug extends Run {
                 for (String line : logBuffer) {
                     System.out.println(line);
                 }
-                // any error
+                // and any error
                 String text = IOHelper.loadText(spawnError);
                 System.out.println(text);
                 return -1;
@@ -277,7 +277,7 @@ public class Debug extends Run {
         StringWriter sw = new StringWriter();
         // log last 10 lines
         int start = Math.max(logBuffer.size() - 10, 0);
-        for (int i = start; i < 10; i++) {
+        for (int i = start; i < start + 10; i++) {
             String line = "";
             if (i < logBuffer.size()) {
                 line = logBuffer.get(i);

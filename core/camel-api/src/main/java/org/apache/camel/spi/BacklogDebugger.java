@@ -56,29 +56,65 @@ public interface BacklogDebugger extends StatefulService {
      */
     String BREAKPOINT_FIRST_ROUTES = "FIRST_ROUTES";
 
+    /**
+     * Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by
+     * comma. Use special value FIRST_ROUTES to add a breakpoint for the first node for every route, in other words this
+     * makes it easy to debug from the beginning of every route without knowing the exact node ids.
+     */
     String getInitialBreakpoints();
 
     /**
-     * Sets initial breakpoints to set on startup
+     * Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by
+     * comma. Use special value FIRST_ROUTES to add a breakpoint for the first node for every route, in other words this
+     * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
     void setInitialBreakpoints(String initialBreakpoints);
 
+    /**
+     * The debugger logging level to use when logging activity.
+     */
     String getLoggingLevel();
 
+    /**
+     * The debugger logging level to use when logging activity.
+     */
     void setLoggingLevel(String level);
 
+    /**
+     * To enable the debugger
+     */
     void enableDebugger();
 
+    /**
+     * To disable the debugger
+     */
     void disableDebugger();
 
+    /**
+     * Whether the debugger is enabled
+     */
     boolean isEnabled();
 
+    /**
+     * Does the node have a breakpoint
+     */
     boolean hasBreakpoint(String nodeId);
 
+    /**
+     * Whether the debugger should suspend on startup, and wait for a remote debugger to attach. This is what the IDEA
+     * and VSCode tooling is using.
+     */
     void setSuspendMode(boolean suspendMode);
 
+    /**
+     * Whether the debugger should suspend on startup, and wait for a remote debugger to attach. This is what the IDEA
+     * and VSCode tooling is using.
+     */
     boolean isSuspendMode();
 
+    /**
+     * Is the debugger currently in single step mode
+     */
     boolean isSingleStepMode();
 
     /**
@@ -93,52 +129,118 @@ public interface BacklogDebugger extends StatefulService {
      */
     void detach();
 
+    /**
+     * Adds a breakpoint for the given node
+     */
     void addBreakpoint(String nodeId);
 
+    /**
+     * Adds a conditional breakpoint for the given node
+     */
     void addConditionalBreakpoint(String nodeId, String language, String predicate);
 
+    /**
+     * Removes the breakpoint
+     */
     void removeBreakpoint(String nodeId);
 
+    /**
+     * Remove all breakpoints
+     */
     void removeAllBreakpoints();
 
+    /**
+     * Gets all the breakpoint (node ids)
+     */
     Set<String> getBreakpoints();
 
+    /**
+     * Resume the breakpoint
+     */
     void resumeBreakpoint(String nodeId);
 
+    /**
+     * Resume the breakpoint in step mode
+     */
     void resumeBreakpoint(String nodeId, boolean stepMode);
 
+    /**
+     * Updates the message body at the given breakpoint
+     */
     void setMessageBodyOnBreakpoint(String nodeId, Object body);
 
+    /**
+     * Updates the message body at the given breakpoint
+     */
     void setMessageBodyOnBreakpoint(String nodeId, Object body, Class<?> type);
 
+    /**
+     * Removes the message body (set as null) at the given breakpoint
+     */
     void removeMessageBodyOnBreakpoint(String nodeId);
 
+    /**
+     * Sets the message header at the given breakpoint
+     */
     void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value)
             throws NoTypeConversionAvailableException;
 
+    /**
+     * Sets the message header at the given breakpoint
+     */
     void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, Class<?> type)
             throws NoTypeConversionAvailableException;
 
+    /**
+     * Sets the exchange property at the given breakpoint
+     */
     void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value)
             throws NoTypeConversionAvailableException;
 
+    /**
+     * Updates the exchange property at the given breakpoint
+     */
     void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, Class<?> type)
             throws NoTypeConversionAvailableException;
 
-    void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName);
-
-    long getFallbackTimeout();
-
-    void setFallbackTimeout(long fallbackTimeout);
-
+    /**
+     * Removes the message header at the given breakpoint
+     */
     void removeMessageHeaderOnBreakpoint(String nodeId, String headerName);
 
+    /**
+     * Removes the exchange property at the given breakpoint
+     */
+    void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName);
+
+    /**
+     * Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used for waiting for a message to arrive at a given breakpoint.
+     */
+    long getFallbackTimeout();
+
+    /**
+     * Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used for waiting for a message to arrive at a given breakpoint.
+     */
+    void setFallbackTimeout(long fallbackTimeout);
+
+    /**
+     * To resume all suspended breakpoints.
+     */
     void resumeAll();
 
+    /**
+     * To start single step mode from a suspended breakpoint at the given node. Then invoke {@link #step()} to step to next node in the route.
+     */
     void stepBreakpoint(String nodeId);
 
+    /**
+     * To step to next node when in single step mode.
+     */
     void step();
 
+    /**
+     * Gets node ids for all current suspended exchanges at breakpoints
+     */
     Set<String> getSuspendedBreakpointNodeIds();
 
     /**
@@ -149,36 +251,88 @@ public interface BacklogDebugger extends StatefulService {
      */
     BacklogTracerEventMessage getSuspendedBreakpointMessage(String id);
 
+    /**
+     * Disables a breakpoint
+     */
     void disableBreakpoint(String nodeId);
 
+    /**
+     * Enables a breakpoint
+     */
     void enableBreakpoint(String nodeId);
 
+    /**
+     * To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size.
+     */
     int getBodyMaxChars();
 
+    /**
+     * To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size.
+     */
     void setBodyMaxChars(int bodyMaxChars);
 
+    /**
+     * Whether to include the message body of stream based messages. If enabled then beware the stream may not be
+     * re-readable later. See more about Stream Caching.
+     */
     boolean isBodyIncludeStreams();
 
+    /**
+     * Whether to include the message body of stream based messages. If enabled then beware the stream may not be
+     * re-readable later. See more about Stream Caching.
+     */
     void setBodyIncludeStreams(boolean bodyIncludeStreams);
 
+    /**
+     * Whether to include the message body of file based messages. The overhead is that the file content has to be read
+     * from the file.
+     */
     boolean isBodyIncludeFiles();
 
+    /**
+     * Whether to include the message body of file based messages. The overhead is that the file content has to be read
+     * from the file.
+     */
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
+    /**
+     * Whether to include the exchange properties in the traced message
+     */
     boolean isIncludeExchangeProperties();
 
+    /**
+     * Whether to include the exchange properties in the traced message
+     */
     void setIncludeExchangeProperties(boolean includeExchangeProperties);
 
+    /**
+     * To dump the debugged messages from the give node id in XML format.
+     */
     String dumpTracedMessagesAsXml(String nodeId);
 
+    /**
+     * To dump the debugged messages from the give node id in JSon format.
+     */
     String dumpTracedMessagesAsJSon(String nodeId);
 
+    /**
+     * Number of breakpoint that has been hit
+     */
     long getDebugCounter();
 
+    /**
+     * Rests the debug counter
+     */
     void resetDebugCounter();
 
+    /**
+     * Callback invoked before hitting a breakpoint
+     */
     StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition, boolean first);
 
+    /**
+     * Callback invoked after a breakpoint
+     */
     void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken);
 
 }
