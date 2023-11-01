@@ -21,7 +21,7 @@ class TypeResolverHelperTest {
 
     @Test
     public void testTryAssignableToChild() {
-        TypeConvertible<?, ?> requestedConverter = new TypeConvertible<>(Source.class, Child.class);
+        TypeConvertible<Source, Child> requestedConverter = new TypeConvertible<>(Source.class, Child.class);
         TypeConverter foundConverter = TypeResolverHelper.tryAssignableFrom(requestedConverter, registeredConverters);
         assertNotNull(foundConverter);
         Child result = foundConverter.tryConvertTo(Child.class, new Source("source"));
@@ -33,7 +33,7 @@ class TypeResolverHelperTest {
     // See https://issues.apache.org/jira/browse/CAMEL-19828
     @Test
     public void testTryAssignableToParent() {
-        TypeConvertible<?, ?> requestedConverter = new TypeConvertible<>(Source.class, Parent.class);
+        TypeConvertible<Source, Parent> requestedConverter = new TypeConvertible<>(Source.class, Parent.class);
         TypeConverter foundConverter = TypeResolverHelper.tryAssignableFrom(requestedConverter, registeredConverters);
         assertNotNull(foundConverter);
         Parent result = foundConverter.tryConvertTo(Parent.class, new Source("source"));
