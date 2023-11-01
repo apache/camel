@@ -720,7 +720,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 data.setEndpointUri(uri);
             }
 
-            if (!data.isFirst()) {
+            if (!data.isFirst() && backlogTracer.isIncludeException()) {
                 // we want to capture if there was an exception
                 Throwable e = exchange.getException();
                 if (e != null) {

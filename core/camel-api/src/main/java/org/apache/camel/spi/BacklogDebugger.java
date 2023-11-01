@@ -321,6 +321,16 @@ public interface BacklogDebugger extends StatefulService {
     void setIncludeExchangeProperties(boolean includeExchangeProperties);
 
     /**
+     * Trace messages to include exception if the message failed
+     */
+    boolean isIncludeException();
+
+    /**
+     * Trace messages to include exception if the message failed
+     */
+    void setIncludeException(boolean includeException);
+
+    /**
      * To dump the debugged messages from the give node id in XML format.
      */
     String dumpTracedMessagesAsXml(String nodeId);

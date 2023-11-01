@@ -37,6 +37,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracerEventMessage;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelLogger;
@@ -77,6 +78,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
     private boolean includeExchangeProperties = true;
+    private boolean includeException = true;
 
     /**
      * An suspend {@link Exchange} at a breakpoint.
@@ -634,6 +636,16 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     @Override
+    public boolean isIncludeException() {
+        return includeException;
+    }
+
+    @Override
+    public void setIncludeException(boolean includeException) {
+        this.includeException = includeException;
+    }
+
+    @Override
     public String dumpTracedMessagesAsXml(String nodeId) {
         logger.log("Dump trace message from breakpoint " + nodeId);
         BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
@@ -675,7 +687,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
-        // noop
+        debugger.afterProcess(exchange, processor, definition, timeTaken);
     }
 
     @Override
@@ -818,7 +830,12 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         }
 
         @Override
-        public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
+        public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
+            if (!before) {
+                // after should not match for node breakpoints
+                return false;
+            }
+
             // must match node
             if (!nodeId.equals(definition.getId())) {
                 return false;
@@ -890,22 +907,43 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         }
 
         @Override
-        public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
+        public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
+            // we want to capture if there was an exception
+            Throwable e = exchange.getException();
+            if (e != null) {
+                String toNode = definition.getId();
+                BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(toNode);
+                if (msg != null) {
+                    String xml = MessageHelper.dumpExceptionAsXML(e, 4);
+                    msg.setExceptionAsXml(xml);
+                    String json = MessageHelper.dumpExceptionAsJSon(e, 4, true);
+                    msg.setExceptionAsJSon(json);
+                }
+            }
+        }
+
+        @Override
+        public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
+            // always match in step (both before and after)
             return true;
         }
 
         @Override
         public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
-            return event instanceof ExchangeCompletedEvent;
+            return event instanceof ExchangeCompletedEvent || event instanceof CamelEvent.ExchangeFailedEvent;
         }
 
         @Override
         public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
-            if (event instanceof ExchangeCompletedEvent) {
+            if (event instanceof ExchangeCompletedEvent || event instanceof CamelEvent.ExchangeFailedEvent) {
+                Throwable cause = null;
+                if (event instanceof CamelEvent.ExchangeFailedEvent fe) {
+                    cause = fe.getCause();
+                }
                 String completedId = event.getExchange().getExchangeId();
                 try {
                     if (singleStepLast && singleStepExchangeId != null && singleStepExchangeId.equals(completedId)) {
-                        doCompleted(exchange, definition);
+                        doCompleted(exchange, definition, cause);
                     }
                 } finally {
                     logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");
@@ -914,7 +952,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             }
         }
 
-        private void doCompleted(Exchange exchange, NamedNode definition) {
+        private void doCompleted(Exchange exchange, NamedNode definition, Throwable cause) {
             // create pseudo-last step in single step mode
             long timestamp = System.currentTimeMillis();
             String toNode = CamelContextHelper.getRouteId(definition);
@@ -931,6 +969,15 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                             false, true, uid, timestamp, source, routeId, toNode, exchangeId, false, false,
                             messageAsXml,
                             messageAsJSon);
+
+            // we want to capture if there was an exception
+            if (cause != null) {
+                String xml = MessageHelper.dumpExceptionAsXML(cause, 4);
+                msg.setExceptionAsXml(xml);
+                String json = MessageHelper.dumpExceptionAsJSon(cause, 4, true);
+                msg.setExceptionAsJSon(json);
+            }
+
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint

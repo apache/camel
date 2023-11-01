@@ -62,13 +62,13 @@ public class DebugTest extends ContextTestSupport {
         };
 
         camelCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
                 return body().contains("Camel").matches(exchange);
             }
         };
 
         mockCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
                 // match when sending to mocks
                 if (definition instanceof ToDefinition) {
                     ToDefinition to = (ToDefinition) definition;

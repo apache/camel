@@ -56,7 +56,7 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
 
         exceptionCondition = new ConditionSupport() {
             @Override
-            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
                 return exchange.getException() != null;
             }
         };

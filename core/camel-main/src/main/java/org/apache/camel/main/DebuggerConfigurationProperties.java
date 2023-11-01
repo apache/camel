@@ -47,6 +47,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     private boolean bodyIncludeFiles = true;
     @Metadata(defaultValue = "true")
     private boolean includeExchangeProperties = true;
+    @Metadata(defaultValue = "true")
+    private boolean includeException = true;
 
     public DebuggerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -167,6 +169,20 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     * Trace messages to include exception if the message failed
+     */
+    public boolean isIncludeException() {
+        return includeException;
+    }
+
+    /**
+     * Trace messages to include exception if the message failed
+     */
+    public void setIncludeException(boolean includeException) {
+        this.includeException = includeException;
+    }
+
+    /**
      * Enables Debugger in your Camel application.
      */
     public DebuggerConfigurationProperties withEnabled(boolean enabled) {
@@ -241,6 +257,14 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withIncludeExchangeProperties(boolean includeExchangeProperties) {
         this.includeExchangeProperties = includeExchangeProperties;
+        return (DebuggerConfigurationProperties) this;
+    }
+
+    /**
+     * Trace messages to include exception if the message failed
+     */
+    public DebuggerConfigurationProperties withIncludeException(boolean includeException) {
+        this.includeException = includeException;
         return (DebuggerConfigurationProperties) this;
     }
 
