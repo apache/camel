@@ -67,7 +67,6 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
@@ -922,42 +921,8 @@ public class Run extends CamelCommand {
         return 0;
     }
 
-    private void removeDebugOnlyOptions(List<String> cmds) {
-        ReflectionHelper.doWithFields(Debug.class, fc -> {
-            cmds.removeIf(c -> {
-                String n1 = "--" + fc.getName();
-                String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
-                return c.startsWith(n1) || c.startsWith(n2);
-            });
-        });
-    }
-
     protected int runDebug(KameletMain main) throws Exception {
-        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
-
-        // debug should be run
-        cmds.remove(0);
-        cmds.add(0, "run");
-
-        cmds.remove("--background=true");
-        cmds.remove("--background");
-
-        // remove args from debug that are not supported by run
-        removeDebugOnlyOptions(cmds);
-
-        // enable light-weight debugger (not camel-debug JAR that is for IDEA/VSCode tooling with remote JMX)
-        cmds.add("--prop=camel.debug.enabled=true");
-        cmds.add("--prop=camel.debug.breakpoints=FIRST_ROUTES");
-        cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
-
-        cmds.add(0, "camel");
-
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.command(cmds);
-
-        Process p = pb.start();
-        this.spawnPid = p.pid();
-        System.out.println("Debugging Camel integration: " + name + " in background with PID: " + p.pid());
+        // to be implemented in Debug
         return 0;
     }
 

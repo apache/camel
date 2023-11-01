@@ -16,14 +16,19 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.BufferedReader;
 import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,10 +39,13 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
@@ -50,6 +58,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
+import static org.apache.camel.util.IOHelper.buffered;
 
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
@@ -109,6 +118,9 @@ public class Debug extends Run {
     private MessageTableHelper tableHelper;
 
     // status
+    private boolean initialWait;
+    private InputStream spawnOutput;
+    private Deque<String> logBuffer = new ArrayDeque<>(10);
     private Row contextRow = new Row();
     private SuspendedRow suspendedRow = new SuspendedRow();
 
@@ -144,6 +156,35 @@ public class Debug extends Run {
             @Override
             public void run() {
                 do {
+                    InputStreamReader isr = new InputStreamReader(spawnOutput);
+                    try {
+                        BufferedReader reader = buffered(isr);
+                        while (true) {
+                            String line = reader.readLine();
+                            if (line != null) {
+                                while (logBuffer.size() > 10) {
+                                    logBuffer.removeFirst();
+                                }
+                                boolean added = logBuffer.offer(line);
+                                if (!added) {
+                                    logBuffer.remove();
+                                    logBuffer.add(line);
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                } while (!quit.get());
+            }
+        }, "ReadLog");
+        t.start();
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                do {
                     String line = c.readLine();
                     if (line != null) {
                         line = line.trim();
@@ -160,33 +201,86 @@ public class Debug extends Run {
                     }
                 } while (!quit.get());
             }
-        }, "ReadConsole");
-        t.start();
+        }, "ReadInput");
+        t2.start();
 
         do {
             exit = doWatch();
             if (exit == 0) {
                 // use half-sec delay to refresh
                 Thread.sleep(500);
+                initialWait = false;
             }
         } while (exit == 0 && !quit.get());
 
         return 0;
     }
 
+    @Override
+    protected int runDebug(KameletMain main) throws Exception {
+        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+
+        // debug should be run
+        cmds.remove(0);
+        cmds.add(0, "run");
+
+        cmds.remove("--background=true");
+        cmds.remove("--background");
+
+        // remove args from debug that are not supported by run
+        removeDebugOnlyOptions(cmds);
+
+        // enable light-weight debugger (not camel-debug JAR that is for IDEA/VSCode tooling with remote JMX)
+        cmds.add("--prop=camel.debug.enabled=true");
+        cmds.add("--prop=camel.debug.breakpoints=FIRST_ROUTES");
+        cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
+
+        cmds.add(0, "camel");
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(cmds);
+
+        Process p = pb.start();
+        this.spawnOutput = p.getInputStream();
+        this.spawnPid = p.pid();
+        System.out.println("Debugging Camel integration: " + name + " with PID: " + p.pid());
+        return 0;
+    }
+
+    private void removeDebugOnlyOptions(List<String> cmds) {
+        ReflectionHelper.doWithFields(Debug.class, fc -> {
+            cmds.removeIf(c -> {
+                String n1 = "--" + fc.getName();
+                String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
+                return c.startsWith(n1) || c.startsWith(n2);
+            });
+        });
+    }
+
     protected int doWatch() {
         if (spawnPid == 0) {
-            return 0;
+            return -1;
+        }
+
+        // does the process still exists?
+        if (!initialWait) {
+            ProcessHandle ph = ProcessHandle.of(spawnPid).orElse(null);
+            if (ph == null || !ph.isAlive()) {
+                return -1;
+            }
         }
 
         // buffer before writing to screen
         StringWriter sw = new StringWriter();
-
+        // log output
+        for (String line : logBuffer) {
+            sw.write(line);
+            sw.write(System.lineSeparator());
+        }
+        sw.write(System.lineSeparator());
         updateContextStatus(spawnPid);
         sw.append(getContextStatusTable());
-        // empty line
-        sw.append("\n");
-
+        sw.write(System.lineSeparator());
         printDebugStatus(spawnPid, sw);
 
         return 0;
