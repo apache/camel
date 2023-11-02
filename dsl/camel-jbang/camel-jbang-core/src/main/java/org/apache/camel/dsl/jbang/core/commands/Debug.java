@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -60,8 +61,6 @@ import static org.apache.camel.util.IOHelper.buffered;
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
 
-    // TODO: faster (no refresh)
-    // TODO: current route id
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
 
     @CommandLine.Option(names = { "--breakpoint" },
@@ -114,8 +113,14 @@ public class Debug extends Run {
     private InputStream spawnOutput;
     private InputStream spawnError;
     private List<String> logBuffer = new ArrayList<>(100);
+    private AtomicBoolean logUpdated = new AtomicBoolean();
+
+    @Deprecated
     private Row contextRow = new Row();
+
     private SuspendedRow suspendedRow = new SuspendedRow();
+    private AtomicBoolean waitForUser = new AtomicBoolean();
+    private AtomicLong debugCounter = new AtomicLong();
 
     public Debug(CamelJBangMain main) {
         super(main);
@@ -142,7 +147,7 @@ public class Debug extends Run {
         tableHelper.setLoggingColor(loggingColor);
         tableHelper.setShowExchangeProperties(showExchangeProperties);
 
-        // read input
+        // read log input
         final AtomicBoolean quit = new AtomicBoolean();
         final Console c = System.console();
         Thread t = new Thread(new Runnable() {
@@ -159,6 +164,7 @@ public class Debug extends Run {
                                     logBuffer.remove(0);
                                 }
                                 logBuffer.add(line);
+                                logUpdated.set(true);
                             } else {
                                 break;
                             }
@@ -170,6 +176,8 @@ public class Debug extends Run {
             }
         }, "ReadLog");
         t.start();
+
+        // read CLI input from user
         Thread t2 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -187,18 +195,20 @@ public class Debug extends Run {
                         } else if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                             quit.set(true);
                         }
+                        // user have pressed ENTER so continue
+                        waitForUser.set(false);
                     }
                 } while (!quit.get());
             }
-        }, "ReadInput");
+        }, "ReadCommand");
         t2.start();
-
-        // give time for process to start
-        Thread.sleep(250);
 
         do {
             exit = doWatch();
-            if (exit == -1) {
+            if (exit == 0) {
+                // wait a little bit before loading again
+                Thread.sleep(100);
+            } else if (exit == -1) {
                 // maybe failed on startup, so dump log buffer
                 for (String line : logBuffer) {
                     System.out.println(line);
@@ -207,10 +217,6 @@ public class Debug extends Run {
                 String text = IOHelper.loadText(spawnError);
                 System.out.println(text);
                 return -1;
-            }
-            if (exit == 0) {
-                // use half-sec delay to refresh
-                Thread.sleep(500);
             }
         } while (exit == 0 && !quit.get());
 
@@ -276,6 +282,11 @@ public class Debug extends Run {
             return -1;
         }
 
+        // suspended and waiting to continue
+        if (waitForUser.get()) {
+            return 0;
+        }
+
         // buffer before writing to screen
         StringWriter sw = new StringWriter();
         // log last 10 lines
@@ -289,9 +300,6 @@ public class Debug extends Run {
             sw.write(System.lineSeparator());
         }
         sw.write(System.lineSeparator());
-        //        updateContextStatus(spawnPid);
-        //        sw.append(getContextStatusTable());
-        //        sw.write(System.lineSeparator());
         printDebugStatus(spawnPid, sw);
 
         return 0;
@@ -322,68 +330,81 @@ public class Debug extends Run {
         JsonObject jo = loadDebug(pid);
         if (jo != null) {
             List<SuspendedRow> rows = new ArrayList<>();
-            JsonArray arr = jo.getCollection("suspended");
-            if (arr != null) {
-                for (Object o : arr) {
-                    SuspendedRow row = new SuspendedRow();
-                    row.pid = String.valueOf(pid);
-                    row.name = "TODO";//pid.name;
-                    jo = (JsonObject) o;
-                    row.uid = jo.getLong("uid");
-                    row.first = jo.getBoolean("first");
-                    row.last = jo.getBoolean("last");
-                    row.location = jo.getString("location");
-                    row.routeId = jo.getString("routeId");
-                    row.nodeId = jo.getString("nodeId");
-                    String uri = jo.getString("endpointUri");
-                    if (uri != null) {
-                        row.endpoint = new JsonObject();
-                        if (mask) {
-                            uri = URISupport.sanitizeUri(uri);
+
+            // only read if expecting new data
+            long cnt = jo.getLongOrDefault("debugCounter", 0);
+            if (cnt > debugCounter.get()) {
+                JsonArray arr = jo.getCollection("suspended");
+                if (arr != null) {
+                    for (Object o : arr) {
+                        SuspendedRow row = new SuspendedRow();
+                        row.pid = String.valueOf(pid);
+                        row.name = "TODO";//pid.name;
+                        jo = (JsonObject) o;
+                        row.uid = jo.getLong("uid");
+                        row.first = jo.getBoolean("first");
+                        row.last = jo.getBoolean("last");
+                        row.location = jo.getString("location");
+                        row.routeId = jo.getString("routeId");
+                        row.nodeId = jo.getString("nodeId");
+                        String uri = jo.getString("endpointUri");
+                        if (uri != null) {
+                            row.endpoint = new JsonObject();
+                            if (mask) {
+                                uri = URISupport.sanitizeUri(uri);
+                            }
+                            row.endpoint.put("endpoint", uri);
                         }
-                        row.endpoint.put("endpoint", uri);
-                    }
-                    Long ts = jo.getLong("timestamp");
-                    if (ts != null) {
-                        row.timestamp = ts;
-                    }
-                    row.elapsed = jo.getLong("elapsed");
-                    row.failed = jo.getBoolean("failed");
-                    row.done = jo.getBoolean("done");
-                    row.threadName = jo.getString("threadName");
-                    row.message = jo.getMap("message");
-                    row.exception = jo.getMap("exception");
-                    row.exchangeId = row.message.getString("exchangeId");
-                    row.exchangePattern = row.message.getString("exchangePattern");
-                    // we should exchangeId/pattern elsewhere
-                    row.message.remove("exchangeId");
-                    row.message.remove("exchangePattern");
-                    if (!showExchangeProperties) {
-                        row.message.remove("exchangeProperties");
-                    }
-                    if (!showHeaders) {
-                        row.message.remove("headers");
-                    }
-                    if (!showBody) {
-                        row.message.remove("body");
-                    }
-                    if (!showException) {
-                        row.exception = null;
-                    }
-                    List<JsonObject> lines = jo.getCollection("code");
-                    if (lines != null) {
-                        for (JsonObject line : lines) {
-                            Code code = new Code();
-                            code.line = line.getInteger("line");
-                            code.match = line.getBooleanOrDefault("match", false);
-                            code.code = line.getString("code");
-                            row.code.add(code);
+                        Long ts = jo.getLong("timestamp");
+                        if (ts != null) {
+                            row.timestamp = ts;
                         }
+                        row.elapsed = jo.getLong("elapsed");
+                        row.failed = jo.getBoolean("failed");
+                        row.done = jo.getBoolean("done");
+                        row.threadName = jo.getString("threadName");
+                        row.message = jo.getMap("message");
+                        row.exception = jo.getMap("exception");
+                        row.exchangeId = row.message.getString("exchangeId");
+                        row.exchangePattern = row.message.getString("exchangePattern");
+                        // we should exchangeId/pattern elsewhere
+                        row.message.remove("exchangeId");
+                        row.message.remove("exchangePattern");
+                        if (!showExchangeProperties) {
+                            row.message.remove("exchangeProperties");
+                        }
+                        if (!showHeaders) {
+                            row.message.remove("headers");
+                        }
+                        if (!showBody) {
+                            row.message.remove("body");
+                        }
+                        if (!showException) {
+                            row.exception = null;
+                        }
+                        List<JsonObject> lines = jo.getCollection("code");
+                        if (lines != null) {
+                            for (JsonObject line : lines) {
+                                Code code = new Code();
+                                code.line = line.getInteger("line");
+                                code.match = line.getBooleanOrDefault("match", false);
+                                code.code = line.getString("code");
+                                row.code.add(code);
+                            }
+                        }
+                        rows.add(row);
                     }
-                    rows.add(row);
                 }
             }
 
+            // if no suspended breakpoint and no updated logs then do not refresh screen
+            if (rows.isEmpty() && !logUpdated.get()) {
+                return;
+            }
+
+            logUpdated.set(false);
+
+            // okay there is some updates to the screen, so redraw
             clearScreen();
             // top header
             System.out.println(buffer.toString());
@@ -391,6 +412,9 @@ public class Debug extends Run {
             for (SuspendedRow row : rows) {
                 printSuspendedRow(row);
                 this.suspendedRow = row;
+                // suspended so wait for user and remember position
+                this.debugCounter.set(cnt);
+                this.waitForUser.set(true);
             }
         }
     }
