@@ -38,6 +38,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     @Metadata
     private String breakpoints;
     @Metadata
+    private boolean singleStepFirst;
+    @Metadata
     private boolean singleStepLast;
     @Metadata(defaultValue = "131072")
     private int bodyMaxChars = 128 * 1024;
@@ -108,6 +110,18 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public void setBreakpoints(String breakpoints) {
         this.breakpoints = breakpoints;
+    }
+
+    public boolean isSingleStepFirst() {
+        return singleStepFirst;
+    }
+
+    /**
+     * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
+     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception etc).
+     */
+    public void setSingleStepFirst(boolean singleStepFirst) {
+        this.singleStepFirst = singleStepFirst;
     }
 
     public boolean isSingleStepLast() {
@@ -214,6 +228,15 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withBreakpoints(String breakpoints) {
         this.breakpoints = breakpoints;
+        return (DebuggerConfigurationProperties) this;
+    }
+
+    /**
+     * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
+     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception etc).
+     */
+    public DebuggerConfigurationProperties withSingleStepFirst(boolean singleStepFirst) {
+        this.singleStepFirst = singleStepFirst;
         return (DebuggerConfigurationProperties) this;
     }
 

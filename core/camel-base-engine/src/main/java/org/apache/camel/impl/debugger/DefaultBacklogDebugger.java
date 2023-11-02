@@ -73,6 +73,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     private boolean suspendMode;
     private String initialBreakpoints;
+    private boolean singleStepFirst;
     private boolean singleStepLast;
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
@@ -596,6 +597,16 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     @Override
+    public boolean isSingleStepFirst() {
+        return singleStepFirst;
+    }
+
+    @Override
+    public void setSingleStepFirst(boolean singleStepFirst) {
+        this.singleStepFirst = singleStepFirst;
+    }
+
+    @Override
     public int getBodyMaxChars() {
         return bodyMaxChars;
     }
@@ -676,7 +687,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         debugCounter.set(0);
     }
 
-    public StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition, boolean first) {
+    public StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
         suspendIfNeeded();
         if (isEnabled() && (hasBreakpoint(definition.getId()) || isSingleStepMode())) {
             StopWatch watch = new StopWatch();
@@ -799,6 +810,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(definition);
+
+            // TODO: Find out first in a better way (maybe on Breakpoint)
 
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(

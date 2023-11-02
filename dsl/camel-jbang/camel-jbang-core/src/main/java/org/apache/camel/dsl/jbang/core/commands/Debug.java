@@ -62,7 +62,8 @@ public class Debug extends Run {
 
     // TODO: faster (no refresh)
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
-    // TODO: option to show source or not
+    // TODO: fake "first"
+    // TODO: current route id
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")

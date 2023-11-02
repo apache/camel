@@ -265,6 +265,18 @@ public interface BacklogDebugger extends StatefulService {
     void enableBreakpoint(String nodeId);
 
     /**
+     * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
+     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception etc).
+     */
+    boolean isSingleStepFirst();
+
+    /**
+     * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
+     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception etc).
+     */
+    void setSingleStepFirst(boolean singleStepFirst);
+
+    /**
      * In single step mode, then when the exchange is complete, then simulate a breakpoint as last, that allows to
      * suspend and watch the exchange when complete (you can see message body as response, failed exception etc).
      */
@@ -353,7 +365,7 @@ public interface BacklogDebugger extends StatefulService {
     /**
      * Callback invoked before hitting a breakpoint
      */
-    StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition, boolean first);
+    StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**
      * Callback invoked after a breakpoint

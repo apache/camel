@@ -763,7 +763,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
-            return backlogDebugger.beforeProcess(exchange, target, definition, first);
+            return backlogDebugger.beforeProcess(exchange, target, definition);
         }
 
         @Override
