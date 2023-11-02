@@ -266,13 +266,15 @@ public interface BacklogDebugger extends StatefulService {
 
     /**
      * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
-     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception etc).
+     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception
+     * etc).
      */
     boolean isSingleStepFirst();
 
     /**
      * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
-     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception etc).
+     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception
+     * etc).
      */
     void setSingleStepFirst(boolean singleStepFirst);
 

@@ -37,9 +37,9 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
     @Metadata
     private String breakpoints;
-    @Metadata
+    @Metadata(label = "advanced")
     private boolean singleStepFirst;
-    @Metadata
+    @Metadata(label = "advanced")
     private boolean singleStepLast;
     @Metadata(defaultValue = "131072")
     private int bodyMaxChars = 128 * 1024;
@@ -118,7 +118,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
-     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception etc).
+     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception
+     * etc).
      */
     public void setSingleStepFirst(boolean singleStepFirst) {
         this.singleStepFirst = singleStepFirst;
@@ -233,7 +234,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
-     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception etc).
+     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception
+     * etc).
      */
     public DebuggerConfigurationProperties withSingleStepFirst(boolean singleStepFirst) {
         this.singleStepFirst = singleStepFirst;

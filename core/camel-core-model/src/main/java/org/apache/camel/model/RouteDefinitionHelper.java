@@ -289,6 +289,13 @@ public final class RouteDefinitionHelper {
     }
 
     public static void initParent(ProcessorDefinition parent) {
+        if (parent instanceof RouteDefinition rd) {
+            FromDefinition from = rd.getInput();
+            if (from != null) {
+                from.setParent(rd);
+            }
+        }
+
         List<ProcessorDefinition<?>> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
             child.setParent(parent);

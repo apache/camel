@@ -752,13 +752,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final BacklogDebugger backlogDebugger;
         private final Processor target;
         private final NamedNode definition;
-        private final boolean first;
 
-        public BacklogDebuggerAdvice(BacklogDebugger backlogDebugger, Processor target, NamedNode definition, boolean first) {
+        public BacklogDebuggerAdvice(BacklogDebugger backlogDebugger, Processor target, NamedNode definition) {
             this.backlogDebugger = backlogDebugger;
             this.target = target;
             this.definition = definition;
-            this.first = first;
         }
 
         @Override
@@ -788,13 +786,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final Debugger debugger;
         private final Processor target;
         private final NamedNode definition;
-        private final NamedRoute routeDefinition;
 
-        public DebuggerAdvice(Debugger debugger, Processor target, NamedNode definition, NamedRoute routeDefinition) {
+        public DebuggerAdvice(Debugger debugger, Processor target, NamedNode definition) {
             this.debugger = debugger;
             this.target = target;
             this.definition = definition;
-            this.routeDefinition = routeDefinition;
         }
 
         @Override

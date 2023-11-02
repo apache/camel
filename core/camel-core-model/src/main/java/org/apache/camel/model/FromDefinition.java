@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.NamedNode;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.Metadata;
 
@@ -34,6 +35,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
 
+    @XmlTransient
+    private RouteDefinition parent;
     @XmlTransient
     private Endpoint endpoint;
     @XmlTransient
@@ -88,6 +91,15 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         } else {
             return null;
         }
+    }
+
+    @Override
+    public NamedNode getParent() {
+        return parent;
+    }
+
+    public void setParent(RouteDefinition parent) {
+        this.parent = parent;
     }
 
     // Properties

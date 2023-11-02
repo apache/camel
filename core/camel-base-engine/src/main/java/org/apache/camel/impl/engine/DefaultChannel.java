@@ -184,7 +184,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             final Debugger customDebugger = camelContext.getDebugger();
             if (customDebugger != null) {
                 // use custom debugger
-                addAdvice(new DebuggerAdvice(customDebugger, nextProcessor, targetOutputDef, routeDefinition));
+                addAdvice(new DebuggerAdvice(customDebugger, nextProcessor, targetOutputDef));
             }
             BacklogDebugger debugger = getBacklogDebugger(camelContext, customDebugger == null);
             if (debugger != null) {
@@ -195,10 +195,23 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 // if starting breakpoint is FIRST_ROUTES then automatic add first as a breakpoint
                 if (first && debugger.getInitialBreakpoints() != null
                         && debugger.getInitialBreakpoints().contains(BacklogDebugger.BREAKPOINT_FIRST_ROUTES)) {
-                    debugger.addBreakpoint(targetOutputDef.getId());
-                    LOG.debug("BacklogDebugger added breakpoint: {}", targetOutputDef.getId());
+                    if (debugger.isSingleStepFirst()) {
+                        // we want route to be breakpoint (use input)
+                        String id = routeDefinition.getInput().getId();
+                        debugger.addBreakpoint(id);
+                        LOG.debug("BacklogDebugger added breakpoint: {}", id);
+                    } else {
+                        // first output should also be breakpoint
+                        String id = targetOutputDef.getId();
+                        debugger.addBreakpoint(id);
+                        LOG.debug("BacklogDebugger added breakpoint: {}", id);
+                    }
                 }
-                addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef, first));
+                if (first && debugger.isSingleStepFirst()) {
+                    // add breakpoint on route input instead of first node
+                    addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
+                }
+                addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
             }
         }
 

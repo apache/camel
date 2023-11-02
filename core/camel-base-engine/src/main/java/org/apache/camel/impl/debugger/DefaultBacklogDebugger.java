@@ -810,12 +810,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(definition);
-
-            // TODO: Find out first in a better way (maybe on Breakpoint)
+            boolean first = "from".equals(definition.getShortName());
 
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
-                            false, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, messageAsXml,
+                            first, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, messageAsXml,
                             messageAsJSon);
             suspendedBreakpointMessages.put(nodeId, msg);
 
