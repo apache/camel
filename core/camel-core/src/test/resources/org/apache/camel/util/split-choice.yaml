@@ -18,6 +18,7 @@
 - route:
     id: myRoute
     from:
+      id: from
       uri: direct:start
       steps:
         - split:
