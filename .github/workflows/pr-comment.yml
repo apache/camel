@@ -49,7 +49,7 @@ jobs:
           submodules: recursive
       - uses: ./.github/actions/create-or-update-comment
         with:
-          issue-number: ${{ context.issue.number }}
+          issue-number: ${{ github.event.issue.number }}
           body: |
             :robot: The Apache Camel test robot will run the tests for you :+1:
       - id: install-packages
