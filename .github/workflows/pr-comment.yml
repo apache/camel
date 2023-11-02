@@ -32,16 +32,11 @@ jobs:
       matrix:
         java: [ '17' ]
     steps:
-      - uses: actions/github-script@v6
+      - uses: peter-evans/create-or-update-comment@v3.1.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `:robot: The Apache Camel test robot will run the tests for you :+1:`
-            })
+          issue-number: ${{ context.issue.number }}
+          body: |
+            :robot: The Apache Camel test robot will run the tests for you :+1:
       - name: Retrieve sha
         uses: actions/github-script@v6
         with:
@@ -56,6 +51,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ env.pr_sha }}
+          submodules: recursive
       - id: install-packages
         uses: ./.github/actions/install-packages
       - name: Set up JDK ${{ matrix.java }}
@@ -68,7 +64,6 @@ jobs:
         name: Component test execution
         uses: ./.github/actions/component-test
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.run_id }}
           pr-id: ${{ github.event.issue.number }}
           comment-id: ${{ github.event.comment.id }}
