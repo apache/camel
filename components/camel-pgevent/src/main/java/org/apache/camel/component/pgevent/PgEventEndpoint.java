@@ -63,7 +63,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String channel;
     @UriParam(defaultValue = "postgres", label = "security", secret = true)
-    private String user = "postgres";
+    private String user;
     @UriParam(label = "security", secret = true)
     private String pass;
     @UriParam
