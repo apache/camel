@@ -172,12 +172,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public Boolean toBoolean(JsonNode node, Exchange exchange) throws Exception {
-        if (node instanceof BooleanNode) {
-            BooleanNode bn = (BooleanNode) node;
-            return bn.asBoolean();
-        }
-        String text = node.asText();
-        return org.apache.camel.util.ObjectHelper.toBoolean(text);
+        return node.asBoolean();
     }
 
     @Converter
