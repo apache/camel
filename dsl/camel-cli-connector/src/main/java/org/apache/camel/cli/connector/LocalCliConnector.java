@@ -80,7 +80,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
     private final CliConnectorFactory cliConnectorFactory;
     private CamelContext camelContext;
-    private int delay = 2000;
+    private int delay = 1000;
     private String platform;
     private String platformVersion;
     private String mainClass;

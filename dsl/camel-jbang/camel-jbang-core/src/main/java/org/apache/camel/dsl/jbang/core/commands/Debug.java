@@ -188,6 +188,11 @@ public class Debug extends Run {
                         if (line.isEmpty()) {
                             // continue breakpoint
                             if (suspendedRow != null) {
+                                // step to exit because it was the last
+                                if (suspendedRow.last) {
+                                    // we need to clear screen so fool by saying log is updated
+                                    logUpdated.set(true);
+                                }
                                 sendDebugCommand(spawnPid, "step", suspendedRow.nodeId);
                             } else {
                                 sendDebugCommand(spawnPid, "step", null);
