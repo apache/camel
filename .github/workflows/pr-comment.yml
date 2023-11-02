@@ -32,11 +32,6 @@ jobs:
       matrix:
         java: [ '17' ]
     steps:
-      - uses: peter-evans/create-or-update-comment@v3.1.0
-        with:
-          issue-number: ${{ context.issue.number }}
-          body: |
-            :robot: The Apache Camel test robot will run the tests for you :+1:
       - name: Retrieve sha
         uses: actions/github-script@v6
         with:
@@ -52,6 +47,11 @@ jobs:
         with:
           ref: ${{ env.pr_sha }}
           submodules: recursive
+      - uses: ./.github/actions/create-or-update-comment
+        with:
+          issue-number: ${{ context.issue.number }}
+          body: |
+            :robot: The Apache Camel test robot will run the tests for you :+1:
       - id: install-packages
         uses: ./.github/actions/install-packages
       - name: Set up JDK ${{ matrix.java }}
