@@ -185,7 +185,9 @@ public class Debug extends Run {
                     String line = c.readLine();
                     if (line != null) {
                         line = line.trim();
-                        if (line.isEmpty()) {
+                        if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
+                            quit.set(true);
+                        } else {
                             // continue breakpoint
                             if (suspendedRow != null) {
                                 // step to exit because it was the last
@@ -197,8 +199,6 @@ public class Debug extends Run {
                             } else {
                                 sendDebugCommand(spawnPid, "step", null);
                             }
-                        } else if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
-                            quit.set(true);
                         }
                         // user have pressed ENTER so continue
                         waitForUser.set(false);
@@ -420,6 +420,15 @@ public class Debug extends Run {
                 // suspended so wait for user and remember position
                 this.debugCounter.set(cnt);
                 this.waitForUser.set(true);
+            }
+            if (this.waitForUser.get()) {
+                String msg = "    Breakpoint suspended. Press ENTER to continue.";
+                if (loggingColor) {
+                    AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
+                } else {
+                    System.out.println(msg);
+                }
+                System.out.println();
             }
         }
     }
