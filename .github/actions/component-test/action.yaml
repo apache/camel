@@ -68,7 +68,9 @@ runs:
       uses: ./.github/actions/create-or-update-comment
       with:
         comment-id: ${{ inputs.comment-id }}
+        edit-mode: replace
         body: |
+          ${{ inputs.comment-body }}
 
           **Result** :white_check_mark: The tests passed successfully
     - name: Failure comment
@@ -76,6 +78,8 @@ runs:
       uses: ./.github/actions/create-or-update-comment
       with:
         comment-id: ${{ inputs.comment-id }}
+        edit-mode: replace
         body: |
+          ${{ inputs.comment-body }}
 
           **Result** :x: The tests failed please [check the logs](https://github.com/apache/camel/actions/runs/${{ inputs.run-id }})
