@@ -18,9 +18,6 @@
 name: "Component Test Runner"
 description: "Runs tests of corresponding to the given comment"
 inputs:
-  github-token:
-    description: 'GitHub token to use to update the comment'
-    required: true
   run-id:
     description: 'Id of the job'
     required: true
@@ -68,31 +65,19 @@ runs:
         path: tests.log
     - name: Success comment
       if: success()
-      uses: actions/github-script@v6
+      uses: ./.github/actions/create-or-update-comment
       with:
-        github-token: ${{ inputs.github-token }}
-        script: |
-          await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: ${{ inputs.pr-id }},
-                comment_id: ${{ inputs.comment-id }},
-                body: `${{ inputs.comment-body }}
+        comment-id: ${{ inputs.comment-id }}
+        body: |
+          ${{ inputs.comment-body }}
 
-          **Result** :white_check_mark: The tests passed successfully`
-          });
+          **Result** :white_check_mark: The tests passed successfully
     - name: Failure comment
       if: failure()
-      uses: actions/github-script@v6
+      uses: ./.github/actions/create-or-update-comment
       with:
-        github-token: ${{ inputs.github-token }}
-        script: |
-          await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: ${{ inputs.pr-id }},
-                comment_id: ${{ inputs.comment-id }},
-                body: `${{ inputs.comment-body }}
+        comment-id: ${{ inputs.comment-id }}
+        body: |
+          ${{ inputs.comment-body }}
 
-          **Result** :x: The tests failed please [check the logs](https://github.com/apache/camel/actions/runs/${{ inputs.run-id }})`
-          });
+          **Result** :x: The tests failed please [check the logs](https://github.com/apache/camel/actions/runs/${{ inputs.run-id }})
