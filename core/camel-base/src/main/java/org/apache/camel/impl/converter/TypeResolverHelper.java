@@ -115,6 +115,12 @@ final class TypeResolverHelper {
          matching both the "from type" and the "to type" which are NOT Object (we usually try this later).
          */
         for (var entry : converters.entrySet()) {
+            if (entry.getKey().isAssignableMatch(typeConvertible)) {
+                return entry.getValue();
+            }
+
+        }
+        for (var entry : converters.entrySet()) {
             if (typeConvertible.isAssignableMatch(entry.getKey())) {
                 return entry.getValue();
             }
