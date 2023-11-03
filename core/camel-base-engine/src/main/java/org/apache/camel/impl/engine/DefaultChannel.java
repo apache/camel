@@ -202,6 +202,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 if (first && debugger.isSingleStepFirst()) {
                     // add breakpoint on route input instead of first node
                     addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
+                    // debugger captures message history, and we need to capture history of incoming
+                    addAdvice(new MessageHistoryAdvice(camelContext.getMessageHistoryFactory(), routeDefinition.getInput()));
                 }
                 addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
             }

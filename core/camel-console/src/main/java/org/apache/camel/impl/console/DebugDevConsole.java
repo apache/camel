@@ -229,7 +229,8 @@ public class DebugDevConsole extends AbstractDevConsole {
                 if (h.getNode().getLineNumber() != -1) {
                     jo.put("line", h.getNode().getLineNumber());
                 }
-                String t = ConsoleHelper.loadSourceLine(getCamelContext(), h.getNode().getLocation(), h.getNode().getLineNumber());
+                String t = ConsoleHelper.loadSourceLine(getCamelContext(), h.getNode().getLocation(),
+                        h.getNode().getLineNumber());
                 if (t != null) {
                     jo.put("code", Jsoner.escape(t));
                 }
