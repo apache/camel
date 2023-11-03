@@ -22,11 +22,18 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -782,9 +789,23 @@ public final class ObjectHelper {
 
         if (value == null) {
             return Collections.emptyList();
-        } else if (value instanceof String) {
+        }
+        if (fastStringCheck(value)) {
             return createStringIterator((String) value, delimiter, allowEmptyValues, pattern);
-        } else if (value instanceof Iterator) {
+        }
+        if (fastIsMap(value)) {
+            Map<?, ?> map = (Map<?, ?>) value;
+            return map.entrySet();
+        }
+        if (value.getClass().isArray()) {
+            return createArrayIterator(value);
+        }
+
+        return trySlowIterables(value);
+    }
+
+    private static Iterable<?> trySlowIterables(Object value) {
+        if (value instanceof Iterator) {
             final Iterator<Object> iterator = (Iterator<Object>) value;
             return (Iterable<Object>) () -> iterator;
         } else if (value instanceof Iterable) {
@@ -792,8 +813,6 @@ public final class ObjectHelper {
         } else if (value instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) value;
             return map.entrySet();
-        } else if (value.getClass().isArray()) {
-            return createArrayIterator(value);
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
@@ -801,6 +820,21 @@ public final class ObjectHelper {
         } else {
             return Collections.singletonList(value);
         }
+    }
+
+    private static boolean fastStringCheck(Object obj) {
+        return obj.getClass() == String.class;
+    }
+
+    private static boolean fastIsMap(Object obj) {
+        return obj.getClass() == HashMap.class
+                || obj.getClass() == ConcurrentHashMap.class
+                || obj.getClass() == ConcurrentSkipListMap.class
+                || obj.getClass() == EnumMap.class
+                || obj.getClass() == LinkedHashMap.class
+                || obj.getClass() == TreeMap.class
+                || obj.getClass() == WeakHashMap.class;
+
     }
 
     private static Iterable<Object> createArrayIterator(Object value) {

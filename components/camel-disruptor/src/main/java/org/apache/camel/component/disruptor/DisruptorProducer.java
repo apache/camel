@@ -44,9 +44,9 @@ public class DisruptorProducer extends DefaultAsyncProducer {
     private boolean blockWhenFull;
 
     public DisruptorProducer(
-            final DisruptorEndpoint endpoint,
-            final WaitForTaskToComplete waitForTaskToComplete,
-            final long timeout, boolean blockWhenFull) {
+                             final DisruptorEndpoint endpoint,
+                             final WaitForTaskToComplete waitForTaskToComplete,
+                             final long timeout, boolean blockWhenFull) {
         super(endpoint);
         this.waitForTaskToComplete = waitForTaskToComplete;
         this.timeout = timeout;

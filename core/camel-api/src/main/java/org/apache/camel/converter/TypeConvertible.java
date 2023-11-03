@@ -98,6 +98,11 @@ public final class TypeConvertible<F, T> {
             return true;
         }
 
+        // They are the same, but the thisTo and thatTo don't match.
+        if (thisFrom == thatFrom) {
+            return false;
+        }
+
         /* Try interfaces:
          * Try to resolve a TypeConverter by looking at the interfaces implemented by a given "from" type. It looks at the
          * type hierarchy of the target "from type" trying to match a suitable converter (i.e.: Integer -> Number). It will

@@ -20,6 +20,7 @@ package org.apache.camel.component.jira.consumer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
@@ -37,7 +38,7 @@ import org.apache.camel.component.jira.JiraConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -52,7 +53,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class WatchUpdatesConsumerTest extends CamelTestSupport {
-    private static final List<Issue> ISSUES = new ArrayList<>();
+    private final List<Issue> issues = new ArrayList<>();
 
     @Mock
     private JiraRestClient jiraClient;
@@ -71,16 +72,16 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
         registry.bind(JIRA_REST_CLIENT_FACTORY, jiraRestClientFactory);
     }
 
-    @BeforeAll
-    public static void beforeAll() {
-        ISSUES.clear();
-        ISSUES.add(createIssue(1L));
-        ISSUES.add(createIssue(2L));
-        ISSUES.add(createIssue(3L));
+    @BeforeEach
+    public void beforeEach() {
+        issues.clear();
+        issues.add(createIssue(1L));
+        issues.add(createIssue(2L));
+        issues.add(createIssue(3L));
     }
 
     public void setMocks() {
-        SearchResult result = new SearchResult(0, 50, 100, ISSUES);
+        SearchResult result = new SearchResult(0, 50, 100, issues);
         Promise<SearchResult> promiseSearchResult = Promises.promise(result);
 
         when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
@@ -104,7 +105,7 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jira://watchUpdates?jiraUrl=" + JIRA_CREDENTIALS
-                     + "&jql=project=" + PROJECT + "&delay=5000&watchedFields=" + WATCHED_COMPONENTS)
+                     + "&jql=project=" + PROJECT + "&delay=500&watchedFields=" + WATCHED_COMPONENTS)
                         .to(mockResult);
             }
         };
@@ -118,17 +119,16 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
 
     @Test
     public void singleChangeTest() throws Exception {
-        Issue issue = setPriority(ISSUES.get(0), new Priority(
+        Issue issue = setPriority(issues.get(0), new Priority(
                 null, 4L, "High", null, null, null));
         reset(searchRestClient);
-        AtomicBoolean searched = new AtomicBoolean();
+        AtomicInteger searchCount = new AtomicInteger();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
-
-            if (!searched.get()) {
-                ISSUES.remove(0);
-                ISSUES.add(0, issue);
+            if (searchCount.incrementAndGet() == 2) {
+                issues.remove(0);
+                issues.add(0, issue);
             }
-            SearchResult result = new SearchResult(0, 50, 100, ISSUES);
+            SearchResult result = new SearchResult(0, 50, 100, issues);
             return Promises.promise(result);
         });
 
@@ -141,23 +141,22 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
 
     @Test
     public void multipleChangesWithAddedNewIssueTest() throws Exception {
-        final Issue issue = transitionIssueDone(ISSUES.get(1));
-        final Issue issue2 = setPriority(ISSUES.get(2), new Priority(
-                null, 4L, "High", null, null, null));
+        final Issue issue = transitionIssueDone(issues.get(1));
+        final Issue issue2 = setPriority(issues.get(2), new Priority(
+                null, 2L, "High", null, null, null));
 
         reset(searchRestClient);
-        AtomicBoolean searched = new AtomicBoolean();
+        AtomicInteger searchCount = new AtomicInteger();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
-            if (!searched.get()) {
-                ISSUES.add(createIssue(4L));
-                ISSUES.remove(1);
-                ISSUES.add(1, issue);
-                ISSUES.remove(2);
-                ISSUES.add(2, issue2);
-                searched.set(true);
+            if (searchCount.incrementAndGet() == 2) {
+                issues.add(createIssue(4L));
+                issues.remove(1);
+                issues.add(1, issue);
+                issues.remove(2);
+                issues.add(2, issue2);
             }
 
-            SearchResult result = new SearchResult(0, 50, 3, ISSUES);
+            SearchResult result = new SearchResult(0, 50, 4, issues);
             return Promises.promise(result);
         });
 
@@ -166,4 +165,51 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
         mockResult.assertIsSatisfied(1000);
     }
 
+    @Test
+    public void multipleChangesWithAddedAndUpdatedNewIssueTest() throws Exception {
+        final Issue issue = transitionIssueDone(issues.get(1));
+        final Issue issue2 = setPriority(issues.get(2), new Priority(
+                null, 2L, "High", null, null, null));
+        final Issue newIssue = createIssue(4L);
+
+        reset(searchRestClient);
+        AtomicInteger searchCount = new AtomicInteger();
+        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
+            if (searchCount.incrementAndGet() == 2) {
+                issues.add(newIssue);
+                issues.remove(1);
+                issues.add(1, issue);
+                issues.remove(2);
+                issues.add(2, issue2);
+            }
+
+            SearchResult result = new SearchResult(0, 50, 3, issues);
+            return Promises.promise(result);
+        });
+
+        mockResult.expectedMessageCount(3);
+        mockResult.expectedBodiesReceivedInAnyOrder(issue.getStatus(), issue.getResolution(), issue2.getPriority());
+        mockResult.assertIsSatisfied(1000);
+
+        mockResult.reset();
+        mockResult.expectedMessageCount(2);
+
+        AtomicBoolean searched = new AtomicBoolean();
+        Issue resolvedNewIssue = transitionIssueDone(newIssue);
+        reset(searchRestClient);
+        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
+            if (!searched.get()) {
+                issues.remove(3);
+                issues.add(3, resolvedNewIssue);
+                searched.set(true);
+            }
+
+            SearchResult result = new SearchResult(0, 50, 4, issues);
+
+            return Promises.promise(result);
+        });
+
+        mockResult.expectedBodiesReceivedInAnyOrder(resolvedNewIssue.getStatus(), resolvedNewIssue.getResolution());
+        mockResult.assertIsSatisfied(1000);
+    }
 }

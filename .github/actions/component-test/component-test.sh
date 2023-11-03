@@ -18,10 +18,10 @@
 echo "Using MVND_OPTS=$MVND_OPTS"
 
 function main() {
-  local mavenBinary=${1}
-  local commentBody=${2}
-  local fastBuild=${3}
-  local log=${4}
+  local mavenBinary=$MAVEN_BINARY
+  local commentBody=$COMMENT_BODY
+  local fastBuild=$FAST_BUILD
+  local log=$LOG_FILE
 
   if [[ ${commentBody} = /component-test* ]] ; then
     local componentList="${commentBody:16}"

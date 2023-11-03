@@ -81,7 +81,7 @@ public void process(Exchange exchange) throws Exception {
     // change the message to say Hello
     exchange.getOut().setBody("Hello " + body);
     // copy headers from IN to OUT to propagate them
-    exchange.getOut().setHeaders(exchange.getIn().getHeaders();
+    exchange.getOut().setHeaders(exchange.getIn().getHeaders());
     // copy attachements from IN to OUT to propagate them
     exchange.getOut().setAttachments(exchange.getIn().getAttachments());
 }
