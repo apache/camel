@@ -17,10 +17,11 @@
 package org.apache.camel.component.springrabbit.integration;
 
 import java.nio.charset.Charset;
+import java.util.Map;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.springrabbit.SpringRabbitMQConstants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -28,6 +29,7 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.core.Queue;
@@ -107,7 +109,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
     }
 
     @Test
-    public void testProducerContentType() throws Exception {
+    public void testProducerWithMessageProperties() throws Exception {
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
         Queue q = new Queue("myqueue");
@@ -118,7 +120,12 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         admin.declareExchange(t);
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
-        template.sendBodyAndHeader("direct:start", "<price>123</price>", Exchange.CONTENT_TYPE, "application/xml");
+        template.sendBodyAndHeaders("direct:start", "<price>123</price>",
+                Map.of(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT,
+                        SpringRabbitMQConstants.TYPE, "price",
+                        SpringRabbitMQConstants.CONTENT_TYPE, "application/xml",
+                        SpringRabbitMQConstants.MESSAGE_ID, "0fe9c142-f9c1-426f-9237-f5a4c988a8ae",
+                        SpringRabbitMQConstants.PRIORITY, 1));
 
         AmqpTemplate template = new RabbitTemplate(cf);
         Message out = template.receive("myqueue");
@@ -126,7 +133,11 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         String encoding = out.getMessageProperties().getContentEncoding();
         Assertions.assertEquals(Charset.defaultCharset().name(), encoding);
         Assertions.assertEquals("<price>123</price>", new String(out.getBody(), encoding));
+        Assertions.assertEquals(MessageDeliveryMode.PERSISTENT, out.getMessageProperties().getReceivedDeliveryMode());
+        Assertions.assertEquals("price", out.getMessageProperties().getType());
         Assertions.assertEquals("application/xml", out.getMessageProperties().getContentType());
+        Assertions.assertEquals("0fe9c142-f9c1-426f-9237-f5a4c988a8ae", out.getMessageProperties().getMessageId());
+        Assertions.assertEquals(1, out.getMessageProperties().getPriority());
         Assertions.assertEquals(0, out.getMessageProperties().getHeaders().size());
     }
 
