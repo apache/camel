@@ -546,7 +546,6 @@ public class Debug extends Run {
             String line = c + extra + "  " + h;
             System.out.println(line);
         }
-
     }
 
     private void printSuspendedRow(SuspendedRow row) {
