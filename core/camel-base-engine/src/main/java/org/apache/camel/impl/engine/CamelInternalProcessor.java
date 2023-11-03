@@ -575,7 +575,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      * Advice to execute the {@link BacklogTracer} if enabled.
      */
     public static final class BacklogTracerAdvice
-            implements CamelInternalProcessorAdvice<DefaultBacklogTracerEventMessage>, Ordered {
+            implements CamelInternalProcessorAdvice<DefaultBacklogTracerEventMessage> {
 
         private final BacklogTraceAdviceEventNotifier notifier;
         private final CamelContext camelContext;
@@ -737,17 +737,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             return true;
         }
 
-        @Override
-        public int getOrder() {
-            // we want tracer just before calling the processor
-            return Ordered.LOWEST - 1;
-        }
     }
 
     /**
      * Advice to execute the {@link BacklogDebugger} if enabled.
      */
-    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
 
         private final BacklogDebugger backlogDebugger;
         private final Processor target;
@@ -770,18 +765,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
         }
-
-        @Override
-        public int getOrder() {
-            // we want debugger just before calling the processor
-            return Ordered.LOWEST;
-        }
     }
 
     /**
      * Advice to execute when using custom debugger.
      */
-    public static final class DebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+    public static final class DebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
 
         private final Debugger debugger;
         private final Processor target;
@@ -804,11 +793,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             debugger.afterProcess(exchange, target, definition, stopWatch.taken());
         }
 
-        @Override
-        public int getOrder() {
-            // we want debugger just before calling the processor
-            return Ordered.LOWEST;
-        }
     }
 
     /**

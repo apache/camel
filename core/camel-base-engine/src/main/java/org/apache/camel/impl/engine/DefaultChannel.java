@@ -170,14 +170,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        if (route.isMessageHistory()) {
-            // add message history advice
-            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
-            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
-        }
-        // add advice that keeps track of which node is processing
-        addAdvice(new NodeHistoryAdvice(targetOutputDef));
-
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
         if (route.isDebugging()) {
@@ -225,6 +217,14 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             Tracer tracer = camelContext.getTracer();
             addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));
         }
+
+        if (route.isMessageHistory()) {
+            // add message history advice
+            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
+            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
+        }
+        // add advice that keeps track of which node is processing
+        addAdvice(new NodeHistoryAdvice(targetOutputDef));
 
         // sort interceptors according to ordered
         interceptors.sort(OrderedComparator.get());
