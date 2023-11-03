@@ -54,7 +54,6 @@ import static org.apache.camel.util.IOHelper.buffered;
 public class Debug extends Run {
 
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
-    // TODO: step(single) to make it easier than have to provide nodeId if only 1 suspended
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
@@ -184,10 +183,8 @@ public class Debug extends Run {
                                     // we need to clear screen so fool by saying log is updated
                                     logUpdated.set(true);
                                 }
-                                sendDebugCommand(spawnPid, "step", suspendedRow.nodeId);
-                            } else {
-                                sendDebugCommand(spawnPid, "step", null);
                             }
+                            sendDebugCommand(spawnPid, "step", null);
                         }
                         // user have pressed ENTER so continue
                         waitForUser.set(false);

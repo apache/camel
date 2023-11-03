@@ -519,6 +519,32 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     @Override
+    public void stepBreakpoint() {
+        // if we are already in single step mode, then infer stepping
+        if (isSingleStepMode()) {
+            logger.log("Step breakpoint is already in single step mode, so stepping instead.");
+            step();
+        }
+
+        if (suspendedBreakpointMessages.size() != 1) {
+            return;
+        }
+
+        BacklogTracerEventMessage msg = suspendedBreakpointMessages.values().iterator().next();
+        if (msg != null) {
+            String nodeId = msg.getToNode();
+            NodeBreakpoint breakpoint = breakpoints.get(nodeId);
+            if (breakpoint != null) {
+                singleStepExchangeId = msg.getExchangeId();
+                if (debugger.startSingleStepExchange(singleStepExchangeId, new StepBreakpoint())) {
+                    // now resume
+                    resumeBreakpoint(nodeId, true);
+                }
+            }
+        }
+    }
+
+    @Override
     public void stepBreakpoint(String nodeId) {
         // if we are already in single step mode, then infer stepping
         if (isSingleStepMode()) {

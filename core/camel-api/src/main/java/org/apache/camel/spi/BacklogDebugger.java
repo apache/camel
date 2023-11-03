@@ -237,6 +237,12 @@ public interface BacklogDebugger extends StatefulService {
     void stepBreakpoint(String nodeId);
 
     /**
+     * To start single step mode from the current suspended breakpoint. Then invoke {@link #step()} to step to
+     * next node in the route.
+     */
+    void stepBreakpoint();
+
+    /**
      * To step to next node when in single step mode.
      */
     void step();
