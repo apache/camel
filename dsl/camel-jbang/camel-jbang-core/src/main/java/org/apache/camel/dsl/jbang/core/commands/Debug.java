@@ -496,7 +496,8 @@ public class Debug extends Run {
                 } else {
                     if (row.history.size() > i - 2) {
                         History h = row.history.get(i - 2);
-                        String msg = String.format("%s/%s (%dms)", h.routeId, h.nodeId, h.elapsed);
+                        long elapsed = i == 2 ? 0 : h.elapsed; // the pseudo from should have 0 as elapsed
+                        String msg = String.format("%s/%s (%dms)", h.routeId, h.nodeId, elapsed);
                         p.history = msg;
                     }
                 }
