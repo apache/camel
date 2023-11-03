@@ -36,6 +36,7 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import com.github.freva.asciitable.Styler;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.main.KameletMain;
@@ -505,17 +506,45 @@ public class Debug extends Run {
         }
 
         if (!panel.isEmpty()) {
-            String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, panel, Arrays.asList(
+            Column[] colums = new Column[] {
                     new Column().header("")
                             .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .minWidth(90)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.code),
+                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT),
                     new Column().header("")
                             .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .minWidth(90)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.history)));
+                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT) };
+
+            Object[][] data = new Object[11][2];
+            for (int i = 0; i < 11; i++) {
+                Panel p = panel.get(i);
+                data[i] = new Object[] { p.code, p.history };
+            }
+
+            String table = AsciiTable.builder().styler(new Styler() {
+                @Override
+                public List<String> styleCell(Column column, int row, int col, List<String> data) {
+                    List<String> answer = data;
+                    if (logging && col == 0) {
+                        answer = new ArrayList<>();
+                        for (String s : data) {
+                            if (row <= 1) {
+                                s = Ansi.ansi().bg(Ansi.Color.WHITE).a(Ansi.Attribute.INTENSITY_BOLD).a(s).reset().toString();
+                            }
+                            if (s.contains("<--*")) {
+                                s = Ansi.ansi().bg(Ansi.Color.GREEN).a(Ansi.Attribute.INTENSITY_BOLD).a(s).reset().toString();
+                            } else if (s.contains("-->")) {
+                                s = Ansi.ansi().bg(Ansi.Color.RED).a(Ansi.Attribute.INTENSITY_BOLD).a(s).reset().toString();
+                            } else {
+                                s = Ansi.ansi().bgDefault().a(Ansi.Attribute.INTENSITY_BOLD).a(s).reset().toString();
+                            }
+                            answer.add(s);
+                        }
+                    }
+                    return answer;
+                }
+            }).border(AsciiTable.NO_BORDERS).data(colums, data).toString();
             System.out.println(table);
         }
     }
