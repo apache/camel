@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.MessageHistory;
 import org.apache.camel.Route;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracerEventMessage;
@@ -40,6 +43,7 @@ public class DebugDevConsole extends AbstractDevConsole {
     public static final String COMMAND = "command";
     public static final String BREAKPOINT = "breakpoint";
     public static final String CODE_LIMIT = "codeLimit";
+    public static final String HISTORY = "history";
 
     public DebugDevConsole() {
         super("camel", "debug", "Debug", "Camel route debugger");
@@ -131,6 +135,7 @@ public class DebugDevConsole extends AbstractDevConsole {
         String command = (String) options.get(COMMAND);
         String breakpoint = (String) options.get(BREAKPOINT);
         String codeLimit = (String) options.getOrDefault(CODE_LIMIT, "5");
+        boolean history = "true".equals(options.getOrDefault(HISTORY, "true"));
 
         if (ObjectHelper.isNotEmpty(command)) {
             doCommand(command, breakpoint);
@@ -181,6 +186,13 @@ public class DebugDevConsole extends AbstractDevConsole {
                             }
                         }
                     }
+                    // enrich with message history
+                    if (history) {
+                        List<JsonObject> steps = enrichHistory(backlog, n);
+                        if (!steps.isEmpty()) {
+                            to.put("history", steps);
+                        }
+                    }
                 }
             }
             if (!arr.isEmpty()) {
@@ -189,6 +201,33 @@ public class DebugDevConsole extends AbstractDevConsole {
         }
 
         return root;
+    }
+
+    private List<JsonObject> enrichHistory(BacklogDebugger backlog, String id) {
+        List<JsonObject> arr = new ArrayList<>();
+
+        Exchange exchange = backlog.getSuspendedExchange(id);
+        if (exchange == null) {
+            return arr;
+        }
+        List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (list == null) {
+            return arr;
+        }
+
+        for (MessageHistory h : list) {
+            JsonObject jo = new JsonObject();
+            if (h.getRouteId() != null) {
+                jo.put("routeId", h.getRouteId());
+            }
+            if (h.getNode() != null) {
+                jo.put("nodeId", h.getNode().getId());
+            }
+            jo.put("elapsed", h.getElapsed());
+            arr.add(jo);
+        }
+
+        return arr;
     }
 
     private List<JsonObject> enrichSourceCode(String routeId, String location, int lines) {

@@ -131,6 +131,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      * @return         a new backlog debugger
      */
     public static BacklogDebugger createDebugger(CamelContext context) {
+        // must enable source location so debugger tooling knows to map breakpoints to source code
+        context.setSourceLocationEnabled(true);
+        // must enable message history for debugger to capture more details
+        context.setMessageHistory(true);
+
         return new DefaultBacklogDebugger(context, resolveSuspendMode());
     }
 
@@ -552,12 +557,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         return new LinkedHashSet<>(suspendedBreakpoints.keySet());
     }
 
-    /**
-     * Gets the exchanged suspended at the given breakpoint id or null if there is none at that id.
-     *
-     * @param  id node id for the breakpoint
-     * @return    the suspended exchange or null if there isn't one suspended at the given breakpoint.
-     */
+    @Override
     public Exchange getSuspendedExchange(String id) {
         SuspendedExchange suspendedExchange = suspendedBreakpoints.get(id);
         return suspendedExchange == null ? null : suspendedExchange.getExchange();

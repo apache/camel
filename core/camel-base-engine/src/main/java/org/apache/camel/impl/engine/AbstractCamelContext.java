@@ -2249,10 +2249,10 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
         if (!debuggerDetected && isDebugging()) {
-            // debugging enabled by camel-debug was not auto-detected from classpath
+            // debugging enabled but camel-debug was not auto-detected from classpath
             // so install default debugger
             BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(this);
-            addService(backlog);
+            addService(backlog, true, true);
         }
 
         addService(getManagementStrategy(), false);

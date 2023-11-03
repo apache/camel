@@ -32,11 +32,6 @@ public class CamelDebuggerFactory implements DebuggerFactory {
         // only create a debugger if none already exists
         if (camelContext.hasService(BacklogDebugger.class) == null) {
 
-            // must enable source location so debugger tooling knows to map breakpoints to source code
-            camelContext.setSourceLocationEnabled(true);
-            // must enable message history for debugger to capture more details
-            camelContext.setMessageHistory(true);
-
             BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(camelContext);
             // we need to enable debugger after context is started
             camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
@@ -50,7 +45,7 @@ public class CamelDebuggerFactory implements DebuggerFactory {
                     backlog.disableDebugger();
                 }
             });
-            camelContext.addService(backlog);
+            camelContext.addService(backlog, true, true);
         }
 
         // to make debugging possible for tooling we need to make it possible to do remote JMX connection
