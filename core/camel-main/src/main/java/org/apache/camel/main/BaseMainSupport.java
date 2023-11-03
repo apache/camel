@@ -1496,8 +1496,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
         debugger.setInitialBreakpoints(config.getBreakpoints());
-        debugger.setSingleStepFirst(config.isSingleStepFirst());
-        debugger.setSingleStepLast(config.isSingleStepLast());
+        debugger.setSingleStepIncludeStartEnd(config.isSingleStepIncludeStartEnd());
         debugger.setBodyMaxChars(config.getBodyMaxChars());
         debugger.setBodyIncludeStreams(config.isBodyIncludeStreams());
         debugger.setBodyIncludeFiles(config.isBodyIncludeFiles());

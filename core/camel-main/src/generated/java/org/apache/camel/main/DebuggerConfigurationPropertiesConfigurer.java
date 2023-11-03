@@ -37,10 +37,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeExchangeProperties": target.setIncludeExchangeProperties(property(camelContext, boolean.class, value)); return true;
         case "logginglevel":
         case "LoggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "singlestepfirst":
-        case "SingleStepFirst": target.setSingleStepFirst(property(camelContext, boolean.class, value)); return true;
-        case "singlesteplast":
-        case "SingleStepLast": target.setSingleStepLast(property(camelContext, boolean.class, value)); return true;
+        case "singlestepincludestartend":
+        case "SingleStepIncludeStartEnd": target.setSingleStepIncludeStartEnd(property(camelContext, boolean.class, value)); return true;
         case "waitforattach":
         case "WaitForAttach": target.setWaitForAttach(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -66,10 +64,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeExchangeProperties": return boolean.class;
         case "logginglevel":
         case "LoggingLevel": return org.apache.camel.LoggingLevel.class;
-        case "singlestepfirst":
-        case "SingleStepFirst": return boolean.class;
-        case "singlesteplast":
-        case "SingleStepLast": return boolean.class;
+        case "singlestepincludestartend":
+        case "SingleStepIncludeStartEnd": return boolean.class;
         case "waitforattach":
         case "WaitForAttach": return boolean.class;
         default: return null;
@@ -96,10 +92,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "IncludeExchangeProperties": return target.isIncludeExchangeProperties();
         case "logginglevel":
         case "LoggingLevel": return target.getLoggingLevel();
-        case "singlestepfirst":
-        case "SingleStepFirst": return target.isSingleStepFirst();
-        case "singlesteplast":
-        case "SingleStepLast": return target.isSingleStepLast();
+        case "singlestepincludestartend":
+        case "SingleStepIncludeStartEnd": return target.isSingleStepIncludeStartEnd();
         case "waitforattach":
         case "WaitForAttach": return target.isWaitForAttach();
         default: return null;

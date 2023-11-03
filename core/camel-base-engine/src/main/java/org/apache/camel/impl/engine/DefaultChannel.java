@@ -187,7 +187,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 // if starting breakpoint is FIRST_ROUTES then automatic add first as a breakpoint
                 if (first && debugger.getInitialBreakpoints() != null
                         && debugger.getInitialBreakpoints().contains(BacklogDebugger.BREAKPOINT_FIRST_ROUTES)) {
-                    if (debugger.isSingleStepFirst()) {
+                    if (debugger.isSingleStepIncludeStartEnd()) {
                         // we want route to be breakpoint (use input)
                         String id = routeDefinition.getInput().getId();
                         debugger.addBreakpoint(id);
@@ -199,7 +199,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                         LOG.debug("BacklogDebugger added breakpoint: {}", id);
                     }
                 }
-                if (first && debugger.isSingleStepFirst()) {
+                if (first && debugger.isSingleStepIncludeStartEnd()) {
                     // add breakpoint on route input instead of first node
                     addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
                     // debugger captures message history, and we need to capture history of incoming

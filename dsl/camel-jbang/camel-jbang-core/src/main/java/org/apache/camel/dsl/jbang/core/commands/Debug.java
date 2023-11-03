@@ -54,7 +54,7 @@ import static org.apache.camel.util.IOHelper.buffered;
 public class Debug extends Run {
 
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
-    // TODO: first+last as single option for camel.debugger.xxx
+    // TODO: step(single) to make it easier than have to provide nodeId if only 1 suspended
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
@@ -239,8 +239,7 @@ public class Debug extends Run {
             cmds.add("--prop=camel.debug.breakpoints=" + breakpoint);
         }
         cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
-        cmds.add("--prop=camel.debug.singleStepFirst=true");
-        cmds.add("--prop=camel.debug.singleStepLast=true");
+        cmds.add("--prop=camel.debug.singleStepIncludeStartEnd=true");
 
         cmds.add(0, "camel");
 

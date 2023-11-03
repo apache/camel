@@ -273,30 +273,18 @@ public interface BacklogDebugger extends StatefulService {
     void enableBreakpoint(String nodeId);
 
     /**
-     * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
-     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception
+     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to
+     * suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception
      * etc).
      */
-    boolean isSingleStepFirst();
+    void setSingleStepIncludeStartEnd(boolean singleStepIncludeStartEnd);
 
     /**
-     * In single step mode, then when the exchange is created, then simulate a breakpoint as first, that allows to
-     * suspend and watch the incoming exchange at the route (you can see message body as response, failed exception
+     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to
+     * suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception
      * etc).
      */
-    void setSingleStepFirst(boolean singleStepFirst);
-
-    /**
-     * In single step mode, then when the exchange is complete, then simulate a breakpoint as last, that allows to
-     * suspend and watch the exchange when complete (you can see message body as response, failed exception etc).
-     */
-    boolean isSingleStepLast();
-
-    /**
-     * In single step mode, then when the exchange is complete, then simulate a breakpoint as last, that allows to
-     * suspend and watch the exchange when complete (you can see message body as response, failed exception etc).
-     */
-    void setSingleStepLast(boolean singleStepLast);
+    boolean isSingleStepIncludeStartEnd();
 
     /**
      * To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size.

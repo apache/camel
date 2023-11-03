@@ -73,8 +73,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     private boolean suspendMode;
     private String initialBreakpoints;
-    private boolean singleStepFirst;
-    private boolean singleStepLast;
+    private boolean singleStepIncludeStartEnd;
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
@@ -587,23 +586,13 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     @Override
-    public boolean isSingleStepLast() {
-        return singleStepLast;
+    public boolean isSingleStepIncludeStartEnd() {
+        return singleStepIncludeStartEnd;
     }
 
     @Override
-    public void setSingleStepLast(boolean singleStepLast) {
-        this.singleStepLast = singleStepLast;
-    }
-
-    @Override
-    public boolean isSingleStepFirst() {
-        return singleStepFirst;
-    }
-
-    @Override
-    public void setSingleStepFirst(boolean singleStepFirst) {
-        this.singleStepFirst = singleStepFirst;
+    public void setSingleStepIncludeStartEnd(boolean singleStepIncludeStartEnd) {
+        this.singleStepIncludeStartEnd = singleStepIncludeStartEnd;
     }
 
     @Override
@@ -954,7 +943,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 }
                 String completedId = event.getExchange().getExchangeId();
                 try {
-                    if (singleStepLast && singleStepExchangeId != null && singleStepExchangeId.equals(completedId)) {
+                    if (isSingleStepIncludeStartEnd() && singleStepExchangeId != null && singleStepExchangeId.equals(completedId)) {
                         doCompleted(exchange, definition, cause);
                     }
                 } finally {
