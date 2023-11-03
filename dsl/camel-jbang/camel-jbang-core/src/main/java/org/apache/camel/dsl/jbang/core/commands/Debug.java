@@ -481,14 +481,14 @@ public class Debug extends Run {
             }
         }
         if (!row.history.isEmpty()) {
-            if (row.history.size() > panel.size() - 2) {
+            if (row.history.size() > (panel.size() - 4)) {
                 // cut to only what we can display
-                int pos = row.history.size() - panel.size() - 2;
+                int pos = row.history.size() - (panel.size() - 4);
                 row.history = row.history.subList(pos, row.history.size());
             }
-            for (int i = 2; i < panel.size(); i++) {
+            for (int i = 2; i < 11; i++) {
                 Panel p = panel.get(i);
-                if (row.history.size() > i - 2) {
+                if (row.history.size() > (i - 2)) {
                     History h = row.history.get(i - 2);
 
                     String ids;
@@ -511,14 +511,19 @@ public class Debug extends Run {
                     String c = "";
                     if (h.code != null) {
                         c = Jsoner.unescape(h.code);
-                        // cut code max length
-                        if (c.length() > 50) {
-                            c = c.substring(0, 50);
-                        }
                     }
 
-                    String msg = String.format("%s %10.10s %4d: %s", ids, elapsed, h.line, c);
+                    String fids = String.format("%-30.30s", ids);
+                    String msg = String.format("%s %10.10s %4d: %s", fids, elapsed, h.line, c);
+                    int len = msg.length();
+                    if (loggingColor) {
+                        fids = String.format("%-30.30s", ids);
+                        fids = Ansi.ansi().fgCyan().a(fids).reset().toString();
+                        msg = String.format("%s %10.10s %4d: %s", fids, elapsed, h.line, c);
+                    }
+
                     p.history = msg;
+                    p.historyLength = len;
                 }
             }
         }
@@ -528,14 +533,15 @@ public class Debug extends Run {
             String c = p.code;
             String h = p.history;
             String extra = "";
-            int len = p.length;
+            int len = p.codeLength;
             if (len < 80) {
                 extra = " ".repeat(80 - len);
             } else {
                 c = c.substring(0, 80);
             }
-            if (h.length() > 90) {
-                h = h.substring(0, 90);
+            len = p.historyLength;
+            if (len > 95) {
+                h = h.substring(0, 95);
             }
             String line = c + extra + "  " + h;
             System.out.println(line);
@@ -640,21 +646,6 @@ public class Debug extends Run {
         Thread task = new Thread(this::handleHangup);
         task.setName(ThreadHelper.resolveThreadName(null, "CamelHangupInterceptor"));
         Runtime.getRuntime().addShutdownHook(task);
-    }
-
-    JsonObject loadStatus(long pid) {
-        try {
-            File f = getStatusFile(Long.toString(pid));
-            if (f != null && f.exists()) {
-                FileInputStream fis = new FileInputStream(f);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
-                return (JsonObject) Jsoner.deserialize(text);
-            }
-        } catch (Throwable e) {
-            // ignore
-        }
-        return null;
     }
 
     JsonObject loadDebug(long pid) {
@@ -772,7 +763,8 @@ public class Debug extends Run {
     private static class Panel {
         String code = "";
         String history = "";
-        int length;
+        int codeLength;
+        int historyLength;
 
         static Panel withCode(String code) {
             return withCode(code, code.length());
@@ -781,12 +773,17 @@ public class Debug extends Run {
         static Panel withCode(String code, int length) {
             Panel p = new Panel();
             p.code = code;
-            p.length = length;
+            p.codeLength = length;
             return p;
         }
 
         Panel andHistory(String history) {
+            return andHistory(history, history.length());
+        }
+
+        Panel andHistory(String history, int length) {
             this.history = history;
+            this.historyLength = length;
             return this;
         }
 
