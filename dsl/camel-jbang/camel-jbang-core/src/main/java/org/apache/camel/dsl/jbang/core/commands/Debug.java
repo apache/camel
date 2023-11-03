@@ -53,8 +53,6 @@ import static org.apache.camel.util.IOHelper.buffered;
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
 
-    // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
-
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
     String breakpoint;
@@ -62,6 +60,10 @@ public class Debug extends Run {
     @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true",
                         description = "Whether to stop the running Camel on exit")
     boolean stopOnExit = true;
+
+    @CommandLine.Option(names = { "--log-lines" }, defaultValue = "10",
+                        description = "Number of log lines to display on top of screen")
+    int logLines = 10;
 
     @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
                         description = "Print timestamp.")
@@ -279,15 +281,18 @@ public class Debug extends Run {
 
         // buffer before writing to screen
         StringWriter sw = new StringWriter();
-        // log last 10 lines
-        int start = Math.max(logBuffer.size() - 10, 0);
-        for (int i = start; i < start + 10; i++) {
-            String line = "";
-            if (i < logBuffer.size()) {
-                line = logBuffer.get(i);
+
+        if (logLines > 0) {
+            // log last 10 lines
+            int start = Math.max(logBuffer.size() - logLines, 0);
+            for (int i = start; i < start + logLines; i++) {
+                String line = "";
+                if (i < logBuffer.size()) {
+                    line = logBuffer.get(i);
+                }
+                sw.write(line);
+                sw.write(System.lineSeparator());
             }
-            sw.write(line);
-            sw.write(System.lineSeparator());
         }
         printDebugStatus(spawnPid, sw);
 
@@ -325,6 +330,13 @@ public class Debug extends Run {
             if (cnt > debugCounter.get()) {
                 JsonArray arr = jo.getCollection("suspended");
                 if (arr != null) {
+
+                    if (arr.size() > 1) {
+                        System.out.println(
+                                "WARN: Multiple suspended breakpoints is not supported (You can use --breakpoint option to specify a starting breakpoint)");
+                        return;
+                    }
+
                     for (Object o : arr) {
                         SuspendedRow row = new SuspendedRow();
                         row.pid = String.valueOf(pid);
