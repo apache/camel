@@ -71,7 +71,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
-    private boolean debugging;
     private boolean backlogTracing;
     private boolean backlogTracingStandby;
     private boolean backlogTracingTemplates;
@@ -695,19 +694,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setTracingLoggingFormat(String format) {
         tracingLoggingFormat = format;
-    }
-
-    public boolean isDebugging() {
-        return debugging;
-    }
-
-    /**
-     * Sets whether debugging is enabled or not.
-     *
-     * Default is false.
-     */
-    public void setDebugging(boolean debugging) {
-        this.debugging = debugging;
     }
 
     public boolean isBacklogTracing() {
@@ -2454,16 +2440,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withTracingLoggingFormat(String format) {
         this.tracingLoggingFormat = format;
-        return (T) this;
-    }
-
-    /**
-     * Sets whether debugging is enabled or not.
-     *
-     * Default is false.
-     */
-    public T withDebugging(boolean debugging) {
-        this.debugging = debugging;
         return (T) this;
     }
 

@@ -49,8 +49,8 @@ import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
@@ -136,7 +136,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     private volatile boolean initialized;
     private final Set<String> knowRouteIds = new HashSet<>();
     private final Map<BacklogTracer, ManagedBacklogTracer> managedBacklogTracers = new HashMap<>();
-    private final Map<BacklogDebugger, ManagedBacklogDebugger> managedBacklogDebuggers = new HashMap<>();
+    private final Map<DefaultBacklogDebugger, ManagedBacklogDebugger> managedBacklogDebuggers = new HashMap<>();
     private final Map<ThreadPoolExecutor, Object> managedThreadPools = new HashMap<>();
 
     public JmxManagementLifecycleStrategy() {
@@ -507,7 +507,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 managedBacklogTracers.put(backlogTracer, mt);
             }
             return mt;
-        } else if (service instanceof BacklogDebugger backlogDebugger) {
+        } else if (service instanceof DefaultBacklogDebugger backlogDebugger) {
             // special for backlog debugger
             ManagedBacklogDebugger md = managedBacklogDebuggers.get(backlogDebugger);
             if (md == null) {

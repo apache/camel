@@ -50,9 +50,11 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -954,6 +956,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties globalOptions = new OrderedLocationProperties();
         OrderedLocationProperties httpServerProperties = new OrderedLocationProperties();
         OrderedLocationProperties sslProperties = new OrderedLocationProperties();
+        OrderedLocationProperties debuggerProperties = new OrderedLocationProperties();
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
             if (key.startsWith("camel.context.")) {
@@ -1040,6 +1043,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
                 sslProperties.put(loc, optionKey(option), value);
+            } else if (key.startsWith("camel.debug.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(12);
+                validateOptionAndValue(key, option, value);
+                debuggerProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1117,6 +1126,12 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        if (!debuggerProperties.isEmpty() || mainConfigurationProperties.hasDebuggerConfiguration()) {
+            LOG.debug("Auto-configuring Debugger from loaded properties: {}", debuggerProperties.size());
+            setDebuggerProperties(camelContext, debuggerProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
 
         // configure which requires access to the model
         MainSupportModelConfigurer.configureModelCamelContext(camelContext, mainConfigurationProperties,
@@ -1166,6 +1181,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!sslProperties.isEmpty()) {
             sslProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.ssl.{}={}", k, v);
+            });
+        }
+        if (!debuggerProperties.isEmpty()) {
+            debuggerProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.debug.{}={}", k, v);
             });
         }
         if (!routeTemplateProperties.isEmpty()) {
@@ -1453,6 +1473,52 @@ public abstract class BaseMainSupport extends BaseService {
         sslContextParameters.setServerParameters(scsp);
 
         camelContext.setSSLContextParameters(sslContextParameters);
+    }
+
+    private void setDebuggerProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        DebuggerConfigurationProperties config = mainConfigurationProperties.debuggerConfig();
+        setPropertiesOnTarget(camelContext, config, properties, "camel.debug.",
+                failIfNotSet, true, autoConfiguredProperties);
+
+        if (!config.isEnabled()) {
+            return;
+        }
+
+        // must enable source location so debugger tooling knows to map breakpoints to source code
+        camelContext.setSourceLocationEnabled(true);
+
+        // enable debugger on camel
+        camelContext.setDebugging(true);
+
+        BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
+        debugger.setInitialBreakpoints(config.getBreakpoints());
+        debugger.setSingleStepIncludeStartEnd(config.isSingleStepIncludeStartEnd());
+        debugger.setBodyMaxChars(config.getBodyMaxChars());
+        debugger.setBodyIncludeStreams(config.isBodyIncludeStreams());
+        debugger.setBodyIncludeFiles(config.isBodyIncludeFiles());
+        debugger.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
+        debugger.setIncludeException(config.isIncludeException());
+        debugger.setLoggingLevel(config.getLoggingLevel().name());
+        debugger.setSuspendMode(config.isWaitForAttach());
+
+        // start debugger after context is started
+        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onContextStarted(CamelContext context) {
+                debugger.enableDebugger();
+            }
+
+            @Override
+            public void onContextStopping(CamelContext context) {
+                debugger.disableDebugger();
+            }
+        });
+
+        camelContext.addService(debugger);
     }
 
     private void bindBeansToRegistry(

@@ -30,8 +30,9 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
 import org.apache.camel.spi.InterceptStrategy;
@@ -169,14 +170,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        if (route.isMessageHistory()) {
-            // add message history advice
-            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
-            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
-        }
-        // add advice that keeps track of which node is processing
-        addAdvice(new NodeHistoryAdvice(targetOutputDef));
-
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
         if (route.isDebugging()) {
@@ -188,7 +181,30 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             BacklogDebugger debugger = getBacklogDebugger(camelContext, customDebugger == null);
             if (debugger != null) {
                 // use backlog debugger
-                camelContext.addService(debugger);
+                if (!camelContext.hasService(debugger)) {
+                    camelContext.addService(debugger);
+                }
+                // if starting breakpoint is FIRST_ROUTES then automatic add first as a breakpoint
+                if (first && debugger.getInitialBreakpoints() != null
+                        && debugger.getInitialBreakpoints().contains(BacklogDebugger.BREAKPOINT_FIRST_ROUTES)) {
+                    if (debugger.isSingleStepIncludeStartEnd()) {
+                        // we want route to be breakpoint (use input)
+                        String id = routeDefinition.getInput().getId();
+                        debugger.addBreakpoint(id);
+                        LOG.debug("BacklogDebugger added breakpoint: {}", id);
+                    } else {
+                        // first output should also be breakpoint
+                        String id = targetOutputDef.getId();
+                        debugger.addBreakpoint(id);
+                        LOG.debug("BacklogDebugger added breakpoint: {}", id);
+                    }
+                }
+                if (first && debugger.isSingleStepIncludeStartEnd()) {
+                    // add breakpoint on route input instead of first node
+                    addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
+                    // debugger captures message history, and we need to capture history of incoming
+                    addAdvice(new MessageHistoryAdvice(camelContext.getMessageHistoryFactory(), routeDefinition.getInput()));
+                }
                 addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
             }
         }
@@ -203,6 +219,14 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             Tracer tracer = camelContext.getTracer();
             addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));
         }
+
+        if (route.isMessageHistory()) {
+            // add message history advice
+            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
+            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
+        }
+        // add advice that keeps track of which node is processing
+        addAdvice(new NodeHistoryAdvice(targetOutputDef));
 
         // sort interceptors according to ordered
         interceptors.sort(OrderedComparator.get());
@@ -310,8 +334,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             debugger = camelContext.hasService(BacklogDebugger.class);
         }
         if (debugger == null && createIfAbsent) {
-            // fallback to use the default debugger
-            debugger = BacklogDebugger.createDebugger(camelContext);
+            // fallback to use the default backlog debugger
+            debugger = DefaultBacklogDebugger.createDebugger(camelContext);
         }
         return debugger;
     }

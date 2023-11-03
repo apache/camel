@@ -309,11 +309,6 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 
-        // debug may be enabled via camel-debug JAR on classpath so if config is false (default)
-        // then do not change setting on camel-context
-        if (config.isDebugging()) {
-            camelContext.setDebugging(true);
-        }
         if (config.isMessageHistory()) {
             camelContext.setMessageHistory(true);
         }
@@ -553,7 +548,6 @@ public final class DefaultConfigurationConfigurer {
         if (sslContextParametersSupplier != null) {
             camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
         }
-
         // health check
         HealthCheckRegistry healthCheckRegistry = getSingleBeanOfType(registry, HealthCheckRegistry.class);
         if (healthCheckRegistry != null) {

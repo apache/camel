@@ -1865,13 +1865,11 @@ There are two kinds of debugging:
 
 ==== Java debugging
 
-You can debug your integration scripts by making use of the `--debug` flag provided by JBang.
-However, due to Java debugging must be enabled when starting the JVM, then you must do this
-using the `jbang` command, instead of `camel` as shown:
+Camel JBang makes it easy to do _Java debugging_ when you run your integration with the `--jvm-debug` option as shown below:
 
 [source,bash]
 ----
-jbang --debug  camel@apache/camel run hello.yaml
+camel run hello.yaml --jmv-debug
 Listening for transport dt_socket at address: 4004
 ----
 
@@ -1879,7 +1877,72 @@ As you can see the default listening port is 4004 but can be configured as descr
 
 This is a standard Java debug socket. You can then use the IDE of your choice. For instance, see the generic documentation for https://www.jetbrains.com/help/idea/attaching-to-local-process.html#create-rc[IntelliJ], https://code.visualstudio.com/docs/java/java-debugging#_attach[VS Code] and https://www.vogella.com/tutorials/EclipseDebugging/article.html#remote-debugging[Eclipse Desktop]. You will surely want to add `Processor` to be able to put breakpoints hit during route execution (as opposed to route definition creation).
 
+===== Standard JBang debugging
+
+You can debug your integration scripts by making use of the `--debug` flag provided by JBang.
+
+[source,bash]
+----
+jbang --debug  camel@apache/camel run hello.yaml
+Listening for transport dt_socket at address: 4004
+----
+
+This makes it possible to debug any of the Camel JBang commands, not only the `run` command as shown above.
+
 ==== Camel route debugging
+
+With *Camel 4.2* onwards you can now easily debug Camel routes from the command shell with the `debug` command as shown below:
+
+[source,bash]
+----
+camel debug hello.yaml
+----
+
+This will run the integration (in background) and the current shell running in foreground will act as a CLI based debugger.
+You can see snippets from the log (in the top), the middle section shown the current breakpoint.
+And in the bottom you can see content of the message (similar to the `camel trace` command)
+
+[source,text]
+----
+2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.loggingLevel=DEBUG
+2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.singleStepIncludeStartEnd=true
+2023-11-03 18:15:06.787  INFO 33384 --- [           main] mel.cli.connector.LocalCliConnector : Camel CLI enabled (local)
+2023-11-03 18:15:06.833  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.2.0-SNAPSHOT (foo) is starting
+2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport : Property-placeholders summary
+2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [application.properties]       my-name=Donald Duck
+2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Routes startup (started:1)
+2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext :     Started route-07a6 (timer://yaml)
+2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.2.0-SNAPSHOT (foo) started in 91ms (build:0ms init:0ms start:91ms)
+2023-11-03 18:15:11.951  INFO 33384 --- [ - timer://yaml] foo.camel.yaml:10                   : Before:
+
+Source: foo.camel.yaml:13                                                         History
+--------------------------------------------------------------------------------  ------------------------------------------------------------------------------------------
+  10:              - log:                                                         route-07a6/from-c041           (0ms)    4:       uri: timer
+  11:                  message: 'Before: ${body}'                                 route-07a6/log1                (1ms)   10:         - log:
+  12:                  id: log1
+  13: --->         - setProperty:
+  14:                  name: myProp
+  15:                  expression:
+  16:                    constant:
+  17:                      expression: '123'
+  18:                      id: constant-4004
+
+
+2023-11-03 18:15:11.951  33384 --- [ thread #4 - timer://yaml]              route-07a6/setProperty-321c :     3 - Breakpoint (4ms)
+ Exchange  (DefaultExchange)  InOnly  D48642E54410AF9-0000000000000000
+ Message   (DefaultMessage)
+ Body      (null)
+
+
+    Breakpoint suspended. Press ENTER to continue.
+----
+
+This is _basic_ but yet powerful, as you have this debugger always readily available, without having to startup VSCode or IDEA tooling.
+
+TIP: The `camel debug` can debug almost all the DSLs (there is a problem with groovy).
+
+
+==== Camel route debugging using VSCode or IDEA editors
 
 The Camel route debugger is available by default (the `camel-debug` component is automatically added to the classpath). By default, it can be reached through JMX at the URL `service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel`.
 

@@ -37,7 +37,7 @@ import org.fusesource.jansi.Ansi;
 public class MessageTableHelper {
 
     @FunctionalInterface
-    interface ColorChooser {
+    public interface ColorChooser {
         Ansi.Color color(String value);
     }
 

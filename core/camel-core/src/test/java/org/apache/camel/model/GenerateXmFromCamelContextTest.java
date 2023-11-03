@@ -51,7 +51,7 @@ public class GenerateXmFromCamelContextTest extends ContextTestSupport {
         log.info("Created: {}", buffer);
         assertNotNull(buffer);
         String out = buffer.toString();
-        assertTrue(out.indexOf("<from uri=\"direct:start\"/>") > 0, "Should contain the description");
+        assertTrue(out.indexOf("<from uri=\"direct:start\"") > 0, "Should contain from");
     }
 
     @Override

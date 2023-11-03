@@ -33,8 +33,8 @@ public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
         assertNotNull(xml);
         log.info(xml);
         assertTrue(xml.contains("<route xmlns=\"http://camel.apache.org/schema/spring\" id=\"Gouda\">"));
-        assertTrue(xml.contains("<from uri=\"direct:start-{{cheese.type}}\"/>"));
-        assertTrue(xml.contains("<to id=\"log\" uri=\"direct:end-{{cheese.type}}\"/>"));
+        assertTrue(xml.contains("uri=\"direct:start-{{cheese.type}}\""));
+        assertTrue(xml.contains("uri=\"direct:end-{{cheese.type}}\""));
     }
 
     @Override

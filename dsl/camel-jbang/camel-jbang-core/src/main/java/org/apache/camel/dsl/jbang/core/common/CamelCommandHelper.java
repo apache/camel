@@ -14,26 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.interceptor;
+package org.apache.camel.dsl.jbang.core.common;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.NamedNode;
-import org.apache.camel.Processor;
-import org.apache.camel.spi.CamelEvent.ExchangeEvent;
-import org.apache.camel.spi.Condition;
+public final class CamelCommandHelper {
 
-/**
- * A support class for {@link org.apache.camel.spi.Condition} implementations to use as base class.
- */
-public class ConditionSupport implements Condition {
-
-    @Override
-    public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
-        return false;
+    private CamelCommandHelper() {
     }
 
-    @Override
-    public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
-        return false;
+    public static String extractState(int status) {
+        if (status <= 4) {
+            return "Starting";
+        } else if (status == 5) {
+            return "Running";
+        } else if (status == 6) {
+            return "Suspending";
+        } else if (status == 7) {
+            return "Suspended";
+        } else if (status == 8) {
+            return "Terminating";
+        } else if (status == 9) {
+            return "Terminated";
+        } else {
+            return "Terminated";
+        }
     }
+
 }

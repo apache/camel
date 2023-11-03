@@ -714,6 +714,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                         RouteDefinitionHelper.prepareRoute(getCamelContextReference(), routeDefinition);
                         routeDefinition.markPrepared();
                     }
+                    // force the creation of ids on all nodes in the route
+                    RouteDefinitionHelper.forceAssignIds(this, routeDefinition.getInput());
+                    RouteDefinitionHelper.forceAssignIds(this, routeDefinition);
 
                     StartupStepRecorder recorder
                             = getCamelContextReference().getCamelContextExtension().getStartupStepRecorder();

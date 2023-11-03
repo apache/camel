@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -43,7 +42,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
 
         // use a routes definition to dump the routes
         String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("foo"));
-        assertTrue(xml.contains("<from uri=\"{{cool.start}}\"/>"));
+        assertThat(xml).containsPattern("\\Q<from id=\"\\Efrom[0-9]+\\Q\" uri=\"{{cool.start}}\"/>\\E");
         assertThat(xml).containsPattern("\\Q<to id=\"\\Eto[0-9]+\\Q\" uri=\"{{cool.end}}\"/>\\E");
     }
 
