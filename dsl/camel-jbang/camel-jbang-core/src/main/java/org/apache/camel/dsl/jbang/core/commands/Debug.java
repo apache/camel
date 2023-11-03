@@ -36,7 +36,6 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
-import com.github.freva.asciitable.Styler;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.main.KameletMain;
@@ -407,6 +406,9 @@ public class Debug extends Run {
                                 history.routeId = line.getString("routeId");
                                 history.nodeId = line.getString("nodeId");
                                 history.elapsed = line.getLongOrDefault("elapsed", 0);
+                                history.location = line.getString("location");
+                                history.line = line.getIntegerOrDefault("line", -1);
+                                history.code = line.getString("code");
                                 row.history.add(history);
                             }
                         }
@@ -451,15 +453,13 @@ public class Debug extends Run {
         List<Panel> panel = new ArrayList<>();
         if (!row.code.isEmpty()) {
             String loc = LoggerHelper.stripSourceLocationLineNumber(row.location);
-            panel.add(Panel.withCode(String.format("Source: %s", loc)));
-            panel.add(Panel.withCode("--------------------------------------------------------------------------------"));
+            panel.add(Panel.withCode(String.format("Source: %s", loc)).andHistory("History"));
+            panel.add(Panel.withCode("-".repeat(80))
+                    .andHistory("-".repeat(90)));
+
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
                 String c = Jsoner.unescape(code.code);
-                // cut code max length
-                if (c.length() > 70) {
-                    c = c.substring(0, 70);
-                }
                 String arrow = "    ";
                 if (code.match) {
                     if (row.first) {
@@ -471,11 +471,15 @@ public class Debug extends Run {
                     }
                 }
                 String msg = String.format("%4d: %s %s", code.line, arrow, c);
+                if (msg.length() > 80) {
+                    msg = msg.substring(0, 80);
+                }
+                int length = msg.length();
                 if (loggingColor && code.match) {
                     Ansi.Color col = row.last ? Ansi.Color.GREEN : Ansi.Color.RED;
                     msg = Ansi.ansi().bg(col).a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset().toString();
                 }
-                panel.add(Panel.withCode(msg));
+                panel.add(Panel.withCode(msg, length));
             }
             for (int i = row.code.size(); i < 11; i++) {
                 // empty lines so source code has same height
@@ -488,65 +492,61 @@ public class Debug extends Run {
                 int pos = row.history.size() - panel.size() - 2;
                 row.history = row.history.subList(pos, row.history.size());
             }
-            for (int i = 0; i < panel.size(); i++) {
+            for (int i = 2; i < panel.size(); i++) {
                 Panel p = panel.get(i);
-                if (i == 0) {
-                    p.history = "History";
-                } else if (i == 1) {
-                    p.history = "--------------------------------------------------------------------------------";
-                } else {
-                    if (row.history.size() > i - 2) {
-                        History h = row.history.get(i - 2);
-                        long elapsed = i == 2 ? 0 : h.elapsed; // the pseudo from should have 0 as elapsed
-                        String msg = String.format("%s/%s (%dms)", h.routeId, h.nodeId, elapsed);
-                        p.history = msg;
+                if (row.history.size() > i - 2) {
+                    History h = row.history.get(i - 2);
+
+                    String ids;
+                    if (source) {
+                        ids = h.location;
+                    } else {
+                        ids = h.routeId + "/" + h.nodeId;
                     }
-                }
-            }
-        }
+                    if (ids.length() > 30) {
+                        ids = ids.substring(ids.length() - 30);
+                    }
 
-        if (!panel.isEmpty()) {
-            Column[] colums = new Column[] {
-                    new Column().header("")
-                            .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(90)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT),
-                    new Column().header("")
-                            .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(90)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT) };
+                    ids = String.format("%-30.30s", ids);
+                    if (loggingColor) {
+                        ids = Ansi.ansi().fgCyan().a(ids).reset().toString();
+                    }
+                    long e = i == 2 ? 0 : h.elapsed; // the pseudo from should have 0 as elapsed
+                    String elapsed = "(" + e + "ms)";
 
-            Object[][] data = new Object[11][2];
-            for (int i = 0; i < 11; i++) {
-                Panel p = panel.get(i);
-                data[i] = new Object[] { p.code, p.history };
-            }
-
-            String table = AsciiTable.builder().styler(new Styler() {
-                @Override
-                public List<String> styleCell(Column column, int row, int col, List<String> data) {
-                    List<String> answer = data;
-                    if (logging && col == 0) {
-                        answer = new ArrayList<>();
-                        for (String s : data) {
-                            if (row <= 1) {
-                                s = Ansi.ansi().bg(Ansi.Color.WHITE).a(Ansi.Attribute.INTENSITY_BOLD).a(s).reset().toString();
-                            }
-                            if (s.contains("<--*")) {
-                                s = Ansi.ansi().bg(Ansi.Color.GREEN).a(Ansi.Attribute.INTENSITY_BOLD).a(s).reset().toString();
-                            } else if (s.contains("-->")) {
-                                s = Ansi.ansi().bg(Ansi.Color.RED).a(Ansi.Attribute.INTENSITY_BOLD).a(s).reset().toString();
-                            } else {
-                                s = Ansi.ansi().bgDefault().a(Ansi.Attribute.INTENSITY_BOLD).a(s).reset().toString();
-                            }
-                            answer.add(s);
+                    String c = "";
+                    if (h.code != null) {
+                        c = Jsoner.unescape(h.code);
+                        // cut code max length
+                        if (c.length() > 50) {
+                            c = c.substring(0, 50);
                         }
                     }
-                    return answer;
+
+                    String msg = String.format("%s %10.10s %4d: %s", ids, elapsed, h.line, c);
+                    p.history = msg;
                 }
-            }).border(AsciiTable.NO_BORDERS).data(colums, data).toString();
-            System.out.println(table);
+            }
         }
+
+        // the ascii-table does not work well with color cells (https://github.com/freva/ascii-table/issues/26)
+        for (Panel p : panel) {
+            String c = p.code;
+            String h = p.history;
+            String extra = "";
+            int len = p.length;
+            if (len < 80) {
+                extra = " ".repeat(80 - len);
+            } else {
+                c = c.substring(0, 80);
+            }
+            if (h.length() > 90) {
+                h = h.substring(0, 90);
+            }
+            String line = c + extra + "  " + h;
+            System.out.println(line);
+        }
+
     }
 
     private void printSuspendedRow(SuspendedRow row) {
@@ -939,23 +939,39 @@ public class Debug extends Run {
         String routeId;
         String nodeId;
         long elapsed;
+        String location;
+        int line;
+        String code;
     }
 
     private static class Panel {
-        String code;
-        String history;
+        String code = "";
+        String history = "";
+        int length;
 
         static Panel withCode(String code) {
+            return withCode(code, code.length());
+        }
+
+        static Panel withCode(String code, int length) {
             Panel p = new Panel();
             p.code = code;
+            p.length = length;
             return p;
+        }
+
+        Panel andHistory(String history) {
+            this.history = history;
+            return this;
         }
 
         static Panel withHistory(String history) {
             Panel p = new Panel();
             p.history = history;
+            p.length = history.length(); // no color
             return p;
         }
+
     }
 
 }
