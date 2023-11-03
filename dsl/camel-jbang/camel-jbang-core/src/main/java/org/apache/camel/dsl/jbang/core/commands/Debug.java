@@ -307,7 +307,6 @@ public class Debug extends Run {
             sw.write(line);
             sw.write(System.lineSeparator());
         }
-        sw.write(System.lineSeparator());
         printDebugStatus(spawnPid, sw);
 
         return 0;
@@ -400,6 +399,16 @@ public class Debug extends Run {
                                 row.code.add(code);
                             }
                         }
+                        lines = jo.getCollection("history");
+                        if (lines != null) {
+                            for (JsonObject line : lines) {
+                                History history = new History();
+                                history.routeId = line.getString("routeId");
+                                history.nodeId = line.getString("nodeId");
+                                history.elapsed = line.getLongOrDefault("elapsed", 0);
+                                row.history.add(history);
+                            }
+                        }
                         rows.add(row);
                     }
                 }
@@ -418,6 +427,7 @@ public class Debug extends Run {
             System.out.println(buffer.toString());
             // suspended breakpoints
             for (SuspendedRow row : rows) {
+                printSourceAndHistory(row);
                 printSuspendedRow(row);
                 this.suspendedRow = row;
                 // suspended so wait for user and remember position
@@ -436,14 +446,19 @@ public class Debug extends Run {
         }
     }
 
-    private void printSuspendedRow(SuspendedRow row) {
+    private void printSourceAndHistory(SuspendedRow row) {
+        List<Panel> panel = new ArrayList<>();
         if (!row.code.isEmpty()) {
             String loc = LoggerHelper.stripSourceLocationLineNumber(row.location);
-            System.out.printf("Source: %s%n", loc);
-            System.out.println("--------------------------------------------------------------------------------");
+            panel.add(Panel.withCode(String.format("Source: %s", loc)));
+            panel.add(Panel.withCode("--------------------------------------------------------------------------------"));
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
                 String c = Jsoner.unescape(code.code);
+                // cut code max length
+                if (c.length() > 70) {
+                    c = c.substring(0, 70);
+                }
                 String arrow = "    ";
                 if (code.match) {
                     if (row.first) {
@@ -457,18 +472,54 @@ public class Debug extends Run {
                 String msg = String.format("%4d: %s %s", code.line, arrow, c);
                 if (loggingColor && code.match) {
                     Ansi.Color col = row.last ? Ansi.Color.GREEN : Ansi.Color.RED;
-                    AnsiConsole.out().println(Ansi.ansi().bg(col).a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
-                } else {
-                    System.out.println(msg);
+                    msg = Ansi.ansi().bg(col).a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset().toString();
                 }
+                panel.add(Panel.withCode(msg));
             }
             for (int i = row.code.size(); i < 11; i++) {
                 // empty lines so source code has same height
-                System.out.println();
+                panel.add(new Panel());
             }
-            System.out.println();
+        }
+        if (!row.history.isEmpty()) {
+            if (row.history.size() > panel.size() - 2) {
+                // cut to only what we can display
+                int pos = row.history.size() - panel.size() - 2;
+                row.history = row.history.subList(pos, row.history.size());
+            }
+            for (int i = 0; i < panel.size(); i++) {
+                Panel p = panel.get(i);
+                if (i == 0) {
+                    p.history = "History";
+                } else if (i == 1) {
+                    p.history = "--------------------------------------------------------------------------------";
+                } else {
+                    if (row.history.size() > i - 2) {
+                        History h = row.history.get(i - 2);
+                        String msg = String.format("%s/%s (%dms)", h.routeId, h.nodeId, h.elapsed);
+                        p.history = msg;
+                    }
+                }
+            }
         }
 
+        if (!panel.isEmpty()) {
+            String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, panel, Arrays.asList(
+                    new Column().header("")
+                            .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                            .minWidth(90)
+                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(r -> r.code),
+                    new Column().header("")
+                            .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                            .minWidth(90)
+                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(r -> r.history)));
+            System.out.println(table);
+        }
+    }
+
+    private void printSuspendedRow(SuspendedRow row) {
         if (timestamp) {
             String ts;
             if (ago) {
@@ -845,12 +896,36 @@ public class Debug extends Run {
         JsonObject message;
         JsonObject exception;
         List<Code> code = new ArrayList<>();
+        List<History> history = new ArrayList<>();
     }
 
     private static class Code {
         int line;
         String code;
         boolean match;
+    }
+
+    private static class History {
+        String routeId;
+        String nodeId;
+        long elapsed;
+    }
+
+    private static class Panel {
+        String code;
+        String history;
+
+        static Panel withCode(String code) {
+            Panel p = new Panel();
+            p.code = code;
+            return p;
+        }
+
+        static Panel withHistory(String history) {
+            Panel p = new Panel();
+            p.history = history;
+            return p;
+        }
     }
 
 }

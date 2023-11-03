@@ -220,10 +220,20 @@ public class DebugDevConsole extends AbstractDevConsole {
             if (h.getRouteId() != null) {
                 jo.put("routeId", h.getRouteId());
             }
+            jo.put("elapsed", h.getElapsed());
             if (h.getNode() != null) {
                 jo.put("nodeId", h.getNode().getId());
+                if (h.getNode().getLocation() != null) {
+                    jo.put("location", h.getNode().getLocation());
+                }
+                if (h.getNode().getLineNumber() != -1) {
+                    jo.put("line", h.getNode().getLineNumber());
+                }
+                String t = ConsoleHelper.loadSourceLine(getCamelContext(), h.getNode().getLocation(), h.getNode().getLineNumber());
+                if (t != null) {
+                    jo.put("code", Jsoner.escape(t));
+                }
             }
-            jo.put("elapsed", h.getElapsed());
             arr.add(jo);
         }
 
