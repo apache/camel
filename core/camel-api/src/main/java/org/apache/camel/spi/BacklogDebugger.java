@@ -237,8 +237,8 @@ public interface BacklogDebugger extends StatefulService {
     void stepBreakpoint(String nodeId);
 
     /**
-     * To start single step mode from the current suspended breakpoint. Then invoke {@link #step()} to step to
-     * next node in the route.
+     * To start single step mode from the current suspended breakpoint. Then invoke {@link #step()} to step to next node
+     * in the route.
      */
     void stepBreakpoint();
 
@@ -279,16 +279,16 @@ public interface BacklogDebugger extends StatefulService {
     void enableBreakpoint(String nodeId);
 
     /**
-     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to
-     * suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception
-     * etc).
+     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and
+     * end, that allows to suspend and watch the incoming/complete exchange at the route (you can see message body as
+     * response, failed exception etc).
      */
     void setSingleStepIncludeStartEnd(boolean singleStepIncludeStartEnd);
 
     /**
-     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to
-     * suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception
-     * etc).
+     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and
+     * end, that allows to suspend and watch the incoming/complete exchange at the route (you can see message body as
+     * response, failed exception etc).
      */
     boolean isSingleStepIncludeStartEnd();
 

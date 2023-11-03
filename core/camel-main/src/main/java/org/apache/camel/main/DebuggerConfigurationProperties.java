@@ -115,9 +115,9 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to
-     * suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception
-     * etc).
+     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and
+     * end, that allows to suspend and watch the incoming/complete exchange at the route (you can see message body as
+     * response, failed exception etc).
      */
     public void setSingleStepIncludeStartEnd(boolean singleStepIncludeStartEnd) {
         this.singleStepIncludeStartEnd = singleStepIncludeStartEnd;
@@ -219,9 +219,9 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to
-     * suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception
-     * etc).
+     * In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and
+     * end, that allows to suspend and watch the incoming/complete exchange at the route (you can see message body as
+     * response, failed exception etc).
      */
     public DebuggerConfigurationProperties withSingleStepIncludeStartEnd(boolean singleStepIncludeStartEnd) {
         this.singleStepIncludeStartEnd = singleStepIncludeStartEnd;

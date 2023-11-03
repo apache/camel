@@ -969,7 +969,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 }
                 String completedId = event.getExchange().getExchangeId();
                 try {
-                    if (isSingleStepIncludeStartEnd() && singleStepExchangeId != null && singleStepExchangeId.equals(completedId)) {
+                    if (isSingleStepIncludeStartEnd() && singleStepExchangeId != null
+                            && singleStepExchangeId.equals(completedId)) {
                         doCompleted(exchange, definition, cause);
                     }
                 } finally {
