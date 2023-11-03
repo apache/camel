@@ -25,19 +25,12 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.github.freva.asciitable.AsciiTable;
-import com.github.freva.asciitable.Column;
-import com.github.freva.asciitable.HorizontalAlign;
-import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
@@ -55,16 +48,13 @@ import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 import static org.apache.camel.util.IOHelper.buffered;
 
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
 public class Debug extends Run {
 
     // TODO: Multiple hit breakpoints (select starting, or fail and tell user to select a specific route/node)
-    // TODO: cleanup context status
     // TODO: first+last as single option for camel.debugger.xxx
-    // TODO: message history panel right-next of source code
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
@@ -112,18 +102,14 @@ public class Debug extends Run {
 
     private MessageTableHelper tableHelper;
 
-    // status
+    // state from spawned debugging process
     private InputStream spawnOutput;
     private InputStream spawnError;
-    private List<String> logBuffer = new ArrayList<>(100);
-    private AtomicBoolean logUpdated = new AtomicBoolean();
-
-    @Deprecated
-    private Row contextRow = new Row();
-
+    private final List<String> logBuffer = new ArrayList<>(100);
+    private final AtomicBoolean logUpdated = new AtomicBoolean();
     private SuspendedRow suspendedRow = new SuspendedRow();
-    private AtomicBoolean waitForUser = new AtomicBoolean();
-    private AtomicLong debugCounter = new AtomicLong();
+    private final AtomicBoolean waitForUser = new AtomicBoolean();
+    private final AtomicLong debugCounter = new AtomicLong();
 
     public Debug(CamelJBangMain main) {
         super(main);
@@ -627,28 +613,6 @@ public class Debug extends Run {
         System.out.println();
     }
 
-    private String getContextStatusTable() {
-        return AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(contextRow), Arrays.asList(
-                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
-                new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
-                new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                        .with(r -> extractState(r.state)),
-                new Column().header("RELOAD").headerAlign(HorizontalAlign.CENTER)
-                        .with(r -> r.reloaded),
-                new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("ROUTE").with(this::getRoutes),
-                new Column().header("MSG/S").with(this::getThroughput),
-                new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("FAIL").with(r -> r.failed),
-                new Column().header("INFLIGHT").with(r -> r.inflight),
-                new Column().header("LAST").with(r -> r.last),
-                new Column().header("DELTA").with(this::getDelta),
-                new Column().header("SINCE-LAST").with(this::getSinceLast)));
-    }
-
     private void clearScreen() {
         AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
     }
@@ -698,153 +662,6 @@ public class Debug extends Run {
             // ignore
         }
         return null;
-    }
-
-    private void updateContextStatus(long pid) {
-        JsonObject root = loadStatus(pid);
-        // there must be a status file for the running Camel integration
-        if (root != null) {
-            JsonObject context = (JsonObject) root.get("context");
-            if (context == null) {
-                return;
-            }
-            contextRow.name = context.getString("name");
-            if ("CamelJBang".equals(contextRow.name)) {
-                contextRow.name = ProcessHelper.extractName(root, null);
-            }
-            contextRow.pid = Long.toString(pid);
-            contextRow.uptime = extractSince();
-            contextRow.age = TimeUtils.printSince(contextRow.uptime);
-            JsonObject runtime = (JsonObject) root.get("runtime");
-            contextRow.platform = extractPlatform(null, runtime);
-            contextRow.state = context.getInteger("phase");
-            contextRow.camelVersion = context.getString("version");
-            Map<String, ?> stats = context.getMap("statistics");
-            if (stats != null) {
-                Object thp = stats.get("exchangesThroughput");
-                if (thp != null) {
-                    contextRow.throughput = thp.toString();
-                }
-                contextRow.total = stats.get("exchangesTotal").toString();
-                contextRow.inflight = stats.get("exchangesInflight").toString();
-                contextRow.failed = stats.get("exchangesFailed").toString();
-                contextRow.reloaded = stats.get("reloaded").toString();
-                Object last = stats.get("lastProcessingTime");
-                if (last != null) {
-                    contextRow.last = last.toString();
-                }
-                last = stats.get("deltaProcessingTime");
-                if (last != null) {
-                    contextRow.delta = last.toString();
-                }
-                last = stats.get("sinceLastCreatedExchange");
-                if (last != null) {
-                    contextRow.sinceLastStarted = last.toString();
-                }
-                last = stats.get("sinceLastCompletedExchange");
-                if (last != null) {
-                    contextRow.sinceLastCompleted = last.toString();
-                }
-                last = stats.get("sinceLastFailedExchange");
-                if (last != null) {
-                    contextRow.sinceLastFailed = last.toString();
-                }
-            }
-            JsonArray array = (JsonArray) root.get("routes");
-            contextRow.routeStarted = 0;
-            contextRow.routeTotal = 0;
-            for (int i = 0; i < array.size(); i++) {
-                JsonObject o = (JsonObject) array.get(i);
-                String state = o.getString("state");
-                contextRow.routeTotal++;
-                if ("Started".equals(state)) {
-                    contextRow.routeStarted++;
-                }
-            }
-
-            JsonObject hc = (JsonObject) root.get("healthChecks");
-            boolean rdy = hc != null && hc.getBoolean("ready");
-            if (rdy) {
-                contextRow.ready = "1/1";
-            } else {
-                contextRow.ready = "0/1";
-            }
-        }
-    }
-
-    private String extractPlatform(ProcessHandle ph, JsonObject runtime) {
-        String answer = runtime != null ? runtime.getString("platform") : null;
-        if ("Camel".equals(answer)) {
-            // generic camel, we need to check if we run in JBang
-            String cl = ph != null ? ph.info().commandLine().orElse("") : "";
-            if (cl.contains("main.CamelJBang run")) {
-                answer = "JBang";
-            }
-        }
-        return answer;
-    }
-
-    private static class Row {
-        String pid;
-        String platform;
-        String camelVersion;
-        String name;
-        String ready;
-        int routeStarted;
-        int routeTotal;
-        int state;
-        String reloaded;
-        String age;
-        long uptime;
-        String throughput;
-        String total;
-        String failed;
-        String inflight;
-        String last;
-        String delta;
-        String sinceLastStarted;
-        String sinceLastCompleted;
-        String sinceLastFailed;
-    }
-
-    protected String getSinceLast(Row r) {
-        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
-        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
-        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
-        return s1 + "/" + s2 + "/" + s3;
-    }
-
-    protected String getThroughput(Row r) {
-        String s = r.throughput;
-        if (s == null || s.isEmpty()) {
-            s = "";
-        }
-        return s;
-    }
-
-    protected String getRoutes(Row r) {
-        return r.routeStarted + "/" + r.routeTotal;
-    }
-
-    protected String getDelta(Row r) {
-        if (r.delta != null) {
-            if (r.delta.startsWith("-")) {
-                return r.delta;
-            } else if (!"0".equals(r.delta)) {
-                // use plus sign to denote slower when positive
-                return "+" + r.delta;
-            }
-        }
-        return r.delta;
-    }
-
-    public static long extractSince() {
-        ProcessHandle ph = ProcessHandle.current();
-        long since = 0;
-        if (ph.info().startInstant().isPresent()) {
-            since = ph.info().startInstant().get().toEpochMilli();
-        }
-        return since;
     }
 
     private String getDataAsTable(SuspendedRow r) {
@@ -963,13 +780,6 @@ public class Debug extends Run {
         Panel andHistory(String history) {
             this.history = history;
             return this;
-        }
-
-        static Panel withHistory(String history) {
-            Panel p = new Panel();
-            p.history = history;
-            p.length = history.length(); // no color
-            return p;
         }
 
     }
