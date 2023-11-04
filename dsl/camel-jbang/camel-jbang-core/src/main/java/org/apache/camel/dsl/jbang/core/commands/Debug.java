@@ -447,7 +447,10 @@ public class Debug extends Run {
         List<Panel> panel = new ArrayList<>();
         if (!row.code.isEmpty()) {
             String loc = LoggerHelper.stripSourceLocationLineNumber(row.location);
-            panel.add(Panel.withCode(String.format("Source: %s", loc)).andHistory("History"));
+            if (loc.length() < 72) {
+                loc = loc + " ".repeat(72 - loc.length());
+            }
+            panel.add(Panel.withCode("Source: " + loc).andHistory("History"));
             panel.add(Panel.withCode("-".repeat(80))
                     .andHistory("-".repeat(90)));
 
@@ -470,14 +473,32 @@ public class Debug extends Run {
                 }
                 int length = msg.length();
                 if (loggingColor && code.match) {
-                    Ansi.Color col = row.last ? Ansi.Color.GREEN : Ansi.Color.RED;
+                    Ansi.Color col = Ansi.Color.BLUE;
+                    if (row.failed && row.last) {
+                        col = Ansi.Color.RED;
+                    } else if (row.last) {
+                        col = Ansi.Color.GREEN;
+                    }
+                    // need to fill out entire line, so fill in spaces
+                    if (length < 80) {
+                        String extra = " ".repeat(80 - length);
+                        msg = msg + extra;
+                        length = 80;
+                    }
                     msg = Ansi.ansi().bg(col).a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset().toString();
+                } else {
+                    // need to fill out entire line, so fill in spaces
+                    if (length < 80) {
+                        String extra = " ".repeat(80 - length);
+                        msg = msg + extra;
+                        length = 80;
+                    }
                 }
                 panel.add(Panel.withCode(msg, length));
             }
             for (int i = row.code.size(); i < 11; i++) {
                 // empty lines so source code has same height
-                panel.add(new Panel());
+                panel.add(Panel.withCode(" ".repeat(80)));
             }
         }
         if (!row.history.isEmpty()) {
@@ -511,15 +532,16 @@ public class Debug extends Run {
                     String c = "";
                     if (h.code != null) {
                         c = Jsoner.unescape(h.code);
+                        c = c.trim();
                     }
 
                     String fids = String.format("%-30.30s", ids);
-                    String msg = String.format("%s %10.10s %4d: %s", fids, elapsed, h.line, c);
+                    String msg = String.format("%s %10.10s %4d:  %s", fids, elapsed, h.line, c);
                     int len = msg.length();
                     if (loggingColor) {
                         fids = String.format("%-30.30s", ids);
                         fids = Ansi.ansi().fgCyan().a(fids).reset().toString();
-                        msg = String.format("%s %10.10s %4d: %s", fids, elapsed, h.line, c);
+                        msg = String.format("%s %10.10s %4d:   %s", fids, elapsed, h.line, c);
                     }
 
                     p.history = msg;
@@ -532,18 +554,11 @@ public class Debug extends Run {
         for (Panel p : panel) {
             String c = p.code;
             String h = p.history;
-            String extra = "";
-            int len = p.codeLength;
-            if (len < 80) {
-                extra = " ".repeat(80 - len);
-            } else {
-                c = c.substring(0, 80);
+            int len = p.historyLength;
+            if (len > 90) {
+                h = h.substring(0, 90);
             }
-            len = p.historyLength;
-            if (len > 95) {
-                h = h.substring(0, 95);
-            }
-            String line = c + extra + "  " + h;
+            String line = c + "    " + h;
             System.out.println(line);
         }
     }

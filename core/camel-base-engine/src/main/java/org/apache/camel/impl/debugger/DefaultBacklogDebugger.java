@@ -934,22 +934,6 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         }
 
         @Override
-        public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
-            // we want to capture if there was an exception
-            Throwable e = exchange.getException();
-            if (e != null) {
-                String toNode = definition.getId();
-                BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(toNode);
-                if (msg != null) {
-                    String xml = MessageHelper.dumpExceptionAsXML(e, 4);
-                    msg.setExceptionAsXml(xml);
-                    String json = MessageHelper.dumpExceptionAsJSon(e, 4, true);
-                    msg.setExceptionAsJSon(json);
-                }
-            }
-        }
-
-        @Override
         public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
             // always match in step (both before and after)
             return true;
