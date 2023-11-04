@@ -233,7 +233,7 @@ public class Debug extends Run {
         // enable light-weight debugger (not camel-debug JAR that is for IDEA/VSCode tooling with remote JMX)
         cmds.add("--prop=camel.debug.enabled=true");
         if (breakpoint == null) {
-            cmds.add("--prop=camel.debug.breakpoints=route:*");
+            cmds.add("--prop=camel.debug.breakpoints=_all_routes_");
         } else {
             cmds.add("--prop=camel.debug.breakpoints=" + breakpoint);
         }

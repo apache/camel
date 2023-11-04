@@ -54,18 +54,18 @@ public interface BacklogDebugger extends StatefulService {
     /**
      * Special breakpoint id token to automatically add breakpoint for every route.
      */
-    String BREAKPOINT_ALL_ROUTES = "route:*";
+    String BREAKPOINT_ALL_ROUTES = "_all_routes_";
 
     /**
      * Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by
-     * comma. Use special value route:* to add a breakpoint for the first node for every route, in other words this
+     * comma. Use special value _all_routes_ to add a breakpoint for the first node for every route, in other words this
      * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
     String getInitialBreakpoints();
 
     /**
      * Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by
-     * comma. Use special value route:* to add a breakpoint for the first node for every route, in other words this
+     * comma. Use special value _all_routes_ to add a breakpoint for the first node for every route, in other words this
      * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
     void setInitialBreakpoints(String initialBreakpoints);
