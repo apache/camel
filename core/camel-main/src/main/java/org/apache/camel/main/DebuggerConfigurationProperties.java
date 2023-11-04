@@ -290,5 +290,4 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
         return (DebuggerConfigurationProperties) this;
     }
 
-
 }

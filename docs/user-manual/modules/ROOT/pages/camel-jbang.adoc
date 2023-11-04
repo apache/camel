@@ -1941,6 +1941,40 @@ This is _basic_ but yet powerful, as you have this debugger always readily avail
 
 TIP: The `camel debug` can debug almost all the DSLs (there is a problem with groovy).
 
+===== Configuring breakpoints
+
+When using `camel debug` then breakpoints is by default added to every route. However, you can specify which breakpoints to use instead with the `--breakpoint` option.
+This parameter is able to match the Camel routes using a pattern style:
+
+1. Exact match by node ids
+2. Match node ids by pattern (wildcard and regular expression)
+3. Match by EIP kind (setHeader, setBody, choice, split, etc.)
+4. Match by source and line number
+5. Match by line number
+
+Multiple breakpoints can be separated by comma.
+
+For example to set a breakpoint at the setHeader EIP you do:
+
+[source,bash]
+----
+camel debug hello.yaml --breakpoint=setHeader
+----
+
+To set a breakpoint at line 18:
+
+[source,bash]
+----
+camel debug hello.yaml --breakpoint=18
+----
+
+To set a breakpoint at line 18 and 34
+
+[source,bash]
+----
+camel debug hello.yaml --breakpoint=18,34
+----
+
 
 ==== Camel route debugging using VSCode or IDEA editors
 
