@@ -1504,6 +1504,7 @@ public abstract class BaseMainSupport extends BaseService {
         debugger.setIncludeException(config.isIncludeException());
         debugger.setLoggingLevel(config.getLoggingLevel().name());
         debugger.setSuspendMode(config.isWaitForAttach());
+        debugger.setFallbackTimeout(config.getFallbackTimeout());
 
         // start debugger after context is started
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {

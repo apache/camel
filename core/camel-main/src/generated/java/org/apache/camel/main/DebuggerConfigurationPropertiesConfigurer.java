@@ -31,6 +31,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "Breakpoints": target.setBreakpoints(property(camelContext, java.lang.String.class, value)); return true;
         case "enabled":
         case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "fallbacktimeout":
+        case "FallbackTimeout": target.setFallbackTimeout(property(camelContext, long.class, value)); return true;
         case "includeexception":
         case "IncludeException": target.setIncludeException(property(camelContext, boolean.class, value)); return true;
         case "includeexchangeproperties":
@@ -58,6 +60,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "Breakpoints": return java.lang.String.class;
         case "enabled":
         case "Enabled": return boolean.class;
+        case "fallbacktimeout":
+        case "FallbackTimeout": return long.class;
         case "includeexception":
         case "IncludeException": return boolean.class;
         case "includeexchangeproperties":
@@ -86,6 +90,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "Breakpoints": return target.getBreakpoints();
         case "enabled":
         case "Enabled": return target.isEnabled();
+        case "fallbacktimeout":
+        case "FallbackTimeout": return target.getFallbackTimeout();
         case "includeexception":
         case "IncludeException": return target.isIncludeException();
         case "includeexchangeproperties":

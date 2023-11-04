@@ -49,6 +49,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     private boolean includeExchangeProperties = true;
     @Metadata(defaultValue = "true")
     private boolean includeException = true;
+    @Metadata(label = "advanced", defaultValue = "300")
+    private long fallbackTimeout = 300;
 
     public DebuggerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -180,6 +182,18 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
         this.includeException = includeException;
     }
 
+    public long getFallbackTimeout() {
+        return fallbackTimeout;
+    }
+
+    /**
+     * Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used
+     * for waiting for a message to arrive at a given breakpoint.
+     */
+    public void setFallbackTimeout(long fallbackTimeout) {
+        this.fallbackTimeout = fallbackTimeout;
+    }
+
     /**
      * Enables Debugger in your Camel application.
      */
@@ -266,5 +280,15 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
         this.includeException = includeException;
         return (DebuggerConfigurationProperties) this;
     }
+
+    /**
+     * Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used
+     * for waiting for a message to arrive at a given breakpoint.
+     */
+    public DebuggerConfigurationProperties withFallbackTimeout(long fallbackTimeout) {
+        this.fallbackTimeout = fallbackTimeout;
+        return (DebuggerConfigurationProperties) this;
+    }
+
 
 }
