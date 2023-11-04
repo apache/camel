@@ -52,20 +52,20 @@ public interface BacklogDebugger extends StatefulService {
     String SUSPEND_MODE_SYSTEM_PROP_NAME = "org.apache.camel.debugger.suspend";
 
     /**
-     * Special breakpoint id token to automatically add breakpoint for every first node in every route
+     * Special breakpoint id token to automatically add breakpoint for every route.
      */
-    String BREAKPOINT_FIRST_ROUTES = "FIRST_ROUTES";
+    String BREAKPOINT_ALL_ROUTES = "route:*";
 
     /**
      * Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by
-     * comma. Use special value FIRST_ROUTES to add a breakpoint for the first node for every route, in other words this
+     * comma. Use special value route:* to add a breakpoint for the first node for every route, in other words this
      * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
     String getInitialBreakpoints();
 
     /**
      * Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by
-     * comma. Use special value FIRST_ROUTES to add a breakpoint for the first node for every route, in other words this
+     * comma. Use special value route:* to add a breakpoint for the first node for every route, in other words this
      * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
     void setInitialBreakpoints(String initialBreakpoints);

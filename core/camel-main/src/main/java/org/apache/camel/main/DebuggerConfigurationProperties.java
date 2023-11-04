@@ -103,7 +103,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by
-     * comma. Use special value FIRST_ROUTES to add a breakpoint for the first node for every route, in other words this
+     * comma. Use special value route:* to add a breakpoint for the first node for every route, in other words this
      * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
     public void setBreakpoints(String breakpoints) {
@@ -207,7 +207,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by
-     * comma. Use special value FIRST_ROUTES to add a breakpoint for the first node for every route, in other words this
+     * comma. Use special value route:* to add a breakpoint for the first node for every route, in other words this
      * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
     public DebuggerConfigurationProperties withBreakpoints(String breakpoints) {

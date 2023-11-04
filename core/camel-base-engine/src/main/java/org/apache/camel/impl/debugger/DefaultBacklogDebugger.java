@@ -723,8 +723,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         if (initialBreakpoints != null) {
             for (String b : initialBreakpoints.split(",")) {
                 b = b.trim();
-                if (!DefaultBacklogDebugger.BREAKPOINT_FIRST_ROUTES.equals(b)) {
-                    // FIRST_ROUTES are special and handled elsewhere
+                if (!DefaultBacklogDebugger.BREAKPOINT_ALL_ROUTES.equals(b)) {
+                    // BREAKPOINT_ALL_ROUTES are special and handled elsewhere
                     addBreakpoint(b);
                 }
             }

@@ -184,9 +184,9 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 if (!camelContext.hasService(debugger)) {
                     camelContext.addService(debugger);
                 }
-                // if starting breakpoint is FIRST_ROUTES then automatic add first as a breakpoint
+                // if starting breakpoint is BREAKPOINT_ALL_ROUTES then automatic add first as a breakpoint
                 if (first && debugger.getInitialBreakpoints() != null
-                        && debugger.getInitialBreakpoints().contains(BacklogDebugger.BREAKPOINT_FIRST_ROUTES)) {
+                        && debugger.getInitialBreakpoints().contains(BacklogDebugger.BREAKPOINT_ALL_ROUTES)) {
                     if (debugger.isSingleStepIncludeStartEnd()) {
                         // we want route to be breakpoint (use input)
                         String id = routeDefinition.getInput().getId();
