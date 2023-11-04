@@ -169,9 +169,6 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
         this.includeExchangeProperties = includeExchangeProperties;
     }
 
-    /**
-     * Trace messages to include exception if the message failed
-     */
     public boolean isIncludeException() {
         return includeException;
     }
