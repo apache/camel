@@ -16,9 +16,6 @@
  */
 package org.apache.camel.observation;
 
-import java.util.Collections;
-import java.util.Set;
-
 import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,8 +36,8 @@ class TwoServiceWithExcludeTest extends CamelMicrometerObservationTestSupport {
     }
 
     @Override
-    protected Set<String> getExcludePatterns() {
-        return Collections.singleton("direct:ServiceB");
+    protected String getExcludePatterns() {
+        return "direct:ServiceB";
     }
 
     @Test

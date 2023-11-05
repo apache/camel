@@ -28,7 +28,7 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "encoding":
         case "Encoding": target.setEncoding(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
-        case "ExcludePatterns": target.setExcludePatterns(property(camelContext, java.util.Set.class, value)); return true;
+        case "ExcludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "instrumentationname":
         case "InstrumentationName": target.setInstrumentationName(property(camelContext, java.lang.String.class, value)); return true;
         case "tracer":
@@ -49,7 +49,7 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "encoding":
         case "Encoding": return boolean.class;
         case "excludepatterns":
-        case "ExcludePatterns": return java.util.Set.class;
+        case "ExcludePatterns": return java.lang.String.class;
         case "instrumentationname":
         case "InstrumentationName": return java.lang.String.class;
         case "tracer":
@@ -78,15 +78,6 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "Tracer": return target.getTracer();
         case "tracingstrategy":
         case "TracingStrategy": return target.getTracingStrategy();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "excludepatterns":
-        case "ExcludePatterns": return java.lang.String.class;
         default: return null;
         }
     }
