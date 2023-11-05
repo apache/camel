@@ -16,8 +16,6 @@
  */
 package org.apache.camel.parser.helper;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,15 +32,12 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.InfixExpression;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MemberValuePair;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MethodInvocation;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.NumberLiteral;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.QualifiedName;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SimpleName;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.StringLiteral;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.TextBlock;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Type;
@@ -52,6 +47,8 @@ import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
+
+import static org.apache.camel.parser.helper.ParserCommon.findLineNumber;
 
 /**
  * A Camel Java Rest DSL parser that only depends on the Roaster API.
@@ -529,18 +526,8 @@ public final class CamelJavaRestDslParserHelper {
                                 || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
                         if (valid) {
                             Expression exp = (Expression) ann.getInternal();
-                            if (exp instanceof SingleMemberAnnotation singleMemberAnnotation) {
-                                exp = singleMemberAnnotation.getValue();
-                            } else if (exp instanceof NormalAnnotation normalAnnotation) {
-                                List<?> values = normalAnnotation.values();
-                                for (Object value : values) {
-                                    MemberValuePair pair = (MemberValuePair) value;
-                                    if ("uri".equals(pair.getName().toString())) {
-                                        exp = pair.getValue();
-                                        break;
-                                    }
-                                }
-                            }
+                            exp = ParserCommon.evalExpression(exp);
+
                             if (exp != null) {
                                 return getLiteralValue(clazz, block, exp);
                             }
@@ -632,28 +619,4 @@ public final class CamelJavaRestDslParserHelper {
         }
         return false;
     }
-
-    private static int findLineNumber(String fullyQualifiedFileName, int position) {
-        int lines = 0;
-
-        try {
-            int current = 0;
-            try (BufferedReader br = new BufferedReader(new FileReader(fullyQualifiedFileName))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    lines++;
-                    current += line.length() + 1; // add 1 for line feed
-                    if (current >= position) {
-                        return lines;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-            return -1;
-        }
-
-        return lines;
-    }
-
 }
