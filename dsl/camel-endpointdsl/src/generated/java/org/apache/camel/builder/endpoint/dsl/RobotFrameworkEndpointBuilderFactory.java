@@ -3676,7 +3676,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the name of the header {@code RobotVariables}.
          */
         public String robotVariables() {
-            return "RobotVariables";
+            return "CamelRobotVariables";
         }
 
         /**
@@ -3689,7 +3689,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the name of the header {@code RobotReturnCode}.
          */
         public String robotReturnCode() {
-            return "RobotReturnCode";
+            return "CamelRobotReturnCode";
         }
 
         /**
@@ -3702,7 +3702,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the name of the header {@code RobotResourceUri}.
          */
         public String robotResourceUri() {
-            return "RobotResourceUri";
+            return "CamelRobotResourceUri";
         }
     }
     static RobotFrameworkEndpointBuilder endpointBuilder(

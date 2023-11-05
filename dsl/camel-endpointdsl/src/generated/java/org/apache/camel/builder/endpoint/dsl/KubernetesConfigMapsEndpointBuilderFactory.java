@@ -1529,7 +1529,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1542,7 +1542,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1555,7 +1555,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesConfigMapsLabels}.
          */
         public String kubernetesConfigMapsLabels() {
-            return "KubernetesConfigMapsLabels";
+            return "CamelKubernetesConfigMapsLabels";
         }
 
         /**
@@ -1568,7 +1568,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesConfigMapName}.
          */
         public String kubernetesConfigMapName() {
-            return "KubernetesConfigMapName";
+            return "CamelKubernetesConfigMapName";
         }
 
         /**
@@ -1581,7 +1581,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesConfigData}.
          */
         public String kubernetesConfigData() {
-            return "KubernetesConfigData";
+            return "CamelKubernetesConfigData";
         }
 
         /**
@@ -1595,7 +1595,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventAction}.
          */
         public String kubernetesEventAction() {
-            return "KubernetesEventAction";
+            return "CamelKubernetesEventAction";
         }
 
         /**
@@ -1608,7 +1608,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventTimestamp}.
          */
         public String kubernetesEventTimestamp() {
-            return "KubernetesEventTimestamp";
+            return "CamelKubernetesEventTimestamp";
         }
     }
     static KubernetesConfigMapsEndpointBuilder endpointBuilder(

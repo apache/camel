@@ -806,7 +806,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the name of the header {@code XsltResourceUri}.
          */
         public String xsltResourceUri() {
-            return "XsltResourceUri";
+            return "CamelXsltResourceUri";
         }
 
         /**
@@ -819,7 +819,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the name of the header {@code XsltStylesheet}.
          */
         public String xsltStylesheet() {
-            return "XsltStylesheet";
+            return "CamelXsltStylesheet";
         }
 
         /**
@@ -832,7 +832,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the name of the header {@code XsltFileName}.
          */
         public String xsltFileName() {
-            return "XsltFileName";
+            return "CamelXsltFileName";
         }
     }
     static XsltSaxonEndpointBuilder endpointBuilder(

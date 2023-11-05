@@ -1018,7 +1018,7 @@ public interface DataSetEndpointBuilderFactory {
          * @return the name of the header {@code DataSetIndex}.
          */
         public String dataSetIndex() {
-            return "DataSetIndex";
+            return "CamelDataSetIndex";
         }
     }
     static DataSetEndpointBuilder endpointBuilder(

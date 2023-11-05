@@ -412,7 +412,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * @return the name of the header {@code SqlStoredTemplate}.
          */
         public String sqlStoredTemplate() {
-            return "SqlStoredTemplate";
+            return "CamelSqlStoredTemplate";
         }
 
         /**
@@ -425,7 +425,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * @return the name of the header {@code SqlStoredParameters}.
          */
         public String sqlStoredParameters() {
-            return "SqlStoredParameters";
+            return "CamelSqlStoredParameters";
         }
 
         /**
@@ -438,7 +438,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * @return the name of the header {@code SqlStoredUpdateCount}.
          */
         public String sqlStoredUpdateCount() {
-            return "SqlStoredUpdateCount";
+            return "CamelSqlStoredUpdateCount";
         }
     }
     static SqlStoredEndpointBuilder endpointBuilder(

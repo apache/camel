@@ -569,7 +569,7 @@ public interface KMS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKMSOperation}.
          */
         public String awsKMSOperation() {
-            return "AwsKMSOperation";
+            return "CamelAwsKMSOperation";
         }
 
         /**
@@ -583,7 +583,7 @@ public interface KMS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKMSLimit}.
          */
         public String awsKMSLimit() {
-            return "AwsKMSLimit";
+            return "CamelAwsKMSLimit";
         }
 
         /**
@@ -596,7 +596,7 @@ public interface KMS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKMSDescription}.
          */
         public String awsKMSDescription() {
-            return "AwsKMSDescription";
+            return "CamelAwsKMSDescription";
         }
 
         /**
@@ -609,7 +609,7 @@ public interface KMS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKMSKeyId}.
          */
         public String awsKMSKeyId() {
-            return "AwsKMSKeyId";
+            return "CamelAwsKMSKeyId";
         }
 
         /**
@@ -622,7 +622,7 @@ public interface KMS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKMSPendingWindowInDays}.
          */
         public String awsKMSPendingWindowInDays() {
-            return "AwsKMSPendingWindowInDays";
+            return "CamelAwsKMSPendingWindowInDays";
         }
     }
     static KMS2EndpointBuilder endpointBuilder(String componentName, String path) {

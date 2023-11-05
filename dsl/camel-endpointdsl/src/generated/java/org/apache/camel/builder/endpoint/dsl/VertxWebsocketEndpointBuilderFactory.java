@@ -881,7 +881,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the name of the header {@code VertxWebsocket.connectionKey}.
          */
         public String vertxwebsocketConnectionkey() {
-            return "VertxWebsocket.connectionKey";
+            return "CamelVertxWebsocket.connectionKey";
         }
 
         /**
@@ -898,7 +898,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the name of the header {@code VertxWebsocket.sendToAll}.
          */
         public String vertxwebsocketSendtoall() {
-            return "VertxWebsocket.sendToAll";
+            return "CamelVertxWebsocket.sendToAll";
         }
 
         /**
@@ -911,7 +911,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the name of the header {@code VertxWebsocket.remoteAddress}.
          */
         public String vertxwebsocketRemoteaddress() {
-            return "VertxWebsocket.remoteAddress";
+            return "CamelVertxWebsocket.remoteAddress";
         }
 
         /**
@@ -925,7 +925,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the name of the header {@code VertxWebsocket.event}.
          */
         public String vertxwebsocketEvent() {
-            return "VertxWebsocket.event";
+            return "CamelVertxWebsocket.event";
         }
     }
     static VertxWebsocketEndpointBuilder endpointBuilder(

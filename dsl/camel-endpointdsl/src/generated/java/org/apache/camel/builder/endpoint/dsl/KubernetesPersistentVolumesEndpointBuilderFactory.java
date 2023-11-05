@@ -542,7 +542,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -556,7 +556,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * KubernetesPersistentVolumesLabels}.
          */
         public String kubernetesPersistentVolumesLabels() {
-            return "KubernetesPersistentVolumesLabels";
+            return "CamelKubernetesPersistentVolumesLabels";
         }
 
         /**
@@ -570,7 +570,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * KubernetesPersistentVolumeName}.
          */
         public String kubernetesPersistentVolumeName() {
-            return "KubernetesPersistentVolumeName";
+            return "CamelKubernetesPersistentVolumeName";
         }
     }
     static KubernetesPersistentVolumesEndpointBuilder endpointBuilder(

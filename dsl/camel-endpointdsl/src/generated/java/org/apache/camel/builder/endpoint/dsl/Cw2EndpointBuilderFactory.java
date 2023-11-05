@@ -589,7 +589,7 @@ public interface Cw2EndpointBuilderFactory {
          * @return the name of the header {@code AwsCwMetricNamespace}.
          */
         public String awsCwMetricNamespace() {
-            return "AwsCwMetricNamespace";
+            return "CamelAwsCwMetricNamespace";
         }
 
         /**
@@ -602,7 +602,7 @@ public interface Cw2EndpointBuilderFactory {
          * @return the name of the header {@code AwsCwMetricName}.
          */
         public String awsCwMetricName() {
-            return "AwsCwMetricName";
+            return "CamelAwsCwMetricName";
         }
 
         /**
@@ -615,7 +615,7 @@ public interface Cw2EndpointBuilderFactory {
          * @return the name of the header {@code AwsCwMetricValue}.
          */
         public String awsCwMetricValue() {
-            return "AwsCwMetricValue";
+            return "CamelAwsCwMetricValue";
         }
 
         /**
@@ -628,7 +628,7 @@ public interface Cw2EndpointBuilderFactory {
          * @return the name of the header {@code AwsCwMetricUnit}.
          */
         public String awsCwMetricUnit() {
-            return "AwsCwMetricUnit";
+            return "CamelAwsCwMetricUnit";
         }
 
         /**
@@ -641,7 +641,7 @@ public interface Cw2EndpointBuilderFactory {
          * @return the name of the header {@code AwsCwMetricTimestamp}.
          */
         public String awsCwMetricTimestamp() {
-            return "AwsCwMetricTimestamp";
+            return "CamelAwsCwMetricTimestamp";
         }
 
         /**
@@ -654,7 +654,7 @@ public interface Cw2EndpointBuilderFactory {
          * @return the name of the header {@code AwsCwMetricDimensions}.
          */
         public String awsCwMetricDimensions() {
-            return "AwsCwMetricDimensions";
+            return "CamelAwsCwMetricDimensions";
         }
 
         /**
@@ -667,7 +667,7 @@ public interface Cw2EndpointBuilderFactory {
          * @return the name of the header {@code AwsCwMetricDimensionName}.
          */
         public String awsCwMetricDimensionName() {
-            return "AwsCwMetricDimensionName";
+            return "CamelAwsCwMetricDimensionName";
         }
 
         /**
@@ -680,7 +680,7 @@ public interface Cw2EndpointBuilderFactory {
          * @return the name of the header {@code AwsCwMetricDimensionValue}.
          */
         public String awsCwMetricDimensionValue() {
-            return "AwsCwMetricDimensionValue";
+            return "CamelAwsCwMetricDimensionValue";
         }
     }
     static Cw2EndpointBuilder endpointBuilder(String componentName, String path) {

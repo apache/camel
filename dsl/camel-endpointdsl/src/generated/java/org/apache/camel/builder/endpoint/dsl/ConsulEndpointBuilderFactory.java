@@ -1604,7 +1604,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulAction}.
          */
         public String consulAction() {
-            return "ConsulAction";
+            return "CamelConsulAction";
         }
 
         /**
@@ -1617,7 +1617,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulKey}.
          */
         public String consulKey() {
-            return "ConsulKey";
+            return "CamelConsulKey";
         }
 
         /**
@@ -1630,7 +1630,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulEventId}.
          */
         public String consulEventId() {
-            return "ConsulEventId";
+            return "CamelConsulEventId";
         }
 
         /**
@@ -1643,7 +1643,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulEventName}.
          */
         public String consulEventName() {
-            return "ConsulEventName";
+            return "CamelConsulEventName";
         }
 
         /**
@@ -1656,7 +1656,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulEventLTime}.
          */
         public String consulEventLTime() {
-            return "ConsulEventLTime";
+            return "CamelConsulEventLTime";
         }
 
         /**
@@ -1669,7 +1669,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulNodeFilter}.
          */
         public String consulNodeFilter() {
-            return "ConsulNodeFilter";
+            return "CamelConsulNodeFilter";
         }
 
         /**
@@ -1682,7 +1682,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulTagFilter}.
          */
         public String consulTagFilter() {
-            return "ConsulTagFilter";
+            return "CamelConsulTagFilter";
         }
 
         /**
@@ -1695,7 +1695,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulSessionFilter}.
          */
         public String consulSessionFilter() {
-            return "ConsulSessionFilter";
+            return "CamelConsulSessionFilter";
         }
 
         /**
@@ -1708,7 +1708,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulVersion}.
          */
         public String consulVersion() {
-            return "ConsulVersion";
+            return "CamelConsulVersion";
         }
 
         /**
@@ -1721,7 +1721,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulFlags}.
          */
         public String consulFlags() {
-            return "ConsulFlags";
+            return "CamelConsulFlags";
         }
 
         /**
@@ -1734,7 +1734,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulIndex}.
          */
         public String consulIndex() {
-            return "ConsulIndex";
+            return "CamelConsulIndex";
         }
 
         /**
@@ -1747,7 +1747,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulWait}.
          */
         public String consulWait() {
-            return "ConsulWait";
+            return "CamelConsulWait";
         }
 
         /**
@@ -1760,7 +1760,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulCreateIndex}.
          */
         public String consulCreateIndex() {
-            return "ConsulCreateIndex";
+            return "CamelConsulCreateIndex";
         }
 
         /**
@@ -1774,7 +1774,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulLockIndex}.
          */
         public String consulLockIndex() {
-            return "ConsulLockIndex";
+            return "CamelConsulLockIndex";
         }
 
         /**
@@ -1787,7 +1787,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulModifyIndex}.
          */
         public String consulModifyIndex() {
-            return "ConsulModifyIndex";
+            return "CamelConsulModifyIndex";
         }
 
         /**
@@ -1800,7 +1800,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulOptions}.
          */
         public String consulOptions() {
-            return "ConsulOptions";
+            return "CamelConsulOptions";
         }
 
         /**
@@ -1813,7 +1813,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulResult}.
          */
         public String consulResult() {
-            return "ConsulResult";
+            return "CamelConsulResult";
         }
 
         /**
@@ -1826,7 +1826,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulSession}.
          */
         public String consulSession() {
-            return "ConsulSession";
+            return "CamelConsulSession";
         }
 
         /**
@@ -1840,7 +1840,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulValueAsString}.
          */
         public String consulValueAsString() {
-            return "ConsulValueAsString";
+            return "CamelConsulValueAsString";
         }
 
         /**
@@ -1853,7 +1853,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulNode}.
          */
         public String consulNode() {
-            return "ConsulNode";
+            return "CamelConsulNode";
         }
 
         /**
@@ -1866,7 +1866,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulService}.
          */
         public String consulService() {
-            return "ConsulService";
+            return "CamelConsulService";
         }
 
         /**
@@ -1879,7 +1879,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulDatacenter}.
          */
         public String consulDatacenter() {
-            return "ConsulDatacenter";
+            return "CamelConsulDatacenter";
         }
 
         /**
@@ -1892,7 +1892,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulNearNode}.
          */
         public String consulNearNode() {
-            return "ConsulNearNode";
+            return "CamelConsulNearNode";
         }
 
         /**
@@ -1905,7 +1905,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulNodeMeta}.
          */
         public String consulNodeMeta() {
-            return "ConsulNodeMeta";
+            return "CamelConsulNodeMeta";
         }
 
         /**
@@ -1918,7 +1918,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulLastContact}.
          */
         public String consulLastContact() {
-            return "ConsulLastContact";
+            return "CamelConsulLastContact";
         }
 
         /**
@@ -1931,7 +1931,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulKnownLeader}.
          */
         public String consulKnownLeader() {
-            return "ConsulKnownLeader";
+            return "CamelConsulKnownLeader";
         }
 
         /**
@@ -1946,7 +1946,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulConsistencyMode}.
          */
         public String consulConsistencyMode() {
-            return "ConsulConsistencyMode";
+            return "CamelConsulConsistencyMode";
         }
 
         /**
@@ -1960,7 +1960,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulHealthyOnly}.
          */
         public String consulHealthyOnly() {
-            return "ConsulHealthyOnly";
+            return "CamelConsulHealthyOnly";
         }
 
         /**
@@ -1973,7 +1973,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulHealthyState}.
          */
         public String consulHealthyState() {
-            return "ConsulHealthyState";
+            return "CamelConsulHealthyState";
         }
 
         /**
@@ -1986,7 +1986,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulPreparedQueryID}.
          */
         public String consulPreparedQueryID() {
-            return "ConsulPreparedQueryID";
+            return "CamelConsulPreparedQueryID";
         }
 
         /**
@@ -1999,7 +1999,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the name of the header {@code ConsulServiceId}.
          */
         public String consulServiceId() {
-            return "ConsulServiceId";
+            return "CamelConsulServiceId";
         }
     }
     static ConsulEndpointBuilder endpointBuilder(

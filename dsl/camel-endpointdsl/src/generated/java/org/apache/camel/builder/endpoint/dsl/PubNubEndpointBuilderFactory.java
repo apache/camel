@@ -865,7 +865,7 @@ public interface PubNubEndpointBuilderFactory {
          * @return the name of the header {@code PubNubOperation}.
          */
         public String pubNubOperation() {
-            return "PubNubOperation";
+            return "CamelPubNubOperation";
         }
 
         /**
@@ -878,7 +878,7 @@ public interface PubNubEndpointBuilderFactory {
          * @return the name of the header {@code PubNubTimeToken}.
          */
         public String pubNubTimeToken() {
-            return "PubNubTimeToken";
+            return "CamelPubNubTimeToken";
         }
 
         /**
@@ -891,7 +891,7 @@ public interface PubNubEndpointBuilderFactory {
          * @return the name of the header {@code PubNubChannel}.
          */
         public String pubNubChannel() {
-            return "PubNubChannel";
+            return "CamelPubNubChannel";
         }
 
         /**
@@ -904,7 +904,7 @@ public interface PubNubEndpointBuilderFactory {
          * @return the name of the header {@code PubNubUUID}.
          */
         public String pubNubUUID() {
-            return "PubNubUUID";
+            return "CamelPubNubUUID";
         }
     }
     static PubNubEndpointBuilder endpointBuilder(

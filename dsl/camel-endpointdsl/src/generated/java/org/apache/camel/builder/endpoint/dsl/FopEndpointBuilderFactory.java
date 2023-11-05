@@ -239,7 +239,7 @@ public interface FopEndpointBuilderFactory {
          * @return the name of the header {@code Fop.Output.Format}.
          */
         public String fopOutputFormat() {
-            return "Fop.Output.Format";
+            return "CamelFop.Output.Format";
         }
     }
     static FopEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -478,7 +478,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * @return the name of the header {@code ThymeleafResourceUri}.
          */
         public String thymeleafResourceUri() {
-            return "ThymeleafResourceUri";
+            return "CamelThymeleafResourceUri";
         }
 
         /**
@@ -491,7 +491,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * @return the name of the header {@code ThymeleafTemplate}.
          */
         public String thymeleafTemplate() {
-            return "ThymeleafTemplate";
+            return "CamelThymeleafTemplate";
         }
 
         /**
@@ -507,7 +507,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * @return the name of the header {@code ThymeleafVariableMap}.
          */
         public String thymeleafVariableMap() {
-            return "ThymeleafVariableMap";
+            return "CamelThymeleafVariableMap";
         }
 
         /**
@@ -520,7 +520,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * @return the name of the header {@code ThymeleafServletContext}.
          */
         public String thymeleafServletContext() {
-            return "ThymeleafServletContext";
+            return "CamelThymeleafServletContext";
         }
     }
     static ThymeleafEndpointBuilder endpointBuilder(

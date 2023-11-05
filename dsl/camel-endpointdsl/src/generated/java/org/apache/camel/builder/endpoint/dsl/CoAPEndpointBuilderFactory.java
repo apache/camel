@@ -1282,7 +1282,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the name of the header {@code CoapETag}.
          */
         public String coapETag() {
-            return "CoapETag";
+            return "CamelCoapETag";
         }
 
         /**
@@ -1295,7 +1295,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the name of the header {@code CoapMaxAge}.
          */
         public String coapMaxAge() {
-            return "CoapMaxAge";
+            return "CamelCoapMaxAge";
         }
 
         /**
@@ -1310,7 +1310,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the name of the header {@code CoapMethod}.
          */
         public String coapMethod() {
-            return "CoapMethod";
+            return "CamelCoapMethod";
         }
 
         /**
@@ -1324,7 +1324,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the name of the header {@code CoapResponseCode}.
          */
         public String coapResponseCode() {
-            return "CoapResponseCode";
+            return "CamelCoapResponseCode";
         }
 
         /**
@@ -1338,7 +1338,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the name of the header {@code CoapUri}.
          */
         public String coapUri() {
-            return "CoapUri";
+            return "CamelCoapUri";
         }
 
         /**

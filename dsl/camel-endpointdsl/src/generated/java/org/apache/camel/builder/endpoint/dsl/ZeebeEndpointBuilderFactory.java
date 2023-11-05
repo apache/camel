@@ -499,7 +499,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeResourceName}.
          */
         public String zeebeResourceName() {
-            return "ZeebeResourceName";
+            return "CamelZeebeResourceName";
         }
 
         /**
@@ -512,7 +512,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeIsSuccess}.
          */
         public String zeebeIsSuccess() {
-            return "ZeebeIsSuccess";
+            return "CamelZeebeIsSuccess";
         }
 
         /**
@@ -525,7 +525,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeErrorMessage}.
          */
         public String zeebeErrorMessage() {
-            return "ZeebeErrorMessage";
+            return "CamelZeebeErrorMessage";
         }
 
         /**
@@ -538,7 +538,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeErrorCode}.
          */
         public String zeebeErrorCode() {
-            return "ZeebeErrorCode";
+            return "CamelZeebeErrorCode";
         }
 
         /**
@@ -551,7 +551,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeBPMNProcessId}.
          */
         public String zeebeBPMNProcessId() {
-            return "ZeebeBPMNProcessId";
+            return "CamelZeebeBPMNProcessId";
         }
 
         /**
@@ -564,7 +564,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeVersion}.
          */
         public String zeebeVersion() {
-            return "ZeebeVersion";
+            return "CamelZeebeVersion";
         }
 
         /**
@@ -577,7 +577,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeProcessDefinitionKey}.
          */
         public String zeebeProcessDefinitionKey() {
-            return "ZeebeProcessDefinitionKey";
+            return "CamelZeebeProcessDefinitionKey";
         }
 
         /**
@@ -592,7 +592,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeJobKey}.
          */
         public String zeebeJobKey() {
-            return "ZeebeJobKey";
+            return "CamelZeebeJobKey";
         }
     }
     static ZeebeEndpointBuilder endpointBuilder(

@@ -267,7 +267,7 @@ public interface JsonPatchEndpointBuilderFactory {
          * @return the name of the header {@code JsonPatchResourceUri}.
          */
         public String jsonPatchResourceUri() {
-            return "JsonPatchResourceUri";
+            return "CamelJsonPatchResourceUri";
         }
     }
     static JsonPatchEndpointBuilder endpointBuilder(

@@ -1440,7 +1440,7 @@ public interface IronMQEndpointBuilderFactory {
          * @return the name of the header {@code IronMQMessageId}.
          */
         public String ironMQMessageId() {
-            return "IronMQMessageId";
+            return "CamelIronMQMessageId";
         }
 
         /**
@@ -1453,7 +1453,7 @@ public interface IronMQEndpointBuilderFactory {
          * @return the name of the header {@code IronMQReservationId}.
          */
         public String ironMQReservationId() {
-            return "IronMQReservationId";
+            return "CamelIronMQReservationId";
         }
 
         /**
@@ -1466,7 +1466,7 @@ public interface IronMQEndpointBuilderFactory {
          * @return the name of the header {@code IronMQReservedCount}.
          */
         public String ironMQReservedCount() {
-            return "IronMQReservedCount";
+            return "CamelIronMQReservedCount";
         }
 
         /**
@@ -1480,7 +1480,7 @@ public interface IronMQEndpointBuilderFactory {
          * @return the name of the header {@code IronMQOperation}.
          */
         public String ironMQOperation() {
-            return "IronMQOperation";
+            return "CamelIronMQOperation";
         }
     }
     static IronMQEndpointBuilder endpointBuilder(
