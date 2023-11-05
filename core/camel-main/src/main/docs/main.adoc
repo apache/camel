@@ -332,6 +332,15 @@ The camel.vault.azure supports 11 options, which are listed below.
 |===
 
 
+=== Camel OpenTelemtry configurations
+The camel.otel supports 0 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+|===
+
+
 === Fault Tolerance EIP Circuit Breaker configurations
 The camel.faulttolerance supports 13 options, which are listed below.
 

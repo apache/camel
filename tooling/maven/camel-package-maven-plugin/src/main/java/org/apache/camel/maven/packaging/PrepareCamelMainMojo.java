@@ -204,6 +204,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("Lra")) {
                     prefix = "camel.lra.";
+                } else if (file.getName().contains("Otel")) {
+                    prefix = "camel.opentelemetry.";
                 } else if (file.getName().contains("HttpServer")) {
                     prefix = "camel.server.";
                 } else if (file.getName().contains("ThreadPoolProfileConfigurationProperties")) {
@@ -316,6 +318,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                             "camel.vault.azure", "Camel Azure Key Vault configurations",
                             "org.apache.camel.vault.AzureVaultConfiguration"));
             // TODO: add more vault providers here
+            model.getGroups().add(new MainGroupModel(
+                    "camel.otel", "Camel OpenTelemtry configurations",
+                    "org.apache.camel.main.OtelConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
                             "camel.faulttolerance", "Fault Tolerance EIP Circuit Breaker configurations",
