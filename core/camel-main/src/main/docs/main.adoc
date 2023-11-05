@@ -333,11 +333,14 @@ The camel.vault.azure supports 11 options, which are listed below.
 
 
 === Camel OpenTelemtry configurations
-The camel.otel supports 0 options, which are listed below.
+The camel.opentelemetry supports 3 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.opentelemetry.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
+| *camel.opentelemetry.exclude{zwsp}Patterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *{zwsp}camel.opentelemetry.instrumentation{zwsp}Name* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
 |===
 
 

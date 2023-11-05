@@ -64,6 +64,10 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         return instrumentationName;
     }
 
+    /**
+     * A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully
+     * qualified class name. Must not be null.
+     */
     public void setInstrumentationName(String instrumentationName) {
         this.instrumentationName = instrumentationName;
     }
