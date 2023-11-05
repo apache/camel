@@ -1386,11 +1386,13 @@ public abstract class BaseMainSupport extends BaseService {
         }
         boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
         if (enabled) {
-            Service otel = resolveOtelService(camelContext);
+            CamelTracingService otel = resolveOtelService(camelContext);
             setPropertiesOnTarget(camelContext, otel, otelProperties, "camel.opentelemetry.", failIfNotSet, true,
                     autoConfiguredProperties);
-            // add as service so tracing can be active
-            camelContext.addService(otel, true, true);
+            if (camelContext.hasService(CamelTracingService.class) == null) {
+                // add as service so tracing can be active
+                camelContext.addService(otel, true, true);
+            }
         }
     }
 
@@ -2022,10 +2024,9 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
-        // lookup in service registry first
-        CamelSagaService answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
+        CamelSagaService answer = camelContext.hasService(CamelSagaService.class);
         if (answer == null) {
-            answer = camelContext.hasService(CamelSagaService.class);
+            answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
         }
         if (answer == null) {
             answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
@@ -2037,10 +2038,9 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     private static CamelTracingService resolveOtelService(CamelContext camelContext) throws Exception {
-        // lookup in service registry first
-        CamelTracingService answer = camelContext.getRegistry().findSingleByType(CamelTracingService.class);
+        CamelTracingService answer = camelContext.hasService(CamelTracingService.class);
         if (answer == null) {
-            answer = camelContext.hasService(CamelTracingService.class);
+            answer = camelContext.getRegistry().findSingleByType(CamelTracingService.class);
         }
         if (answer == null) {
             answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
