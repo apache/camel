@@ -160,7 +160,7 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
 
     @Override
     protected void initContextPropagators() {
-
+        // noop
     }
 
     private static Observation getParentObservation(SpanAdapter parentObservation) {

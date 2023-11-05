@@ -84,6 +84,7 @@ import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
+import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -2024,6 +2025,9 @@ public abstract class BaseMainSupport extends BaseService {
         // lookup in service registry first
         CamelSagaService answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
         if (answer == null) {
+            answer = camelContext.hasService(CamelSagaService.class);
+        }
+        if (answer == null) {
             answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
                     .newInstance("lra-saga-service", CamelSagaService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
@@ -2032,13 +2036,15 @@ public abstract class BaseMainSupport extends BaseService {
         return answer;
     }
 
-    private static Service resolveOtelService(CamelContext camelContext) throws Exception {
+    private static CamelTracingService resolveOtelService(CamelContext camelContext) throws Exception {
         // lookup in service registry first
-        // TODO: We need a Tracing SPI to be able to identify this (lookup in registry / service on camel context)
-        Service answer = camelContext.getRegistry().lookupByNameAndType("OpenTelemetryTracer", Service.class);
+        CamelTracingService answer = camelContext.getRegistry().findSingleByType(CamelTracingService.class);
+        if (answer == null) {
+            answer = camelContext.hasService(CamelTracingService.class);
+        }
         if (answer == null) {
             answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance("opentelemetry-tracer", Service.class)
+                    .newInstance("opentelemetry-tracer", CamelTracingService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find OpenTelemetryTracer on classpath. Add camel-opentelemetry to classpath."));
         }
