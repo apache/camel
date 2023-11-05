@@ -24,7 +24,7 @@ The configuration properties for the OpenTelemetry tracer are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
-
+|instrumentationName| camel | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null.
 |excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
 uses the rules from Intercept.
@@ -34,7 +34,7 @@ Dashes need for instances to be encoded for JMS property keys.
 |=======================================================================
 
 
-=== Configuration
+== Using Camel OpenTelemetry
 
 Include the `camel-opentelemetry` component in your POM, along with any specific dependencies associated with the
 chosen OpenTelemetry compliant Tracer.
@@ -51,6 +51,23 @@ otelTracer.setTracer(...);
 // And then initialize the context
 otelTracer.init(camelContext);
 --------------------------------------------------------------------------------------------------
+
+You would still need OpenTelemetry to instrument your code, which can be done via a Java agent (see further below).
+
+=== Using with standalone Camel
+
+If you use `camel-main` as standalone Camel, then you can enable and use OpenTelemetry without Java code.
+
+Add `camel-opentelemetry` component in your POM, and configure in `application.properties`:
+
+[source,properties]
+----
+camel.opentelemetry.enabled = true
+# you can confiure the other options
+# camel.opentelemetry.instrumentationName = myApp
+----
+
+You would still need OpenTelemetry to instrument your code, which can be done via a Java agent (see further below).
 
 == Spring Boot
 

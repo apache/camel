@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A processor which adds a attribute on the active {@link Observation} with an {@link org.apache.camel.Expression}
+ * A processor which adds an attribute on the active {@link Observation} with an {@link org.apache.camel.Expression}
  */
 public class AttributeProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
@@ -97,16 +97,6 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
 
     public Expression getExpression() {
         return expression;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 
     @Override
