@@ -311,7 +311,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * @return the name of the header {@code NetWeaverCommand}.
          */
         public String netWeaverCommand() {
-            return "NetWeaverCommand";
+            return "CamelNetWeaverCommand";
         }
 
         /**
@@ -324,7 +324,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * @return the name of the header {@code HttpPath}.
          */
         public String httpPath() {
-            return "HttpPath";
+            return "CamelHttpPath";
         }
 
         /**

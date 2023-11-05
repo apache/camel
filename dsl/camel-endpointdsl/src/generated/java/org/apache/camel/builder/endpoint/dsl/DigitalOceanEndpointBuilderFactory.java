@@ -413,7 +413,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanOperation}.
          */
         public String digitalOceanOperation() {
-            return "DigitalOceanOperation";
+            return "CamelDigitalOceanOperation";
         }
 
         /**
@@ -426,7 +426,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanId}.
          */
         public String digitalOceanId() {
-            return "DigitalOceanId";
+            return "CamelDigitalOceanId";
         }
 
         /**
@@ -440,7 +440,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanType}.
          */
         public String digitalOceanType() {
-            return "DigitalOceanType";
+            return "CamelDigitalOceanType";
         }
 
         /**
@@ -453,7 +453,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanName}.
          */
         public String digitalOceanName() {
-            return "DigitalOceanName";
+            return "CamelDigitalOceanName";
         }
 
         /**
@@ -466,7 +466,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanNames}.
          */
         public String digitalOceanNames() {
-            return "DigitalOceanNames";
+            return "CamelDigitalOceanNames";
         }
 
         /**
@@ -479,7 +479,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanRegion}.
          */
         public String digitalOceanRegion() {
-            return "DigitalOceanRegion";
+            return "CamelDigitalOceanRegion";
         }
 
         /**
@@ -492,7 +492,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDescription}.
          */
         public String digitalOceanDescription() {
-            return "DigitalOceanDescription";
+            return "CamelDigitalOceanDescription";
         }
 
         /**
@@ -505,7 +505,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDropletSize}.
          */
         public String digitalOceanDropletSize() {
-            return "DigitalOceanDropletSize";
+            return "CamelDigitalOceanDropletSize";
         }
 
         /**
@@ -518,7 +518,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDropletImage}.
          */
         public String digitalOceanDropletImage() {
-            return "DigitalOceanDropletImage";
+            return "CamelDigitalOceanDropletImage";
         }
 
         /**
@@ -531,7 +531,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDropletSSHKeys}.
          */
         public String digitalOceanDropletSSHKeys() {
-            return "DigitalOceanDropletSSHKeys";
+            return "CamelDigitalOceanDropletSSHKeys";
         }
 
         /**
@@ -545,7 +545,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * DigitalOceanDropletEnableBackups}.
          */
         public String digitalOceanDropletEnableBackups() {
-            return "DigitalOceanDropletEnableBackups";
+            return "CamelDigitalOceanDropletEnableBackups";
         }
 
         /**
@@ -558,7 +558,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDropletEnableIpv6}.
          */
         public String digitalOceanDropletEnableIpv6() {
-            return "DigitalOceanDropletEnableIpv6";
+            return "CamelDigitalOceanDropletEnableIpv6";
         }
 
         /**
@@ -572,7 +572,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * DigitalOceanDropletEnablePrivateNetworking}.
          */
         public String digitalOceanDropletEnablePrivateNetworking() {
-            return "DigitalOceanDropletEnablePrivateNetworking";
+            return "CamelDigitalOceanDropletEnablePrivateNetworking";
         }
 
         /**
@@ -585,7 +585,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDropletUserData}.
          */
         public String digitalOceanDropletUserData() {
-            return "DigitalOceanDropletUserData";
+            return "CamelDigitalOceanDropletUserData";
         }
 
         /**
@@ -598,7 +598,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDropletVolumes}.
          */
         public String digitalOceanDropletVolumes() {
-            return "DigitalOceanDropletVolumes";
+            return "CamelDigitalOceanDropletVolumes";
         }
 
         /**
@@ -611,7 +611,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDropletTags}.
          */
         public String digitalOceanDropletTags() {
-            return "DigitalOceanDropletTags";
+            return "CamelDigitalOceanDropletTags";
         }
 
         /**
@@ -624,7 +624,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanDropletId}.
          */
         public String digitalOceanDropletId() {
-            return "DigitalOceanDropletId";
+            return "CamelDigitalOceanDropletId";
         }
 
         /**
@@ -637,7 +637,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanImageId}.
          */
         public String digitalOceanImageId() {
-            return "DigitalOceanImageId";
+            return "CamelDigitalOceanImageId";
         }
 
         /**
@@ -650,7 +650,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanKernelId}.
          */
         public String digitalOceanKernelId() {
-            return "DigitalOceanKernelId";
+            return "CamelDigitalOceanKernelId";
         }
 
         /**
@@ -663,7 +663,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanVolumeName}.
          */
         public String digitalOceanVolumeName() {
-            return "DigitalOceanVolumeName";
+            return "CamelDigitalOceanVolumeName";
         }
 
         /**
@@ -677,7 +677,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * DigitalOceanVolumeSizeGigabytes}.
          */
         public String digitalOceanVolumeSizeGigabytes() {
-            return "DigitalOceanVolumeSizeGigabytes";
+            return "CamelDigitalOceanVolumeSizeGigabytes";
         }
 
         /**
@@ -690,7 +690,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanFloatingIPAddress}.
          */
         public String digitalOceanFloatingIPAddress() {
-            return "DigitalOceanFloatingIPAddress";
+            return "CamelDigitalOceanFloatingIPAddress";
         }
 
         /**
@@ -703,7 +703,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanKeyFingerprint}.
          */
         public String digitalOceanKeyFingerprint() {
-            return "DigitalOceanKeyFingerprint";
+            return "CamelDigitalOceanKeyFingerprint";
         }
 
         /**
@@ -716,7 +716,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the name of the header {@code DigitalOceanKeyPublicKey}.
          */
         public String digitalOceanKeyPublicKey() {
-            return "DigitalOceanKeyPublicKey";
+            return "CamelDigitalOceanKeyPublicKey";
         }
     }
     static DigitalOceanEndpointBuilder endpointBuilder(

@@ -1699,7 +1699,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400Message}.
          */
         public String jt400Message() {
-            return "Jt400Message";
+            return "CamelJt400Message";
         }
 
         /**
@@ -1712,7 +1712,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageID}.
          */
         public String jt400MessageID() {
-            return "Jt400MessageID";
+            return "CamelJt400MessageID";
         }
 
         /**
@@ -1725,7 +1725,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageFile}.
          */
         public String jt400MessageFile() {
-            return "Jt400MessageFile";
+            return "CamelJt400MessageFile";
         }
 
         /**
@@ -1739,7 +1739,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageType}.
          */
         public String jt400MessageType() {
-            return "Jt400MessageType";
+            return "CamelJt400MessageType";
         }
 
         /**
@@ -1753,7 +1753,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageSeverity}.
          */
         public String jt400MessageSeverity() {
-            return "Jt400MessageSeverity";
+            return "CamelJt400MessageSeverity";
         }
 
         /**
@@ -1766,7 +1766,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageDefaultReply}.
          */
         public String jt400MessageDefaultReply() {
-            return "Jt400MessageDefaultReply";
+            return "CamelJt400MessageDefaultReply";
         }
 
         /**
@@ -1785,7 +1785,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageReplyToKey}.
          */
         public String jt400MessageReplyToKey() {
-            return "Jt400MessageReplyToKey";
+            return "CamelJt400MessageReplyToKey";
         }
     }
     static Jt400EndpointBuilder endpointBuilder(

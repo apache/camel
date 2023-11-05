@@ -245,7 +245,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * @return the name of the header {@code GoogleBigQueryTranslatedQuery}.
          */
         public String googleBigQueryTranslatedQuery() {
-            return "GoogleBigQueryTranslatedQuery";
+            return "CamelGoogleBigQueryTranslatedQuery";
         }
 
         /**
@@ -258,7 +258,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * @return the name of the header {@code GoogleBigQueryJobId}.
          */
         public String googleBigQueryJobId() {
-            return "GoogleBigQueryJobId";
+            return "CamelGoogleBigQueryJobId";
         }
     }
     static GoogleBigQuerySQLEndpointBuilder endpointBuilder(

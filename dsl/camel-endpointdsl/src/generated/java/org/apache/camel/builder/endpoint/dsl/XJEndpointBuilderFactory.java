@@ -831,7 +831,7 @@ public interface XJEndpointBuilderFactory {
          * @return the name of the header {@code XsltFileName}.
          */
         public String xsltFileName() {
-            return "XsltFileName";
+            return "CamelXsltFileName";
         }
 
         /**
@@ -845,7 +845,7 @@ public interface XJEndpointBuilderFactory {
          * @return the name of the header {@code XsltResourceUri}.
          */
         public String xsltResourceUri() {
-            return "XsltResourceUri";
+            return "CamelXsltResourceUri";
         }
 
         /**
@@ -858,7 +858,7 @@ public interface XJEndpointBuilderFactory {
          * @return the name of the header {@code XsltStylesheet}.
          */
         public String xsltStylesheet() {
-            return "XsltStylesheet";
+            return "CamelXsltStylesheet";
         }
     }
     static XJEndpointBuilder endpointBuilder(String componentName, String path) {

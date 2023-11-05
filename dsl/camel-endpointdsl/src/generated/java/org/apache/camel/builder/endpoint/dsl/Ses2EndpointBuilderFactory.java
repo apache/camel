@@ -611,7 +611,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesFrom}.
          */
         public String awsSesFrom() {
-            return "AwsSesFrom";
+            return "CamelAwsSesFrom";
         }
 
         /**
@@ -624,7 +624,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesMessageId}.
          */
         public String awsSesMessageId() {
-            return "AwsSesMessageId";
+            return "CamelAwsSesMessageId";
         }
 
         /**
@@ -638,7 +638,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesReplyToAddresses}.
          */
         public String awsSesReplyToAddresses() {
-            return "AwsSesReplyToAddresses";
+            return "CamelAwsSesReplyToAddresses";
         }
 
         /**
@@ -651,7 +651,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesReturnPath}.
          */
         public String awsSesReturnPath() {
-            return "AwsSesReturnPath";
+            return "CamelAwsSesReturnPath";
         }
 
         /**
@@ -664,7 +664,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesSubject}.
          */
         public String awsSesSubject() {
-            return "AwsSesSubject";
+            return "CamelAwsSesSubject";
         }
 
         /**
@@ -677,7 +677,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesTo}.
          */
         public String awsSesTo() {
-            return "AwsSesTo";
+            return "CamelAwsSesTo";
         }
 
         /**
@@ -690,7 +690,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesCc}.
          */
         public String awsSesCc() {
-            return "AwsSesCc";
+            return "CamelAwsSesCc";
         }
 
         /**
@@ -704,7 +704,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesBcc}.
          */
         public String awsSesBcc() {
-            return "AwsSesBcc";
+            return "CamelAwsSesBcc";
         }
 
         /**
@@ -717,7 +717,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesHtmlEmail}.
          */
         public String awsSesHtmlEmail() {
-            return "AwsSesHtmlEmail";
+            return "CamelAwsSesHtmlEmail";
         }
 
         /**
@@ -730,7 +730,7 @@ public interface Ses2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSesConfigurationSet}.
          */
         public String awsSesConfigurationSet() {
-            return "AwsSesConfigurationSet";
+            return "CamelAwsSesConfigurationSet";
         }
     }
     static Ses2EndpointBuilder endpointBuilder(String componentName, String path) {

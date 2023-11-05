@@ -1223,7 +1223,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the name of the header {@code AzureEventHubsPartitionKey}.
          */
         public String azureEventHubsPartitionKey() {
-            return "AzureEventHubsPartitionKey";
+            return "CamelAzureEventHubsPartitionKey";
         }
 
         /**
@@ -1238,7 +1238,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the name of the header {@code AzureEventHubsPartitionId}.
          */
         public String azureEventHubsPartitionId() {
-            return "AzureEventHubsPartitionId";
+            return "CamelAzureEventHubsPartitionId";
         }
 
         /**
@@ -1253,7 +1253,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the name of the header {@code AzureEventHubsOffset}.
          */
         public String azureEventHubsOffset() {
-            return "AzureEventHubsOffset";
+            return "CamelAzureEventHubsOffset";
         }
 
         /**
@@ -1267,7 +1267,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the name of the header {@code AzureEventHubsEnqueuedTime}.
          */
         public String azureEventHubsEnqueuedTime() {
-            return "AzureEventHubsEnqueuedTime";
+            return "CamelAzureEventHubsEnqueuedTime";
         }
 
         /**
@@ -1283,7 +1283,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the name of the header {@code AzureEventHubsSequenceNumber}.
          */
         public String azureEventHubsSequenceNumber() {
-            return "AzureEventHubsSequenceNumber";
+            return "CamelAzureEventHubsSequenceNumber";
         }
 
         /**
@@ -1298,7 +1298,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the name of the header {@code AzureEventHubsMetadata}.
          */
         public String azureEventHubsMetadata() {
-            return "AzureEventHubsMetadata";
+            return "CamelAzureEventHubsMetadata";
         }
 
         /**
@@ -1311,7 +1311,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the name of the header {@code MessageTimestamp}.
          */
         public String messageTimestamp() {
-            return "MessageTimestamp";
+            return "CamelMessageTimestamp";
         }
 
         /**
@@ -1326,7 +1326,7 @@ public interface EventHubsEndpointBuilderFactory {
          * AzureEventHubsCheckpointUpdatedBy}.
          */
         public String azureEventHubsCheckpointUpdatedBy() {
-            return "AzureEventHubsCheckpointUpdatedBy";
+            return "CamelAzureEventHubsCheckpointUpdatedBy";
         }
     }
     static EventHubsEndpointBuilder endpointBuilder(

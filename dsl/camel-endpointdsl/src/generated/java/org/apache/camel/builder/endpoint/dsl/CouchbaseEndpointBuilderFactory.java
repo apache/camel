@@ -1886,7 +1886,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * @return the name of the header {@code CqlResumeQuery}.
          */
         public String cqlResumeQuery() {
-            return "CqlResumeQuery";
+            return "CamelCqlResumeQuery";
         }
     }
     static CouchbaseEndpointBuilder endpointBuilder(

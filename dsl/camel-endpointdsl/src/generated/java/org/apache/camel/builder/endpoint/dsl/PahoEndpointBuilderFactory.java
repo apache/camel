@@ -3095,7 +3095,7 @@ public interface PahoEndpointBuilderFactory {
          * @return the name of the header {@code MqttTopic}.
          */
         public String mqttTopic() {
-            return "MqttTopic";
+            return "CamelMqttTopic";
         }
 
         /**
@@ -3108,7 +3108,7 @@ public interface PahoEndpointBuilderFactory {
          * @return the name of the header {@code MqttQoS}.
          */
         public String mqttQoS() {
-            return "MqttQoS";
+            return "CamelMqttQoS";
         }
 
         /**
@@ -3121,7 +3121,7 @@ public interface PahoEndpointBuilderFactory {
          * @return the name of the header {@code PahoQos}.
          */
         public String pahoQos() {
-            return "PahoQos";
+            return "CamelPahoQos";
         }
 
         /**
@@ -3134,7 +3134,7 @@ public interface PahoEndpointBuilderFactory {
          * @return the name of the header {@code PahoRetained}.
          */
         public String pahoRetained() {
-            return "PahoRetained";
+            return "CamelPahoRetained";
         }
 
         /**
@@ -3148,7 +3148,7 @@ public interface PahoEndpointBuilderFactory {
          * @return the name of the header {@code PahoOverrideTopic}.
          */
         public String pahoOverrideTopic() {
-            return "PahoOverrideTopic";
+            return "CamelPahoOverrideTopic";
         }
     }
     static PahoEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -933,7 +933,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the name of the header {@code DropboxRemotePath}.
          */
         public String dropboxRemotePath() {
-            return "DropboxRemotePath";
+            return "CamelDropboxRemotePath";
         }
 
         /**
@@ -946,7 +946,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the name of the header {@code DropboxNewRemotePath}.
          */
         public String dropboxNewRemotePath() {
-            return "DropboxNewRemotePath";
+            return "CamelDropboxNewRemotePath";
         }
 
         /**
@@ -959,7 +959,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the name of the header {@code DropboxLocalPath}.
          */
         public String dropboxLocalPath() {
-            return "DropboxLocalPath";
+            return "CamelDropboxLocalPath";
         }
 
         /**
@@ -972,7 +972,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the name of the header {@code DropboxUploadMode}.
          */
         public String dropboxUploadMode() {
-            return "DropboxUploadMode";
+            return "CamelDropboxUploadMode";
         }
 
         /**
@@ -985,7 +985,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the name of the header {@code DropboxQuery}.
          */
         public String dropboxQuery() {
-            return "DropboxQuery";
+            return "CamelDropboxQuery";
         }
 
         /**
@@ -998,7 +998,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the name of the header {@code DropboxPutFileName}.
          */
         public String dropboxPutFileName() {
-            return "DropboxPutFileName";
+            return "CamelDropboxPutFileName";
         }
 
         /**

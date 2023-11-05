@@ -582,7 +582,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataOperation}.
          */
         public String awsRedshiftDataOperation() {
-            return "AwsRedshiftDataOperation";
+            return "CamelAwsRedshiftDataOperation";
         }
 
         /**
@@ -596,7 +596,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataClusterIdentifier}.
          */
         public String awsRedshiftDataClusterIdentifier() {
-            return "AwsRedshiftDataClusterIdentifier";
+            return "CamelAwsRedshiftDataClusterIdentifier";
         }
 
         /**
@@ -609,7 +609,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataSecretArn}.
          */
         public String awsRedshiftDataSecretArn() {
-            return "AwsRedshiftDataSecretArn";
+            return "CamelAwsRedshiftDataSecretArn";
         }
 
         /**
@@ -622,7 +622,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataDatabase}.
          */
         public String awsRedshiftDataDatabase() {
-            return "AwsRedshiftDataDatabase";
+            return "CamelAwsRedshiftDataDatabase";
         }
 
         /**
@@ -635,7 +635,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataWorkGroupName}.
          */
         public String awsRedshiftDataWorkGroupName() {
-            return "AwsRedshiftDataWorkGroupName";
+            return "CamelAwsRedshiftDataWorkGroupName";
         }
 
         /**
@@ -649,7 +649,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataDatabasesMaxResults}.
          */
         public String awsRedshiftDataDatabasesMaxResults() {
-            return "AwsRedshiftDataDatabasesMaxResults";
+            return "CamelAwsRedshiftDataDatabasesMaxResults";
         }
 
         /**
@@ -662,7 +662,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataDbUser}.
          */
         public String awsRedshiftDataDbUser() {
-            return "AwsRedshiftDataDbUser";
+            return "CamelAwsRedshiftDataDbUser";
         }
 
         /**
@@ -676,7 +676,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataConnectedDatabase}.
          */
         public String awsRedshiftDataConnectedDatabase() {
-            return "AwsRedshiftDataConnectedDatabase";
+            return "CamelAwsRedshiftDataConnectedDatabase";
         }
 
         /**
@@ -689,7 +689,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataSchemaPattern}.
          */
         public String awsRedshiftDataSchemaPattern() {
-            return "AwsRedshiftDataSchemaPattern";
+            return "CamelAwsRedshiftDataSchemaPattern";
         }
 
         /**
@@ -703,7 +703,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataSchemasMaxResults}.
          */
         public String awsRedshiftDataSchemasMaxResults() {
-            return "AwsRedshiftDataSchemasMaxResults";
+            return "CamelAwsRedshiftDataSchemasMaxResults";
         }
 
         /**
@@ -717,7 +717,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataStatementsMaxResults}.
          */
         public String awsRedshiftDataStatementsMaxResults() {
-            return "AwsRedshiftDataStatementsMaxResults";
+            return "CamelAwsRedshiftDataStatementsMaxResults";
         }
 
         /**
@@ -731,7 +731,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataStatementName}.
          */
         public String awsRedshiftDataStatementName() {
-            return "AwsRedshiftDataStatementName";
+            return "CamelAwsRedshiftDataStatementName";
         }
 
         /**
@@ -744,7 +744,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataStatus}.
          */
         public String awsRedshiftDataStatus() {
-            return "AwsRedshiftDataStatus";
+            return "CamelAwsRedshiftDataStatus";
         }
 
         /**
@@ -757,7 +757,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataRoleLevel}.
          */
         public String awsRedshiftDataRoleLevel() {
-            return "AwsRedshiftDataRoleLevel";
+            return "CamelAwsRedshiftDataRoleLevel";
         }
 
         /**
@@ -771,7 +771,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataTablesMaxResults}.
          */
         public String awsRedshiftDataTablesMaxResults() {
-            return "AwsRedshiftDataTablesMaxResults";
+            return "CamelAwsRedshiftDataTablesMaxResults";
         }
 
         /**
@@ -784,7 +784,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataTablePattern}.
          */
         public String awsRedshiftDataTablePattern() {
-            return "AwsRedshiftDataTablePattern";
+            return "CamelAwsRedshiftDataTablePattern";
         }
 
         /**
@@ -797,7 +797,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataTable}.
          */
         public String awsRedshiftDataTable() {
-            return "AwsRedshiftDataTable";
+            return "CamelAwsRedshiftDataTable";
         }
 
         /**
@@ -810,7 +810,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataSchema}.
          */
         public String awsRedshiftDataSchema() {
-            return "AwsRedshiftDataSchema";
+            return "CamelAwsRedshiftDataSchema";
         }
 
         /**
@@ -824,7 +824,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataDescribeTableMaxResults}.
          */
         public String awsRedshiftDataDescribeTableMaxResults() {
-            return "AwsRedshiftDataDescribeTableMaxResults";
+            return "CamelAwsRedshiftDataDescribeTableMaxResults";
         }
 
         /**
@@ -837,7 +837,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataStatementId}.
          */
         public String awsRedshiftDataStatementId() {
-            return "AwsRedshiftDataStatementId";
+            return "CamelAwsRedshiftDataStatementId";
         }
 
         /**
@@ -851,7 +851,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataWithEvent}.
          */
         public String awsRedshiftDataWithEvent() {
-            return "AwsRedshiftDataWithEvent";
+            return "CamelAwsRedshiftDataWithEvent";
         }
 
         /**
@@ -865,7 +865,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataClientToken}.
          */
         public String awsRedshiftDataClientToken() {
-            return "AwsRedshiftDataClientToken";
+            return "CamelAwsRedshiftDataClientToken";
         }
 
         /**
@@ -878,7 +878,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * @return the name of the header {@code AwsRedshiftDataSqlStatement}.
          */
         public String awsRedshiftDataSqlStatement() {
-            return "AwsRedshiftDataSqlStatement";
+            return "CamelAwsRedshiftDataSqlStatement";
         }
 
         /**
@@ -892,7 +892,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataSqlParameterList}.
          */
         public String awsRedshiftDataSqlParameterList() {
-            return "AwsRedshiftDataSqlParameterList";
+            return "CamelAwsRedshiftDataSqlParameterList";
         }
 
         /**
@@ -906,7 +906,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * AwsRedshiftDataSqlStatementList}.
          */
         public String awsRedshiftDataSqlStatementList() {
-            return "AwsRedshiftDataSqlStatementList";
+            return "CamelAwsRedshiftDataSqlStatementList";
         }
     }
     static RedshiftData2EndpointBuilder endpointBuilder(

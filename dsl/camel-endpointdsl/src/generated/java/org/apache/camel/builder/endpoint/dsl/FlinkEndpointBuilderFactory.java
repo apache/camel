@@ -337,7 +337,7 @@ public interface FlinkEndpointBuilderFactory {
          * @return the name of the header {@code FlinkDataSet}.
          */
         public String flinkDataSet() {
-            return "FlinkDataSet";
+            return "CamelFlinkDataSet";
         }
 
         /**
@@ -351,7 +351,7 @@ public interface FlinkEndpointBuilderFactory {
          * @return the name of the header {@code FlinkDataSetCallback}.
          */
         public String flinkDataSetCallback() {
-            return "FlinkDataSetCallback";
+            return "CamelFlinkDataSetCallback";
         }
 
         /**
@@ -364,7 +364,7 @@ public interface FlinkEndpointBuilderFactory {
          * @return the name of the header {@code FlinkDataStream}.
          */
         public String flinkDataStream() {
-            return "FlinkDataStream";
+            return "CamelFlinkDataStream";
         }
 
         /**
@@ -378,7 +378,7 @@ public interface FlinkEndpointBuilderFactory {
          * @return the name of the header {@code FlinkDataStreamCallback}.
          */
         public String flinkDataStreamCallback() {
-            return "FlinkDataStreamCallback";
+            return "CamelFlinkDataStreamCallback";
         }
     }
     static FlinkEndpointBuilder endpointBuilder(

@@ -372,7 +372,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * @return the name of the header {@code StringTemplateResourceUri}.
          */
         public String stringTemplateResourceUri() {
-            return "StringTemplateResourceUri";
+            return "CamelStringTemplateResourceUri";
         }
 
         /**
@@ -386,7 +386,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * @return the name of the header {@code StringTemplateVariableMap}.
          */
         public String stringTemplateVariableMap() {
-            return "StringTemplateVariableMap";
+            return "CamelStringTemplateVariableMap";
         }
 
         /**
@@ -399,7 +399,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * @return the name of the header {@code StringTemplateTemplate}.
          */
         public String stringTemplateTemplate() {
-            return "StringTemplateTemplate";
+            return "CamelStringTemplateTemplate";
         }
     }
     static StringTemplateEndpointBuilder endpointBuilder(

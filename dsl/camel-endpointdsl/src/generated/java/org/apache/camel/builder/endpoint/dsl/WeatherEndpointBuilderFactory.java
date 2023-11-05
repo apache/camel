@@ -2253,7 +2253,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the name of the header {@code WeatherLocation}.
          */
         public String weatherLocation() {
-            return "WeatherLocation";
+            return "CamelWeatherLocation";
         }
 
         /**
@@ -2266,7 +2266,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the name of the header {@code WeatherQuery}.
          */
         public String weatherQuery() {
-            return "WeatherQuery";
+            return "CamelWeatherQuery";
         }
     }
     static WeatherEndpointBuilder endpointBuilder(

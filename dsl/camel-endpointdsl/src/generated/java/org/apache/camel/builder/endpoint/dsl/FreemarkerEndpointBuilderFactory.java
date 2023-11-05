@@ -388,7 +388,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * @return the name of the header {@code FreemarkerResourceUri}.
          */
         public String freemarkerResourceUri() {
-            return "FreemarkerResourceUri";
+            return "CamelFreemarkerResourceUri";
         }
 
         /**
@@ -401,7 +401,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * @return the name of the header {@code FreemarkerTemplate}.
          */
         public String freemarkerTemplate() {
-            return "FreemarkerTemplate";
+            return "CamelFreemarkerTemplate";
         }
 
         /**
@@ -414,7 +414,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * @return the name of the header {@code FreemarkerDataModel}.
          */
         public String freemarkerDataModel() {
-            return "FreemarkerDataModel";
+            return "CamelFreemarkerDataModel";
         }
     }
     static FreemarkerEndpointBuilder endpointBuilder(

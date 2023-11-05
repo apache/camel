@@ -808,7 +808,7 @@ public interface AvroEndpointBuilderFactory {
          * @return the name of the header {@code AvroMessageName}.
          */
         public String avroMessageName() {
-            return "AvroMessageName";
+            return "CamelAvroMessageName";
         }
     }
     static AvroEndpointBuilder endpointBuilder(String componentName, String path) {

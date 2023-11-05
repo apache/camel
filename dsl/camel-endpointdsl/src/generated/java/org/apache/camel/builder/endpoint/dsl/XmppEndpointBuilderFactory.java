@@ -1406,7 +1406,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the name of the header {@code XmppDoc}.
          */
         public String xmppDoc() {
-            return "XmppDoc";
+            return "CamelXmppDoc";
         }
     }
     static XmppEndpointBuilder endpointBuilder(String componentName, String path) {

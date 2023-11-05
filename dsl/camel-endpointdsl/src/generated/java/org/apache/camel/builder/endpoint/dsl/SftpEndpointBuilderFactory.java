@@ -6567,7 +6567,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileLength}.
          */
         public String fileLength() {
-            return "FileLength";
+            return "CamelFileLength";
         }
 
         /**
@@ -6580,7 +6580,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileLastModified}.
          */
         public String fileLastModified() {
-            return "FileLastModified";
+            return "CamelFileLastModified";
         }
 
         /**
@@ -6596,7 +6596,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
 
         /**
@@ -6609,7 +6609,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileNameOnly}.
          */
         public String fileNameOnly() {
-            return "FileNameOnly";
+            return "CamelFileNameOnly";
         }
 
         /**
@@ -6622,7 +6622,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileParent}.
          */
         public String fileParent() {
-            return "FileParent";
+            return "CamelFileParent";
         }
 
         /**
@@ -6635,7 +6635,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code RemoteFileInputStream}.
          */
         public String remoteFileInputStream() {
-            return "RemoteFileInputStream";
+            return "CamelRemoteFileInputStream";
         }
 
         /**
@@ -6648,7 +6648,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileLocalWorkPath}.
          */
         public String fileLocalWorkPath() {
-            return "FileLocalWorkPath";
+            return "CamelFileLocalWorkPath";
         }
 
         /**
@@ -6661,7 +6661,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FtpReplyCode}.
          */
         public String ftpReplyCode() {
-            return "FtpReplyCode";
+            return "CamelFtpReplyCode";
         }
 
         /**
@@ -6674,7 +6674,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FtpReplyString}.
          */
         public String ftpReplyString() {
-            return "FtpReplyString";
+            return "CamelFtpReplyString";
         }
 
         /**
@@ -6687,7 +6687,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileHost}.
          */
         public String fileHost() {
-            return "FileHost";
+            return "CamelFileHost";
         }
     }
     static SftpEndpointBuilder endpointBuilder(String componentName, String path) {

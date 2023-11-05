@@ -592,7 +592,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * @return the name of the header {@code CaffeineAction}.
          */
         public String caffeineAction() {
-            return "CaffeineAction";
+            return "CamelCaffeineAction";
         }
 
         /**
@@ -605,7 +605,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * @return the name of the header {@code CaffeineActionHasResult}.
          */
         public String caffeineActionHasResult() {
-            return "CaffeineActionHasResult";
+            return "CamelCaffeineActionHasResult";
         }
 
         /**
@@ -618,7 +618,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * @return the name of the header {@code CaffeineActionSucceeded}.
          */
         public String caffeineActionSucceeded() {
-            return "CaffeineActionSucceeded";
+            return "CamelCaffeineActionSucceeded";
         }
 
         /**
@@ -631,7 +631,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * @return the name of the header {@code CaffeineKey}.
          */
         public String caffeineKey() {
-            return "CaffeineKey";
+            return "CamelCaffeineKey";
         }
 
         /**
@@ -645,7 +645,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * @return the name of the header {@code CaffeineKeys}.
          */
         public String caffeineKeys() {
-            return "CaffeineKeys";
+            return "CamelCaffeineKeys";
         }
 
         /**
@@ -658,7 +658,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * @return the name of the header {@code CaffeineValue}.
          */
         public String caffeineValue() {
-            return "CaffeineValue";
+            return "CamelCaffeineValue";
         }
 
         /**
@@ -671,7 +671,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * @return the name of the header {@code CaffeineOldValue}.
          */
         public String caffeineOldValue() {
-            return "CaffeineOldValue";
+            return "CamelCaffeineOldValue";
         }
     }
     static CaffeineLoadCacheEndpointBuilder endpointBuilder(
