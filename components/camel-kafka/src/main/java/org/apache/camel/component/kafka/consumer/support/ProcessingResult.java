@@ -45,7 +45,7 @@ public final class ProcessingResult {
     public long getPartitionLastOffset() {
         return partitionLastOffset;
     }
-
+    
     public long getPartition() {
         return lastPartition;
     }

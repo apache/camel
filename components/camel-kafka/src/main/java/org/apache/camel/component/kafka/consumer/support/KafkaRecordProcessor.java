@@ -120,7 +120,6 @@ public class KafkaRecordProcessor {
 
             boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
                     exceptionHandler);
-
             return new ProcessingResult(breakOnErrorExit, lastResult.getPartition(), lastResult.getPartitionLastOffset(), true);
         } else {
             return new ProcessingResult(false, record.partition(), record.offset(), exchange.getException() != null);
