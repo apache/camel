@@ -2502,7 +2502,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @return the name of the header {@code DebeziumSourceMetadata}.
          */
         public String debeziumSourceMetadata() {
-            return "DebeziumSourceMetadata";
+            return "CamelDebeziumSourceMetadata";
         }
 
         /**
@@ -2516,7 +2516,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @return the name of the header {@code DebeziumIdentifier}.
          */
         public String debeziumIdentifier() {
-            return "DebeziumIdentifier";
+            return "CamelDebeziumIdentifier";
         }
 
         /**
@@ -2529,7 +2529,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @return the name of the header {@code DebeziumKey}.
          */
         public String debeziumKey() {
-            return "DebeziumKey";
+            return "CamelDebeziumKey";
         }
 
         /**
@@ -2544,7 +2544,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @return the name of the header {@code DebeziumOperation}.
          */
         public String debeziumOperation() {
-            return "DebeziumOperation";
+            return "CamelDebeziumOperation";
         }
 
         /**
@@ -2558,7 +2558,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @return the name of the header {@code DebeziumTimestamp}.
          */
         public String debeziumTimestamp() {
-            return "DebeziumTimestamp";
+            return "CamelDebeziumTimestamp";
         }
 
         /**
@@ -2571,7 +2571,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @return the name of the header {@code DebeziumBefore}.
          */
         public String debeziumBefore() {
-            return "DebeziumBefore";
+            return "CamelDebeziumBefore";
         }
 
         /**
@@ -2584,7 +2584,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @return the name of the header {@code DebeziumDdlSQL}.
          */
         public String debeziumDdlSQL() {
-            return "DebeziumDdlSQL";
+            return "CamelDebeziumDdlSQL";
         }
     }
     static DebeziumPostgresEndpointBuilder endpointBuilder(

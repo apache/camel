@@ -324,7 +324,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * @return the name of the header {@code IgniteSetsOperation}.
          */
         public String igniteSetsOperation() {
-            return "IgniteSetsOperation";
+            return "CamelIgniteSetsOperation";
         }
     }
     static IgniteSetEndpointBuilder endpointBuilder(

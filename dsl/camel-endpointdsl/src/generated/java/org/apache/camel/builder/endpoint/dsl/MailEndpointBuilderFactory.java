@@ -3753,7 +3753,7 @@ public interface MailEndpointBuilderFactory {
          * @return the name of the header {@code MailMessageId}.
          */
         public String mailMessageId() {
-            return "MailMessageId";
+            return "CamelMailMessageId";
         }
     }
     static MailEndpointBuilder endpointBuilder(String componentName, String path) {

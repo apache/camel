@@ -790,7 +790,7 @@ public interface XJEndpointBuilderFactory {
          * @return the name of the header {@code XsltFileName}.
          */
         public String xsltFileName() {
-            return "XsltFileName";
+            return "CamelXsltFileName";
         }
     }
     static XJEndpointBuilder endpointBuilder(String componentName, String path) {

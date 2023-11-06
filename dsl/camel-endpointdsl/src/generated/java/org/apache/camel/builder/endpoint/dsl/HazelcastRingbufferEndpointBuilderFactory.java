@@ -287,7 +287,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastOperationType}.
          */
         public String hazelcastOperationType() {
-            return "HazelcastOperationType";
+            return "CamelHazelcastOperationType";
         }
     }
     static HazelcastRingbufferEndpointBuilder endpointBuilder(

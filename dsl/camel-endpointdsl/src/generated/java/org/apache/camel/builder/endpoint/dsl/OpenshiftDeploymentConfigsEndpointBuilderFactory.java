@@ -1533,7 +1533,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1546,7 +1546,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1559,7 +1559,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesDeploymentsLabels}.
          */
         public String kubernetesDeploymentsLabels() {
-            return "KubernetesDeploymentsLabels";
+            return "CamelKubernetesDeploymentsLabels";
         }
 
         /**
@@ -1572,7 +1572,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesDeploymentName}.
          */
         public String kubernetesDeploymentName() {
-            return "KubernetesDeploymentName";
+            return "CamelKubernetesDeploymentName";
         }
 
         /**
@@ -1585,7 +1585,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesDeploymentReplicas}.
          */
         public String kubernetesDeploymentReplicas() {
-            return "KubernetesDeploymentReplicas";
+            return "CamelKubernetesDeploymentReplicas";
         }
 
         /**
@@ -1600,7 +1600,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * KubernetesDeploymentConfigSpec}.
          */
         public String kubernetesDeploymentConfigSpec() {
-            return "KubernetesDeploymentConfigSpec";
+            return "CamelKubernetesDeploymentConfigSpec";
         }
 
         /**
@@ -1614,7 +1614,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventAction}.
          */
         public String kubernetesEventAction() {
-            return "KubernetesEventAction";
+            return "CamelKubernetesEventAction";
         }
 
         /**
@@ -1627,7 +1627,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventTimestamp}.
          */
         public String kubernetesEventTimestamp() {
-            return "KubernetesEventTimestamp";
+            return "CamelKubernetesEventTimestamp";
         }
     }
     static OpenshiftDeploymentConfigsEndpointBuilder endpointBuilder(

@@ -497,7 +497,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 40000
+         * Default: 30000
          * Group: consumer
          * 
          * @param consumerRequestTimeoutMs the value to set
@@ -517,7 +517,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 40000
+         * Default: 30000
          * Group: consumer
          * 
          * @param consumerRequestTimeoutMs the value to set
@@ -1115,7 +1115,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 10000
+         * Default: 45000
          * Group: consumer
          * 
          * @param sessionTimeoutMs the value to set
@@ -1133,7 +1133,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 10000
+         * Default: 45000
          * Group: consumer
          * 
          * @param sessionTimeoutMs the value to set
@@ -5266,7 +5266,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the name of the header {@code KafkaManualCommit}.
          */
         public String kafkaManualCommit() {
-            return "KafkaManualCommit";
+            return "CamelKafkaManualCommit";
         }
     }
     static KafkaEndpointBuilder endpointBuilder(

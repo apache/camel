@@ -1640,7 +1640,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the name of the header {@code CqlQuery}.
          */
         public String cqlQuery() {
-            return "CqlQuery";
+            return "CamelCqlQuery";
         }
 
         /**
@@ -1653,7 +1653,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the name of the header {@code CqlResumeAction}.
          */
         public String cqlResumeAction() {
-            return "CqlResumeAction";
+            return "CamelCqlResumeAction";
         }
     }
     static CassandraEndpointBuilder endpointBuilder(

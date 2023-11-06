@@ -4196,7 +4196,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbOperation}.
          */
         public String mongoDbOperation() {
-            return "MongoDbOperation";
+            return "CamelMongoDbOperation";
         }
 
         /**
@@ -4210,7 +4210,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbResultTotalSize}.
          */
         public String mongoDbResultTotalSize() {
-            return "MongoDbResultTotalSize";
+            return "CamelMongoDbResultTotalSize";
         }
 
         /**
@@ -4224,7 +4224,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbResultPageSize}.
          */
         public String mongoDbResultPageSize() {
-            return "MongoDbResultPageSize";
+            return "CamelMongoDbResultPageSize";
         }
 
         /**
@@ -4237,7 +4237,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbCriteria}.
          */
         public String mongoDbCriteria() {
-            return "MongoDbCriteria";
+            return "CamelMongoDbCriteria";
         }
 
         /**
@@ -4250,7 +4250,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbFieldsProjection}.
          */
         public String mongoDbFieldsProjection() {
-            return "MongoDbFieldsProjection";
+            return "CamelMongoDbFieldsProjection";
         }
 
         /**
@@ -4263,7 +4263,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbBatchSize}.
          */
         public String mongoDbBatchSize() {
-            return "MongoDbBatchSize";
+            return "CamelMongoDbBatchSize";
         }
 
         /**
@@ -4276,7 +4276,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbNumToSkip}.
          */
         public String mongoDbNumToSkip() {
-            return "MongoDbNumToSkip";
+            return "CamelMongoDbNumToSkip";
         }
 
         /**
@@ -4291,7 +4291,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbMultiUpdate}.
          */
         public String mongoDbMultiUpdate() {
-            return "MongoDbMultiUpdate";
+            return "CamelMongoDbMultiUpdate";
         }
 
         /**
@@ -4304,7 +4304,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbUpsert}.
          */
         public String mongoDbUpsert() {
-            return "MongoDbUpsert";
+            return "CamelMongoDbUpsert";
         }
 
         /**
@@ -4317,7 +4317,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbRecordsAffected}.
          */
         public String mongoDbRecordsAffected() {
-            return "MongoDbRecordsAffected";
+            return "CamelMongoDbRecordsAffected";
         }
 
         /**
@@ -4330,7 +4330,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbRecordsMatched}.
          */
         public String mongoDbRecordsMatched() {
-            return "MongoDbRecordsMatched";
+            return "CamelMongoDbRecordsMatched";
         }
 
         /**
@@ -4343,7 +4343,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbSortBy}.
          */
         public String mongoDbSortBy() {
-            return "MongoDbSortBy";
+            return "CamelMongoDbSortBy";
         }
 
         /**
@@ -4356,7 +4356,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbDatabase}.
          */
         public String mongoDbDatabase() {
-            return "MongoDbDatabase";
+            return "CamelMongoDbDatabase";
         }
 
         /**
@@ -4369,7 +4369,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbCollection}.
          */
         public String mongoDbCollection() {
-            return "MongoDbCollection";
+            return "CamelMongoDbCollection";
         }
 
         /**
@@ -4382,7 +4382,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbCollectionIndex}.
          */
         public String mongoDbCollectionIndex() {
-            return "MongoDbCollectionIndex";
+            return "CamelMongoDbCollectionIndex";
         }
 
         /**
@@ -4395,7 +4395,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbLimit}.
          */
         public String mongoDbLimit() {
-            return "MongoDbLimit";
+            return "CamelMongoDbLimit";
         }
 
         /**
@@ -4408,7 +4408,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbTailable}.
          */
         public String mongoDbTailable() {
-            return "MongoDbTailable";
+            return "CamelMongoDbTailable";
         }
 
         /**
@@ -4421,7 +4421,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoWriteResult}.
          */
         public String mongoWriteResult() {
-            return "MongoWriteResult";
+            return "CamelMongoWriteResult";
         }
 
         /**
@@ -4434,7 +4434,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoOid}.
          */
         public String mongoOid() {
-            return "MongoOid";
+            return "CamelMongoOid";
         }
 
         /**
@@ -4448,7 +4448,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbDistinctQueryField}.
          */
         public String mongoDbDistinctQueryField() {
-            return "MongoDbDistinctQueryField";
+            return "CamelMongoDbDistinctQueryField";
         }
 
         /**
@@ -4463,7 +4463,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbAllowDiskUse}.
          */
         public String mongoDbAllowDiskUse() {
-            return "MongoDbAllowDiskUse";
+            return "CamelMongoDbAllowDiskUse";
         }
 
         /**
@@ -4477,7 +4477,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbBulkOrdered}.
          */
         public String mongoDbBulkOrdered() {
-            return "MongoDbBulkOrdered";
+            return "CamelMongoDbBulkOrdered";
         }
 
         /**
@@ -4509,7 +4509,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbStreamOperationType}.
          */
         public String mongoDbStreamOperationType() {
-            return "MongoDbStreamOperationType";
+            return "CamelMongoDbStreamOperationType";
         }
     }
     static MongoDbEndpointBuilder endpointBuilder(

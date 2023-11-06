@@ -1198,7 +1198,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the name of the header {@code MyBatisResult}.
          */
         public String myBatisResult() {
-            return "MyBatisResult";
+            return "CamelMyBatisResult";
         }
 
         /**
@@ -1211,7 +1211,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the name of the header {@code MyBatisStatementName}.
          */
         public String myBatisStatementName() {
-            return "MyBatisStatementName";
+            return "CamelMyBatisStatementName";
         }
     }
     static MyBatisEndpointBuilder endpointBuilder(

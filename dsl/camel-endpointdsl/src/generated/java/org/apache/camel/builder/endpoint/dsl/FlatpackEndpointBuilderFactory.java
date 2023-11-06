@@ -1500,7 +1500,7 @@ public interface FlatpackEndpointBuilderFactory {
          * @return the name of the header {@code FlatpackCounter}.
          */
         public String flatpackCounter() {
-            return "FlatpackCounter";
+            return "CamelFlatpackCounter";
         }
     }
     static FlatpackEndpointBuilder endpointBuilder(

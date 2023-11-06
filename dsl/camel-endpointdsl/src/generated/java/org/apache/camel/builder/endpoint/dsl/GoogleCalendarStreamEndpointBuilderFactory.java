@@ -1154,7 +1154,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCalendarEventId}.
          */
         public String googleCalendarEventId() {
-            return "GoogleCalendarEventId";
+            return "CamelGoogleCalendarEventId";
         }
     }
     static GoogleCalendarStreamEndpointBuilder endpointBuilder(

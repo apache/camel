@@ -3138,7 +3138,7 @@ public interface SjmsEndpointBuilderFactory {
          * @return the name of the header {@code JMSDestinationName}.
          */
         public String jMSDestinationName() {
-            return "JMSDestinationName";
+            return "CamelJMSDestinationName";
         }
 
         /**
@@ -3152,7 +3152,7 @@ public interface SjmsEndpointBuilderFactory {
          * @return the name of the header {@code JmsRequestTimeout}.
          */
         public String jmsRequestTimeout() {
-            return "JmsRequestTimeout";
+            return "CamelJmsRequestTimeout";
         }
 
         /**
