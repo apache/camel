@@ -21,7 +21,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
-import org.apache.camel.converter.TypeConvertible;
 
 /**
  * Registry for type converters.

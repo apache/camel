@@ -9,7 +9,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.TypeConvertible;
+import org.apache.camel.spi.TypeConvertible;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;

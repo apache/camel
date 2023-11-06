@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.converter;
+package org.apache.camel.spi;
 
 import java.util.Objects;
 
