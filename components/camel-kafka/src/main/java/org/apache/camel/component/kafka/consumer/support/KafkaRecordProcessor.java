@@ -136,8 +136,9 @@ public class KafkaRecordProcessor {
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
             
-            if (topicPartition.partition() != record.partition()) {
-                LOG.error("about to process an exception with UNEXPECTED partition. Got topic partition {}. " + 
+            if (lastResult.getPartition() != -1 &&
+                lastResult.getPartition() != record.partition()) {
+                LOG.error("about to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " + 
                         " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
                         topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(), 
                         record.partition(), record.offset());
