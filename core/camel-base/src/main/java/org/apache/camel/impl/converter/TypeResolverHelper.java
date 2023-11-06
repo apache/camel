@@ -20,7 +20,7 @@ package org.apache.camel.impl.converter;
 import java.util.Map;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.TypeConvertible;
+import org.apache.camel.spi.TypeConvertible;
 
 /**
  * Helper methods for resolving the type conversions. This is an internal API and not meant for public usages.

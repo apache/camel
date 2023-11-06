@@ -33,7 +33,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.converter.TypeConvertible;
+import org.apache.camel.spi.TypeConvertible;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Injector;
