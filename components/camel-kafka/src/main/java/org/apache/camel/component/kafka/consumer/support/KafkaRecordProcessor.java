@@ -137,8 +137,9 @@ public class KafkaRecordProcessor {
         if (configuration.isBreakOnFirstError()) {
             
             if (topicPartition.partition() != record.partition()) {
-                LOG.error("about to process an exception with UNEXPECTED partition. Got partition {} with offset {} but was expecting partition {} with offset {}",
-                        topicPartition.partition(), lastResult.getPartitionLastOffset(), 
+                LOG.error("about to process an exception with UNEXPECTED partition. Got topic partition {}. " + 
+                        " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
+                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(), 
                         record.partition(), record.offset());
             }
             
