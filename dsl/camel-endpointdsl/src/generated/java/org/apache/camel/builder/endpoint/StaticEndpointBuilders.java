@@ -1827,9 +1827,6 @@ public class StaticEndpointBuilders {
      * Path parameter: containerName
      * The blob container name
      * 
-     * Path parameter: sasToken
-     * In case of usage of Shared Access Signature we'll need to set a SAS Token
-     * 
      * @param path accountName/containerName
      * @return the dsl builder
      */
@@ -1852,9 +1849,6 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: containerName
      * The blob container name
-     * 
-     * Path parameter: sasToken
-     * In case of usage of Shared Access Signature we'll need to set a SAS Token
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13029,6 +13023,67 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * SMB (camel-smb)
+     * SMB component which consumes natively from file shares using the Server
+     * Message Block (SMB, also known as Common Internet File System - CIFS)
+     * protocol
+     * 
+     * Category: file
+     * Since: 4.2.0-SNAPSHOT
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * Syntax: <code>smb:hostname:port</code>
+     * 
+     * Path parameter: hostname (required)
+     * The share name or IP address
+     * 
+     * Path parameter: port
+     * The share port
+     * Default value: 445
+     * 
+     * Path parameter: shareName
+     * The share path
+     * 
+     * @param path hostname:port
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory.SmbEndpointBuilder smb(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory.endpointBuilder("smb", path);
+    }
+    /**
+     * SMB (camel-smb)
+     * SMB component which consumes natively from file shares using the Server
+     * Message Block (SMB, also known as Common Internet File System - CIFS)
+     * protocol
+     * 
+     * Category: file
+     * Since: 4.2.0-SNAPSHOT
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * Syntax: <code>smb:hostname:port</code>
+     * 
+     * Path parameter: hostname (required)
+     * The share name or IP address
+     * 
+     * Path parameter: port
+     * The share port
+     * Default value: 445
+     * 
+     * Path parameter: shareName
+     * The share path
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path hostname:port
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory.SmbEndpointBuilder smb(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * SMPP (camel-smpp)
