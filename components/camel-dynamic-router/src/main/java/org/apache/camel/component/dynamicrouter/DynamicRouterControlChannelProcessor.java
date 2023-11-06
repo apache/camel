@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
-import java.io.IOException;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.camel.AsyncCallback;
@@ -110,7 +108,7 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
     DynamicRouterControlMessage handleControlMessage(final Exchange exchange) {
         final String controlAction = configuration.getControlAction();
         DynamicRouterControlMessage controlMessage;
-        final Object body = exchange.getIn().getBody();
+        final Object body = exchange.getMessage().getBody();
         if (controlAction != null && !controlAction.isEmpty()) {
             switch (controlAction) {
                 case CONTROL_ACTION_UNSUBSCRIBE:
@@ -157,22 +155,22 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         LOG.debug("Received control channel message");
         DynamicRouterControlMessage controlMessage = handleControlMessage(exchange);
-        try (DynamicRouterMulticastProcessor processor
-                = Optional.ofNullable(component.getRoutingProcessor(controlMessage.getChannel()))
-                        .orElseThrow(() -> new IllegalArgumentException(
-                                "Control channel message is invalid: wrong channel, or no processors present."))) {
+        DynamicRouterMulticastProcessor processor = component.getRoutingProcessor(controlMessage.getChannel());
+        if (processor != null) {
             switch (controlMessage.getMessageType()) {
                 case SUBSCRIBE -> {
                     processor.addFilter(controlMessage);
-                    exchange.getIn().setBody(controlMessage.getId(), String.class);
+                    exchange.getMessage().setBody(controlMessage.getId(), String.class);
                 }
                 case UNSUBSCRIBE -> processor.removeFilter(controlMessage.getId());
                 default -> {
                     // Cannot get here due to enum
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } else {
+            exchange.setException(
+                    new IllegalArgumentException(
+                            "Control channel message is invalid: wrong channel, or no processors present."));
         }
         callback.done(true);
         return true;

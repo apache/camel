@@ -19,7 +19,6 @@ package org.apache.camel.component.dynamicrouter;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.apache.camel.*;
 import org.apache.camel.processor.FilterProcessor;
@@ -99,53 +98,48 @@ public class DynamicRouterMulticastProcessor extends MulticastProcessor {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
-    protected List<Processor> createEndpointProcessors(Exchange exchange) {
-        List<String> recipientList = matchFilters(exchange).stream()
-                .map(PrioritizedFilter::getEndpoint)
-                .distinct()
-                .map(String::trim)
-                .collect(Collectors.toList());
-        if (recipientList.isEmpty()) {
-            // No matching filters, so we will use the default filter that will create a
-            // notification that there were no routing participants that matched the
-            // exchange, which results in a "dropped" message.
+    private List<String> checkRecipients(Exchange exchange) {
+        List<PrioritizedFilter> matchingFilters = matchFilters(exchange);
+        Set<String> recipients = new HashSet<>();
+        for (PrioritizedFilter filter : matchingFilters) {
+            recipients.add(filter.getEndpoint().trim());
+        }
+        if (recipients.isEmpty()) {
             Message exchangeIn = exchange.getIn();
             Object originalBody = exchangeIn.getBody();
             exchangeIn.setHeader("originalBody", originalBody);
             String endpoint = String.format(LOG_ENDPOINT, this.getClass().getCanonicalName(), getId(),
                     warnDroppedMessage ? "WARN" : "DEBUG");
-            recipientList.add(endpoint);
+            recipients.add(endpoint);
             String error = String.format(
                     "DynamicRouter '%s': no filters matched for an exchange with id: '%s', from route: '%s'.  " +
                                          "The 'originalBody' header contains the original message body.",
                     getId(), exchange.getExchangeId(), exchange.getFromEndpoint());
             exchangeIn.setBody(error, String.class);
         }
+        return new ArrayList<>(recipients);
+    }
 
-        return recipientList.stream()
-                .map(uri -> {
-                    Endpoint endpoint;
-                    try {
-                        endpoint = Optional.ofNullable(exchange.getContext().hasEndpoint(uri))
-                                .orElse(ExchangeHelper.resolveEndpoint(exchange, uri));
-                    } catch (Exception e) {
-                        if (isIgnoreInvalidEndpoints()) {
-                            LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", uri, e);
-                            return null;
-                        } else {
-                            // failure so break out
-                            throw e;
-                        }
-                    }
-                    return endpoint;
-                })
-                .filter(Objects::nonNull)
-                .map(endpoint -> {
-                    Producer producer = producerCache.acquireProducer(endpoint);
-                    Route route = ExchangeHelper.getRoute(exchange);
-                    return wrapInErrorHandler(route, exchange, producer);
-                })
-                .toList();
+    protected List<Processor> createEndpointProcessors(Exchange exchange) {
+        List<Processor> endpointProcessors = new ArrayList<>();
+        List<String> recipientList = checkRecipients(exchange);
+        for (String recipient : recipientList) {
+            try {
+                Endpoint ctxEndpoint = exchange.getContext().hasEndpoint(recipient);
+                Endpoint endpoint = ctxEndpoint == null ? ExchangeHelper.resolveEndpoint(exchange, recipient) : ctxEndpoint;
+                Producer producer = producerCache.acquireProducer(endpoint);
+                Route route = ExchangeHelper.getRoute(exchange);
+                endpointProcessors.add(wrapInErrorHandler(route, exchange, producer));
+            } catch (Exception e) {
+                if (isIgnoreInvalidEndpoints()) {
+                    LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
+                } else {
+                    // failure so break out
+                    throw e;
+                }
+            }
+        }
+        return endpointProcessors;
     }
 
     @Override

@@ -61,6 +61,9 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterEndpoint.class);
 
+    private static final Processor NOOP_PROCESSOR = exchange -> {
+    };
+
     /**
      * Creates the {@link DynamicRouterMulticastProcessor} instance.
      */
@@ -179,23 +182,31 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
                         .newScheduledThreadPool(this, "DynamicRouter-AggregateTask", 0);
             }
             AggregationStrategy aggregationStrategy = determineAggregationStrategy(camelContext);
-            DynamicRouterMulticastProcessor processor = processorFactorySupplier.get()
-                    .getInstance("DynamicRouterMulticastProcessor-" + configuration.getChannel(), camelContext, null,
-                            configuration.getRecipientMode(),
-                            configuration.isWarnDroppedMessage(), filterProcessorFactorySupplier, producerCache,
-                            aggregationStrategy, configuration.isParallelProcessing(),
-                            determineExecutorService(camelContext), configuration.isShutdownExecutorService(),
-                            configuration.isStreaming(), configuration.isStopOnException(), timeout,
-                            determineOnPrepare(camelContext), configuration.isShareUnitOfWork(),
-                            configuration.isParallelAggregate());
-            processor.setErrorHandler(errorHandler);
-            processor.setAggregateExecutorService(aggregateExecutorService);
-            processor.setIgnoreInvalidEndpoints(configuration.isIgnoreInvalidEndpoints());
-            processor.setId(getId());
-            processor.setRouteId(routeId);
+            DynamicRouterMulticastProcessor processor = createProcessor(camelContext, aggregationStrategy, timeout,
+                    errorHandler, aggregateExecutorService, routeId);
             ServiceHelper.startService(aggregationStrategy, producerCache, processor);
             component.addRoutingProcessor(configuration.getChannel(), processor);
         }
+    }
+
+    protected DynamicRouterMulticastProcessor createProcessor(
+            CamelContext camelContext, AggregationStrategy aggregationStrategy, long timeout, ErrorHandler errorHandler,
+            ExecutorService aggregateExecutorService, String routeId) {
+        DynamicRouterMulticastProcessor processor = processorFactorySupplier.get()
+                .getInstance("DynamicRouterMulticastProcessor-" + configuration.getChannel(), camelContext, null,
+                        configuration.getRecipientMode(),
+                        configuration.isWarnDroppedMessage(), filterProcessorFactorySupplier, producerCache,
+                        aggregationStrategy, configuration.isParallelProcessing(),
+                        determineExecutorService(camelContext), configuration.isShutdownExecutorService(),
+                        configuration.isStreaming(), configuration.isStopOnException(), timeout,
+                        determineOnPrepare(camelContext), configuration.isShareUnitOfWork(),
+                        configuration.isParallelAggregate());
+        processor.setErrorHandler(errorHandler);
+        processor.setAggregateExecutorService(aggregateExecutorService);
+        processor.setIgnoreInvalidEndpoints(configuration.isIgnoreInvalidEndpoints());
+        processor.setId(getId());
+        processor.setRouteId(routeId);
+        return processor;
     }
 
     protected ExecutorService determineExecutorService(CamelContext camelContext) {
@@ -213,21 +224,16 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
     }
 
     protected AggregationStrategy determineAggregationStrategy(CamelContext camelContext) {
-        AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
-        if (ObjectHelper.isNotEmpty(configuration.getAggregationStrategy())) {
-            aggregationStrategy = CamelContextHelper.mandatoryLookup(camelContext,
-                    configuration.getAggregationStrategy(), AggregationStrategy.class);
-        }
-        return aggregationStrategy;
+        String cfgStrategy = configuration.getAggregationStrategy();
+        return ObjectHelper.isNotEmpty(cfgStrategy)
+                ? CamelContextHelper.mandatoryLookup(camelContext, cfgStrategy, AggregationStrategy.class)
+                : new UseLatestAggregationStrategy();
     }
 
     protected Processor determineOnPrepare(CamelContext camelContext) {
-        Processor processor = exchange -> {
-        };
-        if (ObjectHelper.isNotEmpty(configuration.getOnPrepare())) {
-            processor = CamelContextHelper.mandatoryLookup(camelContext, configuration.getOnPrepare(), Processor.class);
-        }
-        return processor;
+        String onPrepare = configuration.getOnPrepare();
+        return ObjectHelper.isNotEmpty(onPrepare)
+                ? CamelContextHelper.mandatoryLookup(camelContext, onPrepare, Processor.class) : NOOP_PROCESSOR;
     }
 
     /**
