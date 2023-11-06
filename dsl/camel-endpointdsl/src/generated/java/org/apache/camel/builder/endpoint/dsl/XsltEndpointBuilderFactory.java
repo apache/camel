@@ -600,7 +600,7 @@ public interface XsltEndpointBuilderFactory {
          * @return the name of the header {@code XsltFileName}.
          */
         public String xsltFileName() {
-            return "XsltFileName";
+            return "CamelXsltFileName";
         }
     }
     static XsltEndpointBuilder endpointBuilder(String componentName, String path) {

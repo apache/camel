@@ -539,7 +539,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsBlobName}.
          */
         public String jcloudsBlobName() {
-            return "JcloudsBlobName";
+            return "CamelJcloudsBlobName";
         }
 
         /**
@@ -552,7 +552,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsContainerName}.
          */
         public String jcloudsContainerName() {
-            return "JcloudsContainerName";
+            return "CamelJcloudsContainerName";
         }
 
         /**
@@ -565,7 +565,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsBlobNameList}.
          */
         public String jcloudsBlobNameList() {
-            return "JcloudsBlobNameList";
+            return "CamelJcloudsBlobNameList";
         }
 
         /**
@@ -578,7 +578,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsNodeState}.
          */
         public String jcloudsNodeState() {
-            return "JcloudsNodeState";
+            return "CamelJcloudsNodeState";
         }
 
         /**
@@ -592,7 +592,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsOperation}.
          */
         public String jcloudsOperation() {
-            return "JcloudsOperation";
+            return "CamelJcloudsOperation";
         }
 
         /**
@@ -606,7 +606,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsImageId}.
          */
         public String jcloudsImageId() {
-            return "JcloudsImageId";
+            return "CamelJcloudsImageId";
         }
 
         /**
@@ -620,7 +620,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsLocationId}.
          */
         public String jcloudsLocationId() {
-            return "JcloudsLocationId";
+            return "CamelJcloudsLocationId";
         }
 
         /**
@@ -634,7 +634,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsHardwareId}.
          */
         public String jcloudsHardwareId() {
-            return "JcloudsHardwareId";
+            return "CamelJcloudsHardwareId";
         }
 
         /**
@@ -648,7 +648,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsGroup}.
          */
         public String jcloudsGroup() {
-            return "JcloudsGroup";
+            return "CamelJcloudsGroup";
         }
 
         /**
@@ -661,7 +661,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsNodeId}.
          */
         public String jcloudsNodeId() {
-            return "JcloudsNodeId";
+            return "CamelJcloudsNodeId";
         }
 
         /**
@@ -674,7 +674,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @return the name of the header {@code JcloudsUser}.
          */
         public String jcloudsUser() {
-            return "JcloudsUser";
+            return "CamelJcloudsUser";
         }
     }
     static JcloudsEndpointBuilder endpointBuilder(

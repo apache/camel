@@ -959,7 +959,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the name of the header {@code ThriftMethodName}.
          */
         public String thriftMethodName() {
-            return "ThriftMethodName";
+            return "CamelThriftMethodName";
         }
     }
     static ThriftEndpointBuilder endpointBuilder(

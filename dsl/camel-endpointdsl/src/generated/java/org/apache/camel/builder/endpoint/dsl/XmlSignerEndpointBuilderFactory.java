@@ -946,7 +946,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureMessageIsPlainText}.
          */
         public String xmlSignatureMessageIsPlainText() {
-            return "XmlSignatureMessageIsPlainText";
+            return "CamelXmlSignatureMessageIsPlainText";
         }
 
         /**
@@ -963,7 +963,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the name of the header {@code XmlSignaturePlainTextEncoding}.
          */
         public String xmlSignaturePlainTextEncoding() {
-            return "XmlSignaturePlainTextEncoding";
+            return "CamelXmlSignaturePlainTextEncoding";
         }
 
         /**
@@ -984,7 +984,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureOmitXmlDeclaration}.
          */
         public String xmlSignatureOmitXmlDeclaration() {
-            return "XmlSignatureOmitXmlDeclaration";
+            return "CamelXmlSignatureOmitXmlDeclaration";
         }
 
         /**
@@ -998,7 +998,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureContentReferenceUri}.
          */
         public String xmlSignatureContentReferenceUri() {
-            return "XmlSignatureContentReferenceUri";
+            return "CamelXmlSignatureContentReferenceUri";
         }
 
         /**
@@ -1012,7 +1012,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureContentReferenceType}.
          */
         public String xmlSignatureContentReferenceType() {
-            return "XmlSignatureContentReferenceType";
+            return "CamelXmlSignatureContentReferenceType";
         }
 
         /**
@@ -1025,7 +1025,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the name of the header {@code XmlSignatureSchemaResourceUri}.
          */
         public String xmlSignatureSchemaResourceUri() {
-            return "XmlSignatureSchemaResourceUri";
+            return "CamelXmlSignatureSchemaResourceUri";
         }
 
         /**
@@ -1039,7 +1039,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureXpathsToIdAttributes}.
          */
         public String xmlSignatureXpathsToIdAttributes() {
-            return "XmlSignatureXpathsToIdAttributes";
+            return "CamelXmlSignatureXpathsToIdAttributes";
         }
 
         /**
@@ -1055,7 +1055,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the name of the header {@code XmlSignatureTransformMethods}.
          */
         public String xmlSignatureTransformMethods() {
-            return "XmlSignatureTransformMethods";
+            return "CamelXmlSignatureTransformMethods";
         }
 
         /**
@@ -1069,7 +1069,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureXAdESQualifyingPropertiesId}.
          */
         public String xmlSignatureXAdESQualifyingPropertiesId() {
-            return "XmlSignatureXAdESQualifyingPropertiesId";
+            return "CamelXmlSignatureXAdESQualifyingPropertiesId";
         }
 
         /**
@@ -1083,7 +1083,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureXAdESSignedDataObjectPropertiesId}.
          */
         public String xmlSignatureXAdESSignedDataObjectPropertiesId() {
-            return "XmlSignatureXAdESSignedDataObjectPropertiesId";
+            return "CamelXmlSignatureXAdESSignedDataObjectPropertiesId";
         }
 
         /**
@@ -1097,7 +1097,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureXAdESSignedSignaturePropertiesId}.
          */
         public String xmlSignatureXAdESSignedSignaturePropertiesId() {
-            return "XmlSignatureXAdESSignedSignaturePropertiesId";
+            return "CamelXmlSignatureXAdESSignedSignaturePropertiesId";
         }
 
         /**
@@ -1112,7 +1112,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * XmlSignatureXAdESDataObjectFormatEncoding}.
          */
         public String xmlSignatureXAdESDataObjectFormatEncoding() {
-            return "XmlSignatureXAdESDataObjectFormatEncoding";
+            return "CamelXmlSignatureXAdESDataObjectFormatEncoding";
         }
 
         /**
@@ -1125,7 +1125,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the name of the header {@code XmlSignatureXAdESNamespace}.
          */
         public String xmlSignatureXAdESNamespace() {
-            return "XmlSignatureXAdESNamespace";
+            return "CamelXmlSignatureXAdESNamespace";
         }
 
         /**
@@ -1138,7 +1138,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the name of the header {@code XmlSignatureXAdESPrefix}.
          */
         public String xmlSignatureXAdESPrefix() {
-            return "XmlSignatureXAdESPrefix";
+            return "CamelXmlSignatureXAdESPrefix";
         }
 
         /**
@@ -1151,7 +1151,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the name of the header {@code CharsetName}.
          */
         public String charsetName() {
-            return "CharsetName";
+            return "CamelCharsetName";
         }
     }
     static XmlSignerEndpointBuilder endpointBuilder(

@@ -714,7 +714,7 @@ public interface RestEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpQuery}.
          */
         public String restHttpQuery() {
-            return "RestHttpQuery";
+            return "CamelRestHttpQuery";
         }
 
         /**
@@ -727,7 +727,7 @@ public interface RestEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpUri}.
          */
         public String restHttpUri() {
-            return "RestHttpUri";
+            return "CamelRestHttpUri";
         }
 
         /**
@@ -740,7 +740,7 @@ public interface RestEndpointBuilderFactory {
          * @return the name of the header {@code HttpMethod}.
          */
         public String httpMethod() {
-            return "HttpMethod";
+            return "CamelHttpMethod";
         }
 
         /**
@@ -781,7 +781,7 @@ public interface RestEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseCode}.
          */
         public String httpResponseCode() {
-            return "HttpResponseCode";
+            return "CamelHttpResponseCode";
         }
     }
     static RestEndpointBuilder endpointBuilder(String componentName, String path) {

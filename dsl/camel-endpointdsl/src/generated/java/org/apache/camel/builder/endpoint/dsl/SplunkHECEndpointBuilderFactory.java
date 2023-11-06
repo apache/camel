@@ -429,7 +429,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * @return the name of the header {@code SplunkHECIndexTime}.
          */
         public String splunkHECIndexTime() {
-            return "SplunkHECIndexTime";
+            return "CamelSplunkHECIndexTime";
         }
     }
     static SplunkHECEndpointBuilder endpointBuilder(

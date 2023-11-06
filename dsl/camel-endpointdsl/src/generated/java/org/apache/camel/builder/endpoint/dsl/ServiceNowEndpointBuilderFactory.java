@@ -1280,7 +1280,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowResource}.
          */
         public String serviceNowResource() {
-            return "ServiceNowResource";
+            return "CamelServiceNowResource";
         }
 
         /**
@@ -1293,7 +1293,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowAction}.
          */
         public String serviceNowAction() {
-            return "ServiceNowAction";
+            return "CamelServiceNowAction";
         }
 
         /**
@@ -1306,7 +1306,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowActionSubject}.
          */
         public String serviceNowActionSubject() {
-            return "ServiceNowActionSubject";
+            return "CamelServiceNowActionSubject";
         }
 
         /**
@@ -1319,7 +1319,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowModel}.
          */
         public String serviceNowModel() {
-            return "ServiceNowModel";
+            return "CamelServiceNowModel";
         }
 
         /**
@@ -1332,7 +1332,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowRequestModel}.
          */
         public String serviceNowRequestModel() {
-            return "ServiceNowRequestModel";
+            return "CamelServiceNowRequestModel";
         }
 
         /**
@@ -1345,7 +1345,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowResponseModel}.
          */
         public String serviceNowResponseModel() {
-            return "ServiceNowResponseModel";
+            return "CamelServiceNowResponseModel";
         }
 
         /**
@@ -1358,7 +1358,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowContentType}.
          */
         public String serviceNowContentType() {
-            return "ServiceNowContentType";
+            return "CamelServiceNowContentType";
         }
 
         /**
@@ -1371,7 +1371,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowContentMeta}.
          */
         public String serviceNowContentMeta() {
-            return "ServiceNowContentMeta";
+            return "CamelServiceNowContentMeta";
         }
 
         /**
@@ -1384,7 +1384,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowResponseMeta}.
          */
         public String serviceNowResponseMeta() {
-            return "ServiceNowResponseMeta";
+            return "CamelServiceNowResponseMeta";
         }
 
         /**
@@ -1397,7 +1397,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowApiVersion}.
          */
         public String serviceNowApiVersion() {
-            return "ServiceNowApiVersion";
+            return "CamelServiceNowApiVersion";
         }
 
         /**
@@ -1410,7 +1410,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowResponseType}.
          */
         public String serviceNowResponseType() {
-            return "ServiceNowResponseType";
+            return "CamelServiceNowResponseType";
         }
 
         /**
@@ -1424,7 +1424,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * ServiceNowRetrieveTargetRecord}.
          */
         public String serviceNowRetrieveTargetRecord() {
-            return "ServiceNowRetrieveTargetRecord";
+            return "CamelServiceNowRetrieveTargetRecord";
         }
 
         /**
@@ -1437,7 +1437,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowTable}.
          */
         public String serviceNowTable() {
-            return "ServiceNowTable";
+            return "CamelServiceNowTable";
         }
 
         /**
@@ -1450,7 +1450,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowSysId}.
          */
         public String serviceNowSysId() {
-            return "ServiceNowSysId";
+            return "CamelServiceNowSysId";
         }
 
         /**
@@ -1463,7 +1463,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowUserSysId}.
          */
         public String serviceNowUserSysId() {
-            return "ServiceNowUserSysId";
+            return "CamelServiceNowUserSysId";
         }
 
         /**
@@ -1476,7 +1476,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowUserId}.
          */
         public String serviceNowUserId() {
-            return "ServiceNowUserId";
+            return "CamelServiceNowUserId";
         }
 
         /**
@@ -1489,7 +1489,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowCartItemId}.
          */
         public String serviceNowCartItemId() {
-            return "ServiceNowCartItemId";
+            return "CamelServiceNowCartItemId";
         }
 
         /**
@@ -1502,7 +1502,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowFileName}.
          */
         public String serviceNowFileName() {
-            return "ServiceNowFileName";
+            return "CamelServiceNowFileName";
         }
 
         /**
@@ -1515,7 +1515,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowTableSysId}.
          */
         public String serviceNowTableSysId() {
-            return "ServiceNowTableSysId";
+            return "CamelServiceNowTableSysId";
         }
 
         /**
@@ -1528,7 +1528,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowEncryptionContext}.
          */
         public String serviceNowEncryptionContext() {
-            return "ServiceNowEncryptionContext";
+            return "CamelServiceNowEncryptionContext";
         }
 
         /**
@@ -1541,7 +1541,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowCategory}.
          */
         public String serviceNowCategory() {
-            return "ServiceNowCategory";
+            return "CamelServiceNowCategory";
         }
 
         /**
@@ -1554,7 +1554,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowType}.
          */
         public String serviceNowType() {
-            return "ServiceNowType";
+            return "CamelServiceNowType";
         }
 
         /**
@@ -1567,7 +1567,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowCatalog}.
          */
         public String serviceNowCatalog() {
-            return "ServiceNowCatalog";
+            return "CamelServiceNowCatalog";
         }
 
         /**
@@ -1580,7 +1580,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowQuery}.
          */
         public String serviceNowQuery() {
-            return "ServiceNowQuery";
+            return "CamelServiceNowQuery";
         }
 
         /**
@@ -1595,7 +1595,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowDisplayValue}.
          */
         public String serviceNowDisplayValue() {
-            return "ServiceNowDisplayValue";
+            return "CamelServiceNowDisplayValue";
         }
 
         /**
@@ -1609,7 +1609,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowInputDisplayValue}.
          */
         public String serviceNowInputDisplayValue() {
-            return "ServiceNowInputDisplayValue";
+            return "CamelServiceNowInputDisplayValue";
         }
 
         /**
@@ -1624,7 +1624,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * ServiceNowExcludeReferenceLink}.
          */
         public String serviceNowExcludeReferenceLink() {
-            return "ServiceNowExcludeReferenceLink";
+            return "CamelServiceNowExcludeReferenceLink";
         }
 
         /**
@@ -1637,7 +1637,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowFields}.
          */
         public String serviceNowFields() {
-            return "ServiceNowFields";
+            return "CamelServiceNowFields";
         }
 
         /**
@@ -1650,7 +1650,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowLimit}.
          */
         public String serviceNowLimit() {
-            return "ServiceNowLimit";
+            return "CamelServiceNowLimit";
         }
 
         /**
@@ -1663,7 +1663,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowText}.
          */
         public String serviceNowText() {
-            return "ServiceNowText";
+            return "CamelServiceNowText";
         }
 
         /**
@@ -1676,7 +1676,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowOffset}.
          */
         public String serviceNowOffset() {
-            return "ServiceNowOffset";
+            return "CamelServiceNowOffset";
         }
 
         /**
@@ -1689,7 +1689,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowView}.
          */
         public String serviceNowView() {
-            return "ServiceNowView";
+            return "CamelServiceNowView";
         }
 
         /**
@@ -1704,7 +1704,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * ServiceNowSuppressAutoSysField}.
          */
         public String serviceNowSuppressAutoSysField() {
-            return "ServiceNowSuppressAutoSysField";
+            return "CamelServiceNowSuppressAutoSysField";
         }
 
         /**
@@ -1720,7 +1720,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * ServiceNowSuppressPaginationHeader}.
          */
         public String serviceNowSuppressPaginationHeader() {
-            return "ServiceNowSuppressPaginationHeader";
+            return "CamelServiceNowSuppressPaginationHeader";
         }
 
         /**
@@ -1733,7 +1733,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowMinFields}.
          */
         public String serviceNowMinFields() {
-            return "ServiceNowMinFields";
+            return "CamelServiceNowMinFields";
         }
 
         /**
@@ -1746,7 +1746,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowMaxFields}.
          */
         public String serviceNowMaxFields() {
-            return "ServiceNowMaxFields";
+            return "CamelServiceNowMaxFields";
         }
 
         /**
@@ -1759,7 +1759,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowSumFields}.
          */
         public String serviceNowSumFields() {
-            return "ServiceNowSumFields";
+            return "CamelServiceNowSumFields";
         }
 
         /**
@@ -1772,7 +1772,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowAvgFields}.
          */
         public String serviceNowAvgFields() {
-            return "ServiceNowAvgFields";
+            return "CamelServiceNowAvgFields";
         }
 
         /**
@@ -1785,7 +1785,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowCount}.
          */
         public String serviceNowCount() {
-            return "ServiceNowCount";
+            return "CamelServiceNowCount";
         }
 
         /**
@@ -1798,7 +1798,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowGroupBy}.
          */
         public String serviceNowGroupBy() {
-            return "ServiceNowGroupBy";
+            return "CamelServiceNowGroupBy";
         }
 
         /**
@@ -1811,7 +1811,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowOrderBy}.
          */
         public String serviceNowOrderBy() {
-            return "ServiceNowOrderBy";
+            return "CamelServiceNowOrderBy";
         }
 
         /**
@@ -1824,7 +1824,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowHaving}.
          */
         public String serviceNowHaving() {
-            return "ServiceNowHaving";
+            return "CamelServiceNowHaving";
         }
 
         /**
@@ -1837,7 +1837,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowUUID}.
          */
         public String serviceNowUUID() {
-            return "ServiceNowUUID";
+            return "CamelServiceNowUUID";
         }
 
         /**
@@ -1850,7 +1850,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowBreakdown}.
          */
         public String serviceNowBreakdown() {
-            return "ServiceNowBreakdown";
+            return "CamelServiceNowBreakdown";
         }
 
         /**
@@ -1865,7 +1865,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowIncludeScores}.
          */
         public String serviceNowIncludeScores() {
-            return "ServiceNowIncludeScores";
+            return "CamelServiceNowIncludeScores";
         }
 
         /**
@@ -1880,7 +1880,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowIncludeScoreNotes}.
          */
         public String serviceNowIncludeScoreNotes() {
-            return "ServiceNowIncludeScoreNotes";
+            return "CamelServiceNowIncludeScoreNotes";
         }
 
         /**
@@ -1896,7 +1896,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowIncludeAggregates}.
          */
         public String serviceNowIncludeAggregates() {
-            return "ServiceNowIncludeAggregates";
+            return "CamelServiceNowIncludeAggregates";
         }
 
         /**
@@ -1912,7 +1912,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * ServiceNowIncludeAvailableBreakdowns}.
          */
         public String serviceNowIncludeAvailableBreakdowns() {
-            return "ServiceNowIncludeAvailableBreakdowns";
+            return "CamelServiceNowIncludeAvailableBreakdowns";
         }
 
         /**
@@ -1929,7 +1929,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * ServiceNowIncludeAvailableAggregates}.
          */
         public String serviceNowIncludeAvailableAggregates() {
-            return "ServiceNowIncludeAvailableAggregates";
+            return "CamelServiceNowIncludeAvailableAggregates";
         }
 
         /**
@@ -1943,7 +1943,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowFavorites}.
          */
         public String serviceNowFavorites() {
-            return "ServiceNowFavorites";
+            return "CamelServiceNowFavorites";
         }
 
         /**
@@ -1957,7 +1957,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowKey}.
          */
         public String serviceNowKey() {
-            return "ServiceNowKey";
+            return "CamelServiceNowKey";
         }
 
         /**
@@ -1971,7 +1971,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowTarget}.
          */
         public String serviceNowTarget() {
-            return "ServiceNowTarget";
+            return "CamelServiceNowTarget";
         }
 
         /**
@@ -1987,7 +1987,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowDisplay}.
          */
         public String serviceNowDisplay() {
-            return "ServiceNowDisplay";
+            return "CamelServiceNowDisplay";
         }
 
         /**
@@ -2002,7 +2002,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowPerPage}.
          */
         public String serviceNowPerPage() {
-            return "ServiceNowPerPage";
+            return "CamelServiceNowPerPage";
         }
 
         /**
@@ -2016,7 +2016,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowSortBy}.
          */
         public String serviceNowSortBy() {
-            return "ServiceNowSortBy";
+            return "CamelServiceNowSortBy";
         }
 
         /**
@@ -2031,7 +2031,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowSortDir}.
          */
         public String serviceNowSortDir() {
-            return "ServiceNowSortDir";
+            return "CamelServiceNowSortDir";
         }
 
         /**
@@ -2044,7 +2044,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowContains}.
          */
         public String serviceNowContains() {
-            return "ServiceNowContains";
+            return "CamelServiceNowContains";
         }
 
         /**
@@ -2057,7 +2057,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowTags}.
          */
         public String serviceNowTags() {
-            return "ServiceNowTags";
+            return "CamelServiceNowTags";
         }
 
         /**
@@ -2070,7 +2070,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowPage}.
          */
         public String serviceNowPage() {
-            return "ServiceNowPage";
+            return "CamelServiceNowPage";
         }
 
         /**
@@ -2083,7 +2083,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowElementsFilter}.
          */
         public String serviceNowElementsFilter() {
-            return "ServiceNowElementsFilter";
+            return "CamelServiceNowElementsFilter";
         }
 
         /**
@@ -2096,7 +2096,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowBreakdownRelation}.
          */
         public String serviceNowBreakdownRelation() {
-            return "ServiceNowBreakdownRelation";
+            return "CamelServiceNowBreakdownRelation";
         }
 
         /**
@@ -2109,7 +2109,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowDataSource}.
          */
         public String serviceNowDataSource() {
-            return "ServiceNowDataSource";
+            return "CamelServiceNowDataSource";
         }
 
         /**
@@ -2122,7 +2122,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the name of the header {@code ServiceNowTopLevelOnly}.
          */
         public String serviceNowTopLevelOnly() {
-            return "ServiceNowTopLevelOnly";
+            return "CamelServiceNowTopLevelOnly";
         }
     }
     static ServiceNowEndpointBuilder endpointBuilder(

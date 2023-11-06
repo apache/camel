@@ -362,7 +362,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * @return the name of the header {@code InfluxDB2MeasurementName}.
          */
         public String influxDB2MeasurementName() {
-            return "InfluxDB2MeasurementName";
+            return "CamelInfluxDB2MeasurementName";
         }
 
         /**
@@ -376,7 +376,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * @return the name of the header {@code InfluxDB.RetentionPolicy}.
          */
         public String influxdbRetentionpolicy() {
-            return "InfluxDB.RetentionPolicy";
+            return "camelInfluxDB.RetentionPolicy";
         }
 
         /**
@@ -390,7 +390,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * @return the name of the header {@code InfluxDB2WritePrecision}.
          */
         public String influxDB2WritePrecision() {
-            return "InfluxDB2WritePrecision";
+            return "CamelInfluxDB2WritePrecision";
         }
     }
     static InfluxDb2EndpointBuilder endpointBuilder(
