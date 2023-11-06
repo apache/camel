@@ -513,7 +513,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the name of the header {@code AsteriskEventName}.
          */
         public String asteriskEventName() {
-            return "AsteriskEventName";
+            return "CamelAsteriskEventName";
         }
 
         /**
@@ -526,7 +526,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the name of the header {@code AsteriskExtension}.
          */
         public String asteriskExtension() {
-            return "AsteriskExtension";
+            return "CamelAsteriskExtension";
         }
 
         /**
@@ -540,7 +540,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the name of the header {@code AsteriskContext}.
          */
         public String asteriskContext() {
-            return "AsteriskContext";
+            return "CamelAsteriskContext";
         }
 
         /**
@@ -554,7 +554,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the name of the header {@code AsteriskAction}.
          */
         public String asteriskAction() {
-            return "AsteriskAction";
+            return "CamelAsteriskAction";
         }
     }
     static AsteriskEndpointBuilder endpointBuilder(

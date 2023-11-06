@@ -2246,7 +2246,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the name of the header {@code EntityManager}.
          */
         public String entityManager() {
-            return "EntityManager";
+            return "CamelEntityManager";
         }
 
         /**
@@ -2259,7 +2259,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the name of the header {@code JpaParameters}.
          */
         public String jpaParameters() {
-            return "JpaParameters";
+            return "CamelJpaParameters";
         }
 
         /**
@@ -2273,7 +2273,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the name of the header {@code JpaMaximumResults}.
          */
         public String jpaMaximumResults() {
-            return "JpaMaximumResults";
+            return "CamelJpaMaximumResults";
         }
 
         /**
@@ -2287,7 +2287,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the name of the header {@code JpaFirstResult}.
          */
         public String jpaFirstResult() {
-            return "JpaFirstResult";
+            return "CamelJpaFirstResult";
         }
     }
     static JpaEndpointBuilder endpointBuilder(String componentName, String path) {

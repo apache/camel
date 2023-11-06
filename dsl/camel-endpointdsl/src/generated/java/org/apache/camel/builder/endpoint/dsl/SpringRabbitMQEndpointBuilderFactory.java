@@ -1957,7 +1957,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * SpringRabbitmqRoutingOverrideKey}.
          */
         public String springRabbitmqRoutingOverrideKey() {
-            return "SpringRabbitmqRoutingOverrideKey";
+            return "CamelSpringRabbitmqRoutingOverrideKey";
         }
 
         /**
@@ -1971,7 +1971,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * SpringRabbitmqExchangeOverrideName}.
          */
         public String springRabbitmqExchangeOverrideName() {
-            return "SpringRabbitmqExchangeOverrideName";
+            return "CamelSpringRabbitmqExchangeOverrideName";
         }
 
         /**
@@ -1984,7 +1984,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqRedelivered}.
          */
         public String springRabbitmqRedelivered() {
-            return "SpringRabbitmqRedelivered";
+            return "CamelSpringRabbitmqRedelivered";
         }
 
         /**
@@ -1997,7 +1997,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqDeliveryTag}.
          */
         public String springRabbitmqDeliveryTag() {
-            return "SpringRabbitmqDeliveryTag";
+            return "CamelSpringRabbitmqDeliveryTag";
         }
 
         /**
@@ -2010,7 +2010,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqExchangeName}.
          */
         public String springRabbitmqExchangeName() {
-            return "SpringRabbitmqExchangeName";
+            return "CamelSpringRabbitmqExchangeName";
         }
 
         /**
@@ -2023,7 +2023,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqRoutingKey}.
          */
         public String springRabbitmqRoutingKey() {
-            return "SpringRabbitmqRoutingKey";
+            return "CamelSpringRabbitmqRoutingKey";
         }
 
         /**
@@ -2036,7 +2036,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqDeliveryMode}.
          */
         public String springRabbitmqDeliveryMode() {
-            return "SpringRabbitmqDeliveryMode";
+            return "CamelSpringRabbitmqDeliveryMode";
         }
 
         /**
@@ -2049,7 +2049,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqType}.
          */
         public String springRabbitmqType() {
-            return "SpringRabbitmqType";
+            return "CamelSpringRabbitmqType";
         }
 
         /**
@@ -2062,7 +2062,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqContentType}.
          */
         public String springRabbitmqContentType() {
-            return "SpringRabbitmqContentType";
+            return "CamelSpringRabbitmqContentType";
         }
 
         /**
@@ -2075,7 +2075,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqContentLength}.
          */
         public String springRabbitmqContentLength() {
-            return "SpringRabbitmqContentLength";
+            return "CamelSpringRabbitmqContentLength";
         }
 
         /**
@@ -2088,7 +2088,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqContentEncoding}.
          */
         public String springRabbitmqContentEncoding() {
-            return "SpringRabbitmqContentEncoding";
+            return "CamelSpringRabbitmqContentEncoding";
         }
 
         /**
@@ -2101,7 +2101,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqMessageId}.
          */
         public String springRabbitmqMessageId() {
-            return "SpringRabbitmqMessageId";
+            return "CamelSpringRabbitmqMessageId";
         }
 
         /**
@@ -2114,7 +2114,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqCorrelationId}.
          */
         public String springRabbitmqCorrelationId() {
-            return "SpringRabbitmqCorrelationId";
+            return "CamelSpringRabbitmqCorrelationId";
         }
 
         /**
@@ -2127,7 +2127,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqReplyTo}.
          */
         public String springRabbitmqReplyTo() {
-            return "SpringRabbitmqReplyTo";
+            return "CamelSpringRabbitmqReplyTo";
         }
 
         /**
@@ -2140,7 +2140,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqExpiration}.
          */
         public String springRabbitmqExpiration() {
-            return "SpringRabbitmqExpiration";
+            return "CamelSpringRabbitmqExpiration";
         }
 
         /**
@@ -2153,7 +2153,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqTimestamp}.
          */
         public String springRabbitmqTimestamp() {
-            return "SpringRabbitmqTimestamp";
+            return "CamelSpringRabbitmqTimestamp";
         }
 
         /**
@@ -2166,7 +2166,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqUserId}.
          */
         public String springRabbitmqUserId() {
-            return "SpringRabbitmqUserId";
+            return "CamelSpringRabbitmqUserId";
         }
 
         /**
@@ -2179,7 +2179,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqAppId}.
          */
         public String springRabbitmqAppId() {
-            return "SpringRabbitmqAppId";
+            return "CamelSpringRabbitmqAppId";
         }
 
         /**
@@ -2192,7 +2192,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqPriority}.
          */
         public String springRabbitmqPriority() {
-            return "SpringRabbitmqPriority";
+            return "CamelSpringRabbitmqPriority";
         }
 
         /**
@@ -2205,7 +2205,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqClusterId}.
          */
         public String springRabbitmqClusterId() {
-            return "SpringRabbitmqClusterId";
+            return "CamelSpringRabbitmqClusterId";
         }
     }
     static SpringRabbitMQEndpointBuilder endpointBuilder(

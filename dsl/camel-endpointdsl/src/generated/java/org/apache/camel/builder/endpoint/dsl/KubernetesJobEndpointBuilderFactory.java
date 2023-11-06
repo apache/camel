@@ -1489,7 +1489,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1502,7 +1502,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1515,7 +1515,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesJobName}.
          */
         public String kubernetesJobName() {
-            return "KubernetesJobName";
+            return "CamelKubernetesJobName";
         }
 
         /**
@@ -1529,7 +1529,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesJobSpec}.
          */
         public String kubernetesJobSpec() {
-            return "KubernetesJobSpec";
+            return "CamelKubernetesJobSpec";
         }
 
         /**
@@ -1542,7 +1542,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesJobLabels}.
          */
         public String kubernetesJobLabels() {
-            return "KubernetesJobLabels";
+            return "CamelKubernetesJobLabels";
         }
     }
     static KubernetesJobEndpointBuilder endpointBuilder(

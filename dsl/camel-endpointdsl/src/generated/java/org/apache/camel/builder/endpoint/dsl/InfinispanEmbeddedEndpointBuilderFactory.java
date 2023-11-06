@@ -1185,7 +1185,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanEventType}.
          */
         public String infinispanEventType() {
-            return "InfinispanEventType";
+            return "CamelInfinispanEventType";
         }
 
         /**
@@ -1199,7 +1199,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanIsPre}.
          */
         public String infinispanIsPre() {
-            return "InfinispanIsPre";
+            return "CamelInfinispanIsPre";
         }
 
         /**
@@ -1212,7 +1212,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanCacheName}.
          */
         public String infinispanCacheName() {
-            return "InfinispanCacheName";
+            return "CamelInfinispanCacheName";
         }
 
         /**
@@ -1225,7 +1225,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanKey}.
          */
         public String infinispanKey() {
-            return "InfinispanKey";
+            return "CamelInfinispanKey";
         }
 
         /**
@@ -1238,7 +1238,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanValue}.
          */
         public String infinispanValue() {
-            return "InfinispanValue";
+            return "CamelInfinispanValue";
         }
 
         /**
@@ -1251,7 +1251,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanDefaultValue}.
          */
         public String infinispanDefaultValue() {
-            return "InfinispanDefaultValue";
+            return "CamelInfinispanDefaultValue";
         }
 
         /**
@@ -1264,7 +1264,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanOldValue}.
          */
         public String infinispanOldValue() {
-            return "InfinispanOldValue";
+            return "CamelInfinispanOldValue";
         }
 
         /**
@@ -1277,7 +1277,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanMap}.
          */
         public String infinispanMap() {
-            return "InfinispanMap";
+            return "CamelInfinispanMap";
         }
 
         /**
@@ -1291,7 +1291,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanOperation}.
          */
         public String infinispanOperation() {
-            return "InfinispanOperation";
+            return "CamelInfinispanOperation";
         }
 
         /**
@@ -1304,7 +1304,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanOperationResult}.
          */
         public String infinispanOperationResult() {
-            return "InfinispanOperationResult";
+            return "CamelInfinispanOperationResult";
         }
 
         /**
@@ -1318,7 +1318,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * InfinispanOperationResultHeader}.
          */
         public String infinispanOperationResultHeader() {
-            return "InfinispanOperationResultHeader";
+            return "CamelInfinispanOperationResultHeader";
         }
 
         /**
@@ -1332,7 +1332,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanLifespanTime}.
          */
         public String infinispanLifespanTime() {
-            return "InfinispanLifespanTime";
+            return "CamelInfinispanLifespanTime";
         }
 
         /**
@@ -1345,7 +1345,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanTimeUnit}.
          */
         public String infinispanTimeUnit() {
-            return "InfinispanTimeUnit";
+            return "CamelInfinispanTimeUnit";
         }
 
         /**
@@ -1359,7 +1359,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanMaxIdleTime}.
          */
         public String infinispanMaxIdleTime() {
-            return "InfinispanMaxIdleTime";
+            return "CamelInfinispanMaxIdleTime";
         }
 
         /**
@@ -1372,7 +1372,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanMaxIdleTimeUnit}.
          */
         public String infinispanMaxIdleTimeUnit() {
-            return "InfinispanMaxIdleTimeUnit";
+            return "CamelInfinispanMaxIdleTimeUnit";
         }
 
         /**
@@ -1388,7 +1388,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanIgnoreReturnValues}.
          */
         public String infinispanIgnoreReturnValues() {
-            return "InfinispanIgnoreReturnValues";
+            return "CamelInfinispanIgnoreReturnValues";
         }
 
         /**
@@ -1401,7 +1401,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanEventData}.
          */
         public String infinispanEventData() {
-            return "InfinispanEventData";
+            return "CamelInfinispanEventData";
         }
 
         /**
@@ -1416,7 +1416,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanQueryBuilder}.
          */
         public String infinispanQueryBuilder() {
-            return "InfinispanQueryBuilder";
+            return "CamelInfinispanQueryBuilder";
         }
 
         /**
@@ -1430,7 +1430,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanCommandRetried}.
          */
         public String infinispanCommandRetried() {
-            return "InfinispanCommandRetried";
+            return "CamelInfinispanCommandRetried";
         }
 
         /**
@@ -1444,7 +1444,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanEntryCreated}.
          */
         public String infinispanEntryCreated() {
-            return "InfinispanEntryCreated";
+            return "CamelInfinispanEntryCreated";
         }
 
         /**
@@ -1458,7 +1458,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanOriginLocal}.
          */
         public String infinispanOriginLocal() {
-            return "InfinispanOriginLocal";
+            return "CamelInfinispanOriginLocal";
         }
 
         /**
@@ -1472,7 +1472,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the name of the header {@code InfinispanCurrentState}.
          */
         public String infinispanCurrentState() {
-            return "InfinispanCurrentState";
+            return "CamelInfinispanCurrentState";
         }
     }
     static InfinispanEmbeddedEndpointBuilder endpointBuilder(

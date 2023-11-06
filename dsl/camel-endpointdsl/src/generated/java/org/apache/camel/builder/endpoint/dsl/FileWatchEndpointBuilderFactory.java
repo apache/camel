@@ -524,7 +524,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileEventType}.
          */
         public String fileEventType() {
-            return "FileEventType";
+            return "CamelFileEventType";
         }
 
         /**
@@ -537,7 +537,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileNameOnly}.
          */
         public String fileNameOnly() {
-            return "FileNameOnly";
+            return "CamelFileNameOnly";
         }
 
         /**
@@ -554,7 +554,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileAbsolute}.
          */
         public String fileAbsolute() {
-            return "FileAbsolute";
+            return "CamelFileAbsolute";
         }
 
         /**
@@ -568,7 +568,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileAbsolutePath}.
          */
         public String fileAbsolutePath() {
-            return "FileAbsolutePath";
+            return "CamelFileAbsolutePath";
         }
 
         /**
@@ -582,7 +582,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FilePath}.
          */
         public String filePath() {
-            return "FilePath";
+            return "CamelFilePath";
         }
 
         /**
@@ -596,7 +596,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
 
         /**
@@ -609,7 +609,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileRelativePath}.
          */
         public String fileRelativePath() {
-            return "FileRelativePath";
+            return "CamelFileRelativePath";
         }
 
         /**
@@ -622,7 +622,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileNameConsumed}.
          */
         public String fileNameConsumed() {
-            return "FileNameConsumed";
+            return "CamelFileNameConsumed";
         }
 
         /**
@@ -635,7 +635,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileParent}.
          */
         public String fileParent() {
-            return "FileParent";
+            return "CamelFileParent";
         }
 
         /**
@@ -648,7 +648,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the name of the header {@code FileLastModified}.
          */
         public String fileLastModified() {
-            return "FileLastModified";
+            return "CamelFileLastModified";
         }
     }
     static FileWatchEndpointBuilder endpointBuilder(

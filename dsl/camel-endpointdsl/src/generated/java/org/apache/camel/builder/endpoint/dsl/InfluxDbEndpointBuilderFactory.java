@@ -340,7 +340,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * @return the name of the header {@code InfluxDB.RetentionPolicy}.
          */
         public String influxdbRetentionpolicy() {
-            return "InfluxDB.RetentionPolicy";
+            return "camelInfluxDB.RetentionPolicy";
         }
 
         /**
@@ -353,7 +353,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * @return the name of the header {@code InfluxDB.databaseName}.
          */
         public String influxdbDatabasename() {
-            return "InfluxDB.databaseName";
+            return "camelInfluxDB.databaseName";
         }
 
         /**
@@ -366,7 +366,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * @return the name of the header {@code InfluxDB.query}.
          */
         public String influxdbQuery() {
-            return "InfluxDB.query";
+            return "camelInfluxDB.query";
         }
     }
     static InfluxDbEndpointBuilder endpointBuilder(

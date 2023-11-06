@@ -637,7 +637,7 @@ public interface Translate2EndpointBuilderFactory {
          * @return the name of the header {@code AwsTranslateSourceLanguage}.
          */
         public String awsTranslateSourceLanguage() {
-            return "AwsTranslateSourceLanguage";
+            return "CamelAwsTranslateSourceLanguage";
         }
 
         /**
@@ -650,7 +650,7 @@ public interface Translate2EndpointBuilderFactory {
          * @return the name of the header {@code AwsTranslateTargetLanguage}.
          */
         public String awsTranslateTargetLanguage() {
-            return "AwsTranslateTargetLanguage";
+            return "CamelAwsTranslateTargetLanguage";
         }
 
         /**
@@ -663,7 +663,7 @@ public interface Translate2EndpointBuilderFactory {
          * @return the name of the header {@code AwsTranslateTerminologyNames}.
          */
         public String awsTranslateTerminologyNames() {
-            return "AwsTranslateTerminologyNames";
+            return "CamelAwsTranslateTerminologyNames";
         }
 
         /**
@@ -676,7 +676,7 @@ public interface Translate2EndpointBuilderFactory {
          * @return the name of the header {@code AwsTranslateOperation}.
          */
         public String awsTranslateOperation() {
-            return "AwsTranslateOperation";
+            return "CamelAwsTranslateOperation";
         }
     }
     static Translate2EndpointBuilder endpointBuilder(

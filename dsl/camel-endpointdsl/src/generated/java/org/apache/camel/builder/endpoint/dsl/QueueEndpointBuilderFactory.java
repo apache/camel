@@ -1801,7 +1801,7 @@ public interface QueueEndpointBuilderFactory {
          * AzureStorageQueueRawHttpHeaders}.
          */
         public String azureStorageQueueRawHttpHeaders() {
-            return "AzureStorageQueueRawHttpHeaders";
+            return "CamelAzureStorageQueueRawHttpHeaders";
         }
 
         /**
@@ -1814,7 +1814,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueMetadata}.
          */
         public String azureStorageQueueMetadata() {
-            return "AzureStorageQueueMetadata";
+            return "CamelAzureStorageQueueMetadata";
         }
 
         /**
@@ -1827,7 +1827,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueMessageId}.
          */
         public String azureStorageQueueMessageId() {
-            return "AzureStorageQueueMessageId";
+            return "CamelAzureStorageQueueMessageId";
         }
 
         /**
@@ -1841,7 +1841,7 @@ public interface QueueEndpointBuilderFactory {
          * AzureStorageQueueInsertionTime}.
          */
         public String azureStorageQueueInsertionTime() {
-            return "AzureStorageQueueInsertionTime";
+            return "CamelAzureStorageQueueInsertionTime";
         }
 
         /**
@@ -1855,7 +1855,7 @@ public interface QueueEndpointBuilderFactory {
          * AzureStorageQueueExpirationTime}.
          */
         public String azureStorageQueueExpirationTime() {
-            return "AzureStorageQueueExpirationTime";
+            return "CamelAzureStorageQueueExpirationTime";
         }
 
         /**
@@ -1870,7 +1870,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueuePopReceipt}.
          */
         public String azureStorageQueuePopReceipt() {
-            return "AzureStorageQueuePopReceipt";
+            return "CamelAzureStorageQueuePopReceipt";
         }
 
         /**
@@ -1884,7 +1884,7 @@ public interface QueueEndpointBuilderFactory {
          * AzureStorageQueueTimeNextVisible}.
          */
         public String azureStorageQueueTimeNextVisible() {
-            return "AzureStorageQueueTimeNextVisible";
+            return "CamelAzureStorageQueueTimeNextVisible";
         }
 
         /**
@@ -1897,7 +1897,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueDequeueCount}.
          */
         public String azureStorageQueueDequeueCount() {
-            return "AzureStorageQueueDequeueCount";
+            return "CamelAzureStorageQueueDequeueCount";
         }
 
         /**
@@ -1912,7 +1912,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueOperation}.
          */
         public String azureStorageQueueOperation() {
-            return "AzureStorageQueueOperation";
+            return "CamelAzureStorageQueueOperation";
         }
 
         /**
@@ -1925,7 +1925,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueName}.
          */
         public String azureStorageQueueName() {
-            return "AzureStorageQueueName";
+            return "CamelAzureStorageQueueName";
         }
 
         /**
@@ -1939,7 +1939,7 @@ public interface QueueEndpointBuilderFactory {
          * AzureStorageQueueSegmentOptions}.
          */
         public String azureStorageQueueSegmentOptions() {
-            return "AzureStorageQueueSegmentOptions";
+            return "CamelAzureStorageQueueSegmentOptions";
         }
 
         /**
@@ -1953,7 +1953,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueTimeout}.
          */
         public String azureStorageQueueTimeout() {
-            return "AzureStorageQueueTimeout";
+            return "CamelAzureStorageQueueTimeout";
         }
 
         /**
@@ -1969,7 +1969,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueMaxMessages}.
          */
         public String azureStorageQueueMaxMessages() {
-            return "AzureStorageQueueMaxMessages";
+            return "CamelAzureStorageQueueMaxMessages";
         }
 
         /**
@@ -1986,7 +1986,7 @@ public interface QueueEndpointBuilderFactory {
          * AzureStorageQueueVisibilityTimeout}.
          */
         public String azureStorageQueueVisibilityTimeout() {
-            return "AzureStorageQueueVisibilityTimeout";
+            return "CamelAzureStorageQueueVisibilityTimeout";
         }
 
         /**
@@ -2001,7 +2001,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueTimeToLive}.
          */
         public String azureStorageQueueTimeToLive() {
-            return "AzureStorageQueueTimeToLive";
+            return "CamelAzureStorageQueueTimeToLive";
         }
 
         /**
@@ -2015,7 +2015,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageQueueCreateQueue}.
          */
         public String azureStorageQueueCreateQueue() {
-            return "AzureStorageQueueCreateQueue";
+            return "CamelAzureStorageQueueCreateQueue";
         }
     }
     static QueueEndpointBuilder endpointBuilder(

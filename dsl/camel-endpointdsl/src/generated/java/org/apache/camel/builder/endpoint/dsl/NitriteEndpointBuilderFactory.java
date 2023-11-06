@@ -625,7 +625,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the name of the header {@code NitriteChangeTimestamp}.
          */
         public String nitriteChangeTimestamp() {
-            return "NitriteChangeTimestamp";
+            return "CamelNitriteChangeTimestamp";
         }
 
         /**
@@ -638,7 +638,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the name of the header {@code NitriteChangeType}.
          */
         public String nitriteChangeType() {
-            return "NitriteChangeType";
+            return "CamelNitriteChangeType";
         }
 
         /**
@@ -653,7 +653,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the name of the header {@code NitriteOperation}.
          */
         public String nitriteOperation() {
-            return "NitriteOperation";
+            return "CamelNitriteOperation";
         }
 
         /**
@@ -666,7 +666,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the name of the header {@code NitriteWriteResult}.
          */
         public String nitriteWriteResult() {
-            return "NitriteWriteResult";
+            return "CamelNitriteWriteResult";
         }
     }
     static NitriteEndpointBuilder endpointBuilder(

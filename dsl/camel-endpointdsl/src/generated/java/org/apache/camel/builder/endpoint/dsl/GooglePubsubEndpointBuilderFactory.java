@@ -809,7 +809,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @return the name of the header {@code GooglePubsubMessageId}.
          */
         public String googlePubsubMessageId() {
-            return "GooglePubsubMessageId";
+            return "CamelGooglePubsubMessageId";
         }
 
         /**
@@ -822,7 +822,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @return the name of the header {@code GooglePubsubMsgAckId}.
          */
         public String googlePubsubMsgAckId() {
-            return "GooglePubsubMsgAckId";
+            return "CamelGooglePubsubMsgAckId";
         }
 
         /**
@@ -835,7 +835,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @return the name of the header {@code GooglePubsubPublishTime}.
          */
         public String googlePubsubPublishTime() {
-            return "GooglePubsubPublishTime";
+            return "CamelGooglePubsubPublishTime";
         }
 
         /**
@@ -848,7 +848,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @return the name of the header {@code GooglePubsubAttributes}.
          */
         public String googlePubsubAttributes() {
-            return "GooglePubsubAttributes";
+            return "CamelGooglePubsubAttributes";
         }
 
         /**
@@ -862,7 +862,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @return the name of the header {@code GooglePubsubOrderingKey}.
          */
         public String googlePubsubOrderingKey() {
-            return "GooglePubsubOrderingKey";
+            return "CamelGooglePubsubOrderingKey";
         }
     }
     static GooglePubsubEndpointBuilder endpointBuilder(

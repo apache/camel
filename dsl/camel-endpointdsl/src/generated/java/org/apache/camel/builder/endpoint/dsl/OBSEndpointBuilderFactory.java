@@ -1774,7 +1774,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsBucketName}.
          */
         public String hwCloudObsBucketName() {
-            return "HwCloudObsBucketName";
+            return "CamelHwCloudObsBucketName";
         }
 
         /**
@@ -1787,7 +1787,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsObjectKey}.
          */
         public String hwCloudObsObjectKey() {
-            return "HwCloudObsObjectKey";
+            return "CamelHwCloudObsObjectKey";
         }
 
         /**
@@ -1800,7 +1800,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsLastModified}.
          */
         public String hwCloudObsLastModified() {
-            return "HwCloudObsLastModified";
+            return "CamelHwCloudObsLastModified";
         }
 
         /**
@@ -1814,7 +1814,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsETag}.
          */
         public String hwCloudObsETag() {
-            return "HwCloudObsETag";
+            return "CamelHwCloudObsETag";
         }
 
         /**
@@ -1827,7 +1827,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsContentMD5}.
          */
         public String hwCloudObsContentMD5() {
-            return "HwCloudObsContentMD5";
+            return "CamelHwCloudObsContentMD5";
         }
 
         /**
@@ -1840,7 +1840,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsObjectType}.
          */
         public String hwCloudObsObjectType() {
-            return "HwCloudObsObjectType";
+            return "CamelHwCloudObsObjectType";
         }
 
         /**
@@ -1879,7 +1879,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
     }
     static OBSEndpointBuilder endpointBuilder(String componentName, String path) {

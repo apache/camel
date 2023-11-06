@@ -274,7 +274,7 @@ public interface DrillEndpointBuilderFactory {
          * @return the name of the header {@code DrillQuery}.
          */
         public String drillQuery() {
-            return "DrillQuery";
+            return "CamelDrillQuery";
         }
     }
     static DrillEndpointBuilder endpointBuilder(

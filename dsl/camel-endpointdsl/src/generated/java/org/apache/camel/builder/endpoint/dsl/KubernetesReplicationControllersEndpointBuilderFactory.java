@@ -1533,7 +1533,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1546,7 +1546,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1560,7 +1560,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * KubernetesReplicationControllersLabels}.
          */
         public String kubernetesReplicationControllersLabels() {
-            return "KubernetesReplicationControllersLabels";
+            return "CamelKubernetesReplicationControllersLabels";
         }
 
         /**
@@ -1574,7 +1574,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * KubernetesReplicationControllerName}.
          */
         public String kubernetesReplicationControllerName() {
-            return "KubernetesReplicationControllerName";
+            return "CamelKubernetesReplicationControllerName";
         }
 
         /**
@@ -1589,7 +1589,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * KubernetesReplicationControllerSpec}.
          */
         public String kubernetesReplicationControllerSpec() {
-            return "KubernetesReplicationControllerSpec";
+            return "CamelKubernetesReplicationControllerSpec";
         }
 
         /**
@@ -1604,7 +1604,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * KubernetesReplicationControllerReplicas}.
          */
         public String kubernetesReplicationControllerReplicas() {
-            return "KubernetesReplicationControllerReplicas";
+            return "CamelKubernetesReplicationControllerReplicas";
         }
 
         /**
@@ -1618,7 +1618,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventAction}.
          */
         public String kubernetesEventAction() {
-            return "KubernetesEventAction";
+            return "CamelKubernetesEventAction";
         }
 
         /**
@@ -1631,7 +1631,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventTimestamp}.
          */
         public String kubernetesEventTimestamp() {
-            return "KubernetesEventTimestamp";
+            return "CamelKubernetesEventTimestamp";
         }
     }
     static KubernetesReplicationControllersEndpointBuilder endpointBuilder(
