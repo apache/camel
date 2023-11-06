@@ -420,7 +420,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecCommandExecutable}.
          */
         public String execCommandExecutable() {
-            return "ExecCommandExecutable";
+            return "CamelExecCommandExecutable";
         }
 
         /**
@@ -435,7 +435,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecCommandArgs}.
          */
         public String execCommandArgs() {
-            return "ExecCommandArgs";
+            return "CamelExecCommandArgs";
         }
 
         /**
@@ -449,7 +449,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecCommandOutFile}.
          */
         public String execCommandOutFile() {
-            return "ExecCommandOutFile";
+            return "CamelExecCommandOutFile";
         }
 
         /**
@@ -463,7 +463,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecCommandWorkingDir}.
          */
         public String execCommandWorkingDir() {
-            return "ExecCommandWorkingDir";
+            return "CamelExecCommandWorkingDir";
         }
 
         /**
@@ -477,7 +477,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecCommandTimeout}.
          */
         public String execCommandTimeout() {
-            return "ExecCommandTimeout";
+            return "CamelExecCommandTimeout";
         }
 
         /**
@@ -491,7 +491,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecExitValues}.
          */
         public String execExitValues() {
-            return "ExecExitValues";
+            return "CamelExecExitValues";
         }
 
         /**
@@ -505,7 +505,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecStderr}.
          */
         public String execStderr() {
-            return "ExecStderr";
+            return "CamelExecStderr";
         }
 
         /**
@@ -520,7 +520,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecExitValue}.
          */
         public String execExitValue() {
-            return "ExecExitValue";
+            return "CamelExecExitValue";
         }
 
         /**
@@ -535,7 +535,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecUseStderrOnEmptyStdout}.
          */
         public String execUseStderrOnEmptyStdout() {
-            return "ExecUseStderrOnEmptyStdout";
+            return "CamelExecUseStderrOnEmptyStdout";
         }
 
         /**
@@ -550,7 +550,7 @@ public interface ExecEndpointBuilderFactory {
          * @return the name of the header {@code ExecCommandLogLevel}.
          */
         public String execCommandLogLevel() {
-            return "ExecCommandLogLevel";
+            return "CamelExecCommandLogLevel";
         }
     }
     static ExecEndpointBuilder endpointBuilder(String componentName, String path) {

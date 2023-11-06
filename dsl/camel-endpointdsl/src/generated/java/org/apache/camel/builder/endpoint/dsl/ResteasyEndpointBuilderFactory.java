@@ -2068,7 +2068,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code ResteasyProxyMethod}.
          */
         public String resteasyProxyMethod() {
-            return "ResteasyProxyMethod";
+            return "CamelResteasyProxyMethod";
         }
 
         /**
@@ -2081,7 +2081,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code ResteasyProxyMethodArgs}.
          */
         public String resteasyProxyMethodArgs() {
-            return "ResteasyProxyMethodArgs";
+            return "CamelResteasyProxyMethodArgs";
         }
 
         /**
@@ -2094,7 +2094,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code ResteasyLogin}.
          */
         public String resteasyLogin() {
-            return "ResteasyLogin";
+            return "CamelResteasyLogin";
         }
 
         /**
@@ -2107,7 +2107,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code ResteasyPassword}.
          */
         public String resteasyPassword() {
-            return "ResteasyPassword";
+            return "CamelResteasyPassword";
         }
 
         /**
@@ -2120,7 +2120,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code ResteasyContextPath}.
          */
         public String resteasyContextPath() {
-            return "ResteasyContextPath";
+            return "CamelResteasyContextPath";
         }
 
         /**
@@ -2133,7 +2133,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code ResteasyHttpMethod}.
          */
         public String resteasyHttpMethod() {
-            return "ResteasyHttpMethod";
+            return "CamelResteasyHttpMethod";
         }
 
         /**
@@ -2146,7 +2146,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code ResteasyHttpRequest}.
          */
         public String resteasyHttpRequest() {
-            return "ResteasyHttpRequest";
+            return "CamelResteasyHttpRequest";
         }
 
         /**
@@ -2160,7 +2160,7 @@ public interface ResteasyEndpointBuilderFactory {
          * ResteasyProxyProducerException}.
          */
         public String resteasyProxyProducerException() {
-            return "ResteasyProxyProducerException";
+            return "CamelResteasyProxyProducerException";
         }
 
         /**
@@ -2173,7 +2173,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpQuery}.
          */
         public String httpQuery() {
-            return "HttpQuery";
+            return "CamelHttpQuery";
         }
 
         /**
@@ -2199,7 +2199,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpPath}.
          */
         public String httpPath() {
-            return "HttpPath";
+            return "CamelHttpPath";
         }
 
         /**
@@ -2226,7 +2226,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseCode}.
          */
         public String httpResponseCode() {
-            return "HttpResponseCode";
+            return "CamelHttpResponseCode";
         }
 
         /**
@@ -2239,7 +2239,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseText}.
          */
         public String httpResponseText() {
-            return "HttpResponseText";
+            return "CamelHttpResponseText";
         }
 
         /**
@@ -2252,7 +2252,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpProtocolVersion}.
          */
         public String httpProtocolVersion() {
-            return "HttpProtocolVersion";
+            return "CamelHttpProtocolVersion";
         }
 
         /**
@@ -2278,7 +2278,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpUri}.
          */
         public String restHttpUri() {
-            return "RestHttpUri";
+            return "CamelRestHttpUri";
         }
 
         /**
@@ -2295,7 +2295,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpUri}.
          */
         public String httpUri() {
-            return "HttpUri";
+            return "CamelHttpUri";
         }
 
         /**
@@ -2308,7 +2308,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpQuery}.
          */
         public String restHttpQuery() {
-            return "RestHttpQuery";
+            return "CamelRestHttpQuery";
         }
 
         /**
@@ -2321,7 +2321,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpRawQuery}.
          */
         public String httpRawQuery() {
-            return "HttpRawQuery";
+            return "CamelHttpRawQuery";
         }
 
         /**
@@ -2335,7 +2335,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpMethod}.
          */
         public String httpMethod() {
-            return "HttpMethod";
+            return "CamelHttpMethod";
         }
 
         /**
@@ -2348,7 +2348,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the name of the header {@code HttpCharacterEncoding}.
          */
         public String httpCharacterEncoding() {
-            return "HttpCharacterEncoding";
+            return "CamelHttpCharacterEncoding";
         }
     }
     @Deprecated

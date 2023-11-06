@@ -1651,7 +1651,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the name of the header {@code GrpcMethodName}.
          */
         public String grpcMethodName() {
-            return "GrpcMethodName";
+            return "CamelGrpcMethodName";
         }
 
         /**
@@ -1665,7 +1665,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the name of the header {@code GrpcUserAgent}.
          */
         public String grpcUserAgent() {
-            return "GrpcUserAgent";
+            return "CamelGrpcUserAgent";
         }
 
         /**
@@ -1679,7 +1679,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the name of the header {@code GrpcEventType}.
          */
         public String grpcEventType() {
-            return "GrpcEventType";
+            return "CamelGrpcEventType";
         }
     }
     static GrpcEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -259,7 +259,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * @return the name of the header {@code GoogleBigQueryTableSuffix}.
          */
         public String googleBigQueryTableSuffix() {
-            return "GoogleBigQueryTableSuffix";
+            return "CamelGoogleBigQueryTableSuffix";
         }
 
         /**
@@ -273,7 +273,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * @return the name of the header {@code GoogleBigQueryTableId}.
          */
         public String googleBigQueryTableId() {
-            return "GoogleBigQueryTableId";
+            return "CamelGoogleBigQueryTableId";
         }
 
         /**
@@ -286,7 +286,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * @return the name of the header {@code GoogleBigQueryInsertId}.
          */
         public String googleBigQueryInsertId() {
-            return "GoogleBigQueryInsertId";
+            return "CamelGoogleBigQueryInsertId";
         }
 
         /**
@@ -300,7 +300,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * GoogleBigQueryPartitionDecorator}.
          */
         public String googleBigQueryPartitionDecorator() {
-            return "GoogleBigQueryPartitionDecorator";
+            return "CamelGoogleBigQueryPartitionDecorator";
         }
     }
     static GoogleBigQueryEndpointBuilder endpointBuilder(

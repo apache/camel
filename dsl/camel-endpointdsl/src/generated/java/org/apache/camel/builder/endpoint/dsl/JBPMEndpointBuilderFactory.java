@@ -2265,7 +2265,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMValue}.
          */
         public String jBPMValue() {
-            return "JBPMValue";
+            return "CamelJBPMValue";
         }
 
         /**
@@ -2281,7 +2281,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMOperation}.
          */
         public String jBPMOperation() {
-            return "JBPMOperation";
+            return "CamelJBPMOperation";
         }
 
         /**
@@ -2294,7 +2294,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMProcessId}.
          */
         public String jBPMProcessId() {
-            return "JBPMProcessId";
+            return "CamelJBPMProcessId";
         }
 
         /**
@@ -2307,7 +2307,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMProcessInstanceId}.
          */
         public String jBPMProcessInstanceId() {
-            return "JBPMProcessInstanceId";
+            return "CamelJBPMProcessInstanceId";
         }
 
         /**
@@ -2320,7 +2320,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMParameters}.
          */
         public String jBPMParameters() {
-            return "JBPMParameters";
+            return "CamelJBPMParameters";
         }
 
         /**
@@ -2333,7 +2333,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMEventType}.
          */
         public String jBPMEventType() {
-            return "JBPMEventType";
+            return "CamelJBPMEventType";
         }
 
         /**
@@ -2347,7 +2347,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMEvent}.
          */
         public String jBPMEvent() {
-            return "JBPMEvent";
+            return "CamelJBPMEvent";
         }
 
         /**
@@ -2360,7 +2360,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMMaxNumber}.
          */
         public String jBPMMaxNumber() {
-            return "JBPMMaxNumber";
+            return "CamelJBPMMaxNumber";
         }
 
         /**
@@ -2373,7 +2373,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMIdentifier}.
          */
         public String jBPMIdentifier() {
-            return "JBPMIdentifier";
+            return "CamelJBPMIdentifier";
         }
 
         /**
@@ -2386,7 +2386,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMWorkItemId}.
          */
         public String jBPMWorkItemId() {
-            return "JBPMWorkItemId";
+            return "CamelJBPMWorkItemId";
         }
 
         /**
@@ -2399,7 +2399,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMTaskId}.
          */
         public String jBPMTaskId() {
-            return "JBPMTaskId";
+            return "CamelJBPMTaskId";
         }
 
         /**
@@ -2412,7 +2412,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMTask}.
          */
         public String jBPMTask() {
-            return "JBPMTask";
+            return "CamelJBPMTask";
         }
 
         /**
@@ -2425,7 +2425,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMUserId}.
          */
         public String jBPMUserId() {
-            return "JBPMUserId";
+            return "CamelJBPMUserId";
         }
 
         /**
@@ -2438,7 +2438,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMTargetUserId}.
          */
         public String jBPMTargetUserId() {
-            return "JBPMTargetUserId";
+            return "CamelJBPMTargetUserId";
         }
 
         /**
@@ -2451,7 +2451,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMAttachmentId}.
          */
         public String jBPMAttachmentId() {
-            return "JBPMAttachmentId";
+            return "CamelJBPMAttachmentId";
         }
 
         /**
@@ -2464,7 +2464,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMContentId}.
          */
         public String jBPMContentId() {
-            return "JBPMContentId";
+            return "CamelJBPMContentId";
         }
 
         /**
@@ -2477,7 +2477,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMEntityList}.
          */
         public String jBPMEntityList() {
-            return "JBPMEntityList";
+            return "CamelJBPMEntityList";
         }
 
         /**
@@ -2490,7 +2490,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMStatusList}.
          */
         public String jBPMStatusList() {
-            return "JBPMStatusList";
+            return "CamelJBPMStatusList";
         }
 
         /**
@@ -2503,7 +2503,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMResultPage}.
          */
         public String jBPMResultPage() {
-            return "JBPMResultPage";
+            return "CamelJBPMResultPage";
         }
 
         /**
@@ -2516,7 +2516,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the name of the header {@code JBPMResultPageSize}.
          */
         public String jBPMResultPageSize() {
-            return "JBPMResultPageSize";
+            return "CamelJBPMResultPageSize";
         }
     }
     static JBPMEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -366,7 +366,7 @@ public interface VelocityEndpointBuilderFactory {
          * @return the name of the header {@code VelocityResourceUri}.
          */
         public String velocityResourceUri() {
-            return "VelocityResourceUri";
+            return "CamelVelocityResourceUri";
         }
 
         /**
@@ -379,7 +379,7 @@ public interface VelocityEndpointBuilderFactory {
          * @return the name of the header {@code VelocityTemplate}.
          */
         public String velocityTemplate() {
-            return "VelocityTemplate";
+            return "CamelVelocityTemplate";
         }
 
         /**
@@ -392,7 +392,7 @@ public interface VelocityEndpointBuilderFactory {
          * @return the name of the header {@code VelocityContext}.
          */
         public String velocityContext() {
-            return "VelocityContext";
+            return "CamelVelocityContext";
         }
 
         /**
@@ -409,7 +409,7 @@ public interface VelocityEndpointBuilderFactory {
          * @return the name of the header {@code VelocitySupplementalContext}.
          */
         public String velocitySupplementalContext() {
-            return "VelocitySupplementalContext";
+            return "CamelVelocitySupplementalContext";
         }
     }
     static VelocityEndpointBuilder endpointBuilder(
