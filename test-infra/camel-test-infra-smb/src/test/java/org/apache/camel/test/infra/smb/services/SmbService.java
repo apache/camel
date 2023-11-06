@@ -26,8 +26,11 @@ import org.slf4j.LoggerFactory;
 
 public interface SmbService extends TestService, BeforeTestExecutionCallback, AfterTestExecutionCallback {
     String address();
+
     String shareName();
+
     String userName();
+
     String password();
 
     @Override
