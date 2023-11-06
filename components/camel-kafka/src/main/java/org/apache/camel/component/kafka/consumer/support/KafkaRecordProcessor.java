@@ -63,10 +63,7 @@ public class KafkaRecordProcessor {
             message.setHeader(KafkaConstants.KEY, record.key());
         }
         
-        LOG.debug("setting up the exchange for message from partition {} and offset {}",
-                record.partition(), record.offset());
-
-        LOG.debug("setting up the exchange for message from partition {} and offset {}",
+        LOG.debug("Setting up the exchange for message from partition {} and offset {}",
                 record.partition(), record.offset());
 
         message.setBody(record.value());

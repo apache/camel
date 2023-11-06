@@ -86,9 +86,11 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
         to.expectedMessageCount(4);
         to.expectedBodiesReceived("1", "2", "3", "4");
 
+        context.getRouteController().stopRoute(ROUTE_ID);
+        
         this.publishMessagesToKafka();
         
-        this.context().getRouteController().startRoute(ROUTE_ID);
+        context.getRouteController().startRoute(ROUTE_ID);
         
         Awaitility.await()
             .timeout(30, TimeUnit.SECONDS)
