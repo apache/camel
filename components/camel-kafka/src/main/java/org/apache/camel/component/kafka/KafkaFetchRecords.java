@@ -316,7 +316,9 @@ public class KafkaFetchRecords implements Runnable {
                     kafkaConsumer, threadId, commitManager, consumerListener);
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
+            
             ProcessingResult lastResult = null;
+            
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
                 if (consumerListener != null) {
@@ -325,7 +327,32 @@ public class KafkaFetchRecords implements Runnable {
                     }
                 }
 
+                if (lastResult != null) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("this polling iteration is using lastresult on partition {} and offset {}",
+                            lastResult.getPartition(), lastResult.getPartitionLastOffset());
+                    }
+                    
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("this polling iteration is using lastresult of null");
+                    }
+                }
+                
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords, lastResult);
+                
+                if (result != null) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("this polling iteration had a result returned for partition {} and offset {}",
+                            result.getPartition(), result.getPartitionLastOffset());
+                    }
+                    
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("this polling iteration had a result returned as null");
+                    }
+                }
+                
                 updateTaskState();
                 if (result.isBreakOnErrorHit() && !this.state.equals(State.PAUSED)) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
@@ -334,6 +361,11 @@ public class KafkaFetchRecords implements Runnable {
                     setConnected(false);
                 } else {
                     lastResult = result;
+                    
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("setting lastresult to partition {} and offset {}",
+                           lastResult.getPartition(), lastResult.getPartitionLastOffset());
+                    }
                 }
 
             }
