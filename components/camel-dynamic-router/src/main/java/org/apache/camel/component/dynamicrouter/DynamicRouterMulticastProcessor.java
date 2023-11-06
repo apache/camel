@@ -158,10 +158,10 @@ public class DynamicRouterMulticastProcessor extends MulticastProcessor {
      * @return                a {@link PrioritizedFilter} built from the properties of the incoming control message
      */
     PrioritizedFilter createFilter(final DynamicRouterControlMessage controlMessage) {
-        final String id = controlMessage.getId();
-        final int priority = controlMessage.getPriority();
-        final String endpoint = controlMessage.getEndpoint();
-        final Predicate predicate = controlMessage.getPredicate();
+        final String id = controlMessage.id();
+        final int priority = controlMessage.priority();
+        final String endpoint = controlMessage.endpoint();
+        final Predicate predicate = controlMessage.predicate();
         return filterProcessorFactorySupplier.get().getInstance(id, priority, predicate, endpoint);
     }
 

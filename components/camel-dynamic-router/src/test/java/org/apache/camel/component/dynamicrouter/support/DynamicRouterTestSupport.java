@@ -208,11 +208,11 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
 
         lenient().doNothing().when(asyncCallback).done(anyBoolean());
 
-        lenient().when(controlMessage.getId()).thenReturn(TEST_ID);
-        lenient().when(controlMessage.getChannel()).thenReturn(DYNAMIC_ROUTER_CHANNEL);
-        lenient().when(controlMessage.getPriority()).thenReturn(1);
-        lenient().when(controlMessage.getPredicate()).thenReturn(PredicateBuilder.constant(true));
-        lenient().when(controlMessage.getEndpoint()).thenReturn("test");
+        lenient().when(controlMessage.id()).thenReturn(TEST_ID);
+        lenient().when(controlMessage.channel()).thenReturn(DYNAMIC_ROUTER_CHANNEL);
+        lenient().when(controlMessage.priority()).thenReturn(1);
+        lenient().when(controlMessage.predicate()).thenReturn(PredicateBuilder.constant(true));
+        lenient().when(controlMessage.endpoint()).thenReturn("test");
 
         endpointFactory = new DynamicRouterEndpointFactory() {
             @Override

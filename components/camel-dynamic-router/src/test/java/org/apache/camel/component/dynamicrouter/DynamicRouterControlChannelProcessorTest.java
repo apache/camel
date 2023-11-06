@@ -110,11 +110,11 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
         final DynamicRouterControlMessage result = controlChannelProcessor.handleControlMessage(exchange);
 
         assertNotNull(result);
-        assertEquals(CONTROL_ACTION_SUBSCRIBE, result.getMessageType().name().toLowerCase());
-        assertEquals(DYNAMIC_ROUTER_CHANNEL, result.getChannel());
-        assertEquals(TEST_ID, result.getId());
-        assertEquals("testUri", result.getEndpoint());
-        assertEquals(10, result.getPriority());
+        assertEquals(CONTROL_ACTION_SUBSCRIBE, result.messageType().name().toLowerCase());
+        assertEquals(DYNAMIC_ROUTER_CHANNEL, result.channel());
+        assertEquals(TEST_ID, result.id());
+        assertEquals("testUri", result.endpoint());
+        assertEquals(10, result.priority());
     }
 
     @Test
@@ -129,9 +129,9 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
         final DynamicRouterControlMessage result = controlChannelProcessor.handleControlMessage(exchange);
 
         assertNotNull(result);
-        assertEquals(CONTROL_ACTION_UNSUBSCRIBE, result.getMessageType().name().toLowerCase());
-        assertEquals(DYNAMIC_ROUTER_CHANNEL, result.getChannel());
-        assertEquals(TEST_ID, result.getId());
+        assertEquals(CONTROL_ACTION_UNSUBSCRIBE, result.messageType().name().toLowerCase());
+        assertEquals(DYNAMIC_ROUTER_CHANNEL, result.channel());
+        assertEquals(TEST_ID, result.id());
     }
 
     @Test

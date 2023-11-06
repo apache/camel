@@ -47,8 +47,8 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
 
     @Test
     void createFilter() {
-        when(controlMessage.getPriority()).thenReturn(1);
-        when(controlMessage.getPredicate()).thenReturn(e -> true);
+        when(controlMessage.priority()).thenReturn(1);
+        when(controlMessage.predicate()).thenReturn(e -> true);
         PrioritizedFilter result = processor.createFilter(controlMessage);
         assertEquals(filterProcessorLowPriority, result);
     }

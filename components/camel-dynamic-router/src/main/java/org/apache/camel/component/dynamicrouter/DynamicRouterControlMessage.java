@@ -23,40 +23,16 @@ import org.apache.camel.Predicate;
 /**
  * The control channel message to provide the conditions under which a recipient should receive an exchange for
  * processing. Provides Builder classes for fluent construction of subscribe and unsubscribe messages.
+ *
+ * @param messageType The type of control message.
+ * @param id          The ID of the subscription, which must be provided for all message types.
+ * @param channel     The channel of the Dynamic Router.
+ * @param priority    The priority level of this subscription, where a lower number indicates higher priority.
+ * @param endpoint    The endpoint to send the exchange if the predicate evaluates to true.
+ * @param predicate   The rule expression to determine if an exchange should be sent to the endpoint.
  */
-public class DynamicRouterControlMessage implements Serializable {
-
-    /**
-     * The type of control message.
-     */
-    private final ControlMessageType messageType;
-
-    /**
-     * The ID of the subscription, which must be provided for all message types.
-     */
-    private final String id;
-
-    /**
-     * The channel of the Dynamic Router.
-     */
-    private final String channel;
-
-    /**
-     * The priority level of this subscription, where a lower number indicates higher priority.
-     */
-    private final int priority;
-
-    /**
-     * The endpoint to send the exchange if the predicate evaluates to true.
-     */
-    private final String endpoint;
-
-    /**
-     * The rule expression to determine if an exchange should be sent to the endpoint.
-     *
-     * @see <a href="https://camel.apache.org/manual/predicate.html">Camel Predicates documentation</a>
-     */
-    private final Predicate predicate;
+public record DynamicRouterControlMessage(ControlMessageType messageType, String id, String channel, int priority,
+        String endpoint, Predicate predicate) implements Serializable {
 
     /**
      * Constructor that sets all properties.
@@ -68,19 +44,7 @@ public class DynamicRouterControlMessage implements Serializable {
      * @param endpoint    the endpoint URI to send qualifying messages
      * @param predicate   {@link Predicate} used to determine if the exchange should be sent to the endpoint URI
      */
-    public DynamicRouterControlMessage(
-                                       final ControlMessageType messageType,
-                                       final String id,
-                                       final String channel,
-                                       int priority,
-                                       final String endpoint,
-                                       final Predicate predicate) {
-        this.messageType = messageType;
-        this.id = id;
-        this.channel = channel;
-        this.priority = priority;
-        this.endpoint = endpoint;
-        this.predicate = predicate;
+    public DynamicRouterControlMessage {
     }
 
     /**
@@ -88,7 +52,8 @@ public class DynamicRouterControlMessage implements Serializable {
      *
      * @return the message type
      */
-    public ControlMessageType getMessageType() {
+    @Override
+    public ControlMessageType messageType() {
         return this.messageType;
     }
 
@@ -97,7 +62,8 @@ public class DynamicRouterControlMessage implements Serializable {
      *
      * @return the subscription id
      */
-    public String getId() {
+    @Override
+    public String id() {
         return id;
     }
 
@@ -106,7 +72,8 @@ public class DynamicRouterControlMessage implements Serializable {
      *
      * @return the Dynamic Router channel
      */
-    public String getChannel() {
+    @Override
+    public String channel() {
         return channel;
     }
 
@@ -115,7 +82,8 @@ public class DynamicRouterControlMessage implements Serializable {
      *
      * @return the priority
      */
-    public int getPriority() {
+    @Override
+    public int priority() {
         return priority;
     }
 
@@ -125,7 +93,8 @@ public class DynamicRouterControlMessage implements Serializable {
      * @return the predicate
      * @see    <a href="https://camel.apache.org/manual/predicate.html">Camel Predicates documentation</a>
      */
-    public Predicate getPredicate() {
+    @Override
+    public Predicate predicate() {
         return this.predicate;
     }
 
@@ -134,7 +103,8 @@ public class DynamicRouterControlMessage implements Serializable {
      *
      * @return the endpoint
      */
-    public String getEndpoint() {
+    @Override
+    public String endpoint() {
         return this.endpoint;
     }
 

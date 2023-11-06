@@ -138,7 +138,7 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
 
     /**
      * When a {@link DynamicRouterControlMessage} is received, it is processed, depending on the
-     * {@link DynamicRouterControlMessage#getMessageType()}: if the type is
+     * {@link DynamicRouterControlMessage#messageType()}: if the type is
      * {@link DynamicRouterControlMessage.ControlMessageType#SUBSCRIBE}, then create the
      * {@link org.apache.camel.processor.FilterProcessor} and add it to the consumer's filters, but if the type is
      * {@link DynamicRouterControlMessage.ControlMessageType#UNSUBSCRIBE}, then the entry for the endpoint is removed.
@@ -152,14 +152,14 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         LOG.debug("Received control channel message");
         DynamicRouterControlMessage controlMessage = handleControlMessage(exchange);
-        DynamicRouterMulticastProcessor processor = component.getRoutingProcessor(controlMessage.getChannel());
+        DynamicRouterMulticastProcessor processor = component.getRoutingProcessor(controlMessage.channel());
         if (processor != null) {
-            switch (controlMessage.getMessageType()) {
+            switch (controlMessage.messageType()) {
                 case SUBSCRIBE -> {
                     processor.addFilter(controlMessage);
-                    exchange.getMessage().setBody(controlMessage.getId(), String.class);
+                    exchange.getMessage().setBody(controlMessage.id(), String.class);
                 }
-                case UNSUBSCRIBE -> processor.removeFilter(controlMessage.getId());
+                case UNSUBSCRIBE -> processor.removeFilter(controlMessage.id());
                 default -> {
                     // Cannot get here due to enum
                 }
