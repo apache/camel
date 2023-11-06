@@ -102,7 +102,7 @@ public class DynamicRouterMulticastProcessor extends MulticastProcessor {
         List<PrioritizedFilter> matchingFilters = matchFilters(exchange);
         Set<String> recipients = new HashSet<>();
         for (PrioritizedFilter filter : matchingFilters) {
-            recipients.add(filter.getEndpoint().trim());
+            recipients.add(filter.endpoint().trim());
         }
         if (recipients.isEmpty()) {
             Message exchangeIn = exchange.getIn();
@@ -182,7 +182,7 @@ public class DynamicRouterMulticastProcessor extends MulticastProcessor {
     public void addFilter(final PrioritizedFilter filter) {
         synchronized (filterMap) {
             if (filter != null) {
-                filterMap.put(filter.getId(), filter);
+                filterMap.put(filter.id(), filter);
                 LOG.debug("Added subscription: {}", filter);
             }
         }
@@ -223,7 +223,7 @@ public class DynamicRouterMulticastProcessor extends MulticastProcessor {
     protected List<PrioritizedFilter> matchFilters(final Exchange exchange) {
         return filterMap.values().stream()
                 .sorted(PrioritizedFilter.COMPARATOR)
-                .filter(f -> f.getPredicate().matches(exchange))
+                .filter(f -> f.predicate().matches(exchange))
                 .limit(MODE_FIRST_MATCH.equals(recipientMode) ? 1 : Integer.MAX_VALUE)
                 .toList();
     }

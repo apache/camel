@@ -41,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class DynamicRouterUriControlIT extends CamelTestSupport {
 
+    private static final String TEST_CHANNEL = "test";
+
     /**
      * Tests participant subscription, and that messages are received at their registered destination endpoints.
      *
@@ -51,7 +53,7 @@ public class DynamicRouterUriControlIT extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "test", "testSubscriptionId",
+        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "testSubscriptionId",
                 mock.getEndpointUri(), 1, "${body} contains 'test'");
 
         template.sendBody(subscribeUri, "");
@@ -73,7 +75,7 @@ public class DynamicRouterUriControlIT extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "test", null,
+        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, null,
                 mock.getEndpointUri(), 1, "${body} contains 'test'");
 
         String generatedId = (String) template.sendBody(subscribeUri, ExchangePattern.InOut, "");
@@ -97,7 +99,7 @@ public class DynamicRouterUriControlIT extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         // Initially subscribe
-        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "test", "testId",
+        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "testId",
                 mock.getEndpointUri(), 1, "${body} contains 'test'");
 
         template.sendBody(subscribeUri, "");
@@ -107,7 +109,7 @@ public class DynamicRouterUriControlIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         // Now unsubscribe
-        String unsubscribeUri = createControlChannelUri(CONTROL_ACTION_UNSUBSCRIBE, "test", "testId",
+        String unsubscribeUri = createControlChannelUri(CONTROL_ACTION_UNSUBSCRIBE, "testId",
                 null, null, null);
         template.sendBody(unsubscribeUri, "");
 
@@ -125,7 +127,7 @@ public class DynamicRouterUriControlIT extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         Predicate predicate = PredicateBuilder.constant(true);
-        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "test", "testSubscriptionId",
+        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "testSubscriptionId",
                 mock.getEndpointUri(), 1, null);
 
         template.sendBody(subscribeUri, predicate);
@@ -142,7 +144,7 @@ public class DynamicRouterUriControlIT extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         context.getRegistry().bind("predicateBean", Predicate.class, PredicateBuilder.constant(true));
-        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "test", "testSubscriptionId",
+        String subscribeUri = createControlChannelUri(CONTROL_ACTION_SUBSCRIBE, "testSubscriptionId",
                 mock.getEndpointUri(), 1, "#bean:predicateBean");
 
         template.sendBody(subscribeUri, null);
@@ -155,14 +157,13 @@ public class DynamicRouterUriControlIT extends CamelTestSupport {
 
     String createControlChannelUri(
             final String action,
-            final String subscribeChannel,
             final String subscriptionId,
             final String endpointUri,
             final Integer priority,
             final String predicate) {
         StringBuilder builder = new StringBuilder(
                 String.format("%s/%s/%s",
-                        CONTROL_CHANNEL_URI, action, subscribeChannel));
+                        CONTROL_CHANNEL_URI, action, TEST_CHANNEL));
         if (subscriptionId != null) {
             builder.append("&subscriptionId=").append(subscriptionId);
         }

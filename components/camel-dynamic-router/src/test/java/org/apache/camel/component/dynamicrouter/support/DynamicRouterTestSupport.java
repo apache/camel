@@ -163,9 +163,9 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
 
         lenient().when(exchangeFactory.newExchangeFactory(any(Consumer.class))).thenReturn(exchangeFactory);
 
-        lenient().when(prioritizedFilter.getId()).thenReturn("testId");
-        lenient().when(prioritizedFilter.getPredicate()).thenReturn(predicate);
-        lenient().when(prioritizedFilter.getPriority()).thenReturn(TEST_PRIORITY);
+        lenient().when(prioritizedFilter.id()).thenReturn("testId");
+        lenient().when(prioritizedFilter.predicate()).thenReturn(predicate);
+        lenient().when(prioritizedFilter.priority()).thenReturn(TEST_PRIORITY);
 
         lenient().doNothing().when(processor).process(any(Exchange.class));
 
@@ -200,11 +200,11 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
 
         lenient().when(simpleLanguage.createPredicate(anyString())).thenReturn(predicate);
 
-        lenient().when(filterProcessorLowPriority.getId()).thenReturn(TEST_ID);
-        lenient().when(filterProcessorLowPriority.getPredicate()).thenReturn(predicate);
-        lenient().when(filterProcessorLowPriority.getPriority()).thenReturn(Integer.MAX_VALUE - 1000);
+        lenient().when(filterProcessorLowPriority.id()).thenReturn(TEST_ID);
+        lenient().when(filterProcessorLowPriority.predicate()).thenReturn(predicate);
+        lenient().when(filterProcessorLowPriority.priority()).thenReturn(Integer.MAX_VALUE - 1000);
 
-        lenient().when(filterProcessorLowestPriority.getPriority()).thenReturn(Integer.MAX_VALUE);
+        lenient().when(filterProcessorLowestPriority.priority()).thenReturn(Integer.MAX_VALUE);
 
         lenient().doNothing().when(asyncCallback).done(anyBoolean());
 

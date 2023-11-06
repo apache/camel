@@ -29,7 +29,7 @@ import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MO
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
 
@@ -80,14 +80,14 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
     @Test
     void testMultipleFilterOrderByPriorityNotIdKey() {
         when(predicate.matches(any(Exchange.class))).thenReturn(true);
-        when(filterProcessorLowestPriority.getId()).thenReturn("anIdThatComesLexicallyBeforeTestId");
-        when(filterProcessorLowestPriority.getPredicate()).thenReturn(predicate);
+        when(filterProcessorLowestPriority.id()).thenReturn("anIdThatComesLexicallyBeforeTestId");
+        when(filterProcessorLowestPriority.predicate()).thenReturn(predicate);
         processor.addFilter(filterProcessorLowestPriority);
         addFilterAsFilterProcessor();
         List<PrioritizedFilter> matchingFilters = processor.matchFilters(exchange);
         assertEquals(2, matchingFilters.size());
         PrioritizedFilter matchingFilter = matchingFilters.get(0);
-        assertEquals(TEST_ID, matchingFilter.getId());
+        assertEquals(TEST_ID, matchingFilter.id());
     }
 
     @Test
@@ -103,7 +103,7 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
         addFilterAsFilterProcessor();
         when(predicate.matches(any(Exchange.class))).thenReturn(true);
         PrioritizedFilter result = processor.matchFilters(exchange).get(0);
-        assertEquals(TEST_ID, result.getId());
+        assertEquals(TEST_ID, result.id());
     }
 
     @Test
