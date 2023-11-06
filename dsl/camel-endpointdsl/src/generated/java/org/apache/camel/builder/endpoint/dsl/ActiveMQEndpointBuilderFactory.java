@@ -6904,7 +6904,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the name of the header {@code JmsDestination}.
          */
         public String jmsDestination() {
-            return "JmsDestination";
+            return "CamelJmsDestination";
         }
 
         /**
@@ -6917,7 +6917,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the name of the header {@code JmsDestinationName}.
          */
         public String jmsDestinationName() {
-            return "JmsDestinationName";
+            return "CamelJmsDestinationName";
         }
 
         /**
@@ -7101,7 +7101,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the name of the header {@code JmsMessageType}.
          */
         public String jmsMessageType() {
-            return "JmsMessageType";
+            return "CamelJmsMessageType";
         }
 
         /**
@@ -7116,7 +7116,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the name of the header {@code JmsRequestTimeout}.
          */
         public String jmsRequestTimeout() {
-            return "JmsRequestTimeout";
+            return "CamelJmsRequestTimeout";
         }
     }
     static ActiveMQEndpointBuilder endpointBuilder(

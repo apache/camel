@@ -599,7 +599,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastObjectId}.
          */
         public String hazelcastObjectId() {
-            return "HazelcastObjectId";
+            return "CamelHazelcastObjectId";
         }
 
         /**
@@ -612,7 +612,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastObjectValue}.
          */
         public String hazelcastObjectValue() {
-            return "HazelcastObjectValue";
+            return "CamelHazelcastObjectValue";
         }
 
         /**
@@ -625,7 +625,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastObjectTtlValue}.
          */
         public String hazelcastObjectTtlValue() {
-            return "HazelcastObjectTtlValue";
+            return "CamelHazelcastObjectTtlValue";
         }
 
         /**
@@ -638,7 +638,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastObjectTtlUnit}.
          */
         public String hazelcastObjectTtlUnit() {
-            return "HazelcastObjectTtlUnit";
+            return "CamelHazelcastObjectTtlUnit";
         }
 
         /**
@@ -652,7 +652,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastQuery}.
          */
         public String hazelcastQuery() {
-            return "HazelcastQuery";
+            return "CamelHazelcastQuery";
         }
 
         /**
@@ -665,7 +665,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerAction}.
          */
         public String hazelcastListenerAction() {
-            return "HazelcastListenerAction";
+            return "CamelHazelcastListenerAction";
         }
 
         /**
@@ -678,7 +678,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerType}.
          */
         public String hazelcastListenerType() {
-            return "HazelcastListenerType";
+            return "CamelHazelcastListenerType";
         }
 
         /**
@@ -691,7 +691,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerTime}.
          */
         public String hazelcastListenerTime() {
-            return "HazelcastListenerTime";
+            return "CamelHazelcastListenerTime";
         }
 
         /**
@@ -704,7 +704,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastCacheName}.
          */
         public String hazelcastCacheName() {
-            return "HazelcastCacheName";
+            return "CamelHazelcastCacheName";
         }
 
         /**
@@ -717,7 +717,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastOperationType}.
          */
         public String hazelcastOperationType() {
-            return "HazelcastOperationType";
+            return "CamelHazelcastOperationType";
         }
     }
     static HazelcastMapEndpointBuilder endpointBuilder(

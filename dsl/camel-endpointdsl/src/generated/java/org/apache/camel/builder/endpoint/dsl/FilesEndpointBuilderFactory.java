@@ -4231,7 +4231,7 @@ public interface FilesEndpointBuilderFactory {
          * @return the name of the header {@code FileLength}.
          */
         public String fileLength() {
-            return "FileLength";
+            return "CamelFileLength";
         }
 
         /**
@@ -4244,7 +4244,7 @@ public interface FilesEndpointBuilderFactory {
          * @return the name of the header {@code FileLastModified}.
          */
         public String fileLastModified() {
-            return "FileLastModified";
+            return "CamelFileLastModified";
         }
 
         /**
@@ -4260,7 +4260,7 @@ public interface FilesEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
 
         /**
@@ -4273,7 +4273,7 @@ public interface FilesEndpointBuilderFactory {
          * @return the name of the header {@code FileNameOnly}.
          */
         public String fileNameOnly() {
-            return "FileNameOnly";
+            return "CamelFileNameOnly";
         }
 
         /**
@@ -4286,7 +4286,7 @@ public interface FilesEndpointBuilderFactory {
          * @return the name of the header {@code FileParent}.
          */
         public String fileParent() {
-            return "FileParent";
+            return "CamelFileParent";
         }
 
         /**
@@ -4299,7 +4299,7 @@ public interface FilesEndpointBuilderFactory {
          * @return the name of the header {@code RemoteFileInputStream}.
          */
         public String remoteFileInputStream() {
-            return "RemoteFileInputStream";
+            return "CamelRemoteFileInputStream";
         }
 
         /**
@@ -4312,7 +4312,7 @@ public interface FilesEndpointBuilderFactory {
          * @return the name of the header {@code FileLocalWorkPath}.
          */
         public String fileLocalWorkPath() {
-            return "FileLocalWorkPath";
+            return "CamelFileLocalWorkPath";
         }
 
         /**
@@ -4325,7 +4325,7 @@ public interface FilesEndpointBuilderFactory {
          * @return the name of the header {@code FileHost}.
          */
         public String fileHost() {
-            return "FileHost";
+            return "CamelFileHost";
         }
     }
     static FilesEndpointBuilder endpointBuilder(

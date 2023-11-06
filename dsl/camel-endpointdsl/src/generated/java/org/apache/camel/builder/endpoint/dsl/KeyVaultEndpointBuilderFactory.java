@@ -287,7 +287,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * AzureKeyVaultProducerOperation}.
          */
         public String azureKeyVaultProducerOperation() {
-            return "AzureKeyVaultProducerOperation";
+            return "CamelAzureKeyVaultProducerOperation";
         }
 
         /**
@@ -300,7 +300,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * @return the name of the header {@code AzureKeyVaultSecretName}.
          */
         public String azureKeyVaultSecretName() {
-            return "AzureKeyVaultSecretName";
+            return "CamelAzureKeyVaultSecretName";
         }
     }
     static KeyVaultEndpointBuilder endpointBuilder(

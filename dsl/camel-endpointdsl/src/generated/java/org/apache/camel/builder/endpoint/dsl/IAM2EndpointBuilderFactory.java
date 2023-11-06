@@ -522,7 +522,7 @@ public interface IAM2EndpointBuilderFactory {
          * @return the name of the header {@code AwsIAMOperation}.
          */
         public String awsIAMOperation() {
-            return "AwsIAMOperation";
+            return "CamelAwsIAMOperation";
         }
 
         /**
@@ -535,7 +535,7 @@ public interface IAM2EndpointBuilderFactory {
          * @return the name of the header {@code AwsIAMUsername}.
          */
         public String awsIAMUsername() {
-            return "AwsIAMUsername";
+            return "CamelAwsIAMUsername";
         }
 
         /**
@@ -548,7 +548,7 @@ public interface IAM2EndpointBuilderFactory {
          * @return the name of the header {@code AwsIAMAccessKeyID}.
          */
         public String awsIAMAccessKeyID() {
-            return "AwsIAMAccessKeyID";
+            return "CamelAwsIAMAccessKeyID";
         }
 
         /**
@@ -562,7 +562,7 @@ public interface IAM2EndpointBuilderFactory {
          * @return the name of the header {@code AwsIAMAccessKeyStatus}.
          */
         public String awsIAMAccessKeyStatus() {
-            return "AwsIAMAccessKeyStatus";
+            return "CamelAwsIAMAccessKeyStatus";
         }
 
         /**
@@ -575,7 +575,7 @@ public interface IAM2EndpointBuilderFactory {
          * @return the name of the header {@code AwsIAMGroupName}.
          */
         public String awsIAMGroupName() {
-            return "AwsIAMGroupName";
+            return "CamelAwsIAMGroupName";
         }
 
         /**
@@ -588,7 +588,7 @@ public interface IAM2EndpointBuilderFactory {
          * @return the name of the header {@code AwsIAMGroupPath}.
          */
         public String awsIAMGroupPath() {
-            return "AwsIAMGroupPath";
+            return "CamelAwsIAMGroupPath";
         }
     }
     static IAM2EndpointBuilder endpointBuilder(String componentName, String path) {

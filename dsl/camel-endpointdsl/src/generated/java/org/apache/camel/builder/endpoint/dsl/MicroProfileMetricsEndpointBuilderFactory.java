@@ -450,7 +450,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * MicroProfileMetricsCounterIncrement}.
          */
         public String microProfileMetricsCounterIncrement() {
-            return "MicroProfileMetricsCounterIncrement";
+            return "CamelMicroProfileMetricsCounterIncrement";
         }
 
         /**
@@ -464,7 +464,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * MicroProfileMetricsGaugeIncrement}.
          */
         public String microProfileMetricsGaugeIncrement() {
-            return "MicroProfileMetricsGaugeIncrement";
+            return "CamelMicroProfileMetricsGaugeIncrement";
         }
 
         /**
@@ -478,7 +478,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * MicroProfileMetricsGaugeDecrement}.
          */
         public String microProfileMetricsGaugeDecrement() {
-            return "MicroProfileMetricsGaugeDecrement";
+            return "CamelMicroProfileMetricsGaugeDecrement";
         }
 
         /**
@@ -491,7 +491,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @return the name of the header {@code MicroProfileMetricsGaugeValue}.
          */
         public String microProfileMetricsGaugeValue() {
-            return "MicroProfileMetricsGaugeValue";
+            return "CamelMicroProfileMetricsGaugeValue";
         }
 
         /**
@@ -505,7 +505,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * MicroProfileMetricsHistogramValue}.
          */
         public String microProfileMetricsHistogramValue() {
-            return "MicroProfileMetricsHistogramValue";
+            return "CamelMicroProfileMetricsHistogramValue";
         }
 
         /**
@@ -518,7 +518,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @return the name of the header {@code MicroProfileMetricsMeterMark}.
          */
         public String microProfileMetricsMeterMark() {
-            return "MicroProfileMetricsMeterMark";
+            return "CamelMicroProfileMetricsMeterMark";
         }
 
         /**
@@ -532,7 +532,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * MicroProfileMetricsDescription}.
          */
         public String microProfileMetricsDescription() {
-            return "MicroProfileMetricsDescription";
+            return "CamelMicroProfileMetricsDescription";
         }
 
         /**
@@ -546,7 +546,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * MicroProfileMetricsDisplayName}.
          */
         public String microProfileMetricsDisplayName() {
-            return "MicroProfileMetricsDisplayName";
+            return "CamelMicroProfileMetricsDisplayName";
         }
 
         /**
@@ -559,7 +559,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @return the name of the header {@code MicroProfileMetricsName}.
          */
         public String microProfileMetricsName() {
-            return "MicroProfileMetricsName";
+            return "CamelMicroProfileMetricsName";
         }
 
         /**
@@ -572,7 +572,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @return the name of the header {@code MicroProfileMetricsTags}.
          */
         public String microProfileMetricsTags() {
-            return "MicroProfileMetricsTags";
+            return "CamelMicroProfileMetricsTags";
         }
 
         /**
@@ -586,7 +586,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @return the name of the header {@code MicroProfileMetricsType}.
          */
         public String microProfileMetricsType() {
-            return "MicroProfileMetricsType";
+            return "CamelMicroProfileMetricsType";
         }
 
         /**
@@ -599,7 +599,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @return the name of the header {@code MicroProfileMetricsUnits}.
          */
         public String microProfileMetricsUnits() {
-            return "MicroProfileMetricsUnits";
+            return "CamelMicroProfileMetricsUnits";
         }
 
         /**
@@ -614,7 +614,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * MicroProfileMetricsTimerAction}.
          */
         public String microProfileMetricsTimerAction() {
-            return "MicroProfileMetricsTimerAction";
+            return "CamelMicroProfileMetricsTimerAction";
         }
     }
     @Deprecated

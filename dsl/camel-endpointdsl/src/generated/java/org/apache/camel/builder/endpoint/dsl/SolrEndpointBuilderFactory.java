@@ -719,7 +719,7 @@ public interface SolrEndpointBuilderFactory {
          * @return the name of the header {@code SolrClient}.
          */
         public String solrClient() {
-            return "SolrClient";
+            return "CamelSolrClient";
         }
 
         /**
@@ -732,7 +732,7 @@ public interface SolrEndpointBuilderFactory {
          * @return the name of the header {@code SolrCollection}.
          */
         public String solrCollection() {
-            return "SolrCollection";
+            return "CamelSolrCollection";
         }
 
         /**
@@ -758,7 +758,7 @@ public interface SolrEndpointBuilderFactory {
          * @return the name of the header {@code SolrQueryString}.
          */
         public String solrQueryString() {
-            return "SolrQueryString";
+            return "CamelSolrQueryString";
         }
 
         /**
