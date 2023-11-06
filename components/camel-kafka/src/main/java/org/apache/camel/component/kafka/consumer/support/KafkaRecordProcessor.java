@@ -62,6 +62,9 @@ public class KafkaRecordProcessor {
         if (record.key() != null) {
             message.setHeader(KafkaConstants.KEY, record.key());
         }
+        
+        LOG.debug("setting up the exchange for message from partition {} and offset {}",
+                record.partition(), record.offset());
 
         message.setBody(record.value());
     }
@@ -82,7 +85,7 @@ public class KafkaRecordProcessor {
     }
 
     public ProcessingResult processExchange(
-            Exchange exchange, TopicPartition partition, boolean partitionHasNext,
+            Exchange exchange, TopicPartition topicPartition, boolean partitionHasNext,
             boolean recordHasNext, ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
@@ -100,7 +103,7 @@ public class KafkaRecordProcessor {
 
         if (configuration.isAllowManualCommit()) {
             // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
-            KafkaManualCommit manual = commitManager.getManualCommit(exchange, partition, record);
+            KafkaManualCommit manual = commitManager.getManualCommit(exchange, topicPartition, record);
 
             message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
             message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
@@ -112,30 +115,43 @@ public class KafkaRecordProcessor {
             exchange.setException(e);
         }
         if (exchange.getException() != null) {
-            boolean breakOnErrorExit = processException(exchange, partition, lastResult.getPartitionLastOffset(),
+            
+            LOG.debug("an exception was thrown for record at partition {} and offset {}",
+                    record.partition(), record.offset());
+            
+            boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
                     exceptionHandler);
-            return new ProcessingResult(breakOnErrorExit, lastResult.getPartitionLastOffset(), true);
+            
+            return new ProcessingResult(breakOnErrorExit, lastResult.getPartition(), lastResult.getPartitionLastOffset(), true);
         } else {
-            return new ProcessingResult(false, record.offset(), exchange.getException() != null);
+            return new ProcessingResult(false, record.partition(), record.offset(), exchange.getException() != null);
         }
     }
 
     private boolean processException(
-            Exchange exchange, TopicPartition partition, long partitionLastOffset,
+            Exchange exchange, TopicPartition topicPartition, 
+            ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
+            
+            if (topicPartition.partition() != record.partition()) {
+                LOG.error("about to process an exception with UNEXPECTED partition. Got partition {} but was expecting partition {}",
+                        topicPartition.partition(), record.partition());
+            }
+            
             // we are failing and we should break out
             if (LOG.isWarnEnabled()) {
-                LOG.warn("Error during processing {} from topic: {}", exchange, partition.topic(), exchange.getException());
-                LOG.warn("Will seek consumer to offset {} and start polling again.", partitionLastOffset);
+                LOG.warn("Error during processing {} from topic: {}", exchange, topicPartition.topic(), exchange.getException());
+                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.", 
+                        lastResult.getPartition(), lastResult.getPartitionLastOffset());
             }
 
             // force commit, so we resume on next poll where we failed except when the failure happened
             // at the first message in a poll
-            if (partitionLastOffset != AbstractCommitManager.START_OFFSET) {
-                commitManager.forceCommit(partition, partitionLastOffset);
+            if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
+                commitManager.forceCommit(topicPartition, lastResult.getPartitionLastOffset());
             }
 
             // continue to next partition
