@@ -110,27 +110,24 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
         DynamicRouterControlMessage controlMessage;
         final Object body = exchange.getMessage().getBody();
         if (controlAction != null && !controlAction.isEmpty()) {
-            switch (controlAction) {
-                case CONTROL_ACTION_UNSUBSCRIBE:
-                    controlMessage = new UnsubscribeMessageBuilder()
-                            .channel(configuration.getSubscribeChannel())
-                            .id(configuration.getSubscriptionId())
-                            .build();
-                    break;
-                case CONTROL_ACTION_SUBSCRIBE:
+            controlMessage = switch (controlAction) {
+                case CONTROL_ACTION_UNSUBSCRIBE -> new UnsubscribeMessageBuilder()
+                        .channel(configuration.getSubscribeChannel())
+                        .id(configuration.getSubscriptionId())
+                        .build();
+                case CONTROL_ACTION_SUBSCRIBE -> {
                     final String subscriptionId = configuration.getSubscriptionId() == null
                             ? UUID.randomUUID().toString() : configuration.getSubscriptionId();
-                    controlMessage = new SubscribeMessageBuilder()
+                    yield new SubscribeMessageBuilder()
                             .channel(configuration.getSubscribeChannel())
                             .id(subscriptionId)
                             .endpointUri(configuration.getDestinationUri())
                             .priority(configuration.getPriority())
                             .predicate(obtainPredicate(body))
                             .build();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Illegal control channel action: " + controlAction);
-            }
+                }
+                default -> throw new IllegalArgumentException("Illegal control channel action: " + controlAction);
+            };
         } else if (DynamicRouterControlMessage.class.isAssignableFrom(body.getClass())) {
             controlMessage = (DynamicRouterControlMessage) body;
         } else {
