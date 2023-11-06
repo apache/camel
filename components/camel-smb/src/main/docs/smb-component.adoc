@@ -31,9 +31,27 @@ The Server Message Block (SMB) component provides a way to connect natively to S
 smb:address[:port]/shareName[?options]
 ----
 
-== Usage
+// component-configure options: START
 
-For instance, polling all the files from a SMB file share and reading their contents would look like this:
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+
+== Examples
+
+For instance, polling all the files from an SMB file share and reading their contents would look like this:
 
 [source,java]
 ----
@@ -53,5 +71,5 @@ public void configure() {
 
 [NOTE]
 ====
-Beware that the File object provided is not a java.io.File instance, but, instead a com.hierynomus.smbj.share.File instance.
+Beware that the File object provided is not a `java.io.File` instance, but, instead a `com.hierynomus.smbj.share.File` instance.
 ====
