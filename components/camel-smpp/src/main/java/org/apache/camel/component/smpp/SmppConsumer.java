@@ -27,6 +27,7 @@ import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.SessionState;
@@ -109,7 +110,8 @@ public class SmppConsumer extends DefaultConsumer {
                         BindType.BIND_RX, this.configuration.getSystemId(),
                         this.configuration.getPassword(), this.configuration.getSystemType(),
                         TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN,
-                        configuration.getAddressRange()));
+                        configuration.getAddressRange(),
+                        InterfaceVersion.valueOf(Byte.decode(configuration.getInterfaceVersion()))));
 
         return newSession;
     }

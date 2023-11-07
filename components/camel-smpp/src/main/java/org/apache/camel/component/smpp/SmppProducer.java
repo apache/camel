@@ -29,6 +29,7 @@ import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.SessionState;
@@ -123,7 +124,8 @@ public class SmppProducer extends DefaultProducer {
                         this.configuration.getSystemType(),
                         TypeOfNumber.valueOf(configuration.getTypeOfNumber()),
                         NumberingPlanIndicator.valueOf(configuration.getNumberingPlanIndicator()),
-                        ""));
+                        "",
+                        InterfaceVersion.valueOf(Byte.decode(configuration.getInterfaceVersion()))));
 
         LOG.info("Connected to: {}", getEndpoint().getConnectionString());
 

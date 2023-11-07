@@ -82,6 +82,7 @@ public class SmppConfigurationTest {
         assertEquals(3, configuration.getPduProcessorDegree());
         assertEquals(100, configuration.getPduProcessorQueueCapacity());
         assertEquals(false, configuration.isSingleDLR());
+        assertEquals("0x34", configuration.getInterfaceVersion());
         assertNull(configuration.getMessageReceiverRouteId());
     }
 
@@ -122,6 +123,7 @@ public class SmppConfigurationTest {
         assertEquals(80, configuration.getPduProcessorQueueCapacity());
         assertEquals(1, configuration.getPduProcessorDegree());
         assertEquals(true, configuration.isSingleDLR());
+        assertEquals("0x50", configuration.getInterfaceVersion());
         assertEquals("testMessageReceiverRouteId", configuration.getMessageReceiverRouteId());
     }
 
@@ -183,6 +185,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
         assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
         assertEquals(config.isSingleDLR(), configuration.isSingleDLR());
+        assertEquals(config.getInterfaceVersion(), configuration.getInterfaceVersion());
         assertEquals(config.getMessageReceiverRouteId(), configuration.getMessageReceiverRouteId());
     }
 
@@ -227,7 +230,8 @@ public class SmppConfigurationTest {
                           + "httpProxyUsername=null, "
                           + "httpProxyPassword=null, "
                           + "splittingPolicy=ALLOW, "
-                          + "proxyHeaders=null]";
+                          + "proxyHeaders=null, "
+                          + "interfaceVersion=0x34]";
 
         assertEquals(expected, configuration.toString());
     }
@@ -271,6 +275,7 @@ public class SmppConfigurationTest {
         config.setPduProcessorQueueCapacity(80);
         config.setPduProcessorDegree(1);
         config.setSingleDLR(true);
+        config.setInterfaceVersion("0x50");
         config.setMessageReceiverRouteId("testMessageReceiverRouteId");
     }
 }

@@ -120,6 +120,8 @@ public class SmppConfiguration implements Cloneable {
     private Integer pduProcessorQueueCapacity = 100;
     @UriParam(label = "advanced", defaultValue = "false")
     private boolean singleDLR;
+    @UriParam(label = "advanced", enums = "0x00,0x33,0x34,0x50", defaultValue = "0x34")
+    private String interfaceVersion = "0x34";
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -733,6 +735,26 @@ public class SmppConfiguration implements Cloneable {
         this.singleDLR = singleDLR;
     }
 
+    public String getInterfaceVersion() {
+        return interfaceVersion;
+    }
+
+    /**
+     * Defines the interface version to be used in the binding request with the SMSC. The following values are allowed,
+     * as defined in the SMPP protocol:
+     * <ul>
+     * <li>0x00: Interface Version for legacy SMPP</li>
+     * <li>0x33: Interface Version for SMPP version 3.3</li>
+     * <li>0x34: Interface Version for SMPP version 3.4</li>
+     * <li>0x50: Interface Version for SMPP version 5.0</li>
+     * </ul>
+     * Value is parsed as String and converted to byte at a later stage when passed to jSMPP, as Camel does not support
+     * hexadecimal byte parsing from config values at this point.
+     */
+    public void setInterfaceVersion(String interfaceVersion) {
+        this.interfaceVersion = interfaceVersion;
+    }
+
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL
@@ -774,6 +796,7 @@ public class SmppConfiguration implements Cloneable {
                + ", httpProxyPassword=" + httpProxyPassword
                + ", splittingPolicy=" + splittingPolicy
                + ", proxyHeaders=" + proxyHeaders
+               + ", interfaceVersion=" + interfaceVersion
                + "]";
     }
 }
