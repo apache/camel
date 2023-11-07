@@ -120,6 +120,12 @@ final class TypeResolverHelper {
             }
 
         }
+        for (var entry : converters.entrySet()) {
+            if (typeConvertible.isAssignableMatch(entry.getKey())) {
+                return entry.getValue();
+            }
+
+        }
 
         return null;
     }
