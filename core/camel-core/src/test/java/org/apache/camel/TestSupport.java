@@ -125,7 +125,7 @@ public abstract class TestSupport {
     }
 
     protected String fileUri(Path directory, String query) {
-        return "file:" + testDirectory().resolve(directory) + (query.startsWith("?") ? "" : "/") + query;
+        return "file:" + directory + (query.startsWith("?") ? "" : "/") + query;
     }
 
     protected boolean canRunOnThisPlatform() {
