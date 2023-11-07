@@ -521,7 +521,7 @@ public interface STS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStsOperation}.
          */
         public String awsStsOperation() {
-            return "AwsStsOperation";
+            return "CamelAwsStsOperation";
         }
 
         /**
@@ -534,7 +534,7 @@ public interface STS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStsRoleArn}.
          */
         public String awsStsRoleArn() {
-            return "AwsStsRoleArn";
+            return "CamelAwsStsRoleArn";
         }
 
         /**
@@ -547,7 +547,7 @@ public interface STS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStsRoleSessionName}.
          */
         public String awsStsRoleSessionName() {
-            return "AwsStsRoleSessionName";
+            return "CamelAwsStsRoleSessionName";
         }
 
         /**
@@ -560,7 +560,7 @@ public interface STS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStsFederatedName}.
          */
         public String awsStsFederatedName() {
-            return "AwsStsFederatedName";
+            return "CamelAwsStsFederatedName";
         }
     }
     static STS2EndpointBuilder endpointBuilder(String componentName, String path) {

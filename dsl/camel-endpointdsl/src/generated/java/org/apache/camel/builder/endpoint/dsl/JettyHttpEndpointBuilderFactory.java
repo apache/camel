@@ -1291,7 +1291,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code ServletContextPath}.
          */
         public String servletContextPath() {
-            return "ServletContextPath";
+            return "CamelServletContextPath";
         }
 
         /**
@@ -1305,7 +1305,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpPath}.
          */
         public String httpPath() {
-            return "HttpPath";
+            return "CamelHttpPath";
         }
     }
     static JettyHttpEndpointBuilder endpointBuilder(

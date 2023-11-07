@@ -2771,7 +2771,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the name of the header {@code DestinationOverrideUrl}.
          */
         public String destinationOverrideUrl() {
-            return "DestinationOverrideUrl";
+            return "CamelDestinationOverrideUrl";
         }
 
         /**
@@ -2797,7 +2797,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the name of the header {@code Authentication}.
          */
         public String authentication() {
-            return "Authentication";
+            return "CamelAuthentication";
         }
 
         /**

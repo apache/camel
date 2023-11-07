@@ -2044,7 +2044,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpLocalAddress}.
          */
         public String mllpLocalAddress() {
-            return "MllpLocalAddress";
+            return "CamelMllpLocalAddress";
         }
 
         /**
@@ -2057,7 +2057,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpRemoteAddress}.
          */
         public String mllpRemoteAddress() {
-            return "MllpRemoteAddress";
+            return "CamelMllpRemoteAddress";
         }
 
         /**
@@ -2070,7 +2070,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpAcknowledgement}.
          */
         public String mllpAcknowledgement() {
-            return "MllpAcknowledgement";
+            return "CamelMllpAcknowledgement";
         }
 
         /**
@@ -2083,7 +2083,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpAcknowledgementString}.
          */
         public String mllpAcknowledgementString() {
-            return "MllpAcknowledgementString";
+            return "CamelMllpAcknowledgementString";
         }
 
         /**
@@ -2096,7 +2096,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpAcknowledgementType}.
          */
         public String mllpAcknowledgementType() {
-            return "MllpAcknowledgementType";
+            return "CamelMllpAcknowledgementType";
         }
 
         /**
@@ -2109,7 +2109,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpSendingApplication}.
          */
         public String mllpSendingApplication() {
-            return "MllpSendingApplication";
+            return "CamelMllpSendingApplication";
         }
 
         /**
@@ -2122,7 +2122,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpSendingFacility}.
          */
         public String mllpSendingFacility() {
-            return "MllpSendingFacility";
+            return "CamelMllpSendingFacility";
         }
 
         /**
@@ -2135,7 +2135,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpReceivingApplication}.
          */
         public String mllpReceivingApplication() {
-            return "MllpReceivingApplication";
+            return "CamelMllpReceivingApplication";
         }
 
         /**
@@ -2148,7 +2148,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpReceivingFacility}.
          */
         public String mllpReceivingFacility() {
-            return "MllpReceivingFacility";
+            return "CamelMllpReceivingFacility";
         }
 
         /**
@@ -2161,7 +2161,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpTimestamp}.
          */
         public String mllpTimestamp() {
-            return "MllpTimestamp";
+            return "CamelMllpTimestamp";
         }
 
         /**
@@ -2174,7 +2174,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpSecurity}.
          */
         public String mllpSecurity() {
-            return "MllpSecurity";
+            return "CamelMllpSecurity";
         }
 
         /**
@@ -2187,7 +2187,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpMessageType}.
          */
         public String mllpMessageType() {
-            return "MllpMessageType";
+            return "CamelMllpMessageType";
         }
 
         /**
@@ -2200,7 +2200,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpEventType}.
          */
         public String mllpEventType() {
-            return "MllpEventType";
+            return "CamelMllpEventType";
         }
 
         /**
@@ -2213,7 +2213,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpTriggerEvent}.
          */
         public String mllpTriggerEvent() {
-            return "MllpTriggerEvent";
+            return "CamelMllpTriggerEvent";
         }
 
         /**
@@ -2226,7 +2226,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpMessageControlId}.
          */
         public String mllpMessageControlId() {
-            return "MllpMessageControlId";
+            return "CamelMllpMessageControlId";
         }
 
         /**
@@ -2239,7 +2239,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpProcessingId}.
          */
         public String mllpProcessingId() {
-            return "MllpProcessingId";
+            return "CamelMllpProcessingId";
         }
 
         /**
@@ -2252,7 +2252,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpVersionId}.
          */
         public String mllpVersionId() {
-            return "MllpVersionId";
+            return "CamelMllpVersionId";
         }
 
         /**
@@ -2265,7 +2265,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the name of the header {@code MllpCharset}.
          */
         public String mllpCharset() {
-            return "MllpCharset";
+            return "CamelMllpCharset";
         }
     }
     static MllpEndpointBuilder endpointBuilder(String componentName, String path) {

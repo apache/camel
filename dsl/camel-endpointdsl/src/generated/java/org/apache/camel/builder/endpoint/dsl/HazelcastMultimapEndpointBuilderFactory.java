@@ -601,7 +601,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastObjectId}.
          */
         public String hazelcastObjectId() {
-            return "HazelcastObjectId";
+            return "CamelHazelcastObjectId";
         }
 
         /**
@@ -614,7 +614,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerAction}.
          */
         public String hazelcastListenerAction() {
-            return "HazelcastListenerAction";
+            return "CamelHazelcastListenerAction";
         }
 
         /**
@@ -627,7 +627,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerType}.
          */
         public String hazelcastListenerType() {
-            return "HazelcastListenerType";
+            return "CamelHazelcastListenerType";
         }
 
         /**
@@ -640,7 +640,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerTime}.
          */
         public String hazelcastListenerTime() {
-            return "HazelcastListenerTime";
+            return "CamelHazelcastListenerTime";
         }
 
         /**
@@ -653,7 +653,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastCacheName}.
          */
         public String hazelcastCacheName() {
-            return "HazelcastCacheName";
+            return "CamelHazelcastCacheName";
         }
 
         /**
@@ -666,7 +666,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastCacheType}.
          */
         public String hazelcastCacheType() {
-            return "HazelcastCacheType";
+            return "CamelHazelcastCacheType";
         }
 
         /**
@@ -679,7 +679,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastOperationType}.
          */
         public String hazelcastOperationType() {
-            return "HazelcastOperationType";
+            return "CamelHazelcastOperationType";
         }
     }
     static HazelcastMultimapEndpointBuilder endpointBuilder(

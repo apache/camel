@@ -387,7 +387,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * @return the name of the header {@code IgniteComputeExecutionType}.
          */
         public String igniteComputeExecutionType() {
-            return "IgniteComputeExecutionType";
+            return "CamelIgniteComputeExecutionType";
         }
 
         /**
@@ -400,7 +400,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * @return the name of the header {@code IgniteComputeParameters}.
          */
         public String igniteComputeParameters() {
-            return "IgniteComputeParameters";
+            return "CamelIgniteComputeParameters";
         }
 
         /**
@@ -413,7 +413,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * @return the name of the header {@code IgniteComputeReducer}.
          */
         public String igniteComputeReducer() {
-            return "IgniteComputeReducer";
+            return "CamelIgniteComputeReducer";
         }
 
         /**
@@ -428,7 +428,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * IgniteComputeAffinityCacheName}.
          */
         public String igniteComputeAffinityCacheName() {
-            return "IgniteComputeAffinityCacheName";
+            return "CamelIgniteComputeAffinityCacheName";
         }
 
         /**
@@ -441,7 +441,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * @return the name of the header {@code IgniteComputeAffinityKey}.
          */
         public String igniteComputeAffinityKey() {
-            return "IgniteComputeAffinityKey";
+            return "CamelIgniteComputeAffinityKey";
         }
     }
     static IgniteComputeEndpointBuilder endpointBuilder(

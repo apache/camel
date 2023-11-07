@@ -2474,7 +2474,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the name of the header {@code SqlQuery}.
          */
         public String sqlQuery() {
-            return "SqlQuery";
+            return "CamelSqlQuery";
         }
 
         /**
@@ -2489,7 +2489,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the name of the header {@code SqlUpdateCount}.
          */
         public String sqlUpdateCount() {
-            return "SqlUpdateCount";
+            return "CamelSqlUpdateCount";
         }
 
         /**
@@ -2504,7 +2504,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the name of the header {@code SqlRowCount}.
          */
         public String sqlRowCount() {
-            return "SqlRowCount";
+            return "CamelSqlRowCount";
         }
 
         /**
@@ -2518,7 +2518,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the name of the header {@code SqlRetrieveGeneratedKeys}.
          */
         public String sqlRetrieveGeneratedKeys() {
-            return "SqlRetrieveGeneratedKeys";
+            return "CamelSqlRetrieveGeneratedKeys";
         }
 
         /**
@@ -2531,7 +2531,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the name of the header {@code SqlGeneratedColumns}.
          */
         public String sqlGeneratedColumns() {
-            return "SqlGeneratedColumns";
+            return "CamelSqlGeneratedColumns";
         }
 
         /**
@@ -2544,7 +2544,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the name of the header {@code SqlGeneratedKeysRowCount}.
          */
         public String sqlGeneratedKeysRowCount() {
-            return "SqlGeneratedKeysRowCount";
+            return "CamelSqlGeneratedKeysRowCount";
         }
 
         /**
@@ -2557,7 +2557,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the name of the header {@code SqlGeneratedKeyRows}.
          */
         public String sqlGeneratedKeyRows() {
-            return "SqlGeneratedKeyRows";
+            return "CamelSqlGeneratedKeyRows";
         }
 
         /**
@@ -2570,7 +2570,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the name of the header {@code SqlParameters}.
          */
         public String sqlParameters() {
-            return "SqlParameters";
+            return "CamelSqlParameters";
         }
     }
     static SqlEndpointBuilder endpointBuilder(String componentName, String path) {

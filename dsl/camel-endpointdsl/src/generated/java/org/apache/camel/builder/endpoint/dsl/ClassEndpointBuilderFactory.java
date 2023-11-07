@@ -320,7 +320,7 @@ public interface ClassEndpointBuilderFactory {
          * @return the name of the header {@code BeanMethodName}.
          */
         public String beanMethodName() {
-            return "BeanMethodName";
+            return "CamelBeanMethodName";
         }
     }
     static ClassEndpointBuilder endpointBuilder(

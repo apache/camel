@@ -226,7 +226,7 @@ public interface KuduEndpointBuilderFactory {
          * @return the name of the header {@code KuduSchema}.
          */
         public String kuduSchema() {
-            return "KuduSchema";
+            return "CamelKuduSchema";
         }
 
         /**
@@ -240,7 +240,7 @@ public interface KuduEndpointBuilderFactory {
          * @return the name of the header {@code KuduTableOptions}.
          */
         public String kuduTableOptions() {
-            return "KuduTableOptions";
+            return "CamelKuduTableOptions";
         }
     }
     static KuduEndpointBuilder endpointBuilder(String componentName, String path) {

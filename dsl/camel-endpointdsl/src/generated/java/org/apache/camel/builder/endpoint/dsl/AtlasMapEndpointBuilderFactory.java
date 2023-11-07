@@ -380,7 +380,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * @return the name of the header {@code AtlasResourceUri}.
          */
         public String atlasResourceUri() {
-            return "AtlasResourceUri";
+            return "CamelAtlasResourceUri";
         }
 
         /**
@@ -393,7 +393,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * @return the name of the header {@code AtlasMapping}.
          */
         public String atlasMapping() {
-            return "AtlasMapping";
+            return "CamelAtlasMapping";
         }
 
         /**

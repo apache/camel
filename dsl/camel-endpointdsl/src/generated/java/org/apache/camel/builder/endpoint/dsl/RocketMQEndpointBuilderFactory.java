@@ -788,7 +788,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQTopic}.
          */
         public String rockerMQTopic() {
-            return "RockerMQTopic";
+            return "CamelRockerMQTopic";
         }
 
         /**
@@ -801,7 +801,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQTag}.
          */
         public String rockerMQTag() {
-            return "RockerMQTag";
+            return "CamelRockerMQTag";
         }
 
         /**
@@ -814,7 +814,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQKey}.
          */
         public String rockerMQKey() {
-            return "RockerMQKey";
+            return "CamelRockerMQKey";
         }
 
         /**
@@ -828,7 +828,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQOverrideTopicName}.
          */
         public String rockerMQOverrideTopicName() {
-            return "RockerMQOverrideTopicName";
+            return "CamelRockerMQOverrideTopicName";
         }
 
         /**
@@ -842,7 +842,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQOverrideTag}.
          */
         public String rockerMQOverrideTag() {
-            return "RockerMQOverrideTag";
+            return "CamelRockerMQOverrideTag";
         }
 
         /**
@@ -856,7 +856,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQOverrideMessageKey}.
          */
         public String rockerMQOverrideMessageKey() {
-            return "RockerMQOverrideMessageKey";
+            return "CamelRockerMQOverrideMessageKey";
         }
 
         /**
@@ -869,7 +869,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQBrokerName}.
          */
         public String rockerMQBrokerName() {
-            return "RockerMQBrokerName";
+            return "CamelRockerMQBrokerName";
         }
 
         /**
@@ -882,7 +882,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQQueueId}.
          */
         public String rockerMQQueueId() {
-            return "RockerMQQueueId";
+            return "CamelRockerMQQueueId";
         }
 
         /**
@@ -895,7 +895,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQStoreSize}.
          */
         public String rockerMQStoreSize() {
-            return "RockerMQStoreSize";
+            return "CamelRockerMQStoreSize";
         }
 
         /**
@@ -908,7 +908,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQQueueOffset}.
          */
         public String rockerMQQueueOffset() {
-            return "RockerMQQueueOffset";
+            return "CamelRockerMQQueueOffset";
         }
 
         /**
@@ -921,7 +921,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQSysFlag}.
          */
         public String rockerMQSysFlag() {
-            return "RockerMQSysFlag";
+            return "CamelRockerMQSysFlag";
         }
 
         /**
@@ -934,7 +934,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQBornTimestamp}.
          */
         public String rockerMQBornTimestamp() {
-            return "RockerMQBornTimestamp";
+            return "CamelRockerMQBornTimestamp";
         }
 
         /**
@@ -947,7 +947,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQBornHost}.
          */
         public String rockerMQBornHost() {
-            return "RockerMQBornHost";
+            return "CamelRockerMQBornHost";
         }
 
         /**
@@ -960,7 +960,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQStoreTimestamp}.
          */
         public String rockerMQStoreTimestamp() {
-            return "RockerMQStoreTimestamp";
+            return "CamelRockerMQStoreTimestamp";
         }
 
         /**
@@ -973,7 +973,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQStoreHost}.
          */
         public String rockerMQStoreHost() {
-            return "RockerMQStoreHost";
+            return "CamelRockerMQStoreHost";
         }
 
         /**
@@ -986,7 +986,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQMsgId}.
          */
         public String rockerMQMsgId() {
-            return "RockerMQMsgId";
+            return "CamelRockerMQMsgId";
         }
 
         /**
@@ -999,7 +999,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQCommitLogOffset}.
          */
         public String rockerMQCommitLogOffset() {
-            return "RockerMQCommitLogOffset";
+            return "CamelRockerMQCommitLogOffset";
         }
 
         /**
@@ -1012,7 +1012,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQBodyCrc}.
          */
         public String rockerMQBodyCrc() {
-            return "RockerMQBodyCrc";
+            return "CamelRockerMQBodyCrc";
         }
 
         /**
@@ -1025,7 +1025,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQReconsumeTimes}.
          */
         public String rockerMQReconsumeTimes() {
-            return "RockerMQReconsumeTimes";
+            return "CamelRockerMQReconsumeTimes";
         }
 
         /**
@@ -1039,7 +1039,7 @@ public interface RocketMQEndpointBuilderFactory {
          * RockerMQPreparedTransactionOffset}.
          */
         public String rockerMQPreparedTransactionOffset() {
-            return "RockerMQPreparedTransactionOffset";
+            return "CamelRockerMQPreparedTransactionOffset";
         }
     }
     static RocketMQEndpointBuilder endpointBuilder(

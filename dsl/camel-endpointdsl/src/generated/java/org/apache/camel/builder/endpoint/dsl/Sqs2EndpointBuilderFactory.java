@@ -3140,7 +3140,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsAttributes}.
          */
         public String awsSqsAttributes() {
-            return "AwsSqsAttributes";
+            return "CamelAwsSqsAttributes";
         }
 
         /**
@@ -3153,7 +3153,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsMessageAttributes}.
          */
         public String awsSqsMessageAttributes() {
-            return "AwsSqsMessageAttributes";
+            return "CamelAwsSqsMessageAttributes";
         }
 
         /**
@@ -3166,7 +3166,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsMD5OfBody}.
          */
         public String awsSqsMD5OfBody() {
-            return "AwsSqsMD5OfBody";
+            return "CamelAwsSqsMD5OfBody";
         }
 
         /**
@@ -3179,7 +3179,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsMessageId}.
          */
         public String awsSqsMessageId() {
-            return "AwsSqsMessageId";
+            return "CamelAwsSqsMessageId";
         }
 
         /**
@@ -3192,7 +3192,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsReceiptHandle}.
          */
         public String awsSqsReceiptHandle() {
-            return "AwsSqsReceiptHandle";
+            return "CamelAwsSqsReceiptHandle";
         }
 
         /**
@@ -3205,7 +3205,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsDelaySeconds}.
          */
         public String awsSqsDelaySeconds() {
-            return "AwsSqsDelaySeconds";
+            return "CamelAwsSqsDelaySeconds";
         }
 
         /**
@@ -3218,7 +3218,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsPrefix}.
          */
         public String awsSqsPrefix() {
-            return "AwsSqsPrefix";
+            return "CamelAwsSqsPrefix";
         }
 
         /**
@@ -3231,7 +3231,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsOperation}.
          */
         public String awsSqsOperation() {
-            return "AwsSqsOperation";
+            return "CamelAwsSqsOperation";
         }
     }
     static Sqs2EndpointBuilder endpointBuilder(String componentName, String path) {

@@ -983,7 +983,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the name of the header {@code CMISFolderPath}.
          */
         public String cMISFolderPath() {
-            return "CMISFolderPath";
+            return "CamelCMISFolderPath";
         }
 
         /**
@@ -996,7 +996,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the name of the header {@code CMISObjectId}.
          */
         public String cMISObjectId() {
-            return "CMISObjectId";
+            return "CamelCMISObjectId";
         }
 
         /**
@@ -1009,7 +1009,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the name of the header {@code CMISDestinationFolderId}.
          */
         public String cMISDestinationFolderId() {
-            return "CMISDestinationFolderId";
+            return "CamelCMISDestinationFolderId";
         }
 
         /**
@@ -1022,7 +1022,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the name of the header {@code CMISSourceFolderId}.
          */
         public String cMISSourceFolderId() {
-            return "CMISSourceFolderId";
+            return "CamelCMISSourceFolderId";
         }
 
         /**
@@ -1035,7 +1035,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the name of the header {@code CMISResultCount}.
          */
         public String cMISResultCount() {
-            return "CMISResultCount";
+            return "CamelCMISResultCount";
         }
 
         /**
@@ -1049,7 +1049,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the name of the header {@code CMISRetrieveContent}.
          */
         public String cMISRetrieveContent() {
-            return "CMISRetrieveContent";
+            return "CamelCMISRetrieveContent";
         }
 
         /**
@@ -1062,7 +1062,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the name of the header {@code CMISReadSize}.
          */
         public String cMISReadSize() {
-            return "CMISReadSize";
+            return "CamelCMISReadSize";
         }
 
         /**
@@ -1075,7 +1075,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the name of the header {@code CMISAllVersions}.
          */
         public String cMISAllVersions() {
-            return "CMISAllVersions";
+            return "CamelCMISAllVersions";
         }
 
         /**

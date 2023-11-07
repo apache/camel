@@ -4915,7 +4915,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettyCloseChannelWhenComplete}.
          */
         public String nettyCloseChannelWhenComplete() {
-            return "NettyCloseChannelWhenComplete";
+            return "CamelNettyCloseChannelWhenComplete";
         }
 
         /**
@@ -4928,7 +4928,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettyChannelHandlerContext}.
          */
         public String nettyChannelHandlerContext() {
-            return "NettyChannelHandlerContext";
+            return "CamelNettyChannelHandlerContext";
         }
 
         /**
@@ -4941,7 +4941,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettyRemoteAddress}.
          */
         public String nettyRemoteAddress() {
-            return "NettyRemoteAddress";
+            return "CamelNettyRemoteAddress";
         }
 
         /**
@@ -4954,7 +4954,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettyLocalAddress}.
          */
         public String nettyLocalAddress() {
-            return "NettyLocalAddress";
+            return "CamelNettyLocalAddress";
         }
 
         /**
@@ -4967,7 +4967,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLSession}.
          */
         public String nettySSLSession() {
-            return "NettySSLSession";
+            return "CamelNettySSLSession";
         }
 
         /**
@@ -4980,7 +4980,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLClientCertSubjectName}.
          */
         public String nettySSLClientCertSubjectName() {
-            return "NettySSLClientCertSubjectName";
+            return "CamelNettySSLClientCertSubjectName";
         }
 
         /**
@@ -4993,7 +4993,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLClientCertIssuerName}.
          */
         public String nettySSLClientCertIssuerName() {
-            return "NettySSLClientCertIssuerName";
+            return "CamelNettySSLClientCertIssuerName";
         }
 
         /**
@@ -5007,7 +5007,7 @@ public interface NettyEndpointBuilderFactory {
          * NettySSLClientCertSerialNumber}.
          */
         public String nettySSLClientCertSerialNumber() {
-            return "NettySSLClientCertSerialNumber";
+            return "CamelNettySSLClientCertSerialNumber";
         }
 
         /**
@@ -5020,7 +5020,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLClientCertNotBefore}.
          */
         public String nettySSLClientCertNotBefore() {
-            return "NettySSLClientCertNotBefore";
+            return "CamelNettySSLClientCertNotBefore";
         }
 
         /**
@@ -5033,7 +5033,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLClientCertNotAfter}.
          */
         public String nettySSLClientCertNotAfter() {
-            return "NettySSLClientCertNotAfter";
+            return "CamelNettySSLClientCertNotAfter";
         }
 
         /**
@@ -5046,7 +5046,7 @@ public interface NettyEndpointBuilderFactory {
          * @return the name of the header {@code NettyRequestTimeout}.
          */
         public String nettyRequestTimeout() {
-            return "NettyRequestTimeout";
+            return "CamelNettyRequestTimeout";
         }
     }
     static NettyEndpointBuilder endpointBuilder(
