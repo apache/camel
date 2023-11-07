@@ -2167,7 +2167,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the name of the header {@code EntityManager}.
          */
         public String entityManager() {
-            return "EntityManager";
+            return "CamelEntityManager";
         }
 
         /**
@@ -2180,7 +2180,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the name of the header {@code JpaParameters}.
          */
         public String jpaParameters() {
-            return "JpaParameters";
+            return "CamelJpaParameters";
         }
     }
     static JpaEndpointBuilder endpointBuilder(String componentName, String path) {

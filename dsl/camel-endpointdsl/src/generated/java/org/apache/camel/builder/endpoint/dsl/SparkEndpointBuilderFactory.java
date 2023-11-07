@@ -340,7 +340,7 @@ public interface SparkEndpointBuilderFactory {
          * @return the name of the header {@code _SPARK_RDD}.
          */
         public String sparkRdd() {
-            return "_SPARK_RDD";
+            return "CAMEL_SPARK_RDD";
         }
 
         /**
@@ -354,7 +354,7 @@ public interface SparkEndpointBuilderFactory {
          * @return the name of the header {@code _SPARK_RDD_CALLBACK}.
          */
         public String sparkRddCallback() {
-            return "_SPARK_RDD_CALLBACK";
+            return "CAMEL_SPARK_RDD_CALLBACK";
         }
 
         /**
@@ -367,7 +367,7 @@ public interface SparkEndpointBuilderFactory {
          * @return the name of the header {@code _SPARK_DATAFRAME}.
          */
         public String sparkDataframe() {
-            return "_SPARK_DATAFRAME";
+            return "CAMEL_SPARK_DATAFRAME";
         }
 
         /**
@@ -381,7 +381,7 @@ public interface SparkEndpointBuilderFactory {
          * @return the name of the header {@code _SPARK_DATAFRAME_CALLBACK}.
          */
         public String sparkDataframeCallback() {
-            return "_SPARK_DATAFRAME_CALLBACK";
+            return "CAMEL_SPARK_DATAFRAME_CALLBACK";
         }
     }
     @Deprecated

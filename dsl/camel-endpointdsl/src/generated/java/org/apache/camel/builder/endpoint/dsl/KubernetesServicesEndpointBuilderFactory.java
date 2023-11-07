@@ -1515,7 +1515,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1528,7 +1528,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1541,7 +1541,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesServiceLabels}.
          */
         public String kubernetesServiceLabels() {
-            return "KubernetesServiceLabels";
+            return "CamelKubernetesServiceLabels";
         }
 
         /**
@@ -1554,7 +1554,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesServiceName}.
          */
         public String kubernetesServiceName() {
-            return "KubernetesServiceName";
+            return "CamelKubernetesServiceName";
         }
 
         /**
@@ -1568,7 +1568,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesServiceSpec}.
          */
         public String kubernetesServiceSpec() {
-            return "KubernetesServiceSpec";
+            return "CamelKubernetesServiceSpec";
         }
 
         /**
@@ -1582,7 +1582,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventAction}.
          */
         public String kubernetesEventAction() {
-            return "KubernetesEventAction";
+            return "CamelKubernetesEventAction";
         }
 
         /**
@@ -1595,7 +1595,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventTimestamp}.
          */
         public String kubernetesEventTimestamp() {
-            return "KubernetesEventTimestamp";
+            return "CamelKubernetesEventTimestamp";
         }
     }
     static KubernetesServicesEndpointBuilder endpointBuilder(

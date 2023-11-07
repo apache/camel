@@ -1749,7 +1749,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * @return the name of the header {@code TwitterUser}.
          */
         public String twitterUser() {
-            return "TwitterUser";
+            return "CamelTwitterUser";
         }
 
         /**
@@ -1763,7 +1763,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * @return the name of the header {@code TwitterEventType}.
          */
         public String twitterEventType() {
-            return "TwitterEventType";
+            return "CamelTwitterEventType";
         }
     }
     static TwitterDirectMessageEndpointBuilder endpointBuilder(

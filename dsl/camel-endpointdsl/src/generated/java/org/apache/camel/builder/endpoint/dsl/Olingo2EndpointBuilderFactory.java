@@ -2124,7 +2124,7 @@ public interface Olingo2EndpointBuilderFactory {
          * @return the name of the header {@code Olingo2.responseHttpHeaders}.
          */
         public String olingo2Responsehttpheaders() {
-            return "Olingo2.responseHttpHeaders";
+            return "CamelOlingo2.responseHttpHeaders";
         }
     }
     static Olingo2EndpointBuilder endpointBuilder(

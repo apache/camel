@@ -6189,7 +6189,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaPartitionId}.
          */
         public String vertxKafkaPartitionId() {
-            return "VertxKafkaPartitionId";
+            return "CamelVertxKafkaPartitionId";
         }
 
         /**
@@ -6204,7 +6204,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaMessageKey}.
          */
         public String vertxKafkaMessageKey() {
-            return "VertxKafkaMessageKey";
+            return "CamelVertxKafkaMessageKey";
         }
 
         /**
@@ -6219,7 +6219,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaTopic}.
          */
         public String vertxKafkaTopic() {
-            return "VertxKafkaTopic";
+            return "CamelVertxKafkaTopic";
         }
 
         /**
@@ -6232,7 +6232,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaRecordMetadata}.
          */
         public String vertxKafkaRecordMetadata() {
-            return "VertxKafkaRecordMetadata";
+            return "CamelVertxKafkaRecordMetadata";
         }
 
         /**
@@ -6245,7 +6245,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaOffset}.
          */
         public String vertxKafkaOffset() {
-            return "VertxKafkaOffset";
+            return "CamelVertxKafkaOffset";
         }
 
         /**
@@ -6258,7 +6258,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaHeaders}.
          */
         public String vertxKafkaHeaders() {
-            return "VertxKafkaHeaders";
+            return "CamelVertxKafkaHeaders";
         }
 
         /**
@@ -6271,7 +6271,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaTimestamp}.
          */
         public String vertxKafkaTimestamp() {
-            return "VertxKafkaTimestamp";
+            return "CamelVertxKafkaTimestamp";
         }
 
         /**
@@ -6286,7 +6286,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaOverrideTimestamp}.
          */
         public String vertxKafkaOverrideTimestamp() {
-            return "VertxKafkaOverrideTimestamp";
+            return "CamelVertxKafkaOverrideTimestamp";
         }
 
         /**
@@ -6301,7 +6301,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @return the name of the header {@code VertxKafkaOverrideTopic}.
          */
         public String vertxKafkaOverrideTopic() {
-            return "VertxKafkaOverrideTopic";
+            return "CamelVertxKafkaOverrideTopic";
         }
     }
     @Deprecated

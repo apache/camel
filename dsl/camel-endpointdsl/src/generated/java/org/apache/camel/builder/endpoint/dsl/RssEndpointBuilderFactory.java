@@ -947,7 +947,7 @@ public interface RssEndpointBuilderFactory {
          * @return the name of the header {@code RssFeed}.
          */
         public String rssFeed() {
-            return "RssFeed";
+            return "CamelRssFeed";
         }
     }
     static RssEndpointBuilder endpointBuilder(String componentName, String path) {

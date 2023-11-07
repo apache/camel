@@ -949,7 +949,7 @@ public interface AtomEndpointBuilderFactory {
          * @return the name of the header {@code AtomFeed}.
          */
         public String atomFeed() {
-            return "AtomFeed";
+            return "CamelAtomFeed";
         }
     }
     static AtomEndpointBuilder endpointBuilder(String componentName, String path) {

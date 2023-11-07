@@ -383,7 +383,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * @return the name of the header {@code IgniteQueueOperation}.
          */
         public String igniteQueueOperation() {
-            return "IgniteQueueOperation";
+            return "CamelIgniteQueueOperation";
         }
 
         /**
@@ -396,7 +396,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * @return the name of the header {@code IgniteQueueMaxElements}.
          */
         public String igniteQueueMaxElements() {
-            return "IgniteQueueMaxElements";
+            return "CamelIgniteQueueMaxElements";
         }
 
         /**
@@ -409,7 +409,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * @return the name of the header {@code IgniteQueueTransferredCount}.
          */
         public String igniteQueueTransferredCount() {
-            return "IgniteQueueTransferredCount";
+            return "CamelIgniteQueueTransferredCount";
         }
 
         /**
@@ -423,7 +423,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * @return the name of the header {@code IgniteQueueTimeoutMillis}.
          */
         public String igniteQueueTimeoutMillis() {
-            return "IgniteQueueTimeoutMillis";
+            return "CamelIgniteQueueTimeoutMillis";
         }
     }
     static IgniteQueueEndpointBuilder endpointBuilder(

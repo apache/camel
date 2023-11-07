@@ -1864,7 +1864,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * SpringRabbitmqRoutingOverrideKey}.
          */
         public String springRabbitmqRoutingOverrideKey() {
-            return "SpringRabbitmqRoutingOverrideKey";
+            return "CamelSpringRabbitmqRoutingOverrideKey";
         }
 
         /**
@@ -1878,7 +1878,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * SpringRabbitmqExchangeOverrideName}.
          */
         public String springRabbitmqExchangeOverrideName() {
-            return "SpringRabbitmqExchangeOverrideName";
+            return "CamelSpringRabbitmqExchangeOverrideName";
         }
     }
     static SpringRabbitMQEndpointBuilder endpointBuilder(

@@ -2688,7 +2688,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioBucketName}.
          */
         public String minioBucketName() {
-            return "MinioBucketName";
+            return "CamelMinioBucketName";
         }
 
         /**
@@ -2702,7 +2702,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioDestinationBucketName}.
          */
         public String minioDestinationBucketName() {
-            return "MinioDestinationBucketName";
+            return "CamelMinioDestinationBucketName";
         }
 
         /**
@@ -2717,7 +2717,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioContentControl}.
          */
         public String minioContentControl() {
-            return "MinioContentControl";
+            return "CamelMinioContentControl";
         }
 
         /**
@@ -2733,7 +2733,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioContentDisposition}.
          */
         public String minioContentDisposition() {
-            return "MinioContentDisposition";
+            return "CamelMinioContentDisposition";
         }
 
         /**
@@ -2750,7 +2750,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioContentEncoding}.
          */
         public String minioContentEncoding() {
-            return "MinioContentEncoding";
+            return "CamelMinioContentEncoding";
         }
 
         /**
@@ -2765,7 +2765,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioContentLength}.
          */
         public String minioContentLength() {
-            return "MinioContentLength";
+            return "CamelMinioContentLength";
         }
 
         /**
@@ -2782,7 +2782,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioContentMD5}.
          */
         public String minioContentMD5() {
-            return "MinioContentMD5";
+            return "CamelMinioContentMD5";
         }
 
         /**
@@ -2797,7 +2797,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioContentType}.
          */
         public String minioContentType() {
-            return "MinioContentType";
+            return "CamelMinioContentType";
         }
 
         /**
@@ -2813,7 +2813,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioETag}.
          */
         public String minioETag() {
-            return "MinioETag";
+            return "CamelMinioETag";
         }
 
         /**
@@ -2828,7 +2828,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioObjectName}.
          */
         public String minioObjectName() {
-            return "MinioObjectName";
+            return "CamelMinioObjectName";
         }
 
         /**
@@ -2841,7 +2841,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioDestinationObjectName}.
          */
         public String minioDestinationObjectName() {
-            return "MinioDestinationObjectName";
+            return "CamelMinioDestinationObjectName";
         }
 
         /**
@@ -2856,7 +2856,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioLastModified}.
          */
         public String minioLastModified() {
-            return "MinioLastModified";
+            return "CamelMinioLastModified";
         }
 
         /**
@@ -2869,7 +2869,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioStorageClass}.
          */
         public String minioStorageClass() {
-            return "MinioStorageClass";
+            return "CamelMinioStorageClass";
         }
 
         /**
@@ -2886,7 +2886,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioVersionId}.
          */
         public String minioVersionId() {
-            return "MinioVersionId";
+            return "CamelMinioVersionId";
         }
 
         /**
@@ -2901,7 +2901,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioCannedAcl}.
          */
         public String minioCannedAcl() {
-            return "MinioCannedAcl";
+            return "CamelMinioCannedAcl";
         }
 
         /**
@@ -2915,7 +2915,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioOperation}.
          */
         public String minioOperation() {
-            return "MinioOperation";
+            return "CamelMinioOperation";
         }
 
         /**
@@ -2931,7 +2931,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioServerSideEncryption}.
          */
         public String minioServerSideEncryption() {
-            return "MinioServerSideEncryption";
+            return "CamelMinioServerSideEncryption";
         }
 
         /**
@@ -2944,7 +2944,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioExpirationTime}.
          */
         public String minioExpirationTime() {
-            return "MinioExpirationTime";
+            return "CamelMinioExpirationTime";
         }
 
         /**
@@ -2957,7 +2957,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioReplicationStatus}.
          */
         public String minioReplicationStatus() {
-            return "MinioReplicationStatus";
+            return "CamelMinioReplicationStatus";
         }
 
         /**
@@ -2970,7 +2970,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioOffset}.
          */
         public String minioOffset() {
-            return "MinioOffset";
+            return "CamelMinioOffset";
         }
 
         /**
@@ -2983,7 +2983,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the name of the header {@code MinioLength}.
          */
         public String minioLength() {
-            return "MinioLength";
+            return "CamelMinioLength";
         }
     }
     static MinioEndpointBuilder endpointBuilder(

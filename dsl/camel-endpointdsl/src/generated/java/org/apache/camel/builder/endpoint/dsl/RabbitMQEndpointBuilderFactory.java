@@ -4463,7 +4463,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqRoutingKey}.
          */
         public String rabbitmqRoutingKey() {
-            return "RabbitmqRoutingKey";
+            return "CamelRabbitmqRoutingKey";
         }
 
         /**
@@ -4477,7 +4477,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqExchangeOverrideName}.
          */
         public String rabbitmqExchangeOverrideName() {
-            return "RabbitmqExchangeOverrideName";
+            return "CamelRabbitmqExchangeOverrideName";
         }
 
         /**
@@ -4491,7 +4491,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqExchangeName}.
          */
         public String rabbitmqExchangeName() {
-            return "RabbitmqExchangeName";
+            return "CamelRabbitmqExchangeName";
         }
 
         /**
@@ -4504,7 +4504,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqContentType}.
          */
         public String rabbitmqContentType() {
-            return "RabbitmqContentType";
+            return "CamelRabbitmqContentType";
         }
 
         /**
@@ -4517,7 +4517,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqPriority}.
          */
         public String rabbitmqPriority() {
-            return "RabbitmqPriority";
+            return "CamelRabbitmqPriority";
         }
 
         /**
@@ -4530,7 +4530,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqDeliveryTag}.
          */
         public String rabbitmqDeliveryTag() {
-            return "RabbitmqDeliveryTag";
+            return "CamelRabbitmqDeliveryTag";
         }
 
         /**
@@ -4543,7 +4543,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqRedeliveryTag}.
          */
         public String rabbitmqRedeliveryTag() {
-            return "RabbitmqRedeliveryTag";
+            return "CamelRabbitmqRedeliveryTag";
         }
 
         /**
@@ -4556,7 +4556,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqCorrelationId}.
          */
         public String rabbitmqCorrelationId() {
-            return "RabbitmqCorrelationId";
+            return "CamelRabbitmqCorrelationId";
         }
 
         /**
@@ -4569,7 +4569,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqMessageId}.
          */
         public String rabbitmqMessageId() {
-            return "RabbitmqMessageId";
+            return "CamelRabbitmqMessageId";
         }
 
         /**
@@ -4582,7 +4582,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqDeliveryMode}.
          */
         public String rabbitmqDeliveryMode() {
-            return "RabbitmqDeliveryMode";
+            return "CamelRabbitmqDeliveryMode";
         }
 
         /**
@@ -4595,7 +4595,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqUserId}.
          */
         public String rabbitmqUserId() {
-            return "RabbitmqUserId";
+            return "CamelRabbitmqUserId";
         }
 
         /**
@@ -4608,7 +4608,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqClusterId}.
          */
         public String rabbitmqClusterId() {
-            return "RabbitmqClusterId";
+            return "CamelRabbitmqClusterId";
         }
 
         /**
@@ -4622,7 +4622,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqRequestTimeout}.
          */
         public String rabbitmqRequestTimeout() {
-            return "RabbitmqRequestTimeout";
+            return "CamelRabbitmqRequestTimeout";
         }
 
         /**
@@ -4635,7 +4635,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqReplyTo}.
          */
         public String rabbitmqReplyTo() {
-            return "RabbitmqReplyTo";
+            return "CamelRabbitmqReplyTo";
         }
 
         /**
@@ -4648,7 +4648,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqContentEncoding}.
          */
         public String rabbitmqContentEncoding() {
-            return "RabbitmqContentEncoding";
+            return "CamelRabbitmqContentEncoding";
         }
 
         /**
@@ -4661,7 +4661,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqType}.
          */
         public String rabbitmqType() {
-            return "RabbitmqType";
+            return "CamelRabbitmqType";
         }
 
         /**
@@ -4674,7 +4674,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqExpiration}.
          */
         public String rabbitmqExpiration() {
-            return "RabbitmqExpiration";
+            return "CamelRabbitmqExpiration";
         }
 
         /**
@@ -4687,7 +4687,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqTimestamp}.
          */
         public String rabbitmqTimestamp() {
-            return "RabbitmqTimestamp";
+            return "CamelRabbitmqTimestamp";
         }
 
         /**
@@ -4700,7 +4700,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqAppId}.
          */
         public String rabbitmqAppId() {
-            return "RabbitmqAppId";
+            return "CamelRabbitmqAppId";
         }
 
         /**
@@ -4719,7 +4719,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqRequeue}.
          */
         public String rabbitmqRequeue() {
-            return "RabbitmqRequeue";
+            return "CamelRabbitmqRequeue";
         }
 
         /**
@@ -4733,7 +4733,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqMandatory}.
          */
         public String rabbitmqMandatory() {
-            return "RabbitmqMandatory";
+            return "CamelRabbitmqMandatory";
         }
 
         /**
@@ -4747,7 +4747,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code RabbitmqImmediate}.
          */
         public String rabbitmqImmediate() {
-            return "RabbitmqImmediate";
+            return "CamelRabbitmqImmediate";
         }
 
         /**
@@ -4760,7 +4760,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code MessageTimestamp}.
          */
         public String messageTimestamp() {
-            return "MessageTimestamp";
+            return "CamelMessageTimestamp";
         }
     }
     static RabbitMQEndpointBuilder endpointBuilder(

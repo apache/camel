@@ -1502,7 +1502,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the name of the header {@code TelegramChatId}.
          */
         public String telegramChatId() {
-            return "TelegramChatId";
+            return "CamelTelegramChatId";
         }
 
         /**
@@ -1520,7 +1520,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the name of the header {@code TelegramMediaType}.
          */
         public String telegramMediaType() {
-            return "TelegramMediaType";
+            return "CamelTelegramMediaType";
         }
 
         /**
@@ -1534,7 +1534,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the name of the header {@code TelegramMediaTitleCaption}.
          */
         public String telegramMediaTitleCaption() {
-            return "TelegramMediaTitleCaption";
+            return "CamelTelegramMediaTitleCaption";
         }
 
         /**
@@ -1548,7 +1548,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the name of the header {@code TelegramMediaMarkup}.
          */
         public String telegramMediaMarkup() {
-            return "TelegramMediaMarkup";
+            return "CamelTelegramMediaMarkup";
         }
 
         /**
@@ -1562,7 +1562,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the name of the header {@code TelegramParseMode}.
          */
         public String telegramParseMode() {
-            return "TelegramParseMode";
+            return "CamelTelegramParseMode";
         }
 
         /**
@@ -1575,7 +1575,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the name of the header {@code MessageTimestamp}.
          */
         public String messageTimestamp() {
-            return "MessageTimestamp";
+            return "CamelMessageTimestamp";
         }
     }
     static TelegramEndpointBuilder endpointBuilder(
