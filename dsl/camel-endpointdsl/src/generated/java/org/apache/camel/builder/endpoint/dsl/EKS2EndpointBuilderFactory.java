@@ -519,7 +519,7 @@ public interface EKS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEKSOperation}.
          */
         public String awsEKSOperation() {
-            return "AwsEKSOperation";
+            return "CamelAwsEKSOperation";
         }
 
         /**
@@ -532,7 +532,7 @@ public interface EKS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEKSMaxResults}.
          */
         public String awsEKSMaxResults() {
-            return "AwsEKSMaxResults";
+            return "CamelAwsEKSMaxResults";
         }
 
         /**
@@ -545,7 +545,7 @@ public interface EKS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEKSDescription}.
          */
         public String awsEKSDescription() {
-            return "AwsEKSDescription";
+            return "CamelAwsEKSDescription";
         }
 
         /**
@@ -558,7 +558,7 @@ public interface EKS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEKSClusterName}.
          */
         public String awsEKSClusterName() {
-            return "AwsEKSClusterName";
+            return "CamelAwsEKSClusterName";
         }
 
         /**
@@ -571,7 +571,7 @@ public interface EKS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEKSRoleARN}.
          */
         public String awsEKSRoleARN() {
-            return "AwsEKSRoleARN";
+            return "CamelAwsEKSRoleARN";
         }
 
         /**
@@ -585,7 +585,7 @@ public interface EKS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEKSVPCConfig}.
          */
         public String awsEKSVPCConfig() {
-            return "AwsEKSVPCConfig";
+            return "CamelAwsEKSVPCConfig";
         }
     }
     static EKS2EndpointBuilder endpointBuilder(String componentName, String path) {

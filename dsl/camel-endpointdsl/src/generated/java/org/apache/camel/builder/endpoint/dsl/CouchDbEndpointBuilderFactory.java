@@ -727,7 +727,7 @@ public interface CouchDbEndpointBuilderFactory {
          * @return the name of the header {@code CouchDbResumeAction}.
          */
         public String couchDbResumeAction() {
-            return "CouchDbResumeAction";
+            return "CamelCouchDbResumeAction";
         }
     }
     static CouchDbEndpointBuilder endpointBuilder(

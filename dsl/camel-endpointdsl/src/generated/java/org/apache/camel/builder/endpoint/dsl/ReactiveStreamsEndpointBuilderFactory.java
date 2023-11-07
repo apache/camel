@@ -573,7 +573,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * @return the name of the header {@code ReactiveStreamsEventType}.
          */
         public String reactiveStreamsEventType() {
-            return "ReactiveStreamsEventType";
+            return "CamelReactiveStreamsEventType";
         }
 
         /**
@@ -588,7 +588,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * @return the name of the header {@code ReactiveStreamsCallback}.
          */
         public String reactiveStreamsCallback() {
-            return "ReactiveStreamsCallback";
+            return "CamelReactiveStreamsCallback";
         }
     }
     static ReactiveStreamsEndpointBuilder endpointBuilder(

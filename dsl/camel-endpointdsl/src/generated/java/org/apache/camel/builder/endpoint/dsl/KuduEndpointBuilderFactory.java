@@ -226,7 +226,7 @@ public interface KuduEndpointBuilderFactory {
          * @return the name of the header {@code KuduSchema}.
          */
         public String kuduSchema() {
-            return "KuduSchema";
+            return "CamelKuduSchema";
         }
 
         /**
@@ -240,7 +240,7 @@ public interface KuduEndpointBuilderFactory {
          * @return the name of the header {@code KuduTableOptions}.
          */
         public String kuduTableOptions() {
-            return "KuduTableOptions";
+            return "CamelKuduTableOptions";
         }
 
         /**
@@ -253,7 +253,7 @@ public interface KuduEndpointBuilderFactory {
          * @return the name of the header {@code KuduScanColumnNames}.
          */
         public String kuduScanColumnNames() {
-            return "KuduScanColumnNames";
+            return "CamelKuduScanColumnNames";
         }
 
         /**
@@ -266,7 +266,7 @@ public interface KuduEndpointBuilderFactory {
          * @return the name of the header {@code KuduScanPredicate}.
          */
         public String kuduScanPredicate() {
-            return "KuduScanPredicate";
+            return "CamelKuduScanPredicate";
         }
 
         /**
@@ -279,7 +279,7 @@ public interface KuduEndpointBuilderFactory {
          * @return the name of the header {@code KuduScanLimit}.
          */
         public String kuduScanLimit() {
-            return "KuduScanLimit";
+            return "CamelKuduScanLimit";
         }
     }
     static KuduEndpointBuilder endpointBuilder(String componentName, String path) {

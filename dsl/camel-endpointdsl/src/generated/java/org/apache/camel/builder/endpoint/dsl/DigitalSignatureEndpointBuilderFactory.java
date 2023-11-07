@@ -643,7 +643,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @return the name of the header {@code SignaturePrivateKey}.
          */
         public String signaturePrivateKey() {
-            return "SignaturePrivateKey";
+            return "CamelSignaturePrivateKey";
         }
 
         /**
@@ -657,7 +657,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @return the name of the header {@code SignaturePublicKeyOrCert}.
          */
         public String signaturePublicKeyOrCert() {
-            return "SignaturePublicKeyOrCert";
+            return "CamelSignaturePublicKeyOrCert";
         }
 
         /**
@@ -671,7 +671,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @return the name of the header {@code SignatureKeyStoreAlias}.
          */
         public String signatureKeyStoreAlias() {
-            return "SignatureKeyStoreAlias";
+            return "CamelSignatureKeyStoreAlias";
         }
 
         /**
@@ -684,7 +684,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @return the name of the header {@code SignatureKeyStorePassword}.
          */
         public String signatureKeyStorePassword() {
-            return "SignatureKeyStorePassword";
+            return "CamelSignatureKeyStorePassword";
         }
     }
     static DigitalSignatureEndpointBuilder endpointBuilder(

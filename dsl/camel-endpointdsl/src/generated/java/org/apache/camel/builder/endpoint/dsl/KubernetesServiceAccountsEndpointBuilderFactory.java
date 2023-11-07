@@ -538,7 +538,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -551,7 +551,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -565,7 +565,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * KubernetesServiceAccountsLabels}.
          */
         public String kubernetesServiceAccountsLabels() {
-            return "KubernetesServiceAccountsLabels";
+            return "CamelKubernetesServiceAccountsLabels";
         }
 
         /**
@@ -578,7 +578,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesServiceAccountName}.
          */
         public String kubernetesServiceAccountName() {
-            return "KubernetesServiceAccountName";
+            return "CamelKubernetesServiceAccountName";
         }
 
         /**
@@ -592,7 +592,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesServiceAccount}.
          */
         public String kubernetesServiceAccount() {
-            return "KubernetesServiceAccount";
+            return "CamelKubernetesServiceAccount";
         }
     }
     static KubernetesServiceAccountsEndpointBuilder endpointBuilder(

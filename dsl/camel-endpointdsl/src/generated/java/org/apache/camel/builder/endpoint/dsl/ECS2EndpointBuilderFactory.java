@@ -519,7 +519,7 @@ public interface ECS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsECSOperation}.
          */
         public String awsECSOperation() {
-            return "AwsECSOperation";
+            return "CamelAwsECSOperation";
         }
 
         /**
@@ -532,7 +532,7 @@ public interface ECS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsECSMaxResults}.
          */
         public String awsECSMaxResults() {
-            return "AwsECSMaxResults";
+            return "CamelAwsECSMaxResults";
         }
 
         /**
@@ -545,7 +545,7 @@ public interface ECS2EndpointBuilderFactory {
          * @return the name of the header {@code AwsECSClusterName}.
          */
         public String awsECSClusterName() {
-            return "AwsECSClusterName";
+            return "CamelAwsECSClusterName";
         }
     }
     static ECS2EndpointBuilder endpointBuilder(String componentName, String path) {

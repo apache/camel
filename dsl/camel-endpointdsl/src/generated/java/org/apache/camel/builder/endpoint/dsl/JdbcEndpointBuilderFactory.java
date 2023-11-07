@@ -642,7 +642,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the name of the header {@code JdbcUpdateCount}.
          */
         public String jdbcUpdateCount() {
-            return "JdbcUpdateCount";
+            return "CamelJdbcUpdateCount";
         }
 
         /**
@@ -656,7 +656,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the name of the header {@code JdbcRowCount}.
          */
         public String jdbcRowCount() {
-            return "JdbcRowCount";
+            return "CamelJdbcRowCount";
         }
 
         /**
@@ -669,7 +669,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the name of the header {@code JdbcColumnNames}.
          */
         public String jdbcColumnNames() {
-            return "JdbcColumnNames";
+            return "CamelJdbcColumnNames";
         }
 
         /**
@@ -683,7 +683,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the name of the header {@code JdbcParameters}.
          */
         public String jdbcParameters() {
-            return "JdbcParameters";
+            return "CamelJdbcParameters";
         }
 
         /**
@@ -697,7 +697,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the name of the header {@code RetrieveGeneratedKeys}.
          */
         public String retrieveGeneratedKeys() {
-            return "RetrieveGeneratedKeys";
+            return "CamelRetrieveGeneratedKeys";
         }
 
         /**
@@ -710,7 +710,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the name of the header {@code GeneratedColumns}.
          */
         public String generatedColumns() {
-            return "GeneratedColumns";
+            return "CamelGeneratedColumns";
         }
 
         /**
@@ -723,7 +723,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the name of the header {@code GeneratedKeysRowCount}.
          */
         public String generatedKeysRowCount() {
-            return "GeneratedKeysRowCount";
+            return "CamelGeneratedKeysRowCount";
         }
 
         /**
@@ -736,7 +736,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the name of the header {@code GeneratedKeysRows}.
          */
         public String generatedKeysRows() {
-            return "GeneratedKeysRows";
+            return "CamelGeneratedKeysRows";
         }
     }
     static JdbcEndpointBuilder endpointBuilder(String componentName, String path) {

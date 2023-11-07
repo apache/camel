@@ -732,7 +732,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the name of the header {@code XsltFileName}.
          */
         public String xsltFileName() {
-            return "XsltFileName";
+            return "CamelXsltFileName";
         }
     }
     static XsltSaxonEndpointBuilder endpointBuilder(

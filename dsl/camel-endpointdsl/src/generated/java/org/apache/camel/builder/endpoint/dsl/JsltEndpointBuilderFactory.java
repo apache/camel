@@ -400,7 +400,7 @@ public interface JsltEndpointBuilderFactory {
          * @return the name of the header {@code JsltString}.
          */
         public String jsltString() {
-            return "JsltString";
+            return "CamelJsltString";
         }
 
         /**
@@ -413,7 +413,7 @@ public interface JsltEndpointBuilderFactory {
          * @return the name of the header {@code JsltResourceUri}.
          */
         public String jsltResourceUri() {
-            return "JsltResourceUri";
+            return "CamelJsltResourceUri";
         }
     }
     static JsltEndpointBuilder endpointBuilder(String componentName, String path) {

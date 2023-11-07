@@ -316,7 +316,7 @@ public interface MvelEndpointBuilderFactory {
          * @return the name of the header {@code MvelResourceUri}.
          */
         public String mvelResourceUri() {
-            return "MvelResourceUri";
+            return "CamelMvelResourceUri";
         }
 
         /**
@@ -329,7 +329,7 @@ public interface MvelEndpointBuilderFactory {
          * @return the name of the header {@code MvelTemplate}.
          */
         public String mvelTemplate() {
-            return "MvelTemplate";
+            return "CamelMvelTemplate";
         }
     }
     static MvelEndpointBuilder endpointBuilder(String componentName, String path) {

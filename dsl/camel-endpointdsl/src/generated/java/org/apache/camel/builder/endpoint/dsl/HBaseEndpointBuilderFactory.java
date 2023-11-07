@@ -1137,7 +1137,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the name of the header {@code HBaseOperation}.
          */
         public String hBaseOperation() {
-            return "HBaseOperation";
+            return "CamelHBaseOperation";
         }
 
         /**
@@ -1150,7 +1150,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the name of the header {@code HBaseMaxScanResults}.
          */
         public String hBaseMaxScanResults() {
-            return "HBaseMaxScanResults";
+            return "CamelHBaseMaxScanResults";
         }
 
         /**
@@ -1163,7 +1163,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the name of the header {@code HBaseStartRow}.
          */
         public String hBaseStartRow() {
-            return "HBaseStartRow";
+            return "CamelHBaseStartRow";
         }
 
         /**
@@ -1176,7 +1176,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the name of the header {@code HBaseStopRow}.
          */
         public String hBaseStopRow() {
-            return "HBaseStopRow";
+            return "CamelHBaseStopRow";
         }
 
         /**
@@ -1190,7 +1190,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the name of the header {@code MappingStrategy}.
          */
         public String mappingStrategy() {
-            return "MappingStrategy";
+            return "CamelMappingStrategy";
         }
 
         /**
@@ -1203,7 +1203,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the name of the header {@code MappingStrategyClassName}.
          */
         public String mappingStrategyClassName() {
-            return "MappingStrategyClassName";
+            return "CamelMappingStrategyClassName";
         }
 
         /**
@@ -1216,7 +1216,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the name of the header {@code HBaseMarkedRowId}.
          */
         public String hBaseMarkedRowId() {
-            return "HBaseMarkedRowId";
+            return "CamelHBaseMarkedRowId";
         }
     }
     @Deprecated

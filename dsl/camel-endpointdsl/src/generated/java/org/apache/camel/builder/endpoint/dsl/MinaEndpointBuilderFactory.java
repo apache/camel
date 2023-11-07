@@ -2386,7 +2386,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the name of the header {@code MinaCloseSessionWhenComplete}.
          */
         public String minaCloseSessionWhenComplete() {
-            return "MinaCloseSessionWhenComplete";
+            return "CamelMinaCloseSessionWhenComplete";
         }
 
         /**
@@ -2399,7 +2399,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the name of the header {@code MinaIoSession}.
          */
         public String minaIoSession() {
-            return "MinaIoSession";
+            return "CamelMinaIoSession";
         }
 
         /**
@@ -2412,7 +2412,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the name of the header {@code MinaLocalAddress}.
          */
         public String minaLocalAddress() {
-            return "MinaLocalAddress";
+            return "CamelMinaLocalAddress";
         }
 
         /**
@@ -2425,7 +2425,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the name of the header {@code MinaRemoteAddress}.
          */
         public String minaRemoteAddress() {
-            return "MinaRemoteAddress";
+            return "CamelMinaRemoteAddress";
         }
     }
     static MinaEndpointBuilder endpointBuilder(String componentName, String path) {

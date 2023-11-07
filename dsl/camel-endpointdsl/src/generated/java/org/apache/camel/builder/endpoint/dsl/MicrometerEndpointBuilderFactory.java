@@ -275,7 +275,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @return the name of the header {@code MetricsTimerAction}.
          */
         public String metricsTimerAction() {
-            return "MetricsTimerAction";
+            return "CamelMetricsTimerAction";
         }
 
         /**
@@ -288,7 +288,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @return the name of the header {@code MetricsHistogramValue}.
          */
         public String metricsHistogramValue() {
-            return "MetricsHistogramValue";
+            return "CamelMetricsHistogramValue";
         }
 
         /**
@@ -301,7 +301,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @return the name of the header {@code MetricsCounterDecrement}.
          */
         public String metricsCounterDecrement() {
-            return "MetricsCounterDecrement";
+            return "CamelMetricsCounterDecrement";
         }
 
         /**
@@ -314,7 +314,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @return the name of the header {@code MetricsCounterIncrement}.
          */
         public String metricsCounterIncrement() {
-            return "MetricsCounterIncrement";
+            return "CamelMetricsCounterIncrement";
         }
 
         /**
@@ -327,7 +327,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @return the name of the header {@code MetricsName}.
          */
         public String metricsName() {
-            return "MetricsName";
+            return "CamelMetricsName";
         }
 
         /**
@@ -340,7 +340,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @return the name of the header {@code MetricsDescription}.
          */
         public String metricsDescription() {
-            return "MetricsDescription";
+            return "CamelMetricsDescription";
         }
 
         /**
@@ -353,7 +353,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @return the name of the header {@code MetricsTags}.
          */
         public String metricsTags() {
-            return "MetricsTags";
+            return "CamelMetricsTags";
         }
     }
     static MicrometerEndpointBuilder endpointBuilder(

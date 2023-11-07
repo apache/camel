@@ -328,7 +328,7 @@ public interface IOTAEndpointBuilderFactory {
          * @return the name of the header {@code IOTASeed}.
          */
         public String iOTASeed() {
-            return "IOTASeed";
+            return "CamelIOTASeed";
         }
 
         /**
@@ -341,7 +341,7 @@ public interface IOTAEndpointBuilderFactory {
          * @return the name of the header {@code IOTAValue}.
          */
         public String iOTAValue() {
-            return "IOTAValue";
+            return "CamelIOTAValue";
         }
 
         /**
@@ -354,7 +354,7 @@ public interface IOTAEndpointBuilderFactory {
          * @return the name of the header {@code IOTAToAddress}.
          */
         public String iOTAToAddress() {
-            return "IOTAToAddress";
+            return "CamelIOTAToAddress";
         }
 
         /**
@@ -367,7 +367,7 @@ public interface IOTAEndpointBuilderFactory {
          * @return the name of the header {@code IOTAAddressIndex}.
          */
         public String iOTAAddressIndex() {
-            return "IOTAAddressIndex";
+            return "CamelIOTAAddressIndex";
         }
 
         /**
@@ -380,7 +380,7 @@ public interface IOTAEndpointBuilderFactory {
          * @return the name of the header {@code IOTAAddressStartIndex}.
          */
         public String iOTAAddressStartIndex() {
-            return "IOTAAddressStartIndex";
+            return "CamelIOTAAddressStartIndex";
         }
 
         /**
@@ -393,7 +393,7 @@ public interface IOTAEndpointBuilderFactory {
          * @return the name of the header {@code IOTAAddressEndIndex}.
          */
         public String iOTAAddressEndIndex() {
-            return "IOTAAddressEndIndex";
+            return "CamelIOTAAddressEndIndex";
         }
     }
     @Deprecated

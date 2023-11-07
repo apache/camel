@@ -402,7 +402,7 @@ public interface JoltEndpointBuilderFactory {
          * @return the name of the header {@code JoltResourceUri}.
          */
         public String joltResourceUri() {
-            return "JoltResourceUri";
+            return "CamelJoltResourceUri";
         }
 
         /**
@@ -415,7 +415,7 @@ public interface JoltEndpointBuilderFactory {
          * @return the name of the header {@code JoltContext}.
          */
         public String joltContext() {
-            return "JoltContext";
+            return "CamelJoltContext";
         }
     }
     static JoltEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -1220,7 +1220,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the name of the header {@code SpringWebserviceEndpointUri}.
          */
         public String springWebserviceEndpointUri() {
-            return "SpringWebserviceEndpointUri";
+            return "CamelSpringWebserviceEndpointUri";
         }
 
         /**
@@ -1234,7 +1234,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the name of the header {@code SpringWebserviceSoapAction}.
          */
         public String springWebserviceSoapAction() {
-            return "SpringWebserviceSoapAction";
+            return "CamelSpringWebserviceSoapAction";
         }
 
         /**
@@ -1247,7 +1247,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the name of the header {@code SpringWebserviceSoapHeader}.
          */
         public String springWebserviceSoapHeader() {
-            return "SpringWebserviceSoapHeader";
+            return "CamelSpringWebserviceSoapHeader";
         }
 
         /**
@@ -1263,7 +1263,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * SpringWebserviceAddressingAction}.
          */
         public String springWebserviceAddressingAction() {
-            return "SpringWebserviceAddressingAction";
+            return "CamelSpringWebserviceAddressingAction";
         }
 
         /**
@@ -1280,7 +1280,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * SpringWebserviceAddressingFaultTo}.
          */
         public String springWebserviceAddressingFaultTo() {
-            return "SpringWebserviceAddressingFaultTo";
+            return "CamelSpringWebserviceAddressingFaultTo";
         }
 
         /**
@@ -1297,7 +1297,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * SpringWebserviceAddressingReplyTo}.
          */
         public String springWebserviceAddressingReplyTo() {
-            return "SpringWebserviceAddressingReplyTo";
+            return "CamelSpringWebserviceAddressingReplyTo";
         }
 
         /**
