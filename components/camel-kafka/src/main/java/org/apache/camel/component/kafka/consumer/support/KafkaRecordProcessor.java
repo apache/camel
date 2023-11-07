@@ -146,7 +146,7 @@ public class KafkaRecordProcessor {
             
             // we are failing and we should break out
             if (LOG.isWarnEnabled()) {
-                LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(), exchange.getException());
+                LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(), exchange.getMessage());
                 LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.", 
                         lastResult.getPartitionLastOffset(), lastResult.getPartition());
             }
@@ -154,8 +154,6 @@ public class KafkaRecordProcessor {
             // force commit, so we resume on next poll where we failed 
             // except when the failure happened at the first message in a poll
             if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
-                // should we use record.offset ?
-                //commitManager.forceCommit(topicPartition, record.offset() - 1);
                 commitManager.forceCommit(topicPartition, lastResult.getPartitionLastOffset());
             }
 
