@@ -16,17 +16,18 @@
  */
 package org.apache.camel.spring.pollingconsumer;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class FileConsumerSpringSchedulerTest extends SpringTestSupport {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+public class FileConsumerSpringSchedulerTest extends ContextTestSupport {
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this,
                 "org/apache/camel/spring/pollingconsumer/FileConsumerSpringSchedulerTest.xml");
     }
 

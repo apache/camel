@@ -29,8 +29,6 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
 
     @Test
     public void testXsltOutputDeleteFile() throws Exception {
-        testDirectory(true);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
         template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,

@@ -62,7 +62,7 @@ public class ResourceLoaderTest extends TestSupport {
 
     @Test
     public void testLoadFileWithSpace() throws Exception {
-        createDirectory("target/data/my space");
+        testDirectory("target/data/my space", true);
         copyFile(new File("src/test/resources/log4j2.properties"), new File("target/data/my space/log4j2.properties"));
 
         DefaultCamelContext context = new DefaultCamelContext();

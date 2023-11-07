@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +39,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
@@ -61,9 +61,11 @@ public abstract class TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
 
     protected TestInfo info;
-    protected boolean testDirectoryCleaned;
 
     protected Logger log = LoggerFactory.getLogger(getClass());
+
+    @TempDir
+    private Path tempDirectory;
 
     @Override
     public String toString() {
@@ -82,73 +84,48 @@ public abstract class TestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         Assumptions.assumeTrue(canRunOnThisPlatform());
-        deleteTestDirectory();
-    }
-
-    public void deleteTestDirectory() {
-        if (!testDirectoryCleaned) {
-            deleteDirectory(testDirectory().toFile());
-            testDirectoryCleaned = true;
-        }
     }
 
     @AfterEach
     public void tearDown() throws Exception {
         // make sure we cleanup the platform mbean server
         TestSupportJmxCleanup.removeMBeans(null);
-        testDirectoryCleaned = false;
     }
 
-    protected Path testDirectory() {
-        return testDirectory(false);
+    public Path testDirectory() {
+        return tempDirectory;
     }
 
-    protected Path testDirectory(boolean create) {
-        Class<?> testClass = getClass();
-        if (create) {
-            deleteTestDirectory();
-        }
-        return testDirectory(testClass, create);
+    protected Path testFile(String file) {
+        return testDirectory().resolve(file);
     }
 
-    public static Path testDirectory(Class<?> testClass, boolean create) {
-        Path dir = Paths.get("target", "data", testClass.getSimpleName());
-        if (create) {
-            try {
-                Files.createDirectories(dir);
-            } catch (IOException e) {
-                throw new IllegalStateException("Unable to create test directory: " + dir, e);
-            }
-        }
-        return dir;
+    protected Path testDirectory(String path) {
+        return testDirectory(path, false);
     }
 
-    protected Path testFile(String dir) {
-        return testDirectory().resolve(dir);
-    }
-
-    protected Path testDirectory(String dir) {
-        return testDirectory(dir, false);
-    }
-
-    protected Path testDirectory(String dir, boolean create) {
-        Path f = testDirectory().resolve(dir);
+    protected Path testDirectory(String path, boolean create) {
+        Path resolvedPath = testDirectory().resolve(path);
         if (create) {
             try {
-                Files.createDirectories(f);
+                Files.createDirectories(resolvedPath);
             } catch (IOException e) {
-                throw new IllegalStateException("Unable to create test directory: " + dir, e);
+                throw new IllegalStateException("Unable to create test directory: " + resolvedPath, e);
             }
         }
-        return f;
+        return resolvedPath;
     }
 
     protected String fileUri() {
-        return "file:" + testDirectory();
+        return "file:" + tempDirectory;
     }
 
     protected String fileUri(String query) {
-        return "file:" + testDirectory() + (query.startsWith("?") ? "" : "/") + query;
+        return fileUri(tempDirectory, query);
+    }
+
+    protected String fileUri(Path directory, String query) {
+        return "file:" + directory + (query.startsWith("?") ? "" : "/") + query;
     }
 
     protected boolean canRunOnThisPlatform() {
@@ -443,43 +420,6 @@ public abstract class TestSupport {
                 return null;
             }
         }
-    }
-
-    /**
-     * Recursively delete a directory, useful to zapping test data
-     *
-     * @param file the directory to be deleted
-     */
-    public static void deleteDirectory(String file) {
-        deleteDirectory(new File(file));
-    }
-
-    /**
-     * Recursively delete a directory, useful to zapping test data
-     *
-     * @param file the directory to be deleted
-     */
-    public static void deleteDirectory(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files != null) {
-                for (File child : files) {
-                    deleteDirectory(child);
-                }
-            }
-        }
-
-        file.delete();
-    }
-
-    /**
-     * create the directory
-     *
-     * @param file the directory to be created
-     */
-    public static void createDirectory(String file) {
-        File dir = new File(file);
-        dir.mkdirs();
     }
 
     /**

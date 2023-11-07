@@ -27,13 +27,13 @@ import org.junit.jupiter.api.Test;
  */
 public class FileProduceTempFileNameTest extends ContextTestSupport {
 
-    private String fileUrl = fileUri("tempandrename?tempFileName=inprogress-${file:name.noext}.tmp");
-    private String parentFileUrl = fileUri("tempandrename?tempFileName=../work/${file:name.noext}.tmp");
-    private String childFileUrl = fileUri("tempandrename?tempFileName=work/${file:name.noext}.tmp");
+    public static final String FILE_URL_QUERY = "tempandrename?tempFileName=inprogress-${file:name.noext}.tmp";
+    public static final String PARENT_FILE_URL_QUERY = "tempandrename?tempFileName=../work/${file:name.noext}.tmp";
+    public static final String CHILD_FILE_URL_QUERY = "tempandrename?tempFileName=work/${file:name.noext}.tmp";
 
     @Test
     public void testCreateTempFileName() throws Exception {
-        Endpoint endpoint = context.getEndpoint(fileUrl);
+        Endpoint endpoint = context.getEndpoint(fileUri(FILE_URL_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
@@ -44,7 +44,7 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
 
     @Test
     public void testNoPathCreateTempFileName() throws Exception {
-        Endpoint endpoint = context.getEndpoint(fileUrl);
+        Endpoint endpoint = context.getEndpoint(fileUri(FILE_URL_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
@@ -76,7 +76,7 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
 
     @Test
     public void testCreateParentTempFileName() throws Exception {
-        Endpoint endpoint = context.getEndpoint(parentFileUrl);
+        Endpoint endpoint = context.getEndpoint(fileUri(PARENT_FILE_URL_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
@@ -89,9 +89,9 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to(fileUrl);
-                from("direct:b").to(parentFileUrl);
-                from("direct:c").to(childFileUrl);
+                from("direct:a").to(fileUri(FILE_URL_QUERY));
+                from("direct:b").to(fileUri(PARENT_FILE_URL_QUERY));
+                from("direct:c").to(fileUri(CHILD_FILE_URL_QUERY));
             }
         };
     }

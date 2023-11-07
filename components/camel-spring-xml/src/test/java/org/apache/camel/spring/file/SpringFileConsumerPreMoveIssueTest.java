@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.file;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.FileConsumerPreMoveIssueTest;
 
@@ -25,7 +27,9 @@ public class SpringFileConsumerPreMoveIssueTest extends FileConsumerPreMoveIssue
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/file/SpringFileConsumerPreMoveIssueTest.xml");
+
+        return createSpringCamelContext(this, "org/apache/camel/spring/file/SpringFileConsumerPreMoveIssueTest.xml",
+                Map.of("testDirectory", testDirectory()));
     }
 
     static class MyPreMoveCheckerProcessor extends FileConsumerPreMoveIssueTest.MyPreMoveCheckerProcessor {

@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -43,10 +42,12 @@ public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        context.getRegistry().bind("testDirectory", testDirectory());
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUri("?preMove=before/${file:name.noext}-moved.${file:ext}&initialDelay=0&delay=10"))
+                from(fileUri(
+                        "?preMove=before/${file:name.noext}-moved.${file:ext}&initialDelay=0&delay=10"))
                         .process(new MyPreMoveCheckerProcessor())
                         .to("mock:result");
             }
@@ -57,11 +58,9 @@ public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            Class<?> cl = getClass();
-            while (cl.getEnclosingClass() != null) {
-                cl = cl.getEnclosingClass();
-            }
-            Path file = TestSupport.testDirectory(cl, false).resolve("before/hello-moved.txt");
+            Path testDirectory = (Path) exchange.getContext().getRegistry()
+                    .lookupByName("testDirectory");
+            Path file = testDirectory.resolve("before/hello-moved.txt");
             assertTrue(Files.exists(file), "Pre move file should exist");
         }
     }

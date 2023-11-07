@@ -62,8 +62,6 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        deleteTestDirectory();
-
         DefaultCamelContext.setDisableJmx(!useJmx());
         Class<?>[] excluded = excludeRoutes();
         if (excluded != null && excluded.length > 0) {

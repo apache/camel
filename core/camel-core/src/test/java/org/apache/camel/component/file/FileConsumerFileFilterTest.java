@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerFileFilterTest extends ContextTestSupport {
 
-    private String fileUrl = fileUri("?initialDelay=0&delay=10&filter=#myFilter");
-
     @Override
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
@@ -69,7 +67,8 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10&filter=#myFilter"))
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

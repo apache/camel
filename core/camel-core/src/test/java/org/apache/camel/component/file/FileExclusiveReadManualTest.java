@@ -26,9 +26,7 @@ import org.junit.jupiter.api.condition.OS;
 /**
  * Unit test to verify exclusive read by for manual testing.
  */
-public class FileExclusiveReadManuelTest extends ContextTestSupport {
-
-    private String fileUrl = fileUri("?readLock=fileLock&initialDelay=0&delay=10");
+public class FileExclusiveReadManualTest extends ContextTestSupport {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
@@ -47,7 +45,8 @@ public class FileExclusiveReadManuelTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).to("mock:result");
+                from(fileUri("?readLock=fileLock&initialDelay=0&delay=10"))
+                        .to("mock:result");
             }
         };
     }

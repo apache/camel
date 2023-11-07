@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
 
-    private String fileUrl = fileUri("?initialDelay=0&delay=10&maxMessagesPerPoll=2");
+    public static final String FILE_QUERY = "?initialDelay=0&delay=10&maxMessagesPerPoll=2";
 
     @Test
     public void testMaxMessagesPerPoll() throws Exception {
@@ -36,10 +36,10 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
         mock.expectedMinimumMessageCount(2);
         mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
         mock.message(1).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
-
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "godday.txt");
+        String fileUri = fileUri(FILE_QUERY);
+        template.sendBodyAndHeader(fileUri, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri, "Godday World", Exchange.FILE_NAME, "godday.txt");
 
         // start route
         context.getRouteController().startRoute("foo");
@@ -51,7 +51,7 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from(fileUri(FILE_QUERY)).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.engine.FileStateRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.impl.engine.FileStateRepository.fileStateRepository;
@@ -29,7 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileStateRepositoryTest extends TestSupport {
 
-    private final File repositoryStore = testFile("file-state-repository.dat").toFile();
+    private File repositoryStore;
+
+    @BeforeEach
+    public void setUpTemporaryFile() {
+        repositoryStore = testFile("file-state-repository.dat").toFile();
+    }
 
     @Test
     public void shouldPreventUsingDelimiterInKey() throws Exception {

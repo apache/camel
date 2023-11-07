@@ -29,18 +29,14 @@ import org.junit.jupiter.api.parallel.Isolated;
 @Isolated
 public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSupport {
 
-    // sort by name and not eager, then we should pickup the files in order
-    private String fileUrl = fileUri("?initialDelay=0&delay=10&"
-                                     + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name");
-
     @Test
     public void testMaxMessagesPerPoll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("AAA", "BBB");
 
-        template.sendBodyAndHeader(fileUrl, "CCC", Exchange.FILE_NAME, "ccc.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
-        template.sendBodyAndHeader(fileUrl, "AAA", Exchange.FILE_NAME, "aaa.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
-        template.sendBodyAndHeader(fileUrl, "BBB", Exchange.FILE_NAME, "bbb.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
+        template.sendBodyAndHeader(fileUri(), "CCC", Exchange.FILE_NAME, "ccc.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
+        template.sendBodyAndHeader(fileUri(), "AAA", Exchange.FILE_NAME, "aaa.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
+        template.sendBodyAndHeader(fileUri(), "BBB", Exchange.FILE_NAME, "bbb.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
 
         // start route
         context.getRouteController().startRoute("foo");
@@ -60,7 +56,9 @@ public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10&"
+                             + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name"))
+                        .routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
             }
         };
     }
