@@ -49,7 +49,7 @@ public class SmppProducerTest {
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
         configuration.setPassword("password");
-        configuration.setInterfaceVersion("0x50");
+        configuration.setInterfaceVersion("5.0");
         endpoint = mock(SmppEndpoint.class);
         session = mock(SMPPSession.class);
 

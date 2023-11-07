@@ -82,7 +82,7 @@ public class SmppConfigurationTest {
         assertEquals(3, configuration.getPduProcessorDegree());
         assertEquals(100, configuration.getPduProcessorQueueCapacity());
         assertEquals(false, configuration.isSingleDLR());
-        assertEquals("0x34", configuration.getInterfaceVersion());
+        assertEquals("3.4", configuration.getInterfaceVersion());
         assertNull(configuration.getMessageReceiverRouteId());
     }
 
@@ -123,7 +123,7 @@ public class SmppConfigurationTest {
         assertEquals(80, configuration.getPduProcessorQueueCapacity());
         assertEquals(1, configuration.getPduProcessorDegree());
         assertEquals(true, configuration.isSingleDLR());
-        assertEquals("0x50", configuration.getInterfaceVersion());
+        assertEquals("5.0", configuration.getInterfaceVersion());
         assertEquals("testMessageReceiverRouteId", configuration.getMessageReceiverRouteId());
     }
 
@@ -231,7 +231,7 @@ public class SmppConfigurationTest {
                           + "httpProxyPassword=null, "
                           + "splittingPolicy=ALLOW, "
                           + "proxyHeaders=null, "
-                          + "interfaceVersion=0x34]";
+                          + "interfaceVersion=3.4]";
 
         assertEquals(expected, configuration.toString());
     }
@@ -275,7 +275,7 @@ public class SmppConfigurationTest {
         config.setPduProcessorQueueCapacity(80);
         config.setPduProcessorDegree(1);
         config.setSingleDLR(true);
-        config.setInterfaceVersion("0x50");
+        config.setInterfaceVersion("5.0");
         config.setMessageReceiverRouteId("testMessageReceiverRouteId");
     }
 }
