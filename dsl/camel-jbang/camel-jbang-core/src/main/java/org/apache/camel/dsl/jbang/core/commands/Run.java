@@ -864,9 +864,6 @@ public class Run extends CamelCommand {
         if (camelVersion != null) {
             cmds.remove("--camel-version=" + camelVersion);
         }
-        if (kameletsVersion != null) {
-            cmds.remove("--kamelets-version=" + kameletsVersion);
-        }
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
@@ -980,7 +977,6 @@ public class Run extends CamelCommand {
         }
 
         cmds.remove("--camel-version=" + camelVersion);
-        cmds.remove("--kamelets-version=" + kameletsVersion);
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
