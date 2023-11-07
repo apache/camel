@@ -66,35 +66,40 @@ All the `camel-test` modules that were JUnit 4.x based has been removed. All tes
 
 == API Changes
 
-We have removed deprecated APIs such as the following:
-
-- The `org.apache.camel.ExchangePattern` has removed `InOptionalOut`.
-- Removed `getEndpointMap()` method from `CamelContext`.
-- Removed `@FallbackConverter` as you should use `@Converter(fallback = true)` instead.
-- Removed `uri` attribute on `@EndpointInject`, `@Produce`, and `@Consume` as you should use `value` (default) instead.
-  For example `@Produce(uri = "kafka:cheese")` should be changed to `@Produce("kafka:cheese")`
-- Removed `label` on `@UriEndpoint` as you should use `category` instead.
-- Removed `consumerClass` on `@UriEndpoint`.
-- Removed all `asyncCallback` methods on `ProducerTemplate`. Use `asyncSend` or `asyncRequest` instead.
-- Removed `org.apache.camel.spi.OnCamelContextStart`. Use `org.apache.camel.spi.OnCamelContextStarting` instead.
-- Removed `org.apache.camel.spi.OnCamelContextStop`. Use `org.apache.camel.spi.OnCamelContextStopping` instead.
-- Decoupled the `org.apache.camel.ExtendedCamelContext` from the `org.apache.camel.CamelContext`.
-- Replaced `adapt()` from `org.apache.camel.CamelContext` with `getCamelContextExtension`
-- Decoupled the `org.apache.camel.ExtendedExchange` from the `org.apache.camel.Exchange`.
-- Replaced `adapt()` from `org.apache.camel.ExtendedExchange` with `getExchangeExtension`
-- Exchange failure handling status has moved from being a property defined as `ExchangePropertyKey.FAILURE_HANDLED` to a member of the ExtendedExchange, accessible via `isFailureHandled()`method.
-- Removed `Discard` and `DiscardOldest` from `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
-- Removed `org.apache.camel.builder.SimpleBuilder`. Was mostly used internally in Camel with the Java DSL in some situations.
-- Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only. End users should use `org.apache.camel.spi.BeanIntrospection` instead.
-- Removed `archetypeCatalogAsXml` method from `org.apache.camel.catalog.CamelCatalog`.
-- The `org.apache.camel.health.HealthCheck` method `isLiveness` is now default `false` instead of `true`.
-- Added `position` method to `org.apache.camel.StreamCache`.
-- The method `configure` from the interface `org.apache.camel.main.Listener` was removed
-- The `org.apache.camel.support.EventNotifierSupport` abstract class now implements `CamelContextAware`.
-- The type for `dumpRoutes` on `CamelContext` has changed from `boolean` to `String` to allow specifying either xml or yaml.
+[options="header"]
+|===
+| Type of Change | API | Alternative
+| Removed   | `InOptionalOut` from `org.apache.camel.ExchangePattern` | `InOut`
+| Removed   | `@FallbackConverter` | `@Converter(fallback = true)`
+| Removed   | `getEndpointMap()` |
+| Removed   | `uri` attribute on `@EndpointInject`, `@Produce`, and `@Consume` | Use `value` (default) instead. For example `@Produce(uri = "kafka:cheese")` should be changed to `@Produce("kafka:cheese")`
+| Removed   | `label` on `@UriEndpoint` | use `category` instead.
+| Removed   | `consumerClass` on `@UriEndpoint` |
+| Removed   | all `asyncCallback` methods on `ProducerTemplate` | `asyncSend` or `asyncRequest`.
+| Removed   | `org.apache.camel.spi.OnCamelContextStart` | `org.apache.camel.spi.OnCamelContextStarting`
+| Removed   | `org.apache.camel.spi.OnCamelContextStop` | `org.apache.camel.spi.OnCamelContextStopping`
+| Removed   | `Discard` and `DiscardOldest` from `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy` |
+| Removed   | `org.apache.camel.builder.SimpleBuilder` | This API was mostly used internally in Camel with the Java DSL in some situations.
+| Removed   | `archetypeCatalogAsXml` method from `org.apache.camel.catalog.CamelCatalog` |
+| Removed   | `configure` from the interface `org.apache.camel.main.Listener` |
+| Removed   | `getExtension` from the interface `CamelContext` | Use `getCamelContextExtension` instead. For example `ManagedCamelContext managed = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);`
+| Moved   | Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only | End users should use `org.apache.camel.spi.BeanIntrospection` instead.
+| Moved   | Exchange failure handling status has moved from being a property defined as `ExchangePropertyKey.FAILURE_HANDLED` to a member of the ExtendedExchange, accessible via `isFailureHandled()`method.
+ |
+| Replaced   | Replaced `adapt()` from `org.apache.camel.CamelContext` with `getCamelContextExtension` |
+| Replaced   | Replaced `adapt()` from `org.apache.camel.ExtendedExchange` with `getExchangeExtension` |
+| Added   | Added `position` method to `org.apache.camel.StreamCache` |
+| Decoupled   |Decoupled the `org.apache.camel.ExtendedCamelContext` from the `org.apache.camel.CamelContext` |
+| Decoupled   | Decoupled the `org.apache.camel.ExtendedExchange` from the `org.apache.camel.Exchange`. |
+| Changed   | The type for `dumpRoutes` on `CamelContext` has changed from `boolean` to `String` to allow specifying either xml or yaml. |
+| Changed   | The `org.apache.camel.health.HealthCheck` method `isLiveness` is now default `false` instead of `true`. |
+| Added   | Added `position` method to `org.apache.camel.StreamCache` |
+| Added   | The `org.apache.camel.support.EventNotifierSupport` abstract class now implements `CamelContextAware`. |
+|===
 
 TIP: The `org.apache.camel.support.PluginHelper` gives easy access to various extensions and context plugins, that
-was available previously in Camel v3 directly from `CamelContext`.
+was available previously in Camel v3 directly from `CamelContext`. For example 
+
 
 == EIP Changes
 
