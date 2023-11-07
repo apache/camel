@@ -17,7 +17,7 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.TypeConvertible;
+import org.apache.camel.spi.TypeConvertible;
 import org.apache.camel.support.SimpleTypeConverter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
