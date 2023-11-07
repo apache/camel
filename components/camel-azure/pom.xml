@@ -53,6 +53,7 @@
         <module>camel-azure-servicebus</module>
         <module>camel-azure-key-vault</module>
         <module>camel-azure-files</module>
+        <module>camel-azure-schema-registry</module>
     </modules>
 
 </project>
