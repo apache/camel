@@ -33,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
-    private String url = fileUri("?initialDelay=0&delay=10&synchronous=true");
+    public static final String FILE_URI_QUERY = "?initialDelay=0&delay=10&synchronous=true";
+
     private AtomicInteger counter = new AtomicInteger();
     private CountDownLatch latch = new CountDownLatch(2);
 
@@ -41,7 +42,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
+        String url = fileUri(FILE_URI_QUERY);
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(url, "B", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(url, "C", Exchange.FILE_NAME, "c.txt");
@@ -80,7 +81,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             @Override
             // START SNIPPET: e1
             public void configure() throws Exception {
-                from(url).routeId("foo").noAutoStartup()
+                from(fileUri(FILE_URI_QUERY)).routeId("foo").noAutoStartup()
                         // let it complete all tasks during shutdown
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
             }

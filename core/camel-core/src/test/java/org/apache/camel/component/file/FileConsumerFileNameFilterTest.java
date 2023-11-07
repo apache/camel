@@ -24,13 +24,11 @@ import org.junit.jupiter.api.Test;
 
 public class FileConsumerFileNameFilterTest extends ContextTestSupport {
 
-    private final String fileUri = fileUri();
-
     @Test
     public void testFileConsumer() throws Exception {
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:txt");
         mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
-
+        String fileUri = fileUri();
         template.sendBodyAndHeader(fileUri, "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(fileUri, "<customer>123</customer>", Exchange.FILE_NAME, "customer.xml");
         template.sendBodyAndHeader(fileUri, "<book>Camel Rocks</book>", Exchange.FILE_NAME, "book.xml");

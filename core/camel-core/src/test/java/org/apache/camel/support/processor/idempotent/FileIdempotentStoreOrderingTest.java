@@ -46,7 +46,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
     @Test
     public void testTrunkStoreNotMaxHit() throws Exception {
         // given
-        File fileStore = testDirectory(true).resolve("data.dat").toFile();
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(10);
         fileIdempotentRepository.start();
@@ -70,7 +70,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
     @Test
     public void testTrunkStoreFirstLevelMaxHit() throws Exception {
         // given
-        File fileStore = testDirectory(true).resolve("data.dat").toFile();
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.start();
@@ -94,7 +94,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
     @Test
     public void testTrunkStoreFileMaxHit() throws Exception {
         // given
-        File fileStore = testDirectory(true).resolve("data.dat").toFile();
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.setMaxFileStoreSize(128);

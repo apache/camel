@@ -27,7 +27,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>
         <route>
-            <from uri="file://target/data/SpringFileConsumerPreMoveIssueTest?initialDelay=0&amp;delay=10&amp;preMove=before/${file:name.noext}-moved.${file:ext}"/>
+            <from uri="file:{{testDirectory}}?initialDelay=0&amp;delay=10&amp;preMove=before/${file:name.noext}-moved.${file:ext}"/>
             <process ref="checker"/>
             <to uri="mock:result"/>
         </route>

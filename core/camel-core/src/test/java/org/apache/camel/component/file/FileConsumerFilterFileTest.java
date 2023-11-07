@@ -27,8 +27,10 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerFilterFileTest extends ContextTestSupport {
 
-    private String fileUrl = fileUri("?initialDelay=0&delay=10&filterFile=${bodyAs(String)} contains 'World'");
-    private String fileUrl2 = fileUri("?initialDelay=0&delay=10&filterFile=${file:modified} < ${date:now-2s}");
+    public static final String FILE_URL_1 = "?initialDelay=0&delay=10&"
+                                            + "filterFile=${bodyAs(String)} contains 'World'";
+    public static final String FILE_URL_2 = "?initialDelay=0&delay=10&"
+                                            + "filterFile=${file:modified} < ${date:now-2s}";
 
     @Test
     public void testFilterFiles() throws Exception {
@@ -67,8 +69,8 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
-                from(fileUrl2).convertBodyTo(String.class).to("mock:result2");
+                from(fileUri(FILE_URL_1)).convertBodyTo(String.class).to("mock:result");
+                from(fileUri(FILE_URL_2)).convertBodyTo(String.class).to("mock:result2");
             }
         };
     }

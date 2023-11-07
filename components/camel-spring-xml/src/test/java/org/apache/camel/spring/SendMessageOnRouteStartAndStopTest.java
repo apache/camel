@@ -16,10 +16,13 @@
  */
 package org.apache.camel.spring;
 
+import java.nio.file.Path;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,6 +30,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  */
 public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
+
+    @TempDir
+    private static Path testDirectory;
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
@@ -37,10 +43,9 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
         // the event notifier should have send a message to the file endpoint
         // so the start file is created on startup
-        assertFileExists(testFile("start.txt"));
+        assertFileExists(testDirectory.resolve("start.txt"));
     }
 
     @Override
@@ -50,7 +55,7 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
 
         // the event notifier should have send a message to the file endpoint
         // so the stop file is created on shutdown
-        assertFileExists(testFile("stop.txt"));
+        assertFileExists(testDirectory.resolve("stop.txt"));
     }
 
     @Test
@@ -62,6 +67,10 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public static Path getTestDirectory() {
+        return testDirectory;
     }
 
 }

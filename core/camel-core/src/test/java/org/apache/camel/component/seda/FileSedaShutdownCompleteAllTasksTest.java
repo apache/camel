@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
 
-    private String url = fileUri("?initialDelay=0&delay=10");
-
     @Test
     public void testShutdownCompleteAllTasks() throws Exception {
+        String url = fileUri("?initialDelay=0&delay=10");
+
         // prepare 5 files to begin with
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(url, "B", Exchange.FILE_NAME, "b.txt");

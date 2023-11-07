@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.file;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -23,13 +25,17 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.apache.camel.spring.file.SpringFileRouteTest.TestDirectoryContextInitializer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ContextConfiguration
+@ContextConfiguration(initializers = TestDirectoryContextInitializer.class)
 public class SpringFileRouteTest extends SpringRunWithTestSupport {
     protected String expectedBody = "Hello World!";
     @Autowired
@@ -38,6 +44,8 @@ public class SpringFileRouteTest extends SpringRunWithTestSupport {
     protected Endpoint inputFile;
     @EndpointInject("mock:result")
     protected MockEndpoint result;
+    @TempDir
+    private static Path tempDir;
 
     @Test
     public void testMocksAreValid() throws Exception {
@@ -51,6 +59,20 @@ public class SpringFileRouteTest extends SpringRunWithTestSupport {
         template.sendBodyAndHeader(inputFile, expectedBody, Exchange.FILE_NAME, "hello.txt");
 
         result.assertIsSatisfied();
+    }
+
+    @Override
+    public Path testDirectory() {
+        return tempDir;
+    }
+
+    static class TestDirectoryContextInitializer
+            implements
+            ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(ConfigurableApplicationContext context) {
+            context.getEnvironment().getSystemProperties().put("testDirectory", tempDir.toString());
+        }
     }
 
 }

@@ -23,12 +23,19 @@ import java.nio.file.Path;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileSplitXPathCharsetTest extends ContextTestSupport {
 
-    private final Path inputCsv = testFile("input.csv");
-    private final Path inputXml = testFile("input.xml");
+    private Path inputCsv;
+    private Path inputXml;
+
+    @BeforeEach
+    public void setUpTemporaryFiles() {
+        inputXml = testFile("input.xml");
+        inputCsv = testFile("input.csv");
+    }
 
     @Test
     public void testCsv() throws Exception {

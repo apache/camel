@@ -36,10 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileExclusiveReadNoneStrategyTest.class);
-    private String fileUrl = fileUri("slowfile?noop=true&initialDelay=0&delay=10&readLock=none");
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        String fileUrl = fileUri("slowfile?noop=true&initialDelay=0&delay=10&readLock=none");
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

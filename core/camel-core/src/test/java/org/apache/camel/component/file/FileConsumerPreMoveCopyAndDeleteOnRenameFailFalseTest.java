@@ -22,6 +22,7 @@ public class FileConsumerPreMoveCopyAndDeleteOnRenameFailFalseTest extends FileC
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        context.getRegistry().bind("testDirectory", testDirectory());
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

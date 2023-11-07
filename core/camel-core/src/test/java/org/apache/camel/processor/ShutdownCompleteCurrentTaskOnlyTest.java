@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
 
-    private String url = fileUri("?initialDelay=0&delay=10&synchronous=true");
+    public static final String FILE_QUERY = "?initialDelay=0&delay=10&synchronous=true";
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
+        String url = fileUri(FILE_QUERY);
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(url, "B", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(url, "C", Exchange.FILE_NAME, "c.txt");
@@ -61,6 +61,7 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        String url = fileUri(FILE_QUERY);
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

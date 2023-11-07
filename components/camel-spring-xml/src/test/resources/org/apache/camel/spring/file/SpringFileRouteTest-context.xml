@@ -36,7 +36,7 @@
     </camelContext>
 
     <bean id="inputFile" class="org.apache.camel.component.file.FileEndpoint">
-        <property name="file" value="target/data/SpringFileRouteTest"/>
+        <property name="file" value="#{systemProperties['testDirectory']}"/>
     </bean>
     <!-- END SNIPPET: example -->
 
