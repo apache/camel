@@ -742,13 +742,11 @@ public class SmppConfiguration implements Cloneable {
     /**
      * Defines the interface version to be used in the binding request with the SMSC. The following values are allowed,
      * as defined in the SMPP protocol:
-     * <ul>
-     * <li>0x00: Interface Version for legacy SMPP</li>
-     * <li>0x33: Interface Version for SMPP version 3.3</li>
-     * <li>0x34: Interface Version for SMPP version 3.4</li>
-     * <li>0x50: Interface Version for SMPP version 5.0</li>
-     * </ul>
-     * Value is parsed as String and converted to byte at a later stage when passed to jSMPP, as Camel does not support
+     * 0x00 - legacy SMPP,
+     * 0x33 - version 3.3,
+     * 0x34 - version 3.4,
+     * 0x50 - version 5.0.
+     * The value is parsed as String and converted to byte at a later stage when passed to jSMPP, as Camel does not support
      * hexadecimal byte parsing from config values at this point.
      */
     public void setInterfaceVersion(String interfaceVersion) {
