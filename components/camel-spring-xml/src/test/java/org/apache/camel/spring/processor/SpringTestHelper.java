@@ -48,7 +48,7 @@ public final class SpringTestHelper {
             DefaultCamelContext.setNoStart(true);
             applicationContext = new ClassPathXmlApplicationContext(new String[] { classpathUri }, false);
             applicationContext.getEnvironment().getSystemProperties().put(
-                PROPERTY_TEST_DIR, test.testDirectory().toString());
+                    PROPERTY_TEST_DIR, test.testDirectory().toString());
             applicationContext.refresh();
         } finally {
             DefaultCamelContext.setNoStart(isNoStart);
