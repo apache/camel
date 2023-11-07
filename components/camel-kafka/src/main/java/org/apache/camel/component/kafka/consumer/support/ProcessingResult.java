@@ -21,7 +21,9 @@ import org.apache.camel.component.kafka.consumer.AbstractCommitManager;
 
 public final class ProcessingResult {
     private static final ProcessingResult UNPROCESSED_RESULT
-            = new ProcessingResult(false, -1, AbstractCommitManager.START_OFFSET, false);
+            = new ProcessingResult(false, 
+                    AbstractCommitManager.NON_PARTITION, 
+                    AbstractCommitManager.START_OFFSET, false);
 
     private final boolean breakOnErrorHit;
     private final long lastPartition;

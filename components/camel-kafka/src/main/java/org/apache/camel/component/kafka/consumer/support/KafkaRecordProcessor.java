@@ -146,7 +146,7 @@ public class KafkaRecordProcessor {
             
             // we are failing and we should break out
             if (LOG.isWarnEnabled()) {
-                LOG.warn("Error during processing {} from topic: {}", exchange, topicPartition.topic(), exchange.getException());
+                LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(), exchange.getException());
                 LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.", 
                         lastResult.getPartitionLastOffset(), lastResult.getPartition());
             }
