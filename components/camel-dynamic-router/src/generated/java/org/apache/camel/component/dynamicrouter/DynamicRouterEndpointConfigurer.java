@@ -49,8 +49,6 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "routeId": target.getConfiguration().setRouteId(property(camelContext, java.lang.String.class, value)); return true;
         case "shareunitofwork":
         case "shareUnitOfWork": target.getConfiguration().setShareUnitOfWork(property(camelContext, boolean.class, value)); return true;
-        case "shutdownexecutorservice":
-        case "shutdownExecutorService": target.getConfiguration().setShutdownExecutorService(property(camelContext, boolean.class, value)); return true;
         case "stoponexception":
         case "stopOnException": target.getConfiguration().setStopOnException(property(camelContext, boolean.class, value)); return true;
         case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
@@ -95,8 +93,6 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "routeId": return java.lang.String.class;
         case "shareunitofwork":
         case "shareUnitOfWork": return boolean.class;
-        case "shutdownexecutorservice":
-        case "shutdownExecutorService": return boolean.class;
         case "stoponexception":
         case "stopOnException": return boolean.class;
         case "streaming": return boolean.class;
@@ -142,8 +138,6 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "routeId": return target.getConfiguration().getRouteId();
         case "shareunitofwork":
         case "shareUnitOfWork": return target.getConfiguration().isShareUnitOfWork();
-        case "shutdownexecutorservice":
-        case "shutdownExecutorService": return target.getConfiguration().isShutdownExecutorService();
         case "stoponexception":
         case "stopOnException": return target.getConfiguration().isStopOnException();
         case "streaming": return target.getConfiguration().isStreaming();

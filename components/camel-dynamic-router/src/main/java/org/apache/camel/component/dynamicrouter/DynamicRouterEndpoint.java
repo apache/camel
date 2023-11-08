@@ -176,11 +176,6 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
             }
             ExecutorService aggregateExecutorService = camelContext.getExecutorServiceManager()
                     .newScheduledThreadPool(this, "DynamicRouter-AggregateTask", 0);
-            if (timeout > 0) {
-                // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
-                aggregateExecutorService = camelContext.getExecutorServiceManager()
-                        .newScheduledThreadPool(this, "DynamicRouter-AggregateTask", 0);
-            }
             AggregationStrategy aggregationStrategy = determineAggregationStrategy(camelContext);
             DynamicRouterMulticastProcessor processor = createProcessor(camelContext, aggregationStrategy, timeout,
                     errorHandler, aggregateExecutorService, routeId);
@@ -197,7 +192,7 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
                         configuration.getRecipientMode(),
                         configuration.isWarnDroppedMessage(), filterProcessorFactorySupplier, producerCache,
                         aggregationStrategy, configuration.isParallelProcessing(),
-                        determineExecutorService(camelContext), configuration.isShutdownExecutorService(),
+                        determineExecutorService(camelContext), false,
                         configuration.isStreaming(), configuration.isStopOnException(), timeout,
                         determineOnPrepare(camelContext), configuration.isShareUnitOfWork(),
                         configuration.isParallelAggregate());

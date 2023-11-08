@@ -130,7 +130,7 @@ public class DynamicRouterConfiguration {
     private boolean warnDroppedMessage;
 
     /**
-     * The ID of the route.
+     * The ID of the route that the dynamic router is part of.
      */
     @UriParam(label = "common")
     private String routeId;
@@ -211,12 +211,6 @@ public class DynamicRouterConfiguration {
      */
     @UriParam(label = "common")
     private String executorService;
-
-    /**
-     * TODO: not a configuration setting
-     */
-    @UriParam(label = "common", defaultValue = "false")
-    private boolean shutdownExecutorService;
 
     /**
      * Refers to an AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing
@@ -532,14 +526,6 @@ public class DynamicRouterConfiguration {
 
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
-    }
-
-    public boolean isShutdownExecutorService() {
-        return shutdownExecutorService;
-    }
-
-    public void setShutdownExecutorService(boolean shutdownExecutorService) {
-        this.shutdownExecutorService = shutdownExecutorService;
     }
 
     public String getAggregationStrategy() {
