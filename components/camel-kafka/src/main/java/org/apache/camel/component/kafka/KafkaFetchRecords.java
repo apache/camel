@@ -337,9 +337,9 @@ public class KafkaFetchRecords implements Runnable {
                         LOG.trace("This polling iteration is using lastresult of null");
                     }
                 }
-                
+
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords, lastResult);
-                
+
                 if (result != null) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("This polling iteration had a result returned for partition {} and offset {}",
