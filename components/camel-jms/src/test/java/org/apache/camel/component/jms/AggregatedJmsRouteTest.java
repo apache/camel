@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
@@ -26,14 +28,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregatedJmsRouteTest extends AbstractJMSTest {
 
@@ -92,12 +93,8 @@ public class AggregatedJmsRouteTest extends AbstractJMSTest {
                 from(timeOutEndpointUri).to("jms:queue:AggregatedJmsRouteTestQueueB");
 
                 from("jms:queue:AggregatedJmsRouteTestQueueB").aggregate(header("cheese"), (oldExchange, newExchange) -> {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        LOG.error("aggregation delay sleep interrupted", e);
-                        fail("aggregation delay sleep interrupted");
-                    }
+                    Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                            .until(() -> true);
                     return newExchange;
                 }).completionTimeout(2000L).to("mock:result");
 

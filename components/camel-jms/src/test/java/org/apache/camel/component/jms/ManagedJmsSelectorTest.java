@@ -116,9 +116,6 @@ public class ManagedJmsSelectorTest implements CamelTestSupportHelper {
 
         mbeanServer.setAttribute(on, new Attribute("MessageSelector", "brand='softdrink'"));
 
-        // give it a little time to adjust
-        Thread.sleep(100);
-
         mock.expectedBodiesReceived("Pepsi");
         mock.reset();
 
