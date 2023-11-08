@@ -18,19 +18,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * this will test basic breakOnFirstError functionality
+ * uses allowManualCommit and set Synch Commit Manager
+ * this allows Camel to handle when to commit an offset
  */
-class KafkaBreakOnFirstErrorWithBatchWithOnExceptionIT extends BaseEmbeddedKafkaTestSupport {
+class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbeddedKafkaTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchWithOnExceptionIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT.class);
 
-    public static final String WITH_ON_EXCEPTION_ROUTE_ID = "breakOnFirstErrorBatchOnExceptionIT";
+    private final List<String> errorPayloads = new CopyOnWriteArrayList<>();
+    
+    public static final String NO_ON_EXCEPTION_ROUTE_ID = "breakOnFirstErrorBatchIT";
     public static final String TOPIC = "test-foobar";
 
     @EndpointInject("kafka:" + TOPIC
@@ -43,6 +50,7 @@ class KafkaBreakOnFirstErrorWithBatchWithOnExceptionIT extends BaseEmbeddedKafka
             + "&pollTimeoutMs=1000"
             + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
             + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+            + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
             + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
@@ -73,22 +81,26 @@ class KafkaBreakOnFirstErrorWithBatchWithOnExceptionIT extends BaseEmbeddedKafka
     @Test
     public void kafkaBreakOnFirstErrorBasicCapabilityWithoutOnExcepton() throws Exception {
         to.reset();
-        to.expectedMessageCount(6);
+        to.expectedMessageCount(3);
         // message-3 causes an error 
-        // and breakOnFirstError will cause it to be retried 1x
-        // then we move on
-        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-3", "message-4");
+        // and breakOnFirstError will cause it to be retried forever
+        // we will never get to message-4
+        to.expectedBodiesReceived("message-0", "message-1", "message-2");
 
         this.publishMessagesToKafka();
         
-        context.getRouteController().stopRoute(WITH_ON_EXCEPTION_ROUTE_ID);
-        context.getRouteController().startRoute(WITH_ON_EXCEPTION_ROUTE_ID);
+        context.getRouteController().stopRoute(NO_ON_EXCEPTION_ROUTE_ID);
+        context.getRouteController().startRoute(NO_ON_EXCEPTION_ROUTE_ID);
         
         Awaitility.await()
             .atMost(3, TimeUnit.SECONDS)
-            .until(() -> to.getExchanges().size() > 5);
+            .until(() -> errorPayloads.size() > 3);
 
-        to.assertIsSatisfied(3000);
+        to.assertIsSatisfied();
+        
+        for (String payload : errorPayloads) {
+            assertEquals("message-3", payload);
+        }
     }
 
     @Override
@@ -97,20 +109,8 @@ class KafkaBreakOnFirstErrorWithBatchWithOnExceptionIT extends BaseEmbeddedKafka
 
             @Override
             public void configure() {
-                onException(Exception.class)
-                    .handled(false)
-                    // adding error message to end
-                    // so we can account for it
-                    .to(to)
-                    .process(exchange -> {
-                        // if we don't commit 
-                        // camel will continuously 
-                        // retry the message with an error
-                        doCommitOffset(exchange);
-                    });
-                
                 from(from)
-                    .routeId(WITH_ON_EXCEPTION_ROUTE_ID)
+                    .routeId(NO_ON_EXCEPTION_ROUTE_ID)
                     .process(exchange -> {
                         LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Consuming", exchange, true));
                     })
@@ -118,9 +118,7 @@ class KafkaBreakOnFirstErrorWithBatchWithOnExceptionIT extends BaseEmbeddedKafka
                         ifIsPayloadWithErrorThrowException(exchange);
                     })
                     .to(to)
-                    .process(exchange -> {
-                        doCommitOffset(exchange);
-                    });
+                    .end();
             }
         };
     }
@@ -133,17 +131,10 @@ class KafkaBreakOnFirstErrorWithBatchWithOnExceptionIT extends BaseEmbeddedKafka
         }
     }
     
-    private void doCommitOffset(Exchange exchange) {
-        LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Committing", exchange, true));
-        KafkaManualCommit manual = exchange.getMessage()
-            .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-        assertNotNull(manual);
-        manual.commit();
-    }
-    
     private void ifIsPayloadWithErrorThrowException(Exchange exchange) {
         String payload = exchange.getMessage().getBody(String.class);
         if (payload.equals("message-3")) {
+            errorPayloads.add(payload);
             throw new RuntimeException("ERROR TRIGGERED BY TEST");
         }
     }
