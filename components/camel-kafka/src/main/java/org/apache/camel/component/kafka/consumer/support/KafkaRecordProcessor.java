@@ -116,7 +116,7 @@ public class KafkaRecordProcessor {
         }
         if (exchange.getException() != null) {
             
-            LOG.debug("an exception was thrown for record at partition {} and offset {}",
+            LOG.debug("An exception was thrown for record at partition {} and offset {}",
                     record.partition(), record.offset());
             
             boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
@@ -138,7 +138,7 @@ public class KafkaRecordProcessor {
             
             if (lastResult.getPartition() != -1 &&
                 lastResult.getPartition() != record.partition()) {
-                LOG.error("about to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " + 
+                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " + 
                         " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
                         topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(), 
                         record.partition(), record.offset());

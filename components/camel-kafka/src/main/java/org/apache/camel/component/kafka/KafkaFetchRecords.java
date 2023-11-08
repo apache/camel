@@ -329,13 +329,13 @@ public class KafkaFetchRecords implements Runnable {
 
                 if (lastResult != null) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("this polling iteration is using lastresult on partition {} and offset {}",
+                        LOG.trace("This polling iteration is using lastresult on partition {} and offset {}",
                             lastResult.getPartition(), lastResult.getPartitionLastOffset());
                     }
                     
                 } else {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("this polling iteration is using lastresult of null");
+                        LOG.trace("This polling iteration is using lastresult of null");
                     }
                 }
                 
@@ -343,13 +343,13 @@ public class KafkaFetchRecords implements Runnable {
                 
                 if (result != null) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("this polling iteration had a result returned for partition {} and offset {}",
+                        LOG.trace("This polling iteration had a result returned for partition {} and offset {}",
                             result.getPartition(), result.getPartitionLastOffset());
                     }
                     
                 } else {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("this polling iteration had a result returned as null");
+                        LOG.trace("This polling iteration had a result returned as null");
                     }
                 }
                 
