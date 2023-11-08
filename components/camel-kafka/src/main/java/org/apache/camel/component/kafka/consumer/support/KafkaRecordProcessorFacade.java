@@ -81,6 +81,9 @@ public class KafkaRecordProcessorFacade {
                 LOG.debug("Processed record on partition {} and offset {} and got result for partition {} and offset {}",
                     record.partition(), record.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
 
+                LOG.debug("Processed record on partition {} and offset {} and got result for partition {} and offset {}",
+                        record.partition(), record.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
+
                 if (consumerListener != null) {
                     if (!consumerListener.afterProcess(lastResult)) {
                         commitManager.commit(partition);

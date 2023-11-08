@@ -2366,7 +2366,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the name of the header {@code MiloNodeIds}.
          */
         public String miloNodeIds() {
-            return "MiloNodeIds";
+            return "CamelMiloNodeIds";
         }
 
         /**

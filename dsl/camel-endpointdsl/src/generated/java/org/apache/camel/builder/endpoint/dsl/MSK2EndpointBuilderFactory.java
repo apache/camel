@@ -519,7 +519,7 @@ public interface MSK2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMSKOperation}.
          */
         public String awsMSKOperation() {
-            return "AwsMSKOperation";
+            return "CamelAwsMSKOperation";
         }
 
         /**
@@ -532,7 +532,7 @@ public interface MSK2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMSKClusterFilter}.
          */
         public String awsMSKClusterFilter() {
-            return "AwsMSKClusterFilter";
+            return "CamelAwsMSKClusterFilter";
         }
 
         /**
@@ -545,7 +545,7 @@ public interface MSK2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMSKClusterName}.
          */
         public String awsMSKClusterName() {
-            return "AwsMSKClusterName";
+            return "CamelAwsMSKClusterName";
         }
 
         /**
@@ -558,7 +558,7 @@ public interface MSK2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMSKClusterArn}.
          */
         public String awsMSKClusterArn() {
-            return "AwsMSKClusterArn";
+            return "CamelAwsMSKClusterArn";
         }
 
         /**
@@ -571,7 +571,7 @@ public interface MSK2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMSKClusterKafkaVersion}.
          */
         public String awsMSKClusterKafkaVersion() {
-            return "AwsMSKClusterKafkaVersion";
+            return "CamelAwsMSKClusterKafkaVersion";
         }
 
         /**
@@ -584,7 +584,7 @@ public interface MSK2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMSKBrokerNodesNumber}.
          */
         public String awsMSKBrokerNodesNumber() {
-            return "AwsMSKBrokerNodesNumber";
+            return "CamelAwsMSKBrokerNodesNumber";
         }
 
         /**
@@ -599,7 +599,7 @@ public interface MSK2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMSKBrokerNodesGroupInfo}.
          */
         public String awsMSKBrokerNodesGroupInfo() {
-            return "AwsMSKBrokerNodesGroupInfo";
+            return "CamelAwsMSKBrokerNodesGroupInfo";
         }
     }
     static MSK2EndpointBuilder endpointBuilder(String componentName, String path) {

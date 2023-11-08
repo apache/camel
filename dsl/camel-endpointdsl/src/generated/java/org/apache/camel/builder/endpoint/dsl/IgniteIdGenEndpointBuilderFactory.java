@@ -351,7 +351,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * @return the name of the header {@code IgniteIdGenOperation}.
          */
         public String igniteIdGenOperation() {
-            return "IgniteIdGenOperation";
+            return "CamelIgniteIdGenOperation";
         }
     }
     static IgniteIdGenEndpointBuilder endpointBuilder(

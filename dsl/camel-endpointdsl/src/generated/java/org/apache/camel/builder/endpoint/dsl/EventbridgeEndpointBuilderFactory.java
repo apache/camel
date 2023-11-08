@@ -540,7 +540,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeOperation}.
          */
         public String awsEventbridgeOperation() {
-            return "AwsEventbridgeOperation";
+            return "CamelAwsEventbridgeOperation";
         }
 
         /**
@@ -553,7 +553,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeRuleName}.
          */
         public String awsEventbridgeRuleName() {
-            return "AwsEventbridgeRuleName";
+            return "CamelAwsEventbridgeRuleName";
         }
 
         /**
@@ -566,7 +566,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeRuleNamePrefix}.
          */
         public String awsEventbridgeRuleNamePrefix() {
-            return "AwsEventbridgeRuleNamePrefix";
+            return "CamelAwsEventbridgeRuleNamePrefix";
         }
 
         /**
@@ -579,7 +579,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeEventPattern}.
          */
         public String awsEventbridgeEventPattern() {
-            return "AwsEventbridgeEventPattern";
+            return "CamelAwsEventbridgeEventPattern";
         }
 
         /**
@@ -592,7 +592,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeTargets}.
          */
         public String awsEventbridgeTargets() {
-            return "AwsEventbridgeTargets";
+            return "CamelAwsEventbridgeTargets";
         }
 
         /**
@@ -605,7 +605,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeTargetsIds}.
          */
         public String awsEventbridgeTargetsIds() {
-            return "AwsEventbridgeTargetsIds";
+            return "CamelAwsEventbridgeTargetsIds";
         }
 
         /**
@@ -618,7 +618,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeTargetArn}.
          */
         public String awsEventbridgeTargetArn() {
-            return "AwsEventbridgeTargetArn";
+            return "CamelAwsEventbridgeTargetArn";
         }
 
         /**
@@ -632,7 +632,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeResourcesArn}.
          */
         public String awsEventbridgeResourcesArn() {
-            return "AwsEventbridgeResourcesArn";
+            return "CamelAwsEventbridgeResourcesArn";
         }
 
         /**
@@ -645,7 +645,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeSource}.
          */
         public String awsEventbridgeSource() {
-            return "AwsEventbridgeSource";
+            return "CamelAwsEventbridgeSource";
         }
 
         /**
@@ -658,7 +658,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the name of the header {@code AwsEventbridgeDetailType}.
          */
         public String awsEventbridgeDetailType() {
-            return "AwsEventbridgeDetailType";
+            return "CamelAwsEventbridgeDetailType";
         }
     }
     static EventbridgeEndpointBuilder endpointBuilder(

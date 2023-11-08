@@ -21,11 +21,11 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("ApiName", org.apache.camel.component.dhis2.internal.Dhis2ApiName.class);
+        map.put("ArrayName", java.lang.String.class);
         map.put("BaseApiUrl", java.lang.String.class);
         map.put("Client", org.hisp.dhis.integration.sdk.api.Dhis2Client.class);
         map.put("Fields", java.lang.String.class);
         map.put("Filter", java.lang.String.class);
-        map.put("ItemType", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("Paging", java.lang.Boolean.class);
         map.put("Password", java.lang.String.class);
@@ -42,6 +42,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
         case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.dhis2.internal.Dhis2ApiName.class, value)); return true;
+        case "arrayname":
+        case "ArrayName": target.setArrayName(property(camelContext, java.lang.String.class, value)); return true;
         case "baseapiurl":
         case "BaseApiUrl": target.setBaseApiUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "client":
@@ -50,8 +52,6 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Fields": target.setFields(property(camelContext, java.lang.String.class, value)); return true;
         case "filter":
         case "Filter": target.setFilter(property(camelContext, java.lang.String.class, value)); return true;
-        case "itemtype":
-        case "ItemType": target.setItemType(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "paging":
@@ -80,6 +80,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
         case "ApiName": return org.apache.camel.component.dhis2.internal.Dhis2ApiName.class;
+        case "arrayname":
+        case "ArrayName": return java.lang.String.class;
         case "baseapiurl":
         case "BaseApiUrl": return java.lang.String.class;
         case "client":
@@ -88,8 +90,6 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Fields": return java.lang.String.class;
         case "filter":
         case "Filter": return java.lang.String.class;
-        case "itemtype":
-        case "ItemType": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "paging":
@@ -114,6 +114,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
         case "ApiName": return target.getApiName();
+        case "arrayname":
+        case "ArrayName": return target.getArrayName();
         case "baseapiurl":
         case "BaseApiUrl": return target.getBaseApiUrl();
         case "client":
@@ -122,8 +124,6 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Fields": return target.getFields();
         case "filter":
         case "Filter": return target.getFilter();
-        case "itemtype":
-        case "ItemType": return target.getItemType();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "paging":

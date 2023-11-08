@@ -524,7 +524,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2ImageId}.
          */
         public String awsEC2ImageId() {
-            return "AwsEC2ImageId";
+            return "CamelAwsEC2ImageId";
         }
 
         /**
@@ -538,7 +538,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstanceType}.
          */
         public String awsEC2InstanceType() {
-            return "AwsEC2InstanceType";
+            return "CamelAwsEC2InstanceType";
         }
 
         /**
@@ -551,7 +551,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2Operation}.
          */
         public String awsEC2Operation() {
-            return "AwsEC2Operation";
+            return "CamelAwsEC2Operation";
         }
 
         /**
@@ -564,7 +564,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstanceMinCount}.
          */
         public String awsEC2InstanceMinCount() {
-            return "AwsEC2InstanceMinCount";
+            return "CamelAwsEC2InstanceMinCount";
         }
 
         /**
@@ -577,7 +577,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstanceMaxCount}.
          */
         public String awsEC2InstanceMaxCount() {
-            return "AwsEC2InstanceMaxCount";
+            return "CamelAwsEC2InstanceMaxCount";
         }
 
         /**
@@ -590,7 +590,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstanceMonitoring}.
          */
         public String awsEC2InstanceMonitoring() {
-            return "AwsEC2InstanceMonitoring";
+            return "CamelAwsEC2InstanceMonitoring";
         }
 
         /**
@@ -603,7 +603,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstanceKernelId}.
          */
         public String awsEC2InstanceKernelId() {
-            return "AwsEC2InstanceKernelId";
+            return "CamelAwsEC2InstanceKernelId";
         }
 
         /**
@@ -616,7 +616,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstanceEbsOptimized}.
          */
         public String awsEC2InstanceEbsOptimized() {
-            return "AwsEC2InstanceEbsOptimized";
+            return "CamelAwsEC2InstanceEbsOptimized";
         }
 
         /**
@@ -629,7 +629,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstanceSecurityGroups}.
          */
         public String awsEC2InstanceSecurityGroups() {
-            return "AwsEC2InstanceSecurityGroups";
+            return "CamelAwsEC2InstanceSecurityGroups";
         }
 
         /**
@@ -643,7 +643,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstancesIds}.
          */
         public String awsEC2InstancesIds() {
-            return "AwsEC2InstancesIds";
+            return "CamelAwsEC2InstancesIds";
         }
 
         /**
@@ -656,7 +656,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstancesKeyPair}.
          */
         public String awsEC2InstancesKeyPair() {
-            return "AwsEC2InstancesKeyPair";
+            return "CamelAwsEC2InstancesKeyPair";
         }
 
         /**
@@ -670,7 +670,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstancesClientToken}.
          */
         public String awsEC2InstancesClientToken() {
-            return "AwsEC2InstancesClientToken";
+            return "CamelAwsEC2InstancesClientToken";
         }
 
         /**
@@ -684,7 +684,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstancesPlacement}.
          */
         public String awsEC2InstancesPlacement() {
-            return "AwsEC2InstancesPlacement";
+            return "CamelAwsEC2InstancesPlacement";
         }
 
         /**
@@ -697,7 +697,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2InstancesTags}.
          */
         public String awsEC2InstancesTags() {
-            return "AwsEC2InstancesTags";
+            return "CamelAwsEC2InstancesTags";
         }
 
         /**
@@ -710,7 +710,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @return the name of the header {@code AwsEC2SubnetId}.
          */
         public String awsEC2SubnetId() {
-            return "AwsEC2SubnetId";
+            return "CamelAwsEC2SubnetId";
         }
     }
     static AWS2EC2EndpointBuilder endpointBuilder(

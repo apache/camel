@@ -66,6 +66,9 @@ public class KafkaRecordProcessor {
         LOG.debug("setting up the exchange for message from partition {} and offset {}",
                 record.partition(), record.offset());
 
+        LOG.debug("setting up the exchange for message from partition {} and offset {}",
+                record.partition(), record.offset());
+
         message.setBody(record.value());
     }
 
@@ -115,13 +118,11 @@ public class KafkaRecordProcessor {
             exchange.setException(e);
         }
         if (exchange.getException() != null) {
-            
             LOG.debug("An exception was thrown for record at partition {} and offset {}",
                     record.partition(), record.offset());
             
             boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
                     exceptionHandler);
-            
             return new ProcessingResult(breakOnErrorExit, lastResult.getPartition(), lastResult.getPartitionLastOffset(), true);
         } else {
             return new ProcessingResult(false, record.partition(), record.offset(), exchange.getException() != null);
@@ -135,7 +136,6 @@ public class KafkaRecordProcessor {
 
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
-            
             if (lastResult.getPartition() != -1 &&
                 lastResult.getPartition() != record.partition()) {
                 LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " + 

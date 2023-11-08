@@ -434,7 +434,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 "\nThe option is a: {@code " + header.getJavaType() + "} type.");
         javaDoc += String.format("%n%n@return the name of the header {@code %s}.%n", headerName);
         method.getJavaDoc().setText(javaDoc);
-        method.setBodyF("return \"%s\";", headerName);
+        method.setBodyF("return \"%s\";", header.getName());
         if (header.isDeprecated()) {
             method.addAnnotation(Deprecated.class);
         }

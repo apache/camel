@@ -681,7 +681,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * @return the name of the header {@code ZooKeeperNode}.
          */
         public String zooKeeperNode() {
-            return "ZooKeeperNode";
+            return "CamelZooKeeperNode";
         }
 
         /**
@@ -695,7 +695,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * @return the name of the header {@code ZooKeeperVersion}.
          */
         public String zooKeeperVersion() {
-            return "ZooKeeperVersion";
+            return "CamelZooKeeperVersion";
         }
 
         /**
@@ -709,7 +709,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * @return the name of the header {@code ZookeeperAcl}.
          */
         public String zookeeperAcl() {
-            return "ZookeeperAcl";
+            return "CamelZookeeperAcl";
         }
 
         /**
@@ -723,7 +723,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * @return the name of the header {@code ZookeeperCreateMode}.
          */
         public String zookeeperCreateMode() {
-            return "ZookeeperCreateMode";
+            return "CamelZookeeperCreateMode";
         }
 
         /**
@@ -736,7 +736,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * @return the name of the header {@code ZookeeperStatistics}.
          */
         public String zookeeperStatistics() {
-            return "ZookeeperStatistics";
+            return "CamelZookeeperStatistics";
         }
 
         /**
@@ -750,7 +750,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * @return the name of the header {@code ZookeeperEventType}.
          */
         public String zookeeperEventType() {
-            return "ZookeeperEventType";
+            return "CamelZookeeperEventType";
         }
 
         /**
@@ -763,7 +763,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * @return the name of the header {@code ZookeeperOperation}.
          */
         public String zookeeperOperation() {
-            return "ZookeeperOperation";
+            return "CamelZookeeperOperation";
         }
     }
     static ZooKeeperEndpointBuilder endpointBuilder(

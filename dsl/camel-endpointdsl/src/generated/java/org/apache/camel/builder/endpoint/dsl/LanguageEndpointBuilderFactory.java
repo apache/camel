@@ -399,7 +399,7 @@ public interface LanguageEndpointBuilderFactory {
          * @return the name of the header {@code LanguageScript}.
          */
         public String languageScript() {
-            return "LanguageScript";
+            return "CamelLanguageScript";
         }
     }
     static LanguageEndpointBuilder endpointBuilder(

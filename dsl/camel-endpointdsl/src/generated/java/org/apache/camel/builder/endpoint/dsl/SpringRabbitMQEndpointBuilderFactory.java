@@ -1920,7 +1920,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * SpringRabbitmqRoutingOverrideKey}.
          */
         public String springRabbitmqRoutingOverrideKey() {
-            return "SpringRabbitmqRoutingOverrideKey";
+            return "CamelSpringRabbitmqRoutingOverrideKey";
         }
 
         /**
@@ -1934,7 +1934,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * SpringRabbitmqExchangeOverrideName}.
          */
         public String springRabbitmqExchangeOverrideName() {
-            return "SpringRabbitmqExchangeOverrideName";
+            return "CamelSpringRabbitmqExchangeOverrideName";
         }
 
         /**
@@ -1947,7 +1947,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the name of the header {@code SpringRabbitmqDeliveryTag}.
          */
         public String springRabbitmqDeliveryTag() {
-            return "SpringRabbitmqDeliveryTag";
+            return "CamelSpringRabbitmqDeliveryTag";
         }
     }
     static SpringRabbitMQEndpointBuilder endpointBuilder(

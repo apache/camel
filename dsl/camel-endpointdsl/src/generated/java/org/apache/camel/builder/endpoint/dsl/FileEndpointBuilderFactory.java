@@ -3818,7 +3818,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileLength}.
          */
         public String fileLength() {
-            return "FileLength";
+            return "CamelFileLength";
         }
 
         /**
@@ -3831,7 +3831,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileLastModified}.
          */
         public String fileLastModified() {
-            return "FileLastModified";
+            return "CamelFileLastModified";
         }
 
         /**
@@ -3844,7 +3844,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileLocalWorkPath}.
          */
         public String fileLocalWorkPath() {
-            return "FileLocalWorkPath";
+            return "CamelFileLocalWorkPath";
         }
 
         /**
@@ -3857,7 +3857,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileNameOnly}.
          */
         public String fileNameOnly() {
-            return "FileNameOnly";
+            return "CamelFileNameOnly";
         }
 
         /**
@@ -3877,7 +3877,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
 
         /**
@@ -3890,7 +3890,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileNameConsumed}.
          */
         public String fileNameConsumed() {
-            return "FileNameConsumed";
+            return "CamelFileNameConsumed";
         }
 
         /**
@@ -3907,7 +3907,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileAbsolute}.
          */
         public String fileAbsolute() {
-            return "FileAbsolute";
+            return "CamelFileAbsolute";
         }
 
         /**
@@ -3921,7 +3921,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileAbsolutePath}.
          */
         public String fileAbsolutePath() {
-            return "FileAbsolutePath";
+            return "CamelFileAbsolutePath";
         }
 
         /**
@@ -3934,7 +3934,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileExtendedAttributes}.
          */
         public String fileExtendedAttributes() {
-            return "FileExtendedAttributes";
+            return "CamelFileExtendedAttributes";
         }
 
         /**
@@ -3947,7 +3947,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileContentType}.
          */
         public String fileContentType() {
-            return "FileContentType";
+            return "CamelFileContentType";
         }
 
         /**
@@ -3961,7 +3961,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FilePath}.
          */
         public String filePath() {
-            return "FilePath";
+            return "CamelFilePath";
         }
 
         /**
@@ -3974,7 +3974,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileRelativePath}.
          */
         public String fileRelativePath() {
-            return "FileRelativePath";
+            return "CamelFileRelativePath";
         }
 
         /**
@@ -3987,7 +3987,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileParent}.
          */
         public String fileParent() {
-            return "FileParent";
+            return "CamelFileParent";
         }
 
         /**
@@ -4002,7 +4002,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileNameProduced}.
          */
         public String fileNameProduced() {
-            return "FileNameProduced";
+            return "CamelFileNameProduced";
         }
 
         /**
@@ -4019,7 +4019,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code OverruleFileName}.
          */
         public String overruleFileName() {
-            return "OverruleFileName";
+            return "CamelOverruleFileName";
         }
 
         /**
@@ -4032,7 +4032,7 @@ public interface FileEndpointBuilderFactory {
          * @return the name of the header {@code FileInitialOffset}.
          */
         public String fileInitialOffset() {
-            return "FileInitialOffset";
+            return "CamelFileInitialOffset";
         }
     }
     static FileEndpointBuilder endpointBuilder(String componentName, String path) {

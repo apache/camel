@@ -1960,7 +1960,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKinesisSequenceNumber}.
          */
         public String awsKinesisSequenceNumber() {
-            return "AwsKinesisSequenceNumber";
+            return "CamelAwsKinesisSequenceNumber";
         }
 
         /**
@@ -1974,7 +1974,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * AwsKinesisApproximateArrivalTimestamp}.
          */
         public String awsKinesisApproximateArrivalTimestamp() {
-            return "AwsKinesisApproximateArrivalTimestamp";
+            return "CamelAwsKinesisApproximateArrivalTimestamp";
         }
 
         /**
@@ -1987,7 +1987,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKinesisPartitionKey}.
          */
         public String awsKinesisPartitionKey() {
-            return "AwsKinesisPartitionKey";
+            return "CamelAwsKinesisPartitionKey";
         }
 
         /**
@@ -2000,7 +2000,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the name of the header {@code MessageTimestamp}.
          */
         public String messageTimestamp() {
-            return "MessageTimestamp";
+            return "CamelMessageTimestamp";
         }
 
         /**
@@ -2013,7 +2013,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKinesisShardId}.
          */
         public String awsKinesisShardId() {
-            return "AwsKinesisShardId";
+            return "CamelAwsKinesisShardId";
         }
     }
     static Kinesis2EndpointBuilder endpointBuilder(

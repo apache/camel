@@ -698,7 +698,7 @@ public interface Sns2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSnsMessageId}.
          */
         public String awsSnsMessageId() {
-            return "AwsSnsMessageId";
+            return "CamelAwsSnsMessageId";
         }
 
         /**
@@ -712,7 +712,7 @@ public interface Sns2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSnsSubject}.
          */
         public String awsSnsSubject() {
-            return "AwsSnsSubject";
+            return "CamelAwsSnsSubject";
         }
 
         /**
@@ -725,7 +725,7 @@ public interface Sns2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSnsMessageStructure}.
          */
         public String awsSnsMessageStructure() {
-            return "AwsSnsMessageStructure";
+            return "CamelAwsSnsMessageStructure";
         }
     }
     static Sns2EndpointBuilder endpointBuilder(String componentName, String path) {
