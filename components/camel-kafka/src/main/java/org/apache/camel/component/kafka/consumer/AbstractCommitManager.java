@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractCommitManager implements CommitManager {
     public static final long START_OFFSET = -1;
     public static final long NON_PARTITION = -1;
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommitManager.class);
 
     protected final KafkaConsumer kafkaConsumer;
