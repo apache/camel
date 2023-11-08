@@ -16,14 +16,14 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConvertible;
 import org.apache.camel.support.SimpleTypeConverter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
