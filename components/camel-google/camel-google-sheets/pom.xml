@@ -129,6 +129,14 @@
             </exclusions>
         </dependency>
 
+        <!-- provided -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -141,8 +149,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
