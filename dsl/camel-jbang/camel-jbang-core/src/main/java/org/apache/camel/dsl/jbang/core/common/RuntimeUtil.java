@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -99,17 +101,21 @@ public final class RuntimeUtil {
     }
 
     public static List<String> loadPropertiesLines(File file) throws IOException {
-        List<String> lines = new ArrayList<>();
         if (!file.exists()) {
-            return lines;
+            return new ArrayList<>();
         }
 
-        Properties prop = new OrderedProperties();
-        loadProperties(prop, file);
-        for (String k : prop.stringPropertyNames()) {
-            String v = prop.getProperty(k);
-            if (v != null) {
-                lines.add(k + "=" + v);
+        List<String> lines = new ArrayList<>();
+        for (String line : Files.readAllLines(file.toPath())) {
+            // need to use java.util.Properties to read raw value and un-escape
+            Properties prop = new OrderedProperties();
+            prop.load(new StringReader(line));
+
+            for (String key : prop.stringPropertyNames()) {
+                String value = prop.getProperty(key);
+                if (value != null) {
+                    lines.add(key + "=" + value);
+                }
             }
         }
         return lines;

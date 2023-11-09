@@ -97,6 +97,10 @@ public final class MavenGav {
             } else if (defaultVersion != null) {
                 answer.setVersion(defaultVersion);
             }
+        } else if (gav.startsWith("agent:")) {
+            // special for java agent JARs
+            answer = parseGav(gav.substring(6));
+            answer.setPackaging("agent");
         } else {
             // for those used to OSGi's pax-url-aether syntax
             String[] parts = gav.startsWith("mvn:") ? gav.substring(4).split(":") : gav.split(":");

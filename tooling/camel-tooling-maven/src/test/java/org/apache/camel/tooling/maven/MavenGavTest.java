@@ -49,4 +49,14 @@ class MavenGavTest {
         assertEquals("junit-api", gav.getArtifactId());
         assertEquals("99.99", gav.getVersion());
     }
+
+    @Test
+    void parseAgentGav() {
+        MavenGav gav = MavenGav.parseGav("agent:io.opentelemetry.javaagent:opentelemetry-javaagent:1.31.0");
+
+        assertEquals("io.opentelemetry.javaagent", gav.getGroupId());
+        assertEquals("opentelemetry-javaagent", gav.getArtifactId());
+        assertEquals("1.31.0", gav.getVersion());
+        assertEquals("agent", gav.getPackaging());
+    }
 }
