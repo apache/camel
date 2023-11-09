@@ -16,16 +16,29 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
-import org.apache.camel.*;
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.Route;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.ProcessorExchangePair;
 import org.apache.camel.spi.ProducerCache;
-import org.apache.camel.support.*;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

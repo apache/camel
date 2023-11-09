@@ -20,7 +20,10 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.*;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.ACTION_GROUP;
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CHANNEL_GROUP;
