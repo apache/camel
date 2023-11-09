@@ -84,7 +84,7 @@ public class KafkaRecordProcessorFacade {
                 lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
                         kafkaRecordProcessor, record);
                 
-                LOG.debug("processed record on partition {} and offset {} and got result for partition {} and offset {}",
+                LOG.debug("Processed record on partition {} and offset {} and got result for partition {} and offset {}",
                     record.partition(), record.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
 
                 LOG.debug("Processed record on partition {} with offset {} and got ProcessingResult for partition {} and offset {}",
