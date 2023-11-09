@@ -69,6 +69,9 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     @UriParam(label = "advanced",
               description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new PlatformHttpHeaderFilterStrategy();
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether to use streaming for large requests and responses")
+    private boolean useStreaming;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -166,6 +169,14 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
+    }
+
+    public boolean isUseStreaming() {
+        return useStreaming;
+    }
+
+    public void setUseStreaming(boolean useStreaming) {
+        this.useStreaming = useStreaming;
     }
 
     PlatformHttpEngine getOrCreateEngine() {
