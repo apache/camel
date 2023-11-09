@@ -87,9 +87,10 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
         // we will never get to message-4
         to.expectedBodiesReceived("message-0", "message-1", "message-2");
 
+        context.getRouteController().stopRoute(NO_ON_EXCEPTION_ROUTE_ID);
+        
         this.publishMessagesToKafka();
         
-        context.getRouteController().stopRoute(NO_ON_EXCEPTION_ROUTE_ID);
         context.getRouteController().startRoute(NO_ON_EXCEPTION_ROUTE_ID);
         
         Awaitility.await()
