@@ -57,7 +57,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
     /**
      * The optional secure random configuration options to use for constructing the {@link SecureRandom} used in the
-     * creation of an {@link SSLContext].
+     * creation of an {@link SSLContext}.
      */
     private SecureRandomParameters secureRandom;
 
