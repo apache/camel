@@ -19,7 +19,12 @@ package org.apache.camel.component.dynamicrouter;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
-import org.apache.camel.*;
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlChannelProcessor.DynamicRouterControlChannelProcessorFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlProducer.DynamicRouterControlProducerFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterMulticastProcessor.DynamicRouterRecipientListProcessorFactory;
