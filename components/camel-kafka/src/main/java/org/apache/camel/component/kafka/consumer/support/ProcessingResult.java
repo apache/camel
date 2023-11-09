@@ -26,7 +26,6 @@ public final class ProcessingResult {
                     AbstractCommitManager.NON_PARTITION,
                     AbstractCommitManager.START_OFFSET, false);
 
-
     private final boolean breakOnErrorHit;
     private final long lastPartition;
     private final long partitionLastOffset;
