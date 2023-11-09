@@ -156,6 +156,8 @@ public class KafkaRecordProcessor {
             // force commit, so we resume on next poll where we failed 
             // except when the failure happened at the first message in a poll
             if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
+                // should we use record.offset ?
+                //commitManager.forceCommit(topicPartition, record.offset() - 1);
                 commitManager.forceCommit(topicPartition, lastResult.getPartitionLastOffset());
             }
 
