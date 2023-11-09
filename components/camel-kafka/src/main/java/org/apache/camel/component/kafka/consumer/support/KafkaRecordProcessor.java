@@ -62,7 +62,7 @@ public class KafkaRecordProcessor {
         if (record.key() != null) {
             message.setHeader(KafkaConstants.KEY, record.key());
         }
-        
+
         LOG.debug("Setting up the exchange for message from partition {} and offset {}",
                 record.partition(), record.offset());
 
@@ -117,7 +117,7 @@ public class KafkaRecordProcessor {
         if (exchange.getException() != null) {
             LOG.debug("An exception was thrown for record at partition {} and offset {}",
                     record.partition(), record.offset());
-            
+
             boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
                     exceptionHandler);
             return new ProcessingResult(breakOnErrorExit, lastResult.getPartition(), lastResult.getPartitionLastOffset(), true);
@@ -127,7 +127,7 @@ public class KafkaRecordProcessor {
     }
 
     private boolean processException(
-            Exchange exchange, TopicPartition topicPartition, 
+            Exchange exchange, TopicPartition topicPartition,
             ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
@@ -140,7 +140,7 @@ public class KafkaRecordProcessor {
                         topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(), 
                         record.partition(), record.offset());
             }
-            
+
             // we are failing and we should break out
             if (LOG.isWarnEnabled()) {
                 Exception exc = exchange.getException();
