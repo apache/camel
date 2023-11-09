@@ -529,6 +529,26 @@ public interface SmppComponentBuilderFactory {
             return this;
         }
         /**
+         * Defines the interface version to be used in the binding request with
+         * the SMSC. The following values are allowed, as defined in the SMPP
+         * protocol (and the underlying implementation using the jSMPP library,
+         * respectively): legacy (0x00), 3.3 (0x33), 3.4 (0x34), and 5.0 (0x50).
+         * The default (fallback) value is version 3.4.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: 3.4
+         * Group: advanced
+         * 
+         * @param interfaceVersion the value to set
+         * @return the dsl builder
+         */
+        default SmppComponentBuilder interfaceVersion(
+                java.lang.String interfaceVersion) {
+            doSetProperty("interfaceVersion", interfaceVersion);
+            return this;
+        }
+        /**
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
@@ -839,6 +859,7 @@ public interface SmppComponentBuilderFactory {
             case "autowiredEnabled": ((SmppComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((SmppComponent) component).setConfiguration((org.apache.camel.component.smpp.SmppConfiguration) value); return true;
             case "enquireLinkTimer": getOrCreateConfiguration((SmppComponent) component).setEnquireLinkTimer((java.lang.Integer) value); return true;
+            case "interfaceVersion": getOrCreateConfiguration((SmppComponent) component).setInterfaceVersion((java.lang.String) value); return true;
             case "pduProcessorDegree": getOrCreateConfiguration((SmppComponent) component).setPduProcessorDegree((java.lang.Integer) value); return true;
             case "pduProcessorQueueCapacity": getOrCreateConfiguration((SmppComponent) component).setPduProcessorQueueCapacity((java.lang.Integer) value); return true;
             case "sessionStateListener": getOrCreateConfiguration((SmppComponent) component).setSessionStateListener((org.jsmpp.session.SessionStateListener) value); return true;
