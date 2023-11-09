@@ -162,9 +162,15 @@ public class KafkaRecordProcessor {
                 // Note: without a more extensive look at handling of breakOnFirstError
                 // we will still need the lastResult so that we don't force 
                 // retrying this message over and over
-                //if (configuration.isBreakOnFirstErrorWithRetry()) {
-                    commitManager.forceCommit(topicPartition, record.offset() - 1);
-                //}
+                // commitManager.forceCommit(topicPartition, record.offset() - 1);
+                
+                // we should just do a commit (vs the original forceCommit)
+                // when route uses NOOP Commit Manager it will rely
+                // on the route implementation to explicitly commit offset
+                // when route uses Synch/Asynch Commit Manager it will 
+                // ALWAYS commit the offset for the failing record
+                // and will ALWAYS retry it
+                commitManager.commit(topicPartition);
             }
 
             // continue to next partition
