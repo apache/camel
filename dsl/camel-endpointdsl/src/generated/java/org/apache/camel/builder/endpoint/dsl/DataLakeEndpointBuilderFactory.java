@@ -3268,7 +3268,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeListFileSystemsOptions}.
          */
         public String azureStorageDataLakeListFileSystemsOptions() {
-            return "AzureStorageDataLakeListFileSystemsOptions";
+            return "CamelAzureStorageDataLakeListFileSystemsOptions";
         }
 
         /**
@@ -3282,7 +3282,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeTimeout}.
          */
         public String azureStorageDataLakeTimeout() {
-            return "AzureStorageDataLakeTimeout";
+            return "CamelAzureStorageDataLakeTimeout";
         }
 
         /**
@@ -3297,7 +3297,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeOperation}.
          */
         public String azureStorageDataLakeOperation() {
-            return "AzureStorageDataLakeOperation";
+            return "CamelAzureStorageDataLakeOperation";
         }
 
         /**
@@ -3312,7 +3312,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeFileSystemName}.
          */
         public String azureStorageDataLakeFileSystemName() {
-            return "AzureStorageDataLakeFileSystemName";
+            return "CamelAzureStorageDataLakeFileSystemName";
         }
 
         /**
@@ -3327,7 +3327,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeDirectoryName}.
          */
         public String azureStorageDataLakeDirectoryName() {
-            return "AzureStorageDataLakeDirectoryName";
+            return "CamelAzureStorageDataLakeDirectoryName";
         }
 
         /**
@@ -3341,7 +3341,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeFileName}.
          */
         public String azureStorageDataLakeFileName() {
-            return "AzureStorageDataLakeFileName";
+            return "CamelAzureStorageDataLakeFileName";
         }
 
         /**
@@ -3354,7 +3354,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeMetadata}.
          */
         public String azureStorageDataLakeMetadata() {
-            return "AzureStorageDataLakeMetadata";
+            return "CamelAzureStorageDataLakeMetadata";
         }
 
         /**
@@ -3369,7 +3369,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakePublicAccessType}.
          */
         public String azureStorageDataLakePublicAccessType() {
-            return "AzureStorageDataLakePublicAccessType";
+            return "CamelAzureStorageDataLakePublicAccessType";
         }
 
         /**
@@ -3383,7 +3383,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeRawHttpHeaders}.
          */
         public String azureStorageDataLakeRawHttpHeaders() {
-            return "AzureStorageDataLakeRawHttpHeaders";
+            return "CamelAzureStorageDataLakeRawHttpHeaders";
         }
 
         /**
@@ -3399,7 +3399,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeRequestCondition}.
          */
         public String azureStorageDataLakeRequestCondition() {
-            return "AzureStorageDataLakeRequestCondition";
+            return "CamelAzureStorageDataLakeRequestCondition";
         }
 
         /**
@@ -3415,7 +3415,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeListPathOptions}.
          */
         public String azureStorageDataLakeListPathOptions() {
-            return "AzureStorageDataLakeListPathOptions";
+            return "CamelAzureStorageDataLakeListPathOptions";
         }
 
         /**
@@ -3428,7 +3428,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakePath}.
          */
         public String azureStorageDataLakePath() {
-            return "AzureStorageDataLakePath";
+            return "CamelAzureStorageDataLakePath";
         }
 
         /**
@@ -3442,7 +3442,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeRecursive}.
          */
         public String azureStorageDataLakeRecursive() {
-            return "AzureStorageDataLakeRecursive";
+            return "CamelAzureStorageDataLakeRecursive";
         }
 
         /**
@@ -3457,7 +3457,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeMaxResults}.
          */
         public String azureStorageDataLakeMaxResults() {
-            return "AzureStorageDataLakeMaxResults";
+            return "CamelAzureStorageDataLakeMaxResults";
         }
 
         /**
@@ -3471,7 +3471,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeUserPrincipalNameReturned}.
          */
         public String azureStorageDataLakeUserPrincipalNameReturned() {
-            return "AzureStorageDataLakeUserPrincipalNameReturned";
+            return "CamelAzureStorageDataLakeUserPrincipalNameReturned";
         }
 
         /**
@@ -3485,7 +3485,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeRegex}.
          */
         public String azureStorageDataLakeRegex() {
-            return "AzureStorageDataLakeRegex";
+            return "CamelAzureStorageDataLakeRegex";
         }
 
         /**
@@ -3498,7 +3498,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeFileDir}.
          */
         public String azureStorageDataLakeFileDir() {
-            return "AzureStorageDataLakeFileDir";
+            return "CamelAzureStorageDataLakeFileDir";
         }
 
         /**
@@ -3512,7 +3512,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeAccessTier}.
          */
         public String azureStorageDataLakeAccessTier() {
-            return "AzureStorageDataLakeAccessTier";
+            return "CamelAzureStorageDataLakeAccessTier";
         }
 
         /**
@@ -3527,7 +3527,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeContentMD5}.
          */
         public String azureStorageDataLakeContentMD5() {
-            return "AzureStorageDataLakeContentMD5";
+            return "CamelAzureStorageDataLakeContentMD5";
         }
 
         /**
@@ -3542,7 +3542,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeFileRange}.
          */
         public String azureStorageDataLakeFileRange() {
-            return "AzureStorageDataLakeFileRange";
+            return "CamelAzureStorageDataLakeFileRange";
         }
 
         /**
@@ -3556,7 +3556,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeParallelTransferOptions}.
          */
         public String azureStorageDataLakeParallelTransferOptions() {
-            return "AzureStorageDataLakeParallelTransferOptions";
+            return "CamelAzureStorageDataLakeParallelTransferOptions";
         }
 
         /**
@@ -3570,7 +3570,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeOpenOptions}.
          */
         public String azureStorageDataLakeOpenOptions() {
-            return "AzureStorageDataLakeOpenOptions";
+            return "CamelAzureStorageDataLakeOpenOptions";
         }
 
         /**
@@ -3584,7 +3584,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeAccessTierChangeTime}.
          */
         public String azureStorageDataLakeAccessTierChangeTime() {
-            return "AzureStorageDataLakeAccessTierChangeTime";
+            return "CamelAzureStorageDataLakeAccessTierChangeTime";
         }
 
         /**
@@ -3598,7 +3598,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeArchiveStatus}.
          */
         public String azureStorageDataLakeArchiveStatus() {
-            return "AzureStorageDataLakeArchiveStatus";
+            return "CamelAzureStorageDataLakeArchiveStatus";
         }
 
         /**
@@ -3612,7 +3612,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeCacheControl}.
          */
         public String azureStorageDataLakeCacheControl() {
-            return "AzureStorageDataLakeCacheControl";
+            return "CamelAzureStorageDataLakeCacheControl";
         }
 
         /**
@@ -3626,7 +3626,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeContentDisposition}.
          */
         public String azureStorageDataLakeContentDisposition() {
-            return "AzureStorageDataLakeContentDisposition";
+            return "CamelAzureStorageDataLakeContentDisposition";
         }
 
         /**
@@ -3640,7 +3640,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeContentEncoding}.
          */
         public String azureStorageDataLakeContentEncoding() {
-            return "AzureStorageDataLakeContentEncoding";
+            return "CamelAzureStorageDataLakeContentEncoding";
         }
 
         /**
@@ -3654,7 +3654,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeContentLanguage}.
          */
         public String azureStorageDataLakeContentLanguage() {
-            return "AzureStorageDataLakeContentLanguage";
+            return "CamelAzureStorageDataLakeContentLanguage";
         }
 
         /**
@@ -3668,7 +3668,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeContentType}.
          */
         public String azureStorageDataLakeContentType() {
-            return "AzureStorageDataLakeContentType";
+            return "CamelAzureStorageDataLakeContentType";
         }
 
         /**
@@ -3683,7 +3683,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeCopyCompletionTime}.
          */
         public String azureStorageDataLakeCopyCompletionTime() {
-            return "AzureStorageDataLakeCopyCompletionTime";
+            return "CamelAzureStorageDataLakeCopyCompletionTime";
         }
 
         /**
@@ -3696,7 +3696,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeCopyId}.
          */
         public String azureStorageDataLakeCopyId() {
-            return "AzureStorageDataLakeCopyId";
+            return "CamelAzureStorageDataLakeCopyId";
         }
 
         /**
@@ -3712,7 +3712,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeCopyProgress}.
          */
         public String azureStorageDataLakeCopyProgress() {
-            return "AzureStorageDataLakeCopyProgress";
+            return "CamelAzureStorageDataLakeCopyProgress";
         }
 
         /**
@@ -3728,7 +3728,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeCopySource}.
          */
         public String azureStorageDataLakeCopySource() {
-            return "AzureStorageDataLakeCopySource";
+            return "CamelAzureStorageDataLakeCopySource";
         }
 
         /**
@@ -3743,7 +3743,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeCopyStatus}.
          */
         public String azureStorageDataLakeCopyStatus() {
-            return "AzureStorageDataLakeCopyStatus";
+            return "CamelAzureStorageDataLakeCopyStatus";
         }
 
         /**
@@ -3757,7 +3757,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeCopyStatusDescription}.
          */
         public String azureStorageDataLakeCopyStatusDescription() {
-            return "AzureStorageDataLakeCopyStatusDescription";
+            return "CamelAzureStorageDataLakeCopyStatusDescription";
         }
 
         /**
@@ -3771,7 +3771,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeCreationTime}.
          */
         public String azureStorageDataLakeCreationTime() {
-            return "AzureStorageDataLakeCreationTime";
+            return "CamelAzureStorageDataLakeCreationTime";
         }
 
         /**
@@ -3785,7 +3785,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeEncryptionKeySha256}.
          */
         public String azureStorageDataLakeEncryptionKeySha256() {
-            return "AzureStorageDataLakeEncryptionKeySha256";
+            return "CamelAzureStorageDataLakeEncryptionKeySha256";
         }
 
         /**
@@ -3798,7 +3798,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeETag}.
          */
         public String azureStorageDataLakeETag() {
-            return "AzureStorageDataLakeETag";
+            return "CamelAzureStorageDataLakeETag";
         }
 
         /**
@@ -3811,7 +3811,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeFileSize}.
          */
         public String azureStorageDataLakeFileSize() {
-            return "AzureStorageDataLakeFileSize";
+            return "CamelAzureStorageDataLakeFileSize";
         }
 
         /**
@@ -3825,7 +3825,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeLastModified}.
          */
         public String azureStorageDataLakeLastModified() {
-            return "AzureStorageDataLakeLastModified";
+            return "CamelAzureStorageDataLakeLastModified";
         }
 
         /**
@@ -3840,7 +3840,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeLeaseDuration}.
          */
         public String azureStorageDataLakeLeaseDuration() {
-            return "AzureStorageDataLakeLeaseDuration";
+            return "CamelAzureStorageDataLakeLeaseDuration";
         }
 
         /**
@@ -3855,7 +3855,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeLeaseState}.
          */
         public String azureStorageDataLakeLeaseState() {
-            return "AzureStorageDataLakeLeaseState";
+            return "CamelAzureStorageDataLakeLeaseState";
         }
 
         /**
@@ -3870,7 +3870,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeLeaseStatus}.
          */
         public String azureStorageDataLakeLeaseStatus() {
-            return "AzureStorageDataLakeLeaseStatus";
+            return "CamelAzureStorageDataLakeLeaseStatus";
         }
 
         /**
@@ -3884,7 +3884,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeIncrementalCopy}.
          */
         public String azureStorageDataLakeIncrementalCopy() {
-            return "AzureStorageDataLakeIncrementalCopy";
+            return "CamelAzureStorageDataLakeIncrementalCopy";
         }
 
         /**
@@ -3898,7 +3898,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeServerEncrypted}.
          */
         public String azureStorageDataLakeServerEncrypted() {
-            return "AzureStorageDataLakeServerEncrypted";
+            return "CamelAzureStorageDataLakeServerEncrypted";
         }
 
         /**
@@ -3912,7 +3912,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeDownloadLinkExpiration}.
          */
         public String azureStorageDataLakeDownloadLinkExpiration() {
-            return "AzureStorageDataLakeDownloadLinkExpiration";
+            return "CamelAzureStorageDataLakeDownloadLinkExpiration";
         }
 
         /**
@@ -3926,7 +3926,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeDownloadLink}.
          */
         public String azureStorageDataLakeDownloadLink() {
-            return "AzureStorageDataLakeDownloadLink";
+            return "CamelAzureStorageDataLakeDownloadLink";
         }
 
         /**
@@ -3940,7 +3940,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeFileOffset}.
          */
         public String azureStorageDataLakeFileOffset() {
-            return "AzureStorageDataLakeFileOffset";
+            return "CamelAzureStorageDataLakeFileOffset";
         }
 
         /**
@@ -3954,7 +3954,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeLeaseId}.
          */
         public String azureStorageDataLakeLeaseId() {
-            return "AzureStorageDataLakeLeaseId";
+            return "CamelAzureStorageDataLakeLeaseId";
         }
 
         /**
@@ -3968,7 +3968,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakePathHttpHeaders}.
          */
         public String azureStorageDataLakePathHttpHeaders() {
-            return "AzureStorageDataLakePathHttpHeaders";
+            return "CamelAzureStorageDataLakePathHttpHeaders";
         }
 
         /**
@@ -3983,7 +3983,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeRetainCommitedData}.
          */
         public String azureStorageDataLakeRetainCommitedData() {
-            return "AzureStorageDataLakeRetainCommitedData";
+            return "CamelAzureStorageDataLakeRetainCommitedData";
         }
 
         /**
@@ -3997,7 +3997,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeClose}.
          */
         public String azureStorageDataLakeClose() {
-            return "AzureStorageDataLakeClose";
+            return "CamelAzureStorageDataLakeClose";
         }
 
         /**
@@ -4010,7 +4010,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakePosition}.
          */
         public String azureStorageDataLakePosition() {
-            return "AzureStorageDataLakePosition";
+            return "CamelAzureStorageDataLakePosition";
         }
 
         /**
@@ -4024,7 +4024,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeExpression}.
          */
         public String azureStorageDataLakeExpression() {
-            return "AzureStorageDataLakeExpression";
+            return "CamelAzureStorageDataLakeExpression";
         }
 
         /**
@@ -4039,7 +4039,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeInputSerialization}.
          */
         public String azureStorageDataLakeInputSerialization() {
-            return "AzureStorageDataLakeInputSerialization";
+            return "CamelAzureStorageDataLakeInputSerialization";
         }
 
         /**
@@ -4054,7 +4054,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeOutputSerialization}.
          */
         public String azureStorageDataLakeOutputSerialization() {
-            return "AzureStorageDataLakeOutputSerialization";
+            return "CamelAzureStorageDataLakeOutputSerialization";
         }
 
         /**
@@ -4068,7 +4068,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeErrorConsumer}.
          */
         public String azureStorageDataLakeErrorConsumer() {
-            return "AzureStorageDataLakeErrorConsumer";
+            return "CamelAzureStorageDataLakeErrorConsumer";
         }
 
         /**
@@ -4082,7 +4082,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeProgressConsumer}.
          */
         public String azureStorageDataLakeProgressConsumer() {
-            return "AzureStorageDataLakeProgressConsumer";
+            return "CamelAzureStorageDataLakeProgressConsumer";
         }
 
         /**
@@ -4096,7 +4096,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeQueryOptions}.
          */
         public String azureStorageDataLakeQueryOptions() {
-            return "AzureStorageDataLakeQueryOptions";
+            return "CamelAzureStorageDataLakeQueryOptions";
         }
 
         /**
@@ -4110,7 +4110,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakePermission}.
          */
         public String azureStorageDataLakePermission() {
-            return "AzureStorageDataLakePermission";
+            return "CamelAzureStorageDataLakePermission";
         }
 
         /**
@@ -4123,7 +4123,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeUmask}.
          */
         public String azureStorageDataLakeUmask() {
-            return "AzureStorageDataLakeUmask";
+            return "CamelAzureStorageDataLakeUmask";
         }
 
         /**
@@ -4137,7 +4137,7 @@ public interface DataLakeEndpointBuilderFactory {
          * AzureStorageDataLakeFileClient}.
          */
         public String azureStorageDataLakeFileClient() {
-            return "AzureStorageDataLakeFileClient";
+            return "CamelAzureStorageDataLakeFileClient";
         }
 
         /**
@@ -4150,7 +4150,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeFlush}.
          */
         public String azureStorageDataLakeFlush() {
-            return "AzureStorageDataLakeFlush";
+            return "CamelAzureStorageDataLakeFlush";
         }
     }
     static DataLakeEndpointBuilder endpointBuilder(

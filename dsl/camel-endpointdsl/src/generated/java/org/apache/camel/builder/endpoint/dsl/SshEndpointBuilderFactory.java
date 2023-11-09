@@ -1704,7 +1704,7 @@ public interface SshEndpointBuilderFactory {
          * @return the name of the header {@code SshUsername}.
          */
         public String sshUsername() {
-            return "SshUsername";
+            return "CamelSshUsername";
         }
 
         /**
@@ -1717,7 +1717,7 @@ public interface SshEndpointBuilderFactory {
          * @return the name of the header {@code SshPassword}.
          */
         public String sshPassword() {
-            return "SshPassword";
+            return "CamelSshPassword";
         }
 
         /**
@@ -1731,7 +1731,7 @@ public interface SshEndpointBuilderFactory {
          * @return the name of the header {@code SshStderr}.
          */
         public String sshStderr() {
-            return "SshStderr";
+            return "CamelSshStderr";
         }
 
         /**
@@ -1746,7 +1746,7 @@ public interface SshEndpointBuilderFactory {
          * @return the name of the header {@code SshExitValue}.
          */
         public String sshExitValue() {
-            return "SshExitValue";
+            return "CamelSshExitValue";
         }
     }
     static SshEndpointBuilder endpointBuilder(String componentName, String path) {

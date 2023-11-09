@@ -1196,7 +1196,7 @@ public interface GitHubEndpointBuilderFactory {
          * @return the name of the header {@code GitHubCommitAuthor}.
          */
         public String gitHubCommitAuthor() {
-            return "GitHubCommitAuthor";
+            return "CamelGitHubCommitAuthor";
         }
 
         /**
@@ -1209,7 +1209,7 @@ public interface GitHubEndpointBuilderFactory {
          * @return the name of the header {@code GitHubCommitCommitter}.
          */
         public String gitHubCommitCommitter() {
-            return "GitHubCommitCommitter";
+            return "CamelGitHubCommitCommitter";
         }
 
         /**
@@ -1222,7 +1222,7 @@ public interface GitHubEndpointBuilderFactory {
          * @return the name of the header {@code GitHubCommitSha}.
          */
         public String gitHubCommitSha() {
-            return "GitHubCommitSha";
+            return "CamelGitHubCommitSha";
         }
 
         /**
@@ -1235,7 +1235,7 @@ public interface GitHubEndpointBuilderFactory {
          * @return the name of the header {@code GitHubCommitUrl}.
          */
         public String gitHubCommitUrl() {
-            return "GitHubCommitUrl";
+            return "CamelGitHubCommitUrl";
         }
 
         /**
@@ -1249,7 +1249,7 @@ public interface GitHubEndpointBuilderFactory {
          * @return the name of the header {@code GitHubEventPayload}.
          */
         public String gitHubEventPayload() {
-            return "GitHubEventPayload";
+            return "CamelGitHubEventPayload";
         }
     }
     static GitHubEndpointBuilder endpointBuilder(

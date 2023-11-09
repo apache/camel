@@ -17,13 +17,10 @@
 package org.apache.camel.tracing;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -31,8 +28,10 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.RoutePolicy;
@@ -48,7 +47,7 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Tracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
+public abstract class Tracer extends ServiceSupport implements CamelTracingService, RoutePolicyFactory, StaticService {
     protected static final Map<String, SpanDecorator> DECORATORS = new HashMap<>();
     static final AutoCloseable NOOP_CLOSEABLE = () -> {
     };
@@ -70,7 +69,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
     protected boolean encoding;
     private final TracingLogListener logListener = new TracingLogListener();
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
-    private Set<String> excludePatterns = new HashSet<>(0);
+    private String excludePatterns;
     private InterceptStrategy tracingStrategy;
     private CamelContext camelContext;
 
@@ -120,14 +119,16 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         this.camelContext = camelContext;
     }
 
-    public Set<String> getExcludePatterns() {
+    @ManagedAttribute
+    public String getExcludePatterns() {
         return excludePatterns;
     }
 
-    public void setExcludePatterns(Set<String> excludePatterns) {
+    public void setExcludePatterns(String excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
 
+    @ManagedAttribute
     public boolean isEncoding() {
         return encoding;
     }
@@ -136,20 +137,10 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         this.encoding = encoding;
     }
 
-    /**
-     * Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern.
-     *
-     * @param pattern the pattern such as route id, endpoint url
-     */
-    public void addExcludePattern(String pattern) {
-        excludePatterns.add(pattern);
-    }
-
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         init(camelContext);
         return new TracingRoutePolicy();
-
     }
 
     /**
@@ -222,8 +213,9 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
 
     private boolean isExcluded(Exchange exchange, Endpoint endpoint) {
         String url = endpoint.getEndpointUri();
-        if (url != null && !excludePatterns.isEmpty()) {
-            for (String pattern : excludePatterns) {
+        if (url != null && excludePatterns != null) {
+            for (String pattern : excludePatterns.split(",")) {
+                pattern = pattern.trim();
                 if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
                     return true;
                 }

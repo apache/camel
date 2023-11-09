@@ -46,7 +46,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequestEntry;
@@ -222,7 +222,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
                 LOG.trace("Deleted message with receipt handle {}...", receiptHandle);
             }
-        } catch (AwsServiceException e) {
+        } catch (SdkException e) {
             getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.",
                     exchange, e);
         }

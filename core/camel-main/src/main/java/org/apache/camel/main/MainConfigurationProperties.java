@@ -53,6 +53,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // extended configuration
     private HealthConfigurationProperties healthConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
+    private OtelConfigurationProperties otelConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
@@ -71,6 +72,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (lraConfigurationProperties != null) {
             lraConfigurationProperties.close();
             lraConfigurationProperties = null;
+        }
+        if (otelConfigurationProperties != null) {
+            otelConfigurationProperties.close();
+            otelConfigurationProperties = null;
         }
         if (threadPoolProperties != null) {
             threadPoolProperties.close();
@@ -149,6 +154,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasLraConfiguration() {
         return lraConfigurationProperties != null;
+    }
+
+    /**
+     * To configure OpenTelemetry.
+     */
+    public OtelConfigurationProperties otel() {
+        if (otelConfigurationProperties == null) {
+            otelConfigurationProperties = new OtelConfigurationProperties(this);
+        }
+        return otelConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any OpenTelemetry configuration specified
+     */
+    public boolean hasOtelConfiguration() {
+        return otelConfigurationProperties != null;
     }
 
     /**

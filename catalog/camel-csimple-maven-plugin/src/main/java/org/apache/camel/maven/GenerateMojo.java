@@ -32,16 +32,15 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.catalog.common.CatalogHelper;
 import org.apache.camel.language.csimple.CSimpleCodeGenerator;
 import org.apache.camel.language.csimple.CSimpleGeneratedCode;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelCSimpleExpressionDetails;
-import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -53,6 +52,9 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+
+import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
+import static org.apache.camel.catalog.common.CatalogHelper.findXmlRouters;
 
 /**
  * Parses the source code and generates source code for the csimple language.
@@ -142,70 +144,16 @@ public class GenerateMojo extends AbstractExecMojo {
         Set<File> xmlFiles = new LinkedHashSet<>();
 
         // find all java route builder classes
-        if (includeJava) {
-            List list = project.getCompileSourceRoots();
-            for (Object obj : list) {
-                String dir = (String) obj;
-                findJavaFiles(new File(dir), javaFiles);
-            }
-            if (includeTest) {
-                list = project.getTestCompileSourceRoots();
-                for (Object obj : list) {
-                    String dir = (String) obj;
-                    findJavaFiles(new File(dir), javaFiles);
-                }
-            }
-        }
+        findJavaRouteBuilderClasses(javaFiles, includeJava, includeTest, project);
+
         // find all xml routes
-        if (includeXml) {
-            List list = project.getResources();
-            for (Object obj : list) {
-                Resource dir = (Resource) obj;
-                findXmlFiles(new File(dir.getDirectory()), xmlFiles);
-            }
-            if (includeTest) {
-                list = project.getTestResources();
-                for (Object obj : list) {
-                    Resource dir = (Resource) obj;
-                    findXmlFiles(new File(dir.getDirectory()), xmlFiles);
-                }
-            }
-        }
+        findXmlRouters(xmlFiles, includeXml, includeTest, project);
 
         for (File file : javaFiles) {
-            if (matchRouteFile(file)) {
-                try {
-                    List<CamelCSimpleExpressionDetails> fileCSimpleExpressions = new ArrayList<>();
-
-                    // parse the java source code and find Camel RouteBuilder classes
-                    String fqn = file.getPath();
-                    String baseDir = ".";
-                    JavaType<?> out = Roaster.parse(file);
-                    // we should only parse java classes (not interfaces and enums etc)
-                    if (out instanceof JavaClassSource clazz) {
-                        RouteBuilderParser.parseRouteBuilderCSimpleExpressions(clazz, baseDir, fqn, fileCSimpleExpressions);
-                        csimpleExpressions.addAll(fileCSimpleExpressions);
-                    }
-                } catch (Exception e) {
-                    getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
-                }
-            }
+            addJavaFiles(file, csimpleExpressions);
         }
         for (File file : xmlFiles) {
-            if (matchRouteFile(file)) {
-                try {
-                    List<CamelCSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
-                    // parse the xml source code and find Camel routes
-                    String fqn = file.getPath();
-                    String baseDir = ".";
-                    InputStream is = new FileInputStream(file);
-                    XmlRouteParser.parseXmlRouteCSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
-                    is.close();
-                    csimpleExpressions.addAll(fileSimpleExpressions);
-                } catch (Exception e) {
-                    getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
-                }
-            }
+            addXmlFiles(file, csimpleExpressions);
         }
 
         if (!csimpleExpressions.isEmpty()) {
@@ -253,6 +201,43 @@ public class GenerateMojo extends AbstractExecMojo {
             }
         }
 
+    }
+
+    private void addXmlFiles(File file, List<CamelCSimpleExpressionDetails> csimpleExpressions) {
+        if (matchRouteFile(file)) {
+            try {
+                List<CamelCSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
+                // parse the xml source code and find Camel routes
+                String fqn = file.getPath();
+                String baseDir = ".";
+                InputStream is = new FileInputStream(file);
+                XmlRouteParser.parseXmlRouteCSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
+                is.close();
+                csimpleExpressions.addAll(fileSimpleExpressions);
+            } catch (Exception e) {
+                getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void addJavaFiles(File file, List<CamelCSimpleExpressionDetails> csimpleExpressions) {
+        if (matchRouteFile(file)) {
+            try {
+                List<CamelCSimpleExpressionDetails> fileCSimpleExpressions = new ArrayList<>();
+
+                // parse the java source code and find Camel RouteBuilder classes
+                String fqn = file.getPath();
+                String baseDir = ".";
+                JavaType<?> out = Roaster.parse(file);
+                // we should only parse java classes (not interfaces and enums etc)
+                if (out instanceof JavaClassSource clazz) {
+                    RouteBuilderParser.parseRouteBuilderCSimpleExpressions(clazz, baseDir, fqn, fileCSimpleExpressions);
+                    csimpleExpressions.addAll(fileCSimpleExpressions);
+                }
+            } catch (Exception e) {
+                getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
+            }
+        }
     }
 
     private void loadConfiguration() {
@@ -311,136 +296,8 @@ public class GenerateMojo extends AbstractExecMojo {
         }
     }
 
-    private void findJavaFiles(File dir, Set<File> javaFiles) {
-        File[] files = dir.isDirectory() ? dir.listFiles() : null;
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(".java")) {
-                    javaFiles.add(file);
-                } else if (file.isDirectory()) {
-                    findJavaFiles(file, javaFiles);
-                }
-            }
-        }
-    }
-
-    private void findXmlFiles(File dir, Set<File> xmlFiles) {
-        File[] files = dir.isDirectory() ? dir.listFiles() : null;
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(".xml")) {
-                    xmlFiles.add(file);
-                } else if (file.isDirectory()) {
-                    findXmlFiles(file, xmlFiles);
-                }
-            }
-        }
-    }
-
     private boolean matchRouteFile(File file) {
-        if (excludes == null && includes == null) {
-            return true;
-        }
-
-        // exclude take precedence
-        if (excludes != null) {
-            for (String exclude : excludes.split(",")) {
-                boolean match = isMatch(exclude, file);
-                if (match) {
-                    return false;
-                }
-            }
-        }
-
-        // include
-        if (includes != null) {
-            for (String include : includes.split(",")) {
-                boolean match = isMatch(include, file);
-                if (match) {
-                    return true;
-                }
-            }
-            // did not match any includes
-            return false;
-        }
-
-        // was not excluded nor failed include so its accepted
-        return true;
-    }
-
-    private boolean isMatch(String include, File file) {
-        include = include.trim();
-        // try both with and without directory in the name
-        String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-        return PatternHelper.matchPattern(fqn, include) || PatternHelper.matchPattern(file.getName(), include);
-    }
-
-    private String asRelativeFile(String name) {
-        String answer = name;
-
-        String base = project.getBasedir().getAbsolutePath();
-        if (name.startsWith(base)) {
-            answer = name.substring(base.length());
-            // skip leading slash for relative path
-            if (answer.startsWith(File.separator)) {
-                answer = answer.substring(1);
-            }
-        }
-        return answer;
-    }
-
-    private String stripRootPath(String name) {
-        // strip out any leading source / resource directory
-
-        String compileSourceRoot = findInCompileSourceRoots(name);
-        if (compileSourceRoot != null) {
-            return compileSourceRoot;
-        }
-
-        String buildPath = findInResources(name);
-        if (buildPath != null) {
-            return buildPath;
-        }
-
-        return name;
-    }
-
-    private String findInCompileSourceRoots(String name) {
-        String compileSourceRoot = findInCompileSourceRoots(project.getCompileSourceRoots(), name);
-        if (compileSourceRoot != null) {
-            return compileSourceRoot;
-        }
-
-        return findInCompileSourceRoots(project.getTestCompileSourceRoots(), name);
-    }
-
-    private String findInCompileSourceRoots(List<String> list, String name) {
-        for (String dir : list) {
-            dir = asRelativeFile(dir);
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        return null;
-    }
-
-    private String findInResources(String name) {
-        String buildPath = findInResources(project.getResources(), name);
-        if (buildPath != null) {
-            return buildPath;
-        }
-
-        return findInResources(project.getTestResources(), name);
-    }
-
-    private String findInResources(List<Resource> resources, String name) {
-        for (Resource resource : resources) {
-            String dir = asRelativeFile(resource.getDirectory());
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        return null;
+        return CatalogHelper.matchRouteFile(file, excludes, includes, project);
     }
 
     public static boolean updateResource(Path out, String data) {

@@ -698,7 +698,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * @return the name of the header {@code OptaPlannerSolverId}.
          */
         public String optaPlannerSolverId() {
-            return "OptaPlannerSolverId";
+            return "CamelOptaPlannerSolverId";
         }
 
         /**
@@ -712,7 +712,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * @return the name of the header {@code OptaPlannerIsAsync}.
          */
         public String optaPlannerIsAsync() {
-            return "OptaPlannerIsAsync";
+            return "CamelOptaPlannerIsAsync";
         }
 
         /**
@@ -725,7 +725,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * @return the name of the header {@code OptaPlannerBestSolution}.
          */
         public String optaPlannerBestSolution() {
-            return "OptaPlannerBestSolution";
+            return "CamelOptaPlannerBestSolution";
         }
 
         /**
@@ -738,7 +738,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * @return the name of the header {@code OptaPlannerIsSolving}.
          */
         public String optaPlannerIsSolving() {
-            return "OptaPlannerIsSolving";
+            return "CamelOptaPlannerIsSolving";
         }
 
         /**
@@ -752,7 +752,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * @return the name of the header {@code OptaPlannerSolverManager}.
          */
         public String optaPlannerSolverManager() {
-            return "OptaPlannerSolverManager";
+            return "CamelOptaPlannerSolverManager";
         }
     }
     static OptaPlannerEndpointBuilder endpointBuilder(

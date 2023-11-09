@@ -1563,7 +1563,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusApplicationProperties}.
          */
         public String azureServiceBusApplicationProperties() {
-            return "AzureServiceBusApplicationProperties";
+            return "CamelAzureServiceBusApplicationProperties";
         }
 
         /**
@@ -1576,7 +1576,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusContentType}.
          */
         public String azureServiceBusContentType() {
-            return "AzureServiceBusContentType";
+            return "CamelAzureServiceBusContentType";
         }
 
         /**
@@ -1589,7 +1589,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusCorrelationId}.
          */
         public String azureServiceBusCorrelationId() {
-            return "AzureServiceBusCorrelationId";
+            return "CamelAzureServiceBusCorrelationId";
         }
 
         /**
@@ -1603,7 +1603,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusDeadLetterErrorDescription}.
          */
         public String azureServiceBusDeadLetterErrorDescription() {
-            return "AzureServiceBusDeadLetterErrorDescription";
+            return "CamelAzureServiceBusDeadLetterErrorDescription";
         }
 
         /**
@@ -1617,7 +1617,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusDeadLetterReason}.
          */
         public String azureServiceBusDeadLetterReason() {
-            return "AzureServiceBusDeadLetterReason";
+            return "CamelAzureServiceBusDeadLetterReason";
         }
 
         /**
@@ -1632,7 +1632,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusDeadLetterSource}.
          */
         public String azureServiceBusDeadLetterSource() {
-            return "AzureServiceBusDeadLetterSource";
+            return "CamelAzureServiceBusDeadLetterSource";
         }
 
         /**
@@ -1645,7 +1645,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusDeliveryCount}.
          */
         public String azureServiceBusDeliveryCount() {
-            return "AzureServiceBusDeliveryCount";
+            return "CamelAzureServiceBusDeliveryCount";
         }
 
         /**
@@ -1660,7 +1660,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusEnqueuedSequenceNumber}.
          */
         public String azureServiceBusEnqueuedSequenceNumber() {
-            return "AzureServiceBusEnqueuedSequenceNumber";
+            return "CamelAzureServiceBusEnqueuedSequenceNumber";
         }
 
         /**
@@ -1674,7 +1674,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusEnqueuedTime}.
          */
         public String azureServiceBusEnqueuedTime() {
-            return "AzureServiceBusEnqueuedTime";
+            return "CamelAzureServiceBusEnqueuedTime";
         }
 
         /**
@@ -1687,7 +1687,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusExpiresAt}.
          */
         public String azureServiceBusExpiresAt() {
-            return "AzureServiceBusExpiresAt";
+            return "CamelAzureServiceBusExpiresAt";
         }
 
         /**
@@ -1700,7 +1700,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusLockToken}.
          */
         public String azureServiceBusLockToken() {
-            return "AzureServiceBusLockToken";
+            return "CamelAzureServiceBusLockToken";
         }
 
         /**
@@ -1713,7 +1713,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusLockedUntil}.
          */
         public String azureServiceBusLockedUntil() {
-            return "AzureServiceBusLockedUntil";
+            return "CamelAzureServiceBusLockedUntil";
         }
 
         /**
@@ -1726,7 +1726,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusMessageId}.
          */
         public String azureServiceBusMessageId() {
-            return "AzureServiceBusMessageId";
+            return "CamelAzureServiceBusMessageId";
         }
 
         /**
@@ -1739,7 +1739,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusPartitionKey}.
          */
         public String azureServiceBusPartitionKey() {
-            return "AzureServiceBusPartitionKey";
+            return "CamelAzureServiceBusPartitionKey";
         }
 
         /**
@@ -1752,7 +1752,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusRawAmqpMessage}.
          */
         public String azureServiceBusRawAmqpMessage() {
-            return "AzureServiceBusRawAmqpMessage";
+            return "CamelAzureServiceBusRawAmqpMessage";
         }
 
         /**
@@ -1765,7 +1765,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusReplyTo}.
          */
         public String azureServiceBusReplyTo() {
-            return "AzureServiceBusReplyTo";
+            return "CamelAzureServiceBusReplyTo";
         }
 
         /**
@@ -1779,7 +1779,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusReplyToSessionId}.
          */
         public String azureServiceBusReplyToSessionId() {
-            return "AzureServiceBusReplyToSessionId";
+            return "CamelAzureServiceBusReplyToSessionId";
         }
 
         /**
@@ -1792,7 +1792,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusSequenceNumber}.
          */
         public String azureServiceBusSequenceNumber() {
-            return "AzureServiceBusSequenceNumber";
+            return "CamelAzureServiceBusSequenceNumber";
         }
 
         /**
@@ -1805,7 +1805,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusSessionId}.
          */
         public String azureServiceBusSessionId() {
-            return "AzureServiceBusSessionId";
+            return "CamelAzureServiceBusSessionId";
         }
 
         /**
@@ -1818,7 +1818,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusSubject}.
          */
         public String azureServiceBusSubject() {
-            return "AzureServiceBusSubject";
+            return "CamelAzureServiceBusSubject";
         }
 
         /**
@@ -1831,7 +1831,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusTimeToLive}.
          */
         public String azureServiceBusTimeToLive() {
-            return "AzureServiceBusTimeToLive";
+            return "CamelAzureServiceBusTimeToLive";
         }
 
         /**
@@ -1844,7 +1844,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the name of the header {@code AzureServiceBusTo}.
          */
         public String azureServiceBusTo() {
-            return "AzureServiceBusTo";
+            return "CamelAzureServiceBusTo";
         }
 
         /**
@@ -1860,7 +1860,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusScheduledEnqueueTime}.
          */
         public String azureServiceBusScheduledEnqueueTime() {
-            return "AzureServiceBusScheduledEnqueueTime";
+            return "CamelAzureServiceBusScheduledEnqueueTime";
         }
 
         /**
@@ -1875,7 +1875,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusServiceBusTransactionContext}.
          */
         public String azureServiceBusServiceBusTransactionContext() {
-            return "AzureServiceBusServiceBusTransactionContext";
+            return "CamelAzureServiceBusServiceBusTransactionContext";
         }
 
         /**
@@ -1890,7 +1890,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * AzureServiceBusProducerOperation}.
          */
         public String azureServiceBusProducerOperation() {
-            return "AzureServiceBusProducerOperation";
+            return "CamelAzureServiceBusProducerOperation";
         }
     }
     static ServiceBusEndpointBuilder endpointBuilder(

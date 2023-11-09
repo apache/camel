@@ -578,7 +578,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStepFunctionsOperation}.
          */
         public String awsStepFunctionsOperation() {
-            return "AwsStepFunctionsOperation";
+            return "CamelAwsStepFunctionsOperation";
         }
 
         /**
@@ -592,7 +592,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsStateMachineName}.
          */
         public String awsStepFunctionsStateMachineName() {
-            return "AwsStepFunctionsStateMachineName";
+            return "CamelAwsStepFunctionsStateMachineName";
         }
 
         /**
@@ -606,7 +606,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsStateMachineDefinition}.
          */
         public String awsStepFunctionsStateMachineDefinition() {
-            return "AwsStepFunctionsStateMachineDefinition";
+            return "CamelAwsStepFunctionsStateMachineDefinition";
         }
 
         /**
@@ -620,7 +620,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsStateMachineType}.
          */
         public String awsStepFunctionsStateMachineType() {
-            return "AwsStepFunctionsStateMachineType";
+            return "CamelAwsStepFunctionsStateMachineType";
         }
 
         /**
@@ -635,7 +635,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsStateMachineRoleArn}.
          */
         public String awsStepFunctionsStateMachineRoleArn() {
-            return "AwsStepFunctionsStateMachineRoleArn";
+            return "CamelAwsStepFunctionsStateMachineRoleArn";
         }
 
         /**
@@ -649,7 +649,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsStateMachineArn}.
          */
         public String awsStepFunctionsStateMachineArn() {
-            return "AwsStepFunctionsStateMachineArn";
+            return "CamelAwsStepFunctionsStateMachineArn";
         }
 
         /**
@@ -663,7 +663,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsStateMachinesMaxResults}.
          */
         public String awsStepFunctionsStateMachinesMaxResults() {
-            return "AwsStepFunctionsStateMachinesMaxResults";
+            return "CamelAwsStepFunctionsStateMachinesMaxResults";
         }
 
         /**
@@ -676,7 +676,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStepFunctionsActivityName}.
          */
         public String awsStepFunctionsActivityName() {
-            return "AwsStepFunctionsActivityName";
+            return "CamelAwsStepFunctionsActivityName";
         }
 
         /**
@@ -689,7 +689,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStepFunctionsActivityArn}.
          */
         public String awsStepFunctionsActivityArn() {
-            return "AwsStepFunctionsActivityArn";
+            return "CamelAwsStepFunctionsActivityArn";
         }
 
         /**
@@ -703,7 +703,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsActivitiesMaxResults}.
          */
         public String awsStepFunctionsActivitiesMaxResults() {
-            return "AwsStepFunctionsActivitiesMaxResults";
+            return "CamelAwsStepFunctionsActivitiesMaxResults";
         }
 
         /**
@@ -716,7 +716,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStepFunctionsExecutionArn}.
          */
         public String awsStepFunctionsExecutionArn() {
-            return "AwsStepFunctionsExecutionArn";
+            return "CamelAwsStepFunctionsExecutionArn";
         }
 
         /**
@@ -729,7 +729,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * @return the name of the header {@code AwsStepFunctionsExecutionName}.
          */
         public String awsStepFunctionsExecutionName() {
-            return "AwsStepFunctionsExecutionName";
+            return "CamelAwsStepFunctionsExecutionName";
         }
 
         /**
@@ -743,7 +743,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsExecutionInput}.
          */
         public String awsStepFunctionsExecutionInput() {
-            return "AwsStepFunctionsExecutionInput";
+            return "CamelAwsStepFunctionsExecutionInput";
         }
 
         /**
@@ -757,7 +757,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsExecutionTraceHeader}.
          */
         public String awsStepFunctionsExecutionTraceHeader() {
-            return "AwsStepFunctionsExecutionTraceHeader";
+            return "CamelAwsStepFunctionsExecutionTraceHeader";
         }
 
         /**
@@ -771,7 +771,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsExecutionHistoryMaxResults}.
          */
         public String awsStepFunctionsExecutionHistoryMaxResults() {
-            return "AwsStepFunctionsExecutionHistoryMaxResults";
+            return "CamelAwsStepFunctionsExecutionHistoryMaxResults";
         }
 
         /**
@@ -786,7 +786,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsExecutionHistoryIncludeExecutionData}.
          */
         public String awsStepFunctionsExecutionHistoryIncludeExecutionData() {
-            return "AwsStepFunctionsExecutionHistoryIncludeExecutionData";
+            return "CamelAwsStepFunctionsExecutionHistoryIncludeExecutionData";
         }
 
         /**
@@ -800,7 +800,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsExecutionHistoryReverseOrder}.
          */
         public String awsStepFunctionsExecutionHistoryReverseOrder() {
-            return "AwsStepFunctionsExecutionHistoryReverseOrder";
+            return "CamelAwsStepFunctionsExecutionHistoryReverseOrder";
         }
 
         /**
@@ -814,7 +814,7 @@ public interface StepFunctions2EndpointBuilderFactory {
          * AwsStepFunctionsExecutionMaxResults}.
          */
         public String awsStepFunctionsExecutionMaxResults() {
-            return "AwsStepFunctionsExecutionMaxResults";
+            return "CamelAwsStepFunctionsExecutionMaxResults";
         }
     }
     static StepFunctions2EndpointBuilder endpointBuilder(

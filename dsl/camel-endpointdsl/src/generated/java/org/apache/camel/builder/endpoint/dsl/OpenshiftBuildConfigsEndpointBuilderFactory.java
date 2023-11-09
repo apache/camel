@@ -530,7 +530,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -543,7 +543,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -556,7 +556,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesBuildConfigsLabels}.
          */
         public String kubernetesBuildConfigsLabels() {
-            return "KubernetesBuildConfigsLabels";
+            return "CamelKubernetesBuildConfigsLabels";
         }
 
         /**
@@ -569,7 +569,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesBuildConfigName}.
          */
         public String kubernetesBuildConfigName() {
-            return "KubernetesBuildConfigName";
+            return "CamelKubernetesBuildConfigName";
         }
     }
     static OpenshiftBuildConfigsEndpointBuilder endpointBuilder(

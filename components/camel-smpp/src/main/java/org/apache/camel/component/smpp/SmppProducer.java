@@ -123,7 +123,8 @@ public class SmppProducer extends DefaultProducer {
                         this.configuration.getSystemType(),
                         TypeOfNumber.valueOf(configuration.getTypeOfNumber()),
                         NumberingPlanIndicator.valueOf(configuration.getNumberingPlanIndicator()),
-                        ""));
+                        "",
+                        configuration.getInterfaceVersionByte()));
 
         LOG.info("Connected to: {}", getEndpoint().getConnectionString());
 

@@ -1503,7 +1503,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1516,7 +1516,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1529,7 +1529,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesHPAName}.
          */
         public String kubernetesHPAName() {
-            return "KubernetesHPAName";
+            return "CamelKubernetesHPAName";
         }
 
         /**
@@ -1543,7 +1543,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesHPASpec}.
          */
         public String kubernetesHPASpec() {
-            return "KubernetesHPASpec";
+            return "CamelKubernetesHPASpec";
         }
 
         /**
@@ -1556,7 +1556,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesHPALabels}.
          */
         public String kubernetesHPALabels() {
-            return "KubernetesHPALabels";
+            return "CamelKubernetesHPALabels";
         }
 
         /**
@@ -1570,7 +1570,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventAction}.
          */
         public String kubernetesEventAction() {
-            return "KubernetesEventAction";
+            return "CamelKubernetesEventAction";
         }
 
         /**
@@ -1583,7 +1583,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventTimestamp}.
          */
         public String kubernetesEventTimestamp() {
-            return "KubernetesEventTimestamp";
+            return "CamelKubernetesEventTimestamp";
         }
     }
     static KubernetesHPAEndpointBuilder endpointBuilder(

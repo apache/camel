@@ -41,8 +41,10 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.WrapAwareProcessor;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,21 +186,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 if (!camelContext.hasService(debugger)) {
                     camelContext.addService(debugger);
                 }
-                // if starting breakpoint is BREAKPOINT_ALL_ROUTES then automatic add first as a breakpoint
-                if (first && debugger.getInitialBreakpoints() != null
-                        && debugger.getInitialBreakpoints().contains(BacklogDebugger.BREAKPOINT_ALL_ROUTES)) {
-                    if (debugger.isSingleStepIncludeStartEnd()) {
-                        // we want route to be breakpoint (use input)
-                        String id = routeDefinition.getInput().getId();
-                        debugger.addBreakpoint(id);
-                        LOG.debug("BacklogDebugger added breakpoint: {}", id);
-                    } else {
-                        // first output should also be breakpoint
-                        String id = targetOutputDef.getId();
-                        debugger.addBreakpoint(id);
-                        LOG.debug("BacklogDebugger added breakpoint: {}", id);
-                    }
-                }
+                backlogDebuggerSetupInitialBreakpoints(definition, routeDefinition, first, debugger, targetOutputDef);
                 if (first && debugger.isSingleStepIncludeStartEnd()) {
                     // add breakpoint on route input instead of first node
                     addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
@@ -338,6 +326,67 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             debugger = DefaultBacklogDebugger.createDebugger(camelContext);
         }
         return debugger;
+    }
+
+    private void backlogDebuggerSetupInitialBreakpoints(
+            NamedNode definition, NamedRoute routeDefinition, boolean first,
+            BacklogDebugger debugger, NamedNode targetOutputDef) {
+        // setup initial breakpoints
+        if (debugger.getInitialBreakpoints() != null) {
+            boolean match = false;
+            String id = definition.getId();
+            for (String pattern : debugger.getInitialBreakpoints().split(",")) {
+                pattern = pattern.trim();
+                match |= BacklogDebugger.BREAKPOINT_ALL_ROUTES.equals(pattern) && first;
+                if (!match) {
+                    match = PatternHelper.matchPattern(id, pattern);
+                }
+                // eip kind so you can match with (setBody*)
+                if (!match) {
+                    match = PatternHelper.matchPattern(definition.getShortName(), pattern);
+                }
+                // location and line number
+                if (!match && pattern.contains(":")) {
+                    // try with line number and location
+                    String pnum = StringHelper.afterLast(pattern, ":");
+                    if (pnum != null) {
+                        String ploc = StringHelper.beforeLast(pattern, ":");
+                        String loc = definition.getLocation();
+                        // strip schema
+                        if (loc != null && loc.contains(":")) {
+                            loc = StringHelper.after(loc, ":");
+                        }
+                        String num = "" + definition.getLineNumber();
+                        if (PatternHelper.matchPattern(loc, ploc) && pnum.equals(num)) {
+                            match = true;
+                        }
+                    }
+                }
+                // line number only
+                if (!match) {
+                    Integer pnum = camelContext.getTypeConverter().tryConvertTo(Integer.class, pattern);
+                    if (pnum != null) {
+                        int num = definition.getLineNumber();
+                        if (num == pnum) {
+                            match = true;
+                        }
+                    }
+                }
+            }
+            if (match) {
+                if (first && debugger.isSingleStepIncludeStartEnd()) {
+                    // we want route to be breakpoint (use input)
+                    id = routeDefinition.getInput().getId();
+                    debugger.addBreakpoint(id);
+                    LOG.debug("BacklogDebugger added breakpoint: {}", id);
+                } else {
+                    // first output should also be breakpoint
+                    id = targetOutputDef.getId();
+                    debugger.addBreakpoint(id);
+                    LOG.debug("BacklogDebugger added breakpoint: {}", id);
+                }
+            }
+        }
     }
 
     @Override

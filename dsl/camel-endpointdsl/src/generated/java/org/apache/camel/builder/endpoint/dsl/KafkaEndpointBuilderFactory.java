@@ -5316,7 +5316,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the name of the header {@code KafkaManualCommit}.
          */
         public String kafkaManualCommit() {
-            return "KafkaManualCommit";
+            return "CamelKafkaManualCommit";
         }
     }
     static KafkaEndpointBuilder endpointBuilder(

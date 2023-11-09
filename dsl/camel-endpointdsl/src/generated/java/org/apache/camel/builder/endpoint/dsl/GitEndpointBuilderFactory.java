@@ -603,7 +603,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitOperation}.
          */
         public String gitOperation() {
-            return "GitOperation";
+            return "CamelGitOperation";
         }
 
         /**
@@ -616,7 +616,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitFilename}.
          */
         public String gitFilename() {
-            return "GitFilename";
+            return "CamelGitFilename";
         }
 
         /**
@@ -629,7 +629,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitMessage}.
          */
         public String gitCommitMessage() {
-            return "GitCommitMessage";
+            return "CamelGitCommitMessage";
         }
 
         /**
@@ -642,7 +642,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitUsername}.
          */
         public String gitCommitUsername() {
-            return "GitCommitUsername";
+            return "CamelGitCommitUsername";
         }
 
         /**
@@ -655,7 +655,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitEmail}.
          */
         public String gitCommitEmail() {
-            return "GitCommitEmail";
+            return "CamelGitCommitEmail";
         }
 
         /**
@@ -668,7 +668,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitId}.
          */
         public String gitCommitId() {
-            return "GitCommitId";
+            return "CamelGitCommitId";
         }
 
         /**
@@ -681,7 +681,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitAllowEmpty}.
          */
         public String gitAllowEmpty() {
-            return "GitAllowEmpty";
+            return "CamelGitAllowEmpty";
         }
 
         /**
@@ -694,7 +694,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitAuthorName}.
          */
         public String gitAuthorName() {
-            return "GitAuthorName";
+            return "CamelGitAuthorName";
         }
 
         /**
@@ -707,7 +707,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommiterName}.
          */
         public String gitCommiterName() {
-            return "GitCommiterName";
+            return "CamelGitCommiterName";
         }
 
         /**
@@ -720,7 +720,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitTime}.
          */
         public String gitCommitTime() {
-            return "GitCommitTime";
+            return "CamelGitCommitTime";
         }
 
         /**
@@ -733,7 +733,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitBranchLeaf}.
          */
         public String gitBranchLeaf() {
-            return "GitBranchLeaf";
+            return "CamelGitBranchLeaf";
         }
 
         /**
@@ -746,7 +746,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitBranchObjectId}.
          */
         public String gitBranchObjectId() {
-            return "GitBranchObjectId";
+            return "CamelGitBranchObjectId";
         }
     }
     static GitEndpointBuilder endpointBuilder(String componentName, String path) {

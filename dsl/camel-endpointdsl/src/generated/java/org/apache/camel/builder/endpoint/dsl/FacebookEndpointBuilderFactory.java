@@ -6677,7 +6677,7 @@ public interface FacebookEndpointBuilderFactory {
          * @return the name of the header {@code Facebook.rawJSON}.
          */
         public String facebookRawjson() {
-            return "Facebook.rawJSON";
+            return "CamelFacebook.rawJSON";
         }
     }
     static FacebookEndpointBuilder endpointBuilder(

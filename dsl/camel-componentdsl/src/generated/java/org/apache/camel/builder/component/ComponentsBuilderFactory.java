@@ -3668,6 +3668,21 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SlackComponentBuilderFactory.slack();
     }
     /**
+     * SMB (camel-smb)
+     * SMB component which consumes natively from file shares using the Server
+     * Message Block (SMB, also known as Common Internet File System - CIFS)
+     * protocol
+     * 
+     * Category: file
+     * Since: 4.2.0-SNAPSHOT
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SmbComponentBuilderFactory.SmbComponentBuilder smb() {
+        return org.apache.camel.builder.component.dsl.SmbComponentBuilderFactory.smb();
+    }
+    /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).

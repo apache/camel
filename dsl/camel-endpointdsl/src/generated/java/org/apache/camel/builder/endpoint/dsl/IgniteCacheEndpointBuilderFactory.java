@@ -908,7 +908,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the name of the header {@code IgniteCacheKey}.
          */
         public String igniteCacheKey() {
-            return "IgniteCacheKey";
+            return "CamelIgniteCacheKey";
         }
 
         /**
@@ -921,7 +921,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the name of the header {@code IgniteCacheQuery}.
          */
         public String igniteCacheQuery() {
-            return "IgniteCacheQuery";
+            return "CamelIgniteCacheQuery";
         }
 
         /**
@@ -935,7 +935,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the name of the header {@code IgniteCacheOperation}.
          */
         public String igniteCacheOperation() {
-            return "IgniteCacheOperation";
+            return "CamelIgniteCacheOperation";
         }
 
         /**
@@ -949,7 +949,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the name of the header {@code IgniteCachePeekMode}.
          */
         public String igniteCachePeekMode() {
-            return "IgniteCachePeekMode";
+            return "CamelIgniteCachePeekMode";
         }
 
         /**
@@ -963,7 +963,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the name of the header {@code IgniteCacheEventType}.
          */
         public String igniteCacheEventType() {
-            return "IgniteCacheEventType";
+            return "CamelIgniteCacheEventType";
         }
 
         /**
@@ -979,7 +979,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the name of the header {@code IgniteCacheName}.
          */
         public String igniteCacheName() {
-            return "IgniteCacheName";
+            return "CamelIgniteCacheName";
         }
 
         /**
@@ -994,7 +994,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the name of the header {@code IgniteCacheOldValue}.
          */
         public String igniteCacheOldValue() {
-            return "IgniteCacheOldValue";
+            return "CamelIgniteCacheOldValue";
         }
     }
     static IgniteCacheEndpointBuilder endpointBuilder(

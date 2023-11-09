@@ -26,15 +26,13 @@ import java.util.regex.Pattern;
 
 import jakarta.activation.DataHandler;
 
-import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
-import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.impl.RouteImpl;
@@ -56,6 +54,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.appendHeader;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.populateCamelHeaders;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.writeResponse;
 
@@ -74,6 +74,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
     private String path;
     private Route route;
     private VertxPlatformHttpRouter router;
+    private HttpRequestBodyHandler httpRequestBodyHandler;
 
     public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint,
                                      Processor processor,
@@ -97,6 +98,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
         path = configureEndpointPath(getEndpoint());
         router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
+        if (!getEndpoint().isHttpProxy() && getEndpoint().isUseStreaming()) {
+            httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
+        } else {
+            httpRequestBodyHandler = new DefaultHttpRequestBodyHandler(router.bodyHandler());
+        }
     }
 
     @Override
@@ -126,7 +132,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             }
         }
 
-        newRoute.handler(router.bodyHandler());
+        httpRequestBodyHandler.configureRoute(newRoute);
         for (Handler<RoutingContext> handler : handlers) {
             newRoute.handler(handler);
         }
@@ -161,7 +167,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         }
 
         final Vertx vertx = ctx.vertx();
-        final Exchange exchange = toExchange(ctx);
+        final Exchange exchange = createExchange(false);
+        exchange.setPattern(ExchangePattern.InOut);
 
         //
         // We do not know if any of the processing logic of the route is synchronous or not so we
@@ -180,45 +187,51 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         //             .to("rest:get:?bridgeEndpoint=true");
         //
 
-        if (getEndpoint().isHttpProxy()) {
-            handleProxy(ctx, exchange);
-        }
+        // Note: any logic that needs to interrogate HTTP headers not provided by RoutingContext.parsedHeaders, should
+        // be done inside of the following onComplete block, to ensure that the HTTP request is fully processed.
+        processHttpRequest(exchange, ctx).onComplete(result -> {
+            if (result.failed()) {
+                handleFailure(exchange, ctx, result.cause());
+                return;
+            }
 
-        vertx.executeBlocking(() -> processRequest(exchange), false)
-                .onComplete(result -> processResult(ctx, result, exchange));
-    }
+            if (getEndpoint().isHttpProxy()) {
+                handleProxy(ctx, exchange);
+            }
 
-    private void processResult(
-            RoutingContext ctx, AsyncResult<Object> result, Exchange exchange) {
-        Throwable failure = null;
-        try {
-            if (result.succeeded()) {
-                try {
-                    writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy(), muteExceptions);
-                } catch (Exception e) {
-                    failure = e;
+            populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
+
+            vertx.executeBlocking(() -> processExchange(exchange), false).onComplete(processExchangeResult -> {
+                if (processExchangeResult.succeeded()) {
+                    writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy(), muteExceptions)
+                            .onComplete(writeResponseResult -> {
+                                if (writeResponseResult.succeeded()) {
+                                    handleExchangeComplete(exchange);
+                                } else {
+                                    handleFailure(exchange, ctx, writeResponseResult.cause());
+                                }
+                            });
+                } else {
+                    handleFailure(exchange, ctx, processExchangeResult.cause());
                 }
-            } else {
-                failure = result.cause();
-            }
-
-            if (failure != null) {
-                handleFailure(ctx, failure);
-            }
-        } finally {
-            doneUoW(exchange);
-            releaseExchange(exchange, false);
-        }
+            });
+        });
     }
 
-    private void handleFailure(RoutingContext ctx, Throwable failure) {
+    private void handleExchangeComplete(Exchange exchange) {
+        doneUoW(exchange);
+        releaseExchange(exchange, false);
+    }
+
+    private void handleFailure(Exchange exchange, RoutingContext ctx, Throwable failure) {
         getExceptionHandler().handleException(
                 "Failed handling platform-http endpoint " + getEndpoint().getPath(),
                 failure);
         ctx.fail(failure);
+        handleExchangeComplete(exchange);
     }
 
-    private Object processRequest(Exchange exchange) throws Exception {
+    private Object processExchange(Exchange exchange) throws Exception {
         createUoW(exchange);
         getProcessor().process(exchange);
         return null;
@@ -236,10 +249,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         exchange.getMessage().removeHeader("Proxy-Connection");
     }
 
-    protected Exchange toExchange(RoutingContext ctx) {
-        final Exchange exchange = createExchange(false);
-        exchange.setPattern(ExchangePattern.InOut);
-
+    protected Future<Void> processHttpRequest(Exchange exchange, RoutingContext ctx) {
         // reuse existing http message if pooled
         Message in = exchange.getIn();
         if (in instanceof HttpMessage hm) {
@@ -248,7 +258,6 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             in = new HttpMessage(exchange, ctx.request(), ctx.response());
             exchange.setMessage(in);
         }
-        populateCamelMessage(ctx, exchange, in);
 
         final String charset = ctx.parsedHeaders().contentType().parameter("charset");
         if (charset != null) {
@@ -261,53 +270,38 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             in.setHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, user);
         }
 
-        return exchange;
+        return populateCamelMessage(ctx, exchange, in);
     }
 
-    protected void populateCamelMessage(RoutingContext ctx, Exchange exchange, Message result) {
+    protected Future<Void> populateCamelMessage(RoutingContext ctx, Exchange exchange, Message message) {
         final HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
-        populateCamelHeaders(ctx, result.getHeaders(), exchange, headerFilterStrategy);
-        final String mimeType = ctx.parsedHeaders().contentType().value();
-        final boolean isMultipartFormData = "multipart/form-data".equals(mimeType);
-
-        if ("application/x-www-form-urlencoded".equals(mimeType) || isMultipartFormData) {
-            populateMultiFormData(ctx, exchange, result, headerFilterStrategy, isMultipartFormData);
-        } else {
-            populateDefaultMessage(ctx, result);
-        }
-    }
-
-    private static void populateDefaultMessage(RoutingContext ctx, Message result) {
-        final RequestBody requestBody = ctx.body();
-        final Buffer body = requestBody.buffer();
-        if (body != null) {
-            result.setBody(body);
-        } else {
-            result.setBody(null);
-        }
+        populateCamelHeaders(ctx, message.getHeaders(), exchange, headerFilterStrategy);
+        return httpRequestBodyHandler.handle(ctx, message);
     }
 
     private void populateMultiFormData(
-            RoutingContext ctx, Exchange exchange, Message result, HeaderFilterStrategy headerFilterStrategy,
-            boolean isMultipartFormData) {
-        final MultiMap formData = ctx.request().formAttributes();
-        final Map<String, Object> body = new HashMap<>();
-        for (String key : formData.names()) {
-            for (String value : formData.getAll(key)) {
-                if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
-                    appendHeader(result.getHeaders(), key, value);
-                    appendHeader(body, key, value);
+            RoutingContext ctx, Message message, HeaderFilterStrategy headerFilterStrategy) {
+        final boolean isMultipartFormData = isMultiPartFormData(ctx);
+        if (isFormUrlEncoded(ctx) || isMultipartFormData) {
+            final MultiMap formData = ctx.request().formAttributes();
+            final Map<String, Object> body = new HashMap<>();
+            for (String key : formData.names()) {
+                for (String value : formData.getAll(key)) {
+                    if (headerFilterStrategy != null
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, message.getExchange())) {
+                        appendHeader(message.getHeaders(), key, value);
+                        appendHeader(body, key, value);
+                    }
                 }
             }
-        }
 
-        if (!body.isEmpty()) {
-            result.setBody(body);
-        }
+            if (!body.isEmpty()) {
+                message.setBody(body);
+            }
 
-        if (isMultipartFormData) {
-            populateAttachments(ctx.fileUploads(), result);
+            if (isMultipartFormData) {
+                populateAttachments(ctx.fileUploads(), message);
+            }
         }
     }
 

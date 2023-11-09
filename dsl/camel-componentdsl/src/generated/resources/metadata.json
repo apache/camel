@@ -6053,6 +6053,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "SmbComponentBuilderFactory": {
+    "kind": "component",
+    "name": "smb",
+    "title": "SMB",
+    "description": "SMB component which consumes natively from file shares using the Server Message Block (SMB, also known as Common Internet File System - CIFS) protocol",
+    "deprecated": false,
+    "firstVersion": "4.2.0-SNAPSHOT",
+    "label": "file",
+    "javaType": "org.apache.camel.component.smb.SmbComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-smb",
+    "version": "4.2.0-SNAPSHOT",
+    "scheme": "smb",
+    "extendsScheme": "",
+    "syntax": "smb:hostname:port",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "SmppComponentBuilderFactory": {
     "kind": "component",
     "name": "smpp",

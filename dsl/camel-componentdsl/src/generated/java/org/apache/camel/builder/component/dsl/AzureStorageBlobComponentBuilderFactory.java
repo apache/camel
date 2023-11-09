@@ -266,6 +266,22 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * In case of usage of Shared Access Signature we'll need to set a SAS
+         * Token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sasToken the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder sasToken(
+                java.lang.String sasToken) {
+            doSetProperty("sasToken", sasToken);
+            return this;
+        }
+        /**
          * Client to a storage account. This client does not hold any state
          * about a particular storage account but is instead a convenient way of
          * sending off appropriate requests to the resource on the service. It
@@ -695,6 +711,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "maxRetryRequests": getOrCreateConfiguration((BlobComponent) component).setMaxRetryRequests((int) value); return true;
             case "prefix": getOrCreateConfiguration((BlobComponent) component).setPrefix((java.lang.String) value); return true;
             case "regex": getOrCreateConfiguration((BlobComponent) component).setRegex((java.lang.String) value); return true;
+            case "sasToken": getOrCreateConfiguration((BlobComponent) component).setSasToken((java.lang.String) value); return true;
             case "serviceClient": getOrCreateConfiguration((BlobComponent) component).setServiceClient((com.azure.storage.blob.BlobServiceClient) value); return true;
             case "timeout": getOrCreateConfiguration((BlobComponent) component).setTimeout((java.time.Duration) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;

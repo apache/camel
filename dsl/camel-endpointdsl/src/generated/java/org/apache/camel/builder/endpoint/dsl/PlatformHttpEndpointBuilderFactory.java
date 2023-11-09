@@ -159,6 +159,37 @@ public interface PlatformHttpEndpointBuilderFactory {
             doSetProperty("produces", produces);
             return this;
         }
+        /**
+         * Whether to use streaming for large requests and responses.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useStreaming the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder useStreaming(boolean useStreaming) {
+            doSetProperty("useStreaming", useStreaming);
+            return this;
+        }
+        /**
+         * Whether to use streaming for large requests and responses.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useStreaming the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder useStreaming(String useStreaming) {
+            doSetProperty("useStreaming", useStreaming);
+            return this;
+        }
     }
 
     /**

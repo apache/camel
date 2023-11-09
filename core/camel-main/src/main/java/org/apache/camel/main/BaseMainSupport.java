@@ -57,6 +57,7 @@ import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
@@ -950,6 +951,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties threadPoolProperties = new OrderedLocationProperties();
         OrderedLocationProperties healthProperties = new OrderedLocationProperties();
         OrderedLocationProperties lraProperties = new OrderedLocationProperties();
+        OrderedLocationProperties otelProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeTemplateProperties = new OrderedLocationProperties();
         OrderedLocationProperties beansProperties = new OrderedLocationProperties();
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
@@ -1007,6 +1009,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
                 lraProperties.put(loc, optionKey(option), value);
+            } else if (key.startsWith("camel.opentelemetry.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(20);
+                validateOptionAndValue(key, option, value);
+                otelProperties.put(loc, optionKey(option), value);
             } else if (key.startsWith("camel.routeTemplate")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1114,6 +1122,11 @@ public abstract class BaseMainSupport extends BaseService {
             setLraCheckProperties(camelContext, lraProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        if (!otelProperties.isEmpty() || mainConfigurationProperties.hasOtelConfiguration()) {
+            LOG.debug("Auto-configuring OpenTelemetry from loaded properties: {}", otelProperties.size());
+            setOtelProperties(camelContext, otelProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
         if (!devConsoleProperties.isEmpty()) {
             LOG.debug("Auto-configuring Dev Console from loaded properties: {}", devConsoleProperties.size());
             setDevConsoleProperties(camelContext, devConsoleProperties,
@@ -1196,6 +1209,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!lraProperties.isEmpty()) {
             lraProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.lra.{}={}", k, v);
+            });
+        }
+        if (!otelProperties.isEmpty()) {
+            otelProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.opentelemetry.{}={}", k, v);
             });
         }
         if (!httpServerProperties.isEmpty()) {
@@ -1342,15 +1360,39 @@ public abstract class BaseMainSupport extends BaseService {
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
+        String loc = lraProperties.getLocation("enabled");
         Object obj = lraProperties.remove("enabled");
         if (ObjectHelper.isNotEmpty(obj)) {
-            String loc = lraProperties.getLocation("enabled");
             autoConfiguredProperties.put(loc, "camel.lra.enabled", obj.toString());
         }
         boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
         if (enabled) {
             CamelSagaService css = resolveLraSagaService(camelContext);
             setPropertiesOnTarget(camelContext, css, lraProperties, "camel.lra.", failIfNotSet, true, autoConfiguredProperties);
+            // add as service so saga can be active
+            camelContext.addService(css, true, true);
+        }
+    }
+
+    private void setOtelProperties(
+            CamelContext camelContext, OrderedLocationProperties otelProperties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        String loc = otelProperties.getLocation("enabled");
+        Object obj = otelProperties.remove("enabled");
+        if (ObjectHelper.isNotEmpty(obj)) {
+            autoConfiguredProperties.put(loc, "camel.opentelemetry.enabled", obj.toString());
+        }
+        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        if (enabled) {
+            CamelTracingService otel = resolveOtelService(camelContext);
+            setPropertiesOnTarget(camelContext, otel, otelProperties, "camel.opentelemetry.", failIfNotSet, true,
+                    autoConfiguredProperties);
+            if (camelContext.hasService(CamelTracingService.class) == null) {
+                // add as service so tracing can be active
+                camelContext.addService(otel, true, true);
+            }
         }
     }
 
@@ -1982,16 +2024,29 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
-        // lookup in service registry first
-        CamelSagaService answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
+        CamelSagaService answer = camelContext.hasService(CamelSagaService.class);
+        if (answer == null) {
+            answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
+        }
         if (answer == null) {
             answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
                     .newInstance("lra-saga-service", CamelSagaService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
+        }
+        return answer;
+    }
 
-            // add as service so its discover by saga eip
-            camelContext.addService(answer, true, false);
+    private static CamelTracingService resolveOtelService(CamelContext camelContext) throws Exception {
+        CamelTracingService answer = camelContext.hasService(CamelTracingService.class);
+        if (answer == null) {
+            answer = camelContext.getRegistry().findSingleByType(CamelTracingService.class);
+        }
+        if (answer == null) {
+            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                    .newInstance("opentelemetry-tracer", CamelTracingService.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find OpenTelemetryTracer on classpath. Add camel-opentelemetry to classpath."));
         }
         return answer;
     }

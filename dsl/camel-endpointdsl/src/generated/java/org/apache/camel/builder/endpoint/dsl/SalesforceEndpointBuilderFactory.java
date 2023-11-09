@@ -4193,7 +4193,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceReplayId}.
          */
         public String salesforceReplayId() {
-            return "SalesforceReplayId";
+            return "CamelSalesforceReplayId";
         }
 
         /**
@@ -4206,7 +4206,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforcePubSubReplayId}.
          */
         public String salesforcePubSubReplayId() {
-            return "SalesforcePubSubReplayId";
+            return "CamelSalesforcePubSubReplayId";
         }
 
         /**
@@ -4219,7 +4219,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceChangeEventSchema}.
          */
         public String salesforceChangeEventSchema() {
-            return "SalesforceChangeEventSchema";
+            return "CamelSalesforceChangeEventSchema";
         }
 
         /**
@@ -4232,7 +4232,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceEventType}.
          */
         public String salesforceEventType() {
-            return "SalesforceEventType";
+            return "CamelSalesforceEventType";
         }
 
         /**
@@ -4245,7 +4245,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceCommitTimestamp}.
          */
         public String salesforceCommitTimestamp() {
-            return "SalesforceCommitTimestamp";
+            return "CamelSalesforceCommitTimestamp";
         }
 
         /**
@@ -4258,7 +4258,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceCommitUser}.
          */
         public String salesforceCommitUser() {
-            return "SalesforceCommitUser";
+            return "CamelSalesforceCommitUser";
         }
 
         /**
@@ -4271,7 +4271,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceCommitNumber}.
          */
         public String salesforceCommitNumber() {
-            return "SalesforceCommitNumber";
+            return "CamelSalesforceCommitNumber";
         }
 
         /**
@@ -4284,7 +4284,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceRecordIds}.
          */
         public String salesforceRecordIds() {
-            return "SalesforceRecordIds";
+            return "CamelSalesforceRecordIds";
         }
 
         /**
@@ -4297,7 +4297,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceChangeType}.
          */
         public String salesforceChangeType() {
-            return "SalesforceChangeType";
+            return "CamelSalesforceChangeType";
         }
 
         /**
@@ -4310,7 +4310,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceChangeOrigin}.
          */
         public String salesforceChangeOrigin() {
-            return "SalesforceChangeOrigin";
+            return "CamelSalesforceChangeOrigin";
         }
 
         /**
@@ -4323,7 +4323,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceTransactionKey}.
          */
         public String salesforceTransactionKey() {
-            return "SalesforceTransactionKey";
+            return "CamelSalesforceTransactionKey";
         }
 
         /**
@@ -4336,7 +4336,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceSequenceNumber}.
          */
         public String salesforceSequenceNumber() {
-            return "SalesforceSequenceNumber";
+            return "CamelSalesforceSequenceNumber";
         }
 
         /**
@@ -4349,7 +4349,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceIsTransactionEnd}.
          */
         public String salesforceIsTransactionEnd() {
-            return "SalesforceIsTransactionEnd";
+            return "CamelSalesforceIsTransactionEnd";
         }
 
         /**
@@ -4362,7 +4362,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceEntityName}.
          */
         public String salesforceEntityName() {
-            return "SalesforceEntityName";
+            return "CamelSalesforceEntityName";
         }
 
         /**
@@ -4375,7 +4375,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforcePlatformEventSchema}.
          */
         public String salesforcePlatformEventSchema() {
-            return "SalesforcePlatformEventSchema";
+            return "CamelSalesforcePlatformEventSchema";
         }
 
         /**
@@ -4388,7 +4388,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceCreatedDate}.
          */
         public String salesforceCreatedDate() {
-            return "SalesforceCreatedDate";
+            return "CamelSalesforceCreatedDate";
         }
 
         /**
@@ -4401,7 +4401,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceTopicName}.
          */
         public String salesforceTopicName() {
-            return "SalesforceTopicName";
+            return "CamelSalesforceTopicName";
         }
 
         /**
@@ -4414,7 +4414,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceChannel}.
          */
         public String salesforceChannel() {
-            return "SalesforceChannel";
+            return "CamelSalesforceChannel";
         }
 
         /**
@@ -4427,7 +4427,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the name of the header {@code SalesforceClientId}.
          */
         public String salesforceClientId() {
-            return "SalesforceClientId";
+            return "CamelSalesforceClientId";
         }
 
         /**
@@ -4441,7 +4441,7 @@ public interface SalesforceEndpointBuilderFactory {
          * SalesforceQueryResultTotalSize}.
          */
         public String salesforceQueryResultTotalSize() {
-            return "SalesforceQueryResultTotalSize";
+            return "CamelSalesforceQueryResultTotalSize";
         }
     }
     static SalesforceEndpointBuilder endpointBuilder(

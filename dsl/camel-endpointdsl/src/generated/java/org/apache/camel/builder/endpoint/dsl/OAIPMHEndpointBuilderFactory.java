@@ -1404,7 +1404,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * @return the name of the header {@code OaimphResumptionToken}.
          */
         public String oaimphResumptionToken() {
-            return "OaimphResumptionToken";
+            return "CamelOaimphResumptionToken";
         }
     }
     static OAIPMHEndpointBuilder endpointBuilder(

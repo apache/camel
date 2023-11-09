@@ -1,6 +1,6 @@
 = How do I disable JMX?
 
-== How do I disable JMX in Camel 3.x
+== How do I disable JMX since Camel 3.x
 
 JMX is disabled by default, and only enabled if `camel-management`
 is on the classpath. So an easy way to disable JMX is to _not_ include this JAR.

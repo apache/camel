@@ -1739,7 +1739,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterKeywords}.
          */
         public String twitterKeywords() {
-            return "TwitterKeywords";
+            return "CamelTwitterKeywords";
         }
 
         /**
@@ -1752,7 +1752,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterSearchLanguage}.
          */
         public String twitterSearchLanguage() {
-            return "TwitterSearchLanguage";
+            return "CamelTwitterSearchLanguage";
         }
 
         /**
@@ -1765,7 +1765,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterCount}.
          */
         public String twitterCount() {
-            return "TwitterCount";
+            return "CamelTwitterCount";
         }
 
         /**
@@ -1778,7 +1778,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterNumberOfPages}.
          */
         public String twitterNumberOfPages() {
-            return "TwitterNumberOfPages";
+            return "CamelTwitterNumberOfPages";
         }
 
         /**
@@ -1792,7 +1792,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterSinceId}.
          */
         public String twitterSinceId() {
-            return "TwitterSinceId";
+            return "CamelTwitterSinceId";
         }
 
         /**
@@ -1805,7 +1805,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterMaxId}.
          */
         public String twitterMaxId() {
-            return "TwitterMaxId";
+            return "CamelTwitterMaxId";
         }
 
         /**
@@ -1819,7 +1819,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterEventType}.
          */
         public String twitterEventType() {
-            return "TwitterEventType";
+            return "CamelTwitterEventType";
         }
     }
     static TwitterSearchEndpointBuilder endpointBuilder(
