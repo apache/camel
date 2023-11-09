@@ -37,7 +37,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
 
     private final List<String> errorPayloads = new CopyOnWriteArrayList<>();
     
-    public static final String NO_ON_EXCEPTION_ROUTE_ID = "breakOnFirstErrorBatchIT";
+    public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";
     public static final String TOPIC = "test-foobar";
 
     @EndpointInject("kafka:" + TOPIC
@@ -87,11 +87,11 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
         // we will never get to message-4
         to.expectedBodiesReceived("message-0", "message-1", "message-2");
 
-        context.getRouteController().stopRoute(NO_ON_EXCEPTION_ROUTE_ID);
+        context.getRouteController().stopRoute(ROUTE_ID);
         
         this.publishMessagesToKafka();
-        
-        context.getRouteController().startRoute(NO_ON_EXCEPTION_ROUTE_ID);
+
+        context.getRouteController().startRoute(ROUTE_ID);
         
         Awaitility.await()
             .atMost(3, TimeUnit.SECONDS)
@@ -111,7 +111,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
             @Override
             public void configure() {
                 from(from)
-                    .routeId(NO_ON_EXCEPTION_ROUTE_ID)
+                    .routeId(ROUTE_ID)
                     .process(exchange -> {
                         LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Consuming", exchange, true));
                     })
