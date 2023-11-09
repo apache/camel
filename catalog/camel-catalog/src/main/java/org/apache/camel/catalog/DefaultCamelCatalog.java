@@ -543,6 +543,10 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @SuppressWarnings("unchecked")
     private <T> T cache(String key, String name, Function<String, T> loader) {
+        return doGetCache(key, name, loader);
+    }
+
+    private <T> T doGetCache(String key, String name, Function<String, T> loader) {
         if (caching) {
             T t = (T) cache.get(key);
             if (t == null) {
@@ -559,18 +563,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @SuppressWarnings("unchecked")
     private <T> T cache(String name, Function<String, T> loader) {
-        if (caching) {
-            T t = (T) cache.get(name);
-            if (t == null) {
-                t = loader.apply(name);
-                if (t != null) {
-                    cache.put(name, t);
-                }
-            }
-            return t;
-        } else {
-            return loader.apply(name);
-        }
+        return doGetCache(name, name, loader);
     }
 
     private String loadResource(String file) {
