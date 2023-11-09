@@ -15,7 +15,6 @@ public final class CamelKafkaUtil {
             sb.append(msg);
             sb.append(eol);
         }
-
         sb.append("Message consumed from ");
         sb.append(exchange.getMessage().getHeader(KafkaConstants.TOPIC, String.class));
         sb.append(eol);
@@ -34,5 +33,4 @@ public final class CamelKafkaUtil {
 
         return sb.toString();
     }
-
 }

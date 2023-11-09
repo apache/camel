@@ -149,16 +149,24 @@ public class KafkaRecordProcessor {
                 Exception exc = exchange.getException();
                 LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(),
                         exc.getMessage());
-                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.",
-                        lastResult.getPartitionLastOffset(), lastResult.getPartition());
+                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.", 
+                        record.offset(), record.partition());
             }
 
             // force commit, so we resume on next poll where we failed 
             // except when the failure happened at the first message in a poll
             if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
-                // should we use record.offset ?
-                //commitManager.forceCommit(topicPartition, record.offset() - 1);
-                commitManager.forceCommit(topicPartition, lastResult.getPartitionLastOffset());
+                // the record we are processing had the error 
+                // so we will force commit the offset prior 
+                // this will enable the current desired behavior to 
+                // retry the message 1 more time
+                //
+                // Note: without a more extensive look at handling of breakOnFirstError
+                // we will still need the lastResult so that we don't force 
+                // retrying this message over and over
+                //if (configuration.isBreakOnFirstErrorWithRetry()) {
+                    commitManager.forceCommit(topicPartition, record.offset() - 1);
+                //}
             }
 
             // continue to next partition
