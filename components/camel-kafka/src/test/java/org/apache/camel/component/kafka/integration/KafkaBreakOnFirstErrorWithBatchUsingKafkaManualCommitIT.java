@@ -33,7 +33,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT.class);
 
-    public static final String WITH_ON_EXCEPTION_ROUTE_ID = "breakOnFirstErrorBatchOnExceptionIT";
+    public static final String ROUTE_ID = "breakOnFirstErrorBatchOnExceptionIT";
     public static final String TOPIC = "test-foobar";
 
     @EndpointInject("kafka:" + TOPIC
@@ -84,8 +84,8 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
 
         this.publishMessagesToKafka();
         
-        context.getRouteController().stopRoute(WITH_ON_EXCEPTION_ROUTE_ID);
-        context.getRouteController().startRoute(WITH_ON_EXCEPTION_ROUTE_ID);
+        context.getRouteController().stopRoute(ROUTE_ID);
+        context.getRouteController().startRoute(ROUTE_ID);
         
         Awaitility.await()
             .atMost(3, TimeUnit.SECONDS)
@@ -113,7 +113,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
                     });
                 
                 from(from)
-                    .routeId(WITH_ON_EXCEPTION_ROUTE_ID)
+                    .routeId(ROUTE_ID)
                     .process(exchange -> {
                         LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Consuming", exchange, true));
                     })
