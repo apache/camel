@@ -297,8 +297,6 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     protected void startPolling() {
-        // not sure what we are using this for
-        long partitionLastOffset = -1;
 
         try {
             /*
@@ -366,6 +364,7 @@ public class KafkaFetchRecords implements Runnable {
                         e.getClass().getName(), threadId, getPrintableTopic(), e.getMessage());
             }
 
+            long partitionLastOffset = -1;
             pollExceptionStrategy.handle(partitionLastOffset, e);
         } finally {
             // only close if not retry

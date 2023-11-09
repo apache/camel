@@ -113,15 +113,22 @@ public class KafkaRecordProcessor {
             exchange.setException(e);
         }
         
+        ProcessingResult result = ProcessingResult.newUnprocessed();
         if (exchange.getException() != null) {
             LOG.debug("An exception was thrown for record at partition {} and offset {}",
                     record.partition(), record.offset());
 
             boolean breakOnErrorExit = processException(exchange, topicPartition, record, exceptionHandler);
-            return new ProcessingResult(breakOnErrorExit, record.partition(), record.offset(), true);
+            result = new ProcessingResult(breakOnErrorExit, true);
         } else {
-            return new ProcessingResult(false, record.partition(), record.offset(), exchange.getException() != null);
+            result = new  ProcessingResult(false, exchange.getException() != null);
         }
+        
+        if (!result.isBreakOnErrorHit()) {
+            commitManager.recordOffset(topicPartition, record.offset());
+        }
+        
+        return result;
     }
 
     private boolean processException(
@@ -147,7 +154,6 @@ public class KafkaRecordProcessor {
             // and will ALWAYS retry it
             commitManager.commit(topicPartition);
 
-            // continue to next partition
             return true;
         } else {
             // will handle/log the exception and then continue to next
