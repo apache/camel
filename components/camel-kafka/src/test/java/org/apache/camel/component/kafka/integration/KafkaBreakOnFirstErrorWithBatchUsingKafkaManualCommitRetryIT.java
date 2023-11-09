@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -28,12 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * uses allowManualCommit and KafkaManualCommit
  * because relying on Camel default to use NOOP Commit Manager
  * this means the route implementation MUST manage all offset commits
+ * 
+ * will demonstrate how to retry
  */
-class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbeddedKafkaTestSupport {
+class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseEmbeddedKafkaTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT.class);
 
-    public static final String ROUTE_ID = "breakOnFirstErrorBatchOnExceptionIT";
+    public static final String ROUTE_ID = "breakOnFirstErrorBatchRetryIT";
     public static final String TOPIC = "test-foobar";
 
     @EndpointInject("kafka:" + TOPIC
@@ -76,16 +80,6 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
     @Test
     public void kafkaBreakOnFirstErrorBasicCapabilityWithoutOnExcepton() throws Exception {
         to.reset();
-        to.expectedMessageCount(7);
-        
-        // old behavior before the fix
-        // message-3 causes an error 
-        // and breakOnFirstError will cause it to be retried 1x
-        // then we move on
-        //to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-3", "message-4", "message-5");
-        
-        // new behavior w/ NOOP Commit Manager
-        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4", "message-5");
         
         this.publishMessagesToKafka();
         
@@ -94,8 +88,19 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
         
         Awaitility.await()
             .atMost(3, TimeUnit.SECONDS)
-            .until(() -> to.getExchanges().size() > 5);
+            .until(() -> to.getExchanges().size() > 7);
+        
+        
+        assertFalse(to.getExchanges().stream()
+            .anyMatch(exc -> "message-4".equals(exc.getMessage().getBody(String.class))));
 
+        assertFalse(to.getExchanges().stream()
+            .anyMatch(exc -> "message-5".equals(exc.getMessage().getBody(String.class))));
+
+       assertTrue(to.getExchanges().stream() 
+           .filter(exc -> "message-3".equals(exc.getMessage().getBody(String.class)))
+           .count() > 1);
+       
         to.assertIsSatisfied(3000);
     }
 
@@ -110,12 +115,10 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
                     // adding error message to end
                     // so we can account for it
                     .to(to)
-                    .process(exchange -> {
-                        // if we don't commit 
-                        // camel will continuously 
-                        // retry the message with an error
-                        doCommitOffset(exchange);
-                    });
+                    // we are not 
+                    // going to commit offset
+                    // so will retry
+                    .end();
                 
                 from(from)
                     .routeId(ROUTE_ID)
