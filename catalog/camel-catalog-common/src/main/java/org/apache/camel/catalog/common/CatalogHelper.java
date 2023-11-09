@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven;
+package org.apache.camel.catalog.common;
 
 import java.io.File;
 import java.util.Set;
@@ -23,9 +23,9 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 
-final class ReportPluginCommon {
+public final class CatalogHelper {
 
-    private ReportPluginCommon() {
+    private CatalogHelper() {
     }
 
     public static String asRelativeFile(String name, MavenProject project) {
@@ -74,11 +74,11 @@ final class ReportPluginCommon {
     }
 
     public static boolean fileListMatchesPattern(String fileList, File file, MavenProject project) {
-        for (String exclude : fileList.split(",")) {
-            exclude = exclude.trim();
+        for (String fileName : fileList.split(",")) {
+            fileName = fileName.trim();
             // try both with and without directory in the name
             String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath(), project), project);
-            boolean match = PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
+            boolean match = PatternHelper.matchPattern(fqn, fileName) || PatternHelper.matchPattern(file.getName(), fileName);
             if (match) {
                 return true;
             }
@@ -87,29 +87,7 @@ final class ReportPluginCommon {
     }
 
     public static void findXmlFiles(File dir, Set<File> xmlFiles) {
-        File[] files = dir.isDirectory() ? dir.listFiles() : null;
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(".xml")) {
-                    xmlFiles.add(file);
-                } else if (file.isDirectory()) {
-                    findXmlFiles(file, xmlFiles);
-                }
-            }
-        }
-    }
-
-    public static void findJavaFiles(File dir, Set<File> javaFiles) {
-        File[] files = dir.isDirectory() ? dir.listFiles() : null;
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(".java")) {
-                    javaFiles.add(file);
-                } else if (file.isDirectory()) {
-                    findJavaFiles(file, javaFiles);
-                }
-            }
-        }
+        FileUtil.findXmlFiles(dir, xmlFiles);
     }
 
     public static boolean matchRouteFile(File file, String excludes, String includes, MavenProject project) {
@@ -137,11 +115,11 @@ final class ReportPluginCommon {
             Set<File> javaFiles, boolean includeJava, boolean includeTest, MavenProject project) {
         if (includeJava) {
             for (String dir : project.getCompileSourceRoots()) {
-                findJavaFiles(new File(dir), javaFiles);
+                FileUtil.findJavaFiles(new File(dir), javaFiles);
             }
             if (includeTest) {
                 for (String dir : project.getTestCompileSourceRoots()) {
-                    findJavaFiles(new File(dir), javaFiles);
+                    FileUtil.findJavaFiles(new File(dir), javaFiles);
                 }
             }
         }

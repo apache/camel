@@ -64,11 +64,11 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
-import static org.apache.camel.maven.ReportPluginCommon.asRelativeFile;
-import static org.apache.camel.maven.ReportPluginCommon.findJavaRouteBuilderClasses;
-import static org.apache.camel.maven.ReportPluginCommon.findXmlRouters;
-import static org.apache.camel.maven.ReportPluginCommon.matchRouteFile;
-import static org.apache.camel.maven.ReportPluginCommon.stripRootPath;
+import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
+import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
+import static org.apache.camel.catalog.common.CatalogHelper.findXmlRouters;
+import static org.apache.camel.catalog.common.CatalogHelper.matchRouteFile;
+import static org.apache.camel.catalog.common.CatalogHelper.stripRootPath;
 
 /**
  * Performs route coverage reports after running Camel unit tests with camel-test modules
@@ -163,35 +163,10 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         List<CamelNodeDetails> routeTrees = new ArrayList<>();
 
         for (File file : javaFiles) {
-            if (matchFile(file)) {
-                try {
-                    // parse the java source code and find Camel RouteBuilder classes
-                    String fqn = file.getPath();
-                    JavaType<?> out = Roaster.parse(file);
-                    // we should only parse java classes (not interfaces and enums etc)
-                    if (out instanceof JavaClassSource clazz) {
-                        List<CamelNodeDetails> result = RouteBuilderParser.parseRouteBuilderTree(clazz, fqn, true);
-                        routeTrees.addAll(result);
-                    }
-                } catch (Exception e) {
-                    getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
-                }
-            }
+            addJavaFiles(file, routeTrees);
         }
         for (File file : xmlFiles) {
-            if (matchFile(file)) {
-                try {
-                    // parse the xml files code and find Camel routes
-                    String fqn = file.getPath();
-                    String baseDir = ".";
-                    InputStream is = new FileInputStream(file);
-                    List<CamelNodeDetails> result = XmlRouteParser.parseXmlRouteTree(is, baseDir, fqn);
-                    routeTrees.addAll(result);
-                    is.close();
-                } catch (Exception e) {
-                    getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
-                }
-            }
+            addXmlFiles(file, routeTrees);
         }
 
         getLog().info("Discovered " + routeTrees.size() + " routes");
@@ -360,6 +335,39 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             throw new MojoExecutionException("There are " + notCovered.get() + " route(s) not fully covered!");
         } else if (failOnError && !overallCoverageAboveThreshold.get()) {
             throw new MojoExecutionException("The overall coverage is below " + overallCoverageThreshold + "%!");
+        }
+    }
+
+    private void addXmlFiles(File file, List<CamelNodeDetails> routeTrees) {
+        if (matchFile(file)) {
+            try {
+                // parse the xml files code and find Camel routes
+                String fqn = file.getPath();
+                String baseDir = ".";
+                InputStream is = new FileInputStream(file);
+                List<CamelNodeDetails> result = XmlRouteParser.parseXmlRouteTree(is, baseDir, fqn);
+                routeTrees.addAll(result);
+                is.close();
+            } catch (Exception e) {
+                getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void addJavaFiles(File file, List<CamelNodeDetails> routeTrees) {
+        if (matchFile(file)) {
+            try {
+                // parse the java source code and find Camel RouteBuilder classes
+                String fqn = file.getPath();
+                JavaType<?> out = Roaster.parse(file);
+                // we should only parse java classes (not interfaces and enums etc)
+                if (out instanceof JavaClassSource clazz) {
+                    List<CamelNodeDetails> result = RouteBuilderParser.parseRouteBuilderTree(clazz, fqn, true);
+                    routeTrees.addAll(result);
+                }
+            } catch (Exception e) {
+                getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
+            }
         }
     }
 

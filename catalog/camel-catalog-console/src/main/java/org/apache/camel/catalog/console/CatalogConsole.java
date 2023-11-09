@@ -19,6 +19,7 @@ package org.apache.camel.catalog.console;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -51,6 +52,12 @@ public class CatalogConsole extends AbstractDevConsole {
 
         // misc is harder to find as we need to find them via classpath
         sb.append("\n\nMiscellaneous Components:\n");
+        evalMisc(sb, CatalogConsole::appendModel);
+
+        return sb.toString();
+    }
+
+    private <T> void evalMisc(T consumable, BiConsumer<ArtifactModel<?>, T> consumer) {
         String[] cp = CP.split("[:|;]");
         String suffix = "-" + getCamelContext().getVersion() + ".jar";
         for (String c : cp) {
@@ -58,12 +65,10 @@ public class CatalogConsole extends AbstractDevConsole {
                 int pos = Math.max(c.lastIndexOf("/"), c.lastIndexOf("\\"));
                 if (pos > 0) {
                     c = c.substring(pos + 1, c.length() - suffix.length());
-                    appendModel(findOtherModel(c), sb);
+                    consumer.accept(findOtherModel(c), consumable);
                 }
             }
         }
-
-        return sb.toString();
     }
 
     @Override
@@ -83,17 +88,7 @@ public class CatalogConsole extends AbstractDevConsole {
         getCamelContext().getDataFormatNames().forEach(n -> appendModel(catalog.dataFormatModel(n), dataformat));
 
         // misc is harder to find as we need to find them via classpath
-        String[] cp = CP.split("[:|;]");
-        String suffix = "-" + getCamelContext().getVersion() + ".jar";
-        for (String c : cp) {
-            if (c.endsWith(suffix)) {
-                int pos = Math.max(c.lastIndexOf("/"), c.lastIndexOf("\\"));
-                if (pos > 0) {
-                    c = c.substring(pos + 1, c.length() - suffix.length());
-                    appendModel(findOtherModel(c), others);
-                }
-            }
-        }
+        evalMisc(others, CatalogConsole::appendModel);
 
         return root;
     }
