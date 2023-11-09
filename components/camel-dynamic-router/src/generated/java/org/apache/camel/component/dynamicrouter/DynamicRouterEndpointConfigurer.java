@@ -45,8 +45,6 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "priority": target.getConfiguration().setPriority(property(camelContext, java.lang.Integer.class, value)); return true;
         case "recipientmode":
         case "recipientMode": target.getConfiguration().setRecipientMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "routeid":
-        case "routeId": target.getConfiguration().setRouteId(property(camelContext, java.lang.String.class, value)); return true;
         case "shareunitofwork":
         case "shareUnitOfWork": target.getConfiguration().setShareUnitOfWork(property(camelContext, boolean.class, value)); return true;
         case "stoponexception":
@@ -89,8 +87,6 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "priority": return java.lang.Integer.class;
         case "recipientmode":
         case "recipientMode": return java.lang.String.class;
-        case "routeid":
-        case "routeId": return java.lang.String.class;
         case "shareunitofwork":
         case "shareUnitOfWork": return boolean.class;
         case "stoponexception":
@@ -134,8 +130,6 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "priority": return target.getConfiguration().getPriority();
         case "recipientmode":
         case "recipientMode": return target.getConfiguration().getRecipientMode();
-        case "routeid":
-        case "routeId": return target.getConfiguration().getRouteId();
         case "shareunitofwork":
         case "shareUnitOfWork": return target.getConfiguration().isShareUnitOfWork();
         case "stoponexception":

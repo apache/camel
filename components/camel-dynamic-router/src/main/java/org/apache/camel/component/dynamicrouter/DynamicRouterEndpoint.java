@@ -168,7 +168,6 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
             }
         } else {
             CamelContext camelContext = getCamelContext();
-            String routeId = configuration.getRouteId();
             long timeout = configuration.getTimeout();
             ErrorHandler errorHandler = new NoErrorHandler(null);
             if (producerCache == null) {
@@ -178,7 +177,7 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
                     .newScheduledThreadPool(this, "DynamicRouter-AggregateTask", 0);
             AggregationStrategy aggregationStrategy = determineAggregationStrategy(camelContext);
             DynamicRouterMulticastProcessor processor = createProcessor(camelContext, aggregationStrategy, timeout,
-                    errorHandler, aggregateExecutorService, routeId);
+                    errorHandler, aggregateExecutorService);
             ServiceHelper.startService(aggregationStrategy, producerCache, processor);
             component.addRoutingProcessor(configuration.getChannel(), processor);
         }
@@ -186,7 +185,7 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
 
     protected DynamicRouterMulticastProcessor createProcessor(
             CamelContext camelContext, AggregationStrategy aggregationStrategy, long timeout, ErrorHandler errorHandler,
-            ExecutorService aggregateExecutorService, String routeId) {
+            ExecutorService aggregateExecutorService) {
         DynamicRouterMulticastProcessor processor = processorFactorySupplier.get()
                 .getInstance("DynamicRouterMulticastProcessor-" + configuration.getChannel(), camelContext, null,
                         configuration.getRecipientMode(),
@@ -200,7 +199,6 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
         processor.setAggregateExecutorService(aggregateExecutorService);
         processor.setIgnoreInvalidEndpoints(configuration.isIgnoreInvalidEndpoints());
         processor.setId(getId());
-        processor.setRouteId(routeId);
         return processor;
     }
 

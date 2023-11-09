@@ -21,7 +21,7 @@ public class DynamicRouterEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(24);
+        Set<String> props = new HashSet<>(23);
         props.add("aggregationStrategy");
         props.add("channel");
         props.add("controlAction");
@@ -37,7 +37,6 @@ public class DynamicRouterEndpointUriFactory extends org.apache.camel.support.co
         props.add("predicateBean");
         props.add("priority");
         props.add("recipientMode");
-        props.add("routeId");
         props.add("shareUnitOfWork");
         props.add("stopOnException");
         props.add("streaming");

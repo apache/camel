@@ -130,12 +130,6 @@ public class DynamicRouterConfiguration {
     private boolean warnDroppedMessage;
 
     /**
-     * The ID of the route that the dynamic router is part of.
-     */
-    @UriParam(label = "common")
-    private String routeId;
-
-    /**
      * If enabled, then sending via multicast occurs concurrently. Note that the caller thread will still wait until all
      * messages have been fully processed before it continues. It is only the sending and processing of the replies from
      * the multicast recipients that happens concurrently. When parallel processing is enabled, then the Camel routing
@@ -434,14 +428,6 @@ public class DynamicRouterConfiguration {
      */
     public void setRecipientMode(final String recipientMode) {
         this.recipientMode = recipientMode;
-    }
-
-    public String getRouteId() {
-        return routeId;
-    }
-
-    public void setRouteId(final String routeId) {
-        this.routeId = routeId;
     }
 
     /**
