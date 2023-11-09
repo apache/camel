@@ -54,17 +54,15 @@ public class KafkaRecordProcessorFacade {
         return camelKafkaConsumer.isStopping();
     }
 
-    public ProcessingResult processPolledRecords(
-            ConsumerRecords<Object, Object> allRecords, ProcessingResult resultFromPreviousPoll) {
+    public ProcessingResult processPolledRecords( ConsumerRecords<Object, Object> allRecords) {
         logRecords(allRecords);
+        
+        ProcessingResult result = ProcessingResult.newUnprocessed();
 
         Set<TopicPartition> partitions = allRecords.partitions();
         Iterator<TopicPartition> partitionIterator = partitions.iterator();
         
         LOG.debug("Poll received records on {} partitions", partitions.size());
-
-        ProcessingResult lastResult
-                = resultFromPreviousPoll == null ? ProcessingResult.newUnprocessed() : resultFromPreviousPoll;
 
         while (partitionIterator.hasNext() && !isStopping()) {
             TopicPartition partition = partitionIterator.next();
@@ -76,33 +74,33 @@ public class KafkaRecordProcessorFacade {
 
             logRecordsInPartition(partitionRecords, partition);
 
-            while (!lastResult.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
+            while (!result.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
                 ConsumerRecord<Object, Object> record = recordIterator.next();
 
                 LOG.debug("Processing record on partition {} with offset {}", record.partition(), record.offset());
                 
-                lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
+                result = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(),
                         kafkaRecordProcessor, record);
 
                 LOG.debug("Processed record on partition {} with offset {} and got ProcessingResult for partition {} and offset {}",
-                    record.partition(), record.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
+                    record.partition(), record.offset(), result.getPartition(), result.getPartitionLastOffset());
 
                 if (consumerListener != null) {
-                    if (!consumerListener.afterProcess(lastResult)) {
+                    if (!consumerListener.afterProcess(result)) {
                         commitManager.commit(partition);
-                        return lastResult;
+                        return result;
                     }
                 }
             }
 
-            if (!lastResult.isBreakOnErrorHit()) {
+            if (!result.isBreakOnErrorHit()) {
                 LOG.debug("Committing offset on successful execution");
                 // all records processed from partition so commit them
                 commitManager.commit(partition);
             }
         }
 
-        return lastResult;
+        return result;
     }
 
     private void logRecordsInPartition(List<ConsumerRecord<Object, Object>> partitionRecords, TopicPartition partition) {
@@ -122,7 +120,6 @@ public class KafkaRecordProcessorFacade {
             TopicPartition partition,
             boolean partitionHasNext,
             boolean recordHasNext,
-            final ProcessingResult lastResult,
             KafkaRecordProcessor kafkaRecordProcessor,
             ConsumerRecord<Object, Object> record) {
 
@@ -132,7 +129,7 @@ public class KafkaRecordProcessorFacade {
 
         ProcessingResult currentResult
                 = kafkaRecordProcessor.processExchange(exchange, partition, partitionHasNext,
-                        recordHasNext, record, lastResult, camelKafkaConsumer.getExceptionHandler());
+                        recordHasNext, record, camelKafkaConsumer.getExceptionHandler());
 
         if (!currentResult.isBreakOnErrorHit()) {
             commitManager.recordOffset(partition, currentResult.getPartitionLastOffset());

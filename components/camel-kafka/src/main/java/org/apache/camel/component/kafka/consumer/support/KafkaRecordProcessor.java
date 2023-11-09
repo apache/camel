@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.kafka.consumer.support;
 
-import java.util.stream.StreamSupport;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.component.kafka.consumer.AbstractCommitManager;
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
@@ -34,6 +31,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.stream.StreamSupport;
 
 public class KafkaRecordProcessor {
 
@@ -86,8 +85,7 @@ public class KafkaRecordProcessor {
 
     public ProcessingResult processExchange(
             Exchange exchange, TopicPartition topicPartition, boolean partitionHasNext,
-            boolean recordHasNext, ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
-            ExceptionHandler exceptionHandler) {
+            boolean recordHasNext, ConsumerRecord<Object, Object> record, ExceptionHandler exceptionHandler) {
 
         Message message = exchange.getMessage();
 
@@ -114,13 +112,13 @@ public class KafkaRecordProcessor {
         } catch (Exception e) {
             exchange.setException(e);
         }
+        
         if (exchange.getException() != null) {
             LOG.debug("An exception was thrown for record at partition {} and offset {}",
                     record.partition(), record.offset());
 
-            boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
-                    exceptionHandler);
-            return new ProcessingResult(breakOnErrorExit, lastResult.getPartition(), lastResult.getPartitionLastOffset(), true);
+            boolean breakOnErrorExit = processException(exchange, topicPartition, record, exceptionHandler);
+            return new ProcessingResult(breakOnErrorExit, record.partition(), record.offset(), true);
         } else {
             return new ProcessingResult(false, record.partition(), record.offset(), exchange.getException() != null);
         }
@@ -128,19 +126,10 @@ public class KafkaRecordProcessor {
 
     private boolean processException(
             Exchange exchange, TopicPartition topicPartition,
-            ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
-            ExceptionHandler exceptionHandler) {
+            ConsumerRecord<Object, Object> record, ExceptionHandler exceptionHandler) {
 
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
-            if (lastResult.getPartition() != -1 &&
-                lastResult.getPartition() != record.partition()) {
-                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " + 
-                        " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
-                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(), 
-                        record.partition(), record.offset());
-            }
-
             // we are failing and we should break out
             if (LOG.isWarnEnabled()) {
                 Exception exc = exchange.getException();
@@ -150,27 +139,13 @@ public class KafkaRecordProcessor {
                         record.offset(), record.partition());
             }
 
-            // force commit, so we resume on next poll where we failed 
-            // except when the failure happened at the first message in a poll
-            if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
-                // the record we are processing had the error 
-                // so we will force commit the offset prior 
-                // this will enable the current desired behavior to 
-                // retry the message 1 more time
-                //
-                // Note: without a more extensive look at handling of breakOnFirstError
-                // we will still need the lastResult so that we don't force 
-                // retrying this message over and over
-                // commitManager.forceCommit(topicPartition, record.offset() - 1);
-                
-                // we should just do a commit (vs the original forceCommit)
-                // when route uses NOOP Commit Manager it will rely
-                // on the route implementation to explicitly commit offset
-                // when route uses Synch/Asynch Commit Manager it will 
-                // ALWAYS commit the offset for the failing record
-                // and will ALWAYS retry it
-                commitManager.commit(topicPartition);
-            }
+            // we should just do a commit (vs the original forceCommit)
+            // when route uses NOOP Commit Manager it will rely
+            // on the route implementation to explicitly commit offset
+            // when route uses Synch/Asynch Commit Manager it will 
+            // ALWAYS commit the offset for the failing record
+            // and will ALWAYS retry it
+            commitManager.commit(topicPartition);
 
             // continue to next partition
             return true;
