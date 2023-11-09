@@ -144,9 +144,11 @@ function main() {
     fi
   fi
 
-  echo "Processing surefire and failsafe reports to create the summary"
-  echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |"  > "$GITHUB_STEP_SUMMARY"
-  find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+  if [[ ${ret} -ne 0 ]] ; then
+    echo "Processing surefire and failsafe reports to create the summary"
+    echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |"  > "$GITHUB_STEP_SUMMARY"
+    find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+  fi
 
   exit $ret
 }
