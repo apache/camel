@@ -130,6 +130,9 @@ class ExportCamelMain extends Export {
         Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs
         copyLocalLibDependencies(deps);
+        // copy agent JARs and remove as dependency
+        copyAgentDependencies(deps);
+        deps.removeIf(d -> d.startsWith("agent:"));
         if ("maven".equals(buildTool)) {
             createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps, srcPackageName);
             if (mavenWrapper) {
