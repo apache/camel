@@ -63,7 +63,7 @@ public class KafkaRecordProcessor {
             message.setHeader(KafkaConstants.KEY, record.key());
         }
 
-        LOG.debug("setting up the exchange for message from partition {} and offset {}",
+        LOG.debug("Setting up the exchange for message from partition {} and offset {}",
                 record.partition(), record.offset());
 
         message.setBody(record.value());
@@ -115,13 +115,11 @@ public class KafkaRecordProcessor {
             exchange.setException(e);
         }
         if (exchange.getException() != null) {
-
             LOG.debug("An exception was thrown for record at partition {} and offset {}",
                     record.partition(), record.offset());
 
             boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
                     exceptionHandler);
-
             return new ProcessingResult(breakOnErrorExit, lastResult.getPartition(), lastResult.getPartitionLastOffset(), true);
         } else {
             return new ProcessingResult(false, record.partition(), record.offset(), exchange.getException() != null);
@@ -135,12 +133,11 @@ public class KafkaRecordProcessor {
 
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
-
             if (lastResult.getPartition() != -1 &&
-                    lastResult.getPartition() != record.partition()) {
-                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " +
-                          " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
-                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(),
+                lastResult.getPartition() != record.partition()) {
+                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " + 
+                        " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
+                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(), 
                         record.partition(), record.offset());
             }
 
@@ -149,14 +146,30 @@ public class KafkaRecordProcessor {
                 Exception exc = exchange.getException();
                 LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(),
                         exc.getMessage());
-                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.",
-                        lastResult.getPartitionLastOffset(), lastResult.getPartition());
+                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.", 
+                        record.offset(), record.partition());
             }
 
             // force commit, so we resume on next poll where we failed 
             // except when the failure happened at the first message in a poll
             if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
-                commitManager.forceCommit(topicPartition, lastResult.getPartitionLastOffset());
+                // the record we are processing had the error 
+                // so we will force commit the offset prior 
+                // this will enable the current desired behavior to 
+                // retry the message 1 more time
+                //
+                // Note: without a more extensive look at handling of breakOnFirstError
+                // we will still need the lastResult so that we don't force 
+                // retrying this message over and over
+                // commitManager.forceCommit(topicPartition, record.offset() - 1);
+                
+                // we should just do a commit (vs the original forceCommit)
+                // when route uses NOOP Commit Manager it will rely
+                // on the route implementation to explicitly commit offset
+                // when route uses Synch/Asynch Commit Manager it will 
+                // ALWAYS commit the offset for the failing record
+                // and will ALWAYS retry it
+                commitManager.commit(topicPartition);
             }
 
             // continue to next partition
