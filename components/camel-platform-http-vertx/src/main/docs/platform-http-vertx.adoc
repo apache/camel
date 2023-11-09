@@ -96,3 +96,15 @@ Camel `HttpMessage` as shown in the custom `Processor` below :
 });
 ----
 
+== Handling large request / response payloads
+
+When large request / response payloads are expected, there is a `useStreaming` option, which can be enabled to improve performance.
+When `useStreaming` is `true`, it will take advantage of xref:manual::stream-caching.adoc[stream caching]. In conjunction with enabling disk spooling, you can avoid having to store the entire request body payload in memory.
+
+[source,java]
+----
+// Handle a large request body and stream it to a file
+from("platform-http:/upload?httpMethodRestrict=POST&useStreaming=true")
+    .log("Processing large request body...")
+    .to("file:/uploads?fileName=uploaded.txt")
+----

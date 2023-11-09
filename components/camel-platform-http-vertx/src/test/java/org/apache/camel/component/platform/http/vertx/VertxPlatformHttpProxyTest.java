@@ -25,7 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -55,15 +56,16 @@ public class VertxPlatformHttpProxyTest {
         }
     }
 
-    @Test
-    void testProxy() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void testProxy(boolean useStreaming) throws Exception {
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
 
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:proxy")
+                    from("platform-http:proxy?useStreaming=" + useStreaming)
                             .toD("${headers." + Exchange.HTTP_URI + "}?bridgeEndpoint=true");
                 }
             });

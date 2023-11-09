@@ -27,11 +27,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.netty.handler.codec.http.HttpHeaderValues;
+import io.vertx.core.Context;
+import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
+import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.net.SocketAddress;
+import io.vertx.core.streams.Pump;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -189,57 +195,72 @@ public final class VertxPlatformHttpSupport {
         return codeToUse;
     }
 
-    static void writeResponse(
-            RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions)
-            throws Exception {
+    static Future<Void> writeResponse(
+            RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
         final Object body = toHttpResponse(ctx.response(), camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
-        final HttpServerResponse response = ctx.response();
+        final Promise<Void> promise = Promise.promise();
 
         if (body == null) {
             LOGGER.trace("No payload to send as reply for exchange: {}", camelExchange);
-            response.end();
+            ctx.end();
+            promise.complete();
         } else if (body instanceof String) {
-            response.end((String) body);
+            ctx.end((String) body);
+            promise.complete();
         } else if (body instanceof InputStream) {
-            writeResponseAs(response, (InputStream) body);
+            writeResponseAs(promise, ctx, (InputStream) body);
         } else if (body instanceof Buffer) {
-            response.end((Buffer) body);
+            ctx.end((Buffer) body);
+            promise.complete();
         } else {
-            writeResponseAsFallback(camelExchange, body, response);
+            try {
+                writeResponseAsFallback(promise, camelExchange, body, ctx);
+            } catch (IOException | NoTypeConversionAvailableException e) {
+                promise.fail(e);
+            }
         }
+
+        return promise.future();
     }
 
-    private static void writeResponseAsFallback(Exchange camelExchange, Object body, HttpServerResponse response)
+    private static void writeResponseAsFallback(Promise<Void> promise, Exchange camelExchange, Object body, RoutingContext ctx)
             throws NoTypeConversionAvailableException, IOException {
         final TypeConverter tc = camelExchange.getContext().getTypeConverter();
         // Try to convert to ByteBuffer for performance reason
         final ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
         if (bb != null) {
-            writeResponseAs(response, bb);
+            writeResponseAs(promise, ctx, bb);
         } else {
             // Otherwise fallback to most generic InputStream conversion
             final InputStream is = tc.mandatoryConvertTo(InputStream.class, camelExchange, body);
-            writeResponseAs(response, is);
+            writeResponseAs(promise, ctx, is);
         }
     }
 
-    private static void writeResponseAs(HttpServerResponse response, ByteBuffer bb) {
+    private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, ByteBuffer bb) {
         final Buffer b = Buffer.buffer(bb.capacity());
         b.setBytes(0, bb);
-        response.end(b);
+        ctx.end(b);
+        promise.complete();
     }
 
-    private static void writeResponseAs(HttpServerResponse response, InputStream is) throws IOException {
-        final byte[] bytes = new byte[4096];
-        try (InputStream in = is) {
-            int len;
-            while ((len = in.read(bytes)) >= 0) {
-                final Buffer b = Buffer.buffer(len);
-                b.appendBytes(bytes, 0, len);
-                response.write(b);
-            }
-        }
-        response.end();
+    private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, InputStream is) {
+        HttpServerResponse response = ctx.response();
+        Vertx vertx = ctx.vertx();
+        Context context = vertx.getOrCreateContext();
+
+        // Process the InputStream async to avoid blocking the Vert.x event loop on large responses
+        AsyncInputStream asyncInputStream = new AsyncInputStream(vertx, context, is);
+        asyncInputStream.exceptionHandler(promise::fail);
+        asyncInputStream.endHandler(event -> {
+            response.end().onComplete(result -> {
+                asyncInputStream.close(closeResult -> promise.complete());
+            });
+        });
+
+        // Pump the InputStream content into the HTTP response WriteStream
+        Pump pump = Pump.pump(asyncInputStream, response);
+        context.runOnContext(event -> pump.start());
     }
 
     static void populateCamelHeaders(
@@ -335,5 +356,23 @@ public final class VertxPlatformHttpSupport {
         list.add(value);
         value = list;
         return value;
+    }
+
+    static boolean isMultiPartFormData(RoutingContext ctx) {
+        return isContentTypeMatching(ctx, HttpHeaderValues.MULTIPART_FORM_DATA.toString());
+    }
+
+    static boolean isFormUrlEncoded(RoutingContext ctx) {
+        return isContentTypeMatching(ctx, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString());
+    }
+
+    private static boolean isContentTypeMatching(RoutingContext ctx, String expectedContentType) {
+        String contentType = ctx.parsedHeaders().contentType().value();
+        boolean match = false;
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(contentType)) {
+            String lowerCaseContentType = contentType.toLowerCase();
+            match = lowerCaseContentType.startsWith(expectedContentType);
+        }
+        return match;
     }
 }
