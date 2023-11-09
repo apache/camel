@@ -2510,6 +2510,38 @@ Will let Camel JBang export this into as `src/main/jkube/configmap.yaml`.
 
 You can find more information about resource fragments at the https://eclipse.dev/jkube/docs/kubernetes-maven-plugin/#_resource_fragments[Eclipse JKube] website.
 
+==== Exporting with Java Agent included
+
+The Camel Main runtime allows to export with Java Agents that makes it easier to run your Camel integration
+with Java Agents such as OpenTelemetry Agent.
+
+NOTE: Only `camel-main` as runtime supports exporting with Java Agents included.
+
+This requires to specify the agent as a dependency with `agent:` as prefix as shown below in `application.properties`:
+
+[source,properties]
+----
+camel.jbang.dependencies=camel:opentelemetry,agent:io.opentelemetry.javaagent:opentelemetry-javaagent:1.31.0
+camel.opentelemetry.enabled=true
+----
+
+Then you can export to `--runtime=camel-main` as follows:
+
+[source,bash]
+----
+camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=../myproject
+----
+
+Then Camel JBang will detect the `agent:` dependency and download this from Maven and save to a `../myproject/agent` folder.
+You can then start the Camel integration from Java via:
+
+[source,bash]
+----
+cd ../myproject
+mvn clean package
+java -javaagent:agent/opentelemetry-javaagent-1.31.0.jar -jar target/acme-1.0-SNAPSHOT.jar
+----
+
 === Exporting with selected files
 
 By default, Camel will export what was last run, or all files from the current directory.
