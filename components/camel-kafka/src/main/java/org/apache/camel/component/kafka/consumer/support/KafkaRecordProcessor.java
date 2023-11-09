@@ -117,10 +117,9 @@ public class KafkaRecordProcessor {
         if (exchange.getException() != null) {
             LOG.debug("An exception was thrown for record at partition {} and offset {}",
                     record.partition(), record.offset());
-
+            
             boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
                     exceptionHandler);
-
             return new ProcessingResult(breakOnErrorExit, lastResult.getPartition(), lastResult.getPartitionLastOffset(), true);
         } else {
             return new ProcessingResult(false, record.partition(), record.offset(), exchange.getException() != null);
@@ -128,21 +127,20 @@ public class KafkaRecordProcessor {
     }
 
     private boolean processException(
-            Exchange exchange, TopicPartition topicPartition,
+            Exchange exchange, TopicPartition topicPartition, 
             ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
-
             if (lastResult.getPartition() != -1 &&
-                    lastResult.getPartition() != record.partition()) {
-                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " +
-                          " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
-                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(),
+                lastResult.getPartition() != record.partition()) {
+                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " + 
+                        " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
+                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(), 
                         record.partition(), record.offset());
             }
-
+            
             // we are failing and we should break out
             if (LOG.isWarnEnabled()) {
                 Exception exc = exchange.getException();
