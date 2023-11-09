@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms.async;
 
-import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,7 +23,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.awaitility.Awaitility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,10 +52,7 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
 
             LOG.info("Simulating a task which takes {} millis to reply", getEndpoint().getDelay());
 
-            Awaitility.await()
-                    .pollDelay(Duration.ofMillis(getEndpoint().getDelay()))
-                    .until(() -> true);
-
+            Thread.sleep(getEndpoint().getDelay());
             int count = counter.incrementAndGet();
             if (getEndpoint().getFailFirstAttempts() >= count) {
                 LOG.info("Simulating a failure at attempt {}", count);

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms.temp;
 
-import java.time.Duration;
-
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.Produce;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +24,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.xml.CamelBeanPostProcessor;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -105,9 +102,7 @@ public class JmsReconnectManualTest {
          * Wait long enough for the jms client to do a full reconnect. In the Tibco EMS case this means that a Temporary
          * Destination created before is invalid now
          */
-        Awaitility.await()
-                .pollDelay(Duration.ofMillis(5000))
-                .until(() -> true);
+        Thread.sleep(5000);
 
         /**
          * Before the fix to this issue this call will throw a spring UncategorizedJmsException which contains an

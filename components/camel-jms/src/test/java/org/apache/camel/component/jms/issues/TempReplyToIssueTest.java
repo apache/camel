@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import java.time.Duration;
 
 import jakarta.jms.Destination;
-
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -31,7 +29,6 @@ import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -78,9 +75,7 @@ public class TempReplyToIssueTest extends AbstractJMSTest {
         producer.stop();
 
         // sleep a bit so Camel will send the reply a bit later
-        Awaitility.await()
-                .pollDelay(Duration.ofMillis(1000))
-                .until(() -> true);
+        Thread.sleep(1000);
 
         // this will later cause a problem as the temp queue has been deleted
         // and exceptions will be logged etc
