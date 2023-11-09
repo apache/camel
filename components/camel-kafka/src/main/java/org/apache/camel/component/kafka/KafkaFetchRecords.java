@@ -352,7 +352,7 @@ public class KafkaFetchRecords implements Runnable {
                 }
 
                 updateTaskState();
-                if (result.isBreakOnErrorHit() && !this.state.equals(State.PAUSED)) {
+                if (result != null && result.isBreakOnErrorHit() && !this.state.equals(State.PAUSED)) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
                     // force re-connect
                     setReconnect(true);
