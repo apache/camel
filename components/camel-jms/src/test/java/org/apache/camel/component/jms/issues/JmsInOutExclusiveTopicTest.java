@@ -82,8 +82,6 @@ public class JmsInOutExclusiveTopicTest extends AbstractJMSTest {
                             log.info("ReplyTo: {}", replyTo);
                             log.info("CorrelationID: {}", cid);
                             if (replyTo != null && cid != null) {
-                                // wait a bit before sending back
-                                Thread.sleep(1000);
                                 log.info("Sending back reply message on {}", replyTo);
                                 template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(),
                                         "JMSCorrelationID", cid);

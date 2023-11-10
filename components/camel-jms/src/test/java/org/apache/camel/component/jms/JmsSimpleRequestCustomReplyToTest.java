@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -113,10 +114,8 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
         public void run() {
             try {
                 LOG.debug("Waiting for latch");
-                latch.await();
-
                 // wait 1 sec after latch before sending he late replay
-                Thread.sleep(1000);
+                latch.await(1, TimeUnit.SECONDS);
             } catch (Exception e) {
                 // ignore
             }

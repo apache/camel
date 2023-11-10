@@ -31,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -140,9 +141,6 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
                 "JMSExpiration", ttl);
 
-        // sleep just a little
-        Thread.sleep(2000);
-
         // use timeout in case running on slow box
         Exchange bar = consumer.receive("activemq:queue:barJmsProducerWithJMSHeaderTest", 10000);
         assertNotNull(bar, "Should be a message on queue");
@@ -201,16 +199,12 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeaders("activemq:queue:barJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
                 headers);
 
-        // sleep just a little
-        Thread.sleep(50);
-
         Exchange bar = consumer.receive("activemq:queue:barJmsProducerWithJMSHeaderTest", 5000);
         assertNotNull(bar, "Should be a message on queue");
         template.send("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", bar);
 
-        Thread.sleep(1000);
-
-        MockEndpoint.assertIsSatisfied(context);
+        Awaitility.await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Test

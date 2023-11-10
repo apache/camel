@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import jakarta.jms.Destination;
 
+import jakarta.jms.Destination;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;

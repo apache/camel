@@ -99,8 +99,6 @@ public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
                 LOG.info("Waiting for latch");
                 latch.await(30, TimeUnit.SECONDS);
 
-                // wait 1 sec after latch before sending he late replay
-                Thread.sleep(1000);
             } catch (Exception e) {
                 // ignore
             }

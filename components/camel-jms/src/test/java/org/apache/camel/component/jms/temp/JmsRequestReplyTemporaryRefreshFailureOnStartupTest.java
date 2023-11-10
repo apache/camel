@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -86,11 +87,12 @@ public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTe
         } catch (Exception exception) {
 
         }
-        //wait for connection recovery before starting the broker
-        Thread.sleep(recoveryInterval + 500L);
 
-        template.asyncRequestBody("direct:start", "ping");
+        Awaitility.await().untilAsserted(() -> {
+            template.asyncRequestBody("direct:start", "ping");
 
-        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+            MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        });
+
     }
 }
