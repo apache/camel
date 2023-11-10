@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka.consumer.support;
 
+import java.util.stream.StreamSupport;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -31,8 +33,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.stream.StreamSupport;
 
 public class KafkaRecordProcessor {
 
@@ -112,7 +112,7 @@ public class KafkaRecordProcessor {
         } catch (Exception e) {
             exchange.setException(e);
         }
-        
+
         ProcessingResult result = ProcessingResult.newUnprocessed();
         if (exchange.getException() != null) {
             LOG.debug("An exception was thrown for record at partition {} and offset {}",
@@ -121,13 +121,13 @@ public class KafkaRecordProcessor {
             boolean breakOnErrorExit = processException(exchange, topicPartition, record, exceptionHandler);
             result = new ProcessingResult(breakOnErrorExit, true);
         } else {
-            result = new  ProcessingResult(false, exchange.getException() != null);
+            result = new ProcessingResult(false, exchange.getException() != null);
         }
-        
+
         if (!result.isBreakOnErrorHit()) {
             commitManager.recordOffset(topicPartition, record.offset());
         }
-        
+
         return result;
     }
 
@@ -142,7 +142,7 @@ public class KafkaRecordProcessor {
                 Exception exc = exchange.getException();
                 LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(),
                         exc.getMessage());
-                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.", 
+                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.",
                         record.offset(), record.partition());
             }
 

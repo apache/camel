@@ -54,21 +54,21 @@ public class KafkaRecordProcessorFacade {
         return camelKafkaConsumer.isStopping();
     }
 
-    public ProcessingResult processPolledRecords( ConsumerRecords<Object, Object> allRecords) {
+    public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
         logRecords(allRecords);
-        
+
         ProcessingResult result = ProcessingResult.newUnprocessed();
 
         Set<TopicPartition> partitions = allRecords.partitions();
         Iterator<TopicPartition> partitionIterator = partitions.iterator();
-        
+
         LOG.debug("Poll received records on {} partitions", partitions.size());
 
         while (partitionIterator.hasNext() && !isStopping()) {
             TopicPartition topicPartition = partitionIterator.next();
 
             LOG.debug("Processing records on partition {}", topicPartition.partition());
-            
+
             List<ConsumerRecord<Object, Object>> partitionRecords = allRecords.records(topicPartition);
             Iterator<ConsumerRecord<Object, Object>> recordIterator = partitionRecords.iterator();
 
@@ -78,7 +78,7 @@ public class KafkaRecordProcessorFacade {
                 ConsumerRecord<Object, Object> record = recordIterator.next();
 
                 LOG.debug("Processing record on partition {} with offset {}", record.partition(), record.offset());
-                
+
                 result = processRecord(topicPartition, partitionIterator.hasNext(), recordIterator.hasNext(),
                         kafkaRecordProcessor, record);
 
@@ -127,7 +127,7 @@ public class KafkaRecordProcessorFacade {
         Exchange exchange = camelKafkaConsumer.createExchange(false);
 
         ProcessingResult result = kafkaRecordProcessor.processExchange(exchange, topicPartition, partitionHasNext,
-            recordHasNext, record, camelKafkaConsumer.getExceptionHandler());
+                recordHasNext, record, camelKafkaConsumer.getExceptionHandler());
 
         // success so release the exchange
         camelKafkaConsumer.releaseExchange(exchange, false);
