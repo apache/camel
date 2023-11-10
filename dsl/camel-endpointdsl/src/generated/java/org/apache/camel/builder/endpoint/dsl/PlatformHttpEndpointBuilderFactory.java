@@ -160,7 +160,8 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to use streaming for large requests and responses.
+         * Whether to use streaming for large requests and responses (currently
+         * only supported by camel-platform-http-vertx).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -175,7 +176,8 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to use streaming for large requests and responses.
+         * Whether to use streaming for large requests and responses (currently
+         * only supported by camel-platform-http-vertx).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

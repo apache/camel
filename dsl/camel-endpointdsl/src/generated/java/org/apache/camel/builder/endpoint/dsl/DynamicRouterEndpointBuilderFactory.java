@@ -45,6 +45,188 @@ public interface DynamicRouterEndpointBuilderFactory {
             return (AdvancedDynamicRouterEndpointBuilder) this;
         }
         /**
+         * Refers to an AggregationStrategy to be used to assemble the replies
+         * from the multicasts, into a single outgoing message from the
+         * Multicast. By default, Camel will use the last reply as the outgoing
+         * message. You can also use a POJO as the AggregationStrategy.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param aggregationStrategy the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder aggregationStrategy(
+                String aggregationStrategy) {
+            doSetProperty("aggregationStrategy", aggregationStrategy);
+            return this;
+        }
+        /**
+         * Refers to a custom Thread Pool to be used for parallel processing.
+         * Notice that, if you set this option, then parallel processing is
+         * automatically implied, and you do not have to enable that option in
+         * addition to this one.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param executorService the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder executorService(
+                String executorService) {
+            doSetProperty("executorService", executorService);
+            return this;
+        }
+        /**
+         * Ignore the invalid endpoint exception when attempting to create a
+         * producer with an invalid endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreInvalidEndpoints the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder ignoreInvalidEndpoints(
+                boolean ignoreInvalidEndpoints) {
+            doSetProperty("ignoreInvalidEndpoints", ignoreInvalidEndpoints);
+            return this;
+        }
+        /**
+         * Ignore the invalid endpoint exception when attempting to create a
+         * producer with an invalid endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreInvalidEndpoints the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder ignoreInvalidEndpoints(
+                String ignoreInvalidEndpoints) {
+            doSetProperty("ignoreInvalidEndpoints", ignoreInvalidEndpoints);
+            return this;
+        }
+        /**
+         * Uses the Processor when preparing the org.apache.camel.Exchange to be
+         * sent. This can be used to deep-clone messages that should be sent, or
+         * to provide any custom logic that is needed before the exchange is
+         * sent.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param onPrepare the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder onPrepare(String onPrepare) {
+            doSetProperty("onPrepare", onPrepare);
+            return this;
+        }
+        /**
+         * If enabled then the aggregate method on AggregationStrategy can be
+         * called concurrently. Notice that this would require the
+         * implementation of AggregationStrategy to be implemented as
+         * thread-safe. By default, this is false, meaning that Camel
+         * synchronizes the call to the aggregate method. Though, in some
+         * use-cases, this can be used to archive higher performance when the
+         * AggregationStrategy is implemented as thread-safe.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param parallelAggregate the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder parallelAggregate(
+                boolean parallelAggregate) {
+            doSetProperty("parallelAggregate", parallelAggregate);
+            return this;
+        }
+        /**
+         * If enabled then the aggregate method on AggregationStrategy can be
+         * called concurrently. Notice that this would require the
+         * implementation of AggregationStrategy to be implemented as
+         * thread-safe. By default, this is false, meaning that Camel
+         * synchronizes the call to the aggregate method. Though, in some
+         * use-cases, this can be used to archive higher performance when the
+         * AggregationStrategy is implemented as thread-safe.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param parallelAggregate the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder parallelAggregate(
+                String parallelAggregate) {
+            doSetProperty("parallelAggregate", parallelAggregate);
+            return this;
+        }
+        /**
+         * If enabled, then sending via multicast occurs concurrently. Note that
+         * the caller thread will still wait until all messages have been fully
+         * processed before it continues. It is only the sending and processing
+         * of the replies from the multicast recipients that happens
+         * concurrently. When parallel processing is enabled, then the Camel
+         * routing engine will continue processing using the last used thread
+         * from the parallel thread pool. However, if you want to use the
+         * original thread that called the multicast, then make sure to enable
+         * the synchronous option as well.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param parallelProcessing the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder parallelProcessing(
+                boolean parallelProcessing) {
+            doSetProperty("parallelProcessing", parallelProcessing);
+            return this;
+        }
+        /**
+         * If enabled, then sending via multicast occurs concurrently. Note that
+         * the caller thread will still wait until all messages have been fully
+         * processed before it continues. It is only the sending and processing
+         * of the replies from the multicast recipients that happens
+         * concurrently. When parallel processing is enabled, then the Camel
+         * routing engine will continue processing using the last used thread
+         * from the parallel thread pool. However, if you want to use the
+         * original thread that called the multicast, then make sure to enable
+         * the synchronous option as well.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param parallelProcessing the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder parallelProcessing(
+                String parallelProcessing) {
+            doSetProperty("parallelProcessing", parallelProcessing);
+            return this;
+        }
+        /**
          * Recipient mode: firstMatch or allMatch.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -60,7 +242,130 @@ public interface DynamicRouterEndpointBuilderFactory {
             return this;
         }
         /**
-         * Flag to ensure synchronous processing.
+         * Shares the org.apache.camel.spi.UnitOfWork with the parent and each
+         * of the sub messages. Multicast will, by default, not share a unit of
+         * work between the parent exchange and each multicasted exchange. This
+         * means each sub exchange has its own individual unit of work.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param shareUnitOfWork the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder shareUnitOfWork(
+                boolean shareUnitOfWork) {
+            doSetProperty("shareUnitOfWork", shareUnitOfWork);
+            return this;
+        }
+        /**
+         * Shares the org.apache.camel.spi.UnitOfWork with the parent and each
+         * of the sub messages. Multicast will, by default, not share a unit of
+         * work between the parent exchange and each multicasted exchange. This
+         * means each sub exchange has its own individual unit of work.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param shareUnitOfWork the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder shareUnitOfWork(
+                String shareUnitOfWork) {
+            doSetProperty("shareUnitOfWork", shareUnitOfWork);
+            return this;
+        }
+        /**
+         * Will stop further processing if an exception or failure occurred
+         * during processing of an org.apache.camel.Exchange and the caused
+         * exception will be thrown. Will also stop if processing the exchange
+         * failed (has a fault message), or an exception was thrown and handled
+         * by the error handler (such as using onException). In all situations,
+         * the multicast will stop further processing. This is the same behavior
+         * as in the pipeline that is used by the routing engine. The default
+         * behavior is to not stop, but to continue processing until the end.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param stopOnException the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder stopOnException(
+                boolean stopOnException) {
+            doSetProperty("stopOnException", stopOnException);
+            return this;
+        }
+        /**
+         * Will stop further processing if an exception or failure occurred
+         * during processing of an org.apache.camel.Exchange and the caused
+         * exception will be thrown. Will also stop if processing the exchange
+         * failed (has a fault message), or an exception was thrown and handled
+         * by the error handler (such as using onException). In all situations,
+         * the multicast will stop further processing. This is the same behavior
+         * as in the pipeline that is used by the routing engine. The default
+         * behavior is to not stop, but to continue processing until the end.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param stopOnException the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder stopOnException(
+                String stopOnException) {
+            doSetProperty("stopOnException", stopOnException);
+            return this;
+        }
+        /**
+         * If enabled, then Camel will process replies out-of-order (e.g., in
+         * the order they come back). If disabled, Camel will process replies in
+         * the same order as defined by the multicast.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streaming the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder streaming(boolean streaming) {
+            doSetProperty("streaming", streaming);
+            return this;
+        }
+        /**
+         * If enabled, then Camel will process replies out-of-order (e.g., in
+         * the order they come back). If disabled, Camel will process replies in
+         * the same order as defined by the multicast.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streaming the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder streaming(String streaming) {
+            doSetProperty("streaming", streaming);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used. When
+         * enabled then the same thread is used to continue routing after the
+         * multicast is complete, even if parallel processing is enabled.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -75,7 +380,9 @@ public interface DynamicRouterEndpointBuilderFactory {
             return this;
         }
         /**
-         * Flag to ensure synchronous processing.
+         * Sets whether synchronous processing should be strictly used. When
+         * enabled then the same thread is used to continue routing after the
+         * multicast is complete, even if parallel processing is enabled.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -88,6 +395,52 @@ public interface DynamicRouterEndpointBuilderFactory {
          */
         default DynamicRouterEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets a total timeout specified in milliseconds, when using parallel
+         * processing. If the Multicast has not been able to send and process
+         * all replies within the given timeframe, then the timeout triggers and
+         * the Multicast breaks out and continues. Notice that, if you provide a
+         * TimeoutAwareAggregationStrategy, then the timeout method is invoked
+         * before breaking out. If the timeout is reached with running tasks
+         * still remaining, certain tasks (for which it is difficult for Camel
+         * to shut down in a graceful manner) may continue to run. So use this
+         * option with a bit of care.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder timeout(long timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * Sets a total timeout specified in milliseconds, when using parallel
+         * processing. If the Multicast has not been able to send and process
+         * all replies within the given timeframe, then the timeout triggers and
+         * the Multicast breaks out and continues. Notice that, if you provide a
+         * TimeoutAwareAggregationStrategy, then the timeout method is invoked
+         * before breaking out. If the timeout is reached with running tasks
+         * still remaining, certain tasks (for which it is difficult for Camel
+         * to shut down in a graceful manner) may continue to run. So use this
+         * option with a bit of care.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder timeout(String timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
