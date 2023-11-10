@@ -102,7 +102,7 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
                 return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
             }
 
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw RuntimeCamelException.wrapRuntimeCamelException(t);
         }
     }
