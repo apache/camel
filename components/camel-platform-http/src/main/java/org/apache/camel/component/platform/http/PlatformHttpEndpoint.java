@@ -69,8 +69,8 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     @UriParam(label = "advanced",
               description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new PlatformHttpHeaderFilterStrategy();
-    @UriParam(label = "consumer", defaultValue = "false",
-              description = "Whether to use streaming for large requests and responses")
+    @UriParam(label = "consumer",
+              description = "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
     private boolean useStreaming;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
