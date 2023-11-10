@@ -23,9 +23,9 @@ import java.util.function.Supplier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlChannelProcessor.DynamicRouterControlChannelProcessorFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlProducer.DynamicRouterControlProducerFactory;
-import org.apache.camel.component.dynamicrouter.DynamicRouterProcessor.DynamicRouterProcessorFactory;
+import org.apache.camel.component.dynamicrouter.DynamicRouterMulticastProcessor.DynamicRouterRecipientListProcessorFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterProducer.DynamicRouterProducerFactory;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
+import org.apache.camel.component.dynamicrouter.PrioritizedFilter.PrioritizedFilterFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.service.ServiceHelper;
@@ -49,9 +49,9 @@ public class DynamicRouterComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterComponent.class);
 
     /**
-     * The {@link DynamicRouterProcessor}s, mapped by their channel, for the Dynamic Router.
+     * The {@link DynamicRouterMulticastProcessor}s, mapped by their channel, for the Dynamic Router.
      */
-    private final transient Map<String, DynamicRouterProcessor> processors = new HashMap<>();
+    private final Map<String, DynamicRouterMulticastProcessor> processors = new HashMap<>();
 
     private DynamicRouterControlChannelProcessor controlChannelProcessor;
 
@@ -61,9 +61,10 @@ public class DynamicRouterComponent extends DefaultComponent {
     private Supplier<DynamicRouterEndpointFactory> endpointFactorySupplier = DynamicRouterEndpointFactory::new;
 
     /**
-     * Creates a {@link DynamicRouterProcessor} instance.
+     * Creates a {@link DynamicRouterMulticastProcessor} instance.
      */
-    private Supplier<DynamicRouterProcessorFactory> processorFactorySupplier = DynamicRouterProcessorFactory::new;
+    private Supplier<DynamicRouterRecipientListProcessorFactory> processorFactorySupplier
+            = DynamicRouterRecipientListProcessorFactory::new;
 
     /**
      * Creates a {@link DynamicRouterControlChannelProcessor} instance.
@@ -83,9 +84,9 @@ public class DynamicRouterComponent extends DefaultComponent {
             = DynamicRouterControlProducerFactory::new;
 
     /**
-     * Creates a {@link PrioritizedFilterProcessor} instance.
+     * Creates a {@link PrioritizedFilter} instance.
      */
-    private Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier = PrioritizedFilterProcessorFactory::new;
+    private Supplier<PrioritizedFilterFactory> filterProcessorFactorySupplier = PrioritizedFilterFactory::new;
 
     /**
      * Create an instance of the Dynamic Router component.
@@ -98,19 +99,19 @@ public class DynamicRouterComponent extends DefaultComponent {
      * Create an instance of the Dynamic Router component with custom factories.
      *
      * @param endpointFactorySupplier                creates the {@link DynamicRouterEndpoint}
-     * @param processorFactorySupplier               creates the {@link DynamicRouterProcessor}
+     * @param processorFactorySupplier               creates the {@link DynamicRouterMulticastProcessor}
      * @param controlChannelProcessorFactorySupplier creates the {@link DynamicRouterControlChannelProcessor}
      * @param producerFactorySupplier                creates the {@link DynamicRouterProducer}
      * @param controlProducerFactorySupplier         creates the {@link DynamicRouterControlProducer}
-     * @param filterProcessorFactorySupplier         creates the {@link PrioritizedFilterProcessor}
+     * @param filterProcessorFactorySupplier         creates the {@link PrioritizedFilter}
      */
     public DynamicRouterComponent(
                                   final Supplier<DynamicRouterEndpointFactory> endpointFactorySupplier,
-                                  final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
+                                  final Supplier<DynamicRouterRecipientListProcessorFactory> processorFactorySupplier,
                                   final Supplier<DynamicRouterControlChannelProcessorFactory> controlChannelProcessorFactorySupplier,
                                   final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
                                   final Supplier<DynamicRouterControlProducerFactory> controlProducerFactorySupplier,
-                                  final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
+                                  final Supplier<PrioritizedFilterFactory> filterProcessorFactorySupplier) {
         this.endpointFactorySupplier = endpointFactorySupplier;
         this.processorFactorySupplier = processorFactorySupplier;
         this.controlChannelProcessorFactorySupplier = controlChannelProcessorFactorySupplier;
@@ -168,7 +169,7 @@ public class DynamicRouterComponent extends DefaultComponent {
      * @param channel   the channel to add the processor to
      * @param processor the processor to add for the channel
      */
-    void addRoutingProcessor(final String channel, final DynamicRouterProcessor processor) {
+    void addRoutingProcessor(final String channel, final DynamicRouterMulticastProcessor processor) {
         if (processors.putIfAbsent(channel, processor) != null) {
             throw new IllegalArgumentException(
                     "Dynamic Router can have only one processor per channel; channel '" + channel
@@ -182,7 +183,7 @@ public class DynamicRouterComponent extends DefaultComponent {
      * @param  channel the channel to get the processor for
      * @return         the processor for the given channel
      */
-    public DynamicRouterProcessor getRoutingProcessor(final String channel) {
+    public DynamicRouterMulticastProcessor getRoutingProcessor(final String channel) {
         return processors.get(channel);
     }
 

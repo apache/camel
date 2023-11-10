@@ -105,16 +105,16 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
         when(configuration.getPredicate()).thenReturn(expression);
         Message message = mock(Message.class);
         when(message.getBody()).thenReturn(null);
-        when(exchange.getIn()).thenReturn(message);
+        when(exchange.getMessage()).thenReturn(message);
 
         final DynamicRouterControlMessage result = controlChannelProcessor.handleControlMessage(exchange);
 
         assertNotNull(result);
-        assertEquals(CONTROL_ACTION_SUBSCRIBE, result.getMessageType().name().toLowerCase());
-        assertEquals(DYNAMIC_ROUTER_CHANNEL, result.getChannel());
-        assertEquals(TEST_ID, result.getId());
-        assertEquals("testUri", result.getEndpoint());
-        assertEquals(10, result.getPriority());
+        assertEquals(CONTROL_ACTION_SUBSCRIBE, result.messageType().name().toLowerCase());
+        assertEquals(DYNAMIC_ROUTER_CHANNEL, result.channel());
+        assertEquals(TEST_ID, result.id());
+        assertEquals("testUri", result.endpoint());
+        assertEquals(10, result.priority());
     }
 
     @Test
@@ -124,14 +124,14 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
         when(configuration.getSubscriptionId()).thenReturn(TEST_ID);
         Message message = mock(Message.class);
         when(message.getBody()).thenReturn(null);
-        when(exchange.getIn()).thenReturn(message);
+        when(exchange.getMessage()).thenReturn(message);
 
         final DynamicRouterControlMessage result = controlChannelProcessor.handleControlMessage(exchange);
 
         assertNotNull(result);
-        assertEquals(CONTROL_ACTION_UNSUBSCRIBE, result.getMessageType().name().toLowerCase());
-        assertEquals(DYNAMIC_ROUTER_CHANNEL, result.getChannel());
-        assertEquals(TEST_ID, result.getId());
+        assertEquals(CONTROL_ACTION_UNSUBSCRIBE, result.messageType().name().toLowerCase());
+        assertEquals(DYNAMIC_ROUTER_CHANNEL, result.channel());
+        assertEquals(TEST_ID, result.id());
     }
 
     @Test
@@ -146,7 +146,7 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
                 .build();
         Message message = mock(Message.class);
         when(message.getBody()).thenReturn(body);
-        when(exchange.getIn()).thenReturn(message);
+        when(exchange.getMessage()).thenReturn(message);
 
         final DynamicRouterControlMessage result = controlChannelProcessor.handleControlMessage(exchange);
 
@@ -162,7 +162,7 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
                 .build();
         Message message = mock(Message.class);
         when(message.getBody()).thenReturn(body);
-        when(exchange.getIn()).thenReturn(message);
+        when(exchange.getMessage()).thenReturn(message);
 
         final DynamicRouterControlMessage result = controlChannelProcessor.handleControlMessage(exchange);
 
@@ -173,7 +173,7 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
     void testHandleControlMessageWithIllegalControlActionError() {
         when(configuration.getControlAction()).thenReturn("oops");
         Message message = mock(Message.class);
-        when(exchange.getIn()).thenReturn(message);
+        when(exchange.getMessage()).thenReturn(message);
 
         assertThrows(IllegalArgumentException.class, () -> controlChannelProcessor.handleControlMessage(exchange));
     }
@@ -183,7 +183,7 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
         when(configuration.getControlAction()).thenReturn(null);
         Message message = mock(Message.class);
         when(message.getBody()).thenReturn("oops");
-        when(exchange.getIn()).thenReturn(message);
+        when(exchange.getMessage()).thenReturn(message);
 
         assertThrows(IllegalArgumentException.class, () -> controlChannelProcessor.handleControlMessage(exchange));
     }
@@ -200,7 +200,7 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
                 .build();
         Message message = mock(Message.class);
         when(message.getBody()).thenReturn(body);
-        when(exchange.getIn()).thenReturn(message);
+        when(exchange.getMessage()).thenReturn(message);
         doNothing().when(processor).addFilter(any(DynamicRouterControlMessage.class));
 
         boolean result = controlChannelProcessor.process(exchange, asyncCallback);
@@ -218,7 +218,7 @@ class DynamicRouterControlChannelProcessorTest extends DynamicRouterTestSupport 
                 .build();
         Message message = mock(Message.class);
         when(message.getBody()).thenReturn(body);
-        when(exchange.getIn()).thenReturn(message);
+        when(exchange.getMessage()).thenReturn(message);
         doNothing().when(processor).removeFilter(TEST_ID);
 
         boolean result = controlChannelProcessor.process(exchange, asyncCallback);
