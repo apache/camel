@@ -88,7 +88,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
      * will continue to retry the message that is in error
      */
     @Test
-    public void kafkaBreakOnFirstErrorBasicCapabilityWithoutOnExcepton() throws Exception {
+    public void kafkaBreakOnFirstErrorBasicCapability() throws Exception {
         to.reset();
         to.expectedMessageCount(7);
 

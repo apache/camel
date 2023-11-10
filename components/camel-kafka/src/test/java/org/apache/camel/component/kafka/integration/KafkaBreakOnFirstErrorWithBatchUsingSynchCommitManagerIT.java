@@ -62,6 +62,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
                     + "&pollTimeoutMs=1000"
                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                    // synch commit factory
                     + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
@@ -91,7 +92,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
      * will continue to retry the message that is in error
      */
     @Test
-    public void kafkaBreakOnFirstErrorBasicCapabilityWithoutOnExcepton() throws Exception {
+    public void kafkaBreakOnFirstErrorBasicCapability() throws Exception {
         to.reset();
         to.expectedMessageCount(3);
         // message-3 causes an error 
