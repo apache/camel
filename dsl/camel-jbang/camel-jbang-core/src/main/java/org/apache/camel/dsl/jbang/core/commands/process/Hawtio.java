@@ -140,7 +140,7 @@ public class Hawtio extends CamelCommand {
             installHangupInterceptor();
             shutdownLatch.await();
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             System.err.println("Cannot launch Hawtio due to: " + e.getMessage());
             return 1;
         } finally {
