@@ -60,7 +60,7 @@ public class KafkaRecordProcessorFacade {
 
         Set<TopicPartition> partitions = allRecords.partitions();
         Iterator<TopicPartition> partitionIterator = partitions.iterator();
-        
+
         LOG.debug("Poll received records on {} partitions", partitions.size());
 
         ProcessingResult lastResult
@@ -70,7 +70,7 @@ public class KafkaRecordProcessorFacade {
             TopicPartition partition = partitionIterator.next();
 
             LOG.debug("Processing records on partition {}", partition.partition());
-            
+
             List<ConsumerRecord<Object, Object>> partitionRecords = allRecords.records(partition);
             Iterator<ConsumerRecord<Object, Object>> recordIterator = partitionRecords.iterator();
 
@@ -80,12 +80,13 @@ public class KafkaRecordProcessorFacade {
                 ConsumerRecord<Object, Object> record = recordIterator.next();
 
                 LOG.debug("Processing record on partition {} with offset {}", record.partition(), record.offset());
-                
+
                 lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
                         kafkaRecordProcessor, record);
 
-                LOG.debug("Processed record on partition {} with offset {} and got ProcessingResult for partition {} and offset {}",
-                    record.partition(), record.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
+                LOG.debug(
+                        "Processed record on partition {} with offset {} and got ProcessingResult for partition {} and offset {}",
+                        record.partition(), record.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
 
                 if (consumerListener != null) {
                     if (!consumerListener.afterProcess(lastResult)) {

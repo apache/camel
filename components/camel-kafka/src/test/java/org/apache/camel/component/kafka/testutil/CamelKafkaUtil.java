@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.kafka.testutil;
 
+import java.util.Objects;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.KafkaConstants;
-
-import java.util.Objects;
 
 public final class CamelKafkaUtil {
 
@@ -43,7 +42,7 @@ public final class CamelKafkaUtil {
         sb.append(eol);
         sb.append("The Key is ");
         sb.append(exchange.getMessage().getHeader(KafkaConstants.KEY, String.class));
-        
+
         if (includeBody) {
             sb.append(eol);
             sb.append(exchange.getMessage().getBody(String.class));

@@ -134,10 +134,10 @@ public class KafkaRecordProcessor {
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
             if (lastResult.getPartition() != -1 &&
-                lastResult.getPartition() != record.partition()) {
-                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " + 
-                        " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
-                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(), 
+                    lastResult.getPartition() != record.partition()) {
+                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " +
+                          " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
+                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(),
                         record.partition(), record.offset());
             }
 
@@ -146,7 +146,7 @@ public class KafkaRecordProcessor {
                 Exception exc = exchange.getException();
                 LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(),
                         exc.getMessage());
-                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.", 
+                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.",
                         record.offset(), record.partition());
             }
 
@@ -162,7 +162,7 @@ public class KafkaRecordProcessor {
                 // we will still need the lastResult so that we don't force 
                 // retrying this message over and over
                 // commitManager.forceCommit(topicPartition, record.offset() - 1);
-                
+
                 // we should just do a commit (vs the original forceCommit)
                 // when route uses NOOP Commit Manager it will rely
                 // on the route implementation to explicitly commit offset
