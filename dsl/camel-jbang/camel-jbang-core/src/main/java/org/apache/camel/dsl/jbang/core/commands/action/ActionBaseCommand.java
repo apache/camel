@@ -86,7 +86,7 @@ abstract class ActionBaseCommand extends CamelCommand {
                 IOHelper.close(fis);
                 return (JsonObject) Jsoner.deserialize(text);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
         return null;
