@@ -225,7 +225,7 @@ public class CoverageResultsProcessor {
                     if (route.getExchangesTotal() > mappedRoute.getExchangesTotal()) {
                         routeMap.put(routeId, route);
                     }
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     // this is an edge case that needs to be identified. Log some useful debugging information.
                     System.out.println(t.getClass().toString());
                     System.out.printf("routeID: %s%n", routeId);
