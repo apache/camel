@@ -5,7 +5,6 @@
     "title": "JMS",
     "description": "Sent and receive messages to\/from a JMS Queue or Topic.",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "1.0.0",
     "label": "messaging",
     "javaType": "org.apache.camel.component.jms.JmsComponent",

@@ -5,7 +5,6 @@
     "title": "Servlet",
     "description": "Serve HTTP requests by a Servlet.",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "2.0.0",
     "label": "http",
     "javaType": "org.apache.camel.component.servlet.ServletComponent",

@@ -5,7 +5,6 @@
     "title": "HTTPS (Secure)",
     "description": "Send requests to external HTTP servers using Apache HTTP Client 5.x.",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "2.3.0",
     "label": "http",
     "javaType": "org.apache.camel.component.http.HttpComponent",

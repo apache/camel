@@ -5,7 +5,6 @@
     "title": "Jetty",
     "description": "Expose HTTP endpoints using Jetty 11.",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "1.2.0",
     "label": "http",
     "javaType": "org.apache.camel.component.jetty11.JettyHttpComponent11",

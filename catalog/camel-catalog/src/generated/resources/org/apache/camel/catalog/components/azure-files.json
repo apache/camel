@@ -5,7 +5,6 @@
     "title": "Azure Files",
     "description": "Send and receive files to Azure storage file share",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "3.22.0",
     "label": "cloud,file",
     "javaType": "org.apache.camel.component.file.azure.FilesComponent",

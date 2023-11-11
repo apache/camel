@@ -5,7 +5,6 @@
     "title": "FTPS",
     "description": "Upload and download files to\/from FTP servers supporting the FTPS protocol.",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "2.2.0",
     "label": "file",
     "javaType": "org.apache.camel.component.file.remote.FtpsComponent",

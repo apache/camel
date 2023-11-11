@@ -5,7 +5,6 @@
     "title": "Box",
     "description": "Upload, download and manage files, folders, groups, collaborations, etc. on box.com.",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "2.14.0",
     "label": "cloud,file,api",
     "javaType": "org.apache.camel.component.box.BoxComponent",

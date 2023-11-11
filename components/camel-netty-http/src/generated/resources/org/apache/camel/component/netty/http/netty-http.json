@@ -5,7 +5,6 @@
     "title": "Netty HTTP",
     "description": "Netty HTTP server and client using the Netty 4.x.",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "2.14.0",
     "label": "networking,http",
     "javaType": "org.apache.camel.component.netty.http.NettyHttpComponent",

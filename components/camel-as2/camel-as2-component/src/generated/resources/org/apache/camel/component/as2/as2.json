@@ -5,7 +5,6 @@
     "title": "AS2",
     "description": "Transfer data securely and reliably using the AS2 protocol (RFC4130).",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "2.22.0",
     "label": "file",
     "javaType": "org.apache.camel.component.as2.AS2Component",

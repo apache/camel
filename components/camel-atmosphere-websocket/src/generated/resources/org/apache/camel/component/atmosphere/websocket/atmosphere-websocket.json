@@ -5,7 +5,6 @@
     "title": "Atmosphere Websocket",
     "description": "Expose WebSocket endpoints using the Atmosphere framework.",
     "deprecated": false,
-    "deprecationNote": "",
     "firstVersion": "2.14.0",
     "label": "http,networking",
     "javaType": "org.apache.camel.component.atmosphere.websocket.WebsocketComponent",
