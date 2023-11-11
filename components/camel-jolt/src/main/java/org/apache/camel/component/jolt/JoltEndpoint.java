@@ -32,6 +32,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -42,6 +43,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true,
              category = { Category.TRANSFORMATION }, headersClass = JoltConstants.class)
+@Metadata(excludeProperties = "allowContextMapAll")
 public class JoltEndpoint extends ResourceEndpoint {
 
     private JoltTransform transform;
