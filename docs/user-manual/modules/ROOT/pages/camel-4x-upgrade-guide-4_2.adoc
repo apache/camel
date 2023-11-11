@@ -52,6 +52,19 @@ expected to function correctly if using Java 21.
 
 A new release of Apache Ignite is expected that will start to support Java 21.
 
+=== camel-dynamic-router EIP component (non-core)
+
+The Dynamic Router EIP component has been refactored to use the Multicast Processor for sending messages to recipients,
+and this brought some additional configuration options:
+
+- `parallelProcessing`, `parallelAggregate`, `stopOnException`, `ignoreInvalidEndpoints`, `streaming`, `timeout`,
+`onPrepare`, `shareUnitOfWork`, `executorService`, and `aggregationStrategy`.  These configuration items are for
+configuring the Multicast Processor within the Dynamic Router EIP component, so their description, meaning, and effect
+are identical to that of the Multicast Processor.
+
+When upgrading to this version, you should still be able to use this component with the configuration from previous
+versions.  The new options allow more specific configuration, if you need it.
+
 === camel-spring & camel-spring-boot
 
 ==== Autowiring Primary beans
