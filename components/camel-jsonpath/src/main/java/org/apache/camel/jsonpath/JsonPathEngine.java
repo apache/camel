@@ -206,6 +206,10 @@ public class JsonPathEngine {
             LOG.trace("JSonPath: {} is read as String: {}", path, json);
             String str = (String) json;
             return JsonPath.using(configuration).parse(str).read(path);
+        } else if (json instanceof byte[]) {
+            LOG.trace("JSonPath: {} is read as byte[]: {}", path, json);
+            byte[] arr = (byte[]) json;
+            return JsonPath.using(configuration).parseUtf8(arr).read(path);
         } else if (json instanceof Map) {
             LOG.trace("JSonPath: {} is read as Map: {}", path, json);
             Map map = (Map) json;
