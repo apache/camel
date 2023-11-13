@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertTrue;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -112,11 +114,15 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
         context.getRouteController().startRoute(ROUTE_ID);
 
+        // let test run for awhile
         Awaitility.await()
-                .timeout(30, TimeUnit.SECONDS)
-                .pollDelay(20, TimeUnit.SECONDS)
-                .until(() -> to.getExchanges().size() == 4);
+                .timeout(10, TimeUnit.SECONDS)
+                .pollDelay(8, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(true));
 
+        // the replaying of the message with an error
+        // will prevent other paylods from being 
+        // processed
         to.assertIsSatisfied();
     }
 
@@ -148,16 +154,16 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
     }
 
     private void publishMessagesToKafka() {
-        final List<String> producedRecordsPartition0 = List.of("5", "6", "7", "8"); //, "9", "10", "11");
+        final List<String> producedRecordsPartition0 = List.of("5", "6", "7", "8", "9", "10", "11");
         final List<String> producedRecordsPartition1 = List.of("1", "2", "3", "4");
 
         producedRecordsPartition0.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "0", v);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", v);
             producer.send(data);
         });
 
         producedRecordsPartition1.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", v);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "0", v);
             producer.send(data);
         });
     }
