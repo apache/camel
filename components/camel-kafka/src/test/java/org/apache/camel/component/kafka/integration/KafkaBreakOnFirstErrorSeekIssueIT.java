@@ -28,10 +28,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -69,11 +71,17 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
-    @BeforeEach
-    public void init() {
+    @BeforeAll
+    public static void setupTopic() {
+        AdminClient kafkaAdminClient = createAdminClient(service);
         // create the topic w/ 2 partitions
+
         final NewTopic mytopic = new NewTopic(TOPIC, 2, (short) 1);
         kafkaAdminClient.createTopics(Collections.singleton(mytopic));
+    }
+
+    @BeforeEach
+    public void init() {
 
         // setup the producer
         Properties props = getDefaultProperties();
