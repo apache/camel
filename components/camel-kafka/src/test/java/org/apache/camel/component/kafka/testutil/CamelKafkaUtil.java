@@ -50,4 +50,8 @@ public final class CamelKafkaUtil {
 
         return sb.toString();
     }
+
+    private CamelKafkaUtil() {
+        // you can't make me
+    }
 }
