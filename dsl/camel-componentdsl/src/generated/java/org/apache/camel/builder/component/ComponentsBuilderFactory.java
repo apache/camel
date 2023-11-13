@@ -3669,9 +3669,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SMB (camel-smb)
-     * SMB component which consumes natively from file shares using the Server
-     * Message Block (SMB, also known as Common Internet File System - CIFS)
-     * protocol
+     * Receive files from SMB (Server Message Block) shares.
      * 
      * Category: file
      * Since: 4.2.0-SNAPSHOT
