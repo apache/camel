@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -89,8 +90,12 @@ public final class PackageHelper {
     }
 
     public static Set<File> findJsonFiles(File rootDir, Set<File> files) {
+        return findJsonFiles(rootDir, files, (f) -> true);
+    }
+
+    public static Set<File> findJsonFiles(File rootDir, Set<File> files, Predicate<File> filter) {
         try (Stream<Path> stream = findJsonFiles(rootDir.toPath())) {
-            stream.forEach(p -> files.add(p.toFile()));
+            stream.map(Path::toFile).filter(filter).forEach(files::add);
         }
         return files;
     }
