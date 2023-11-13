@@ -51,6 +51,8 @@ public class JettyHttpEndpoint11Configurer extends PropertyConfigurerSupport imp
         case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
         case "httpmethodrestrict":
         case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "idletimeout":
+        case "idleTimeout": target.setIdleTimeout(property(camelContext, long.class, value)); return true;
         case "logexception":
         case "logException": target.setLogException(property(camelContext, boolean.class, value)); return true;
         case "maphttpmessagebody":
@@ -120,6 +122,8 @@ public class JettyHttpEndpoint11Configurer extends PropertyConfigurerSupport imp
         case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
         case "httpmethodrestrict":
         case "httpMethodRestrict": return java.lang.String.class;
+        case "idletimeout":
+        case "idleTimeout": return long.class;
         case "logexception":
         case "logException": return boolean.class;
         case "maphttpmessagebody":
@@ -190,6 +194,8 @@ public class JettyHttpEndpoint11Configurer extends PropertyConfigurerSupport imp
         case "httpBinding": return target.getHttpBinding();
         case "httpmethodrestrict":
         case "httpMethodRestrict": return target.getHttpMethodRestrict();
+        case "idletimeout":
+        case "idleTimeout": return target.getIdleTimeout();
         case "logexception":
         case "logException": return target.isLogException();
         case "maphttpmessagebody":
