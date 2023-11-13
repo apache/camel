@@ -44,13 +44,12 @@ import static org.junit.Assert.assertEquals;
  * Camel to handle when to commit an offset
  */
 class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbeddedKafkaTestSupport {
+    public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";
+    public static final String TOPIC = "test-foobar";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT.class);
 
     private final List<String> errorPayloads = new CopyOnWriteArrayList<>();
-
-    public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";
-    public static final String TOPIC = "test-foobar";
 
     @EndpointInject("kafka:" + TOPIC
                     + "?groupId=KafkaBreakOnFirstErrorIT"

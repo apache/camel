@@ -23,6 +23,9 @@ import org.apache.camel.component.kafka.KafkaConstants;
 
 public final class CamelKafkaUtil {
 
+    private CamelKafkaUtil() {
+    }
+
     public static String buildKafkaLogMessage(String msg, Exchange exchange, boolean includeBody) {
         String eol = "\n";
 

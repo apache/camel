@@ -49,11 +49,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseEmbeddedKafkaTestSupport {
 
-    private static final Logger LOG
-            = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT.class);
-
     public static final String ROUTE_ID = "breakOnFirstErrorBatchRetryIT";
     public static final String TOPIC = "test-foobar";
+
+    private static final Logger LOG
+            = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT.class);
 
     @EndpointInject("kafka:" + TOPIC
                     + "?groupId=KafkaBreakOnFirstErrorIT"
