@@ -18,13 +18,13 @@
 package org.apache.camel.test.infra.smb.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface SmbService extends TestService, BeforeTestExecutionCallback, AfterTestExecutionCallback {
+public interface SmbService extends BeforeAllCallback, AfterAllCallback, TestService {
     String address();
     String shareName();
     String userName();
@@ -46,17 +46,7 @@ public interface SmbService extends TestService, BeforeTestExecutionCallback, Af
     }
 
     @Override
-    default void beforeTestExecution(ExtensionContext extensionContext) {
-        //no op
-    }
-
-    @Override
     default void afterAll(ExtensionContext extensionContext) {
         shutdown();
-    }
-
-    @Override
-    default void afterTestExecution(ExtensionContext context) {
-        //no op
     }
 }

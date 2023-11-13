@@ -64,7 +64,7 @@ public class SmbConsumer extends ScheduledPollConsumer {
 
                     if (!repository.contains(f.getFileName())) {
                         polledCount++;
-                        final Exchange exchange = createExchange(false);
+                        final Exchange exchange = createExchange(true);
 
                         final File file = share.openFile(f.getFileName(),
                                 smbIOBean.accessMask(),
@@ -75,7 +75,16 @@ public class SmbConsumer extends ScheduledPollConsumer {
 
                         repository.add(f.getFileName());
                         exchange.getMessage().setBody(file);
-                        getProcessor().process(exchange);
+                        try {
+                            getProcessor().process(exchange);
+                        } catch (Exception e) {
+                            exchange.setException(e);
+                        }
+                        if (exchange.getException() != null) {
+                            Exception e = exchange.getException();
+                            String msg = "Error processing file " + f.getFileName() + " due to " + e.getMessage();
+                            handleException(msg, exchange, e);
+                        }
                     }
                 }
             }

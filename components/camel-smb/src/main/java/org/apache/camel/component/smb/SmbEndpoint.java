@@ -24,27 +24,26 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * SMB component which consumes natively from file shares using the Server Message Block (SMB, also known as Common
- * Internet File System - CIFS) protocol
+ * Receive files from SMB (Server Message Block) shares.
  */
-@UriEndpoint(firstVersion = "4.2.0-SNAPSHOT", scheme = "smb", title = "SMB", syntax = "smb:hostname:port",
+@UriEndpoint(firstVersion = "4.2.0-SNAPSHOT", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName",
+             consumerOnly = true,
              category = { Category.FILE })
-public class SmbEndpoint extends DefaultEndpoint {
-    @UriParam
-    private SmbConfiguration configuration = new SmbConfiguration();
-
-    @UriPath(label = "common")
-    @Metadata(required = true)
-    private String hostname;
-
-    @UriPath(defaultValue = "445")
-    private int port;
+public class SmbEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
+    @Metadata(required = true)
+    private String hostname;
+    @UriPath(defaultValue = "445")
+    private int port;
+    @UriPath(secret = true)
     private String shareName;
+
+    @UriParam
+    private SmbConfiguration configuration = new SmbConfiguration();
 
     public SmbEndpoint() {
     }
@@ -78,9 +77,7 @@ public class SmbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The share name or IP address
-     *
-     * @param hostname
+     * The share hostname or IP address
      */
     public void setHostname(String hostname) {
         this.hostname = hostname;
@@ -91,9 +88,7 @@ public class SmbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The share port
-     *
-     * @param port
+     * The share port number
      */
     public void setPort(int port) {
         this.port = port;
@@ -104,9 +99,7 @@ public class SmbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The share path
-     *
-     * @param shareName
+     * The name of the share to connect to.
      */
     public void setShareName(String shareName) {
         this.shareName = shareName;

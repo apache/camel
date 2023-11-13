@@ -507,6 +507,7 @@
     <smallrye-fault-tolerance-version>5.6.0</smallrye-fault-tolerance-version>
     <smallrye-health-version>3.3.0</smallrye-health-version>
     <smallrye-metrics-version>3.0.5</smallrye-metrics-version>
+    <smbj-version>0.12.0</smbj-version>
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
     <snakeyaml-version>1.33</snakeyaml-version>
     <snappy-java-version>1.1.10.3</snappy-java-version>
