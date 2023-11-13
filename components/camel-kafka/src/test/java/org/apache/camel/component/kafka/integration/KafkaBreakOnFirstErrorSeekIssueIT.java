@@ -45,10 +45,10 @@ import org.slf4j.LoggerFactory;
  */
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorSeekIssueIT.class);
-
     public static final String ROUTE_ID = "breakOnFirstError-19894";
     public static final String TOPIC = "test-foobar";
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorSeekIssueIT.class);
 
     @EndpointInject("kafka:" + TOPIC
                     + "?groupId=KafkaBreakOnFirstErrorIT"
@@ -91,7 +91,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
     }
 
     @Test
-    void test_camel_19894_test_fix() throws Exception {
+    void testCamel19894TestFix() throws Exception {
         to.reset();
         // will consume the payloads from partition 0
         // and will continually retry the payload with "5"
