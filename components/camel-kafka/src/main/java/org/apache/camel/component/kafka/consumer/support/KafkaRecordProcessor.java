@@ -153,16 +153,6 @@ public class KafkaRecordProcessor {
             // force commit, so we resume on next poll where we failed 
             // except when the failure happened at the first message in a poll
             if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
-                // the record we are processing had the error 
-                // so we will force commit the offset prior 
-                // this will enable the current desired behavior to 
-                // retry the message 1 more time
-                //
-                // Note: without a more extensive look at handling of breakOnFirstError
-                // we will still need the lastResult so that we don't force 
-                // retrying this message over and over
-                // commitManager.forceCommit(topicPartition, record.offset() - 1);
-
                 // we should just do a commit (vs the original forceCommit)
                 // when route uses NOOP Commit Manager it will rely
                 // on the route implementation to explicitly commit offset
