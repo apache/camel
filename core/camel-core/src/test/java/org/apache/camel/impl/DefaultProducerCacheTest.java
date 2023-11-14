@@ -232,14 +232,16 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         List<Callable<Boolean>> callables = new ArrayList<>();
 
-        for(int i = 0; i < 500; i++) {
+        for (int i = 0; i < 500; i++) {
             int index = i % 3;
             callables.add(() -> {
                 Producer producer = cache.acquireProducer(endpoints.get(index));
-                boolean isEqual = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
+                boolean isEqual
+                        = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
 
-                if(!isEqual) {
-                    log.info("Endpoint uri to acquire: " + endpoints.get(index).getEndpointUri() + ", returned producer (uri): " + producer.getEndpoint().getEndpointUri());
+                if (!isEqual) {
+                    log.info("Endpoint uri to acquire: " + endpoints.get(index).getEndpointUri() + ", returned producer (uri): "
+                             + producer.getEndpoint().getEndpointUri());
                 }
 
                 return isEqual;
