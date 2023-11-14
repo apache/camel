@@ -22,8 +22,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertTrue;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -44,9 +42,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertTrue;
+
 /**
- * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-20044 
- * regarding incorrectly handling the offset commit resulting in replaying messages
+ * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-20044 regarding incorrectly
+ * handling the offset commit resulting in replaying messages
  * 
  * mimics the reproduction of the problem in https://github.com/CodeSmell/CamelKafkaOffset
  */
@@ -80,7 +80,7 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSup
     @BeforeAll
     public static void setupTopic() {
         AdminClient kafkaAdminClient = createAdminClient(service);
-        
+
         // create the topic w/ 3 partitions
         final NewTopic mytopic = new NewTopic(TOPIC, 3, (short) 1);
         kafkaAdminClient.createTopics(Collections.singleton(mytopic));
@@ -133,12 +133,12 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSup
             @Override
             public void configure() {
                 onException(RuntimeException.class)
-                    .handled(false)
-                    .process(exchange -> {
-                        doCommitOffset(exchange);
-                    })
-                    .end();
-                
+                        .handled(false)
+                        .process(exchange -> {
+                            doCommitOffset(exchange);
+                        })
+                        .end();
+
                 from(from)
                         .routeId(ROUTE_ID)
                         .autoStartup(false)
@@ -175,11 +175,11 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSup
         });
 
     }
-    
+
     private void doCommitOffset(Exchange exchange) {
         LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Committing", exchange, true));
         KafkaManualCommit manual = exchange.getMessage()
-            .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
         if (Objects.nonNull(manual)) {
             manual.commit();
         } else {

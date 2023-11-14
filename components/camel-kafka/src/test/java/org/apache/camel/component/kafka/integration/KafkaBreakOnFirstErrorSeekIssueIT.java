@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertTrue;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -40,6 +38,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-19894 regarding failure to
@@ -76,7 +76,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
     @BeforeAll
     public static void setupTopic() {
         AdminClient kafkaAdminClient = createAdminClient(service);
-        
+
         // create the topic w/ 2 partitions
         final NewTopic mytopic = new NewTopic(TOPIC, 2, (short) 1);
         kafkaAdminClient.createTopics(Collections.singleton(mytopic));
