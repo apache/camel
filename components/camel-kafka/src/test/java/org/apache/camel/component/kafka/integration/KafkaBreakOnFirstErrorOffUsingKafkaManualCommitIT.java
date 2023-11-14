@@ -40,22 +40,23 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * this will test basic breakOnFirstError functionality uses allowManualCommit and KafkaManualCommit because relying on
- * Camel default to use NOOP Commit Manager this means the route implementation MUST manage all offset commits
+ * this will test basic breakOnFirstError functionality when it is turned off 
+ * and consumer uses allowManualCommit and KafkaManualCommit and NOOP Commit Manager
  */
-class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbeddedKafkaTestSupport {
-    public static final String ROUTE_ID = "breakOnFirstErrorBatchOnExceptionIT";
-    public static final String TOPIC = "breakOnFirstErrorBatchOnExceptionIT";
+class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseEmbeddedKafkaTestSupport {
+    public static final String ROUTE_ID = "breakOnFirstErrorOff";
+    public static final String TOPIC = "breakOnFirstErrorOff";
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT.class);
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=KafkaBreakOnFirstErrorIT"
+                    + "?groupId=breakOnFirstErrorOff"
                     + "&autoOffsetReset=earliest"
                     + "&autoCommitEnable=false"
                     + "&allowManualCommit=true"
-                    + "&breakOnFirstError=true"
-                    + "&maxPollRecords=3"
+                    // set BOFE to false
+                    + "&breakOnFirstError=false"
+                    + "&maxPollRecords=1"
                     + "&pollTimeoutMs=1000"
                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
@@ -89,25 +90,25 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
     @Test
     public void kafkaBreakOnFirstErrorBasicCapability() throws Exception {
         to.reset();
-        to.expectedMessageCount(7);
+        to.expectedMessageCount(4);
 
-        // old behavior before the fix in CAMEL-20044
-        // message-3 causes an error 
-        // and breakOnFirstError will cause it to be retried 1x
-        // then we move on
-        //to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-3", "message-4", "message-5");
-
-        // new behavior w/ NOOP Commit Manager
-        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4", "message-5");
-
-        this.publishMessagesToKafka();
+        // message-3 and message-4 were never committed
+        // by the consumer route
+        // but we moved past them anyway
+        // because breakOnFirstError was false
+        // then when we encounter a successful message
+        // we commit that one and keep going
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-5");
 
         context.getRouteController().stopRoute(ROUTE_ID);
+        
+        this.publishMessagesToKafka();
+        
         context.getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
                 .atMost(3, TimeUnit.SECONDS)
-                .until(() -> to.getExchanges().size() > 5);
+                .until(() -> to.getExchanges().size() > 3);
 
         to.assertIsSatisfied(3000);
     }
@@ -118,17 +119,6 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
 
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .handled(false)
-                        // adding error message to end
-                        // so we can account for it
-                        .to(to)
-                        .process(exchange -> {
-                            // if we don't commit 
-                            // camel will continuously 
-                            // retry the message with an error
-                            doCommitOffset(exchange);
-                        });
 
                 from(from)
                         .routeId(ROUTE_ID)
@@ -164,7 +154,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
 
     private void ifIsPayloadWithErrorThrowException(Exchange exchange) {
         String payload = exchange.getMessage().getBody(String.class);
-        if (payload.equals("message-3")) {
+        if (payload.equals("message-3") || payload.equals("message-4")) {
             throw new RuntimeException("ERROR TRIGGERED BY TEST");
         }
     }
