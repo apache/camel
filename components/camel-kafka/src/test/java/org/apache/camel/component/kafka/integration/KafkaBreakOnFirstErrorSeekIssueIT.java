@@ -50,7 +50,7 @@ import static org.junit.Assert.assertTrue;
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-19894";
-    public static final String TOPIC = "test-foobar";
+    public static final String TOPIC = "breakOnFirstError-19894";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorSeekIssueIT.class);
 

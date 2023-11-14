@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbeddedKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchOnExceptionIT";
-    public static final String TOPIC = "test-foobar";
+    public static final String TOPIC = "breakOnFirstErrorBatchOnExceptionIT";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT.class);
 

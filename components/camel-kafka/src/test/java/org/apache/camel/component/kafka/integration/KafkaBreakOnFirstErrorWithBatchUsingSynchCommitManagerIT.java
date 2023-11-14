@@ -45,7 +45,7 @@ import static org.junit.Assert.assertEquals;
  */
 class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbeddedKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";
-    public static final String TOPIC = "test-foobar";
+    public static final String TOPIC = "breakOnFirstErrorBatchIT";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT.class);
 

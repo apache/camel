@@ -53,7 +53,7 @@ import static org.junit.Assert.assertTrue;
 class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20044";
-    public static final String TOPIC = "test-foobar";
+    public static final String TOPIC = "breakOnFirstError-20044";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorReplayOldMessagesIT.class);
 
