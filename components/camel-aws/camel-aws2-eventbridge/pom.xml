@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 Eventbridge</name>
-    <description>A Camel Amazon Eventbridge Web Service Component Version 2</description>
+    <description>Execute different operation on Amazon Eventbridge service</description>
 
     <properties>
     </properties>
