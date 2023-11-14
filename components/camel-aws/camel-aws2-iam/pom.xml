@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 IAM</name>
-    <description>A Camel Amazon IAM Web Service Component Version 2</description>
+    <description>Execute different operation on Amazon IAM service</description>
 
     <properties>
     </properties>
