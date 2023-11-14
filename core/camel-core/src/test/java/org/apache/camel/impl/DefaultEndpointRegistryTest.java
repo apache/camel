@@ -54,6 +54,20 @@ public class DefaultEndpointRegistryTest {
     }
 
     @Test
+    public void testRemoveEndpointWithHash() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.start();
+
+        ctx.getEndpoint("direct:one");
+        Endpoint e = ctx.getEndpoint("stub:me?bean=#myBean");
+        ctx.getEndpoint("direct:three");
+
+        Assertions.assertEquals(3, ctx.getEndpoints().size());
+        ctx.removeEndpoint(e);
+        Assertions.assertEquals(2, ctx.getEndpoints().size());
+    }
+
+    @Test
     public void testRemoveEndpointToD() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new RouteBuilder() {
