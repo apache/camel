@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.integration;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +28,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -42,17 +45,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-19894 regarding failure to
- * correctly commit the offset in a batch using the Synch Commit Manager
+ * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-20044 
+ * regarding incorrectly handling the offset commit resulting in replaying messages
  * 
- * mimics the reproduction of the problem in https://github.com/Krivda/camel-bug-reproduction
+ * mimics the reproduction of the problem in https://github.com/CodeSmell/CamelKafkaOffset
  */
-class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
+class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSupport {
 
-    public static final String ROUTE_ID = "breakOnFirstError-19894";
+    public static final String ROUTE_ID = "breakOnFirstError-20044";
     public static final String TOPIC = "test-foobar";
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorSeekIssueIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorReplayOldMessagesIT.class);
 
     @EndpointInject("kafka:" + TOPIC
                     + "?groupId=KafkaBreakOnFirstErrorIT"
@@ -60,11 +63,12 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
                     + "&autoCommitEnable=false"
                     + "&allowManualCommit=true"
                     + "&breakOnFirstError=true"
-                    + "&maxPollRecords=8"
+                    + "&maxPollRecords=1"
+                    // here multiple threads was an issue
+                    + "&consumersCount=3"
                     + "&pollTimeoutMs=1000"
                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
@@ -77,8 +81,8 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
     public static void setupTopic() {
         AdminClient kafkaAdminClient = createAdminClient(service);
         
-        // create the topic w/ 2 partitions
-        final NewTopic mytopic = new NewTopic(TOPIC, 2, (short) 1);
+        // create the topic w/ 3 partitions
+        final NewTopic mytopic = new NewTopic(TOPIC, 3, (short) 1);
         kafkaAdminClient.createTopics(Collections.singleton(mytopic));
     }
 
@@ -101,12 +105,11 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
     }
 
     @Test
-    void testCamel19894TestFix() throws Exception {
+    void testCamel20044TestFix() throws Exception {
         to.reset();
-        // will consume the payloads from partition 0
-        // and will continually retry the payload with "5"
-        to.expectedMessageCount(4);
-        to.expectedBodiesReceived("1", "2", "3", "4");
+        to.expectedMessageCount(13);
+        to.expectedBodiesReceivedInAnyOrder("1", "2", "3", "4", "5", "ERROR",
+                "6", "7", "ERROR", "8", "9", "10", "11");
 
         context.getRouteController().stopRoute(ROUTE_ID);
 
@@ -120,9 +123,6 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
                 .pollDelay(8, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(true));
 
-        // the replaying of the message with an error
-        // will prevent other paylods from being 
-        // processed
         to.assertIsSatisfied();
     }
 
@@ -132,40 +132,59 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
             @Override
             public void configure() {
+                onException(RuntimeException.class)
+                    .handled(false)
+                    .process(exchange -> {
+                        doCommitOffset(exchange);
+                    })
+                    .end();
+                
                 from(from)
                         .routeId(ROUTE_ID)
                         .autoStartup(false)
                         .process(exchange -> {
                             LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Consuming", exchange, true));
                         })
-                        .process(exchange -> {
-                            ifIsFifthRecordThrowException(exchange);
-                        })
+                        // capturing all of the payloads
                         .to(to)
+                        .process(exchange -> {
+                            ifIsPayloadWithErrorThrowException(exchange);
+                        })
+                        .process(exchange -> {
+                            doCommitOffset(exchange);
+                        })
                         .end();
             }
         };
     }
 
-    private void ifIsFifthRecordThrowException(Exchange e) {
-        if (e.getMessage().getBody().equals("5")) {
-            throw new RuntimeException("ERROR_TRIGGERED_BY_TEST");
+    private void ifIsPayloadWithErrorThrowException(Exchange exchange) {
+        String payload = exchange.getMessage().getBody(String.class);
+        if (payload.equals("ERROR")) {
+            throw new RuntimeException("NON RETRY ERROR TRIGGERED BY TEST");
         }
     }
 
     private void publishMessagesToKafka() {
-        final List<String> producedRecordsPartition0 = List.of("5", "6", "7", "8", "9", "10", "11");
-        final List<String> producedRecordsPartition1 = List.of("1", "2", "3", "4");
+        final List<String> producedRecords = List.of("1", "2", "3", "4", "5", "ERROR",
+                "6", "7", "ERROR", "8", "9", "10", "11");
 
-        producedRecordsPartition0.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", v);
+        producedRecords.forEach(v -> {
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, null, v);
             producer.send(data);
         });
 
-        producedRecordsPartition1.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "0", v);
-            producer.send(data);
-        });
+    }
+    
+    private void doCommitOffset(Exchange exchange) {
+        LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Committing", exchange, true));
+        KafkaManualCommit manual = exchange.getMessage()
+            .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+        if (Objects.nonNull(manual)) {
+            manual.commit();
+        } else {
+            LOG.error("KafkaManualCommit is MISSING");
+        }
     }
 
 }
