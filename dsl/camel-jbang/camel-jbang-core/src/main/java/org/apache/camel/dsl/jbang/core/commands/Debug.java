@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.main.KameletMain;
-import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
@@ -446,7 +445,7 @@ public class Debug extends Run {
     private void printSourceAndHistory(SuspendedRow row) {
         List<Panel> panel = new ArrayList<>();
         if (!row.code.isEmpty()) {
-            String loc = LoggerHelper.stripSourceLocationLineNumber(row.location);
+            String loc = StringHelper.beforeLast(row.location, ":", row.location);
             if (loc.length() < 72) {
                 loc = loc + " ".repeat(72 - loc.length());
             }
@@ -505,9 +504,11 @@ public class Debug extends Run {
             if (row.history.size() > (panel.size() - 4)) {
                 // cut to only what we can display
                 int pos = row.history.size() - (panel.size() - 4);
-                row.history = row.history.subList(pos, row.history.size());
+                if (row.history.size() > pos) {
+                    row.history = row.history.subList(pos, row.history.size());
+                }
             }
-            for (int i = 2; i < 11; i++) {
+            for (int i = 2; panel.size() > 2 && i < 11; i++) {
                 Panel p = panel.get(i);
                 if (row.history.size() > (i - 2)) {
                     History h = row.history.get(i - 2);
