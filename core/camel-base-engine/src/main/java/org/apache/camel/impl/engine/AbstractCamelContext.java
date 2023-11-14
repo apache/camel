@@ -699,11 +699,17 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void removeEndpoint(Endpoint endpoint) throws Exception {
-        // optimize as uri on endpoint is already normalized
-        String uri = endpoint.getEndpointUri();
-        NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
-        Endpoint oldEndpoint = endpoints.remove(key);
+        Endpoint oldEndpoint = null;
+        NormalizedUri oldKey = null;
+        for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
+            if (endpoint == entry.getValue()) {
+                oldKey = entry.getKey();
+                oldEndpoint = endpoint;
+                break;
+            }
+        }
         if (oldEndpoint != null) {
+            endpoints.remove(oldKey);
             try {
                 stopServices(oldEndpoint);
             } catch (Exception e) {
