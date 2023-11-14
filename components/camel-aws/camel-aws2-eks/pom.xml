@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 EKS</name>
-    <description>A Camel Amazon EKS Web Service Component Version 2</description>
+    <description>Execute different operation on Amazon EKS service</description>
 
     <properties>
     </properties>
