@@ -158,12 +158,12 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
         final List<String> producedRecordsPartition1 = List.of("1", "2", "3", "4");
 
         producedRecordsPartition0.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", v);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 1, null, null, v);
             producer.send(data);
         });
 
         producedRecordsPartition1.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "0", v);
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 0, null, null, v);
             producer.send(data);
         });
     }
