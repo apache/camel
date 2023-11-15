@@ -24,11 +24,13 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Route;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -217,6 +219,17 @@ public class DebugDevConsole extends AbstractDevConsole {
 
         for (MessageHistory h : list) {
             JsonObject jo = new JsonObject();
+
+            if (h.getNode() != null) {
+                NamedRoute nr = CamelContextHelper.getRoute(h.getNode());
+                if (nr != null) {
+                    // skip debugging inside rest-dsl (just a tiny facade) or kamelets / route-templates
+                    boolean skip = nr.isCreatedFromRest() || nr.isCreatedFromTemplate();
+                    if (skip) {
+                        continue;
+                    }
+                }
+            }
             if (h.getRouteId() != null) {
                 jo.put("routeId", h.getRouteId());
             }
@@ -224,7 +237,12 @@ public class DebugDevConsole extends AbstractDevConsole {
             if (h.getNode() != null) {
                 jo.put("nodeId", h.getNode().getId());
                 if (h.getNode().getLocation() != null) {
-                    jo.put("location", h.getNode().getLocation());
+                    String loc = h.getNode().getLocation();
+                    // strip schema
+                    if (loc.contains(":")) {
+                        loc = StringHelper.after(loc, ":");
+                    }
+                    jo.put("location", loc);
                 }
                 if (h.getNode().getLineNumber() != -1) {
                     jo.put("line", h.getNode().getLineNumber());

@@ -515,7 +515,7 @@ public class Debug extends Run {
 
                     String ids;
                     if (source) {
-                        ids = h.location;
+                        ids = locationAndLine(h.location, h.line);
                     } else {
                         ids = h.routeId + "/" + h.nodeId;
                     }
@@ -604,7 +604,7 @@ public class Debug extends Run {
         // node ids or source location
         String ids;
         if (source) {
-            ids = row.location;
+            ids = locationAndLine(row.location, -1);
         } else {
             ids = row.routeId + "/" + getId(row);
         }
@@ -640,6 +640,12 @@ public class Debug extends Run {
         System.out.println();
         System.out.println(getDataAsTable(row));
         System.out.println();
+    }
+
+    private static String locationAndLine(String loc, int line) {
+        // shorten path as there is no much space
+        loc = FileUtil.stripPath(loc);
+        return line == -1 ? loc : loc + ":" + line;
     }
 
     private void clearScreen() {
