@@ -240,8 +240,8 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
                         = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
 
                 if (!isEqual) {
-                    log.info("Endpoint uri to acquire: " + endpoints.get(index).getEndpointUri() + ", returned producer (uri): "
-                             + producer.getEndpoint().getEndpointUri());
+                    log.info("Endpoint uri to acquire: {}, returned producer (uri): {}", endpoints.get(index).getEndpointUri(),
+                            producer.getEndpoint().getEndpointUri());
                 }
 
                 return isEqual;
