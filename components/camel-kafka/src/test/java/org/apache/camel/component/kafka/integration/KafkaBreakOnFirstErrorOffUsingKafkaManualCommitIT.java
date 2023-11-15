@@ -100,11 +100,11 @@ class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseEmbeddedKafk
         // we commit that one and keep going
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-5");
 
-        context.getRouteController().stopRoute(ROUTE_ID);
+        contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
 
         this.publishMessagesToKafka();
 
-        context.getRouteController().startRoute(ROUTE_ID);
+        contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
                 .atMost(3, TimeUnit.SECONDS)

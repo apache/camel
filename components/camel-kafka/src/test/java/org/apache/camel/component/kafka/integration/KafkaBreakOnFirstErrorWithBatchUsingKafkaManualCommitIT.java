@@ -100,10 +100,11 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
         // new behavior w/ NOOP Commit Manager
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4", "message-5");
 
+        contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
+        
         this.publishMessagesToKafka();
-
-        context.getRouteController().stopRoute(ROUTE_ID);
-        context.getRouteController().startRoute(ROUTE_ID);
+        
+        contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
                 .atMost(3, TimeUnit.SECONDS)

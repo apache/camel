@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
@@ -39,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-19894 regarding failure to
@@ -75,8 +74,6 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
     @BeforeAll
     public static void setupTopic() {
-        AdminClient kafkaAdminClient = createAdminClient(service);
-
         // create the topic w/ 2 partitions
         final NewTopic mytopic = new NewTopic(TOPIC, 2, (short) 1);
         kafkaAdminClient.createTopics(Collections.singleton(mytopic));
@@ -108,11 +105,11 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
         to.expectedMessageCount(4);
         to.expectedBodiesReceived("1", "2", "3", "4");
 
-        context.getRouteController().stopRoute(ROUTE_ID);
+        contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
 
         this.publishMessagesToKafka();
 
-        context.getRouteController().startRoute(ROUTE_ID);
+        contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         // let test run for awhile
         Awaitility.await()

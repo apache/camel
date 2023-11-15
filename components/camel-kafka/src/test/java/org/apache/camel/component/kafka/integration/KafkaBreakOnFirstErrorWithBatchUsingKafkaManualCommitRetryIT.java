@@ -37,8 +37,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -96,10 +96,11 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseE
     public void kafkaBreakOnFirstErrorBasicCapabilityRetry() throws Exception {
         to.reset();
 
+        contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
+
         this.publishMessagesToKafka();
 
-        context.getRouteController().stopRoute(ROUTE_ID);
-        context.getRouteController().startRoute(ROUTE_ID);
+        contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
                 .atMost(3, TimeUnit.SECONDS)

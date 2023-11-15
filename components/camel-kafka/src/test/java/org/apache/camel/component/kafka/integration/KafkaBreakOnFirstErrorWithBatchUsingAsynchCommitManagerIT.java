@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * this will test basic breakOnFirstError functionality uses allowManualCommit and set Synch Commit Manager this allows
@@ -99,11 +99,11 @@ class KafkaBreakOnFirstErrorWithBatchUsingAsynchCommitManagerIT extends BaseEmbe
         // we will never get to message-4
         to.expectedBodiesReceived("message-0", "message-1", "message-2");
 
-        context.getRouteController().stopRoute(ROUTE_ID);
+        contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
 
         this.publishMessagesToKafka();
 
-        context.getRouteController().startRoute(ROUTE_ID);
+        contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
                 .atMost(3, TimeUnit.SECONDS)
