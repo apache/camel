@@ -187,8 +187,9 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                     camelContext.addService(debugger);
                 }
                 // skip debugging inside rest-dsl (just a tiny facade) or kamelets / route-templates
-                boolean skip = routeDefinition.isCreatedFromRest() || routeDefinition.isCreatedFromTemplate();
-                if (!skip) {
+                boolean skip = routeDefinition != null
+                        && (routeDefinition.isCreatedFromRest() || routeDefinition.isCreatedFromTemplate());
+                if (!skip && routeDefinition != null) {
                     backlogDebuggerSetupInitialBreakpoints(definition, routeDefinition, first, debugger, targetOutputDef);
                     if (first && debugger.isSingleStepIncludeStartEnd()) {
                         // add breakpoint on route input instead of first node
