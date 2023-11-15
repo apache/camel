@@ -952,6 +952,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties healthProperties = new OrderedLocationProperties();
         OrderedLocationProperties lraProperties = new OrderedLocationProperties();
         OrderedLocationProperties otelProperties = new OrderedLocationProperties();
+        OrderedLocationProperties metricsProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeTemplateProperties = new OrderedLocationProperties();
         OrderedLocationProperties beansProperties = new OrderedLocationProperties();
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
@@ -1015,6 +1016,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 otelProperties.put(loc, optionKey(option), value);
+            } else if (key.startsWith("camel.metrics.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(14);
+                validateOptionAndValue(key, option, value);
+                metricsProperties.put(loc, optionKey(option), value);
             } else if (key.startsWith("camel.routeTemplate")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1125,6 +1132,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!otelProperties.isEmpty() || mainConfigurationProperties.hasOtelConfiguration()) {
             LOG.debug("Auto-configuring OpenTelemetry from loaded properties: {}", otelProperties.size());
             setOtelProperties(camelContext, otelProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!metricsProperties.isEmpty() || mainConfigurationProperties.hasMetricsConfiguration()) {
+            LOG.debug("Auto-configuring Micrometer metrics from loaded properties: {}", metricsProperties.size());
+            setMetricsProperties(camelContext, metricsProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
         if (!devConsoleProperties.isEmpty()) {
@@ -1393,6 +1405,22 @@ public abstract class BaseMainSupport extends BaseService {
                 // add as service so tracing can be active
                 camelContext.addService(otel, true, true);
             }
+        }
+    }
+
+    private void setMetricsProperties(
+            CamelContext camelContext, OrderedLocationProperties metricsProperties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        String loc = metricsProperties.getLocation("enabled");
+        Object obj = metricsProperties.remove("enabled");
+        if (ObjectHelper.isNotEmpty(obj)) {
+            autoConfiguredProperties.put(loc, "camel.metrics.enabled", obj.toString());
+        }
+        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        if (enabled) {
+            // TODO:
         }
     }
 

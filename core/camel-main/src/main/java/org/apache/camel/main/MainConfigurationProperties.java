@@ -54,6 +54,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private HealthConfigurationProperties healthConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
     private OtelConfigurationProperties otelConfigurationProperties;
+    private MetricsConfigurationProperties metricsConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
@@ -76,6 +77,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (otelConfigurationProperties != null) {
             otelConfigurationProperties.close();
             otelConfigurationProperties = null;
+        }
+        if (metricsConfigurationProperties != null) {
+            metricsConfigurationProperties.close();
+            metricsConfigurationProperties = null;
         }
         if (threadPoolProperties != null) {
             threadPoolProperties.close();
@@ -171,6 +176,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasOtelConfiguration() {
         return otelConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Micrometer metrics.
+     */
+    public MetricsConfigurationProperties metrics() {
+        if (metricsConfigurationProperties == null) {
+            metricsConfigurationProperties = new MetricsConfigurationProperties(this);
+        }
+        return metricsConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Micrometer metrics configuration specified
+     */
+    public boolean hasMetricsConfiguration() {
+        return metricsConfigurationProperties != null;
     }
 
     /**
