@@ -237,7 +237,12 @@ public class DebugDevConsole extends AbstractDevConsole {
             if (h.getNode() != null) {
                 jo.put("nodeId", h.getNode().getId());
                 if (h.getNode().getLocation() != null) {
-                    jo.put("location", h.getNode().getLocation());
+                    String loc = h.getNode().getLocation();
+                    // strip schema
+                    if (loc.contains(":")) {
+                        loc = StringHelper.after(loc, ":");
+                    }
+                    jo.put("location", loc);
                 }
                 if (h.getNode().getLineNumber() != -1) {
                     jo.put("line", h.getNode().getLineNumber());
