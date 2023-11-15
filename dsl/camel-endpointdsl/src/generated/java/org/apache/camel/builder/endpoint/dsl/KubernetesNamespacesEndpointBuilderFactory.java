@@ -1529,7 +1529,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1542,7 +1542,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1555,7 +1555,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceLabels}.
          */
         public String kubernetesNamespaceLabels() {
-            return "KubernetesNamespaceLabels";
+            return "CamelKubernetesNamespaceLabels";
         }
 
         /**
@@ -1569,7 +1569,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventAction}.
          */
         public String kubernetesEventAction() {
-            return "KubernetesEventAction";
+            return "CamelKubernetesEventAction";
         }
 
         /**
@@ -1582,7 +1582,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventTimestamp}.
          */
         public String kubernetesEventTimestamp() {
-            return "KubernetesEventTimestamp";
+            return "CamelKubernetesEventTimestamp";
         }
     }
     static KubernetesNamespacesEndpointBuilder endpointBuilder(

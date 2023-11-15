@@ -523,7 +523,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -536,7 +536,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -549,7 +549,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesSecretsLabels}.
          */
         public String kubernetesSecretsLabels() {
-            return "KubernetesSecretsLabels";
+            return "CamelKubernetesSecretsLabels";
         }
 
         /**
@@ -562,7 +562,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesSecretName}.
          */
         public String kubernetesSecretName() {
-            return "KubernetesSecretName";
+            return "CamelKubernetesSecretName";
         }
 
         /**
@@ -575,7 +575,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesSecret}.
          */
         public String kubernetesSecret() {
-            return "KubernetesSecret";
+            return "CamelKubernetesSecret";
         }
     }
     static KubernetesSecretsEndpointBuilder endpointBuilder(

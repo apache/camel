@@ -309,7 +309,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSecretManagerSecretId}.
          */
         public String googleSecretManagerSecretId() {
-            return "GoogleSecretManagerSecretId";
+            return "CamelGoogleSecretManagerSecretId";
         }
 
         /**
@@ -323,7 +323,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSecretManagerVersionId}.
          */
         public String googleSecretManagerVersionId() {
-            return "GoogleSecretManagerVersionId";
+            return "CamelGoogleSecretManagerVersionId";
         }
     }
     static GoogleSecretManagerEndpointBuilder endpointBuilder(

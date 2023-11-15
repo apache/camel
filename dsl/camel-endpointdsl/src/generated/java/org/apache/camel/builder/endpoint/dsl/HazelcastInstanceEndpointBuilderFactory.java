@@ -362,7 +362,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerAction}.
          */
         public String hazelcastListenerAction() {
-            return "HazelcastListenerAction";
+            return "CamelHazelcastListenerAction";
         }
 
         /**
@@ -375,7 +375,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerType}.
          */
         public String hazelcastListenerType() {
-            return "HazelcastListenerType";
+            return "CamelHazelcastListenerType";
         }
 
         /**
@@ -388,7 +388,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerTime}.
          */
         public String hazelcastListenerTime() {
-            return "HazelcastListenerTime";
+            return "CamelHazelcastListenerTime";
         }
 
         /**
@@ -401,7 +401,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastInstanceHost}.
          */
         public String hazelcastInstanceHost() {
-            return "HazelcastInstanceHost";
+            return "CamelHazelcastInstanceHost";
         }
 
         /**
@@ -414,7 +414,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastInstancePort}.
          */
         public String hazelcastInstancePort() {
-            return "HazelcastInstancePort";
+            return "CamelHazelcastInstancePort";
         }
     }
     static HazelcastInstanceEndpointBuilder endpointBuilder(

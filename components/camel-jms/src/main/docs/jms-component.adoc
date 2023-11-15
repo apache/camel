@@ -160,9 +160,9 @@ filename header for the File Component, and so on.
 The current header name strategy for accepting header names in Camel is
 as follows:
 
-* Dots are replaced by `_DOT_` and the replacement is reversed when
+* Dots are replaced by `\_DOT_` and the replacement is reversed when
 Camel consume the message
-* Hyphen is replaced by `_HYPHEN_` and the replacement is reversed when
+* Hyphen is replaced by `\_HYPHEN_` and the replacement is reversed when
 Camel consumes the message
 
 You can configure many different properties on the JMS endpoint, which

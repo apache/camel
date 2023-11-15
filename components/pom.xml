@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -265,6 +265,7 @@
         <module>camel-sjms2</module>
         <module>camel-sjms</module>
         <module>camel-slack</module>
+        <module>camel-smb</module>
         <module>camel-smpp</module>
         <module>camel-snakeyaml</module>
         <module>camel-snmp</module>

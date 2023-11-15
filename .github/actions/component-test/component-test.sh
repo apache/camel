@@ -18,10 +18,10 @@
 echo "Using MVND_OPTS=$MVND_OPTS"
 
 function main() {
-  local mavenBinary=${1}
-  local commentBody=${2}
-  local fastBuild=${3}
-  local log=${4}
+  local mavenBinary=$MAVEN_BINARY
+  local commentBody=$COMMENT_BODY
+  local fastBuild=$FAST_BUILD
+  local log=$LOG_FILE
 
   if [[ ${commentBody} = /component-test* ]] ; then
     local componentList="${commentBody:16}"
@@ -56,6 +56,15 @@ function main() {
   else
     echo "Launching tests of the projects ${pl}"
     $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
+    ret=$?
+
+    if [[ ${ret} -ne 0 ]] ; then
+      echo "Processing surefire and failsafe reports to create the summary"
+      echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |"  > "$GITHUB_STEP_SUMMARY"
+      find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+    fi
+
+    exit $ret
   fi
 }
 

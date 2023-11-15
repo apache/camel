@@ -53,8 +53,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         context.getCamelContextExtension().setDescription("My special Camel description");
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("my-camel-context"));
-        // debugger needed for source locations
-        context.setDebugging(true);
+        context.setSourceLocationEnabled(true);
         return context;
     }
 

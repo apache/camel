@@ -51,8 +51,8 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
         executor.submit(() -> {
 
             LOG.info("Simulating a task which takes {} millis to reply", getEndpoint().getDelay());
-            Thread.sleep(getEndpoint().getDelay());
 
+            Thread.sleep(getEndpoint().getDelay());
             int count = counter.incrementAndGet();
             if (getEndpoint().getFailFirstAttempts() >= count) {
                 LOG.info("Simulating a failure at attempt {}", count);

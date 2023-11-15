@@ -101,10 +101,13 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
     // Adapted from org.apache.camel.impl.engine.DefaultTracer.shouldTrace
     // org.apache.camel.impl.engine.DefaultTracer.shouldTracePattern
     private boolean shouldTrace(NamedNode definition) {
-        for (String pattern : tracer.getExcludePatterns()) {
-            // use matchPattern method from endpoint helper that has a good matcher we use in Camel
-            if (PatternHelper.matchPattern(definition.getId(), pattern)) {
-                return false;
+        if (tracer.getExcludePatterns() != null) {
+            for (String pattern : tracer.getExcludePatterns().split(",")) {
+                pattern = pattern.trim();
+                // use matchPattern method from endpoint helper that has a good matcher we use in Camel
+                if (PatternHelper.matchPattern(definition.getId(), pattern)) {
+                    return false;
+                }
             }
         }
 

@@ -1800,7 +1800,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the name of the header {@code PulsarProducerMessageKey}.
          */
         public String pulsarProducerMessageKey() {
-            return "PulsarProducerMessageKey";
+            return "CamelPulsarProducerMessageKey";
         }
 
         /**
@@ -1814,7 +1814,7 @@ public interface PulsarEndpointBuilderFactory {
          * PulsarProducerMessageProperties}.
          */
         public String pulsarProducerMessageProperties() {
-            return "PulsarProducerMessageProperties";
+            return "CamelPulsarProducerMessageProperties";
         }
 
         /**
@@ -1828,7 +1828,7 @@ public interface PulsarEndpointBuilderFactory {
          * PulsarProducerMessageEventTime}.
          */
         public String pulsarProducerMessageEventTime() {
-            return "PulsarProducerMessageEventTime";
+            return "CamelPulsarProducerMessageEventTime";
         }
 
         /**
@@ -1847,7 +1847,7 @@ public interface PulsarEndpointBuilderFactory {
          * PulsarProducerMessageDeliverAt}.
          */
         public String pulsarProducerMessageDeliverAt() {
-            return "PulsarProducerMessageDeliverAt";
+            return "CamelPulsarProducerMessageDeliverAt";
         }
 
         /**
@@ -1861,7 +1861,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the name of the header {@code PulsarRedeliveryCount}.
          */
         public String pulsarRedeliveryCount() {
-            return "PulsarRedeliveryCount";
+            return "CamelPulsarRedeliveryCount";
         }
     }
     static PulsarEndpointBuilder endpointBuilder(

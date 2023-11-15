@@ -18,6 +18,7 @@ package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.BindParameter;
@@ -48,6 +49,7 @@ public class SmppProducerTest {
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
         configuration.setPassword("password");
+        configuration.setInterfaceVersion("5.0");
         endpoint = mock(SmppEndpoint.class);
         session = mock(SMPPSession.class);
 
@@ -69,7 +71,8 @@ public class SmppProducerTest {
                 "cp",
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
-                "");
+                "",
+                InterfaceVersion.IF_50);
         when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameters))
                 .thenReturn("1");
         when(endpoint.isSingleton()).thenReturn(true);

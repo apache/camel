@@ -215,6 +215,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                                 retryCounter = -1;
                                 LOG.trace("Greedy polling after processing {} messages", polledMessages);
 
+                                // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
+                                // consumer to be unhealthy
+                                errorCounter = 0;
+                                lastError = null;
+                                lastErrorDetails = null;
+
                                 // setting firstPollDone to true if greedy polling is enabled
                                 firstPollDone = true;
                             }

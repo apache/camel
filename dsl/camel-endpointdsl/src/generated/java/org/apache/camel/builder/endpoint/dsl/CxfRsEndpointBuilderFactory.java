@@ -2286,7 +2286,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code Authentication}.
          */
         public String authentication() {
-            return "Authentication";
+            return "CamelAuthentication";
         }
 
         /**
@@ -2299,7 +2299,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code HttpMethod}.
          */
         public String httpMethod() {
-            return "HttpMethod";
+            return "CamelHttpMethod";
         }
 
         /**
@@ -2312,7 +2312,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code HttpPath}.
          */
         public String httpPath() {
-            return "HttpPath";
+            return "CamelHttpPath";
         }
 
         /**
@@ -2338,7 +2338,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code HttpQuery}.
          */
         public String httpQuery() {
-            return "HttpQuery";
+            return "CamelHttpQuery";
         }
 
         /**
@@ -2351,7 +2351,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseCode}.
          */
         public String httpResponseCode() {
-            return "HttpResponseCode";
+            return "CamelHttpResponseCode";
         }
 
         /**
@@ -2391,7 +2391,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfMessage}.
          */
         public String cxfMessage() {
-            return "CxfMessage";
+            return "CamelCxfMessage";
         }
 
         /**
@@ -2406,7 +2406,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsUsingHttpAPI}.
          */
         public String cxfRsUsingHttpAPI() {
-            return "CxfRsUsingHttpAPI";
+            return "CamelCxfRsUsingHttpAPI";
         }
 
         /**
@@ -2419,7 +2419,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsVarValues}.
          */
         public String cxfRsVarValues() {
-            return "CxfRsVarValues";
+            return "CamelCxfRsVarValues";
         }
 
         /**
@@ -2432,7 +2432,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsResponseClass}.
          */
         public String cxfRsResponseClass() {
-            return "CxfRsResponseClass";
+            return "CamelCxfRsResponseClass";
         }
 
         /**
@@ -2445,7 +2445,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsResponseGenericType}.
          */
         public String cxfRsResponseGenericType() {
-            return "CxfRsResponseGenericType";
+            return "CamelCxfRsResponseGenericType";
         }
 
         /**
@@ -2458,7 +2458,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsQueryMap}.
          */
         public String cxfRsQueryMap() {
-            return "CxfRsQueryMap";
+            return "CamelCxfRsQueryMap";
         }
 
         /**
@@ -2474,7 +2474,7 @@ public interface CxfRsEndpointBuilderFactory {
          * CxfRsOperationResourceInfoStack}.
          */
         public String cxfRsOperationResourceInfoStack() {
-            return "CxfRsOperationResourceInfoStack";
+            return "CamelCxfRsOperationResourceInfoStack";
         }
     }
     static CxfRsEndpointBuilder endpointBuilder(

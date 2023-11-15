@@ -37,7 +37,7 @@ import org.fusesource.jansi.Ansi;
 public class MessageTableHelper {
 
     @FunctionalInterface
-    interface ColorChooser {
+    public interface ColorChooser {
         Ansi.Color color(String value);
     }
 
@@ -276,7 +276,7 @@ public class MessageTableHelper {
                     if (s != null && !s.isEmpty()) {
                         json = true;
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     // ignore as not json
                 }
                 if (s == null || s.isEmpty()) {
@@ -291,7 +291,7 @@ public class MessageTableHelper {
                         } else {
                             s = XmlHelper.prettyPrint(s, 2);
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         // ignore as not xml
                     }
                 }

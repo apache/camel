@@ -777,7 +777,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     /**
      * Configures a {@code T} based on the related configuration options.
      */
-    interface Configurer<T> {
+    protected interface Configurer<T> {
 
         /**
          * Configures a {@code T} based on the related configuration options. The return value from this method may be

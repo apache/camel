@@ -51,7 +51,7 @@ public final class KnownDependenciesResolver {
                 }
                 addMappings(map);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
     }

@@ -52,7 +52,7 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
         };
 
         beerCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
                 return "beer".equals(exchange.getFromRouteId());
             }
         };

@@ -60,7 +60,8 @@ import org.twdata.maven.mojoexecutor.MojoExecutor;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.inspector.TrustedTagInspector;
+import org.yaml.snakeyaml.inspector.TagInspector;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
@@ -415,4 +416,10 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         return auths;
     }
 
+    final class TrustedTagInspector implements TagInspector {
+        @Override
+        public boolean isGlobalTagAllowed(Tag tag) {
+            return true;
+        }
+    }
 }

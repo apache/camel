@@ -65,8 +65,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
         case "contextreloadenabled":
         case "ContextReloadEnabled": target.setContextReloadEnabled(property(camelContext, boolean.class, value)); return true;
-        case "debugging":
-        case "Debugging": target.setDebugging(property(camelContext, boolean.class, value)); return true;
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "devconsoleenabled":
@@ -326,8 +324,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": return int.class;
         case "contextreloadenabled":
         case "ContextReloadEnabled": return boolean.class;
-        case "debugging":
-        case "Debugging": return boolean.class;
         case "description":
         case "Description": return java.lang.String.class;
         case "devconsoleenabled":
@@ -588,8 +584,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": return target.getConsumerTemplateCacheSize();
         case "contextreloadenabled":
         case "ContextReloadEnabled": return target.isContextReloadEnabled();
-        case "debugging":
-        case "Debugging": return target.isDebugging();
         case "description":
         case "Description": return target.getDescription();
         case "devconsoleenabled":

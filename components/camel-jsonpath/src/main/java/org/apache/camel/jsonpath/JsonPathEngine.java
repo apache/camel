@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
+import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
 import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 
 public class JsonPathEngine {
@@ -202,32 +203,34 @@ public class JsonPathEngine {
             }
         }
 
+        Object answer;
         if (json instanceof String) {
             LOG.trace("JSonPath: {} is read as String: {}", path, json);
             String str = (String) json;
-            return JsonPath.using(configuration).parse(str).read(path);
+            answer = JsonPath.using(configuration).parse(str).read(path);
         } else if (json instanceof Map) {
             LOG.trace("JSonPath: {} is read as Map: {}", path, json);
             Map map = (Map) json;
-            return JsonPath.using(configuration).parse(map).read(path);
+            answer = JsonPath.using(configuration).parse(map).read(path);
         } else if (json instanceof List) {
             LOG.trace("JSonPath: {} is read as List: {}", path, json);
             List list = (List) json;
-            return JsonPath.using(configuration).parse(list).read(path);
+            answer = JsonPath.using(configuration).parse(list).read(path);
         } else {
             //try to auto convert into inputStream
-            Object answer = readWithInputStream(path, exchange);
+            answer = readWithInputStream(path, exchange);
             if (answer == null) {
                 // fallback and attempt an adapter which can read the message body/header
                 answer = readWithAdapter(path, exchange);
             }
-            if (answer != null) {
-                return answer;
-            }
+        }
+        if (answer != null) {
+            return answer;
         }
 
         // is json path configured to suppress exceptions
-        if (configuration.getOptions().contains(SUPPRESS_EXCEPTIONS)) {
+        if (configuration.getOptions().contains(SUPPRESS_EXCEPTIONS)
+                || configuration.getOptions().contains(DEFAULT_PATH_LEAF_TO_NULL)) {
             if (configuration.getOptions().contains(ALWAYS_RETURN_LIST)) {
                 return Collections.emptyList();
             } else {

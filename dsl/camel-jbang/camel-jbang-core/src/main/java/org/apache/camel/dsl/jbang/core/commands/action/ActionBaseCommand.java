@@ -77,24 +77,6 @@ abstract class ActionBaseCommand extends CamelCommand {
         return since;
     }
 
-    static String extractState(int status) {
-        if (status <= 4) {
-            return "Starting";
-        } else if (status == 5) {
-            return "Running";
-        } else if (status == 6) {
-            return "Suspending";
-        } else if (status == 7) {
-            return "Suspended";
-        } else if (status == 8) {
-            return "Terminating";
-        } else if (status == 9) {
-            return "Terminated";
-        } else {
-            return "Terminated";
-        }
-    }
-
     JsonObject loadStatus(long pid) {
         try {
             File f = getStatusFile(Long.toString(pid));
@@ -104,7 +86,7 @@ abstract class ActionBaseCommand extends CamelCommand {
                 IOHelper.close(fis);
                 return (JsonObject) Jsoner.deserialize(text);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
         return null;

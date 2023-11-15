@@ -1042,7 +1042,7 @@ public interface StreamEndpointBuilderFactory {
          * @return the name of the header {@code StreamIndex}.
          */
         public String streamIndex() {
-            return "StreamIndex";
+            return "CamelStreamIndex";
         }
 
         /**
@@ -1055,7 +1055,7 @@ public interface StreamEndpointBuilderFactory {
          * @return the name of the header {@code StreamComplete}.
          */
         public String streamComplete() {
-            return "StreamComplete";
+            return "CamelStreamComplete";
         }
     }
     static StreamEndpointBuilder endpointBuilder(

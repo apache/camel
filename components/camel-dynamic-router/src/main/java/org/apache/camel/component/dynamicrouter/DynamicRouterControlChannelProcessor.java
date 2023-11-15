@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.camel.AsyncCallback;
@@ -109,29 +108,26 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
     DynamicRouterControlMessage handleControlMessage(final Exchange exchange) {
         final String controlAction = configuration.getControlAction();
         DynamicRouterControlMessage controlMessage;
-        final Object body = exchange.getIn().getBody();
+        final Object body = exchange.getMessage().getBody();
         if (controlAction != null && !controlAction.isEmpty()) {
-            switch (controlAction) {
-                case CONTROL_ACTION_UNSUBSCRIBE:
-                    controlMessage = new UnsubscribeMessageBuilder()
-                            .channel(configuration.getSubscribeChannel())
-                            .id(configuration.getSubscriptionId())
-                            .build();
-                    break;
-                case CONTROL_ACTION_SUBSCRIBE:
+            controlMessage = switch (controlAction) {
+                case CONTROL_ACTION_UNSUBSCRIBE -> new UnsubscribeMessageBuilder()
+                        .channel(configuration.getSubscribeChannel())
+                        .id(configuration.getSubscriptionId())
+                        .build();
+                case CONTROL_ACTION_SUBSCRIBE -> {
                     final String subscriptionId = configuration.getSubscriptionId() == null
                             ? UUID.randomUUID().toString() : configuration.getSubscriptionId();
-                    controlMessage = new SubscribeMessageBuilder()
+                    yield new SubscribeMessageBuilder()
                             .channel(configuration.getSubscribeChannel())
                             .id(subscriptionId)
                             .endpointUri(configuration.getDestinationUri())
                             .priority(configuration.getPriority())
                             .predicate(obtainPredicate(body))
                             .build();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Illegal control channel action: " + controlAction);
-            }
+                }
+                default -> throw new IllegalArgumentException("Illegal control channel action: " + controlAction);
+            };
         } else if (DynamicRouterControlMessage.class.isAssignableFrom(body.getClass())) {
             controlMessage = (DynamicRouterControlMessage) body;
         } else {
@@ -142,7 +138,7 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
 
     /**
      * When a {@link DynamicRouterControlMessage} is received, it is processed, depending on the
-     * {@link DynamicRouterControlMessage#getMessageType()}: if the type is
+     * {@link DynamicRouterControlMessage#messageType()}: if the type is
      * {@link DynamicRouterControlMessage.ControlMessageType#SUBSCRIBE}, then create the
      * {@link org.apache.camel.processor.FilterProcessor} and add it to the consumer's filters, but if the type is
      * {@link DynamicRouterControlMessage.ControlMessageType#UNSUBSCRIBE}, then the entry for the endpoint is removed.
@@ -156,20 +152,22 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         LOG.debug("Received control channel message");
         DynamicRouterControlMessage controlMessage = handleControlMessage(exchange);
-        final DynamicRouterProcessor processor = Optional.ofNullable(component.getRoutingProcessor(controlMessage.getChannel()))
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Control channel message is invalid: wrong channel, or no processors present."));
-        switch (controlMessage.getMessageType()) {
-            case SUBSCRIBE:
-                processor.addFilter(controlMessage);
-                exchange.getIn().setBody(controlMessage.getId(), String.class);
-                break;
-            case UNSUBSCRIBE:
-                processor.removeFilter(controlMessage.getId());
-                break;
-            default:
-                // Cannot get here due to enum
-                break;
+        DynamicRouterMulticastProcessor processor = component.getRoutingProcessor(controlMessage.channel());
+        if (processor != null) {
+            switch (controlMessage.messageType()) {
+                case SUBSCRIBE -> {
+                    processor.addFilter(controlMessage);
+                    exchange.getMessage().setBody(controlMessage.id(), String.class);
+                }
+                case UNSUBSCRIBE -> processor.removeFilter(controlMessage.id());
+                default -> {
+                    // Cannot get here due to enum
+                }
+            }
+        } else {
+            exchange.setException(
+                    new IllegalArgumentException(
+                            "Control channel message is invalid: wrong channel, or no processors present."));
         }
         callback.done(true);
         return true;

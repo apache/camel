@@ -2275,7 +2275,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the name of the header {@code NatsMessageTimestamp}.
          */
         public String natsMessageTimestamp() {
-            return "NatsMessageTimestamp";
+            return "CamelNatsMessageTimestamp";
         }
 
         /**
@@ -2288,7 +2288,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the name of the header {@code NatsSID}.
          */
         public String natsSID() {
-            return "NatsSID";
+            return "CamelNatsSID";
         }
 
         /**
@@ -2301,7 +2301,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the name of the header {@code NatsReplyTo}.
          */
         public String natsReplyTo() {
-            return "NatsReplyTo";
+            return "CamelNatsReplyTo";
         }
 
         /**
@@ -2314,7 +2314,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the name of the header {@code NatsSubject}.
          */
         public String natsSubject() {
-            return "NatsSubject";
+            return "CamelNatsSubject";
         }
 
         /**
@@ -2327,7 +2327,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the name of the header {@code NatsQueueName}.
          */
         public String natsQueueName() {
-            return "NatsQueueName";
+            return "CamelNatsQueueName";
         }
     }
     static NatsEndpointBuilder endpointBuilder(String componentName, String path) {

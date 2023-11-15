@@ -1090,7 +1090,7 @@ public interface JcrEndpointBuilderFactory {
          * @return the name of the header {@code JcrNodeName}.
          */
         public String jcrNodeName() {
-            return "JcrNodeName";
+            return "CamelJcrNodeName";
         }
 
         /**
@@ -1105,7 +1105,7 @@ public interface JcrEndpointBuilderFactory {
          * @return the name of the header {@code JcrOperation}.
          */
         public String jcrOperation() {
-            return "JcrOperation";
+            return "CamelJcrOperation";
         }
 
         /**
@@ -1118,7 +1118,7 @@ public interface JcrEndpointBuilderFactory {
          * @return the name of the header {@code JcrNodeType}.
          */
         public String jcrNodeType() {
-            return "JcrNodeType";
+            return "CamelJcrNodeType";
         }
     }
     static JcrEndpointBuilder endpointBuilder(String componentName, String path) {

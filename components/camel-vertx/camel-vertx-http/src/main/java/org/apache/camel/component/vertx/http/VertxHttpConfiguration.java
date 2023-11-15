@@ -36,7 +36,8 @@ public class VertxHttpConfiguration {
     @UriPath(name = "httpUri")
     @Metadata(required = true)
     private URI httpUri;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              enums = "OPTIONS,GET,HEAD,POST,PUT,DELETE,TRACE,CONNECT,PATCH,PROPFIND,PROPPATCH,MKCOL,COPY,MOVE,LOCK,UNLOCK,MKCALENDAR,VERSION_CONTROL,REPORT,CHECKIN,CHECKOUT,UNCHECKOUT,MKWORKSPACE,UPDATE,LABEL,MERGE,BASELINE_CONTROL,MKACTIVITY,ORDERPATCH,ACL,SEARCH")
     private HttpMethod httpMethod;
     @UriParam(label = "producer", defaultValue = "-1")
     private long timeout = -1;
@@ -97,6 +98,13 @@ public class VertxHttpConfiguration {
      */
     public void setHttpMethod(HttpMethod httpMethod) {
         this.httpMethod = httpMethod;
+    }
+
+    /**
+     * The HTTP method to use. The HttpMethod header cannot override this option if set
+     */
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = HttpMethod.valueOf(httpMethod);
     }
 
     public HttpMethod getHttpMethod() {

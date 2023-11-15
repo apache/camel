@@ -1107,7 +1107,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSheetsSpreadsheetId}.
          */
         public String googleSheetsSpreadsheetId() {
-            return "GoogleSheetsSpreadsheetId";
+            return "CamelGoogleSheetsSpreadsheetId";
         }
 
         /**
@@ -1120,7 +1120,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSheetsSpreadsheetUrl}.
          */
         public String googleSheetsSpreadsheetUrl() {
-            return "GoogleSheetsSpreadsheetUrl";
+            return "CamelGoogleSheetsSpreadsheetUrl";
         }
 
         /**
@@ -1133,7 +1133,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSheetsMajorDimension}.
          */
         public String googleSheetsMajorDimension() {
-            return "GoogleSheetsMajorDimension";
+            return "CamelGoogleSheetsMajorDimension";
         }
 
         /**
@@ -1146,7 +1146,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSheetsRange}.
          */
         public String googleSheetsRange() {
-            return "GoogleSheetsRange";
+            return "CamelGoogleSheetsRange";
         }
 
         /**
@@ -1159,7 +1159,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSheetsRangeIndex}.
          */
         public String googleSheetsRangeIndex() {
-            return "GoogleSheetsRangeIndex";
+            return "CamelGoogleSheetsRangeIndex";
         }
 
         /**
@@ -1172,7 +1172,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSheetsValueIndex}.
          */
         public String googleSheetsValueIndex() {
-            return "GoogleSheetsValueIndex";
+            return "CamelGoogleSheetsValueIndex";
         }
     }
     static GoogleSheetsStreamEndpointBuilder endpointBuilder(

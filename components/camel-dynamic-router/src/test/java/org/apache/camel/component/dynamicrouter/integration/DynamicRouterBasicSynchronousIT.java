@@ -73,11 +73,7 @@ public class DynamicRouterBasicSynchronousIT extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
-        // The predicate is called twice:
-        //   1. when the FilterProcessor parent class tests predicate matches
-        //   2. when the DynamicRouterProcessor sub-class tests predicate matches
-        // Each pair constitutes one Exchange evaluation
-        verify(spyPredicate, times(2)).matches(any(Exchange.class));
+        verify(spyPredicate, times(1)).matches(any(Exchange.class));
     }
 
     /**
@@ -107,11 +103,7 @@ public class DynamicRouterBasicSynchronousIT extends CamelTestSupport {
         // Subscription should lead to the mock endpoint receiving one message
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
-        // The predicate is called twice:
-        //   1. when the FilterProcessor parent class tests predicate matches
-        //   2. when the DynamicRouterProcessor sub-class tests predicate matches
-        // Each pair constitutes one Exchange evaluation
-        verify(spyPredicate, times(2)).matches(any(Exchange.class));
+        verify(spyPredicate, times(1)).matches(any(Exchange.class));
 
         // Reset the interactions for the predicate spy before unsubscribing
         reset(spyPredicate);

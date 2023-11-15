@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
@@ -58,11 +59,11 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             assertNotNull(found);
             assertEquals("textQualifier", found.getName());
             assertEquals("attribute", found.getKind());
-            assertEquals(false, found.isRequired());
+            assertFalse(found.isRequired());
             assertEquals("string", found.getType());
             assertEquals("java.lang.String", found.getJavaType());
-            assertEquals(false, found.isDeprecated());
-            assertEquals(false, found.isSecret());
+            assertFalse(found.isDeprecated());
+            assertFalse(found.isSecret());
             assertEquals("If the text is qualified with a character. Uses quote character by default.", found.getDescription());
         }
     }
@@ -84,11 +85,11 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             assertNotNull(found);
             assertEquals("escapeChar", found.getName());
             assertEquals("attribute", found.getKind());
-            assertEquals(false, found.isRequired());
+            assertFalse(found.isRequired());
             assertEquals("string", found.getType());
             assertEquals("java.lang.String", found.getJavaType());
-            assertEquals(false, found.isDeprecated());
-            assertEquals(false, found.isSecret());
+            assertFalse(found.isDeprecated());
+            assertFalse(found.isSecret());
             assertEquals("\\", found.getDefaultValue());
             assertEquals("The escape character.", found.getDescription());
         }

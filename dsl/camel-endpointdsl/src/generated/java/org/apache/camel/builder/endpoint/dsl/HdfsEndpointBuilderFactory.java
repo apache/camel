@@ -2715,7 +2715,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the name of the header {@code HdfsClose}.
          */
         public String hdfsClose() {
-            return "HdfsClose";
+            return "CamelHdfsClose";
         }
 
         /**
@@ -2731,7 +2731,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
 
         /**
@@ -2744,7 +2744,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the name of the header {@code FileNameConsumed}.
          */
         public String fileNameConsumed() {
-            return "FileNameConsumed";
+            return "CamelFileNameConsumed";
         }
 
         /**
@@ -2757,7 +2757,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the name of the header {@code FileAbsolutePath}.
          */
         public String fileAbsolutePath() {
-            return "FileAbsolutePath";
+            return "CamelFileAbsolutePath";
         }
 
         /**
@@ -2783,7 +2783,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the name of the header {@code FileLength}.
          */
         public String fileLength() {
-            return "FileLength";
+            return "CamelFileLength";
         }
     }
     static HdfsEndpointBuilder endpointBuilder(String componentName, String path) {

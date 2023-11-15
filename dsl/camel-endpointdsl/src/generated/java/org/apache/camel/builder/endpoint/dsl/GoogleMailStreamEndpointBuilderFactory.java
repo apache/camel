@@ -1069,7 +1069,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleMailStreamTo}.
          */
         public String googleMailStreamTo() {
-            return "GoogleMailStreamTo";
+            return "CamelGoogleMailStreamTo";
         }
 
         /**
@@ -1082,7 +1082,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleMailStreamFrom}.
          */
         public String googleMailStreamFrom() {
-            return "GoogleMailStreamFrom";
+            return "CamelGoogleMailStreamFrom";
         }
 
         /**
@@ -1095,7 +1095,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleMailStreamCc}.
          */
         public String googleMailStreamCc() {
-            return "GoogleMailStreamCc";
+            return "CamelGoogleMailStreamCc";
         }
 
         /**
@@ -1108,7 +1108,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleMailStreamBcc}.
          */
         public String googleMailStreamBcc() {
-            return "GoogleMailStreamBcc";
+            return "CamelGoogleMailStreamBcc";
         }
 
         /**
@@ -1121,7 +1121,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleMailStreamSubject}.
          */
         public String googleMailStreamSubject() {
-            return "GoogleMailStreamSubject";
+            return "CamelGoogleMailStreamSubject";
         }
 
         /**
@@ -1134,7 +1134,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * @return the name of the header {@code GoogleMailId}.
          */
         public String googleMailId() {
-            return "GoogleMailId";
+            return "CamelGoogleMailId";
         }
     }
     static GoogleMailStreamEndpointBuilder endpointBuilder(

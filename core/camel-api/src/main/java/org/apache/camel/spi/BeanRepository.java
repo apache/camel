@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.NoSuchBeanTypeException;
+
 /**
  * Represents a bean repository used to lookup components by name and type. This allows Camel to plugin to third-party
  * bean repositories such as Spring, JNDI, OSGi.
@@ -76,6 +78,21 @@ public interface BeanRepository {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Finds the bean by type, if there is exactly only one instance of the bean
+     *
+     * @param  type the type of the beans
+     * @return      the single bean instance, or throws {@link NoSuchBeanTypeException} if not exactly one bean was
+     *              found.
+     */
+    default <T> T mandatoryFindSingleByType(Class<T> type) {
+        T answer = findSingleByType(type);
+        if (answer == null) {
+            throw new NoSuchBeanTypeException(type);
+        }
+        return answer;
     }
 
     /**

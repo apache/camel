@@ -3421,7 +3421,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Path parameter: bucketNameOrArn (required)
          * Bucket name or ARN
          * 
-         * @param path //bucketNameOrArn
+         * @param path bucketNameOrArn
          * @return the dsl builder
          */
         default AWS2S3EndpointBuilder aws2S3(String path) {
@@ -3442,7 +3442,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path //bucketNameOrArn
+         * @param path bucketNameOrArn
          * @return the dsl builder
          */
         default AWS2S3EndpointBuilder aws2S3(String componentName, String path) {
@@ -3471,7 +3471,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3BucketName}.
          */
         public String awsS3BucketName() {
-            return "AwsS3BucketName";
+            return "CamelAwsS3BucketName";
         }
 
         /**
@@ -3485,7 +3485,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3BucketDestinationName}.
          */
         public String awsS3BucketDestinationName() {
-            return "AwsS3BucketDestinationName";
+            return "CamelAwsS3BucketDestinationName";
         }
 
         /**
@@ -3499,7 +3499,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ContentControl}.
          */
         public String awsS3ContentControl() {
-            return "AwsS3ContentControl";
+            return "CamelAwsS3ContentControl";
         }
 
         /**
@@ -3514,7 +3514,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ContentDisposition}.
          */
         public String awsS3ContentDisposition() {
-            return "AwsS3ContentDisposition";
+            return "CamelAwsS3ContentDisposition";
         }
 
         /**
@@ -3530,7 +3530,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ContentEncoding}.
          */
         public String awsS3ContentEncoding() {
-            return "AwsS3ContentEncoding";
+            return "CamelAwsS3ContentEncoding";
         }
 
         /**
@@ -3544,7 +3544,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ContentLength}.
          */
         public String awsS3ContentLength() {
-            return "AwsS3ContentLength";
+            return "CamelAwsS3ContentLength";
         }
 
         /**
@@ -3560,7 +3560,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ContentMD5}.
          */
         public String awsS3ContentMD5() {
-            return "AwsS3ContentMD5";
+            return "CamelAwsS3ContentMD5";
         }
 
         /**
@@ -3575,7 +3575,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ContentType}.
          */
         public String awsS3ContentType() {
-            return "AwsS3ContentType";
+            return "CamelAwsS3ContentType";
         }
 
         /**
@@ -3592,7 +3592,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ETag}.
          */
         public String awsS3ETag() {
-            return "AwsS3ETag";
+            return "CamelAwsS3ETag";
         }
 
         /**
@@ -3606,7 +3606,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3Key}.
          */
         public String awsS3Key() {
-            return "AwsS3Key";
+            return "CamelAwsS3Key";
         }
 
         /**
@@ -3619,7 +3619,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3DestinationKey}.
          */
         public String awsS3DestinationKey() {
-            return "AwsS3DestinationKey";
+            return "CamelAwsS3DestinationKey";
         }
 
         /**
@@ -3634,7 +3634,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3LastModified}.
          */
         public String awsS3LastModified() {
-            return "AwsS3LastModified";
+            return "CamelAwsS3LastModified";
         }
 
         /**
@@ -3647,7 +3647,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3StorageClass}.
          */
         public String awsS3StorageClass() {
-            return "AwsS3StorageClass";
+            return "CamelAwsS3StorageClass";
         }
 
         /**
@@ -3663,7 +3663,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3VersionId}.
          */
         public String awsS3VersionId() {
-            return "AwsS3VersionId";
+            return "CamelAwsS3VersionId";
         }
 
         /**
@@ -3678,7 +3678,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3CannedAcl}.
          */
         public String awsS3CannedAcl() {
-            return "AwsS3CannedAcl";
+            return "CamelAwsS3CannedAcl";
         }
 
         /**
@@ -3692,7 +3692,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3Acl}.
          */
         public String awsS3Acl() {
-            return "AwsS3Acl";
+            return "CamelAwsS3Acl";
         }
 
         /**
@@ -3706,7 +3706,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3Operation}.
          */
         public String awsS3Operation() {
-            return "AwsS3Operation";
+            return "CamelAwsS3Operation";
         }
 
         /**
@@ -3720,7 +3720,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ServerSideEncryption}.
          */
         public String awsS3ServerSideEncryption() {
-            return "AwsS3ServerSideEncryption";
+            return "CamelAwsS3ServerSideEncryption";
         }
 
         /**
@@ -3734,7 +3734,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ExpirationTime}.
          */
         public String awsS3ExpirationTime() {
-            return "AwsS3ExpirationTime";
+            return "CamelAwsS3ExpirationTime";
         }
 
         /**
@@ -3749,7 +3749,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3ReplicationStatus}.
          */
         public String awsS3ReplicationStatus() {
-            return "AwsS3ReplicationStatus";
+            return "CamelAwsS3ReplicationStatus";
         }
 
         /**
@@ -3762,7 +3762,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3RangeStart}.
          */
         public String awsS3RangeStart() {
-            return "AwsS3RangeStart";
+            return "CamelAwsS3RangeStart";
         }
 
         /**
@@ -3775,7 +3775,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3RangeEnd}.
          */
         public String awsS3RangeEnd() {
-            return "AwsS3RangeEnd";
+            return "CamelAwsS3RangeEnd";
         }
 
         /**
@@ -3789,7 +3789,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * AwsS3DowloadLinkExpirationTime}.
          */
         public String awsS3DowloadLinkExpirationTime() {
-            return "AwsS3DowloadLinkExpirationTime";
+            return "CamelAwsS3DowloadLinkExpirationTime";
         }
 
         /**
@@ -3803,7 +3803,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * AwsS3DownloadLinkBrowserCompatible}.
          */
         public String awsS3DownloadLinkBrowserCompatible() {
-            return "AwsS3DownloadLinkBrowserCompatible";
+            return "CamelAwsS3DownloadLinkBrowserCompatible";
         }
 
         /**
@@ -3818,7 +3818,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * AwsS3DownloadLinkHttpRequestHeaders}.
          */
         public String awsS3DownloadLinkHttpRequestHeaders() {
-            return "AwsS3DownloadLinkHttpRequestHeaders";
+            return "CamelAwsS3DownloadLinkHttpRequestHeaders";
         }
 
         /**
@@ -3833,7 +3833,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * AwsS3DownloadLinkSignedPayload}.
          */
         public String awsS3DownloadLinkSignedPayload() {
-            return "AwsS3DownloadLinkSignedPayload";
+            return "CamelAwsS3DownloadLinkSignedPayload";
         }
 
         /**
@@ -3848,7 +3848,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3Metadata}.
          */
         public String awsS3Metadata() {
-            return "AwsS3Metadata";
+            return "CamelAwsS3Metadata";
         }
 
         /**
@@ -3861,7 +3861,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code MessageTimestamp}.
          */
         public String messageTimestamp() {
-            return "MessageTimestamp";
+            return "CamelMessageTimestamp";
         }
 
         /**
@@ -3876,7 +3876,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3Prefix}.
          */
         public String awsS3Prefix() {
-            return "AwsS3Prefix";
+            return "CamelAwsS3Prefix";
         }
 
         /**
@@ -3891,7 +3891,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the name of the header {@code AwsS3Delimiter}.
          */
         public String awsS3Delimiter() {
-            return "AwsS3Delimiter";
+            return "CamelAwsS3Delimiter";
         }
     }
     static AWS2S3EndpointBuilder endpointBuilder(

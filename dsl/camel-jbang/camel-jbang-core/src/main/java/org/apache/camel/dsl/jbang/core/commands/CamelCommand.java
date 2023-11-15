@@ -122,6 +122,13 @@ public abstract class CamelCommand implements Callable<Integer> {
         return new File(camelDir, pid + "-trace.json");
     }
 
+    public File getDebugFile(String pid) {
+        if (camelDir == null) {
+            camelDir = new File(System.getProperty("user.home"), ".camel");
+        }
+        return new File(camelDir, pid + "-debug.json");
+    }
+
     protected void printConfigurationValues(String header) {
         final Properties configProperties = new Properties();
         CommandLineHelper.loadProperties(configProperties::putAll);

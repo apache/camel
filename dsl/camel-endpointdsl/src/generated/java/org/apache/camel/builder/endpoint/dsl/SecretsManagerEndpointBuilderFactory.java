@@ -608,7 +608,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * @return the name of the header {@code AwsSecretsManagerOperation}.
          */
         public String awsSecretsManagerOperation() {
-            return "AwsSecretsManagerOperation";
+            return "CamelAwsSecretsManagerOperation";
         }
 
         /**
@@ -621,7 +621,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * @return the name of the header {@code AwsSecretsManagerMaxResults}.
          */
         public String awsSecretsManagerMaxResults() {
-            return "AwsSecretsManagerMaxResults";
+            return "CamelAwsSecretsManagerMaxResults";
         }
 
         /**
@@ -634,7 +634,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * @return the name of the header {@code AwsSecretsManagerSecretName}.
          */
         public String awsSecretsManagerSecretName() {
-            return "AwsSecretsManagerSecretName";
+            return "CamelAwsSecretsManagerSecretName";
         }
 
         /**
@@ -648,7 +648,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * AwsSecretsManagerSecretDescription}.
          */
         public String awsSecretsManagerSecretDescription() {
-            return "AwsSecretsManagerSecretDescription";
+            return "CamelAwsSecretsManagerSecretDescription";
         }
 
         /**
@@ -661,7 +661,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * @return the name of the header {@code AwsSecretsManagerSecretId}.
          */
         public String awsSecretsManagerSecretId() {
-            return "AwsSecretsManagerSecretId";
+            return "CamelAwsSecretsManagerSecretId";
         }
 
         /**
@@ -675,7 +675,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * AwsSecretsManagerLambdaRotationFunctionArn}.
          */
         public String awsSecretsManagerLambdaRotationFunctionArn() {
-            return "AwsSecretsManagerLambdaRotationFunctionArn";
+            return "CamelAwsSecretsManagerLambdaRotationFunctionArn";
         }
 
         /**
@@ -689,7 +689,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * AwsSecretsManagerSecretVersionId}.
          */
         public String awsSecretsManagerSecretVersionId() {
-            return "AwsSecretsManagerSecretVersionId";
+            return "CamelAwsSecretsManagerSecretVersionId";
         }
 
         /**
@@ -703,7 +703,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * AwsSecretsManagerSecretReplicationRegions}.
          */
         public String awsSecretsManagerSecretReplicationRegions() {
-            return "AwsSecretsManagerSecretReplicationRegions";
+            return "CamelAwsSecretsManagerSecretReplicationRegions";
         }
     }
     static SecretsManagerEndpointBuilder endpointBuilder(

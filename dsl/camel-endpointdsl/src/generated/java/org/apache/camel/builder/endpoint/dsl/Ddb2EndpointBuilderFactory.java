@@ -712,7 +712,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbAttributes}.
          */
         public String awsDdbAttributes() {
-            return "AwsDdbAttributes";
+            return "CamelAwsDdbAttributes";
         }
 
         /**
@@ -726,7 +726,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbAttributeNames}.
          */
         public String awsDdbAttributeNames() {
-            return "AwsDdbAttributeNames";
+            return "CamelAwsDdbAttributeNames";
         }
 
         /**
@@ -740,7 +740,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbBatchItems}.
          */
         public String awsDdbBatchItems() {
-            return "AwsDdbBatchItems";
+            return "CamelAwsDdbBatchItems";
         }
 
         /**
@@ -753,7 +753,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbBatchResponse}.
          */
         public String awsDdbBatchResponse() {
-            return "AwsDdbBatchResponse";
+            return "CamelAwsDdbBatchResponse";
         }
 
         /**
@@ -767,7 +767,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbConsistentRead}.
          */
         public String awsDdbConsistentRead() {
-            return "AwsDdbConsistentRead";
+            return "CamelAwsDdbConsistentRead";
         }
 
         /**
@@ -781,7 +781,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbConsumedCapacity}.
          */
         public String awsDdbConsumedCapacity() {
-            return "AwsDdbConsumedCapacity";
+            return "CamelAwsDdbConsumedCapacity";
         }
 
         /**
@@ -794,7 +794,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbCount}.
          */
         public String awsDdbCount() {
-            return "AwsDdbCount";
+            return "CamelAwsDdbCount";
         }
 
         /**
@@ -807,7 +807,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbCreationDate}.
          */
         public String awsDdbCreationDate() {
-            return "AwsDdbCreationDate";
+            return "CamelAwsDdbCreationDate";
         }
 
         /**
@@ -820,7 +820,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbIndexName}.
          */
         public String awsDdbIndexName() {
-            return "AwsDdbIndexName";
+            return "CamelAwsDdbIndexName";
         }
 
         /**
@@ -834,7 +834,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbItem}.
          */
         public String awsDdbItem() {
-            return "AwsDdbItem";
+            return "CamelAwsDdbItem";
         }
 
         /**
@@ -847,7 +847,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbItems}.
          */
         public String awsDdbItems() {
-            return "AwsDdbItems";
+            return "CamelAwsDdbItems";
         }
 
         /**
@@ -860,7 +860,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbTableItemCount}.
          */
         public String awsDdbTableItemCount() {
-            return "AwsDdbTableItemCount";
+            return "CamelAwsDdbTableItemCount";
         }
 
         /**
@@ -873,7 +873,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbKey}.
          */
         public String awsDdbKey() {
-            return "AwsDdbKey";
+            return "CamelAwsDdbKey";
         }
 
         /**
@@ -888,7 +888,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbKeyConditions}.
          */
         public String awsDdbKeyConditions() {
-            return "AwsDdbKeyConditions";
+            return "CamelAwsDdbKeyConditions";
         }
 
         /**
@@ -902,7 +902,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbKeySchema}.
          */
         public String awsDdbKeySchema() {
-            return "AwsDdbKeySchema";
+            return "CamelAwsDdbKeySchema";
         }
 
         /**
@@ -916,7 +916,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbLastEvaluatedKey}.
          */
         public String awsDdbLastEvaluatedKey() {
-            return "AwsDdbLastEvaluatedKey";
+            return "CamelAwsDdbLastEvaluatedKey";
         }
 
         /**
@@ -929,7 +929,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbLimit}.
          */
         public String awsDdbLimit() {
-            return "AwsDdbLimit";
+            return "CamelAwsDdbLimit";
         }
 
         /**
@@ -943,7 +943,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbOperation}.
          */
         public String awsDdbOperation() {
-            return "AwsDdbOperation";
+            return "CamelAwsDdbOperation";
         }
 
         /**
@@ -957,7 +957,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbProvisionedThroughput}.
          */
         public String awsDdbProvisionedThroughput() {
-            return "AwsDdbProvisionedThroughput";
+            return "CamelAwsDdbProvisionedThroughput";
         }
 
         /**
@@ -970,7 +970,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbReadCapacity}.
          */
         public String awsDdbReadCapacity() {
-            return "AwsDdbReadCapacity";
+            return "CamelAwsDdbReadCapacity";
         }
 
         /**
@@ -985,7 +985,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbReturnValues}.
          */
         public String awsDdbReturnValues() {
-            return "AwsDdbReturnValues";
+            return "CamelAwsDdbReturnValues";
         }
 
         /**
@@ -998,7 +998,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbScannedCount}.
          */
         public String awsDdbScannedCount() {
-            return "AwsDdbScannedCount";
+            return "CamelAwsDdbScannedCount";
         }
 
         /**
@@ -1011,7 +1011,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbScanIndexForward}.
          */
         public String awsDdbScanIndexForward() {
-            return "AwsDdbScanIndexForward";
+            return "CamelAwsDdbScanIndexForward";
         }
 
         /**
@@ -1024,7 +1024,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbScanFilter}.
          */
         public String awsDdbScanFilter() {
-            return "AwsDdbScanFilter";
+            return "CamelAwsDdbScanFilter";
         }
 
         /**
@@ -1037,7 +1037,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbStartKey}.
          */
         public String awsDdbStartKey() {
-            return "AwsDdbStartKey";
+            return "CamelAwsDdbStartKey";
         }
 
         /**
@@ -1050,7 +1050,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbTableName}.
          */
         public String awsDdbTableName() {
-            return "AwsDdbTableName";
+            return "CamelAwsDdbTableName";
         }
 
         /**
@@ -1063,7 +1063,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbTableSize}.
          */
         public String awsDdbTableSize() {
-            return "AwsDdbTableSize";
+            return "CamelAwsDdbTableSize";
         }
 
         /**
@@ -1076,7 +1076,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbTableStatus}.
          */
         public String awsDdbTableStatus() {
-            return "AwsDdbTableStatus";
+            return "CamelAwsDdbTableStatus";
         }
 
         /**
@@ -1089,7 +1089,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbUpdateCondition}.
          */
         public String awsDdbUpdateCondition() {
-            return "AwsDdbUpdateCondition";
+            return "CamelAwsDdbUpdateCondition";
         }
 
         /**
@@ -1102,7 +1102,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbUpdateValues}.
          */
         public String awsDdbUpdateValues() {
-            return "AwsDdbUpdateValues";
+            return "CamelAwsDdbUpdateValues";
         }
 
         /**
@@ -1116,7 +1116,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbUnprocessedKeys}.
          */
         public String awsDdbUnprocessedKeys() {
-            return "AwsDdbUnprocessedKeys";
+            return "CamelAwsDdbUnprocessedKeys";
         }
 
         /**
@@ -1129,7 +1129,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @return the name of the header {@code AwsDdbWriteCapacity}.
          */
         public String awsDdbWriteCapacity() {
-            return "AwsDdbWriteCapacity";
+            return "CamelAwsDdbWriteCapacity";
         }
     }
     static Ddb2EndpointBuilder endpointBuilder(String componentName, String path) {

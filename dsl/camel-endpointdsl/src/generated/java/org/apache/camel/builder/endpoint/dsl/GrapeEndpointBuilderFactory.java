@@ -189,7 +189,7 @@ public interface GrapeEndpointBuilderFactory {
          * @return the name of the header {@code GrapeCommand}.
          */
         public String grapeCommand() {
-            return "GrapeCommand";
+            return "CamelGrapeCommand";
         }
     }
     @Deprecated

@@ -110,11 +110,13 @@ public class Run extends CamelCommand {
     private static final Pattern CLASS_PATTERN = Pattern.compile(
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
-    private boolean silentRun;
-    private boolean scriptRun;
-    private boolean transformRun;
+    boolean silentRun;
+    boolean scriptRun;
+    boolean transformRun;
+    boolean debugRun;
 
     private File logFile;
+    long spawnPid;
 
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -151,13 +153,13 @@ public class Run extends CamelCommand {
     String gav;
 
     @Option(names = { "--maven-settings" },
-            description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies."
+            description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
                           +
                           " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
     @Option(names = { "--maven-settings-security" },
-            description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
+            description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
@@ -299,7 +301,12 @@ public class Run extends CamelCommand {
 
     protected Integer runScript(String file) throws Exception {
         this.files.add(file);
-        scriptRun = true;
+        this.scriptRun = true;
+        return run();
+    }
+
+    protected Integer runDebug() throws Exception {
+        this.debugRun = true;
         return run();
     }
 
@@ -376,7 +383,12 @@ public class Run extends CamelCommand {
             String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
             if (routes == null) {
                 if (!silentRun) {
-                    String run = transformRun ? "transform" : "run";
+                    String run = "run";
+                    if (transformRun) {
+                        run = "transform";
+                    } else if (debugRun) {
+                        run = "debug";
+                    }
                     System.err
                             .println("Cannot " + run + " because " + getProfile()
                                      + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
@@ -474,6 +486,8 @@ public class Run extends CamelCommand {
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        } else if (debugRun) {
+            main.addInitialProperty("camel.jbang.debug", "true");
         } else if (transformRun) {
             main.setSilent(true);
             // enable stub in silent mode so we do not use real components
@@ -715,6 +729,7 @@ public class Run extends CamelCommand {
 
         // okay we have validated all input and are ready to run
         if (camelVersion != null || isDebugMode()) {
+            // TODO: debug camel specific version
             boolean custom = false;
             if (camelVersion != null) {
                 // run in another JVM with different camel version (foreground or background)
@@ -731,6 +746,9 @@ public class Run extends CamelCommand {
                 // apache camel distribution or remote debug enabled
                 return runCamelVersion(main);
             }
+        } else if (debugRun) {
+            // spawn new JVM to debug in background
+            return runDebug(main);
         } else if (background) {
             // spawn new JVM to run in background
             return runBackground(main);
@@ -846,9 +864,6 @@ public class Run extends CamelCommand {
         if (camelVersion != null) {
             cmds.remove("--camel-version=" + camelVersion);
         }
-        if (kameletsVersion != null) {
-            cmds.remove("--kamelets-version=" + kameletsVersion);
-        }
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
@@ -874,12 +889,14 @@ public class Run extends CamelCommand {
         pb.command(jbangArgs);
         if (background) {
             Process p = pb.start();
+            this.spawnPid = p.pid();
             System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
                                + ") in background with PID: " + p.pid());
             return 0;
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
+            this.spawnPid = p.pid();
             // wait for that process to exit as we run in foreground
             return p.waitFor();
         }
@@ -896,7 +913,13 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
         Process p = pb.start();
+        this.spawnPid = p.pid();
         System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+        return 0;
+    }
+
+    protected int runDebug(KameletMain main) throws Exception {
+        // to be implemented in Debug
         return 0;
     }
 
@@ -954,7 +977,6 @@ public class Run extends CamelCommand {
         }
 
         cmds.remove("--camel-version=" + camelVersion);
-        cmds.remove("--kamelets-version=" + kameletsVersion);
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
@@ -966,12 +988,14 @@ public class Run extends CamelCommand {
         pb.command(jbangArgs);
         if (background) {
             Process p = pb.start();
+            this.spawnPid = p.pid();
             System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
                                + ") in background with PID: " + p.pid());
             return 0;
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
+            this.spawnPid = p.pid();
             // wait for that process to exit as we run in foreground
             return p.waitFor();
         }

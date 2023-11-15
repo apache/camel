@@ -1504,7 +1504,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1517,7 +1517,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1530,7 +1530,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesPodsLabels}.
          */
         public String kubernetesPodsLabels() {
-            return "KubernetesPodsLabels";
+            return "CamelKubernetesPodsLabels";
         }
 
         /**
@@ -1543,7 +1543,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesPodName}.
          */
         public String kubernetesPodName() {
-            return "KubernetesPodName";
+            return "CamelKubernetesPodName";
         }
 
         /**
@@ -1557,7 +1557,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesPodSpec}.
          */
         public String kubernetesPodSpec() {
-            return "KubernetesPodSpec";
+            return "CamelKubernetesPodSpec";
         }
 
         /**
@@ -1571,7 +1571,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventAction}.
          */
         public String kubernetesEventAction() {
-            return "KubernetesEventAction";
+            return "CamelKubernetesEventAction";
         }
 
         /**
@@ -1584,7 +1584,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesEventTimestamp}.
          */
         public String kubernetesEventTimestamp() {
-            return "KubernetesEventTimestamp";
+            return "CamelKubernetesEventTimestamp";
         }
     }
     static KubernetesPodsEndpointBuilder endpointBuilder(

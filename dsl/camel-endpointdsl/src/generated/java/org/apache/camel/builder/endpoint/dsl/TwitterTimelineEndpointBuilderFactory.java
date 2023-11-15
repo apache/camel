@@ -1837,7 +1837,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * @return the name of the header {@code TwitterEventType}.
          */
         public String twitterEventType() {
-            return "TwitterEventType";
+            return "CamelTwitterEventType";
         }
     }
     static TwitterTimelineEndpointBuilder endpointBuilder(

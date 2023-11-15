@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
@@ -32,8 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregatedJmsRouteTest extends AbstractJMSTest {
 
@@ -100,6 +100,7 @@ public class AggregatedJmsRouteTest extends AbstractJMSTest {
                     }
                     return newExchange;
                 }).completionTimeout(2000L).to("mock:result");
+
 
                 from(multicastEndpointUri).to("jms:queue:AggregatedJmsRouteTestQueuePoint1",
                         "jms:queue:AggregatedJmsRouteTestQueuePoint2", "jms:queue:AggregatedJmsRouteTestQueuePoint3");

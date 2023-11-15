@@ -535,7 +535,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -548,7 +548,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -562,7 +562,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * KubernetesResourcesQuotaLabels}.
          */
         public String kubernetesResourcesQuotaLabels() {
-            return "KubernetesResourcesQuotaLabels";
+            return "CamelKubernetesResourcesQuotaLabels";
         }
 
         /**
@@ -575,7 +575,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesResourcesQuotaName}.
          */
         public String kubernetesResourcesQuotaName() {
-            return "KubernetesResourcesQuotaName";
+            return "CamelKubernetesResourcesQuotaName";
         }
 
         /**
@@ -589,7 +589,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesResourceQuotaSpec}.
          */
         public String kubernetesResourceQuotaSpec() {
-            return "KubernetesResourceQuotaSpec";
+            return "CamelKubernetesResourceQuotaSpec";
         }
     }
     static KubernetesResourcesQuotaEndpointBuilder endpointBuilder(

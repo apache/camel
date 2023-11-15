@@ -1101,7 +1101,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheAction}.
          */
         public String ehcacheAction() {
-            return "EhcacheAction";
+            return "CamelEhcacheAction";
         }
 
         /**
@@ -1114,7 +1114,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheActionHasResult}.
          */
         public String ehcacheActionHasResult() {
-            return "EhcacheActionHasResult";
+            return "CamelEhcacheActionHasResult";
         }
 
         /**
@@ -1127,7 +1127,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheActionSucceeded}.
          */
         public String ehcacheActionSucceeded() {
-            return "EhcacheActionSucceeded";
+            return "CamelEhcacheActionSucceeded";
         }
 
         /**
@@ -1140,7 +1140,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheKey}.
          */
         public String ehcacheKey() {
-            return "EhcacheKey";
+            return "CamelEhcacheKey";
         }
 
         /**
@@ -1153,7 +1153,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheKeys}.
          */
         public String ehcacheKeys() {
-            return "EhcacheKeys";
+            return "CamelEhcacheKeys";
         }
 
         /**
@@ -1166,7 +1166,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheValue}.
          */
         public String ehcacheValue() {
-            return "EhcacheValue";
+            return "CamelEhcacheValue";
         }
 
         /**
@@ -1180,7 +1180,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheOldValue}.
          */
         public String ehcacheOldValue() {
-            return "EhcacheOldValue";
+            return "CamelEhcacheOldValue";
         }
 
         /**
@@ -1193,7 +1193,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheEventType}.
          */
         public String ehcacheEventType() {
-            return "EhcacheEventType";
+            return "CamelEhcacheEventType";
         }
     }
     static EhcacheEndpointBuilder endpointBuilder(

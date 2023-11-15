@@ -51,7 +51,7 @@ public class DumpModelAsXmlSourceLocationTest extends ContextTestSupport {
         log.info(xml);
 
         Assertions.assertTrue(xml.contains(
-                "<from sourceLineNumber=\"25\" sourceLocation=\"MyCoolRoute.java\" uri=\"direct:cool\"/>"));
+                "sourceLineNumber=\"25\" sourceLocation=\"MyCoolRoute.java\" uri=\"direct:cool\"/>"));
         Assertions.assertTrue(xml.contains("sourceLineNumber=\"26\" sourceLocation=\"MyCoolRoute.java\""));
     }
 

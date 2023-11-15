@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
         <relativePath>../../tooling/maven</relativePath>
     </parent>
 
@@ -99,6 +99,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-catalog-maven</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -222,6 +228,12 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito-version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-common</artifactId>
+            <version>4.3.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

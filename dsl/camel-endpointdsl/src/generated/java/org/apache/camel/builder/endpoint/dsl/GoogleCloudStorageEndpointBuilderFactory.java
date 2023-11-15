@@ -1571,7 +1571,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageOperation}.
          */
         public String googleCloudStorageOperation() {
-            return "GoogleCloudStorageOperation";
+            return "CamelGoogleCloudStorageOperation";
         }
 
         /**
@@ -1585,7 +1585,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageBucketName}.
          */
         public String googleCloudStorageBucketName() {
-            return "GoogleCloudStorageBucketName";
+            return "CamelGoogleCloudStorageBucketName";
         }
 
         /**
@@ -1598,7 +1598,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageObjectName}.
          */
         public String googleCloudStorageObjectName() {
-            return "GoogleCloudStorageObjectName";
+            return "CamelGoogleCloudStorageObjectName";
         }
 
         /**
@@ -1613,7 +1613,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageDestinationObjectName}.
          */
         public String googleCloudStorageDestinationObjectName() {
-            return "GoogleCloudStorageDestinationObjectName";
+            return "CamelGoogleCloudStorageDestinationObjectName";
         }
 
         /**
@@ -1628,7 +1628,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageDestinationBucketName}.
          */
         public String googleCloudStorageDestinationBucketName() {
-            return "GoogleCloudStorageDestinationBucketName";
+            return "CamelGoogleCloudStorageDestinationBucketName";
         }
 
         /**
@@ -1643,7 +1643,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageDownloadLinkExpirationTime}.
          */
         public String googleCloudStorageDownloadLinkExpirationTime() {
-            return "GoogleCloudStorageDownloadLinkExpirationTime";
+            return "CamelGoogleCloudStorageDownloadLinkExpirationTime";
         }
 
         /**
@@ -1657,7 +1657,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageContentLength}.
          */
         public String googleCloudStorageContentLength() {
-            return "GoogleCloudStorageContentLength";
+            return "CamelGoogleCloudStorageContentLength";
         }
 
         /**
@@ -1670,7 +1670,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageContentType}.
          */
         public String googleCloudStorageContentType() {
-            return "GoogleCloudStorageContentType";
+            return "CamelGoogleCloudStorageContentType";
         }
 
         /**
@@ -1686,7 +1686,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageCacheControl}.
          */
         public String googleCloudStorageCacheControl() {
-            return "GoogleCloudStorageCacheControl";
+            return "CamelGoogleCloudStorageCacheControl";
         }
 
         /**
@@ -1700,7 +1700,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageContentDisposition}.
          */
         public String googleCloudStorageContentDisposition() {
-            return "GoogleCloudStorageContentDisposition";
+            return "CamelGoogleCloudStorageContentDisposition";
         }
 
         /**
@@ -1714,7 +1714,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageContentEncoding}.
          */
         public String googleCloudStorageContentEncoding() {
-            return "GoogleCloudStorageContentEncoding";
+            return "CamelGoogleCloudStorageContentEncoding";
         }
 
         /**
@@ -1727,7 +1727,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageContentMd5}.
          */
         public String googleCloudStorageContentMd5() {
-            return "GoogleCloudStorageContentMd5";
+            return "CamelGoogleCloudStorageContentMd5";
         }
 
         /**
@@ -1740,7 +1740,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
 
         /**
@@ -1754,7 +1754,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageComponentCount}.
          */
         public String googleCloudStorageComponentCount() {
-            return "GoogleCloudStorageComponentCount";
+            return "CamelGoogleCloudStorageComponentCount";
         }
 
         /**
@@ -1769,7 +1769,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageContentLanguage}.
          */
         public String googleCloudStorageContentLanguage() {
-            return "GoogleCloudStorageContentLanguage";
+            return "CamelGoogleCloudStorageContentLanguage";
         }
 
         /**
@@ -1786,7 +1786,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageCustomTime}.
          */
         public String googleCloudStorageCustomTime() {
-            return "GoogleCloudStorageCustomTime";
+            return "CamelGoogleCloudStorageCustomTime";
         }
 
         /**
@@ -1799,7 +1799,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageCrc32cHex}.
          */
         public String googleCloudStorageCrc32cHex() {
-            return "GoogleCloudStorageCrc32cHex";
+            return "CamelGoogleCloudStorageCrc32cHex";
         }
 
         /**
@@ -1812,7 +1812,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageETag}.
          */
         public String googleCloudStorageETag() {
-            return "GoogleCloudStorageETag";
+            return "CamelGoogleCloudStorageETag";
         }
 
         /**
@@ -1826,7 +1826,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageGeneration}.
          */
         public String googleCloudStorageGeneration() {
-            return "GoogleCloudStorageGeneration";
+            return "CamelGoogleCloudStorageGeneration";
         }
 
         /**
@@ -1839,7 +1839,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageBlobId}.
          */
         public String googleCloudStorageBlobId() {
-            return "GoogleCloudStorageBlobId";
+            return "CamelGoogleCloudStorageBlobId";
         }
 
         /**
@@ -1852,7 +1852,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageKmsKeyName}.
          */
         public String googleCloudStorageKmsKeyName() {
-            return "GoogleCloudStorageKmsKeyName";
+            return "CamelGoogleCloudStorageKmsKeyName";
         }
 
         /**
@@ -1865,7 +1865,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageMediaLink}.
          */
         public String googleCloudStorageMediaLink() {
-            return "GoogleCloudStorageMediaLink";
+            return "CamelGoogleCloudStorageMediaLink";
         }
 
         /**
@@ -1879,7 +1879,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageMetageneration}.
          */
         public String googleCloudStorageMetageneration() {
-            return "GoogleCloudStorageMetageneration";
+            return "CamelGoogleCloudStorageMetageneration";
         }
 
         /**
@@ -1893,7 +1893,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * GoogleCloudStorageStorageClass}.
          */
         public String googleCloudStorageStorageClass() {
-            return "GoogleCloudStorageStorageClass";
+            return "CamelGoogleCloudStorageStorageClass";
         }
 
         /**
@@ -1906,7 +1906,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageCreateTime}.
          */
         public String googleCloudStorageCreateTime() {
-            return "GoogleCloudStorageCreateTime";
+            return "CamelGoogleCloudStorageCreateTime";
         }
 
         /**
@@ -1919,7 +1919,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudStorageLastUpdate}.
          */
         public String googleCloudStorageLastUpdate() {
-            return "GoogleCloudStorageLastUpdate";
+            return "CamelGoogleCloudStorageLastUpdate";
         }
     }
     static GoogleCloudStorageEndpointBuilder endpointBuilder(

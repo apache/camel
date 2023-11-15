@@ -25,6 +25,7 @@ import org.apache.camel.spi.BeanRepository;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.NamedBeanHolder;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -81,6 +82,18 @@ public class ApplicationContextBeanRepository implements BeanRepository {
     @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         return BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, type);
+    }
+
+    @Override
+    public <T> T findSingleByType(Class<T> type) {
+        try {
+            // this API allows to support @Primary beans that should take precedence in
+            // case there are 2+ beans of the same type.
+            NamedBeanHolder<T> holder = applicationContext.getAutowireCapableBeanFactory().resolveNamedBean(type);
+            return holder.getBeanInstance();
+        } catch (NoSuchBeanDefinitionException e) {
+            return null;
+        }
     }
 
 }

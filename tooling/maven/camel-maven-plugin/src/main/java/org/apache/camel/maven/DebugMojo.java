@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.util.CastUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;

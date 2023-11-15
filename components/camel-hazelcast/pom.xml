@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hazelcast</artifactId>
@@ -95,12 +95,12 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <systemProperties>
+                            <systemPropertyVariables>
                                 <property>
                                     <name>hazelcast.logging.type</name>
                                     <value>slf4j</value>
                                 </property>
-                            </systemProperties>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

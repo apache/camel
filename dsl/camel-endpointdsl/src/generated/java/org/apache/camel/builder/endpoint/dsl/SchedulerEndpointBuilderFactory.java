@@ -902,7 +902,7 @@ public interface SchedulerEndpointBuilderFactory {
          * @return the name of the header {@code MessageTimestamp}.
          */
         public String messageTimestamp() {
-            return "MessageTimestamp";
+            return "CamelMessageTimestamp";
         }
     }
     static SchedulerEndpointBuilder endpointBuilder(

@@ -37,5 +37,10 @@ public enum CredentialType {
      *
      * @see com.azure.identity.DefaultAzureCredentialBuilder
      */
-    AZURE_IDENTITY
+    AZURE_IDENTITY,
+    /**
+     * SAS Token
+     *
+     */
+    AZURE_SAS
 }

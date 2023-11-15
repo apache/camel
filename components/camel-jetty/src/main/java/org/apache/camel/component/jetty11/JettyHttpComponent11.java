@@ -60,7 +60,9 @@ public class JettyHttpComponent11 extends JettyHttpComponent {
             org.eclipse.jetty.server.HttpConfiguration httpConfig = new org.eclipse.jetty.server.HttpConfiguration();
             httpConfig.setSendServerVersion(endpoint.isSendServerVersion());
             httpConfig.setSendDateHeader(endpoint.isSendDateHeader());
-
+            if (endpoint.getIdleTimeout() != -1) {
+                httpConfig.setIdleTimeout(endpoint.getIdleTimeout());
+            }
             if (requestBufferSize != null) {
                 // Does not work
                 // httpConfig.setRequestBufferSize(requestBufferSize);

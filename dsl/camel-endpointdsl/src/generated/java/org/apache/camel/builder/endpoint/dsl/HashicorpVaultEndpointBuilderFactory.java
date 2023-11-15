@@ -320,7 +320,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * HashicorpVaultProducerOperation}.
          */
         public String hashicorpVaultProducerOperation() {
-            return "HashicorpVaultProducerOperation";
+            return "CamelHashicorpVaultProducerOperation";
         }
 
         /**
@@ -333,7 +333,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * @return the name of the header {@code HashicorpVaultSecretPath}.
          */
         public String hashicorpVaultSecretPath() {
-            return "HashicorpVaultSecretPath";
+            return "CamelHashicorpVaultSecretPath";
         }
 
         /**
@@ -346,7 +346,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * @return the name of the header {@code HashicorpVaultSecretVersion}.
          */
         public String hashicorpVaultSecretVersion() {
-            return "HashicorpVaultSecretVersion";
+            return "CamelHashicorpVaultSecretVersion";
         }
     }
     static HashicorpVaultEndpointBuilder endpointBuilder(

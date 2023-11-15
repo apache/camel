@@ -20,8 +20,6 @@ import jakarta.annotation.Resource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.AvailablePortFinder;
@@ -68,10 +66,8 @@ public class JmsToHttpRoute extends RouteBuilder {
                 // as this is based on an unit test we use mocks to verify how many times we did rollback
                 .to("mock:JmsToHttpRoute")
                 // response is not okay so force a rollback by throwing an exception
-                .process(new Processor() {
-                    public void process(Exchange exchange) {
-                        throw new IllegalArgumentException("Rollback please");
-                    }
+                .process(exchange -> {
+                    throw new IllegalArgumentException("Rollback please");
                 })
                 .otherwise()
                 // otherwise since its okay, the route ends and the response is sent back
@@ -80,13 +76,11 @@ public class JmsToHttpRoute extends RouteBuilder {
 
         // this is our http route that will fail the first 2 attempts
         // before it sends an ok response
-        from("jetty:http://localhost:" + port + "/sender").process(new Processor() {
-            public void process(Exchange exchange) {
-                if (counter++ < 2) {
-                    exchange.getMessage().setBody(nok);
-                } else {
-                    exchange.getMessage().setBody(ok);
-                }
+        from("jetty:http://localhost:" + port + "/sender").process(exchange -> {
+            if (counter++ < 2) {
+                exchange.getMessage().setBody(nok);
+            } else {
+                exchange.getMessage().setBody(ok);
             }
         });
     }

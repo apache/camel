@@ -19,6 +19,8 @@ over the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP] protocol to
 send and receive SMS. The http://jsmpp.org[JSMPP] library is used for
 the protocol implementation.
 
+The version of the SMPP protocol specification is 3.4 by default and can be set using the component configuration options (field "interfaceVersion").
+
 The Camel component currently operates as an
 http://en.wikipedia.org/wiki/ESME[ESME] (External Short Messaging
 Entity) and not as an SMSC itself.

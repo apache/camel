@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -51,14 +50,12 @@ public class JmsResequencerTest extends CamelTestSupport {
     public void sendBodyAndHeader(
             String endpointUri, final Object body, final String headerName,
             final Object headerValue) {
-        template.send(endpointUri, new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody(body);
-                in.setHeader(headerName, headerValue);
-                //in.setHeader("testCase", getName());
-                in.setHeader(Exchange.BEAN_METHOD_NAME, "execute");
-            }
+        template.send(endpointUri, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody(body);
+            in.setHeader(headerName, headerValue);
+            //in.setHeader("testCase", getName());
+            in.setHeader(Exchange.BEAN_METHOD_NAME, "execute");
         });
     }
 
@@ -134,7 +131,7 @@ public class JmsResequencerTest extends CamelTestSupport {
         return "bean:" + beanName + "?method=execute";
     }
 
-    public class ReusableBean {
+    public static class ReusableBean {
         public String body;
         private String name;
 

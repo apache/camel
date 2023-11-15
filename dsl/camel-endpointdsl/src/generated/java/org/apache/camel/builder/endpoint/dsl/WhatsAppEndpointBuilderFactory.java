@@ -320,7 +320,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * @return the name of the header {@code WhatsAppPhoneNumberId}.
          */
         public String whatsAppPhoneNumberId() {
-            return "WhatsAppPhoneNumberId";
+            return "CamelWhatsAppPhoneNumberId";
         }
 
         /**
@@ -334,7 +334,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * WhatsAppRecipientPhoneNumberId}.
          */
         public String whatsAppRecipientPhoneNumberId() {
-            return "WhatsAppRecipientPhoneNumberId";
+            return "CamelWhatsAppRecipientPhoneNumberId";
         }
     }
     static WhatsAppEndpointBuilder endpointBuilder(

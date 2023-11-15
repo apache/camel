@@ -36,9 +36,6 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelBrokerC
     @Test
     public void testSendToAlotOfMessageToQueues() {
         assertDoesNotThrow(this::sendToAlotOfMessagesToQueue);
-
-        // now we should be able to poll a message from each queue
-        // Thread.sleep(99999999);
     }
 
     private void sendToAlotOfMessagesToQueue() {

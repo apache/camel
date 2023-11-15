@@ -53,12 +53,15 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // extended configuration
     private HealthConfigurationProperties healthConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
+    private OtelConfigurationProperties otelConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
     private RestConfigurationProperties restConfigurationProperties;
     private VaultConfigurationProperties vaultConfigurationProperties;
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
+    private SSLConfigurationProperties sslConfigurationProperties;
+    private DebuggerConfigurationProperties debuggerConfigurationProperties;
 
     @Override
     public void close() {
@@ -69,6 +72,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (lraConfigurationProperties != null) {
             lraConfigurationProperties.close();
             lraConfigurationProperties = null;
+        }
+        if (otelConfigurationProperties != null) {
+            otelConfigurationProperties.close();
+            otelConfigurationProperties = null;
         }
         if (threadPoolProperties != null) {
             threadPoolProperties.close();
@@ -93,6 +100,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (httpServerConfigurationProperties != null) {
             httpServerConfigurationProperties.close();
             httpServerConfigurationProperties = null;
+        }
+        if (sslConfigurationProperties != null) {
+            sslConfigurationProperties.close();
+            sslConfigurationProperties = null;
+        }
+        if (debuggerConfigurationProperties != null) {
+            debuggerConfigurationProperties.close();
+            debuggerConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -142,6 +157,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * To configure OpenTelemetry.
+     */
+    public OtelConfigurationProperties otel() {
+        if (otelConfigurationProperties == null) {
+            otelConfigurationProperties = new OtelConfigurationProperties(this);
+        }
+        return otelConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any OpenTelemetry configuration specified
+     */
+    public boolean hasOtelConfiguration() {
+        return otelConfigurationProperties != null;
+    }
+
+    /**
      * To configure embedded HTTP server (for standalone applications; not Spring Boot or Quarkus)
      */
     public HttpServerConfigurationProperties httpServer() {
@@ -156,6 +188,42 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasHttpServerConfiguration() {
         return httpServerConfigurationProperties != null;
+    }
+
+    /**
+     * To configure SSL.
+     */
+    public SSLConfigurationProperties sslConfig() {
+        if (sslConfigurationProperties == null) {
+            sslConfigurationProperties = new SSLConfigurationProperties(this);
+        }
+
+        return sslConfigurationProperties;
+    }
+
+    /**
+     * To configure Debugger.
+     */
+    public DebuggerConfigurationProperties debuggerConfig() {
+        if (debuggerConfigurationProperties == null) {
+            debuggerConfigurationProperties = new DebuggerConfigurationProperties(this);
+        }
+
+        return debuggerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any SSL configuration specified.
+     */
+    public boolean hasSslConfiguration() {
+        return sslConfigurationProperties != null;
+    }
+
+    /**
+     * Whether there has been any Debugger configuration specified.
+     */
+    public boolean hasDebuggerConfiguration() {
+        return debuggerConfigurationProperties != null;
     }
 
     /**

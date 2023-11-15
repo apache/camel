@@ -1891,7 +1891,7 @@ public interface Etcd3EndpointBuilderFactory {
          * @return the name of the header {@code EtcdAction}.
          */
         public String etcdAction() {
-            return "EtcdAction";
+            return "CamelEtcdAction";
         }
 
         /**
@@ -1904,7 +1904,7 @@ public interface Etcd3EndpointBuilderFactory {
          * @return the name of the header {@code EtcdPath}.
          */
         public String etcdPath() {
-            return "EtcdPath";
+            return "CamelEtcdPath";
         }
 
         /**
@@ -1918,7 +1918,7 @@ public interface Etcd3EndpointBuilderFactory {
          * @return the name of the header {@code EtcdIsPrefix}.
          */
         public String etcdIsPrefix() {
-            return "EtcdIsPrefix";
+            return "CamelEtcdIsPrefix";
         }
 
         /**
@@ -1931,7 +1931,7 @@ public interface Etcd3EndpointBuilderFactory {
          * @return the name of the header {@code EtcdKeyCharset}.
          */
         public String etcdKeyCharset() {
-            return "EtcdKeyCharset";
+            return "CamelEtcdKeyCharset";
         }
 
         /**
@@ -1944,7 +1944,7 @@ public interface Etcd3EndpointBuilderFactory {
          * @return the name of the header {@code EtcdValueCharset}.
          */
         public String etcdValueCharset() {
-            return "EtcdValueCharset";
+            return "CamelEtcdValueCharset";
         }
     }
     static Etcd3EndpointBuilder endpointBuilder(

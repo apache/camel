@@ -75,9 +75,11 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
@@ -235,6 +237,7 @@ public abstract class AbstractCamelContext extends BaseService
     private String tracingLoggingFormat;
     private Boolean modeline = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
+    private String debugBreakpoints;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
@@ -662,11 +665,17 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void removeEndpoint(Endpoint endpoint) throws Exception {
-        // optimize as uri on endpoint is already normalized
-        String uri = endpoint.getEndpointUri();
-        NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
-        Endpoint oldEndpoint = endpoints.remove(key);
+        Endpoint oldEndpoint = null;
+        NormalizedUri oldKey = null;
+        for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
+            if (endpoint == entry.getValue()) {
+                oldKey = entry.getKey();
+                oldEndpoint = endpoint;
+                break;
+            }
+        }
         if (oldEndpoint != null) {
+            endpoints.remove(oldKey);
             try {
                 stopServices(oldEndpoint);
             } catch (Exception e) {
@@ -1729,6 +1738,14 @@ public abstract class AbstractCamelContext extends BaseService
         return debug;
     }
 
+    public void setDebuggingBreakpoints(String debugBreakpoints) {
+        this.debugBreakpoints = debugBreakpoints;
+    }
+
+    public String getDebuggingBreakpoints() {
+        return debugBreakpoints;
+    }
+
     @Override
     public void setMessageHistory(Boolean messageHistory) {
         this.messageHistory = messageHistory;
@@ -2221,6 +2238,28 @@ public abstract class AbstractCamelContext extends BaseService
                 ServiceHelper.startService(connector);
             }
         }
+        // auto-detect camel-debug on classpath (if debugger has not been explicit added)
+        boolean debuggerDetected = false;
+        if (getDebugger() == null && hasService(BacklogDebugger.class) == null) {
+            // detect if camel-debug is on classpath that enables debugging
+            DebuggerFactory df = getCamelContextExtension().getBootstrapFactoryFinder()
+                    .newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
+            if (df != null) {
+                debuggerDetected = true;
+                LOG.info("Detected: {} JAR (Enabling Camel Debugging)", df);
+                setDebugging(true);
+                Debugger newDebugger = df.createDebugger(this);
+                if (newDebugger != null) {
+                    setDebugger(newDebugger);
+                }
+            }
+        }
+        if (!debuggerDetected && isDebugging()) {
+            // debugging enabled but camel-debug was not auto-detected from classpath
+            // so install default debugger
+            BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(this);
+            addService(backlog, true, true);
+        }
 
         addService(getManagementStrategy(), false);
         lifecycleStrategies.sort(OrderedComparator.get());
@@ -2281,6 +2320,9 @@ public abstract class AbstractCamelContext extends BaseService
                 getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
             }
             addService(runtimeEndpointRegistry, true, true);
+        }
+        // setup debugger if not already installed
+        if (isDebugging() && getDebugger() == null) {
         }
 
         bindDataFormats();

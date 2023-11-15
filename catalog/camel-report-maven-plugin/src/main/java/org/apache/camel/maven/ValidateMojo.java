@@ -57,12 +57,12 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
-import static org.apache.camel.maven.ReportPluginCommon.asRelativeFile;
-import static org.apache.camel.maven.ReportPluginCommon.findJavaFiles;
-import static org.apache.camel.maven.ReportPluginCommon.findJavaRouteBuilderClasses;
-import static org.apache.camel.maven.ReportPluginCommon.findXmlRouters;
-import static org.apache.camel.maven.ReportPluginCommon.matchRouteFile;
-import static org.apache.camel.maven.ReportPluginCommon.stripRootPath;
+import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
+import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
+import static org.apache.camel.catalog.common.CatalogHelper.findXmlRouters;
+import static org.apache.camel.catalog.common.CatalogHelper.matchRouteFile;
+import static org.apache.camel.catalog.common.CatalogHelper.stripRootPath;
+import static org.apache.camel.catalog.common.FileUtil.findJavaFiles;
 
 /**
  * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions, and validates

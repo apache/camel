@@ -854,7 +854,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the name of the header {@code FileContentType}.
          */
         public String fileContentType() {
-            return "FileContentType";
+            return "CamelFileContentType";
         }
 
         /**
@@ -867,7 +867,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the name of the header {@code FileLength}.
          */
         public String fileLength() {
-            return "FileLength";
+            return "CamelFileLength";
         }
 
         /**
@@ -880,7 +880,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the name of the header {@code FileLastModified}.
          */
         public String fileLastModified() {
-            return "FileLastModified";
+            return "CamelFileLastModified";
         }
 
         /**
@@ -893,7 +893,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
 
         /**
@@ -919,7 +919,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the name of the header {@code FileNameProduced}.
          */
         public String fileNameProduced() {
-            return "FileNameProduced";
+            return "CamelFileNameProduced";
         }
 
         /**

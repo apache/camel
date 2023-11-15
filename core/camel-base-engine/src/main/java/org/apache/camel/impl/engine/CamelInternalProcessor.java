@@ -29,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
@@ -38,9 +37,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
-import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
@@ -576,7 +575,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      * Advice to execute the {@link BacklogTracer} if enabled.
      */
     public static final class BacklogTracerAdvice
-            implements CamelInternalProcessorAdvice<DefaultBacklogTracerEventMessage>, Ordered {
+            implements CamelInternalProcessorAdvice<DefaultBacklogTracerEventMessage> {
 
         private final BacklogTraceAdviceEventNotifier notifier;
         private final CamelContext camelContext;
@@ -721,7 +720,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 data.setEndpointUri(uri);
             }
 
-            if (!data.isFirst()) {
+            if (!data.isFirst() && backlogTracer.isIncludeException()) {
                 // we want to capture if there was an exception
                 Throwable e = exchange.getException();
                 if (e != null) {
@@ -738,17 +737,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             return true;
         }
 
-        @Override
-        public int getOrder() {
-            // we want tracer just before calling the processor
-            return Ordered.LOWEST - 1;
-        }
     }
 
     /**
      * Advice to execute the {@link BacklogDebugger} if enabled.
      */
-    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
 
         private final BacklogDebugger backlogDebugger;
         private final Processor target;
@@ -771,18 +765,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
         }
-
-        @Override
-        public int getOrder() {
-            // we want debugger just before calling the processor
-            return Ordered.LOWEST;
-        }
     }
 
     /**
      * Advice to execute when using custom debugger.
      */
-    public static final class DebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+    public static final class DebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
 
         private final Debugger debugger;
         private final Processor target;
@@ -805,11 +793,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             debugger.afterProcess(exchange, target, definition, stopWatch.taken());
         }
 
-        @Override
-        public int getOrder() {
-            // we want debugger just before calling the processor
-            return Ordered.LOWEST;
-        }
     }
 
     /**

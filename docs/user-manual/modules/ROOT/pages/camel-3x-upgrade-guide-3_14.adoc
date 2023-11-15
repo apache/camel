@@ -4,6 +4,11 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
+== Upgrading Camel 3.14.x to 3.14.10
+
+The option `synchronous` in `camel-ftp` has been removed, as this is always enabled to ensure
+thread safety for the underlying FTP client.
+
 == Upgrading Camel 3.13 to 3.14
 
 === API changes

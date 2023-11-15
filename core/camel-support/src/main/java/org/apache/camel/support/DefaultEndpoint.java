@@ -507,10 +507,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                         if (value == null) {
                             Class<?> type = getter.getOptionType(name, true);
                             if (type != null) {
-                                Set<?> set = camelContext.getRegistry().findByType(type);
-                                if (set.size() == 1) {
-                                    value = set.iterator().next();
-                                }
+                                value = camelContext.getRegistry().findSingleByType(type);
                             }
                             if (value != null) {
                                 boolean hit = configurer.configure(camelContext, this, name, value, true);

@@ -70,30 +70,12 @@ abstract class ProcessBaseCommand extends CamelCommand {
         return pids;
     }
 
-    static long extractSince(ProcessHandle ph) {
+    public static long extractSince(ProcessHandle ph) {
         long since = 0;
         if (ph.info().startInstant().isPresent()) {
             since = ph.info().startInstant().get().toEpochMilli();
         }
         return since;
-    }
-
-    static String extractState(int status) {
-        if (status <= 4) {
-            return "Starting";
-        } else if (status == 5) {
-            return "Running";
-        } else if (status == 6) {
-            return "Suspending";
-        } else if (status == 7) {
-            return "Suspended";
-        } else if (status == 8) {
-            return "Terminating";
-        } else if (status == 9) {
-            return "Terminated";
-        } else {
-            return "Terminated";
-        }
     }
 
     JsonObject loadStatus(long pid) {
@@ -105,7 +87,7 @@ abstract class ProcessBaseCommand extends CamelCommand {
                 IOHelper.close(fis);
                 return (JsonObject) Jsoner.deserialize(text);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
         return null;

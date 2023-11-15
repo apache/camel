@@ -22,11 +22,18 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -782,7 +789,23 @@ public final class ObjectHelper {
 
         if (value == null) {
             return Collections.emptyList();
-        } else if (value instanceof Iterator) {
+        }
+        if (fastStringCheck(value)) {
+            return createStringIterator((String) value, delimiter, allowEmptyValues, pattern);
+        }
+        if (fastIsMap(value)) {
+            Map<?, ?> map = (Map<?, ?>) value;
+            return map.entrySet();
+        }
+        if (value.getClass().isArray()) {
+            return createArrayIterator(value);
+        }
+
+        return trySlowIterables(value);
+    }
+
+    private static Iterable<?> trySlowIterables(Object value) {
+        if (value instanceof Iterator) {
             final Iterator<Object> iterator = (Iterator<Object>) value;
             return (Iterable<Object>) () -> iterator;
         } else if (value instanceof Iterable) {
@@ -790,117 +813,150 @@ public final class ObjectHelper {
         } else if (value instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) value;
             return map.entrySet();
-        } else if (value.getClass().isArray()) {
-            if (org.apache.camel.util.ObjectHelper.isPrimitiveArrayType(value.getClass())) {
-                final Object array = value;
-                return (Iterable<Object>) () -> new Iterator<>() {
-                    private int idx;
-
-                    public boolean hasNext() {
-                        return idx < Array.getLength(array);
-                    }
-
-                    public Object next() {
-                        if (!hasNext()) {
-                            throw new NoSuchElementException(
-                                    "no more element available for '" + array + "' at the index " + idx);
-                        }
-
-                        return Array.get(array, idx++);
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
-            } else {
-                return Arrays.asList((Object[]) value);
-            }
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
-            return (Iterable<Node>) () -> new Iterator<>() {
-                private int idx;
-
-                public boolean hasNext() {
-                    return idx < nodeList.getLength();
-                }
-
-                public Node next() {
-                    if (!hasNext()) {
-                        throw new NoSuchElementException(
-                                "no more element available for '" + nodeList + "' at the index " + idx);
-                    }
-
-                    return nodeList.item(idx++);
-                }
-
-                @Override
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
-            };
-        } else if (value instanceof String) {
-            final String s = (String) value;
-
-            // this code is optimized to only use a Scanner if needed, eg there is a delimiter
-
-            if (delimiter != null && (pattern || s.contains(delimiter))) {
-                // if its the default delimiter and the value has parenthesis
-                if (DEFAULT_DELIMITER.equals(delimiter)) {
-                    if (s.indexOf('(') != -1 && s.indexOf(')') != -1) {
-                        // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
-                        // which may have balanced parentheses pairs as well.
-                        // if the value contains parentheses we need to balance those, to avoid iterating
-                        // in the middle of parentheses pair, so use this regular expression (a bit hard to read)
-                        // the regexp will split by comma, but honor parentheses pair that may include commas
-                        // as well, eg if value = "bean=foo?method=killer(a,b),bean=bar?method=great(a,b)"
-                        // then the regexp will split that into two:
-                        // -> bean=foo?method=killer(a,b)
-                        // -> bean=bar?method=great(a,b)
-                        // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
-                        return (Iterable<String>) () -> new Scanner(s, PARENTHESIS_PATTERN);
-                    } else {
-                        // optimized split string on default delimiter
-                        int count = StringHelper.countChar(s, DEFAULT_DELIMITER_CHAR) + 1;
-                        return (Iterable<String>) () -> StringHelper.splitOnCharacterAsIterator(s, DEFAULT_DELIMITER_CHAR,
-                                count);
-                    }
-                } else if (pattern) {
-                    return (Iterable<String>) () -> new StringIteratorForPattern(s, delimiter);
-                }
-                return (Iterable<String>) () -> new StringIterator(s, delimiter);
-            } else {
-                return (Iterable<Object>) () -> {
-                    // use a plain iterator that returns the value as is as there are only a single value
-                    return new Iterator<>() {
-                        private int idx;
-
-                        public boolean hasNext() {
-                            return idx == 0 && (allowEmptyValues || org.apache.camel.util.ObjectHelper.isNotEmpty(s));
-                        }
-
-                        public Object next() {
-                            if (!hasNext()) {
-                                throw new NoSuchElementException(
-                                        "no more element available for '" + s + "' at the index " + idx);
-                            }
-
-                            idx++;
-                            return s;
-                        }
-
-                        @Override
-                        public void remove() {
-                            throw new UnsupportedOperationException();
-                        }
-                    };
-                };
-            }
+            return (Iterable<Node>) () -> createNodeListIterator(nodeList);
         } else {
             return Collections.singletonList(value);
         }
+    }
+
+    private static boolean fastStringCheck(Object obj) {
+        return obj.getClass() == String.class;
+    }
+
+    private static boolean fastIsMap(Object obj) {
+        return obj.getClass() == HashMap.class
+                || obj.getClass() == ConcurrentHashMap.class
+                || obj.getClass() == ConcurrentSkipListMap.class
+                || obj.getClass() == EnumMap.class
+                || obj.getClass() == LinkedHashMap.class
+                || obj.getClass() == TreeMap.class
+                || obj.getClass() == WeakHashMap.class;
+
+    }
+
+    private static Iterable<Object> createArrayIterator(Object value) {
+        if (org.apache.camel.util.ObjectHelper.isPrimitiveArrayType(value.getClass())) {
+            final Object array = value;
+            return () -> createPrimitiveArrayIterator(array);
+        } else {
+            return Arrays.asList((Object[]) value);
+        }
+    }
+
+    private static Iterable<?> createStringIterator(String value, String delimiter, boolean allowEmptyValues, boolean pattern) {
+        final String s = value;
+
+        // this code is optimized to only use a Scanner if needed, eg there is a delimiter
+
+        if (delimiter != null && (pattern || s.contains(delimiter))) {
+            // if its the default delimiter and the value has parenthesis
+            if (DEFAULT_DELIMITER.equals(delimiter)) {
+                return createDelimitedStringIterator(s);
+            } else if (pattern) {
+                return (Iterable<String>) () -> new StringIteratorForPattern(s, delimiter);
+            }
+            return (Iterable<String>) () -> new StringIterator(s, delimiter);
+        } else {
+            return (Iterable<Object>) () -> createPlainIterator(allowEmptyValues, s);
+        }
+    }
+
+    private static Iterable<String> createDelimitedStringIterator(String s) {
+        if (s.indexOf('(') != -1 && s.indexOf(')') != -1) {
+            // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
+            // which may have balanced parentheses pairs as well.
+            // if the value contains parentheses we need to balance those, to avoid iterating
+            // in the middle of parentheses pair, so use this regular expression (a bit hard to read)
+            // the regexp will split by comma, but honor parentheses pair that may include commas
+            // as well, eg if value = "bean=foo?method=killer(a,b),bean=bar?method=great(a,b)"
+            // then the regexp will split that into two:
+            // -> bean=foo?method=killer(a,b)
+            // -> bean=bar?method=great(a,b)
+            // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
+            return (Iterable<String>) () -> new Scanner(s, PARENTHESIS_PATTERN);
+        } else {
+            // optimized split string on default delimiter
+            int count = StringHelper.countChar(s, DEFAULT_DELIMITER_CHAR) + 1;
+            return (Iterable<String>) () -> StringHelper.splitOnCharacterAsIterator(s, DEFAULT_DELIMITER_CHAR,
+                    count);
+        }
+    }
+
+    private static Iterator<Object> createPlainIterator(boolean allowEmptyValues, String s) {
+        // use a plain iterator that returns the value as is as there are only a single value
+        return new Iterator<>() {
+            private int idx;
+
+            public boolean hasNext() {
+                return idx == 0 && (allowEmptyValues || org.apache.camel.util.ObjectHelper.isNotEmpty(s));
+            }
+
+            public Object next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException(
+                            "no more element available for '" + s + "' at the index " + idx);
+                }
+
+                idx++;
+                return s;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    private static Iterator<Node> createNodeListIterator(NodeList nodeList) {
+        return new Iterator<>() {
+            private int idx;
+
+            public boolean hasNext() {
+                return idx < nodeList.getLength();
+            }
+
+            public Node next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException(
+                            "no more element available for '" + nodeList + "' at the index " + idx);
+                }
+
+                return nodeList.item(idx++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    private static Iterator<Object> createPrimitiveArrayIterator(Object array) {
+        return new Iterator<>() {
+            private int idx;
+
+            public boolean hasNext() {
+                return idx < Array.getLength(array);
+            }
+
+            public Object next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException(
+                            "no more element available for '" + array + "' at the index " + idx);
+                }
+
+                return Array.get(array, idx++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
     /**

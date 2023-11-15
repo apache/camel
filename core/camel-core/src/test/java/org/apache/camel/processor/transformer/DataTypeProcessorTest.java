@@ -41,7 +41,7 @@ class DataTypeProcessorTest {
     }
 
     @Test
-    public void shouldApplyDataTypeConverterFromAnnotationLookup() throws Exception {
+    public void shouldApplyDataTypeTransformerFromAnnotationLookup() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
         exchange.getMessage().setBody(new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)));
@@ -53,7 +53,7 @@ class DataTypeProcessorTest {
     }
 
     @Test
-    public void shouldApplyDataTypeConverterFromResourceLookup() throws Exception {
+    public void shouldApplyDataTypeTransformerFromResourceLookup() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
         exchange.getMessage().setBody(new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)));

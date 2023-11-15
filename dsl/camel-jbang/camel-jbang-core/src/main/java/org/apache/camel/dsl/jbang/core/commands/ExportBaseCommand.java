@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +49,11 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenDownloader;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -70,6 +75,10 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+
+    private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
+
+    private MavenDownloader downloader;
 
     @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -101,12 +110,12 @@ abstract class ExportBaseCommand extends CamelCommand {
     String exclude;
 
     @CommandLine.Option(names = { "--maven-settings" },
-                        description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies."
+                        description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
                                       + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
     @CommandLine.Option(names = { "--maven-settings-security" },
-                        description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
+                        description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
     @CommandLine.Option(names = { "--main-classname" },
@@ -145,7 +154,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.2.7.Final")
+                        defaultValue = "3.5.1")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -304,7 +313,7 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
-        List<String> lines = Files.readAllLines(settings.toPath());
+        List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
         boolean kamelets = lines.stream().anyMatch(l -> l.startsWith("kamelet="));
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
@@ -644,7 +653,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // there may be additional extra repositories
-        List<String> lines = Files.readAllLines(settings.toPath());
+        List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
         for (String line : lines) {
             if (line.startsWith("repository=")) {
                 String r = StringHelper.after(line, "repository=");
@@ -661,7 +670,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static boolean hasModeline(File settings) {
         try {
-            List<String> lines = Files.readAllLines(settings.toPath());
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             return lines.stream().anyMatch(l -> l.startsWith("modeline="));
         } catch (Exception e) {
             // ignore
@@ -671,7 +680,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static int httpServerPort(File settings) {
         try {
-            List<String> lines = Files.readAllLines(settings.toPath());
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             String port = lines.stream().filter(l -> l.startsWith("camel.jbang.platform-http.port="))
                     .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
             return Integer.parseInt(port);
@@ -683,7 +692,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static String jibMavenPluginVersion(File settings) {
         try {
-            List<String> lines = Files.readAllLines(settings.toPath());
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             return lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
                     .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.0");
         } catch (Exception e) {
@@ -808,6 +817,48 @@ abstract class ExportBaseCommand extends CamelCommand {
                 safeCopy(source, target, true);
             }
         }
+    }
+
+    protected void copyAgentDependencies(Set<String> deps) throws Exception {
+        for (String d : deps) {
+            if (d.startsWith("agent:")) {
+                File libDir = new File(BUILD_DIR, "agent");
+                libDir.mkdirs();
+                String n = d.substring(6);
+                MavenGav gav = MavenGav.parseGav(n);
+                copyAgentLibDependencies(gav);
+            }
+        }
+    }
+
+    private void copyAgentLibDependencies(MavenGav gav) {
+        try {
+            List<MavenArtifact> artifacts = getDownloader().resolveArtifacts(
+                    List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));
+            for (MavenArtifact artifact : artifacts) {
+                Path target = Paths.get(BUILD_DIR, "agent", artifact.getFile().getName());
+                if (Files.exists(target) || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
+                    continue;
+                }
+                Files.copy(artifact.getFile().toPath(), target);
+            }
+        } catch (MavenResolutionException e) {
+            System.err.println("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error copying the artifact: " + gav + " due to: " + e.getMessage());
+        }
+    }
+
+    private MavenDownloader getDownloader() {
+        if (downloader == null) {
+            init();
+        }
+        return downloader;
+    }
+
+    private void init() {
+        this.downloader = new MavenDownloaderImpl();
+        ((MavenDownloaderImpl) downloader).build();
     }
 
     static class FilesConsumer extends ParameterConsumer<Export> {

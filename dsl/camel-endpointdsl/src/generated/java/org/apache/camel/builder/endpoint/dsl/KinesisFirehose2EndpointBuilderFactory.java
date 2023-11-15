@@ -583,7 +583,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKinesisFirehoseRecordId}.
          */
         public String awsKinesisFirehoseRecordId() {
-            return "AwsKinesisFirehoseRecordId";
+            return "CamelAwsKinesisFirehoseRecordId";
         }
 
         /**
@@ -596,7 +596,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * @return the name of the header {@code AwsKinesisFirehoseOperation}.
          */
         public String awsKinesisFirehoseOperation() {
-            return "AwsKinesisFirehoseOperation";
+            return "CamelAwsKinesisFirehoseOperation";
         }
 
         /**
@@ -610,7 +610,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * AwsKinesisFirehoseDeliveryStreamName}.
          */
         public String awsKinesisFirehoseDeliveryStreamName() {
-            return "AwsKinesisFirehoseDeliveryStreamName";
+            return "CamelAwsKinesisFirehoseDeliveryStreamName";
         }
     }
     static KinesisFirehose2EndpointBuilder endpointBuilder(

@@ -26,6 +26,7 @@ import org.w3c.dom.Node;
 import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.helper.CamelXmlHelper;
 import org.apache.camel.parser.helper.CamelXmlTreeParserHelper;
+import org.apache.camel.parser.helper.ParserCommon;
 import org.apache.camel.parser.helper.XmlLineNumberParser;
 import org.apache.camel.parser.model.CamelCSimpleExpressionDetails;
 import org.apache.camel.parser.model.CamelEndpointDetails;
@@ -317,15 +318,11 @@ public final class XmlRouteParser {
         if (name == null) {
             return false;
         }
-        if (name.equals("completionPredicate") || name.equals("completion")) {
+
+        if (ParserCommon.isCommonPredicate(name)) {
             return true;
         }
-        if (name.equals("onWhen") || name.equals("when") || name.equals("handled") || name.equals("continued")) {
-            return true;
-        }
-        if (name.equals("retryWhile") || name.equals("filter") || name.equals("validate")) {
-            return true;
-        }
+
         // special for loop
         if (name.equals("loop")) {
             String doWhile = null;

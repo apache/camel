@@ -3306,7 +3306,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code MqttTopic}.
          */
         public String mqttTopic() {
-            return "MqttTopic";
+            return "CamelMqttTopic";
         }
 
         /**
@@ -3319,7 +3319,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code MqttQoS}.
          */
         public String mqttQoS() {
-            return "MqttQoS";
+            return "CamelMqttQoS";
         }
 
         /**
@@ -3332,7 +3332,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code PahoMqtt5Qos}.
          */
         public String pahoMqtt5Qos() {
-            return "PahoMqtt5Qos";
+            return "CamelPahoMqtt5Qos";
         }
 
         /**
@@ -3345,7 +3345,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code PahoMqtt5Retained}.
          */
         public String pahoMqtt5Retained() {
-            return "PahoMqtt5Retained";
+            return "CamelPahoMqtt5Retained";
         }
 
         /**
@@ -3359,7 +3359,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code PahoMqtt5OverrideTopic}.
          */
         public String pahoMqtt5OverrideTopic() {
-            return "PahoMqtt5OverrideTopic";
+            return "CamelPahoMqtt5OverrideTopic";
         }
     }
     static PahoMqtt5EndpointBuilder endpointBuilder(

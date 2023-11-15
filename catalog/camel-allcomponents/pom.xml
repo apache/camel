@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-allcomponents</artifactId>
@@ -260,6 +260,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-azure-key-vault</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-azure-schema-registry</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1515,6 +1520,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-slack</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-smb</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

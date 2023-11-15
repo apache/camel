@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -47,6 +47,7 @@
         <module>camel-route-parser</module>
         <module>camel-csimple-maven-plugin</module>
         <module>camel-report-maven-plugin</module>
+        <module>camel-catalog-common</module>
     </modules>
 
 </project>

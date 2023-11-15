@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
@@ -43,6 +46,7 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
     private final String urlTimeout = "activemq:JmsInOnlyDisableTimeToLiveTest.in?timeToLive=2000";
     private final String urlTimeToLiveDisabled
             = "activemq:JmsInOnlyDisableTimeToLiveTest.in?timeToLive=2000&disableTimeToLive=true";
+    private CountDownLatch messageWasExpiredCountDownLatch = new CountDownLatch(2);
 
     @Test
     public void testInOnlyExpired() throws Exception {
@@ -57,7 +61,7 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
         MockEndpoint.assertIsSatisfied(context);
 
         // wait after the msg has expired
-        Thread.sleep(2500);
+        messageWasExpiredCountDownLatch.await(2000, TimeUnit.MILLISECONDS);
 
         MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:end").expectedMessageCount(0);
@@ -82,7 +86,7 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
         MockEndpoint.assertIsSatisfied(context);
 
         // wait after the msg has expired
-        Thread.sleep(2500);
+        messageWasExpiredCountDownLatch.await(2000, TimeUnit.MILLISECONDS);
 
         MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:end").expectedBodiesReceived("Hello World 2");

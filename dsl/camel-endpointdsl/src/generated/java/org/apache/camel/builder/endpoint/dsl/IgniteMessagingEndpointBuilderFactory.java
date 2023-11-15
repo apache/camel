@@ -662,7 +662,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * @return the name of the header {@code IgniteMessagingTopic}.
          */
         public String igniteMessagingTopic() {
-            return "IgniteMessagingTopic";
+            return "CamelIgniteMessagingTopic";
         }
 
         /**
@@ -676,7 +676,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * @return the name of the header {@code IgniteMessagingUUID}.
          */
         public String igniteMessagingUUID() {
-            return "IgniteMessagingUUID";
+            return "CamelIgniteMessagingUUID";
         }
     }
     static IgniteMessagingEndpointBuilder endpointBuilder(

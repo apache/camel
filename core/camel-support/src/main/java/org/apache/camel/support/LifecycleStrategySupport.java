@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
 
@@ -258,10 +257,7 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
                     if (value == null) {
                         Class<?> type = getter.getOptionType(option, true);
                         if (type != null) {
-                            Set<?> set = camelContext.getRegistry().findByType(type);
-                            if (set.size() == 1) {
-                                value = set.iterator().next();
-                            }
+                            value = camelContext.getRegistry().findSingleByType(type);
                         }
                         if (value != null) {
                             boolean hit = pc.configure(camelContext, target, option, value, true);

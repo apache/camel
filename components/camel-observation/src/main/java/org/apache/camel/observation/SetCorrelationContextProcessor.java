@@ -28,9 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author rvargasp
- */
 public class SetCorrelationContextProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetCorrelationContextProcessor.class);

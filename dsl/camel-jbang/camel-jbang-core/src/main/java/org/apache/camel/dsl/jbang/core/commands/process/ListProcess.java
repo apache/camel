@@ -32,6 +32,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
+
 @Command(name = "ps", description = "List running Camel integrations", sortOptions = false)
 public class ListProcess extends ProcessWatchCommand {
 

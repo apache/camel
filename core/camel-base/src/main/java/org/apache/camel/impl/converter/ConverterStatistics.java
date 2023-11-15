@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.TypeConvertible;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.TypeConvertible;
 
 /**
  * Converter-specific statistics

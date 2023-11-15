@@ -694,7 +694,7 @@ public final class MessageHelper {
         // must not cause new exceptions so run this in a try catch block
         try {
             return doDumpMessageHistoryStacktrace(exchange, exchangeFormatter, logStackTrace);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore as the body is for logging purpose
             return "";
         }

@@ -95,9 +95,7 @@ public class KeystorePasswordCallback implements CallbackHandler {
             Method getType = null;
             try {
                 getType = pc.getClass().getMethod("getPasswordType");
-            } catch (NoSuchMethodException ex) {
-                // keep looking
-            } catch (SecurityException ex) {
+            } catch (NoSuchMethodException | SecurityException ex) {
                 // keep looking
             }
             if (getType == null) {

@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-parent</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws2-eventbridge</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 Eventbridge</name>
-    <description>A Camel Amazon Eventbridge Web Service Component Version 2</description>
+    <description>Execute different operation on Amazon Eventbridge service</description>
 
     <properties>
     </properties>

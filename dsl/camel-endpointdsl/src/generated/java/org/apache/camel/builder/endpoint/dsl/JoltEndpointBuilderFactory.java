@@ -42,46 +42,6 @@ public interface JoltEndpointBuilderFactory {
             return (AdvancedJoltEndpointBuilder) this;
         }
         /**
-         * Sets whether the context map should allow access to all details. By
-         * default only the message body and headers can be accessed. This
-         * option can be enabled for full access to the current Exchange and
-         * CamelContext. Doing so impose a potential security risk as this opens
-         * access to the full power of CamelContext API.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param allowContextMapAll the value to set
-         * @return the dsl builder
-         */
-        default JoltEndpointBuilder allowContextMapAll(
-                boolean allowContextMapAll) {
-            doSetProperty("allowContextMapAll", allowContextMapAll);
-            return this;
-        }
-        /**
-         * Sets whether the context map should allow access to all details. By
-         * default only the message body and headers can be accessed. This
-         * option can be enabled for full access to the current Exchange and
-         * CamelContext. Doing so impose a potential security risk as this opens
-         * access to the full power of CamelContext API.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param allowContextMapAll the value to set
-         * @return the dsl builder
-         */
-        default JoltEndpointBuilder allowContextMapAll(String allowContextMapAll) {
-            doSetProperty("allowContextMapAll", allowContextMapAll);
-            return this;
-        }
-        /**
          * Whether to allow to use resource template from header or not (default
          * false). Enabling this allows to specify dynamic templates via message
          * header. However this can be seen as a potential security
@@ -406,7 +366,7 @@ public interface JoltEndpointBuilderFactory {
          * @return the name of the header {@code JoltResourceUri}.
          */
         public String joltResourceUri() {
-            return "JoltResourceUri";
+            return "CamelJoltResourceUri";
         }
 
         /**
@@ -419,7 +379,7 @@ public interface JoltEndpointBuilderFactory {
          * @return the name of the header {@code JoltContext}.
          */
         public String joltContext() {
-            return "JoltContext";
+            return "CamelJoltContext";
         }
     }
     static JoltEndpointBuilder endpointBuilder(String componentName, String path) {
