@@ -43,6 +43,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
     // TODO: option to configure prometheus
     // TODO: context-path / port for http scrape service
+    // TODO: use platform-http-main
+    // TODO: dev console
 
     private CamelContext camelContext;
     private final PrometheusMeterRegistry meterRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
