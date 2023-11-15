@@ -57,6 +57,7 @@ import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
@@ -1420,7 +1421,13 @@ public abstract class BaseMainSupport extends BaseService {
         }
         boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
         if (enabled) {
-            // TODO:
+            CamelMetricsService micrometer = resolveMicrometerService(camelContext);
+            setPropertiesOnTarget(camelContext, micrometer, metricsProperties, "camel.metrics.", failIfNotSet, true,
+                    autoConfiguredProperties);
+            if (camelContext.hasService(CamelMetricsService.class) == null) {
+                // add as service so micrometer can be active
+                camelContext.addService(micrometer, true, true);
+            }
         }
     }
 
@@ -2075,6 +2082,20 @@ public abstract class BaseMainSupport extends BaseService {
                     .newInstance("opentelemetry-tracer", CamelTracingService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find OpenTelemetryTracer on classpath. Add camel-opentelemetry to classpath."));
+        }
+        return answer;
+    }
+
+    private static CamelMetricsService resolveMicrometerService(CamelContext camelContext) throws Exception {
+        CamelMetricsService answer = camelContext.hasService(CamelMetricsService.class);
+        if (answer == null) {
+            answer = camelContext.getRegistry().findSingleByType(CamelMetricsService.class);
+        }
+        if (answer == null) {
+            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                    .newInstance("micrometer-prometheus", CamelMetricsService.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find CamelMetricsService on classpath. Add camel-micrometer-prometheus to classpath."));
         }
         return answer;
     }

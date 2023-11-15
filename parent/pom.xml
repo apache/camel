@@ -1752,7 +1752,6 @@
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-micrometer-prometheus</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
