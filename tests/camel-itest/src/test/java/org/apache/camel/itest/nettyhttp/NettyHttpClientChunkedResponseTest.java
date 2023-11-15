@@ -31,12 +31,6 @@ public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
     private int port1;
     private int port2;
 
-    @Disabled("TODO: investigate for Camel 3.0")
-    @Test
-    void testNettyHttpClientChunked() {
-        invokeService(port1, true);
-    }
-
     @Test
     void testNettyHttpRouteClientChunked() {
         invokeService(port2, false);
