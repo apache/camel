@@ -43,18 +43,6 @@
             <groupId>com.box</groupId>
             <artifactId>box-java-sdk</artifactId>
             <version>${box-java-sdk-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.box</groupId>
-                    <artifactId>box-java-sdk</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.bitbucket.b_c</groupId>
-            <artifactId>jose4j</artifactId>
-            <version>${jose4j-version}</version>
         </dependency>
 
         <dependency>
