@@ -10,6 +10,10 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Added `boolean` parameter to `matchProcess` method on `org.apache.camel.spi.Condition`.
 
+=== camel-base-engine
+
+`org.apache.camel.impl.debuggerBacklogDebugger` has been splitted between an interface `org.apache.camel.spi.BacklogDebugger` and a default implementation `org.apache.camel.impl.debugger.DefaultBacklogDebugger`.
+
 === camel-main
 
 The option `camel.main.debugger` has been renamed to `camel.debug.enabled`.
