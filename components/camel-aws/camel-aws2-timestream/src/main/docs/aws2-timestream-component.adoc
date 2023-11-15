@@ -4,7 +4,7 @@
 :artifactid: camel-aws2-timestream
 :description: Write records and execute queries on AWS time-series database
 :since: 4.1
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
