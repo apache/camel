@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
@@ -83,20 +82,17 @@ public class JettyFreemarkerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                String name = exchange.getIn().getHeader("name", String.class);
-                                ObjectHelper.notNull(name, "name");
+                        .process(exchange -> {
+                            String name = exchange.getIn().getHeader("name", String.class);
+                            ObjectHelper.notNull(name, "name");
 
-                                name = "org/apache/camel/itest/jetty/" + name + ".ftl";
-                                InputStream is
-                                        = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
-                                String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
+                            name = "org/apache/camel/itest/jetty/" + name + ".ftl";
+                            InputStream is
+                                    = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
+                            String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
-                                exchange.getMessage().setBody(xml);
-                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                            }
+                            exchange.getMessage().setBody(xml);
+                            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
                         });
             }
         };

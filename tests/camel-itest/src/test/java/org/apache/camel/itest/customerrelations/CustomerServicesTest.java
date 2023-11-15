@@ -71,7 +71,7 @@ public class CustomerServicesTest {
         }
     }
 
-    class HeaderChecker extends AbstractPhaseInterceptor<Message> {
+    static class HeaderChecker extends AbstractPhaseInterceptor<Message> {
 
         HeaderChecker(String phase) {
             super(phase);
