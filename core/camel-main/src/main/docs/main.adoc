@@ -333,11 +333,12 @@ The camel.vault.azure supports 11 options, which are listed below.
 
 
 === Camel OpenTelemtry configurations
-The camel.opentelemetry supports 3 options, which are listed below.
+The camel.opentelemetry supports 4 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.opentelemetry.enabled* | To enable OpenTelemetry | false | boolean
 | *camel.opentelemetry.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
 | *camel.opentelemetry.exclude{zwsp}Patterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
 | *{zwsp}camel.opentelemetry.instrumentation{zwsp}Name* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
@@ -345,11 +346,12 @@ The camel.opentelemetry supports 3 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 4 options, which are listed below.
+The camel.metrics supports 5 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.metrics.enabled* | To enable Micrometer metrics. | false | boolean
 | *camel.metrics.enableExchange{zwsp}EventNotifier* | Set whether to enable the MicrometerExchangeEventNotifier for capturing metrics on exchange processing times. | true | boolean
 | *camel.metrics.enableMessage{zwsp}History* | Set whether to enable the MicrometerMessageHistoryFactory for capturing metrics on individual route node processing times. Depending on the number of configured route nodes, there is the potential to create a large volume of metrics. Therefore, this option is disabled by default. | false | boolean
 | *camel.metrics.enableRouteEvent{zwsp}Notifier* | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
@@ -409,13 +411,14 @@ The camel.resilience4j supports 20 options, which are listed below.
 
 
 === Camel Saga EIP (Long Running Actions) configurations
-The camel.lra supports 4 options, which are listed below.
+The camel.lra supports 5 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.lra.coordinatorContext{zwsp}Path* | The context-path for the LRA coordinator. Is default /lra-coordinator | /lra-coordinator | String
 | *camel.lra.coordinatorUrl* | The URL for the LRA coordinator service that orchestrates the transactions |  | String
+| *camel.lra.enabled* | To enable Saga LRA | false | boolean
 | *camel.lra.localParticipant{zwsp}ContextPath* | The context-path for the local participant. Is default /lra-participant | /lra-participant | String
 | *camel.lra.localParticipantUrl* | The URL for the local participant |  | String
 |===

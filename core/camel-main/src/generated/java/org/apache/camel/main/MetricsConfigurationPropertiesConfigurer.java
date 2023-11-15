@@ -29,6 +29,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "EnableRouteEventNotifier": target.setEnableRouteEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "enableroutepolicy":
         case "EnableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
+        case "enabled":
+        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -44,6 +46,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "EnableRouteEventNotifier": return boolean.class;
         case "enableroutepolicy":
         case "EnableRoutePolicy": return boolean.class;
+        case "enabled":
+        case "Enabled": return boolean.class;
         default: return null;
         }
     }
@@ -60,6 +64,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "EnableRouteEventNotifier": return target.isEnableRouteEventNotifier();
         case "enableroutepolicy":
         case "EnableRoutePolicy": return target.isEnableRoutePolicy();
+        case "enabled":
+        case "Enabled": return target.isEnabled();
         default: return null;
         }
     }

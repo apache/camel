@@ -28,6 +28,7 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
 
+    private boolean enabled;
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
     private boolean enableMessageHistory;
@@ -42,6 +43,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
 
     public MainConfigurationProperties end() {
         return parent;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * To enable Micrometer metrics.
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public boolean isEnableRoutePolicy() {
@@ -103,6 +115,14 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public MetricsConfigurationProperties withEnableRoutePolicy(boolean enableRoutePolicy) {
         this.enableRoutePolicy = enableRoutePolicy;
+        return this;
+    }
+
+    /**
+     * To enable Micrometer metrics.
+     */
+    public MetricsConfigurationProperties withEnabled(boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
 
