@@ -29,7 +29,7 @@
     <artifactId>camel-micrometer-prometheus</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Micrometer Prometheus</name>
-    <description>Camel Micrometer Prometheus</description>
+    <description>Camel Micrometer Prometheus for Camel Main</description>
 
     <properties>
         <firstVersion>4.3.0</firstVersion>
@@ -40,6 +40,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-micrometer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-platform-http-main</artifactId>
         </dependency>
 
         <dependency>

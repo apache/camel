@@ -18,6 +18,11 @@ package org.apache.camel.component.micrometer.prometheus;
 
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
+import io.vertx.core.Handler;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.web.Route;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
@@ -25,6 +30,9 @@ import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEve
 import org.apache.camel.component.micrometer.eventnotifier.MicrometerRouteEventNotifier;
 import org.apache.camel.component.micrometer.messagehistory.MicrometerMessageHistoryFactory;
 import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyFactory;
+import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ManagementStrategy;
@@ -41,9 +49,12 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerPrometheus.class);
 
-    // TODO: option to configure prometheus
-    // TODO: context-path / port for http scrape service
-    // TODO: use platform-http-main
+    private VertxPlatformHttpServer server;
+    private VertxPlatformHttpRouter router;
+    private PlatformHttpComponent platformHttpComponent;
+
+    // TODO: option to configure prometheus (on or off)
+    // TODO: 0.0.4 or 1.0.0 text format
     // TODO: dev console
 
     private CamelContext camelContext;
@@ -149,6 +160,35 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             camelContext.setMessageHistoryFactory(factory);
         }
 
-        LOG.info("MicrometerPrometheus enabled");
+        server = camelContext.hasService(VertxPlatformHttpServer.class);
+        router = VertxPlatformHttpRouter.lookup(camelContext);
+        platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+
+        if (server != null && router != null && platformHttpComponent != null) {
+            setupHttpScraper();
+            LOG.info("MicrometerPrometheus enabled with HTTP scraping on /q/metrics");
+        } else {
+            LOG.info("MicrometerPrometheus enabled");
+        }
+    }
+
+    protected void setupHttpScraper() {
+        Route metrcis = router.route("/q/metrics");
+        metrcis.method(HttpMethod.GET);
+        metrcis.produces("text/plain;version=0.0.4;charset=utf-8");
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                ctx.response().putHeader("content-type", "text/plain;version=0.0.4;charset=utf-8");
+                String data = meterRegistry.scrape();
+                ctx.response().write(data);
+            }
+        };
+
+        // use blocking handler as the task can take longer time to complete
+        metrcis.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpEndpoint("/q/metrics", null, null);
     }
 }
