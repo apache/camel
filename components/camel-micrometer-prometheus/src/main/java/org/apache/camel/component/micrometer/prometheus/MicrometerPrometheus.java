@@ -182,7 +182,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             public void handle(RoutingContext ctx) {
                 ctx.response().putHeader("content-type", "text/plain;version=0.0.4;charset=utf-8");
                 String data = meterRegistry.scrape();
-                ctx.response().write(data);
+                ctx.end(data);
             }
         };
 
