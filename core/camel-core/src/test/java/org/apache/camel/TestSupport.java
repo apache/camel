@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -86,6 +87,10 @@ public abstract class TestSupport {
         Assumptions.assumeTrue(canRunOnThisPlatform());
     }
 
+    @Deprecated
+    public void deleteTestDirectory() {
+    }
+
     @AfterEach
     public void tearDown() throws Exception {
         // make sure we cleanup the platform mbean server
@@ -102,6 +107,24 @@ public abstract class TestSupport {
 
     protected Path testDirectory(String path) {
         return testDirectory(path, false);
+    }
+
+    @Deprecated
+    protected Path testDirectory(boolean create) {
+        return testDirectory();
+    }
+
+    @Deprecated
+    public static Path testDirectory(Class<?> testClass, boolean create) {
+        Path dir = Paths.get("target", "data", testClass.getSimpleName());
+        if (create) {
+            try {
+                Files.createDirectories(dir);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create test directory: " + dir, e);
+            }
+        }
+        return dir;
     }
 
     protected Path testDirectory(String path, boolean create) {
@@ -420,6 +443,39 @@ public abstract class TestSupport {
                 return null;
             }
         }
+    }
+
+    /**
+     * Recursively delete a directory, useful to zapping test data
+     *
+     * @param      file the directory to be deleted
+     * @deprecated      since updating the class to use junit5 @TempDir, it no longer should control temp directory
+     *                  lifecycle
+     */
+    @Deprecated
+    public static void deleteDirectory(String file) {
+        deleteDirectory(new File(file));
+    }
+
+    /**
+     * Recursively delete a directory, useful to zapping test data
+     *
+     * @param      file the directory to be deleted
+     * @deprecated      since updating the class to use junit5 @TempDir, it no longer should control temp directory
+     *                  lifecycle
+     */
+    @Deprecated
+    public static void deleteDirectory(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File child : files) {
+                    deleteDirectory(child);
+                }
+            }
+        }
+
+        file.delete();
     }
 
     /**
