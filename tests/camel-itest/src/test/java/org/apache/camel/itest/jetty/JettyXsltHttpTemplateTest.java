@@ -37,11 +37,11 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>", String.class);
 
         assertNotNull(xml, "The transformed XML should not be null");
-        assertTrue(xml.indexOf("transformed") > -1);
+        assertTrue(xml.contains("transformed"));
         // the cheese tag is in the transform.xsl
-        assertTrue(xml.indexOf("cheese") > -1);
-        assertTrue(xml.indexOf("<subject>Hey</subject>") > -1);
-        assertTrue(xml.indexOf("<body>Hello world!</body>") > -1);
+        assertTrue(xml.contains("cheese"));
+        assertTrue(xml.contains("<subject>Hey</subject>"));
+        assertTrue(xml.contains("<body>Hello world!</body>"));
     }
 
     @Override

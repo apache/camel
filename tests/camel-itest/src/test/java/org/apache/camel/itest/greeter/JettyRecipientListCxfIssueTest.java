@@ -19,7 +19,6 @@ package org.apache.camel.itest.greeter;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -57,12 +56,9 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
         assertNotNull(request);
 
         // send a message to jetty
-        Exchange out = template.request("http://0.0.0.0:{{RecipientListCxfTest.port3}}/myapp", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader("operationName", "greetMe");
-                exchange.getIn().setBody(request);
-            }
+        Exchange out = template.request("http://0.0.0.0:{{RecipientListCxfTest.port3}}/myapp", exchange -> {
+            exchange.getIn().setHeader("operationName", "greetMe");
+            exchange.getIn().setBody(request);
         });
 
         assertNotNull(out);

@@ -18,7 +18,6 @@ package org.apache.camel.itest.jetty;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
@@ -52,12 +51,9 @@ public class JettyJmsTwowayTest {
     void testSendingRequest() {
         assertNotNull(camelContext, "The camelContext should not be null");
         ProducerTemplate template = camelContext.createProducerTemplate();
-        Exchange exchange = template.send(URL, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("<hello>Willem</hello>");
-                exchange.getIn().setHeader("Operation", "greetMe");
-            }
-
+        Exchange exchange = template.send(URL, exchange1 -> {
+            exchange1.getIn().setBody("<hello>Willem</hello>");
+            exchange1.getIn().setHeader("Operation", "greetMe");
         });
         assertEquals("<response><hello>Willem</hello></response>", exchange.getMessage().getBody(String.class));
         template.stop();

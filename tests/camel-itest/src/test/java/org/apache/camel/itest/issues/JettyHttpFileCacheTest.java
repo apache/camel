@@ -18,8 +18,6 @@ package org.apache.camel.itest.issues;
 
 import java.io.File;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyHttpFileCacheTest extends CamelTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough"
@@ -52,6 +51,7 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
 
         File file = new File("target/cachedir");
         String[] files = file.list();
+        assertNotNull(files);
         assertEquals(0, files.length, "There should not have any temp file");
 
     }
@@ -66,13 +66,7 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
                         .to("http://localhost:9101?bridgeEndpoint=true");
 
                 from("jetty:http://localhost:9101?chunked=true&matchOnUriPrefix=true")
-                        .process(new Processor() {
-
-                            public void process(Exchange exchange) {
-                                exchange.getMessage().setBody(TEST_STRING);
-                            }
-
-                        });
+                        .process(exchange -> exchange.getMessage().setBody(TEST_STRING));
             }
         };
     }
