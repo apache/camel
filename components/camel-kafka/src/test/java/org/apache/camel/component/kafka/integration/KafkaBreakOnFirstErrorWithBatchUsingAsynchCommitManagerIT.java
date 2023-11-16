@@ -94,7 +94,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingAsynchCommitManagerIT extends BaseEmbe
     public void kafkaBreakOnFirstErrorBasicCapability() throws Exception {
         to.reset();
         to.expectedMessageCount(3);
-        // message-3 causes an error 
+        // message-3 causes an error
         // and breakOnFirstError will cause it to be retried forever
         // we will never get to message-4
         to.expectedBodiesReceived("message-0", "message-1", "message-2");

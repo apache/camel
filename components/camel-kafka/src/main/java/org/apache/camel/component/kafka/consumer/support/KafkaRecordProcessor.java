@@ -150,13 +150,13 @@ public class KafkaRecordProcessor {
                         record.offset(), record.partition());
             }
 
-            // force commit, so we resume on next poll where we failed 
+            // force commit, so we resume on next poll where we failed
             // except when the failure happened at the first message in a poll
             if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
                 // we should just do a commit (vs the original forceCommit)
                 // when route uses NOOP Commit Manager it will rely
                 // on the route implementation to explicitly commit offset
-                // when route uses Synch/Asynch Commit Manager it will 
+                // when route uses Synch/Asynch Commit Manager it will
                 // ALWAYS commit the offset for the failing record
                 // and will ALWAYS retry it
                 commitManager.commit(topicPartition);

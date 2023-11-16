@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-19894 regarding failure to
  * correctly commit the offset in a batch using the Synch Commit Manager
- * 
+ *
  * mimics the reproduction of the problem in https://github.com/Krivda/camel-bug-reproduction
  */
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
@@ -118,7 +118,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
                 .untilAsserted(() -> assertTrue(true));
 
         // the replaying of the message with an error
-        // will prevent other paylods from being 
+        // will prevent other paylods from being
         // processed
         to.assertIsSatisfied();
     }

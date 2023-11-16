@@ -38,13 +38,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * this will test basic breakOnFirstError functionality uses allowManualCommit and KafkaManualCommit because relying on
  * Camel default to use NOOP Commit Manager this means the route implementation MUST manage all offset commits
- * 
+ *
  * will demonstrate how to retry
  */
 class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseEmbeddedKafkaTestSupport {
@@ -130,7 +130,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseE
                         // adding error message to end
                         // so we can account for it
                         .to(to)
-                        // we are not 
+                        // we are not
                         // going to commit offset
                         // so will retry
                         .end();

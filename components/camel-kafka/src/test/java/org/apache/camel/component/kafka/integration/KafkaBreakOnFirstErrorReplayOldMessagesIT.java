@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-20044 regarding incorrectly
  * handling the offset commit resulting in replaying messages
- * 
+ *
  * mimics the reproduction of the problem in https://github.com/CodeSmell/CamelKafkaOffset
  */
 class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSupport {

@@ -92,7 +92,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
         to.expectedMessageCount(7);
 
         // old behavior before the fix in CAMEL-20044
-        // message-3 causes an error 
+        // message-3 causes an error
         // and breakOnFirstError will cause it to be retried 1x
         // then we move on
         //to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-3", "message-4", "message-5");
@@ -101,9 +101,9 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4", "message-5");
 
         contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
-        
+
         this.publishMessagesToKafka();
-        
+
         contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
@@ -125,8 +125,8 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseEmbedd
                         // so we can account for it
                         .to(to)
                         .process(exchange -> {
-                            // if we don't commit 
-                            // camel will continuously 
+                            // if we don't commit
+                            // camel will continuously
                             // retry the message with an error
                             doCommitOffset(exchange);
                         });
