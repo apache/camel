@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.helper.CamelJavaRestDslParserHelper;
 import org.apache.camel.parser.model.RestConfigurationDetails;
 import org.apache.camel.parser.model.RestServiceDetails;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
+
+import static org.apache.camel.parser.RouteBuilderParser.findAllConfigureMethods;
 
 /**
  * A Camel parser that parses Camel Java Rest DSL source code.
@@ -49,17 +50,7 @@ public final class RestDslParser {
             JavaClassSource clazz, String fullyQualifiedFileName,
             boolean includeInlinedRouteBuilders) {
 
-        List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
-        MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
-        if (method != null) {
-            methods.add(method);
-        }
-        if (includeInlinedRouteBuilders) {
-            List<MethodSource<JavaClassSource>> inlinedMethods = CamelJavaParserHelper.findInlinedConfigureMethods(clazz);
-            if (!inlinedMethods.isEmpty()) {
-                methods.addAll(inlinedMethods);
-            }
-        }
+        List<MethodSource<JavaClassSource>> methods = findAllConfigureMethods(clazz, includeInlinedRouteBuilders);
 
         CamelJavaRestDslParserHelper parser = new CamelJavaRestDslParserHelper();
         List<RestConfigurationDetails> list = new ArrayList<>();
@@ -87,17 +78,7 @@ public final class RestDslParser {
             JavaClassSource clazz, String fullyQualifiedFileName,
             boolean includeInlinedRouteBuilders) {
 
-        List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
-        MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
-        if (method != null) {
-            methods.add(method);
-        }
-        if (includeInlinedRouteBuilders) {
-            List<MethodSource<JavaClassSource>> inlinedMethods = CamelJavaParserHelper.findInlinedConfigureMethods(clazz);
-            if (!inlinedMethods.isEmpty()) {
-                methods.addAll(inlinedMethods);
-            }
-        }
+        List<MethodSource<JavaClassSource>> methods = findAllConfigureMethods(clazz, includeInlinedRouteBuilders);
 
         CamelJavaRestDslParserHelper parser = new CamelJavaRestDslParserHelper();
         List<RestServiceDetails> list = new ArrayList<>();
