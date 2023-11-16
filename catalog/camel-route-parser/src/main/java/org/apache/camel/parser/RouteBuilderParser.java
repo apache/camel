@@ -216,7 +216,7 @@ public final class RouteBuilderParser {
         }
     }
 
-    private static List<MethodSource<JavaClassSource>> findAllConfigureMethods(
+    static List<MethodSource<JavaClassSource>> findAllConfigureMethods(
             JavaClassSource clazz, boolean includeInlinedRouteBuilders) {
         List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
