@@ -36,6 +36,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private boolean enableExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+    @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
+    private String textFormatVersion = "0.0.4";
 
     public MetricsConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -105,6 +107,20 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         this.enableRouteEventNotifier = enableRouteEventNotifier;
     }
 
+    public String getTextFormatVersion() {
+        return textFormatVersion;
+    }
+
+    /**
+     * The text-format version to use with Prometheus scraping.
+     *
+     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8
+     * 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8
+     */
+    public void setTextFormatVersion(String textFormatVersion) {
+        this.textFormatVersion = textFormatVersion;
+    }
+
     @Override
     public void close() {
         parent = null;
@@ -154,5 +170,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         this.enableRouteEventNotifier = enableRouteEventNotifier;
         return this;
     }
+
+    /**
+     * The text-format version to use with Prometheus scraping.
+     *
+     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8
+     * 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8
+     */
+    public MetricsConfigurationProperties withTextFormatVersion(String textFormatVersion) {
+        this.textFormatVersion = textFormatVersion;
+        return this;
+    }
+
 
 }

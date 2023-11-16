@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer.prometheus;
 
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
+import io.prometheus.client.exporter.common.TextFormat;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Route;
@@ -53,7 +54,6 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private VertxPlatformHttpRouter router;
     private PlatformHttpComponent platformHttpComponent;
 
-    // TODO: 0.0.4 or 1.0.0 text format
     // TODO: option include JVM metrics
     // TODO: option include platform-http metrics
     // TODO: include easily with jbang
@@ -70,6 +70,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private boolean enableExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+    @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
+    private String textFormatVersion = "0.0.4";
 
     @Override
     public CamelContext getCamelContext() {
@@ -130,6 +132,20 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         this.enableRouteEventNotifier = enableRouteEventNotifier;
     }
 
+    public String getTextFormatVersion() {
+        return textFormatVersion;
+    }
+
+    /**
+     * The text-format version to use with Prometheus scraping.
+     *
+     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8
+     * 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8
+     */
+    public void setTextFormatVersion(String textFormatVersion) {
+        this.textFormatVersion = textFormatVersion;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -177,13 +193,22 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     protected void setupHttpScraper() {
         Route metrics = router.route("/q/metrics");
         metrics.method(HttpMethod.GET);
-        metrics.produces("text/plain;version=0.0.4;charset=utf-8");
+
+        final String format = "0.0.4".equals(textFormatVersion) ? TextFormat.CONTENT_TYPE_004 : TextFormat.CONTENT_TYPE_OPENMETRICS_100;
+        metrics.produces(format);
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
-                ctx.response().putHeader("content-type", "text/plain;version=0.0.4;charset=utf-8");
-                String data = meterRegistry.scrape();
+                String ct = format;
+                // the client may ask for version 1.0.0 via accept header
+                String ah = ctx.request().getHeader("Accept");
+                if (ah != null && ah.contains("application/openmetrics-text")) {
+                    ct = TextFormat.chooseContentType(ah);
+                }
+
+                ctx.response().putHeader("Content-Type", ct);
+                String data = meterRegistry.scrape(ct);
                 ctx.end(data);
             }
         };

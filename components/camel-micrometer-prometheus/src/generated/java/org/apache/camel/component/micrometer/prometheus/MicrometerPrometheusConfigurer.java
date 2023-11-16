@@ -31,6 +31,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "EnableRouteEventNotifier": target.setEnableRouteEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "enableroutepolicy":
         case "EnableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
+        case "textformatversion":
+        case "TextFormatVersion": target.setTextFormatVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -48,6 +50,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "EnableRouteEventNotifier": return boolean.class;
         case "enableroutepolicy":
         case "EnableRoutePolicy": return boolean.class;
+        case "textformatversion":
+        case "TextFormatVersion": return java.lang.String.class;
         default: return null;
         }
     }
@@ -66,6 +70,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "EnableRouteEventNotifier": return target.isEnableRouteEventNotifier();
         case "enableroutepolicy":
         case "EnableRoutePolicy": return target.isEnableRoutePolicy();
+        case "textformatversion":
+        case "TextFormatVersion": return target.getTextFormatVersion();
         default: return null;
         }
     }
