@@ -16,6 +16,15 @@
  */
 package org.apache.camel.component.micrometer.prometheus;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
+
+import io.micrometer.core.instrument.binder.MeterBinder;
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
@@ -40,6 +49,11 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
+import org.jboss.jandex.ClassInfo;
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,17 +64,18 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerPrometheus.class);
 
+    private static final String JANDEX_INDEX = "META-INF/micrometer-binder-index.dat";
+
     private MainHttpServer server;
     private VertxPlatformHttpRouter router;
     private PlatformHttpComponent platformHttpComponent;
 
-    // TODO: option include JVM metrics
-    // TODO: option include platform-http metrics
     // TODO: include easily with jbang
     // TODO: docs
 
     private CamelContext camelContext;
     private final PrometheusMeterRegistry meterRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+    private final Set<MeterBinder> createdBinders = new HashSet<>();
 
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
@@ -72,6 +87,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private boolean enableRouteEventNotifier = true;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
+    @Metadata
+    private String binders;
 
     @Override
     public CamelContext getCamelContext() {
@@ -139,16 +156,33 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     /**
      * The text-format version to use with Prometheus scraping.
      *
-     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8
-     * 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8
+     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0;
+     * charset=utf-8
      */
     public void setTextFormatVersion(String textFormatVersion) {
         this.textFormatVersion = textFormatVersion;
     }
 
+    public String getBinders() {
+        return binders;
+    }
+
+    /**
+     * Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple
+     * binders can be separated by comma.
+     */
+    public void setBinders(String binders) {
+        this.binders = binders;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        if (binders != null) {
+            // load binders from micrometer
+            initBinders();
+        }
 
         if (isEnableRoutePolicy()) {
             MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
@@ -190,11 +224,69 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         }
     }
 
+    private void initBinders() throws IOException {
+        LOG.debug("Loading {}", JANDEX_INDEX);
+        Index index = JandexHelper.readJandexIndex(camelContext);
+        if (index == null) {
+            LOG.warn("Cannot read {} with list of known MeterBinder classes}", JANDEX_INDEX);
+        } else {
+            DotName dn = DotName.createSimple(MeterBinder.class);
+            List<ClassInfo> classes = index.getKnownDirectImplementors(dn);
+            LOG.debug("Found {} MeterBinder classes from {}", classes.size(), JANDEX_INDEX);
+
+            StringJoiner sj = new StringJoiner(", ");
+            for (String binder : binders.split(",")) {
+                binder = binder.trim();
+                binder = StringHelper.dashToCamelCase(binder);
+                binder = binder.toLowerCase();
+
+                final String target = binder;
+                Optional<ClassInfo> found = classes.stream()
+                        // use naming convention with and without metrics
+                        .filter(c -> c.name().local().toLowerCase().equals(target)
+                                || c.name().local().toLowerCase().equals(target + "metrics"))
+                        .findFirst();
+
+                if (found.isPresent()) {
+                    String fqn = found.get().name().toString();
+                    LOG.debug("Creating MeterBinder: {}", fqn);
+                    try {
+                        Class<MeterBinder> clazz = camelContext.getClassResolver().resolveClass(fqn, MeterBinder.class);
+                        MeterBinder mb = camelContext.getInjector().newInstance(clazz);
+                        if (mb != null) {
+                            mb.bindTo(meterRegistry);
+                            createdBinders.add(mb);
+                            sj.add(mb.getClass().getSimpleName());
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("Error creating MeterBinder: {} due to: {}", fqn, e.getMessage(), e);
+                    }
+                }
+            }
+            if (!createdBinders.isEmpty()) {
+                LOG.info("Registered {} MeterBinders: {}", createdBinders.size(), sj);
+            }
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+
+        for (MeterBinder mb : createdBinders) {
+            if (mb instanceof Closeable ac) {
+                IOHelper.close(ac);
+            }
+        }
+        createdBinders.clear();
+    }
+
     protected void setupHttpScraper() {
         Route metrics = router.route("/q/metrics");
         metrics.method(HttpMethod.GET);
 
-        final String format = "0.0.4".equals(textFormatVersion) ? TextFormat.CONTENT_TYPE_004 : TextFormat.CONTENT_TYPE_OPENMETRICS_100;
+        final String format
+                = "0.0.4".equals(textFormatVersion) ? TextFormat.CONTENT_TYPE_004 : TextFormat.CONTENT_TYPE_OPENMETRICS_100;
         metrics.produces(format);
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {

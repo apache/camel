@@ -347,11 +347,12 @@ The camel.opentelemetry supports 4 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 6 options, which are listed below.
+The camel.metrics supports 7 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.metrics.binders* | Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple binders can be separated by comma. |  | String
 | *camel.metrics.enabled* | To enable Micrometer metrics. | false | boolean
 | *camel.metrics.enableExchange{zwsp}EventNotifier* | Set whether to enable the MicrometerExchangeEventNotifier for capturing metrics on exchange processing times. | true | boolean
 | *camel.metrics.enableMessage{zwsp}History* | Set whether to enable the MicrometerMessageHistoryFactory for capturing metrics on individual route node processing times. Depending on the number of configured route nodes, there is the potential to create a large volume of metrics. Therefore, this option is disabled by default. | false | boolean

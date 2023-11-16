@@ -21,6 +21,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binders":
+        case "Binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": target.setEnableExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "enablemessagehistory":
@@ -40,6 +42,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binders":
+        case "Binders": return java.lang.String.class;
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": return boolean.class;
         case "enablemessagehistory":
@@ -60,6 +64,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binders":
+        case "Binders": return target.getBinders();
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": return target.isEnableExchangeEventNotifier();
         case "enablemessagehistory":

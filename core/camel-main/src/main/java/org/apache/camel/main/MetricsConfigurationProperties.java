@@ -38,6 +38,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private boolean enableRouteEventNotifier = true;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
+    @Metadata
+    private String binders;
 
     public MetricsConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -121,6 +123,18 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         this.textFormatVersion = textFormatVersion;
     }
 
+    public String getBinders() {
+        return binders;
+    }
+
+    /**
+     * Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple
+     * binders can be separated by comma.
+     */
+    public void setBinders(String binders) {
+        this.binders = binders;
+    }
+
     @Override
     public void close() {
         parent = null;
@@ -182,5 +196,13 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         return this;
     }
 
+    /**
+     * Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple
+     * binders can be separated by comma.
+     */
+    public MetricsConfigurationProperties withbinders(String binders) {
+        this.binders = binders;
+        return this;
+    }
 
 }

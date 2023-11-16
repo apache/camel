@@ -21,6 +21,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binders":
+        case "Binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
         case "camelcontext":
         case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "enableexchangeeventnotifier":
@@ -40,6 +42,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binders":
+        case "Binders": return java.lang.String.class;
         case "camelcontext":
         case "CamelContext": return org.apache.camel.CamelContext.class;
         case "enableexchangeeventnotifier":
@@ -60,6 +64,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binders":
+        case "Binders": return target.getBinders();
         case "camelcontext":
         case "CamelContext": return target.getCamelContext();
         case "enableexchangeeventnotifier":

@@ -48,7 +48,17 @@
 
         <dependency>
             <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <!-- to load micrometer binders -->
+        <dependency>
+            <groupId>io.smallrye</groupId>
+            <artifactId>jandex</artifactId>
+            <version>${jandex-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -99,5 +109,39 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- generate jandex index for all the micrometer binders that can be enabled -->
+            <plugin>
+                <groupId>io.smallrye</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+                <version>${jandex-version}</version>
+                <executions>
+                    <execution>
+                        <id>make-index</id>
+                        <goals>
+                            <goal>jandex</goal>
+                        </goals>
+                        <configuration>
+                            <indexName>micrometer-binder-index.dat</indexName>
+                            <fileSets>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>io.micrometer</groupId>
+                                        <artifactId>micrometer-core</artifactId>
+                                    </dependency>
+                                    <includes>
+                                        <include>io/micrometer/core/instrument/binder/**/*.class</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
