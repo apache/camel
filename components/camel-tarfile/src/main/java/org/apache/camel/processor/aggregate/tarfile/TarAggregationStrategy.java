@@ -33,7 +33,6 @@ import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -241,7 +240,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
 
     private void copyExistingEntries(TarArchiveInputStream tin, TarArchiveOutputStream tos) throws IOException {
         // copy the existing entries
-        ArchiveEntry nextEntry;
+        TarArchiveEntry nextEntry;
         while ((nextEntry = tin.getNextEntry()) != null) {
             tos.putArchiveEntry(nextEntry);
             IOUtils.copy(tin, tos);
