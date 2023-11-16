@@ -55,7 +55,11 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
     // TODO: option to configure prometheus (on or off)
     // TODO: 0.0.4 or 1.0.0 text format
-    // TODO: dev console
+    // TODO: rename to camel-micrometer-main
+    // TODO: include easily with jbang
+    // TODO: camel.server.metricsEnabled=true|false
+    // TODO: camel.server.otelEnabled=true|false
+    // TODO: docs
 
     private CamelContext camelContext;
     private final PrometheusMeterRegistry meterRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
