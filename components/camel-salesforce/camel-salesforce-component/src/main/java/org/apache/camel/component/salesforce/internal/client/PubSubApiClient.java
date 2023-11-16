@@ -140,7 +140,7 @@ public class PubSubApiClient extends ServiceSupport {
     }
 
     public void subscribe(PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId) {
-        LOG.error("Starting subscribe {}", consumer.getTopic());
+        LOG.debug("Starting subscribe {}", consumer.getTopic());
         this.initialReplayPreset = replayPreset;
         this.initialReplayId = initialReplayId;
         if (replayPreset == ReplayPreset.CUSTOM && initialReplayId == null) {
