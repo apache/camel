@@ -62,7 +62,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.deserializeType = endpoint.getConfiguration().getPubSubDeserializeType();
         String pojoClassName = endpoint.getConfiguration().getPubSubPojoClass();
         if (pojoClassName != null) {
-            this.pojoClass = this.getClass().getClassLoader().loadClass(pojoClassName);
+            this.pojoClass = endpoint.getCamelContext().getClassResolver().resolveMandatoryClass(pojoClassName);
         }
     }
 
