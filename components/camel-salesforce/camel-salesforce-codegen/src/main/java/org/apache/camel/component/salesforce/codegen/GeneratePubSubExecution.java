@@ -35,6 +35,7 @@ public class GeneratePubSubExecution extends AbstractSalesforceExecution {
             final TopicInfo topicInfo = getPubSubApiClient().getTopicInfo(topicName);
             final String schemaJson = getPubSubApiClient().getSchemaJson(topicInfo.getSchemaId());
             final File schemaFile = File.createTempFile("schema", ".json", outputDirectory);
+            schemaFile.deleteOnExit();
             Files.writeString(schemaFile.toPath(), schemaJson);
             SpecificCompiler.compileSchema(schemaFile, outputDirectory);
         }
