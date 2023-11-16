@@ -274,7 +274,7 @@
         <jooq-version>3.18.7</jooq-version>
 	<joor-version>0.9.14</joor-version>
 	<jose4j-version>0.9.3</jose4j-version>
-        <johnzon-version>1.2.21</johnzon-version>
+        <johnzon-version>2.0.0</johnzon-version>
         <jslt-version>0.1.14</jslt-version>
         <jsmpp-version>3.0.0</jsmpp-version>
         <jsch-version>0.2.11</jsch-version>
