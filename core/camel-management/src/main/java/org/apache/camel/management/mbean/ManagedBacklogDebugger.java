@@ -39,10 +39,13 @@ import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed BacklogDebugger")
 public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ManagedBacklogDebugger.class);
     private final CamelContext camelContext;
     private final DefaultBacklogDebugger backlogDebugger;
 
@@ -260,6 +263,12 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     @Override
     @Deprecated
     public String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties) {
+        if (includeExchangeProperties && !backlogDebugger.isIncludeExchangeProperties()
+                || !includeExchangeProperties && backlogDebugger.isIncludeExchangeProperties()) {
+            LOG.error("org.apache.camel.management.mbean.ManagedBacklogDebugger.dumpTracedMessagesAsXml(String, boolean) has been deprecated since 4.2 and second parameter to include or not the ExchangeProperties is ignored. Use `setIncludeExchangeProperties`.");
+        } else {
+            LOG.warn("org.apache.camel.management.mbean.ManagedBacklogDebugger.dumpTracedMessagesAsXml(String, boolean) has been deprecated since 4.2.");
+        }
         return dumpTracedMessagesAsXml(nodeId);
     }
 

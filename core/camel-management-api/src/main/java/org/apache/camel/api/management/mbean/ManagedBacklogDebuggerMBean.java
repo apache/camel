@@ -137,7 +137,7 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node.")
     String dumpTracedMessagesAsXml(String nodeId);
 
-    @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node.")
+    @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node. The `includeExchangeProperties` parameter is ignored in default implementation of Camel 4.2+. Use `setIncludeExchangeProperties(true)` before messages are sent to have access to ExchangeProperties.")
     @Deprecated
     String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties);
 
