@@ -145,8 +145,8 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     /**
      * When using stream:http format, this option specifies optional http headers, such as Accept: application/json.
-     * Multiple headers can be separated by comma. The format of headers should be {@code HEADER=VALUE}. An example
-     * might look like {@code Accept=application/json,Content-Type=text/plain}
+     * Multiple headers can be separated by comma. The format of headers should be "HEADER=VALUE". An example
+     * might look like "Accept=application/json,Content-Type=text/plain"
      */
     public void setHttpHeaders(String httpHeaders) {
         this.httpHeaders = httpHeaders;
