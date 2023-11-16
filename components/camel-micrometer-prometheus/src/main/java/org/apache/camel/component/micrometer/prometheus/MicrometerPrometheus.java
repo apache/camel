@@ -70,9 +70,6 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private VertxPlatformHttpRouter router;
     private PlatformHttpComponent platformHttpComponent;
 
-    // TODO: include easily with jbang
-    // TODO: docs
-
     private CamelContext camelContext;
     private final PrometheusMeterRegistry meterRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
     private final Set<MeterBinder> createdBinders = new HashSet<>();

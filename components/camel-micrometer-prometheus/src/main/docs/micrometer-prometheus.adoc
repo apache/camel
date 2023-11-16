@@ -1,0 +1,31 @@
+= Micrometer Prometheus Component
+:doctitle: Micrometer Prometheus
+:shortname: micrometer-prometheus
+:artifactid: camel-micrometer-prometheus
+:description: Camel Micrometer Prometheus for Camel Main
+:since: 4.3
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The camel-micrometer-prometheus is used for running Camel standalone (camel-main) and integrate with Micrometer Prometheus Registry.
+
+== Auto-detection from classpath
+
+To use this implementation all you need to do is to add the `camel-micrometer-prometheus` dependency to the classpath,
+and turn on metrics in `application.properties` such as:
+
+[source,properties]
+----
+# enable HTTP server with metrics
+camel.server.enabled=true
+camel.server.metricsEnabled=true
+
+# turn on micrometer metrics
+camel.metrics.enabled=true
+# include more camel details
+camel.metrics.enableMessageHistory=true
+# include additional out-of-the-box micrometer metrics for cpu, jvm and used file descriptors
+camel.metrics.binders=processor,jvm-info,file-descriptor
+----
