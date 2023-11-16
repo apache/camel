@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "micrometer-prometheus",
     "title": "Micrometer Prometheus",
-    "description": "Camel Micrometer Prometheus",
+    "description": "Camel Micrometer Prometheus for Camel Main",
     "deprecated": false,
     "firstVersion": "4.3.0",
     "supportLevel": "Preview",
