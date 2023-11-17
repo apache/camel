@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer.prometheus;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +60,16 @@ public final class BindersHelper {
                 boolean deprecated = info.hasAnnotation(Deprecated.class);
                 if (deprecated) {
                     // skip deprecated
+                    continue;
+                }
+                boolean abs = Modifier.isAbstract(info.flags());
+                if (abs) {
+                    // skip abstract
+                    continue;
+                }
+                boolean noArg = info.hasNoArgsConstructor();
+                if (!noArg) {
+                    // skip binders that need extra configuration
                     continue;
                 }
                 String name = info.name().local();

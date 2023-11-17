@@ -69,8 +69,7 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     /**
      * Controls the name style to use for metrics.
      *
-     * Default = uses micrometer naming convention.
-     * Legacy = uses the classic naming style (camelCase)
+     * Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase)
      */
     public void setNamingStrategy(String namingStrategy) {
         this.namingStrategy = namingStrategy;
@@ -132,8 +131,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     /**
      * The text-format version to use with Prometheus scraping.
      *
-     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8
-     * 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8
+     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0;
+     * charset=utf-8
      */
     public void setTextFormatVersion(String textFormatVersion) {
         this.textFormatVersion = textFormatVersion;
@@ -147,8 +146,9 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      * Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple
      * binders can be separated by comma.
      *
-     * The following binders currently is available from Micrometer:
-     * cache-meter-binder, class-loader, commons-object-pool2, database-table, disk-space, executor-service, file-descriptor, hystrix-metrics-binder, jetty-server-thread-pool, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory, jvm-thread, kafka, log4j2, logback, netty-allocator, netty-event-executor, ok-http-connection-pool, pooling-http-client-connection-manager-metrics-binder, postgre-sql-database, processor, tomcat, uptime
+     * The following binders currently is available from Micrometer: class-loader, commons-object-pool2,
+     * file-descriptor, hystrix-metrics-binder, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory,
+     * jvm-thread, log4j2, logback, processor, uptime
      */
     public void setBinders(String binders) {
         this.binders = binders;
@@ -178,8 +178,7 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     /**
      * Controls the name style to use for metrics.
      *
-     * Default = uses micrometer naming convention.
-     * Legacy = uses the classic naming style (camelCase)
+     * Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase)
      */
     public MetricsConfigurationProperties withNamingStrategy(String namingStrategy) {
         this.namingStrategy = namingStrategy;
@@ -218,8 +217,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     /**
      * The text-format version to use with Prometheus scraping.
      *
-     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8
-     * 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8
+     * 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0;
+     * charset=utf-8
      */
     public MetricsConfigurationProperties withTextFormatVersion(String textFormatVersion) {
         this.textFormatVersion = textFormatVersion;
@@ -230,8 +229,9 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      * Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple
      * binders can be separated by comma.
      *
-     * The following binders currently is available from Micrometer:
-     * cache-meter-binder, class-loader, commons-object-pool2, database-table, disk-space, executor-service, file-descriptor, hystrix-metrics-binder, jetty-server-thread-pool, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory, jvm-thread, kafka, log4j2, logback, netty-allocator, netty-event-executor, ok-http-connection-pool, pooling-http-client-connection-manager-metrics-binder, postgre-sql-database, processor, tomcat, uptime
+     * The following binders currently is available from Micrometer: class-loader, commons-object-pool2,
+     * file-descriptor, hystrix-metrics-binder, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory,
+     * jvm-thread, log4j2, logback, processor, uptime
      */
     public MetricsConfigurationProperties withBinders(String binders) {
         this.binders = binders;
