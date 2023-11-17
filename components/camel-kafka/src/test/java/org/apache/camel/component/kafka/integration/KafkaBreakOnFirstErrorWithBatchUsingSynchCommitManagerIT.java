@@ -22,7 +22,6 @@ import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +32,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * this will test basic breakOnFirstError functionality uses allowManualCommit and set Synch Commit Manager this allows
  * Camel to handle when to commit an offset
  */
+@Tags({ @Tag("breakOnFirstError") })
 class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbeddedKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";
     public static final String TOPIC = "breakOnFirstErrorBatchIT";
@@ -50,21 +52,6 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT.class);
 
     private final List<String> errorPayloads = new CopyOnWriteArrayList<>();
-
-    @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=KafkaBreakOnFirstErrorIT"
-                    + "&autoOffsetReset=earliest"
-                    + "&autoCommitEnable=false"
-                    + "&allowManualCommit=true"
-                    + "&breakOnFirstError=true"
-                    + "&maxPollRecords=3"
-                    + "&pollTimeoutMs=1000"
-                    + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    // synch commit factory
-                    + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
-                    + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
-    private Endpoint from;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
@@ -122,7 +109,19 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
 
             @Override
             public void configure() {
-                from(from)
+                from("kafka:" + TOPIC
+                     + "?groupId=KafkaBreakOnFirstErrorIT"
+                     + "&autoOffsetReset=earliest"
+                     + "&autoCommitEnable=false"
+                     + "&allowManualCommit=true"
+                     + "&breakOnFirstError=true"
+                     + "&maxPollRecords=3"
+                     + "&pollTimeoutMs=1000"
+                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                // synch commit factory
+                     + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
+                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .process(exchange -> {
                             LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Consuming", exchange, true));

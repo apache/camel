@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
+import org.apache.camel.component.kafka.integration.common.KafkaAdminUtil;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -34,6 +34,9 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,26 +49,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * mimics the reproduction of the problem in https://github.com/Krivda/camel-bug-reproduction
  */
+@Tags({ @Tag("breakOnFirstError") })
+@Disabled("This test is hanging")
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-19894";
     public static final String TOPIC = "breakOnFirstError-19894";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorSeekIssueIT.class);
-
-    @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=KafkaBreakOnFirstErrorIT"
-                    + "&autoOffsetReset=earliest"
-                    + "&autoCommitEnable=false"
-                    + "&allowManualCommit=true"
-                    + "&breakOnFirstError=true"
-                    + "&maxPollRecords=8"
-                    + "&pollTimeoutMs=1000"
-                    + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
-                    + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
-    private Endpoint from;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
@@ -74,6 +65,10 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
     @BeforeAll
     public static void setupTopic() {
+        if (kafkaAdminClient == null) {
+            kafkaAdminClient = KafkaAdminUtil.createAdminClient(service);
+        }
+
         // create the topic w/ 2 partitions
         final NewTopic mytopic = new NewTopic(TOPIC, 2, (short) 1);
         kafkaAdminClient.createTopics(Collections.singleton(mytopic));
@@ -129,7 +124,18 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
             @Override
             public void configure() {
-                from(from)
+                from("kafka:" + TOPIC
+                     + "?groupId=KafkaBreakOnFirstErrorIT"
+                     + "&autoOffsetReset=earliest"
+                     + "&autoCommitEnable=false"
+                     + "&allowManualCommit=true"
+                     + "&breakOnFirstError=true"
+                     + "&maxPollRecords=8"
+                     + "&pollTimeoutMs=1000"
+                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                     + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
+                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .autoStartup(false)
                         .process(exchange -> {

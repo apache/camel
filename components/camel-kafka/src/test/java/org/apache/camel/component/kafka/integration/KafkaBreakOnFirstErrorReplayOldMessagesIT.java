@@ -22,13 +22,13 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
+import org.apache.camel.component.kafka.integration.common.KafkaAdminUtil;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -37,6 +37,8 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,27 +51,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * mimics the reproduction of the problem in https://github.com/CodeSmell/CamelKafkaOffset
  */
+@Tags({ @Tag("breakOnFirstError") })
 class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20044";
     public static final String TOPIC = "breakOnFirstError-20044";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorReplayOldMessagesIT.class);
-
-    @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=KafkaBreakOnFirstErrorIT"
-                    + "&autoOffsetReset=earliest"
-                    + "&autoCommitEnable=false"
-                    + "&allowManualCommit=true"
-                    + "&breakOnFirstError=true"
-                    + "&maxPollRecords=1"
-                    // here multiple threads was an issue
-                    + "&consumersCount=3"
-                    + "&pollTimeoutMs=1000"
-                    + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
-    private Endpoint from;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
@@ -78,6 +66,10 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSup
 
     @BeforeAll
     public static void setupTopic() {
+        if (kafkaAdminClient == null) {
+            kafkaAdminClient = KafkaAdminUtil.createAdminClient(service);
+        }
+
         // create the topic w/ 3 partitions
         final NewTopic mytopic = new NewTopic(TOPIC, 3, (short) 1);
         kafkaAdminClient.createTopics(Collections.singleton(mytopic));
@@ -136,7 +128,19 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSup
                         })
                         .end();
 
-                from(from)
+                from("kafka:" + TOPIC
+                     + "?groupId=KafkaBreakOnFirstErrorIT"
+                     + "&autoOffsetReset=earliest"
+                     + "&autoCommitEnable=false"
+                     + "&allowManualCommit=true"
+                     + "&breakOnFirstError=true"
+                     + "&maxPollRecords=1"
+                // here multiple threads was an issue
+                     + "&consumersCount=3"
+                     + "&pollTimeoutMs=1000"
+                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .autoStartup(false)
                         .process(exchange -> {
