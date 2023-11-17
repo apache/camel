@@ -25,7 +25,7 @@ import org.testcontainers.couchbase.CouchbaseContainer;
 
 public class CouchbaseLocalContainerService implements CouchbaseService, ContainerService<CouchbaseContainer> {
     // Please check CAMEL-19228 before upgrading
-    public static final String IMAGE_NAME = "couchbase/server:6.6.6";
+    public static final String IMAGE_NAME = "couchbase/server:7.2.3";
 
     /*
      * Couchbase container uses a dynamic port for the KV service. The configuration
