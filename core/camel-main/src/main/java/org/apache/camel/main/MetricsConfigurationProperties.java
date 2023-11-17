@@ -146,6 +146,9 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     /**
      * Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple
      * binders can be separated by comma.
+     *
+     * The following binders currently is available from Micrometer:
+     * cache-meter-binder, class-loader, commons-object-pool2, database-table, disk-space, executor-service, file-descriptor, hystrix-metrics-binder, jetty-server-thread-pool, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory, jvm-thread, kafka, log4j2, logback, netty-allocator, netty-event-executor, ok-http-connection-pool, pooling-http-client-connection-manager-metrics-binder, postgre-sql-database, processor, tomcat, uptime
      */
     public void setBinders(String binders) {
         this.binders = binders;
@@ -226,8 +229,11 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     /**
      * Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple
      * binders can be separated by comma.
+     *
+     * The following binders currently is available from Micrometer:
+     * cache-meter-binder, class-loader, commons-object-pool2, database-table, disk-space, executor-service, file-descriptor, hystrix-metrics-binder, jetty-server-thread-pool, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory, jvm-thread, kafka, log4j2, logback, netty-allocator, netty-event-executor, ok-http-connection-pool, pooling-http-client-connection-manager-metrics-binder, postgre-sql-database, processor, tomcat, uptime
      */
-    public MetricsConfigurationProperties withbinders(String binders) {
+    public MetricsConfigurationProperties withBinders(String binders) {
         this.binders = binders;
         return this;
     }

@@ -29,3 +29,39 @@ camel.metrics.enableMessageHistory=true
 # include additional out-of-the-box micrometer metrics for cpu, jvm and used file descriptors
 camel.metrics.binders=processor,jvm-info,file-descriptor
 ----
+
+== List of known binders from Micrometer
+
+The following binders can be configured with `camel.metrics.binders` that comes out of the box from Micrometer:
+
+|====
+|Binder Name
+
+| cache-meter-binder
+| class-loader
+| commons-object-pool2
+| database-table
+| disk-space
+| executor-service
+| file-descriptor
+| hystrix-metrics-binder
+| jetty-server-thread-pool
+| jvm-compilation
+| jvm-gc
+| jvm-heap-pressure
+| jvm-info
+| jvm-memory
+| jvm-thread
+| kafka
+| log4j2
+| logback
+| netty-allocator
+| netty-event-executor
+| ok-http-connection-pool
+| pooling-http-client-connection-manager-metrics-binder
+| postgre-sql-database
+| processor
+| tomcat
+| uptime
+
+|====
