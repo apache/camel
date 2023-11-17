@@ -459,8 +459,19 @@ public class KameletMain extends MainCommandLineSupport {
         }
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health) {
+            configure().health().withEnabled(true);
             configure().httpServer().withEnabled(true);
             configure().httpServer().withHealthCheckEnabled(true);
+        }
+        boolean metrics = "true".equals(getInitialProperties().get("camel.jbang.metrics"));
+        if (metrics) {
+            configure().metrics()
+                    .witheEnableRouteEventNotifier(true)
+                    .withEnableMessageHistory(true)
+                    .withEnableExchangeEventNotifier(true)
+                    .withEnableRoutePolicy(true).withEnabled(true);
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withMetricsEnabled(true);
         }
         boolean ignoreLoading = "true".equals(getInitialProperties().get("camel.jbang.ignoreLoadingError"));
         if (ignoreLoading) {
