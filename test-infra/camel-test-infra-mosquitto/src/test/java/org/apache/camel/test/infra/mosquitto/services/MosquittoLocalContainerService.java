@@ -26,7 +26,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class MosquittoLocalContainerService implements MosquittoService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "eclipse-mosquitto:2.0.10";
+    public static final String CONTAINER_IMAGE = "eclipse-mosquitto:2.0.18";
     public static final String CONTAINER_NAME = "mosquitto";
     public static final int CONTAINER_PORT = 1883;
 
