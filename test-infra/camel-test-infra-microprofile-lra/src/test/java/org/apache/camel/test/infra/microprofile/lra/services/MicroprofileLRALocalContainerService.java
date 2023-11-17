@@ -26,7 +26,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class MicroprofileLRALocalContainerService implements MicroprofileLRAService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "quay.io/jbosstm/lra-coordinator:5.13.0.Final-2.12.3.Final";
+    public static final String CONTAINER_IMAGE = "quay.io/jbosstm/lra-coordinator:5.13.1.Final-2.16.6.Final";
     public static final String CONTAINER_NAME = "microprofile-lra";
 
     private static final Logger LOG = LoggerFactory.getLogger(MicroprofileLRALocalContainerService.class);
