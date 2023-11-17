@@ -30,7 +30,7 @@ import org.testcontainers.containers.Network;
 public class RocketMQContainer implements RocketMQService, ContainerService<RocketMQNameserverContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RocketMQContainer.class);
     public static final String ROCKETMQ_VERSION = System.getProperty(RocketMQProperties.ROCKETMQ_VERSION_PROPERTY,
-            "5.1.3");
+            "5.1.4");
     public static final String ROCKETMQ_IMAGE = System.getProperty(RocketMQProperties.ROCKETMQ_IMAGE_PROPERTY,
             "apache/rocketmq:" + ROCKETMQ_VERSION);
 
