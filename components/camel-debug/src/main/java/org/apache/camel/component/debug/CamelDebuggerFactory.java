@@ -33,6 +33,8 @@ public class CamelDebuggerFactory implements DebuggerFactory {
         if (camelContext.hasService(BacklogDebugger.class) == null) {
 
             BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(camelContext);
+            backlog.setStandby(camelContext.isDebugStandby());
+
             // we need to enable debugger after context is started
             camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
                 @Override
