@@ -67,6 +67,7 @@ public class DebugDevConsole extends AbstractDevConsole {
         if (backlog != null) {
             sb.append("Settings:");
             sb.append(String.format("\n    Enabled: %s", backlog.isEnabled()));
+            sb.append(String.format("\n    Standby: %s", backlog.isStandby()));
             sb.append(String.format("\n    Suspended Mode: %s", backlog.isSuspendMode()));
             sb.append(String.format("\n    Fallback Timeout: %ss", backlog.getFallbackTimeout())); // is in seconds
             sb.append(String.format("\n    Logging Level: %s", backlog.getLoggingLevel()));
@@ -151,6 +152,7 @@ public class DebugDevConsole extends AbstractDevConsole {
         BacklogDebugger backlog = getCamelContext().hasService(BacklogDebugger.class);
         if (backlog != null) {
             root.put("enabled", backlog.isEnabled());
+            root.put("standby", backlog.isStandby());
             root.put("suspendedMode", backlog.isSuspendMode());
             root.put("fallbackTimeout", backlog.getFallbackTimeout());
             root.put("loggingLevel", backlog.getLoggingLevel());

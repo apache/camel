@@ -139,7 +139,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         // must enable message history for debugger to capture more details
         context.setMessageHistory(true);
 
-        return new DefaultBacklogDebugger(context, resolveSuspendMode());
+        DefaultBacklogDebugger answer = new DefaultBacklogDebugger(context, resolveSuspendMode());
+        answer.setStandby(context.isDebugStandby());
+        return answer;
     }
 
     /**

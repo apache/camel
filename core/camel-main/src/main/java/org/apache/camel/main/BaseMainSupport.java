@@ -1561,7 +1561,7 @@ public abstract class BaseMainSupport extends BaseService {
         setPropertiesOnTarget(camelContext, config, properties, "camel.debug.",
                 failIfNotSet, true, autoConfiguredProperties);
 
-        if (!config.isEnabled()) {
+        if (!config.isEnabled() && !config.isStandby()) {
             return;
         }
 
@@ -1569,7 +1569,8 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.setSourceLocationEnabled(true);
 
         // enable debugger on camel
-        camelContext.setDebugging(true);
+        camelContext.setDebugging(config.isEnabled());
+        camelContext.setDebugStandby(config.isStandby());
 
         BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
         debugger.setStandby(config.isStandby());
