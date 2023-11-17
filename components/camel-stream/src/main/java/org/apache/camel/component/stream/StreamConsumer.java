@@ -443,7 +443,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         .stream()
         .map(s -> s.split("[=:]"))
         .filter(h -> h.length == 2)
-        .map(h -> Map.entry(h[0], h[1]));
+        .map(h -> Map.entry(h[0].trim(), h[1].trim()));
     }
 
     private InputStream resolveStreamFromUrl() throws IOException {
