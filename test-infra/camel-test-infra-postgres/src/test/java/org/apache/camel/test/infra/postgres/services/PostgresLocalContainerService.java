@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public class PostgresLocalContainerService implements PostgresService, ContainerService<PostgreSQLContainer> {
-    public static final String DEFAULT_POSTGRES_CONTAINER = "postgres:13.0";
+    public static final String DEFAULT_POSTGRES_CONTAINER = "postgres:13.13";
     private static final Logger LOG = LoggerFactory.getLogger(PostgresLocalContainerService.class);
     private final PostgreSQLContainer container;
 
