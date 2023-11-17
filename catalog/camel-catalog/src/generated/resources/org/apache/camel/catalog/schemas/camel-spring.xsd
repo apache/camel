@@ -1671,6 +1671,15 @@ Sets the value of a message header
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="setHeaders" type="tns:setHeadersDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+A sequence of setHeader operations.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="setProperty" type="tns:setPropertyDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3469,6 +3478,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -4025,6 +4035,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -4126,6 +4137,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -4221,6 +4233,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -4299,6 +4312,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -4744,6 +4758,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -5733,6 +5748,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -5818,6 +5834,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -5961,6 +5978,7 @@ Global option value.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -6116,6 +6134,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -6208,6 +6227,7 @@ intercepted.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -6311,6 +6331,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -6405,6 +6426,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -6710,6 +6732,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -9996,6 +10019,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -10214,6 +10238,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -10407,6 +10432,7 @@ its considered handled as well.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -10660,6 +10686,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -10735,6 +10762,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -11310,6 +11338,7 @@ Name of property to remove.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -11653,6 +11682,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -12080,6 +12110,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -12289,6 +12320,15 @@ be used. Otherwise a constant name will be used.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="setHeadersDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:processorDefinition">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:setHeader"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="setPropertyDefinition">
     <xs:complexContent>
       <xs:extension base="tns:processorDefinition">
@@ -12451,6 +12491,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -12674,6 +12715,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -13233,6 +13275,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
@@ -13367,6 +13410,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
             <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>

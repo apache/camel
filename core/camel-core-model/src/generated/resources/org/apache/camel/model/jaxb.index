@@ -82,6 +82,7 @@ ScriptDefinition
 SetBodyDefinition
 SetExchangePatternDefinition
 SetHeaderDefinition
+SetHeadersDefinition
 SetPropertyDefinition
 SortDefinition
 SplitDefinition

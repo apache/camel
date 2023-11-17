@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "setHeaders",
+    "title": "Set Headers",
+    "description": "A sequence of setHeader operations.",
+    "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.SetHeadersDefinition",
+    "abstract": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "disabled": { "index": 0, "kind": "attribute", "displayName": "Disabled", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
+    "id": { "index": 1, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "index": 2, "kind": "element", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

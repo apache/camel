@@ -72,8 +72,6 @@ public class ModelParserTest {
             = List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
-    private static final List<String> BEANS_XMLS
-            = List.of("beansEmpty.xml", "beansWithProperties.xml", "beansWithSpringNS.xml");
     private static final List<String> ROUTE_CONFIGURATION_XMLS
             = List.of("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
@@ -108,13 +106,14 @@ public class ModelParserTest {
     public void testFiles() throws Exception {
         Path dir = getResourceFolder();
         try (Stream<Path> list = Files.list(dir)) {
-            List<Path> files = list.sorted().filter(Files::isRegularFile).filter(f -> f.endsWith("xml")).toList();
+            List<Path> files = list.sorted().filter(Files::isRegularFile)
+                    .filter(f -> f.getFileName().toString().endsWith("xml")).toList();
             for (Path path : files) {
                 ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
                 boolean isRest = REST_XMLS.contains(path.getFileName().toString());
                 boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
                 boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
-                boolean isBeans = BEANS_XMLS.contains(path.getFileName().toString());
+                boolean isBeans = path.getFileName().toString().startsWith("beans");
                 boolean isConfiguration = ROUTE_CONFIGURATION_XMLS.contains(path.getFileName().toString());
                 if (isRest) {
                     RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
