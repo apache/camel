@@ -173,7 +173,9 @@ public interface StreamEndpointBuilderFactory {
         /**
          * When using stream:http format, this option specifies optional http
          * headers, such as Accept: application/json. Multiple headers can be
-         * separated by comma.
+         * separated by comma. The format of headers should be HEADER=VALUE. An
+         * example might look like
+         * Accept=application/json,Content-Type=text/plain.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
