@@ -35,7 +35,6 @@
         <!-- Couchbase container is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
-        <skipITs.aarch64>true</skipITs.aarch64>
     </properties>
 
     <dependencies>
@@ -117,7 +116,7 @@
                                     <groups>couchbase-7</groups>
                                     <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
                                     <systemPropertyVariables>
-                                        <couchbase.container>couchbase/server:7.1.1</couchbase.container>
+                                        <couchbase.container>couchbase/server:7.1.5</couchbase.container>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
