@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Etcd3LocalContainerService implements Etcd3Service, ContainerService<EtcdContainer> {
-    public static final String CONTAINER_IMAGE = "gcr.io/etcd-development/etcd:v3.5.5";
+    public static final String CONTAINER_IMAGE = "gcr.io/etcd-development/etcd:v3.5.10";
     public static final String CONTAINER_NAME = "etcd";
     public static final int ETCD_CLIENT_PORT = 2379;
     public static final int ETCD_PEER_PORT = 2380;
