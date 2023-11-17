@@ -23,4 +23,6 @@ updates:
     schedule:
       interval: "daily"
     allow:
+    // WIP Here we could list allowed dependency to upgrade
     ignore:
+    // WIP Here we could list allowed dependency to blacklist
