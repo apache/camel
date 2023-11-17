@@ -36,6 +36,10 @@
         <firstVersion>3.5.0</firstVersion>
         <label>database</label>
         <supportLevel>Preview</supportLevel>
+
+        <!-- Etcd3 container is not available on these platforms -->
+        <skipTests.aarch64>true</skipTests.aarch64>
+        <skipITs.aarch64>true</skipITs.aarch64>
     </properties>
 
     <dependencies>
