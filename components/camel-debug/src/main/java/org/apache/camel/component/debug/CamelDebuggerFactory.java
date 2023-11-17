@@ -37,7 +37,10 @@ public class CamelDebuggerFactory implements DebuggerFactory {
             camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
                 @Override
                 public void onContextStarted(CamelContext context) {
-                    backlog.enableDebugger();
+                    // only enable debugger if not in standby mode
+                    if (!backlog.isStandby()) {
+                        backlog.enableDebugger();
+                    }
                 }
 
                 @Override

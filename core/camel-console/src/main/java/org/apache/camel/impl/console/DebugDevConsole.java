@@ -107,7 +107,11 @@ public class DebugDevConsole extends AbstractDevConsole {
             return;
         }
 
-        if ("attach".equalsIgnoreCase(command)) {
+        if ("enable".equalsIgnoreCase(command)) {
+            backlog.enableDebugger();
+        } else if ("disable".equalsIgnoreCase(command)) {
+            backlog.disableDebugger();
+        } else if ("attach".equalsIgnoreCase(command)) {
             backlog.attach();
         } else if ("detach".equalsIgnoreCase(command)) {
             backlog.detach();
