@@ -21,6 +21,8 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.OtelConfigurationProperties target = (org.apache.camel.main.OtelConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "enabled":
+        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "encoding":
         case "Encoding": target.setEncoding(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
@@ -34,6 +36,8 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "enabled":
+        case "Enabled": return boolean.class;
         case "encoding":
         case "Encoding": return boolean.class;
         case "excludepatterns":
@@ -48,6 +52,8 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.OtelConfigurationProperties target = (org.apache.camel.main.OtelConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "enabled":
+        case "Enabled": return target.isEnabled();
         case "encoding":
         case "Encoding": return target.isEncoding();
         case "excludepatterns":

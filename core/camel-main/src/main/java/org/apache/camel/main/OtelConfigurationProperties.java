@@ -28,6 +28,7 @@ public class OtelConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
 
+    private boolean enabled;
     @Metadata(defaultValue = "camel", required = true)
     private String instrumentationName = "camel";
     private boolean encoding;
@@ -44,6 +45,17 @@ public class OtelConfigurationProperties implements BootstrapCloseable {
     @Override
     public void close() {
         parent = null;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * To enable OpenTelemetry
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getInstrumentationName() {
@@ -88,6 +100,14 @@ public class OtelConfigurationProperties implements BootstrapCloseable {
      */
     public OtelConfigurationProperties withInstrumentationName(String instrumentationName) {
         this.instrumentationName = instrumentationName;
+        return this;
+    }
+
+    /**
+     * To enable OpenTelemetry
+     */
+    public OtelConfigurationProperties withEnabled(boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
 

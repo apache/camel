@@ -222,7 +222,7 @@
         <jackson2-version>2.15.2</jackson2-version>
         <jackrabbit-version>2.21.20</jackrabbit-version>
         <jasminb-jsonapi-version>0.13</jasminb-jsonapi-version>
-        <jandex-version>3.1.2</jandex-version>
+        <jandex-version>3.1.5</jandex-version>
         <jansi-version>2.4.0</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
@@ -1750,6 +1750,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-micrometer-prometheus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-microprofile-config</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2812,6 +2817,11 @@
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-jmx</artifactId>
+                <version>${micrometer-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>${micrometer-version}</version>
             </dependency>
             <dependency>

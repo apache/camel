@@ -45,6 +45,8 @@ public class MicrometerConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         MeterRegistry mr = lookupMeterRegistry();
+        sb.append(String.format("MeterRegistry: %s\n", mr.getClass().getName()));
+
         int i = 0;
         for (Meter m : mr.getMeters()) {
             if (m instanceof Counter) {
@@ -133,6 +135,8 @@ public class MicrometerConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
 
         MeterRegistry mr = lookupMeterRegistry();
+        root.put("meterRegistryClass", mr.getClass().getName());
+
         int i = 0;
         List<JsonObject> list = new ArrayList<>();
         for (Meter m : mr.getMeters()) {
