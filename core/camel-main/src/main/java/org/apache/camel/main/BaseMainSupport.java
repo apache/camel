@@ -1561,7 +1561,7 @@ public abstract class BaseMainSupport extends BaseService {
         setPropertiesOnTarget(camelContext, config, properties, "camel.debug.",
                 failIfNotSet, true, autoConfiguredProperties);
 
-        if (!config.isEnabled()) {
+        if (!config.isEnabled() && !config.isStandby()) {
             return;
         }
 
@@ -1569,9 +1569,11 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.setSourceLocationEnabled(true);
 
         // enable debugger on camel
-        camelContext.setDebugging(true);
+        camelContext.setDebugging(config.isEnabled());
+        camelContext.setDebugStandby(config.isStandby());
 
         BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
+        debugger.setStandby(config.isStandby());
         debugger.setInitialBreakpoints(config.getBreakpoints());
         debugger.setSingleStepIncludeStartEnd(config.isSingleStepIncludeStartEnd());
         debugger.setBodyMaxChars(config.getBodyMaxChars());
@@ -1587,7 +1589,10 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
             @Override
             public void onContextStarted(CamelContext context) {
-                debugger.enableDebugger();
+                // only enable debugger if not in standby mode
+                if (!debugger.isStandby()) {
+                    debugger.enableDebugger();
+                }
             }
 
             @Override

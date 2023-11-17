@@ -65,6 +65,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
     private final CamelLogger logger = new CamelLogger(LOG, loggingLevel);
     private final AtomicBoolean enabled = new AtomicBoolean();
+    private final AtomicBoolean standby = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong();
     private final Debugger debugger;
     private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<>();
@@ -138,7 +139,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         // must enable message history for debugger to capture more details
         context.setMessageHistory(true);
 
-        return new DefaultBacklogDebugger(context, resolveSuspendMode());
+        DefaultBacklogDebugger answer = new DefaultBacklogDebugger(context, resolveSuspendMode());
+        answer.setStandby(context.isDebugStandby());
+        return answer;
     }
 
     /**
@@ -197,6 +200,16 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     @Override
     public boolean isEnabled() {
         return enabled.get();
+    }
+
+    @Override
+    public boolean isStandby() {
+        return standby.get();
+    }
+
+    @Override
+    public void setStandby(boolean standby) {
+        this.standby.set(standby);
     }
 
     @Override

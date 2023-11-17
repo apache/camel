@@ -43,6 +43,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnectorFactory;
@@ -394,6 +395,10 @@ public final class DefaultConfigurationConfigurer {
         BacklogTracer bt = getSingleBeanOfType(registry, BacklogTracer.class);
         if (bt != null) {
             camelContext.getCamelContextExtension().addContextPlugin(BacklogTracer.class, bt);
+        }
+        BacklogDebugger bd = getSingleBeanOfType(registry, BacklogDebugger.class);
+        if (bd != null) {
+            camelContext.getCamelContextExtension().addContextPlugin(BacklogDebugger.class, bd);
         }
         InflightRepository ir = getSingleBeanOfType(registry, InflightRepository.class);
         if (ir != null) {

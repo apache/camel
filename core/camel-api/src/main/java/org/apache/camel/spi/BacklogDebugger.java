@@ -96,6 +96,22 @@ public interface BacklogDebugger extends StatefulService {
     boolean isEnabled();
 
     /**
+     * Whether the debugger is standby.
+     * <p>
+     * If a debugger is in standby then the tracer is activated during startup and are ready to be enabled manually via
+     * JMX or calling the enableDebugger method.
+     */
+    boolean isStandby();
+
+    /**
+     * Whether the debugger is standby.
+     * <p>
+     * If a debugger is in standby then the tracer is activated during startup and are ready to be enabled manually via
+     * JMX or calling the enableDebugger method.
+     */
+    void setStandby(boolean standby);
+
+    /**
      * Does the node have a breakpoint
      */
     boolean hasBreakpoint(String nodeId);
