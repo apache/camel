@@ -24,6 +24,7 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.etcd3.common.Etcd3Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 public class Etcd3LocalContainerService implements Etcd3Service, ContainerService<EtcdContainer> {
     public static final String CONTAINER_IMAGE = "gcr.io/etcd-development/etcd:v3.5.10";
@@ -36,7 +37,7 @@ public class Etcd3LocalContainerService implements Etcd3Service, ContainerServic
     private final EtcdContainer container;
 
     public Etcd3LocalContainerService() {
-        this(System.getProperty("etcd.container", CONTAINER_IMAGE));
+        this(System.getProperty(Etcd3Properties.ETCD_CONTAINER, CONTAINER_IMAGE));
     }
 
     public Etcd3LocalContainerService(String imageName) {
@@ -51,7 +52,9 @@ public class Etcd3LocalContainerService implements Etcd3Service, ContainerServic
         return new EtcdContainer(imageName, CONTAINER_NAME, List.of(CONTAINER_NAME))
                 .withNetworkAliases(containerName)
                 .withClusterToken(UUID.randomUUID().toString())
-                .withExposedPorts(ETCD_CLIENT_PORT, ETCD_PEER_PORT);
+                .withExposedPorts(ETCD_CLIENT_PORT, ETCD_PEER_PORT)
+                .waitingFor(Wait.forListeningPort())
+                .waitingFor(Wait.forLogMessage(".*ready to serve client requests.*", 1));
     }
 
     @Override
