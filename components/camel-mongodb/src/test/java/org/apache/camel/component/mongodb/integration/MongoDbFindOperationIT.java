@@ -32,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.apache.camel.test.infra.mongodb.services.MongoDBLocalContainerService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -62,6 +63,8 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     protected static String dbName = "test";
     protected static String testCollectionName;
 
+    private static String mongoDbContainer;
+
     private static MongoClient mongo;
     private static MongoDatabase db;
     private static MongoCollection<Document> testCollection;
@@ -70,7 +73,9 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
 
         // This one requires Mongo 4.4. This is related to
         // "CAMEL-15604 support allowDiskUse for MongoDB find operations"
-        service = new MongoDBLocalContainerService("mongo:4.4");
+        mongoDbContainer = System.getProperty(MongoDBProperties.MONGODB_CONTAINER, "mongo:4.4");
+
+        service = new MongoDBLocalContainerService(mongoDbContainer);
 
         service.getContainer()
                 .waitingFor(Wait.forListeningPort())
