@@ -39,6 +39,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "classresolver":
         case "ClassResolver": target.setClassResolver(property(camelContext, org.apache.camel.spi.ClassResolver.class, value)); return true;
+        case "debugstandby":
+        case "DebugStandby": target.setDebugStandby(property(camelContext, boolean.class, value)); return true;
         case "debugger":
         case "Debugger": target.setDebugger(property(camelContext, org.apache.camel.spi.Debugger.class, value)); return true;
         case "debugging":
@@ -158,6 +160,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "CaseInsensitiveHeaders": return java.lang.Boolean.class;
         case "classresolver":
         case "ClassResolver": return org.apache.camel.spi.ClassResolver.class;
+        case "debugstandby":
+        case "DebugStandby": return boolean.class;
         case "debugger":
         case "Debugger": return org.apache.camel.spi.Debugger.class;
         case "debugging":
@@ -278,6 +282,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
         case "classresolver":
         case "ClassResolver": return target.getClassResolver();
+        case "debugstandby":
+        case "DebugStandby": return target.isDebugStandby();
         case "debugger":
         case "Debugger": return target.getDebugger();
         case "debugging":

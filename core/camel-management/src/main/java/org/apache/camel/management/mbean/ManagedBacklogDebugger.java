@@ -89,6 +89,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public boolean isStandby() {
+        return backlogDebugger.isStandby();
+    }
+
+    @Override
     public void enableDebugger() {
         backlogDebugger.enableDebugger();
     }

@@ -38,6 +38,9 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Is debugger enabled")
     boolean isEnabled();
 
+    @ManagedAttribute(description = "Is debugger standby")
+    boolean isStandby();
+
     @ManagedOperation(description = "Enable the debugger")
     void enableDebugger();
 

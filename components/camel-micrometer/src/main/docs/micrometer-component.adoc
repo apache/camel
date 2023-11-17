@@ -559,9 +559,29 @@ CDI::
 
 The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into an MBean name.
 
+== Using Camel Micrometer with Camel Main
+
+When you use Camel standalone (`camel-main`), then if you need to expose metrics for Prometheus, then you can use `camel-micrometer-prometheus` JAR.
+And easily enable and configure this from `application.properties` as shown:
+
+[source,properties]
+----
+# enable HTTP server with metrics
+camel.server.enabled=true
+camel.server.metricsEnabled=true
+
+# turn on micrometer metrics
+camel.metrics.enabled=true
+# include more camel details
+camel.metrics.enableMessageHistory=true
+# include additional out-of-the-box micrometer metrics for cpu, jvm and used file descriptors
+camel.metrics.binders=processor,jvm-info,file-descriptor
+----
+
+
 == Using Camel Micrometer with Spring Boot
 
-When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot auto- configuration will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
+When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot auto configuration will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
 
 For example to capture data with Prometheus, you can add the following dependency:
 

@@ -72,7 +72,7 @@
         <aws-xray-version>2.14.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.18</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
-        <bouncycastle-version>1.76</bouncycastle-version>
+        <bouncycastle-version>1.77</bouncycastle-version>
         <box-java-sdk-version>4.6.1</box-java-sdk-version>
         <braintree-gateway-version>3.26.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.4.0</build-helper-maven-plugin-version>
@@ -193,7 +193,7 @@
         <hamcrest-version>2.2</hamcrest-version>
         <hapi-version>2.3</hapi-version>
         <hapi-base-version>2.3</hapi-base-version>
-        <hapi-fhir-version>6.6.2</hapi-fhir-version>
+        <hapi-fhir-version>6.8.5</hapi-fhir-version>
         <hazelcast-version>5.3.6</hazelcast-version>
         <hdrhistrogram-version>2.1.12</hdrhistrogram-version>
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
@@ -219,10 +219,10 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.2</ivy-version>
         <jackson-jq-version>1.0.0-preview.20230409</jackson-jq-version>
-        <jackson2-version>2.15.2</jackson2-version>
+        <jackson2-version>2.15.3</jackson2-version>
         <jackrabbit-version>2.21.20</jackrabbit-version>
         <jasminb-jsonapi-version>0.13</jasminb-jsonapi-version>
-        <jandex-version>3.1.2</jandex-version>
+        <jandex-version>3.1.5</jandex-version>
         <jansi-version>2.4.0</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
@@ -332,8 +332,8 @@
         <maven-surefire-report-plugin-version>3.1.2</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
-        <metrics-version>4.2.21</metrics-version>
-        <micrometer-version>1.11.5</micrometer-version>
+        <metrics-version>4.2.22</metrics-version>
+        <micrometer-version>1.12.0</micrometer-version>
         <micrometer-tracing-version>1.1.6</micrometer-tracing-version>
         <microprofile-config-version>3.0.3</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
@@ -391,7 +391,7 @@
         <pulsar-version>3.1.1</pulsar-version>
         <qpid-broker-version>9.1.0</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
-        <qpid-jms-client-version>2.4.0</qpid-jms-client-version>
+        <qpid-jms-client-version>2.5.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.3.1</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
@@ -408,13 +408,13 @@
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.3</saxon-version>
         <scala-datasonnet-version>2.13.11</scala-datasonnet-version>
-        <shiro-version>1.12.0</shiro-version>
+        <shiro-version>1.13.0</shiro-version>
         <slack-api-model-version>1.30.0</slack-api-model-version>
         <slf4j-api-version>2.0.7</slf4j-api-version>
         <slf4j-version>2.0.7</slf4j-version>
         <smack-version>4.3.5</smack-version>
-        <smallrye-config-version>3.3.2</smallrye-config-version>
-        <smallrye-health-version>4.0.2</smallrye-health-version>
+        <smallrye-config-version>3.4.4</smallrye-config-version>
+        <smallrye-health-version>4.0.4</smallrye-health-version>
         <smallrye-fault-tolerance-version>6.2.6</smallrye-fault-tolerance-version>
         <smbj-version>0.12.2</smbj-version>
         <snakeyaml-version>2.1</snakeyaml-version>
@@ -426,7 +426,7 @@
         <spring-data-redis-version>3.1.2</spring-data-redis-version>
         <spring-ldap-version>3.1.2</spring-ldap-version>
         <spring-vault-core-version>3.0.4</spring-vault-core-version>
-        <spring-version>6.0.13</spring-version>
+        <spring-version>6.1.0</spring-version>
         <spring-rabbitmq-version>3.0.10</spring-rabbitmq-version>
         <spring-security-version>6.1.5</spring-security-version>
         <spring-ws-version>4.0.6</spring-ws-version>
@@ -453,7 +453,7 @@
         <vavr-version>0.10.4</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.3</velocity-version>
-        <vertx-version>4.4.6</vertx-version>
+        <vertx-version>4.5.0</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
@@ -1750,6 +1750,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-micrometer-prometheus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-microprofile-config</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2812,6 +2817,11 @@
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-jmx</artifactId>
+                <version>${micrometer-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>${micrometer-version}</version>
             </dependency>
             <dependency>

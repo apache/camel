@@ -31,6 +31,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private boolean enabled;
+    @Metadata
+    private boolean standby;
     @Metadata(label = "advanced")
     private boolean waitForAttach;
     @Metadata(defaultValue = "INFO")
@@ -74,6 +76,18 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isStandby() {
+        return standby;
+    }
+
+    /**
+     * To set the debugger in standby mode, where the debugger will be installed by not automatic enabled. The debugger
+     * can then later be enabled explicit from Java, JMX or tooling.
+     */
+    public void setStandby(boolean standby) {
+        this.standby = standby;
     }
 
     public boolean isWaitForAttach() {
@@ -199,6 +213,15 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
+        return (DebuggerConfigurationProperties) this;
+    }
+
+    /**
+     * To set the debugger in standby mode, where the debugger will be installed by not automatic enabled. The debugger
+     * can then later be enabled explicit from Java, JMX or tooling.
+     */
+    public DebuggerConfigurationProperties withStandby(boolean standby) {
+        this.standby = standby;
         return (DebuggerConfigurationProperties) this;
     }
 

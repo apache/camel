@@ -237,6 +237,7 @@ public abstract class AbstractCamelContext extends BaseService
     private String tracingLoggingFormat;
     private Boolean modeline = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
+    private Boolean debugStandby = Boolean.FALSE;
     private String debugBreakpoints;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
@@ -1738,6 +1739,16 @@ public abstract class AbstractCamelContext extends BaseService
         return debug;
     }
 
+    @Override
+    public void setDebugStandby(boolean debugStandby) {
+        this.debugStandby = debugStandby;
+    }
+
+    @Override
+    public boolean isDebugStandby() {
+        return debugStandby != null && debugStandby;
+    }
+
     public void setDebuggingBreakpoints(String debugBreakpoints) {
         this.debugBreakpoints = debugBreakpoints;
     }
@@ -2254,7 +2265,7 @@ public abstract class AbstractCamelContext extends BaseService
                 }
             }
         }
-        if (!debuggerDetected && isDebugging()) {
+        if (!debuggerDetected && (isDebugging() || isDebugStandby())) {
             // debugging enabled but camel-debug was not auto-detected from classpath
             // so install default debugger
             BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(this);

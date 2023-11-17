@@ -22,5 +22,7 @@ github:
     - camel
     - integration
     - java
+  dependabot_alerts:  true
+  dependabot_updates: true
 notifications:
   pullrequests: commits@camel.apache.org

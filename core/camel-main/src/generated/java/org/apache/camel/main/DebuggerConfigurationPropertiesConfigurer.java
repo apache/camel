@@ -41,6 +41,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "LoggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "singlestepincludestartend":
         case "SingleStepIncludeStartEnd": target.setSingleStepIncludeStartEnd(property(camelContext, boolean.class, value)); return true;
+        case "standby":
+        case "Standby": target.setStandby(property(camelContext, boolean.class, value)); return true;
         case "waitforattach":
         case "WaitForAttach": target.setWaitForAttach(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -70,6 +72,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "LoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "singlestepincludestartend":
         case "SingleStepIncludeStartEnd": return boolean.class;
+        case "standby":
+        case "Standby": return boolean.class;
         case "waitforattach":
         case "WaitForAttach": return boolean.class;
         default: return null;
@@ -100,6 +104,8 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "LoggingLevel": return target.getLoggingLevel();
         case "singlestepincludestartend":
         case "SingleStepIncludeStartEnd": return target.isSingleStepIncludeStartEnd();
+        case "standby":
+        case "Standby": return target.isStandby();
         case "waitforattach":
         case "WaitForAttach": return target.isWaitForAttach();
         default: return null;

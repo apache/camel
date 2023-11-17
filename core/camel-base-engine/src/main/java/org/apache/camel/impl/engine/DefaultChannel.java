@@ -174,7 +174,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
-        if (route.isDebugging()) {
+        if (camelContext.isDebugStandby() || route.isDebugging()) {
             final Debugger customDebugger = camelContext.getDebugger();
             if (customDebugger != null) {
                 // use custom debugger
