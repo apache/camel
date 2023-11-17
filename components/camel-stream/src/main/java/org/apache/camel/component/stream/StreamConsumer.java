@@ -29,8 +29,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -430,6 +432,20 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         return fileStream;
     }
 
+  /**
+   * From a comma-separated list of headers in the format of "FIELD=VALUE" or "FIELD:VALUE", split on the commas
+   * and split on the separator to create a stream of Map.Entry values while filtering out invalid combinations
+   * @param headerList A string containing a comma-separated list of headers
+   * @return A Stream of Map.Entry items which can then be added as headers to a URLConnection
+   */
+  Stream<Map.Entry<String,String>> parseHeaders(String headerList) {
+      return Arrays.asList(headerList.split(","))
+        .stream()
+        .map(s -> s.split("[=:]"))
+        .filter(h -> h.length == 2)
+        .map(h -> Map.entry(h[0], h[1]));
+    }
+
     private InputStream resolveStreamFromUrl() throws IOException {
         String url = endpoint.getHttpUrl();
         StringHelper.notEmpty(url, "httpUrl");
@@ -438,13 +454,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         urlConnectionToClose.setUseCaches(false);
         String headers = endpoint.getHttpHeaders();
         if (headers != null) {
-            for (String h : headers.split(",")) {
-                String k = StringHelper.before(h, "=");
-                String v = StringHelper.after(h, "=");
-                if (k != null && v != null) {
-                    urlConnectionToClose.setRequestProperty(k, v);
-                }
-            }
+            parseHeaders(headers)
+              .forEach(e -> urlConnectionToClose.setRequestProperty(e.getKey(), e.getValue()));
         }
 
         InputStream is;
