@@ -29,6 +29,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private MainConfigurationProperties parent;
 
     private boolean enabled;
+    @Metadata(defaultValue = "default", enums = "default,legacy")
+    private String namingStrategy;
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
     private boolean enableMessageHistory;
@@ -58,6 +60,20 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    /**
+     * Controls the name style to use for metrics.
+     *
+     * Default = uses micrometer naming convention.
+     * Legacy = uses the classic naming style (camelCase)
+     */
+    public void setNamingStrategy(String namingStrategy) {
+        this.namingStrategy = namingStrategy;
     }
 
     public boolean isEnableRoutePolicy() {
@@ -153,6 +169,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public MetricsConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
+    }
+
+    /**
+     * Controls the name style to use for metrics.
+     *
+     * Default = uses micrometer naming convention.
+     * Legacy = uses the classic naming style (camelCase)
+     */
+    public MetricsConfigurationProperties withNamingStrategy(String namingStrategy) {
+        this.namingStrategy = namingStrategy;
         return this;
     }
 

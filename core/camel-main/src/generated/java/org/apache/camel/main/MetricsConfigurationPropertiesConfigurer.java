@@ -33,6 +33,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "EnableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
         case "enabled":
         case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "namingstrategy":
+        case "NamingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "textformatversion":
         case "TextFormatVersion": target.setTextFormatVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -54,6 +56,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "EnableRoutePolicy": return boolean.class;
         case "enabled":
         case "Enabled": return boolean.class;
+        case "namingstrategy":
+        case "NamingStrategy": return java.lang.String.class;
         case "textformatversion":
         case "TextFormatVersion": return java.lang.String.class;
         default: return null;
@@ -76,6 +80,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "EnableRoutePolicy": return target.isEnableRoutePolicy();
         case "enabled":
         case "Enabled": return target.isEnabled();
+        case "namingstrategy":
+        case "NamingStrategy": return target.getNamingStrategy();
         case "textformatversion":
         case "TextFormatVersion": return target.getTextFormatVersion();
         default: return null;

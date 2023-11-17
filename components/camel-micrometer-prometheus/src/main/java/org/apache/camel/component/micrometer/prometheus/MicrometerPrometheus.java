@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.MeterBinder;
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
@@ -36,10 +37,16 @@ import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.micrometer.MicrometerConstants;
+import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEventNotifier;
+import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEventNotifierNamingStrategy;
 import org.apache.camel.component.micrometer.eventnotifier.MicrometerRouteEventNotifier;
+import org.apache.camel.component.micrometer.eventnotifier.MicrometerRouteEventNotifierNamingStrategy;
 import org.apache.camel.component.micrometer.messagehistory.MicrometerMessageHistoryFactory;
+import org.apache.camel.component.micrometer.messagehistory.MicrometerMessageHistoryNamingStrategy;
 import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyFactory;
+import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyNamingStrategy;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
@@ -47,6 +54,7 @@ import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -71,9 +79,11 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private PlatformHttpComponent platformHttpComponent;
 
     private CamelContext camelContext;
-    private final PrometheusMeterRegistry meterRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+    private PrometheusMeterRegistry meterRegistry;
     private final Set<MeterBinder> createdBinders = new HashSet<>();
 
+    @Metadata(defaultValue = "default", enums = "default,legacy")
+    private String namingStrategy;
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
     @Metadata(defaultValue = "false")
@@ -95,6 +105,19 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public String getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    /**
+     * Controls the name style to use for metrics.
+     *
+     * Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase)
+     */
+    public void setNamingStrategy(String namingStrategy) {
+        this.namingStrategy = namingStrategy;
     }
 
     public boolean isEnableRoutePolicy() {
@@ -173,6 +196,27 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (meterRegistry == null) {
+            Registry camelRegistry = getCamelContext().getRegistry();
+            MeterRegistry found = MicrometerUtils.getMeterRegistryFromCamelRegistry(camelRegistry,
+                    MicrometerConstants.METRICS_REGISTRY_NAME);
+            if (found == null) {
+                found = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+                // enlist in registry so it can be reused
+                camelRegistry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, found);
+            }
+            if (!(found instanceof PrometheusMeterRegistry)) {
+                throw new IllegalArgumentException(
+                        "Existing MeterRegistry: " + found.getClass().getName() + " is not a PrometheusMeterRegistry type.");
+            }
+            meterRegistry = (PrometheusMeterRegistry) found;
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
@@ -183,6 +227,9 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
         if (isEnableRoutePolicy()) {
             MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
+            if ("legacy".equalsIgnoreCase(namingStrategy)) {
+                factory.setNamingStrategy(MicrometerRoutePolicyNamingStrategy.LEGACY);
+            }
             factory.setMeterRegistry(meterRegistry);
             camelContext.addRoutePolicyFactory(factory);
         }
@@ -190,12 +237,18 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         if (isEnableExchangeEventNotifier()) {
             MicrometerExchangeEventNotifier notifier = new MicrometerExchangeEventNotifier();
+            if ("legacy".equalsIgnoreCase(namingStrategy)) {
+                notifier.setNamingStrategy(MicrometerExchangeEventNotifierNamingStrategy.LEGACY);
+            }
             notifier.setMeterRegistry(meterRegistry);
             managementStrategy.addEventNotifier(notifier);
         }
 
         if (isEnableRouteEventNotifier()) {
             MicrometerRouteEventNotifier notifier = new MicrometerRouteEventNotifier();
+            if ("legacy".equalsIgnoreCase(namingStrategy)) {
+                notifier.setNamingStrategy(MicrometerRouteEventNotifierNamingStrategy.LEGACY);
+            }
             notifier.setMeterRegistry(meterRegistry);
             managementStrategy.addEventNotifier(notifier);
         }
@@ -205,6 +258,9 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
                 camelContext.setMessageHistory(true);
             }
             MicrometerMessageHistoryFactory factory = new MicrometerMessageHistoryFactory();
+            if ("legacy".equalsIgnoreCase(namingStrategy)) {
+                factory.setNamingStrategy(MicrometerMessageHistoryNamingStrategy.LEGACY);
+            }
             factory.setMeterRegistry(meterRegistry);
             camelContext.setMessageHistoryFactory(factory);
         }
@@ -256,7 +312,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
                             sj.add(mb.getClass().getSimpleName());
                         }
                     } catch (Exception e) {
-                        LOG.warn("Error creating MeterBinder: {} due to: {}", fqn, e.getMessage(), e);
+                        LOG.warn("Error creating MeterBinder: {} due to: {}. This exception is ignored.", fqn, e.getMessage(),
+                                e);
                     }
                 }
             }
