@@ -243,23 +243,50 @@ class ExportCamelMain extends Export {
         boolean jkube = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jkube."));
         if (jkube) {
             // include all jib/jkube/label properties
+            String fromImage = null;
             for (String key : prop.stringPropertyNames()) {
                 String value = prop.getProperty(key);
+                if ("jib.from.image".equals(key)) {
+                    fromImage = value;
+                }
                 boolean accept = key.startsWith("jkube.") || key.startsWith("jib.") || key.startsWith("label.");
                 if (accept) {
                     sb1.append(String.format("        <%s>%s</%s>%n", key, value, key));
                 }
             }
+            // from image is mandatory so use a default image if none provided
+            if (fromImage == null) {
+                fromImage = "eclipse-temurin:" + javaVersion + "-jre";
+                sb1.append(String.format("        <%s>%s</%s>%n", "jib.from.image", fromImage, "jib.from.image"));
+            }
 
             InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
             String context2 = IOHelper.loadText(is);
             IOHelper.close(is);
+
+            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings));
+
+            // image from/to auth
+            String auth = "";
+            if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth."))) {
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-from-auth-pom.tmpl");
+                auth = IOHelper.loadText(is);
+                IOHelper.close(is);
+            }
+            context2 = context2.replace("{{ .JibFromImageAuth }}", auth);
+            auth = "";
+            if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.to.auth."))) {
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-to-auth-pom.tmpl");
+                auth = IOHelper.loadText(is);
+                IOHelper.close(is);
+            }
+            context2 = context2.replace("{{ .JibToImageAuth }}", auth);
+            // http port setting
             int port = httpServerPort(settings);
             if (port == -1) {
                 port = 8080;
             }
             context2 = context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port));
-            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings));
             sb2.append(context2);
         }
 
