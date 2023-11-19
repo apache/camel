@@ -2526,11 +2526,33 @@ jkube.recreate=true
 
 TIP: You can specify the jib-maven-plugin version using the `camel.jbang.jib-maven-plugin-version` property in `application.properties`.
 
+===== Configuring from and to image
+
+The jib-maven-plugin must be configured with a from and to image. The from image will default be `eclipse-temurin:17-jre`
+for Java 17 and `eclipse-temurin:21-jre` for Java 21. However, companies often have their own base images to be used, so
+you can configure this in the properties (together with authentication if needed):
+
+[source,properties]
+----
+jib.from.image=com.mycompany/base-images/ubi17/java17-builder:latest
+jib.from.auth.username = myuser
+jib.from.auth.password = mypass
+----
+
+The to image is configured in the same way, such as:
+
+[source,properties]
+----
+jib.to.image=com.mycompany/myproject/myapp
+jib.to.auth.username = myuser
+jib.to.auth.password = mypass
+----
+
 You can find more details in the https://eclipse.dev/jkube/docs/[Eclipse JKube] and https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin[Jib] documentations.
 
 ===== Resource fragments
 
-Resource fragments allows to store external configuration in YAML resource descriptions, which
+Resource fragments for JKube allows to store external configuration in YAML resource descriptions, which
 will be exported to `src/main/jkube` directory.
 
 Camel JBang will export files that ends with `jkube.yaml` or `jkube.yml` into `src/main/jkube` directory.
