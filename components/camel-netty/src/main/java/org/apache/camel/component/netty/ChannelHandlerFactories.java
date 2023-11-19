@@ -107,7 +107,12 @@ public final class ChannelHandlerFactories {
         if ("udp".equals(protocol)) {
             return new ShareableChannelHandlerFactory(new DatagramPacketByteArrayDecoder());
         } else {
-            return new ShareableChannelHandlerFactory(new ByteArrayDecoder());
+            return new DefaultChannelHandlerFactory() {
+                @Override
+                public ChannelHandler newChannelHandler() {
+                    return new ByteArrayDecoder();
+                }
+            };
         }
     }
 
