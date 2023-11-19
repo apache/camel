@@ -31,7 +31,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
- * A sequence of setHeader operations.
+ * Allows to set multiple headers on the message st the same time.
  */
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setHeaders")

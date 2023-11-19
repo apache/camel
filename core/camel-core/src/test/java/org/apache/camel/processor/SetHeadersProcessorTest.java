@@ -98,12 +98,22 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testSetOneHeaderFromAnother() throws Exception {
+        expected.message(0).header("foo").isEqualTo(15);
+        expected.message(0).header("bar").isEqualTo(true);
+        template.sendBody("direct:startDepHeader", 15);
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeaders("foo", simple("${body}"),
                         "bar", simple("${header.bar1}")).to("mock:result");
+                from("direct:startDepHeader").setHeaders("foo", simple("${body}"),
+                        "bar", simple("${header.foo} > 10", Boolean.class)).to("mock:result");
                 from("direct:startConstant").setHeaders("foo", constant("ABC"),
                         "bar", constant("XYZ")).to("mock:result");
                 from("direct:startXpath").setHeaders("age", xpath("/person/@age"),

@@ -71,5 +71,17 @@
 			</setHeaders>
             <to uri="mock:result"/>
         </route>
+         <route>
+            <from uri="direct:startDepHeader"/>
+			<setHeaders>
+				<setHeader name="foo">
+					<simple>${body}</simple>
+				</setHeader>
+				<setHeader name="bar">
+					<simple resultType="java.lang.Boolean">${header.foo} > 10</simple>
+				</setHeader>
+			</setHeaders>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
 </beans>

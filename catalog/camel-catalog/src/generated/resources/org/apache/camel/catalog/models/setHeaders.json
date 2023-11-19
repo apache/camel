@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "setHeaders",
     "title": "Set Headers",
-    "description": "A sequence of setHeader operations.",
+    "description": "Allows to set multiple headers on the message st the same time.",
     "deprecated": false,
     "label": "eip,transformation",
     "javaType": "org.apache.camel.model.SetHeadersDefinition",
