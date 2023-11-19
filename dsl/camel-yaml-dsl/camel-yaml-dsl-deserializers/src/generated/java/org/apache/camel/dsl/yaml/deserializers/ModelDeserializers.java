@@ -15598,7 +15598,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetHeadersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Headers",
-            description = "Allows to set multiple headers on the message st the same time.",
+            description = "Allows to set multiple headers on the message at the same time.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),

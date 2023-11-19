@@ -1,7 +1,7 @@
 = Set Headers EIP
 :doctitle: Set Headers
 :shortname: setHeaders
-:description: Allows to set multiple headers on the message st the same time.
+:description: Allows to set multiple headers on the message at the same time.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -151,4 +151,3 @@ from("direct:startMap")
     .to("direct:b");
 ----
 ====
-
