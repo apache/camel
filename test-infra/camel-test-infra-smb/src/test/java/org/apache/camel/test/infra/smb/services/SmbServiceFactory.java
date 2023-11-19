@@ -22,7 +22,7 @@ import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 public class SmbServiceFactory {
 
     public static SmbService createService() {
-        SimpleTestServiceBuilder<SmbService> builder = new SimpleTestServiceBuilder<>("kafka");
+        SimpleTestServiceBuilder<SmbService> builder = new SimpleTestServiceBuilder<>("smb");
 
         return builder.addLocalMapping(SmbLocalContainerService::new)
                 .addRemoteMapping(SmbRemoteService::new)
