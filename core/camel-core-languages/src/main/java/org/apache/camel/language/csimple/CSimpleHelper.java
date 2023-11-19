@@ -66,6 +66,10 @@ public final class CSimpleHelper {
     private CSimpleHelper() {
     }
 
+    public static <T> T messageAs(Exchange exchange, Class<T> type) {
+        return exchange.getMessage(type);
+    }
+
     public static <T> T bodyAs(Message message, Class<T> type) {
         return message.getBody(type);
     }
