@@ -28,7 +28,7 @@
         <!-- START SNIPPET: e1 -->
         <route>
             <from uri="direct:sample"/>
-            <sample samplePeriod="1" units="seconds"/>
+            <sample samplePeriod="1000"/>
             <to uri="mock:result"/>
         </route>
         <route>
