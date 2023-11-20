@@ -135,8 +135,10 @@ XML::
 ====
 
 === Using a Map with Java DSL
+
 It's also possible to build a Map and pass it as the single argument to `setHeaders().`
-If the order in which the headers shoud be set is important, use a `LinkedHashMap`.
+If the order in which the headers should be set is important, use a `LinkedHashMap`.
+
 ====
 Java::
 +
