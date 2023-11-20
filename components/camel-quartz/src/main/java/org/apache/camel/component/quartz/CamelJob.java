@@ -101,16 +101,23 @@ public class CamelJob implements Job, InterruptableJob {
         }
     }
 
+    /**
+     * Validates if the Fire Time lies within the Start Time and End Time
+     *
+     * @param context
+     *
+     * @return
+     */
     private boolean hasTriggerExpired(JobExecutionContext context) {
         Date fireTime = context.getFireTime();
-        if (context.getTrigger().getStartTime() != null && fireTime.before(context.getTrigger().getStartTime())) {
-            // Trigger invalid as Fire Time is before Start Time
-            return true;
-        } else if (context.getTrigger().getEndTime() != null && fireTime.after(context.getTrigger().getEndTime())) {
-            // Trigger expired as Fire Time is after End Time
-            return true;
-        }
-        return false;
+
+        // Trigger valid if Start Time is null or before Fire Time
+        boolean validStartTime = context.getTrigger().getStartTime() == null || fireTime.after(context.getTrigger().getStartTime());
+
+        // Trigger valid if End Time is null or after Fire Time
+        boolean validEndTime = context.getTrigger().getEndTime() == null || fireTime.before(context.getTrigger().getEndTime());
+
+        return !(validStartTime && validEndTime);
     }
 
     protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
