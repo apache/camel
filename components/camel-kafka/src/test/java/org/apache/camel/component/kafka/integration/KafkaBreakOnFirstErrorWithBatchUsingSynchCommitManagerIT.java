@@ -110,7 +110,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseEmbed
             @Override
             public void configure() {
                 from("kafka:" + TOPIC
-                     + "?groupId=KafkaBreakOnFirstErrorIT"
+                     + "?groupId=" + ROUTE_ID
                      + "&autoOffsetReset=earliest"
                      + "&autoCommitEnable=false"
                      + "&allowManualCommit=true"

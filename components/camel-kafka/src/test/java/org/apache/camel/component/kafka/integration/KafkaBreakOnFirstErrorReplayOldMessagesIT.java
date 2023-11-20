@@ -129,7 +129,7 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSup
                         .end();
 
                 from("kafka:" + TOPIC
-                     + "?groupId=KafkaBreakOnFirstErrorIT"
+                     + "?groupId=" + ROUTE_ID
                      + "&autoOffsetReset=earliest"
                      + "&autoCommitEnable=false"
                      + "&allowManualCommit=true"

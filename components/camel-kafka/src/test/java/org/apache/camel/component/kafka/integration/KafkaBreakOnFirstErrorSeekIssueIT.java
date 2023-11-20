@@ -34,7 +34,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -50,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * mimics the reproduction of the problem in https://github.com/Krivda/camel-bug-reproduction
  */
 @Tags({ @Tag("breakOnFirstError") })
-@Disabled("This test is hanging")
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-19894";
@@ -125,7 +123,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
             @Override
             public void configure() {
                 from("kafka:" + TOPIC
-                     + "?groupId=KafkaBreakOnFirstErrorIT"
+                     + "?groupId=" + ROUTE_ID
                      + "&autoOffsetReset=earliest"
                      + "&autoCommitEnable=false"
                      + "&allowManualCommit=true"
@@ -134,6 +132,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
                      + "&pollTimeoutMs=1000"
                      + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                      + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                // Synch Commit Manager
                      + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
                      + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
