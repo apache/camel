@@ -13511,6 +13511,63 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * SMB (camel-smb)
+     * Receive files from SMB (Server Message Block) shares.
+     * 
+     * Category: file
+     * Since: 3.22
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * Syntax: <code>smb:hostname:port/shareName</code>
+     * 
+     * Path parameter: hostname (required)
+     * The share hostname or IP address
+     * 
+     * Path parameter: port
+     * The share port number
+     * Default value: 445
+     * 
+     * Path parameter: shareName
+     * The name of the share to connect to.
+     * 
+     * @param path hostname:port/shareName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory.SmbEndpointBuilder smb(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory.endpointBuilder("smb", path);
+    }
+    /**
+     * SMB (camel-smb)
+     * Receive files from SMB (Server Message Block) shares.
+     * 
+     * Category: file
+     * Since: 3.22
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * Syntax: <code>smb:hostname:port/shareName</code>
+     * 
+     * Path parameter: hostname (required)
+     * The share hostname or IP address
+     * 
+     * Path parameter: port
+     * The share port number
+     * Default value: 445
+     * 
+     * Path parameter: shareName
+     * The name of the share to connect to.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path hostname:port/shareName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory.SmbEndpointBuilder smb(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).

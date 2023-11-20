@@ -3872,6 +3872,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SlackComponentBuilderFactory.slack();
     }
     /**
+     * SMB (camel-smb)
+     * Receive files from SMB (Server Message Block) shares.
+     * 
+     * Category: file
+     * Since: 3.22
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SmbComponentBuilderFactory.SmbComponentBuilder smb() {
+        return org.apache.camel.builder.component.dsl.SmbComponentBuilderFactory.smb();
+    }
+    /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).
