@@ -3,7 +3,7 @@
 :shortname: smb
 :artifactid: camel-smb
 :description: Receive files from SMB (Server Message Block) shares.
-:since: 4.2.0-SNAPSHOT
+:since: 3.22
 :supportlevel: Preview
 :component-header: Only consumer is supported
 

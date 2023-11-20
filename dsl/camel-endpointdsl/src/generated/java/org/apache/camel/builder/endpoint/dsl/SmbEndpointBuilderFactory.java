@@ -858,7 +858,7 @@ public interface SmbEndpointBuilderFactory {
          * Receive files from SMB (Server Message Block) shares.
          * 
          * Category: file
-         * Since: 4.2.0-SNAPSHOT
+         * Since: 3.22
          * Maven coordinates: org.apache.camel:camel-smb
          * 
          * Syntax: <code>smb:hostname:port/shareName</code>
@@ -884,7 +884,7 @@ public interface SmbEndpointBuilderFactory {
          * Receive files from SMB (Server Message Block) shares.
          * 
          * Category: file
-         * Since: 4.2.0-SNAPSHOT
+         * Since: 3.22
          * Maven coordinates: org.apache.camel:camel-smb
          * 
          * Syntax: <code>smb:hostname:port/shareName</code>

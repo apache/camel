@@ -29,7 +29,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Receive files from SMB (Server Message Block) shares.
  */
-@UriEndpoint(firstVersion = "4.2.0-SNAPSHOT", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName",
+@UriEndpoint(firstVersion = "3.22.0", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName",
              consumerOnly = true,
              category = { Category.FILE })
 public class SmbEndpoint extends ScheduledPollEndpoint {
