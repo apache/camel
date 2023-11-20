@@ -63,6 +63,9 @@ public class KafkaRecordProcessor {
             message.setHeader(KafkaConstants.KEY, record.key());
         }
 
+        LOG.debug("Setting up the exchange for message from partition {} and offset {}",
+                record.partition(), record.offset());
+
         message.setBody(record.value());
     }
 
@@ -82,7 +85,7 @@ public class KafkaRecordProcessor {
     }
 
     public ProcessingResult processExchange(
-            Exchange exchange, TopicPartition partition, boolean partitionHasNext,
+            Exchange exchange, TopicPartition topicPartition, boolean partitionHasNext,
             boolean recordHasNext, ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
@@ -100,7 +103,7 @@ public class KafkaRecordProcessor {
 
         if (configuration.isAllowManualCommit()) {
             // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
-            KafkaManualCommit manual = commitManager.getManualCommit(exchange, partition, record);
+            KafkaManualCommit manual = commitManager.getManualCommit(exchange, topicPartition, record);
 
             message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
             message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
@@ -112,30 +115,51 @@ public class KafkaRecordProcessor {
             exchange.setException(e);
         }
         if (exchange.getException() != null) {
-            boolean breakOnErrorExit = processException(exchange, partition, lastResult.getPartitionLastOffset(),
+            LOG.debug("An exception was thrown for record at partition {} and offset {}",
+                    record.partition(), record.offset());
+
+            boolean breakOnErrorExit = processException(exchange, topicPartition, record, lastResult,
                     exceptionHandler);
-            return new ProcessingResult(breakOnErrorExit, lastResult.getPartitionLastOffset(), true);
+            return new ProcessingResult(breakOnErrorExit, lastResult.getPartition(), lastResult.getPartitionLastOffset(), true);
         } else {
-            return new ProcessingResult(false, record.offset(), exchange.getException() != null);
+            return new ProcessingResult(false, record.partition(), record.offset(), exchange.getException() != null);
         }
     }
 
     private boolean processException(
-            Exchange exchange, TopicPartition partition, long partitionLastOffset,
+            Exchange exchange, TopicPartition topicPartition,
+            ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
-            // we are failing and we should break out
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Error during processing {} from topic: {}", exchange, partition.topic(), exchange.getException());
-                LOG.warn("Will seek consumer to offset {} and start polling again.", partitionLastOffset);
+            if (lastResult.getPartition() != -1 &&
+                    lastResult.getPartition() != record.partition()) {
+                LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " +
+                          " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
+                        topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(),
+                        record.partition(), record.offset());
             }
 
-            // force commit, so we resume on next poll where we failed except when the failure happened
-            // at the first message in a poll
-            if (partitionLastOffset != AbstractCommitManager.START_OFFSET) {
-                commitManager.forceCommit(partition, partitionLastOffset);
+            // we are failing and we should break out
+            if (LOG.isWarnEnabled()) {
+                Exception exc = exchange.getException();
+                LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(),
+                        exc.getMessage());
+                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.",
+                        record.offset(), record.partition());
+            }
+
+            // force commit, so we resume on next poll where we failed
+            // except when the failure happened at the first message in a poll
+            if (lastResult.getPartitionLastOffset() != AbstractCommitManager.START_OFFSET) {
+                // we should just do a commit (vs the original forceCommit)
+                // when route uses NOOP Commit Manager it will rely
+                // on the route implementation to explicitly commit offset
+                // when route uses Synch/Asynch Commit Manager it will
+                // ALWAYS commit the offset for the failing record
+                // and will ALWAYS retry it
+                commitManager.commit(topicPartition);
             }
 
             // continue to next partition
