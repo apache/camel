@@ -36,7 +36,6 @@ public class SmbContainer extends GenericContainer<SmbContainer> {
                 .waitingFor(Wait.forListeningPort());
     }
 
-
     public String getUser() {
         return DEFAULT_USER;
     }
@@ -48,7 +47,6 @@ public class SmbContainer extends GenericContainer<SmbContainer> {
     public String getShare() {
         return "data-rw";
     }
-
 
     public int getPort() {
         return getMappedPort(SMB_PORT_DEFAULT);

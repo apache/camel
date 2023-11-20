@@ -32,10 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SmbComponentIT extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(SmbComponentIT.class);
 
     @RegisterExtension
     public static SmbService service = SmbServiceFactory.createService();
+    private static final Logger LOG = LoggerFactory.getLogger(SmbComponentIT.class);
 
     @Test
     public void testSmbRead() throws Exception {
@@ -60,8 +60,8 @@ public class SmbComponentIT extends CamelTestSupport {
             public void configure() {
                 fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(),
                         service.userName(), service.password())
-                        .process(this::process)
-                        .to("mock:result");
+                                .process(this::process)
+                                .to("mock:result");
             }
         };
     }

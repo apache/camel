@@ -19,7 +19,10 @@ package org.apache.camel.test.infra.smb.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
-public class SmbServiceFactory {
+public final class SmbServiceFactory {
+
+    private SmbServiceFactory() {
+    }
 
     public static SmbService createService() {
         SimpleTestServiceBuilder<SmbService> builder = new SimpleTestServiceBuilder<>("smb");
