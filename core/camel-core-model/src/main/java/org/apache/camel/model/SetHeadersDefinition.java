@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -40,31 +41,29 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
 
     /** This is provided to support XML and YAML DSL */
     @XmlElementRef(name = "headers")
-    private List<SetHeaderDefinition> setHeaderDefinitions = new java.util.ArrayList<>();
+    private List<SetHeaderDefinition> headers = new java.util.ArrayList<>();
 
     public SetHeadersDefinition() {
     }
 
     public SetHeadersDefinition(Map<String, Expression> setHeaderDefs) {
         for (Entry<String, Expression> entry : setHeaderDefs.entrySet()) {
-            setHeaderDefinitions.add(new SetHeaderDefinition(entry.getKey(), entry.getValue()));
+            headers.add(new SetHeaderDefinition(entry.getKey(), entry.getValue()));
         }
     }
 
     /**
      * Allow setting multiple headers using a single expression.
-     *
-     * @param headerNamesAndExprs
      */
     public SetHeadersDefinition(String header, Expression expr, Object... headerNamesAndExprs) {
         createSetHeaderDefinitions(header, expr, headerNamesAndExprs);
     }
 
     private void createSetHeaderDefinitions(String header, Expression expr, Object[] headerNamesAndExprs) {
-        if (headerNamesAndExprs.length > 0 && headerNamesAndExprs.length % 2 != 0) {
+        if (headerNamesAndExprs.length % 2 != 0) {
             throw new IllegalArgumentException("Must have an even number of arguments!");
         }
-        setHeaderDefinitions.add(new SetHeaderDefinition((String) header, (Expression) expr));
+        headers.add(new SetHeaderDefinition(header, expr));
         for (int i = 0; i < headerNamesAndExprs.length; i += 2) {
             Object key = headerNamesAndExprs[i];
             Object value = headerNamesAndExprs[i + 1];
@@ -76,17 +75,16 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
             } else if (!(value instanceof Expression)) {
                 throw new IllegalArgumentException("Values must be Expressions or Strings");
             }
-            setHeaderDefinitions.add(new SetHeaderDefinition((String) key, (Expression) value));
+            headers.add(new SetHeaderDefinition((String) key, (Expression) value));
         }
-
     }
 
-    public void setSetHeaderDefinitions(List<SetHeaderDefinition> setHeaderDefs) {
-        this.setHeaderDefinitions = setHeaderDefs;
+    public void setSetHeaderDefinitions(List<SetHeaderDefinition> definitions) {
+        this.headers = definitions;
     }
 
     public List<SetHeaderDefinition> getSetHeaderDefinitions() {
-        return this.setHeaderDefinitions;
+        return this.headers;
     }
 
     @Override
@@ -95,12 +93,9 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
     }
 
     private String getHeaderNames() {
-        StringBuilder sb = new StringBuilder();
-        for (SetHeaderDefinition defs : setHeaderDefinitions) {
-            if (!sb.isEmpty()) {
-                sb.append(',');
-            }
-            sb.append(defs.getName());
+        StringJoiner sb = new StringJoiner(",");
+        for (SetHeaderDefinition def : headers) {
+            sb.add(def.getName());
         }
         return sb.toString();
     }
