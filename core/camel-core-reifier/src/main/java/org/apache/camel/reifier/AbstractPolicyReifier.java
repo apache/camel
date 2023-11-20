@@ -31,7 +31,7 @@ import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> extends ProcessorReifier<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TransactedReifier.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractPolicyReifier.class);
 
     public AbstractPolicyReifier(Route route, T definition) {
         super(route, definition);

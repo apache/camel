@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WordpressBasicAuthentication extends BaseWordpressAuthentication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseWordpressAuthentication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WordpressBasicAuthentication.class);
 
     public WordpressBasicAuthentication() {
     }

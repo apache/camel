@@ -65,8 +65,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     private static final List<String> METHODS
             = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
-    // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
-    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpServerMultiplexChannelHandler.class);
     private static final AttributeKey<HttpServerChannelHandler> SERVER_HANDLER_KEY = AttributeKey.valueOf("serverHandler");
     private final Set<HttpServerChannelHandler> consumers = new CopyOnWriteArraySet<>();
     private int port;

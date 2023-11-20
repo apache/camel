@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 class NonXmlCharFilterer {
-    private static final Logger LOG = LoggerFactory.getLogger(FilteringXmlStreamWriter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NonXmlCharFilterer.class);
     private static final char REPLACEMENT_CHAR = ' ';
 
     /**

@@ -36,8 +36,7 @@ import org.slf4j.LoggerFactory;
  * Client handler which cannot be shared
  */
 public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
-    // use NettyProducer as logger to make it easier to read the logs as this is part of the producer
-    private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClientChannelHandler.class);
     private final NettyProducer producer;
     private volatile boolean messageReceived;
     private volatile boolean exceptionHandled;
