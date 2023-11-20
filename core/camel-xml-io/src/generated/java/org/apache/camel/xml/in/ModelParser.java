@@ -1298,7 +1298,7 @@ public class ModelParser extends BaseParser {
         return doParse(new SetHeadersDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
             if ("setHeader".equals(key)) {
-                doAdd(doParseSetHeaderDefinition(), def.getSetHeaderDefinitions(), def::setSetHeaderDefinitions);
+                doAdd(doParseSetHeaderDefinition(), def.getHeaders(), def::setHeaders);
                 return true;
             }
             return optionalIdentifiedDefinitionElementHandler().accept(def, key);

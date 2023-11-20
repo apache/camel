@@ -79,12 +79,12 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
         }
     }
 
-    public void setSetHeaderDefinitions(List<SetHeaderDefinition> definitions) {
-        this.headers = definitions;
+    public List<SetHeaderDefinition> getHeaders() {
+        return headers;
     }
 
-    public List<SetHeaderDefinition> getSetHeaderDefinitions() {
-        return this.headers;
+    public void setHeaders(List<SetHeaderDefinition> headers) {
+        this.headers = headers;
     }
 
     @Override

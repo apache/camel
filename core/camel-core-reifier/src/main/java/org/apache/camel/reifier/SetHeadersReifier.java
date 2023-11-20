@@ -35,12 +35,12 @@ public class SetHeadersReifier extends ProcessorReifier<SetHeadersDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        if (definition.getSetHeaderDefinitions().isEmpty()) {
+        if (definition.getHeaders().isEmpty()) {
             throw new IllegalArgumentException("There must be at least one header specified");
         }
-        List<Expression> nameExprs = new java.util.ArrayList<>(definition.getSetHeaderDefinitions().size());
-        List<Expression> valueExprs = new java.util.ArrayList<>(definition.getSetHeaderDefinitions().size());
-        for (SetHeaderDefinition hdrDef : definition.getSetHeaderDefinitions()) {
+        List<Expression> nameExprs = new java.util.ArrayList<>(definition.getHeaders().size());
+        List<Expression> valueExprs = new java.util.ArrayList<>(definition.getHeaders().size());
+        for (SetHeaderDefinition hdrDef : definition.getHeaders()) {
             valueExprs.add(createExpression(hdrDef.getExpression()));
             Expression nameExpr;
             String key = parseString(hdrDef.getName());

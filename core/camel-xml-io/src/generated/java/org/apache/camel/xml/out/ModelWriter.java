@@ -2191,7 +2191,7 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteList(null, null, def.getSetHeaderDefinitions(), this::doWriteSetHeaderDefinitionRef);
+        doWriteList(null, null, def.getHeaders(), this::doWriteSetHeaderDefinitionRef);
         endElement(name);
     }
     protected void doWriteSetPropertyDefinition(

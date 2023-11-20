@@ -27,9 +27,9 @@ import org.junit.jupiter.api.Assertions
 
 class SetHeadersTest extends YamlTestSupport {
 
-    def "setHeaders definition" () {
+    def "setHeaders definition"() {
         when:
-            loadRoutes '''
+        loadRoutes '''
                     - from:
                         uri: "direct:start"
                         steps:    
@@ -43,21 +43,21 @@ class SetHeadersTest extends YamlTestSupport {
                     '''
         then:
         with(context.routeDefinitions[0].outputs[0], SetHeadersDefinition) {
-            with(setHeaderDefinitions[0], SetHeaderDefinition) {
-                    name == 'testbody'
-                    with(expression, ExpressionDefinition) {
-                                language == 'simple'
-                                expression == '${body}'
-                            }
+            with(it.headers[0], SetHeaderDefinition) {
+                name == 'testbody'
+                with(expression, ExpressionDefinition) {
+                    language == 'simple'
+                    expression == '${body}'
                 }
-                with(setHeaderDefinitions[1], SetHeaderDefinition) {
-                    name == 'testconstant'
-                    with(expression, ExpressionDefinition) {
-                                language == 'constant'
-                                expression == "ABC"
-                            }
+            }
+            with(it.headers[1], SetHeaderDefinition) {
+                name == 'testconstant'
+                with(expression, ExpressionDefinition) {
+                    language == 'constant'
+                    expression == "ABC"
                 }
             }
         }
+    }
 
 }

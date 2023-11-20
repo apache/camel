@@ -15627,14 +15627,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
+                case "headers": {
+                    java.util.List<org.apache.camel.model.SetHeaderDefinition> val = asFlatList(node, org.apache.camel.model.SetHeaderDefinition.class);
+                    target.setHeaders(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "headers": {
-                    java.util.List<org.apache.camel.model.SetHeaderDefinition> val = asFlatList(node, org.apache.camel.model.SetHeaderDefinition.class);
-                    target.setSetHeaderDefinitions(val);
                     break;
                 }
                 case "id": {
