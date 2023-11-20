@@ -40,7 +40,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
 
     private static final Pattern BEAN_INJECTION_PATTERN = Pattern.compile("(#bean:)([A-Za-z0-9-_]*)");
 
-    private static final Logger LOG = LoggerFactory.getLogger(JoorCompiler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JoorScriptingCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
     private Set<String> imports = new TreeSet<>();
     private Map<String, String> aliases;

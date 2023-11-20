@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.function.Predicates.negate;
 
 public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanEmbeddedClusterService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanEmbeddedClusterView.class);
 
     private final InfinispanEmbeddedClusterConfiguration configuration;
     private final InfinispanEmbeddedManager manager;

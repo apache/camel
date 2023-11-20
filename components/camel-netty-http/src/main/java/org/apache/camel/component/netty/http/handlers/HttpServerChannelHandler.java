@@ -68,8 +68,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public class HttpServerChannelHandler extends ServerChannelHandler {
 
-    // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
-    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpServerChannelHandler.class);
     private final NettyHttpConsumer consumer;
 
     public HttpServerChannelHandler(NettyHttpConsumer consumer) {
