@@ -839,10 +839,15 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * This options controls what happens when a consumer is processing an exchange and it fails. If the option is
      * <tt>false</tt> then the consumer continues to the next message and processes it. If the option is <tt>true</tt>
-     * then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then
-     * re-attempt to process this message. However this can lead to endless processing of the same message if its bound
-     * to fail every time, eg a poison message. Therefore it is recommended to deal with that for example by using
-     * Camel's error handler.
+     * then the consumer breaks out.
+     *
+     * Using the default NoopCommitManager will cause the consumer to not commit the offset so that the message is
+     * re-attempted. The consumer should use the KafkaManualCommit to determine the best way to handle the message.
+     *
+     * Using either the SynchCommitManager or the AsynchCommitManager the consumer will seek back to the offset of the
+     * message that caused a failure, and then re-attempt to process this message. However this can lead to endless
+     * processing of the same message if its bound to fail every time, eg a poison message. Therefore its recommended to
+     * deal with that for example by using Camel's error handler.
      */
     public void setBreakOnFirstError(boolean breakOnFirstError) {
         this.breakOnFirstError = breakOnFirstError;

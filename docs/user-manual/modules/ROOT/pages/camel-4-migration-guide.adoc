@@ -350,6 +350,22 @@ The API in `org.apache.camel.http.common.HttpBinding` has changed slightly to be
 The `parseBody` method now takes in `HttpServletRequest` as input parameter. And all `HttpMessage`
 has been changed to generic `Message` types.
 
+=== camel-kafka
+
+When upgrading from Camel 4.0.3 or older to 4.0.4, please note that the behavior for the `breakOnFirstError` has changed.
+
+The behavior for `breakOnFirstError` was altered as numerous issues were fixed. The behavior related to committing
+the offset is now determined by the `CommitManager` that is configured.
+
+When the default `CommitManager` is used (`NoopCommitManager`) then no commit is performed. The route implementation will
+be responsible for managing the offset using `KafkaManualCommit` to manage the retrying of the payload.
+
+When using the `SyncCommitManager` then the offset will be committed so that the payload is continually retried. This was
+the behavior described in the documentation.
+
+When using the `AsyncCommitManager` then the offset will be committed so that the payload is continually retried. This was
+the behavior described in the documentation.
+
 === camel-kubernetes
 
 The `io.fabric8:kubernetes-client` library has been upgraded and some deprecated API usage has been removed. Operations previously prefixed with `replace` are now prefixed with `update`.

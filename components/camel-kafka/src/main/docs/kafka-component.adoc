@@ -85,6 +85,24 @@ Camel components have.
 For advanced control a custom implementation of `org.apache.camel.component.kafka.PollExceptionStrategy` can be configured
 on the component level, which allows to control which exceptions causes which of the strategies above.
 
+== Consumer error handling (advanced)
+
+By default Camel will poll using the *ERROR_HANDLER* to process exceptions. 
+How Camel handles a message that results in an exception can be altered using the `breakOnFirstError` attribute in the configuration.
+Instead of continuing to poll next message, Camel will instead commit the offset so that the message that caused the exception will be retried.
+This is similar to the *RETRY* polling strategy above. 
+
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.setBreakOnFirstError(true);
+...
+camelContext.addComponent("kafka", kafka);
+----
+
+It is recommended that you read the section below "Using manual commit with Kafka consumer" to understand how `breakOnFirstError`
+will work based on the `CommitManager` that is configured.
+
 == Samples
 
 === Consuming messages from Kafka
@@ -351,12 +369,15 @@ or on the endpoint, for example:
 [source,java]
 ----
 KafkaComponent kafka = new KafkaComponent();
+kafka.setAutoCommitEnable(false);
 kafka.setAllowManualCommit(true);
 ...
 camelContext.addComponent("kafka", kafka);
 ----
 
-Then you can use the `KafkaManualCommit` from Java code such as a Camel `Processor`:
+By default this will use the `NoopCommitManager` behind the scenes. In order to commit an offset you will 
+required you to use the `KafkaManualCommit` from Java code such as a Camel `Processor`:
+
 [source,java]
 ----
 public void process(Exchange exchange) {
@@ -366,13 +387,34 @@ public void process(Exchange exchange) {
 }
 ----
 
-This will force a synchronous commit which will block until the commit is acknowledged on Kafka, or if it fails an exception is thrown.
+The `KafkaManualCommit` will force a synchronous commit which will block until the commit is acknowledged on Kafka, or if it fails an exception is thrown.
 You can use an asynchronous commit as well by configuring the `KafkaManualCommitFactory` with the `DefaultKafkaManualAsyncCommitFactory` implementation.
 
 Then the commit will be done in the next consumer loop using the kafka asynchronous commit api.
 
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
+
+When configuring a consumer to use manual commit and a specific `CommitManager` it is important to understand how these influence the behavior 
+of `breakOnFirstError`
+
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.setAutoCommitEnable(false);
+kafka.setAllowManualCommit(true);
+kafka.setBreakOnFirstError(true);
+kafka.setKafkaManualCommitFactory(new DefaultKafkaManualCommitFactory());
+...
+camelContext.addComponent("kafka", kafka);
+----
+
+When the `CommitManager` is left to the default `NoopCommitManager` then `breakOnFirstError` will not automatically commit the offset so that the 
+message with an error is retried. The consumer must manage that in the route using `KafkaManualCommit`.
+
+
+When the `CommitManager` is changed to either the synch or asynch manager then `breakOnFirstError` will automatically commit the offset so that the 
+message with an error is retried. This message will be continually retried until it can be processed without an error.
 
 *Note 1*: records from a partition must be processed and committed by the same thread as the consumer. This means that certain EIPs, async or concurrent operations
 in the DSL, may cause the commit to fail. In such circumstances, tyring to commit the transaction will cause the Kafka client to throw a `java.util.ConcurrentModificationException`
