@@ -432,6 +432,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "set-header": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
             case "setHeader": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
             case "org.apache.camel.model.SetHeaderDefinition": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
+            case "set-headers": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
+            case "setHeaders": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
+            case "org.apache.camel.model.SetHeadersDefinition": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
             case "set-property": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "setProperty": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "org.apache.camel.model.SetPropertyDefinition": return new ModelDeserializers.SetPropertyDefinitionDeserializer();

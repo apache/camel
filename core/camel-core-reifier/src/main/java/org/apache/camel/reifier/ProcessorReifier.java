@@ -87,6 +87,7 @@ import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SetExchangePatternDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.SetHeadersDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
@@ -289,6 +290,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new SetExchangePatternReifier(route, definition);
         } else if (definition instanceof SetHeaderDefinition) {
             return new SetHeaderReifier(route, definition);
+        } else if (definition instanceof SetHeadersDefinition) {
+            return new SetHeadersReifier(route, definition);
         } else if (definition instanceof SetPropertyDefinition) {
             return new SetPropertyReifier(route, definition);
         } else if (definition instanceof SortDefinition) {

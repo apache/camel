@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -2572,6 +2573,30 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type setHeader(String name, Expression expression) {
         SetHeaderDefinition answer = new SetHeaderDefinition(name, expression);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Adds a processor which sets several headers on the IN message
+     *
+     * @param  headerMap a Map of header names and values
+     * @return           the builder
+     */
+    public Type setHeaders(Map<String, Expression> headerMap) {
+        SetHeadersDefinition answer = new SetHeadersDefinition(headerMap);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Adds a processor which sets several headers on the IN message
+     *
+     * @param  headerNamesAndValues a sequence of header names and values
+     * @return                      the builder
+     */
+    public Type setHeaders(String headerName, Expression expr, Object... headerNamesAndValues) {
+        SetHeadersDefinition answer = new SetHeadersDefinition(headerName, expr, headerNamesAndValues);
         addOutput(answer);
         return asType();
     }

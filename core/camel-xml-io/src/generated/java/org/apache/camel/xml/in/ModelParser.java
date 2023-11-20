@@ -1294,6 +1294,16 @@ public class ModelParser extends BaseParser {
             return processorDefinitionAttributeHandler().accept(def, key, val);
         }, expressionNodeElementHandler(), noValueHandler());
     }
+    protected SetHeadersDefinition doParseSetHeadersDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SetHeadersDefinition(),
+            processorDefinitionAttributeHandler(), (def, key) -> {
+            if ("setHeader".equals(key)) {
+                doAdd(doParseSetHeaderDefinition(), def.getSetHeaderDefinitions(), def::setSetHeaderDefinitions);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
+    }
     protected SetPropertyDefinition doParseSetPropertyDefinition() throws IOException, XmlPullParserException {
         return doParse(new SetPropertyDefinition(), (def, key, val) -> {
             if ("name".equals(key)) {
@@ -3443,6 +3453,7 @@ public class ModelParser extends BaseParser {
             case "setBody": return doParseSetBodyDefinition();
             case "setExchangePattern": return doParseSetExchangePatternDefinition();
             case "setHeader": return doParseSetHeaderDefinition();
+            case "setHeaders": return doParseSetHeadersDefinition();
             case "setProperty": return doParseSetPropertyDefinition();
             case "sort": return doParseSortDefinition();
             case "split": return doParseSplitDefinition();
