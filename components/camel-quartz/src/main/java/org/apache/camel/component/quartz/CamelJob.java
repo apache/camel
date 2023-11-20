@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -59,7 +59,7 @@ public class CamelJob implements Job, InterruptableJob {
                         context.getTrigger().getStartTime(), context.getTrigger().getEndTime(), context);
                 return;
             }
-            
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running CamelJob jobExecutionContext={}", context);
             }
@@ -104,7 +104,7 @@ public class CamelJob implements Job, InterruptableJob {
     /**
      * Validates if the Fire Time lies within the Start Time and End Time
      *
-     * @param context
+     * @param  context
      *
      * @return
      */
@@ -112,10 +112,14 @@ public class CamelJob implements Job, InterruptableJob {
         Date fireTime = context.getFireTime();
 
         // Trigger valid if Start Time is null or before Fire Time
-        boolean validStartTime = context.getTrigger().getStartTime() == null || fireTime.after(context.getTrigger().getStartTime());
+        Date startTime = context.getTrigger().getStartTime();
+        boolean validStartTime
+                = context.getTrigger().getStartTime() == null || fireTime.equals(startTime) || fireTime.after(startTime);
 
         // Trigger valid if End Time is null or after Fire Time
-        boolean validEndTime = context.getTrigger().getEndTime() == null || fireTime.before(context.getTrigger().getEndTime());
+        Date endTime = context.getTrigger().getEndTime();
+        boolean validEndTime
+                = context.getTrigger().getEndTime() == null || fireTime.equals(endTime) || fireTime.before(endTime);
 
         return !(validStartTime && validEndTime);
     }
