@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.Date;
 import java.util.Collection;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -53,6 +54,12 @@ public class CamelJob implements Job, InterruptableJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         Exchange exchange = null;
         try {
+            if (hasTriggerExpired(context)) {
+                LOG.warn("Trigger exists outside StartTime={} and EndTime={}. Skipping CamelJob jobExecutionContext={}",
+                        context.getTrigger().getStartTime(), context.getTrigger().getEndTime(), context);
+                return;
+            }
+            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running CamelJob jobExecutionContext={}", context);
             }
@@ -92,6 +99,18 @@ public class CamelJob implements Job, InterruptableJob {
             }
             throw new JobExecutionException(e);
         }
+    }
+
+    private boolean hasTriggerExpired(JobExecutionContext context) {
+        Date fireTime = context.getFireTime();
+        if (context.getTrigger().getStartTime() != null && fireTime.before(context.getTrigger().getStartTime())) {
+            // Trigger invalid as Fire Time is before Start Time
+            return true;
+        } else if (context.getTrigger().getEndTime() != null && fireTime.after(context.getTrigger().getEndTime())) {
+            // Trigger expired as Fire Time is after End Time
+            return true;
+        }
+        return false;
     }
 
     protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {

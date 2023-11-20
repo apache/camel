@@ -389,14 +389,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             }
         } else {
             try {
-                // calculate whether the trigger can be triggered in the future
-                Calendar cal = null;
-                if (trigger.getCalendarName() != null) {
-                    cal = scheduler.getCalendar(trigger.getCalendarName());
-                }
-                OperableTrigger ot = (OperableTrigger) trigger;
-                Date ft = ot.computeFirstFireTime(cal);
-                if (ft == null && ignoreExpiredNextFireTime) {
+                if (hasTriggerExpired(scheduler, trigger)) {
                     scheduled = false;
                     LOG.warn(
                             "Job {} (cron={}, triggerType={}, jobClass={}) not scheduled, because it will never fire in the future",
@@ -434,6 +427,22 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
 
         jobAdded.set(true);
+    }
+
+    private boolean hasTriggerExpired(Scheduler scheduler, Trigger trigger) throws SchedulerException {
+        Calendar cal = null;
+        if (trigger.getCalendarName() != null) {
+            cal = scheduler.getCalendar(trigger.getCalendarName());
+        }
+        OperableTrigger ot = (OperableTrigger) trigger;
+
+        // check if current time is past the Trigger EndDate
+        if (ot.getEndTime() != null && new Date().after(ot.getEndTime())) {
+            return true;
+        }
+        // calculate whether the trigger can be triggered in the future
+        Date ft = ot.computeFirstFireTime(cal);
+        return (ft == null && ignoreExpiredNextFireTime);
     }
 
     private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
@@ -474,6 +483,14 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
+            final String startAt = (String) copy.get("startAt");
+            if (startAt != null) {
+                triggerBuilder.startAt(new Date(Long.parseLong(startAt)));
+            }
+            final String endAt = (String) copy.get("endAt");
+            if (endAt != null) {
+                triggerBuilder.endAt(new Date(Long.parseLong(endAt)));
+            }
             final String timeZone = (String) copy.get("timeZone");
             if (timeZone != null) {
                 if (ObjectHelper.isNotEmpty(customCalendar)) {

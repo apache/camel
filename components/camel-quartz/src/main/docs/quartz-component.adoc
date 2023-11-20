@@ -177,6 +177,22 @@ quartz://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.timeZone=Europ
 
 The timeZone value is the values accepted by `java.util.TimeZone`.
 
+== Specifying start date
+
+The Quartz Scheduler allows you to configure start date per trigger. You can provide the start date as TimeInMillis as follows:
+
+----
+quartz://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.startAt=1700452232554
+----
+
+== Specifying end date
+
+The Quartz Scheduler allows you to configure end date per trigger. You can provide the end date as TimeInMillis as follows:
+
+----
+quartz://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.endAt=1700452232554
+----
+
 == Configuring misfire instructions
 
 The quartz scheduler can be configured with a misfire instruction
