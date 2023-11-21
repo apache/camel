@@ -5,7 +5,7 @@
     "title": "SMB",
     "description": "Receive files from SMB (Server Message Block) shares.",
     "deprecated": false,
-    "firstVersion": "4.3.0-SNAPSHOT",
+    "firstVersion": "4.3.0",
     "label": "file",
     "javaType": "org.apache.camel.component.smb.SmbComponent",
     "supportLevel": "Preview",
