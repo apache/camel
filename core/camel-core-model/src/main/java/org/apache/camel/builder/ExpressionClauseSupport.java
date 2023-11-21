@@ -30,6 +30,7 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
@@ -380,6 +381,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
      */
+    @Deprecated
     public T joor(String text) {
         return expression(new JoorExpression(text));
     }
@@ -391,8 +393,32 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * @param  resultType the return type expected by the expression
      * @return            the builder to continue processing the DSL
      */
+    @Deprecated
     public T joor(String text, Class<?> resultType) {
         JoorExpression exp = new JoorExpression(text);
+        exp.setResultType(resultType);
+        return expression(exp);
+    }
+
+    /**
+     * Evaluates an Java expression
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T java(String text) {
+        return expression(new JavaExpression(text));
+    }
+
+    /**
+     * Evaluates an Java expression
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T java(String text, Class<?> resultType) {
+        JavaExpression exp = new JavaExpression(text);
         exp.setResultType(resultType);
         return expression(exp);
     }

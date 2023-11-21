@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JoorExpression;
 
+@Deprecated
 public class JoorExpressionReifier extends TypedExpressionReifier<JoorExpression> {
 
     public JoorExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {

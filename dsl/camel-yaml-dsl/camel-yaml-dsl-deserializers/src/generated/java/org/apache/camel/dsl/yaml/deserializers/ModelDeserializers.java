@@ -184,6 +184,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
@@ -7136,6 +7137,89 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "java",
+            inline = true,
+            types = org.apache.camel.model.language.JavaExpression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Java",
+            description = "Evaluates a Java (Java compiled once at runtime) expression.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "pre-compile", type = "boolean", description = "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.", displayName = "Pre Compile"),
+                    @YamlProperty(name = "result-type", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
+                    @YamlProperty(name = "single-quotes", type = "boolean", description = "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.", displayName = "Single Quotes"),
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+            }
+    )
+    public static class JavaExpressionDeserializer extends YamlDeserializerBase<JavaExpression> {
+        public JavaExpressionDeserializer() {
+            super(JavaExpression.class);
+        }
+
+        @Override
+        protected JavaExpression newInstance() {
+            return new JavaExpression();
+        }
+
+        @Override
+        protected JavaExpression newInstance(String value) {
+            return new JavaExpression(value);
+        }
+
+        @Override
+        protected boolean setProperty(JavaExpression target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "pre-compile": {
+                    String val = asText(node);
+                    target.setPreCompile(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
+                    break;
+                }
+                case "single-quotes": {
+                    String val = asText(node);
+                    target.setSingleQuotes(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "js",
             inline = true,
             types = org.apache.camel.model.language.JavaScriptExpression.class,
@@ -7371,7 +7455,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "jOOR",
             description = "Evaluates a jOOR (Java compiled once at runtime) expression.",
-            deprecated = false,
+            deprecated = true,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),

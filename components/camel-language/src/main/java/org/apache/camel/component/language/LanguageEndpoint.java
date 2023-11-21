@@ -53,7 +53,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
     private boolean contentResolvedFromResource;
-    @UriPath(enums = "bean,constant,csimple,datasonnet,exchangeProperty,file,groovy,header,hl7terser,joor,jq,jsonpath"
+    @UriPath(enums = "bean,constant,csimple,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,jsonpath"
                      + ",mvel,ognl,ref,simple,spel,sql,tokenize,xpath,xquery,xtokenize")
     @Metadata(required = true)
     private String languageName;

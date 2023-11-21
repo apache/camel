@@ -613,7 +613,7 @@ In XML DSL you would do:
 
 === Binding beans to route templates using scripting languages
 
-You can use scripting languages like groovy, joor, mvel to create the bean.
+You can use scripting languages like groovy, java, mvel to create the bean.
 This allows to define route templates with the scripting language built-in (such as groovy).
 
 For example creating the AWS S3 client can be done as shown in Java (with inlined groovy code):
@@ -707,7 +707,7 @@ The languages supported are:
 | Type | Description
 | bean | Calling a method on a Java class to create the bean.
 | groovy | Using groovy script to create the bean.
-| joor | Using joor (Java code which are runtime compiled) to create the bean.
+| java | Java code which are runtime compiled (using jOOR library) to create the bean.
 | mvel | To use Mvel template script to create the bean.
 | ognl | To use OGNL template script to create the bean.
 | _name_ | To use a 3rd party language by the given _name_ to create the bean.
@@ -730,10 +730,10 @@ To get access to `CamelContext` you can do:
     var cn = rtc.getCamelContext().getName()
 ----
 
-The most powerful languages to use are groovy and joor. The other languages are limited in flexibility
+The most powerful languages to use are groovy and java. The other languages are limited in flexibility
 as they are not complete programming languages, but are more suited for templating needs.
 
-It is recommended to either use groovy or joor, if creating the local bean requires coding,
+It is recommended to either use groovy or java, if creating the local bean requires coding,
 and the route templates are not defined using Java code.
 
 The bean language can be used when creating the local bean from an existing Java method (static or not-static method),

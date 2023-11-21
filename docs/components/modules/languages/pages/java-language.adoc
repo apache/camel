@@ -1,0 +1,1 @@
+../../../../../components/camel-joor/src/main/docs/java-language.adoc

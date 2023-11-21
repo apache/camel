@@ -1,10 +1,11 @@
-= jOOR Language
+= jOOR Language (deprecated)
 :doctitle: jOOR
 :shortname: joor
 :artifactid: camel-joor
 :description: Evaluates a jOOR (Java compiled once at runtime) expression.
 :since: 3.7
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: joor
@@ -14,6 +15,8 @@
 The jOOR language allows using Java code in your Camel expression, with some limitations.
 
 The jOOR library integrates with the Java compiler and performs runtime compilation of Java code.
+
+NOTE: The jOOR language is actually Java code and therefore `joor` has been deprecated in favour of using `java` as the language name in Camel.
 
 NOTE: Java 8 is not supported. Java 11 is required.
 

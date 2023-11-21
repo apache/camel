@@ -2820,6 +2820,16 @@ public class ModelParser extends BaseParser {
             return true;
         };
     }
+    protected JavaExpression doParseJavaExpression() throws IOException, XmlPullParserException {
+        return doParse(new JavaExpression(), (def, key, val) -> {
+            switch (key) {
+                case "preCompile": def.setPreCompile(val); break;
+                case "singleQuotes": def.setSingleQuotes(val); break;
+                default: return typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected JavaScriptExpression doParseJavaScriptExpression() throws IOException, XmlPullParserException {
         return doParse(new JavaScriptExpression(),
             typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
@@ -3484,6 +3494,7 @@ public class ModelParser extends BaseParser {
             case "groovy": return doParseGroovyExpression();
             case "header": return doParseHeaderExpression();
             case "hl7terser": return doParseHl7TerserExpression();
+            case "java": return doParseJavaExpression();
             case "js": return doParseJavaScriptExpression();
             case "joor": return doParseJoorExpression();
             case "jq": return doParseJqExpression();
