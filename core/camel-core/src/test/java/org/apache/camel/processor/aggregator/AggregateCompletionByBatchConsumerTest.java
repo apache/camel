@@ -33,7 +33,6 @@ public class AggregateCompletionByBatchConsumerTest extends ContextTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testCorrelationKey() throws Exception {
-        // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");
 
         // we expect 4 messages since we group 4 batches
@@ -92,14 +91,12 @@ public class AggregateCompletionByBatchConsumerTest extends ContextTestSupport {
         assertEquals("batch-1", grouped.get(0).getBody(String.class));
         assertEquals("batch-1", grouped.get(1).getBody(String.class));
         assertEquals("batch-1", out.getProperty(Exchange.AGGREGATED_CORRELATION_KEY));
-        // END SNIPPET: e2
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // START SNIPPET: e1
                 // our route is aggregating from the direct queue and sending
                 // the response to the mock
                 from("direct:start")
@@ -110,7 +107,6 @@ public class AggregateCompletionByBatchConsumerTest extends ContextTestSupport {
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
                         .to("mock:result");
-                // END SNIPPET: e1
             }
         };
     }
