@@ -112,6 +112,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean contextReloadEnabled;
     private boolean routesCollectorEnabled = true;
     private boolean routesCollectorIgnoreLoadingError;
+    @Metadata(label = "advanced")
+    private String compileWorkDir;
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
     private String routesIncludePattern = "classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*";
@@ -1164,6 +1166,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRoutesCollectorIgnoreLoadingError(boolean routesCollectorIgnoreLoadingError) {
         this.routesCollectorIgnoreLoadingError = routesCollectorIgnoreLoadingError;
+    }
+
+    public String getCompileWorkDir() {
+        return compileWorkDir;
+    }
+
+    /**
+     * Work directory for compiler. Can be used to write compiled classes or other resources.
+     */
+    public void setCompileWorkDir(String compileWorkDir) {
+        this.compileWorkDir = compileWorkDir;
     }
 
     public String getJavaRoutesIncludePattern() {
@@ -2479,6 +2492,14 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRoutesCollectorIgnoreLoadingError(boolean routesCollectorIgnoreLoadingError) {
         this.routesCollectorIgnoreLoadingError = routesCollectorIgnoreLoadingError;
+        return (T) this;
+    }
+
+    /**
+     * Work directory for compiler. Can be used to write compiled classes or other resources.
+     */
+    public T withCompileWorkDir(String compileWorkDir) {
+        this.compileWorkDir = compileWorkDir;
         return (T) this;
     }
 

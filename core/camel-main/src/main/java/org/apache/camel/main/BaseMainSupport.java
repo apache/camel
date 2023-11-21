@@ -51,6 +51,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
+import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
@@ -59,6 +60,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.CamelTracingService;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
@@ -568,9 +570,21 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void configureRoutesLoader(CamelContext camelContext) {
         // use main based routes loader
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
+
+        // need to configure compile work dir as its used from routes loader when it discovered code to dynamic compile
+        if (mainConfigurationProperties.getCompileWorkDir() != null) {
+            CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+            if (cs == null) {
+                cs = new DefaultCompileStrategy();
+                ecc.addContextPlugin(CompileStrategy.class, cs);
+            }
+            cs.setWorkDir(mainConfigurationProperties.getCompileWorkDir());
+        }
+
         RoutesLoader loader = new DefaultRoutesLoader();
         loader.setIgnoreLoadingError(mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
-        camelContext.getCamelContextExtension().addContextPlugin(RoutesLoader.class, loader);
+        ecc.addContextPlugin(RoutesLoader.class, loader);
     }
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {

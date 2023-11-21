@@ -35,6 +35,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
 import org.apache.camel.spi.CompilePostProcessor;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
@@ -70,6 +71,11 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         CamelContext context = getCamelContext();
         if (context != null) {
             context.getClassResolver().addClassLoader(classLoader);
+            // use work dir for classloader as it writes compiled classes to disk
+            CompileStrategy cs = context.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+            if (cs != null && cs.getWorkDir() != null) {
+                classLoader.setCompileDirectory(cs.getWorkDir());
+            }
         }
     }
 
@@ -185,7 +191,8 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
         for (String className : result.getClassNames()) {
             Class<?> clazz = result.getClass(className);
-            classLoader.addClass(className, clazz);
+            byte[] code = result.getByteCode(className);
+            classLoader.addClass(className, clazz, code);
         }
 
         return result;

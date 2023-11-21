@@ -35,6 +35,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.impl.engine.PrototypeExchangeFactory;
@@ -47,6 +48,7 @@ import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DumpRoutesStrategy;
@@ -328,6 +330,15 @@ public final class DefaultConfigurationConfigurer {
 
         if (config.getThreadNamePattern() != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
+        }
+
+        if (config.getCompileWorkDir() != null) {
+            CompileStrategy cs = ecc.getContextPlugin(CompileStrategy.class);
+            if (cs == null) {
+                cs = new DefaultCompileStrategy();
+                ecc.addContextPlugin(CompileStrategy.class, cs);
+            }
+            cs.setWorkDir(config.getCompileWorkDir());
         }
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
