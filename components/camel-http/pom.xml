@@ -73,6 +73,13 @@
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
             <version>${httpclient-version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- Both httpcore5 and httpcore5-h2 are present as the dependencies-->
+                    <artifactId>*</artifactId>
+                    <groupId>org.apache.httpcomponents.core5</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
@@ -108,6 +115,13 @@
             <version>${httpclient-version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- Both httpcore5 and httpcore5-h2 are present as the dependencies-->
+                    <artifactId>*</artifactId>
+                    <groupId>org.apache.httpcomponents.core5</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
