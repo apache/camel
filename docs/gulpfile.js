@@ -188,6 +188,12 @@ const sources = {
     },
   },
   eips: {
+  asciidoc: {
+      source: '../components/{*,*/*}/src/main/docs/*-eip.adoc',
+      destination: '../core/camel-core-engine/src/main/docs/modules/eips/pages',
+      keep: ['*.adoc'],
+      isEip: true,
+    },
     json: {
       source: [
         '../core/camel-core-model/src/generated/resources/org/apache/camel/model/**/*.json',
@@ -304,7 +310,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
 
   // generates sorted & grouped nav.adoc file from a set of .adoc
   // files at the destination
-  const createNav = (destination) => {
+  const createNav = (destination, isEip) => {
     return gulp.src(`${type}-nav.adoc.template`)
       .pipe(insertGeneratedNotice())
       .pipe(
@@ -320,6 +326,8 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
               const title = titleFrom(file)
               if (groupFrom(file) !== null) {
                 return `*** xref:${filepath}[${title}]`
+              } else if (isEip) {
+                return `** xref:eips:${filepath}[${title}]`
               }
               return `** xref:${filepath}[${title}]`
             },
@@ -405,7 +413,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       gulp.series(
         named(`clean:asciidoc:${type}`, clean, asciidoc.destination, asciidoc.keep),
         named(`symlink:asciidoc:${type}`, createSymlinks, asciidoc.source, asciidoc.destination),
-        named(`nav:asciidoc:${type}`, createNav, asciidoc.destination)
+        named(`nav:asciidoc:${type}`, createNav, asciidoc.destination, asciidoc.isEip)
       )
     )
   }
