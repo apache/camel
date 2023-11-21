@@ -27,11 +27,13 @@ import java.util.TreeMap;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.support.SourceLoader;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.main.download.AutoConfigureDownloadListener;
 import org.apache.camel.main.download.BasePackageScanDownloadListener;
 import org.apache.camel.main.download.CamelCustomClassLoader;
@@ -68,6 +70,7 @@ import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
@@ -498,7 +501,7 @@ public class KameletMain extends MainCommandLineSupport {
             if (jfrProfile != null) {
                 recorder.setRecordingProfile(jfrProfile.toString());
             }
-            answer.setStartupStepRecorder(recorder);
+            answer.getCamelContextExtension().setStartupStepRecorder(recorder);
         }
 
         // special for source compilation to a specific package based on Maven GAV
@@ -678,6 +681,19 @@ public class KameletMain extends MainCommandLineSupport {
 
     @Override
     protected void configureRoutesLoader(CamelContext camelContext) {
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
+
+        // need to configure compile work dir as its used from routes loader when it discovered code to dynamic compile
+        String dir = getInitialProperties().getProperty("camel.jbang.compileWorkDir");
+        if (dir != null) {
+            CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+            if (cs == null) {
+                cs = new DefaultCompileStrategy();
+                ecc.addContextPlugin(CompileStrategy.class, cs);
+            }
+            cs.setWorkDir(dir);
+        }
+
         if (download) {
             DependencyDownloaderRoutesLoader routesLoader;
 
@@ -690,8 +706,7 @@ public class KameletMain extends MainCommandLineSupport {
             routesLoader.setIgnoreLoadingError(this.mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
 
             // use resolvers that can auto downloaded
-            camelContext.getCamelContextExtension()
-                    .addContextPlugin(RoutesLoader.class, routesLoader);
+            ecc.addContextPlugin(RoutesLoader.class, routesLoader);
         } else {
             super.configureRoutesLoader(camelContext);
         }

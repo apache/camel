@@ -16,15 +16,46 @@
  */
 package org.apache.camel.dsl.java.joor;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class JavaJoorClassLoader extends ClassLoader {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JavaJoorClassLoader.class);
     private final Map<String, Class<?>> classes = new HashMap<>();
+    private String compileDirectory;
 
     public JavaJoorClassLoader() {
         super(JavaJoorClassLoader.class.getClassLoader());
+    }
+
+    public String getCompileDirectory() {
+        return compileDirectory;
+    }
+
+    public void setCompileDirectory(String compileDirectory) {
+        this.compileDirectory = compileDirectory;
+    }
+
+    @Override
+    public String getName() {
+        return "JavaJoorClassLoader";
+    }
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        Class<?> clazz = classes.get(name);
+        if (clazz != null) {
+            return clazz;
+        }
+        throw new ClassNotFoundException(name);
     }
 
     @Override
@@ -36,9 +67,33 @@ public class JavaJoorClassLoader extends ClassLoader {
         throw new ClassNotFoundException(name);
     }
 
-    public void addClass(String name, Class<?> clazz) {
+    public void addClass(String name, Class<?> clazz, byte[] code) {
         if (name != null && clazz != null) {
             classes.put(name, clazz);
+        }
+        if (name != null && code != null && compileDirectory != null) {
+            saveByteCodeToDisk(compileDirectory, name, code);
+        }
+    }
+
+    private static void saveByteCodeToDisk(String outputDirectory, String name, byte[] byteCode) {
+        // write to disk (can be triggered multiple times so only write once)
+        String fname = name.replace('.', '/');
+        fname = outputDirectory + "/" + fname + ".class";
+        File target = new File(fname);
+        if (!target.exists()) {
+            // create work-dir if needed
+            String dir = FileUtil.onlyPath(fname);
+            new File(dir).mkdirs();
+            try {
+                FileOutputStream fos = new FileOutputStream(target);
+                LOG.debug("Writing compiled class: {} as bytecode to file: {}", name, target);
+                fos.write(byteCode);
+                IOHelper.close(fos);
+            } catch (Exception e) {
+                LOG.warn("Error writing compiled class: " + name + " as bytecode to file: " + target + " due to "
+                         + e.getMessage() + ". This exception is ignored.");
+            }
         }
     }
 

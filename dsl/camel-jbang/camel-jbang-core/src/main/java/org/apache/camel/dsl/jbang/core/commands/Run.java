@@ -458,6 +458,7 @@ public class Run extends CamelCommand {
         if (ignoreLoadingError) {
             writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
         }
+        writeSetting(main, profileProperties, "camel.jbang.compileWorkDir", WORK_DIR + File.separator + "compile");
 
         if (gav != null) {
             writeSetting(main, profileProperties, "camel.jbang.gav", gav);
