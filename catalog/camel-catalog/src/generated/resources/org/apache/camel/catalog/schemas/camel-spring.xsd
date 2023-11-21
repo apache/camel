@@ -684,6 +684,15 @@ Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="java" type="tns:javaExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Evaluates a Java (Java compiled once at runtime) expression.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="jaxb" type="tns:jaxbDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -706,7 +715,7 @@ JMX configuration.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a jOOR (Java compiled once at runtime) expression.
+Deprecated: Evaluates a jOOR (Java compiled once at runtime) expression.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -3750,6 +3759,7 @@ complete all those exchanges before its stopped, when stopping CamelContext or t
       <xs:element ref="tns:groovy"/>
       <xs:element ref="tns:header"/>
       <xs:element ref="tns:hl7terser"/>
+      <xs:element ref="tns:java"/>
       <xs:element ref="tns:js"/>
       <xs:element ref="tns:joor"/>
       <xs:element ref="tns:jq"/>
@@ -4071,6 +4081,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
@@ -4948,6 +4959,7 @@ To use a specific charset when converting.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -5008,6 +5020,7 @@ To use a custom Thread Pool if asyncDelay has been enabled.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -5075,6 +5088,7 @@ reduce memory usage to avoid storing too many non frequent used producers.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -5682,6 +5696,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
@@ -5912,6 +5927,7 @@ Global option value.
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
@@ -6666,6 +6682,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
@@ -10806,6 +10823,7 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -10941,6 +10959,7 @@ type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassTy
       <xs:element ref="tns:groovy"/>
       <xs:element ref="tns:header"/>
       <xs:element ref="tns:hl7terser"/>
+      <xs:element ref="tns:java"/>
       <xs:element ref="tns:js"/>
       <xs:element ref="tns:joor"/>
       <xs:element ref="tns:jq"/>
@@ -10980,6 +10999,7 @@ Property key.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -11272,6 +11292,7 @@ Name of property to remove.
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
@@ -11946,6 +11967,7 @@ Description of the parameter.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -12210,6 +12232,7 @@ Sets the sample message count which only a single Exchange will pass through aft
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -12242,6 +12265,7 @@ Sets the sample message count which only a single Exchange will pass through aft
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -12290,6 +12314,7 @@ Sets the new exchange pattern of the Exchange to be used from this point forward
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -12341,6 +12366,7 @@ be used. Otherwise a constant name will be used.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -12383,6 +12409,7 @@ property name to be used. Otherwise a constant name will be used.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -12425,6 +12452,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
@@ -13024,6 +13052,7 @@ handler. Is by default true. Default value: true
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
@@ -13319,6 +13348,7 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -13504,6 +13534,7 @@ Indicates whether null is allowed as value of a body to unmarshall. Default valu
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
@@ -14252,6 +14283,7 @@ Set the base path to store in ZK.
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
@@ -14578,6 +14610,32 @@ set.
 <![CDATA[
 Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are
 set.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="javaExpression">
+    <xs:simpleContent>
+      <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="preCompile" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the
+expression is reloaded and compiled on each evaluation. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="singleQuotes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with
+strings inside strings. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16384,6 +16442,7 @@ To configure a special tag for the operations within this rest definition.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>

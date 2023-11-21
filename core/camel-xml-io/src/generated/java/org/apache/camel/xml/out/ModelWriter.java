@@ -822,6 +822,9 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteHl7TerserExpression("hl7terser", def);
     }
+    public void writeJavaExpression(JavaExpression def) throws IOException {
+        doWriteJavaExpression("java", def);
+    }
     public void writeJavaScriptExpression(
             JavaScriptExpression def)
             throws IOException {
@@ -3882,6 +3885,17 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteJavaExpression(
+            String name,
+            JavaExpression def)
+            throws IOException {
+        startElement(name);
+        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("preCompile", def.getPreCompile());
+        doWriteAttribute("singleQuotes", def.getSingleQuotes());
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
     protected void doWriteJavaScriptExpression(
             String name,
             JavaScriptExpression def)
@@ -4976,6 +4990,7 @@ public class ModelWriter extends BaseWriter {
                 case "GroovyExpression" -> doWriteGroovyExpression("groovy", (GroovyExpression) v);
                 case "HeaderExpression" -> doWriteHeaderExpression("header", (HeaderExpression) v);
                 case "Hl7TerserExpression" -> doWriteHl7TerserExpression("hl7terser", (Hl7TerserExpression) v);
+                case "JavaExpression" -> doWriteJavaExpression("java", (JavaExpression) v);
                 case "JavaScriptExpression" -> doWriteJavaScriptExpression("js", (JavaScriptExpression) v);
                 case "JoorExpression" -> doWriteJoorExpression("joor", (JoorExpression) v);
                 case "JqExpression" -> doWriteJqExpression("jq", (JqExpression) v);

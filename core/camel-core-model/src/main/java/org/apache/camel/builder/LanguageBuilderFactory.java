@@ -23,6 +23,7 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
@@ -102,14 +103,22 @@ public final class LanguageBuilderFactory {
     }
 
     /**
-     * Uses the Joor language
+     * Uses the Java language
      */
+    public JavaExpression.Builder java() {
+        return new JavaExpression.Builder();
+    }
+
+    /**
+     * Uses the JOOR language
+     */
+    @Deprecated
     public JoorExpression.Builder joor() {
         return new JoorExpression.Builder();
     }
 
     /**
-     * Uses the Jq language
+     * Uses the JQ language
      */
     public JqExpression.Builder jq() {
         return new JqExpression.Builder();
