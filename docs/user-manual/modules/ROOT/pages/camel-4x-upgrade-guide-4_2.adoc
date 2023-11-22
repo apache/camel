@@ -18,6 +18,14 @@ Added `boolean` parameter to `matchProcess` method on `org.apache.camel.spi.Cond
 
 The option `camel.main.debugger` has been renamed to `camel.debug.enabled`.
 
+=== camel-management-api
+
+The `org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean.dumpTracedMessagesAsXml(String, boolean)` has been deprecated.
+The second parameter is ignored with default implementation.
+
+To continue to have access to exchange properties, call `setIncludeExchangeProperties(true)` before messages
+are sent to have access to exchange properties.
+
 === camel-file
 
 The `readLock=changed` with using `readLockMinAge` has been restored to same behaviour as 3.x.
