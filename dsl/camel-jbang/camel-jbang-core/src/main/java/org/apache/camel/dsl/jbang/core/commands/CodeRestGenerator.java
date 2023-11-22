@@ -60,7 +60,8 @@ public class CodeRestGenerator extends CamelCommand {
     @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, or spring-boot)",
                         defaultValue = "quarkus")
     private String runtime;
-    @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated Java models", defaultValue = "model")
+    @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated Java models",
+                        defaultValue = "model")
     private String packageName;
 
     public CodeRestGenerator(CamelJBangMain main) {
