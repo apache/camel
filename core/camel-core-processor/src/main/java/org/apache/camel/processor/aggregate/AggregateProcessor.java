@@ -621,16 +621,19 @@ public class AggregateProcessor extends AsyncProcessorSupport
         if (COMPLETED_BY_CONSUMER.equals(complete)) {
             for (String batchKey : batchConsumerCorrelationKeys) {
                 Exchange batchAnswer;
+                Exchange batchOriginalExchange;
                 if (batchKey.equals(key)) {
                     // skip the current aggregated key as we have already aggregated it and have the answer
                     batchAnswer = answer;
+                    batchOriginalExchange = originalExchange;
                 } else {
                     batchAnswer = aggregationRepository.get(camelContext, batchKey);
+                    batchOriginalExchange = batchAnswer;
                 }
 
                 if (batchAnswer != null) {
                     batchAnswer.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, complete);
-                    onCompletion(batchKey, originalExchange, batchAnswer, false, aggregateFailed);
+                    onCompletion(batchKey, batchOriginalExchange, batchAnswer, false, aggregateFailed);
                     list.add(batchAnswer);
                 }
             }
