@@ -211,8 +211,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         configureChild(output);
         getOutputs().add(output);
 
-        if (context != null && (context.isSourceLocationEnabled() || context.isDebugging() || context.isTracing())) {
-            // we want to capture source location:line for every output
+        if (context != null && (context.isSourceLocationEnabled()
+                || context.isDebugging() || context.isDebugStandby()
+                || context.isTracing() || context.isTracingStandby())) {
+            // we want to capture source location:line for every output (also when debugging or tracing enabled/standby)
             Resource resource = this instanceof ResourceAware ? ((ResourceAware) this).getResource() : null;
             ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
         }
