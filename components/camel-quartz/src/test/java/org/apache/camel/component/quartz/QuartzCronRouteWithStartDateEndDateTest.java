@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -43,10 +47,18 @@ public class QuartzCronRouteWithStartDateEndDateTest extends BaseQuartzTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+            	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+            	Calendar calendar = Calendar.getInstance();
+            	calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+                calendar.add(Calendar.SECOND, 3);
+                Date startDate = calendar.getTime();
+                calendar.add(Calendar.SECOND, 2);
+                Date endDate = calendar.getTime();
+                
                 // triggers every 1th second at precise 00,01,02,03..59 with startAt and endAt exactly 2 second apart.
                 // configuration will create a maximum of three messages
-                from("quartz://myGroup/myTimerName?cron=0/1 * * * * ?&trigger.startAt=" + System.currentTimeMillis()
-                        + "&trigger.endAt=" + (System.currentTimeMillis() + 2000)).to("mock:result");
+                from("quartz://myGroup/myTimerName?cron=0/1 * * * * ?&trigger.startAt=" + dateFormat.format(startDate)
+                        + "&trigger.endAt=" + dateFormat.format(endDate)).to("mock:result");
             }
         };
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -481,12 +482,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
             final String startAt = (String) copy.get("startAt");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
             if (startAt != null) {
-                triggerBuilder.startAt(new Date(Long.parseLong(startAt)));
+                triggerBuilder.startAt(dateFormat.parse(startAt));
             }
             final String endAt = (String) copy.get("endAt");
             if (endAt != null) {
-                triggerBuilder.endAt(new Date(Long.parseLong(endAt)));
+                triggerBuilder.endAt(dateFormat.parse(endAt));
             }
             final String timeZone = (String) copy.get("timeZone");
             if (timeZone != null) {
