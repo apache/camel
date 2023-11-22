@@ -12,7 +12,7 @@ Added `boolean` parameter to `matchProcess` method on `org.apache.camel.spi.Cond
 
 === camel-base-engine
 
-`org.apache.camel.impl.debuggerBacklogDebugger` has been splitted between an interface `org.apache.camel.spi.BacklogDebugger` and a default implementation `org.apache.camel.impl.debugger.DefaultBacklogDebugger`.
+The class `org.apache.camel.impl.DebuggerBacklogDebugger` has been refactored to an interface `org.apache.camel.spi.BacklogDebugger` and a default implementation `org.apache.camel.impl.debugger.DefaultBacklogDebugger`.
 
 === camel-main
 
