@@ -284,7 +284,7 @@
         <json-patch-version>1.13</json-patch-version>
         <json-smart-version>2.5.0</json-smart-version>
         <jsonata4java-version>2.4.5</jsonata4java-version>
-        <json-unit-version>3.0.0</json-unit-version>
+        <json-unit-version>3.2.2</json-unit-version>
         <jsoup-version>1.16.1</jsoup-version>
         <jt400-version>20.0.3</jt400-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
