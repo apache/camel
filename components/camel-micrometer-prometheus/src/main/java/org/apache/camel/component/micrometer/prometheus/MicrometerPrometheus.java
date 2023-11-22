@@ -212,11 +212,6 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             }
             meterRegistry = (PrometheusMeterRegistry) found;
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
 
         if (ObjectHelper.isNotEmpty(binders)) {
             // load binders from micrometer
@@ -262,6 +257,11 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             factory.setMeterRegistry(meterRegistry);
             camelContext.setMessageHistoryFactory(factory);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
         server = camelContext.hasService(MainHttpServer.class);
         router = VertxPlatformHttpRouter.lookup(camelContext);
