@@ -34,7 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ThrottlingGroupingTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     private static final int MESSAGE_COUNT = 9;
-    private static final int TOLERANCE = 50;
+    private static final int CONCURRENT_REQUESTS = 2;
+    private volatile int curr;
+    private volatile int max;
 
     @Test
     public void testGroupingWithSingleConstant() throws Exception {
@@ -72,45 +74,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void testSendLotsOfMessagesButOnly3GetThroughWithin2Seconds() throws Exception {
-
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(3);
-        resultEndpoint.setResultWaitTime(2000);
-
-        Map<String, Object> headers = new HashMap<>();
-        for (int i = 0; i < 9; i++) {
-            if (i % 2 == 0) {
-                headers.put("key", "1");
-            } else {
-                headers.put("key", "2");
-            }
-            template.sendBodyAndHeaders("seda:ga", "<message>" + i + "</message>", headers);
-        }
-
-        // lets pause to give the requests time to be processed
-        // to check that the throttle really does kick in
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    private void assertThrottlerTiming(
-            final long elapsedTimeMs, final int throttle, final int intervalMs, final int messageCount) {
-        // now assert that they have actually been throttled (use +/- 50 as
-        // slack)
-        long minimum = calculateMinimum(intervalMs, throttle, messageCount) - 50;
-        long maximum = calculateMaximum(intervalMs, throttle, messageCount) + 50;
-        // add 500 in case running on slow CI boxes
-        maximum += 500;
-        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", messageCount,
-                elapsedTimeMs, throttle, intervalMs, minimum,
-                maximum);
-
-        assertTrue(elapsedTimeMs >= minimum, "Should take at least " + minimum + "ms, was: " + elapsedTimeMs);
-        assertTrue(elapsedTimeMs <= maximum + TOLERANCE, "Should take at most " + maximum + "ms, was: " + elapsedTimeMs);
-    }
-
-    private long sendMessagesAndAwaitDelivery(
+    private void sendMessagesAndAwaitDelivery(
             final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint)
             throws InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
@@ -119,7 +83,6 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                 receivingEndpoint.expectedMessageCount(messageCount);
             }
 
-            long start = System.nanoTime();
             for (int i = 0; i < messageCount; i++) {
                 executor.execute(new Runnable() {
                     public void run() {
@@ -138,7 +101,6 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
             if (receivingEndpoint != null) {
                 receivingEndpoint.assertIsSatisfied();
             }
-            return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         } finally {
             executor.shutdownNow();
         }
@@ -147,8 +109,8 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnlyGetThroughAsConstantThrottleValue() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
-        long elapsed = sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:ga", MESSAGE_COUNT, resultEndpoint);
-        assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
+        sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:ga", CONCURRENT_REQUESTS, resultEndpoint);
+        assertTrue(max <= CONCURRENT_REQUESTS);
     }
 
     @Test
@@ -158,22 +120,10 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(MESSAGE_COUNT);
         try {
-            sendMessagesWithHeaderExpression(executor, resultEndpoint, 5, INTERVAL, MESSAGE_COUNT);
+            sendMessagesWithHeaderExpression(executor, resultEndpoint, CONCURRENT_REQUESTS, INTERVAL, MESSAGE_COUNT);
         } finally {
             executor.shutdownNow();
         }
-    }
-
-    private long calculateMinimum(final long periodMs, final long throttleRate, final long messageCount) {
-        if (messageCount % throttleRate > 0) {
-            return (long) Math.floor((double) messageCount / (double) throttleRate) * periodMs;
-        } else {
-            return (long) (Math.floor((double) messageCount / (double) throttleRate) * periodMs) - periodMs;
-        }
-    }
-
-    private long calculateMaximum(final long periodMs, final long throttleRate, final long messageCount) {
-        return ((long) Math.ceil((double) messageCount / (double) throttleRate)) * periodMs;
     }
 
     private void sendMessagesWithHeaderExpression(
@@ -201,7 +151,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
         long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-        assertThrottlerTiming(elapsed, throttle, intervalMs, messageCount);
+        assertTrue(max <= CONCURRENT_REQUESTS);
     }
 
     @Override
@@ -215,12 +165,24 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                 from("seda:b").throttle(header("max"), 2).to("mock:result2");
                 from("seda:c").throttle(header("max")).correlationExpression(header("key")).to("mock:resultdynamic");
 
-                from("seda:ga").throttle(constant(3), header("key")).timePeriodMillis(1000).to("log:gresult", "mock:gresult");
+                from("direct:ga").throttle(constant(CONCURRENT_REQUESTS), header("key"))
+                        .process(exchange -> {
+                            curr++;
+                        })
+                        .delay(INTERVAL)
+                        .process(exchange -> {
+                            max = Math.max(max, curr--);
+                        })
+                        .to("log:gresult", "mock:gresult");
 
-                from("direct:ga").throttle(constant(5), header("key")).timePeriodMillis(INTERVAL).to("log:gresult",
-                        "mock:gresult");
-
-                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key")).timePeriodMillis(INTERVAL)
+                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key"))
+                        .process(exchange -> {
+                            curr++;
+                        })
+                        .delay(INTERVAL)
+                        .process(exchange -> {
+                            max = Math.max(max, curr--);
+                        })
                         .to("log:gresult", "mock:gresult");
             }
         };
