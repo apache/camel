@@ -2332,9 +2332,6 @@ public abstract class AbstractCamelContext extends BaseService
             }
             addService(runtimeEndpointRegistry, true, true);
         }
-        // setup debugger if not already installed
-        if (isDebugging() && getDebugger() == null) {
-        }
 
         bindDataFormats();
 
