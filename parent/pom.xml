@@ -192,7 +192,7 @@
         <hadoop3-version>3.3.6</hadoop3-version>
         <hamcrest-version>2.2</hamcrest-version>
         <hapi-version>2.5.1</hapi-version>
-        <hapi-base-version>2.3</hapi-base-version>
+        <hapi-base-version>2.5.1</hapi-base-version>
         <hapi-fhir-version>6.8.5</hapi-fhir-version>
         <hazelcast-version>5.3.6</hazelcast-version>
         <hdrhistrogram-version>2.1.12</hdrhistrogram-version>
