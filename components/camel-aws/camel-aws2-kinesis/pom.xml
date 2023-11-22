@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 Kinesis</name>
-    <description>A Camel Amazon Kinesis Web Service Component Version 2</description>
+    <description>Consuming and Producing data to AWS Kinesis Service</description>
 
     <dependencies>
         <dependency>
