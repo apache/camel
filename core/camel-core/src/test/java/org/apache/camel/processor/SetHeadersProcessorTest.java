@@ -90,6 +90,20 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     }
 
     @Test
+    public void testUseMapOf() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:startMap").setHeaders(Map.of("foo", "ABC", "bar", "XYZ")).to("mock:result");
+            }
+        });
+        ;
+        expected.message(0).header("foo").isEqualTo("ABC");
+        expected.message(0).header("bar").isEqualTo("XYZ");
+        template.sendBody("direct:startMap", body);
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testUseMethod() throws Exception {
         String hdrInBody = "foo,ABC,bar,XYZ";
         template.sendBody("direct:startMethod", hdrInBody);

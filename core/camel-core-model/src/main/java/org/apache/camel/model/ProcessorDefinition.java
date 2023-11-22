@@ -2582,23 +2582,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which sets several headers on the IN message
      *
-     * @param  headerMap a Map of header names and values
-     * @return           the builder
-     */
-    public Type setHeaders(Map<String, Expression> headerMap) {
-        SetHeadersDefinition answer = new SetHeadersDefinition(headerMap);
-        addOutput(answer);
-        return asType();
-    }
-
-    /**
-     * Adds a processor which sets several headers on the IN message
-     *
-     * @param  headerNamesAndValues a sequence of header names and values
+     * @param  headerNamesAndValues a sequence of header names and values or a Map containing names and values
      * @return                      the builder
      */
-    public Type setHeaders(String headerName, Expression expr, Object... headerNamesAndValues) {
-        SetHeadersDefinition answer = new SetHeadersDefinition(headerName, expr, headerNamesAndValues);
+    public Type setHeaders(Object... headerNamesAndValues) {
+        SetHeadersDefinition answer = new SetHeadersDefinition(headerNamesAndValues);
         addOutput(answer);
         return asType();
     }

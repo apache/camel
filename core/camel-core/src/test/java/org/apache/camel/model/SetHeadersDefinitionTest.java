@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Expression;
 import org.apache.camel.TestSupport;
@@ -36,6 +37,20 @@ class SetHeadersDefinitionTest extends TestSupport {
         assertNotNull(setHeadersDef.getHeaders());
         assertEquals(3, setHeadersDef.getHeaders().size());
         assertEquals("isCamel", setHeadersDef.getHeaders().get(1).getName());
+    }
+
+    @Test
+    void testSetFromMapOf() {
+        SetHeadersDefinition setHeadersDef = new SetHeadersDefinition(
+                Map.of("fromBody", body(),
+                        "isCamel", body().contains("Camel"), "isHorse", body().contains("Horse")));
+        assertNotNull(setHeadersDef.getHeaders());
+        assertEquals(3, setHeadersDef.getHeaders().size());
+        Set<String> names = new java.util.HashSet<>();
+        for (SetHeaderDefinition setHdrDef : setHeadersDef.getHeaders()) {
+            names.add(setHdrDef.getName());
+        }
+        assertEquals(names, Set.of("fromBody", "isCamel", "isHorse"));
     }
 
     @Test

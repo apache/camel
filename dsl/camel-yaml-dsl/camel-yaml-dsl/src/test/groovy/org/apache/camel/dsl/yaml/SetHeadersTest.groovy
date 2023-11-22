@@ -38,7 +38,7 @@ class SetHeadersTest extends YamlTestSupport {
                                 - name: testbody
                                   simple: "${body}"
                                 - name: testconstant
-                                  constant: "ABC"
+                                  constant: ABC
                           - to: "mock:result"
                     '''
         then:
@@ -55,6 +55,35 @@ class SetHeadersTest extends YamlTestSupport {
                 with(expression, ExpressionDefinition) {
                     language == 'constant'
                     expression == "ABC"
+                }
+            }
+        }
+    }
+    
+        def "setHeaders resultType"() {
+        when:
+        loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - setHeaders:
+                          headers:
+                            - name: foo
+                              simple: "${body}"
+                            - name: bar
+                              simple:
+                                expression: "${header.foo} > 10"
+                                resultType: "boolean"      
+                      - to: "mock:result"
+            '''
+        then:
+        with(context.routeDefinitions[0].outputs[0], SetHeadersDefinition) {
+            with(it.headers[1], SetHeaderDefinition) {
+                name == 'bar'
+                with(expression, ExpressionDefinition) {
+                    language == 'simple'
+                    expression == '${header.foo} > 10'
+                    resultTypeName == 'boolean'
                 }
             }
         }

@@ -46,37 +46,41 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
     public SetHeadersDefinition() {
     }
 
-    public SetHeadersDefinition(Map<String, Expression> setHeaderDefs) {
-        for (Entry<String, Expression> entry : setHeaderDefs.entrySet()) {
-            headers.add(new SetHeaderDefinition(entry.getKey(), entry.getValue()));
-        }
-    }
-
     /**
      * Allow setting multiple headers using a single expression.
      */
-    public SetHeadersDefinition(String header, Expression expr, Object... headerNamesAndExprs) {
-        createSetHeaderDefinitions(header, expr, headerNamesAndExprs);
+    public SetHeadersDefinition(Object... headerNamesAndExprs) {
+        createSetHeaderDefinitions(headerNamesAndExprs);
     }
 
-    private void createSetHeaderDefinitions(String header, Expression expr, Object[] headerNamesAndExprs) {
-        if (headerNamesAndExprs.length % 2 != 0) {
-            throw new IllegalArgumentException("Must have an even number of arguments!");
-        }
-        headers.add(new SetHeaderDefinition(header, expr));
-        for (int i = 0; i < headerNamesAndExprs.length; i += 2) {
-            Object key = headerNamesAndExprs[i];
-            Object value = headerNamesAndExprs[i + 1];
-            if (!(key instanceof String)) {
-                throw new IllegalArgumentException("Keys must be Strings");
+    private void createSetHeaderDefinitions(Object[] headerNamesAndExprs) {
+        if (headerNamesAndExprs.length == 1 && headerNamesAndExprs[0] instanceof Map) {
+            createHeadersFromMap((Map<?, ?>) headerNamesAndExprs[0]);
+        } else if (headerNamesAndExprs.length % 2 != 0) {
+            throw new IllegalArgumentException("Must be a Map or have an even number of arguments!");
+        } else {
+            for (int i = 0; i < headerNamesAndExprs.length; i += 2) {
+                addHeader(headerNamesAndExprs[i], headerNamesAndExprs[i + 1]);
             }
-            if (value instanceof String) {
-                value = ExpressionBuilder.constantExpression(value);
-            } else if (!(value instanceof Expression)) {
-                throw new IllegalArgumentException("Values must be Expressions or Strings");
-            }
-            headers.add(new SetHeaderDefinition((String) key, (Expression) value));
         }
+    }
+
+    private void addHeader(Object key, Object value) {
+        if (!(key instanceof String)) {
+            throw new IllegalArgumentException("Keys must be Strings");
+        }
+        if (!(value instanceof Expression)) {
+            // Assume it's a constant of some kind
+            value = ExpressionBuilder.constantExpression(value);
+        }
+        headers.add(new SetHeaderDefinition((String) key, (Expression) value));
+    }
+
+    private void createHeadersFromMap(Map<?, ?> headerMap) {
+        for (Entry<?, ?> entry : headerMap.entrySet()) {
+            addHeader(entry.getKey(), entry.getValue());
+        }
+
     }
 
     public List<SetHeaderDefinition> getHeaders() {
