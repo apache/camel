@@ -97,6 +97,23 @@ XML::
     <to uri="direct:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:a
+    steps:
+      - setHeaders:
+          headers:
+            - name: randomNumber
+              simple: "${random(1,100)}"
+            - name: body
+              simple: "${body}"
+      - to: 
+          uri:direct:b
+----
 ====
 
 === Setting a header from another header
@@ -132,6 +149,25 @@ XML::
     <to uri="direct:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:a
+    steps:
+      - setHeaders:
+          headers:
+            - name: foo
+              simple: "${body}"
+            - name: bar
+              simple:
+                expression: "${header.foo} > 10"
+                resultType: "boolean"       
+      - to: 
+          uri:direct:b
+----
 ====
 
 === Using a Map with Java DSL
@@ -150,6 +186,18 @@ headerMap.put("bar", ConstantLanguage.constant("XYZ"));
         
 from("direct:startMap")
     .setHeaders(headerMap)
+    .to("direct:b");
+----
+====
+
+If the ordering is not critical, then `Map.of(name1, expr1, name2, expr2...)` can be used.
+====
+Java::
++
+[source,java]
+----
+from("direct:startMap")
+    .setHeaders(Map.of("foo", "ABC", "bar", "XYZ"))
     .to("direct:b");
 ----
 ====
