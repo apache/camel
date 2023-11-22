@@ -1447,7 +1447,6 @@ public class ModelParser extends BaseParser {
                 case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(val); break;
                 case "executorService": def.setExecutorService(val); break;
                 case "rejectExecution": def.setRejectExecution(val); break;
-                case "timePeriodMillis": def.setTimePeriodMillis(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

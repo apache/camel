@@ -13019,15 +13019,6 @@ To use a custom thread pool (ScheduledExecutorService) by the throttler.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timePeriodMillis" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the time period during which the maximum request count is valid for. Default value: 1000
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="asyncDelayed" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
