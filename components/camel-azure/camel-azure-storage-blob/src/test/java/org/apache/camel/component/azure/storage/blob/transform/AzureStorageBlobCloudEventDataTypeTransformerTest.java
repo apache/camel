@@ -37,7 +37,8 @@ public class AzureStorageBlobCloudEventDataTypeTransformerTest {
 
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
-    private final AzureStorageBlobCloudEventDataTypeTransformer transformer = new AzureStorageBlobCloudEventDataTypeTransformer();
+    private final AzureStorageBlobCloudEventDataTypeTransformer transformer
+            = new AzureStorageBlobCloudEventDataTypeTransformer();
 
     @Test
     void shouldMapToCloudEvent() throws Exception {
