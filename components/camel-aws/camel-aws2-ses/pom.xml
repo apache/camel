@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 SES</name>
-    <description>A Camel Amazon SES Web Service Component Version 2</description>
+    <description>Send Email Messages through AWS SES Service</description>
 
     <properties>
     </properties>
