@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 S3</name>
-    <description>A Camel Amazon S3 Web Service Component Version 2</description>
+    <description>Consume files and upload files through AWS S3 Service</description>
 
     <properties>
     </properties>
