@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 SNS</name>
-    <description>A Camel Amazon SNS Web Service Component Version 2</description>
+    <description>Send Notifications through AWS SNS service</description>
 
     <properties>
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
