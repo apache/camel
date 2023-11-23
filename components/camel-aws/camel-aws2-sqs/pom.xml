@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 SQS</name>
-    <description>A Camel Amazon SQS Web Service Component Version 2</description>
+    <description>Consume and produce messages through AWS SQS Service</description>
 
     <properties>
     </properties>
