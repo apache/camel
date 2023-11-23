@@ -104,8 +104,10 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Compiling code:\n\n{}\n", code);
             }
+            LOG.debug("Compiling: {}", className);
             Reflect ref = Reflect.compile(className, code);
             Class<?> clazz = ref.type();
+            LOG.debug("Compiled to Java class: {}", clazz);
             answer = (JoorMethod) clazz.getConstructor(CamelContext.class).newInstance(camelContext);
         } catch (Exception e) {
             throw new JoorCompilationException(className, code, e);

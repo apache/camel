@@ -181,7 +181,10 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             }
         }
 
-        LOG.debug("Compiling unit: {}", unit);
+        if (LOG.isDebugEnabled()) {
+            String names = String.join(", ", unit.getInput().keySet());
+            LOG.debug("Compiling: {}", names);
+        }
         CompilationUnit.Result result = MultiCompile.compileUnit(unit);
 
         // remember the last loaded resource-set if route reloading is enabled

@@ -112,4 +112,9 @@ public class CompilationUnit {
         return files;
     }
 
+    @Override
+    public String toString() {
+        String names = String.join(", ", files.keySet());
+        return "CompilationUnit[" + names + "]";
+    }
 }
