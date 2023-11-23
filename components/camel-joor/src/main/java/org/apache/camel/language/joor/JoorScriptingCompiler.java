@@ -93,8 +93,10 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
                 co = new CompileOptions();
                 co = co.classLoader(cl);
             }
+            LOG.debug("Compiling: {}", className);
             Reflect ref = Reflect.compile(className, code, co);
             Class<?> clazz = ref.type();
+            LOG.debug("Compiled to Java class: {}", clazz);
             answer = (JoorScriptingMethod) clazz.getConstructor(CamelContext.class).newInstance(camelContext);
         } catch (Exception e) {
             throw new JoorCompilationException(className, code, e);

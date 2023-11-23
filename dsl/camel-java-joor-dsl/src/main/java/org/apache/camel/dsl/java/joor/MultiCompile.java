@@ -94,7 +94,9 @@ public final class MultiCompile {
             try {
                 Class<?> clazz = cl.loadClass(cn);
                 result.addResult(cn, clazz, null);
+                LOG.debug("Class already compiled: {}", cn);
             } catch (ClassNotFoundException ignore) {
+                LOG.debug("Class must be compiled: {}", cn);
                 files.add(new CharSequenceJavaFileObject(cn, code));
             }
         });
@@ -143,7 +145,11 @@ public final class MultiCompile {
             StringWriter out = new StringWriter();
             CompilationTask task = compiler.getTask(out, fileManager, dc, options, null, files);
 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Compiling files: {}", files);
+            }
             boolean success = task.call();
+            LOG.debug("Compiled success: {}", success);
             // after compilation then we need to clean up some unexpected output
             cleanupWaste();
 
@@ -350,6 +356,11 @@ public final class MultiCompile {
         @Override
         public CharSequence getCharContent(boolean ignoreEncodingErrors) {
             return content;
+        }
+
+        @Override
+        public String toString() {
+            return className;
         }
     }
 
