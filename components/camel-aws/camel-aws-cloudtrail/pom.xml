@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS Cloutrail</name>
-    <description>A Camel Amazon Cloudtrail Web Service Component Version 2</description>
+    <description>Consume Events coming from AWS Cloudtrail Service</description>
 
     <properties>
     </properties>

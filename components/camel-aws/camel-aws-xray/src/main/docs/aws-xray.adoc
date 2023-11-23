@@ -2,7 +2,7 @@
 :doctitle: AWS XRay
 :shortname: aws-xray
 :artifactid: camel-aws-xray
-:description: Distributed tracing using AWS XRay
+:description: Enable Distributed tracing using AWS XRay
 :since: 2.21
 :supportlevel: Stable
 :tabs-sync-option:
