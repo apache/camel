@@ -86,7 +86,7 @@ class BlobOperationsIT extends Base {
     }
 
     @AfterAll
-    public void tearDown() {
+    public void deleteClient() {
         blobContainerClientWrapper.deleteContainer(null, null);
     }
 

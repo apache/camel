@@ -218,11 +218,11 @@ class BlobConsumerIT extends Base {
     }
 
     @AfterAll
-    public void tearDown() {
+    public void deleteContainers() {
         // delete container
-        containerClient.delete();
-        batchContainerClient.delete();
-        prefixContainerClient.delete();
+        containerClient.deleteIfExists();
+        batchContainerClient.deleteIfExists();
+        prefixContainerClient.deleteIfExists();
     }
 
     @Override
