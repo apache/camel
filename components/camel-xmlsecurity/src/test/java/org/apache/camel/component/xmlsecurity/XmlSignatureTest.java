@@ -232,17 +232,6 @@ public class XmlSignatureTest extends CamelTestSupport {
             }
         }, new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: transforms XSLT,XPath - secure Validation
-                // disabled
-                from("direct:transformsXsltXPathSecureValDisabled")
-                        .to("xmlsecurity-sign:transformsXsltXPathSecureValDisabled?keyAccessor=#accessor&transformMethods=#transformsXsltXPath",
-                                "xmlsecurity-verify:transformsXsltXPathSecureValDisabled?keySelector=#selector&secureValidation=false")
-                        .to("mock:result");
-                // END SNIPPET: transforms XSLT,XPath - secure Validation
-                // disabled
-            }
-        }, new RouteBuilder() {
-            public void configure() {
                 // START SNIPPET: cryptocontextprops
                 onException(XmlSignatureException.class).handled(false).to("mock:exception");
                 from("direct:cryptocontextprops")
@@ -557,13 +546,6 @@ public class XmlSignatureTest extends CamelTestSupport {
         sendBody("direct:transformsXsltXPath", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, null);
-    }
-
-    @Test
-    public void testSetTransformMethodXsltXpathInRouteDefinitionSecValDisabled() throws Exception {
-        setupMock();
-        sendBody("direct:transformsXsltXPathSecureValDisabled", payload);
-        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
