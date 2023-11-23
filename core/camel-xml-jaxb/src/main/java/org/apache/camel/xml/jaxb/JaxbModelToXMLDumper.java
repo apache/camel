@@ -58,12 +58,12 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 
+import static org.apache.camel.xml.jaxb.JaxbHelper.enrichLocations;
 import static org.apache.camel.xml.jaxb.JaxbHelper.extractNamespaces;
 import static org.apache.camel.xml.jaxb.JaxbHelper.extractSourceLocations;
 import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
 import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
 import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
-import static org.apache.camel.xml.jaxb.JaxbHelper.removeAutoAssignedIds;
 import static org.apache.camel.xml.jaxb.JaxbHelper.resolveEndpointDslUris;
 
 /**
@@ -201,8 +201,9 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                         pc.setLocalProperties(null);
                     }
 
-                    if (!changed.get()) {
-                        changed.set(!text.equals(after));
+                    boolean updated = !text.equals(after);
+                    if (updated && !changed.get()) {
+                        changed.set(true);
                     }
 
                     return after;
@@ -212,7 +213,6 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // okay there were some property placeholder or delegate endpoints
             // replaced so re-create the model
             if (changed.get()) {
-                removeAutoAssignedIds(dom.getDocumentElement());
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
                 xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy, false, generatedIds);
@@ -264,34 +264,6 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             for (int i = 0; i < node.getChildNodes().getLength(); i++) {
                 Node child = node.getChildNodes().item(i);
                 sanitizeXml(child, generatedIds);
-            }
-        }
-    }
-
-    private static void enrichLocations(Node node, Map<String, KeyValueHolder<Integer, String>> locations) {
-        if (node instanceof Element) {
-            Element el = (Element) node;
-
-            // from should grab it from parent (route)
-            String id = el.getAttribute("id");
-            if ("from".equals(el.getNodeName())) {
-                Node parent = el.getParentNode();
-                if (parent instanceof Element) {
-                    id = ((Element) parent).getAttribute("id");
-                }
-            }
-            if (id != null) {
-                var loc = locations.get(id);
-                if (loc != null) {
-                    el.setAttribute("sourceLineNumber", loc.getKey().toString());
-                    el.setAttribute("sourceLocation", loc.getValue());
-                }
-            }
-        }
-        if (node.hasChildNodes()) {
-            for (int i = 0; i < node.getChildNodes().getLength(); i++) {
-                Node child = node.getChildNodes().item(i);
-                enrichLocations(child, locations);
             }
         }
     }
