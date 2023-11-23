@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 MSK</name>
-    <description>Execute different operation on Amazon MSK service</description>
+    <description>Execute different operations on Amazon MSK service</description>
 
     <properties>
     </properties>
