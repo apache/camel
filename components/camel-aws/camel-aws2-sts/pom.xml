@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 STS</name>
-    <description>A Camel Amazon STS Web Service Component Version 2</description>
+    <description>Execute different operations on Amazon STS service</description>
 
     <properties>
     </properties>
