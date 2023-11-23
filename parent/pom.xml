@@ -179,7 +179,7 @@
         <google-cloud-secretmanager-bom-version>2.30.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>23.0.2</graaljs-version>
         <graphql-java-version>21.3</graphql-java-version>
-        <greenmail-version>2.0.0</greenmail-version>
+        <greenmail-version>2.0.1</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <grpc-version>1.57.1</grpc-version>
         <!-- keep grpc-google-auth-library-version in sync with that used by grpc-auth -->
