@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 KMS</name>
-    <description>A Camel Amazon KMS Web Service Component Version 2</description>
+    <description>Execute different operation on Amazon KMS service</description>
 
     <properties>
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
