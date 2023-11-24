@@ -18,9 +18,10 @@ package org.apache.camel.processor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Isolated
 public class ThrottlingGroupingTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
-    private static final int MESSAGE_COUNT = 9;
+    private static final int MESSAGE_COUNT = 20;
     private static final int CONCURRENT_REQUESTS = 2;
-    private volatile int curr;
-    private volatile int max;
+    private Map<String, AtomicInteger> curr;
+    private static int max;
 
     @Test
     public void testGroupingWithSingleConstant() throws Exception {
@@ -74,26 +75,36 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testSendLotsOfMessagesSimultaneouslyButOnlyGetThroughAsConstantThrottleValue() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
+        sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:ga", CONCURRENT_REQUESTS, resultEndpoint);
+    }
+
     private void sendMessagesAndAwaitDelivery(
-            final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint)
+            final int messageCount, final String endpointUri, final int throttle, final MockEndpoint receivingEndpoint)
             throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
+        max = 0;
+        curr = new ConcurrentHashMap<>();
+        // two throttle groups
+        curr.putIfAbsent("1", new AtomicInteger(0));
+        curr.putIfAbsent("2", new AtomicInteger(0));
+        ExecutorService executor = Executors.newFixedThreadPool(messageCount);
         try {
             if (receivingEndpoint != null) {
                 receivingEndpoint.expectedMessageCount(messageCount);
             }
 
             for (int i = 0; i < messageCount; i++) {
-                executor.execute(new Runnable() {
-                    public void run() {
-                        Map<String, Object> headers = new HashMap<>();
-                        if (messageCount % 2 == 0) {
-                            headers.put("key", "1");
-                        } else {
-                            headers.put("key", "2");
-                        }
-                        template.sendBodyAndHeaders(endpointUri, "<message>payload</message>", headers);
+                int finalI = i;
+                executor.execute(() -> {
+                    Map<String, Object> headers = new HashMap<>();
+                    if (finalI % 2 == 0) {
+                        headers.put("key", "1");
+                    } else {
+                        headers.put("key", "2");
                     }
+                    template.sendBodyAndHeaders(endpointUri, "<message>payload</message>", headers);
                 });
             }
 
@@ -104,13 +115,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         } finally {
             executor.shutdownNow();
         }
-    }
-
-    @Test
-    public void testSendLotsOfMessagesSimultaneouslyButOnlyGetThroughAsConstantThrottleValue() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
-        sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:ga", CONCURRENT_REQUESTS, resultEndpoint);
-        assertTrue(max <= CONCURRENT_REQUESTS);
+        assertTrue(max <= throttle);
     }
 
     @Test
@@ -120,38 +125,39 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(MESSAGE_COUNT);
         try {
-            sendMessagesWithHeaderExpression(executor, resultEndpoint, CONCURRENT_REQUESTS, INTERVAL, MESSAGE_COUNT);
+            sendMessagesWithHeaderExpression(executor, resultEndpoint, CONCURRENT_REQUESTS, MESSAGE_COUNT);
         } finally {
             executor.shutdownNow();
         }
     }
 
     private void sendMessagesWithHeaderExpression(
-            final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int intervalMs,
-            final int messageCount)
+            final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int messageCount)
             throws InterruptedException {
         resultEndpoint.expectedMessageCount(messageCount);
 
-        long start = System.nanoTime();
+        max = 0;
+        curr = new ConcurrentHashMap<>();
+        // two throttle groups
+        curr.putIfAbsent("1", new AtomicInteger(0));
+        curr.putIfAbsent("2", new AtomicInteger(0));
         for (int i = 0; i < messageCount; i++) {
-            executor.execute(new Runnable() {
-                public void run() {
-                    Map<String, Object> headers = new HashMap<>();
-                    headers.put("throttleValue", throttle);
-                    if (messageCount % 2 == 0) {
-                        headers.put("key", "1");
-                    } else {
-                        headers.put("key", "2");
-                    }
-                    template.sendBodyAndHeaders("direct:gexpressionHeader", "<message>payload</message>", headers);
+            int finalI = i;
+            executor.execute(() -> {
+                Map<String, Object> headers = new HashMap<>();
+                headers.put("throttleValue", throttle);
+                if (finalI % 2 == 0) {
+                    headers.put("key", "1");
+                } else {
+                    headers.put("key", "2");
                 }
+                template.sendBodyAndHeaders("direct:gexpressionHeader", "<message>payload</message>", headers);
             });
         }
 
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
-        long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-        assertTrue(max <= CONCURRENT_REQUESTS);
+        assertTrue(max <= throttle);
     }
 
     @Override
@@ -167,21 +173,21 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
                 from("direct:ga").throttle(constant(CONCURRENT_REQUESTS), header("key"))
                         .process(exchange -> {
-                            curr++;
+                            curr.get(exchange.getMessage().getHeader("key")).getAndIncrement();
                         })
                         .delay(INTERVAL)
                         .process(exchange -> {
-                            max = Math.max(max, curr--);
+                            max = Math.max(max, curr.get(exchange.getMessage().getHeader("key")).getAndDecrement());
                         })
                         .to("log:gresult", "mock:gresult");
 
                 from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key"))
                         .process(exchange -> {
-                            curr++;
+                            curr.get(exchange.getMessage().getHeader("key")).getAndIncrement();
                         })
                         .delay(INTERVAL)
                         .process(exchange -> {
-                            max = Math.max(max, curr--);
+                            max = Math.max(max, curr.get(exchange.getMessage().getHeader("key")).getAndDecrement());
                         })
                         .to("log:gresult", "mock:gresult");
             }
