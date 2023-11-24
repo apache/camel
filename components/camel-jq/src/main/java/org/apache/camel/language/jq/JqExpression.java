@@ -29,12 +29,12 @@ import net.thisptr.jackson.jq.Versions;
 import net.thisptr.jackson.jq.exception.JsonQueryException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderOrPropertyException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ExpressionResultTypeAware;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
 
@@ -62,35 +62,28 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
 
     @Override
     public void init(CamelContext camelContext) {
-        super.init(camelContext);
+        // avoid initializing multiple times
+        if (this.query == null) {
+            super.init(camelContext);
 
-        this.typeConverter = camelContext.getTypeConverter();
+            if (this.scope == null) {
+                JqLanguage lan = (JqLanguage) camelContext.resolveLanguage("jq");
+                this.scope = Scope.newChildScope(lan.getRootScope());
+            }
 
-        if (this.scope == null) {
-            this.scope = CamelContextHelper.findSingleByType(camelContext, Scope.class);
-        }
+            this.typeConverter = camelContext.getTypeConverter();
+            try {
+                this.query = JsonQuery.compile(this.expression, Versions.JQ_1_6);
+            } catch (JsonQueryException e) {
+                throw new ExpressionIllegalSyntaxException(this.expression, e);
+            }
 
-        if (this.scope == null) {
-            // if no scope is explicit set or no scope is found in the registry,
-            // then a local scope is created and functions are loaded from the
-            // jackson-jq library and the component.
-            this.scope = Scope.newEmptyScope();
-
-            JqFunctions.load(camelContext, scope);
-            JqFunctions.loadLocal(scope);
-        }
-
-        try {
-            this.query = JsonQuery.compile(this.expression, Versions.JQ_1_6);
-        } catch (JsonQueryException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (resultTypeName != null && (resultType == null || resultType == Object.class)) {
-            resultType = camelContext.getClassResolver().resolveClass(resultTypeName);
-        }
-        if (resultType == null || resultType == Object.class) {
-            resultType = JsonNode.class;
+            if (resultTypeName != null && (resultType == null || resultType == Object.class)) {
+                resultType = camelContext.getClassResolver().resolveClass(resultTypeName);
+            }
+            if (resultType == null || resultType == Object.class) {
+                resultType = JsonNode.class;
+            }
         }
     }
 
