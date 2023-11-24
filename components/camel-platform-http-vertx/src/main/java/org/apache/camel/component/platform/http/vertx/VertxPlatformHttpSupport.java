@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -50,6 +49,12 @@ import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
+ * Supporting class for the platform-http-vertx component.
+ *
+ * Please note that many of the methods in this class are part of the component's hot-path, therefore, please be mindful
+ * about the performance implications of the code (i.e.: keep methods small, avoid costly operations, etc).
+ */
 public final class VertxPlatformHttpSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpSupport.class);
     public static final String DEFAULT_CONTENT_TYPE_ON_EXCEPTION = "text/plain; charset=utf-8";
@@ -215,7 +220,7 @@ public final class VertxPlatformHttpSupport {
         } else {
             try {
                 writeResponseAsFallback(promise, camelExchange, body, ctx);
-            } catch (IOException | NoTypeConversionAvailableException e) {
+            } catch (NoTypeConversionAvailableException e) {
                 promise.fail(e);
             }
         }
@@ -224,7 +229,7 @@ public final class VertxPlatformHttpSupport {
     }
 
     private static void writeResponseAsFallback(Promise<Void> promise, Exchange camelExchange, Object body, RoutingContext ctx)
-            throws NoTypeConversionAvailableException, IOException {
+            throws NoTypeConversionAvailableException {
         final TypeConverter tc = camelExchange.getContext().getTypeConverter();
         // Try to convert to ByteBuffer for performance reason
         final ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
@@ -252,15 +257,19 @@ public final class VertxPlatformHttpSupport {
         // Process the InputStream async to avoid blocking the Vert.x event loop on large responses
         AsyncInputStream asyncInputStream = new AsyncInputStream(vertx, context, is);
         asyncInputStream.exceptionHandler(promise::fail);
-        asyncInputStream.endHandler(event -> {
-            response.end().onComplete(result -> {
-                asyncInputStream.close(closeResult -> promise.complete());
-            });
-        });
+        asyncInputStream.endHandler(event -> endHandler(promise, response, asyncInputStream));
 
         // Pump the InputStream content into the HTTP response WriteStream
         Pump pump = Pump.pump(asyncInputStream, response);
         context.runOnContext(event -> pump.start());
+    }
+
+    private static void endHandler(Promise<Void> promise, HttpServerResponse response, AsyncInputStream asyncInputStream) {
+        response.end().onComplete(result -> onComplete(promise, asyncInputStream));
+    }
+
+    private static void onComplete(Promise<Void> promise, AsyncInputStream asyncInputStream) {
+        asyncInputStream.close(closeResult -> promise.complete());
     }
 
     static void populateCamelHeaders(
@@ -301,24 +310,14 @@ public final class VertxPlatformHttpSupport {
         headersMap.put(Exchange.HTTP_RAW_QUERY, request.query());
     }
 
+    // Note: this is in the hot path of the platform http, so be mindful with performance here
     private static void applyHeaderFilterStrategy(
             RoutingContext ctx, Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
             HttpServerRequest request) {
         final MultiMap requestHeaders = request.headers();
-        final String authz = requestHeaders.get("authorization");
-        // store a special header that this request was authenticated using HTTP Basic
-        if (authz != null && authz.trim().startsWith("Basic")) {
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
-                appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
-            }
-        }
+        applyAuthHeaders(headersMap, exchange, headerFilterStrategy, requestHeaders);
         for (String name : requestHeaders.names()) {
-            // add the headers one by one, and use the header filter strategy
-            for (String value : requestHeaders.getAll(name)) {
-                if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                    appendHeader(headersMap, name, value);
-                }
-            }
+            applyHeaders(headersMap, exchange, headerFilterStrategy, name, requestHeaders);
         }
 
         // process uri parameters as headers
@@ -326,24 +325,43 @@ public final class VertxPlatformHttpSupport {
         // continue if the map is not empty, otherwise there are no params
         if (!pathParameters.isEmpty()) {
             for (String name : pathParameters.names()) {
-                for (String value : pathParameters.getAll(name)) {
-                    if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                        appendHeader(headersMap, name, value);
-                    }
-                }
+                applyHeaders(headersMap, exchange, headerFilterStrategy, name, pathParameters);
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            value = addToList(headers, key, value);
+    private static void applyHeaders(
+            Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy, String name,
+            MultiMap requestHeaders) {
+        // add the headers one by one, and use the header filter strategy
+        for (String value : requestHeaders.getAll(name)) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                appendHeader(headersMap, name, value);
+            }
         }
-
-        headers.put(key, value);
     }
 
+    private static void applyAuthHeaders(
+            Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
+            MultiMap requestHeaders) {
+        final String authorization = requestHeaders.get("authorization");
+        // store a special header that this request was authenticated using HTTP Basic
+        if (authorization != null && authorization.trim().startsWith("Basic")) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
+                appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
+            }
+        }
+    }
+
+    static void appendHeader(Map<String, Object> headers, String key, Object value) {
+        if (headers.containsKey(key)) {
+            headers.put(key, addToList(headers, key, value));
+        } else {
+            headers.put(key, value);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     private static Object addToList(Map<String, Object> headers, String key, Object value) {
         Object existing = headers.get(key);
         List<Object> list;
@@ -354,8 +372,7 @@ public final class VertxPlatformHttpSupport {
             list.add(existing);
         }
         list.add(value);
-        value = list;
-        return value;
+        return list;
     }
 
     static boolean isMultiPartFormData(RoutingContext ctx) {
