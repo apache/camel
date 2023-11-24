@@ -407,7 +407,7 @@
         <rssreader-version>3.4.6</rssreader-version>
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.3</saxon-version>
-        <scala-datasonnet-version>2.13.11</scala-datasonnet-version>
+        <scala-datasonnet-version>2.13.12</scala-datasonnet-version>
         <shiro-version>1.13.0</shiro-version>
         <slack-api-model-version>1.30.0</slack-api-model-version>
         <slf4j-api-version>2.0.9</slf4j-api-version>
