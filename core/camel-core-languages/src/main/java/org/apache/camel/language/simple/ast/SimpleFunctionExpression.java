@@ -88,6 +88,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (answer != null) {
             return answer;
         }
+        // custom languages
+        answer = createSimpleCustomLanguage(function, strict);
+        if (answer != null) {
+            return answer;
+        }
 
         // camelContext OGNL
         String remainder = ifStartsWithReturnRemainder("camelContext", function);
@@ -441,6 +446,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 // regular header
                 return ExpressionBuilder.headerExpression(key);
             }
+        }
+
+        return null;
+    }
+
+    private Expression createSimpleCustomLanguage(String function, boolean strict) {
+        // jq
+        String remainder = ifStartsWithReturnRemainder("jq(", function);
+        if (remainder != null) {
+            String exp = StringHelper.beforeLast(remainder, ")");
+            if (exp == null) {
+                throw new SimpleParserException("Valid syntax: ${jq(exp)} was: " + function, token.getIndex());
+            }
+            exp = StringHelper.removeQuotes(exp);
+            return ExpressionBuilder.languageExpression("jq", exp);
         }
 
         return null;

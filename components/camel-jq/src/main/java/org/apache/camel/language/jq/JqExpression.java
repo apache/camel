@@ -36,6 +36,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.MessageHelper;
 
 public class JqExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
 
@@ -217,6 +218,8 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
             if (payload == null) {
                 throw new InvalidPayloadException(exchange, JsonNode.class);
             }
+            // if body is stream cached then reset, so we can re-read it again
+            MessageHelper.resetStreamCache(exchange.getMessage());
         } else {
             if (headerName != null) {
                 payload = exchange.getMessage().getHeader(headerName, JsonNode.class);
