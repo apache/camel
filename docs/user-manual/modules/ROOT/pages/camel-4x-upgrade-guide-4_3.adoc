@@ -19,3 +19,11 @@ the behavior described in the documentation.
 
 When using the `AsyncCommitManager` then the offset will be committed so that the payload is continually retried. This was
 the behavior described in the documentation.
+
+=== throttle
+
+Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests
+per period.
+
+The `throttle` parameter now specifies the maximum number of concurrent requests,
+and there is no longer support for the `timePeriodMillis` option.
