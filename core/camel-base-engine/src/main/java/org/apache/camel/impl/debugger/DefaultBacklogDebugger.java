@@ -792,7 +792,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      * @return          the XML
      */
     private String dumpAsXml(Exchange exchange) {
-        return MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 2, isBodyIncludeStreams(),
+        return MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 2, true,
                 isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars());
     }
@@ -804,7 +804,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      * @return          the JSon
      */
     private String dumpAsJSon(Exchange exchange) {
-        return MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 2, isBodyIncludeStreams(),
+        return MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 2, true,
                 isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars(), true);
     }
