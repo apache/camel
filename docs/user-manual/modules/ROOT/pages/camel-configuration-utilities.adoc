@@ -35,7 +35,7 @@ configuration in the JSSE utility.
 
 === SSLContextParameters
 
-`SSLContextParameters` (`<sslContextParameters` XML tag)
+`SSLContextParameters` (`<sslContextParameters>` XML tag)
 contain the following elements:
 
 * provider (attribute)
