@@ -15,30 +15,51 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class SmbEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":hostname:port";
+    private static final String BASE = ":hostname:port/shareName";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(29);
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
         props.add("bridgeErrorHandler");
+        props.add("delay");
         props.add("domain");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("greedy");
         props.add("hostname");
         props.add("idempotentRepository");
-        props.add("lazyStartProducer");
+        props.add("initialDelay");
         props.add("password");
         props.add("path");
+        props.add("pollStrategy");
         props.add("port");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
         props.add("searchPattern");
+        props.add("sendEmptyMessageWhenIdle");
         props.add("shareName");
         props.add("smbIoBean");
+        props.add("startScheduler");
+        props.add("timeUnit");
+        props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("password");
+        secretProps.add("shareName");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override

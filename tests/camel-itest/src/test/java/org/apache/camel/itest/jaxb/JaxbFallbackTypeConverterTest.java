@@ -18,9 +18,7 @@ package org.apache.camel.itest.jaxb;
 
 import java.io.InputStream;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.itest.jaxb.example.Bar;
@@ -52,16 +50,11 @@ public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
                 // setup the camel property for the PrettyPrint
                 context.getGlobalOptions().put(FallbackTypeConverter.PRETTY_PRINT, "false");
 
-                from("direct:start").process(new Processor() {
-
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        InputStream is = in.getMandatoryBody(InputStream.class);
-                        // make sure we can get the InputStream rightly.
-                        exchange.getMessage().setBody(is);
-                    }
-
+                from("direct:start").process(exchange -> {
+                    Message in = exchange.getIn();
+                    InputStream is = in.getMandatoryBody(InputStream.class);
+                    // make sure we can get the InputStream rightly.
+                    exchange.getMessage().setBody(is);
                 });
             }
         };

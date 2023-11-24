@@ -47,7 +47,6 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
         Path file = testFile(".filestore.dat");
         try (Writer w = Files.newBufferedWriter(file)) {
             w.write(testFile("report.txt").toAbsolutePath().toString() + LS);

@@ -381,6 +381,11 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteSetHeaderDefinition("setHeader", def);
     }
+    public void writeSetHeadersDefinition(
+            SetHeadersDefinition def)
+            throws IOException {
+        doWriteSetHeadersDefinition("setHeaders", def);
+    }
     public void writeSetPropertyDefinition(
             SetPropertyDefinition def)
             throws IOException {
@@ -816,6 +821,9 @@ public class ModelWriter extends BaseWriter {
             Hl7TerserExpression def)
             throws IOException {
         doWriteHl7TerserExpression("hl7terser", def);
+    }
+    public void writeJavaExpression(JavaExpression def) throws IOException {
+        doWriteJavaExpression("java", def);
     }
     public void writeJavaScriptExpression(
             JavaScriptExpression def)
@@ -2178,6 +2186,15 @@ public class ModelWriter extends BaseWriter {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("name", def.getName());
         doWriteExpressionNodeElements(def);
+        endElement(name);
+    }
+    protected void doWriteSetHeadersDefinition(
+            String name,
+            SetHeadersDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteList(null, null, def.getHeaders(), this::doWriteSetHeaderDefinitionRef);
         endElement(name);
     }
     protected void doWriteSetPropertyDefinition(
@@ -3867,6 +3884,17 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteJavaExpression(
+            String name,
+            JavaExpression def)
+            throws IOException {
+        startElement(name);
+        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("preCompile", def.getPreCompile());
+        doWriteAttribute("singleQuotes", def.getSingleQuotes());
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
     protected void doWriteJavaScriptExpression(
             String name,
             JavaScriptExpression def)
@@ -4759,6 +4787,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetBodyDefinition" -> doWriteSetBodyDefinition("setBody", (SetBodyDefinition) v);
                 case "SetExchangePatternDefinition" -> doWriteSetExchangePatternDefinition("setExchangePattern", (SetExchangePatternDefinition) v);
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
+                case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
@@ -4854,6 +4883,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetBodyDefinition" -> doWriteSetBodyDefinition("setBody", (SetBodyDefinition) v);
                 case "SetExchangePatternDefinition" -> doWriteSetExchangePatternDefinition("setExchangePattern", (SetExchangePatternDefinition) v);
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
+                case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
@@ -4905,6 +4935,16 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
+    protected void doWriteSetHeaderDefinitionRef(
+            String n,
+            SetHeaderDefinition v)
+            throws IOException {
+        if (v != null) {
+            switch (v.getClass().getSimpleName()) {
+                case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
+            }
+        }
+    }
     protected void doWriteTemplatedRouteDefinitionRef(
             String n,
             TemplatedRouteDefinition v)
@@ -4949,6 +4989,7 @@ public class ModelWriter extends BaseWriter {
                 case "GroovyExpression" -> doWriteGroovyExpression("groovy", (GroovyExpression) v);
                 case "HeaderExpression" -> doWriteHeaderExpression("header", (HeaderExpression) v);
                 case "Hl7TerserExpression" -> doWriteHl7TerserExpression("hl7terser", (Hl7TerserExpression) v);
+                case "JavaExpression" -> doWriteJavaExpression("java", (JavaExpression) v);
                 case "JavaScriptExpression" -> doWriteJavaScriptExpression("js", (JavaScriptExpression) v);
                 case "JoorExpression" -> doWriteJoorExpression("joor", (JoorExpression) v);
                 case "JqExpression" -> doWriteJqExpression("jq", (JqExpression) v);

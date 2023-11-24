@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-parent</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws2-sts</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 STS</name>
-    <description>A Camel Amazon STS Web Service Component Version 2</description>
+    <description>Execute different operations on Amazon STS service</description>
 
     <properties>
     </properties>

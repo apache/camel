@@ -24,7 +24,8 @@ Using Bindy, you can bind data from sources such as :
 to one or many Plain Old Java Object (POJO). Bindy converts the data
 according to the type of the java property. POJOs can be linked together
 with one-to-many relationships available in some cases. Moreover, for
-data type like Date, Double, Float, Integer, Short, Long and BigDecimal,
+data type like Date, LocalDate, LocalTime, LocalDateTime, ZonedDateTime,
+Double, Float, Integer, Short, Long and BigDecimal,
 you can provide the pattern to apply during the formatting of the
 property.
 
@@ -1681,6 +1682,7 @@ FormattingOptions:
 * Long
 * Short
 * String
+* ZonedDateTime
 
 The DefaultFormatFactory can be overridden by providing an instance of
 FactoryRegistry in the registry in use (e.g. Spring or JNDI).

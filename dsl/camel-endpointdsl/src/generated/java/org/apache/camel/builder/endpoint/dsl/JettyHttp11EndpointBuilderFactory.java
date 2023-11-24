@@ -1051,6 +1051,43 @@ public interface JettyHttp11EndpointBuilderFactory {
             return this;
         }
         /**
+         * The max idle time (in milli seconds) is applied to an HTTP request
+         * for IO operations and delayed dispatch. Idle time 0 implies an
+         * infinite timeout, -1 (default) implies no HTTP channel timeout and
+         * the connection timeout is used instead.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: consumer (advanced)
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttp11EndpointBuilder idleTimeout(long idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
+         * The max idle time (in milli seconds) is applied to an HTTP request
+         * for IO operations and delayed dispatch. Idle time 0 implies an
+         * infinite timeout, -1 (default) implies no HTTP channel timeout and
+         * the connection timeout is used instead.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: consumer (advanced)
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttp11EndpointBuilder idleTimeout(
+                String idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
          * If this option is true then IN exchange Body of the exchange will be
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.

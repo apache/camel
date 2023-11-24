@@ -1181,6 +1181,18 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     boolean isBacklogTracingStandby();
 
     /**
+     * Whether to set backlog debugger on standby. If on standby then the backlog debugger is installed and made
+     * available. Then the backlog debugger can be enabled later at runtime via JMX or via Java API.
+     */
+    void setDebugStandby(boolean debugStandby);
+
+    /**
+     * Whether to set backlog debugger on standby. If on standby then the backlog debugger is installed and made
+     * available. Then the backlog debugger can be enabled later at runtime via JMX or via Java API.
+     */
+    boolean isDebugStandby();
+
+    /**
      * Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this off can
      * reduce the verbosity of tracing when using many route templates, and allow to focus on tracing your own Camel
      * routes only.

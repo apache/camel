@@ -17,24 +17,16 @@
     limitations under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-    ">
-
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <jmxAgent id="jmx" disabled="true"/>
-        <route>
-            <from uri="direct:start"/>
-            <onCompletion onCompleteOnly="true">
-                <to uri="mock:ok"/>
-            </onCompletion>
-            <onCompletion onFailureOnly="true">
-                <to uri="mock:error"/>
-            </onCompletion>
-            <to uri="mock:result"/>
-        </route>
-    </camelContext>
-</beans>
+<routes id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="seda:a"/>
+    <setHeaders>
+      <setHeader name="header1">
+        <simple>${body}</simple>
+      </setHeader>
+       <setHeader name="header2">
+        <xpath>/value2</xpath>
+      </setHeader>
+    </setHeaders>
+  </route>
+</routes>

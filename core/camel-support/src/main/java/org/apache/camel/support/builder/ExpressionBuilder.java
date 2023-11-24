@@ -1169,6 +1169,45 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the message converted to the given type
+     */
+    public static Expression messageExpression(final String name) {
+        return messageExpression(simpleExpression(name));
+    }
+
+    /**
+     * Returns the expression for the message converted to the given type
+     */
+    public static Expression messageExpression(final Expression name) {
+        return new ExpressionAdapter() {
+            private ClassResolver classResolver;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Class<?> type;
+                try {
+                    String text = name.evaluate(exchange, String.class);
+                    type = classResolver.resolveMandatoryClass(text);
+                } catch (ClassNotFoundException e) {
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                }
+                return exchange.getMessage(type);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                name.init(context);
+                classResolver = context.getClassResolver();
+            }
+
+            @Override
+            public String toString() {
+                return "messageAs[" + name + "]";
+            }
+        };
+    }
+
+    /**
      * Returns a functional expression for the IN message
      */
     public static Expression messageExpression(final Function<Message, Object> function) {

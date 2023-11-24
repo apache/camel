@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jira</artifactId>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
-            <version>5.1.3</version>
+            <version>5.1.4</version>
             <!-- force jar type -->
             <type>jar</type>
         </dependency>

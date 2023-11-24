@@ -119,6 +119,8 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
                         if (s.startsWith("[") && s.endsWith("]")) {
                             s = s.substring(1, s.length() - 1);
                         }
+                        // remove white-space noise
+                        s = s.replace(" ", "");
                         model.setJdk(s);
                     }
                     line = lr.readLine();

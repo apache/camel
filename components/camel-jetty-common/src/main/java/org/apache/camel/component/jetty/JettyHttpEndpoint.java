@@ -80,6 +80,11 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "security",
               description = "To configure security using SSLContextParameters")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "consumer,advanced", defaultValue = "-1",
+              description = "The max idle time (in milli seconds) is applied to an HTTP request for IO operations and delayed dispatch."
+                            +
+                            " Idle time 0 implies an infinite timeout, -1 (default) implies no HTTP channel timeout and the connection timeout is used instead.")
+    private long idleTimeout = -1;
 
     protected JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) {
         super(uri, component, httpURL);
@@ -234,6 +239,17 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public long getIdleTimeout() {
+        return idleTimeout;
+    }
+
+    /**
+     * The max idle time is applied to an HTTP request for IO operations and delayed dispatch.
+     */
+    public void setIdleTimeout(long idleTimeout) {
+        this.idleTimeout = idleTimeout;
     }
 
     public Map<String, String> getFilterInitParameters() {

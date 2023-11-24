@@ -237,6 +237,7 @@ public abstract class AbstractCamelContext extends BaseService
     private String tracingLoggingFormat;
     private Boolean modeline = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
+    private Boolean debugStandby = Boolean.FALSE;
     private String debugBreakpoints;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
@@ -665,11 +666,17 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void removeEndpoint(Endpoint endpoint) throws Exception {
-        // optimize as uri on endpoint is already normalized
-        String uri = endpoint.getEndpointUri();
-        NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
-        Endpoint oldEndpoint = endpoints.remove(key);
+        Endpoint oldEndpoint = null;
+        NormalizedUri oldKey = null;
+        for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
+            if (endpoint == entry.getValue()) {
+                oldKey = entry.getKey();
+                oldEndpoint = endpoint;
+                break;
+            }
+        }
         if (oldEndpoint != null) {
+            endpoints.remove(oldKey);
             try {
                 stopServices(oldEndpoint);
             } catch (Exception e) {
@@ -1732,6 +1739,16 @@ public abstract class AbstractCamelContext extends BaseService
         return debug;
     }
 
+    @Override
+    public void setDebugStandby(boolean debugStandby) {
+        this.debugStandby = debugStandby;
+    }
+
+    @Override
+    public boolean isDebugStandby() {
+        return debugStandby != null && debugStandby;
+    }
+
     public void setDebuggingBreakpoints(String debugBreakpoints) {
         this.debugBreakpoints = debugBreakpoints;
     }
@@ -2248,7 +2265,7 @@ public abstract class AbstractCamelContext extends BaseService
                 }
             }
         }
-        if (!debuggerDetected && isDebugging()) {
+        if (!debuggerDetected && (isDebugging() || isDebugStandby())) {
             // debugging enabled but camel-debug was not auto-detected from classpath
             // so install default debugger
             BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(this);
@@ -2314,9 +2331,6 @@ public abstract class AbstractCamelContext extends BaseService
                 getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
             }
             addService(runtimeEndpointRegistry, true, true);
-        }
-        // setup debugger if not already installed
-        if (isDebugging() && getDebugger() == null) {
         }
 
         bindDataFormats();

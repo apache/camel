@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * maximum number of messages has been processed.
  */
 public class MainDurationEventNotifier extends EventNotifierSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(MainLifecycleStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MainDurationEventNotifier.class);
 
     private enum Action {
         SHUTDOWN,

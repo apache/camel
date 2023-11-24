@@ -44,7 +44,8 @@ public class AWS2SQSCloudEventDataTypeTransformer extends Transformer {
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.aws.sqs.receiveMessage");
 
         if (message.getHeaders().containsKey(Sqs2Constants.RECEIPT_HANDLE)) {
-            headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE, "aws.sqs.queue." + message.getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
+            headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
+                    "aws.sqs.queue." + message.getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
         }
 
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(Sqs2Constants.MESSAGE_ID, String.class));

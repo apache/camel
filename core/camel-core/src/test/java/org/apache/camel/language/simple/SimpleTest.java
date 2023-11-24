@@ -749,6 +749,21 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testMessageAs() throws Exception {
+        // should be false as message is default
+        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).hasAttachments}", false);
+        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments}", false);
+
+        MyAttachmentMessage msg = new MyAttachmentMessage(exchange);
+        msg.setBody("<hello id='m123'>world!</hello>");
+        exchange.setMessage(msg);
+
+        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).hasAttachments}", true);
+        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments}", true);
+        assertExpression("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).size}", "42");
+    }
+
+    @Test
     public void testBodyAs() throws Exception {
         assertExpression("${bodyAs(String)}", "<hello id='m123'>world!</hello>");
         assertExpression("${bodyAs('String')}", "<hello id='m123'>world!</hello>");
@@ -2254,4 +2269,5 @@ public class SimpleTest extends LanguageTestSupport {
             return new Object[] { "Hallo", "World", "!" };
         }
     }
+
 }

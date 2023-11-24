@@ -188,6 +188,10 @@ const sources = {
     },
   },
   eips: {
+    asciidoc: {
+      destination: '../core/camel-core-engine/src/main/docs/modules/eips/pages',
+      filter: (path) => !path.endsWith('enterprise-integration-patterns.adoc')
+    },
     json: {
       source: [
         '../core/camel-core-model/src/generated/resources/org/apache/camel/model/**/*.json',
@@ -304,7 +308,15 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
 
   // generates sorted & grouped nav.adoc file from a set of .adoc
   // files at the destination
-  const createNav = (destination) => {
+  const createNav = (destination, filter) => {
+    const filterFn = through2.obj((file, enc, done) => {
+      if (filter && !filter(file.path)) {
+        done() // skip
+      } else {
+        done(null, file) // process
+      }
+    })
+
     return gulp.src(`${type}-nav.adoc.template`)
       .pipe(insertGeneratedNotice())
       .pipe(
@@ -312,7 +324,9 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
           gulp.src([
             `${destination}/**/*.adoc`,
             `!${destination}/index.adoc`,
-          ]).pipe(sort(compare)),
+          ])
+          .pipe(filterFn)
+          .pipe(sort(compare)),
           {
             removeTags: true,
             transform: (filename, file) => {
@@ -400,7 +414,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
   // accumulates all tasks performed per _kind_.
   const allTasks = []
 
-  if (asciidoc) {
+  if (asciidoc && asciidoc.source) {
     allTasks.push(
       gulp.series(
         named(`clean:asciidoc:${type}`, clean, asciidoc.destination, asciidoc.keep),
@@ -429,11 +443,19 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
   }
 
   if (json) {
-    allTasks.push(
-      gulp.series(
-        named(`clean:json:${type}`, clean, json.destination, json.keep),
-        named(`symlink:json:${type}`, createSymlinks, json.source, json.destination, json.filter)
+    let tasks = [
+      named(`clean:json:${type}`, clean, json.destination, json.keep),
+      named(`symlink:json:${type}`, createSymlinks, json.source, json.destination, json.filter)
+    ]
+
+    if (asciidoc && !asciidoc.source) {
+      tasks.push(
+        named(`nav:asciidoc:${type}`, createNav, asciidoc.destination, asciidoc.filter)
       )
+    }
+
+    allTasks.push(
+      gulp.series(tasks)
     )
   }
 

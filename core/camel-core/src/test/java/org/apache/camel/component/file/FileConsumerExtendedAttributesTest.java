@@ -17,7 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,31 +36,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
     private static final String FILE = "attributes.txt";
-    private final String root = testDirectory().toString();
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
-        Files.createFile(Paths.get(root, "basic", FILE));
-        Files.createFile(Paths.get(root, "basic-as-default", FILE));
-        Files.createFile(Paths.get(root, "basic-as-default-with-filter", FILE));
-        Files.createFile(Paths.get(root, "posix", FILE));
+        Files.createFile(testDirectory().resolve(Path.of("basic", FILE)));
+        Files.createFile(testDirectory().resolve(Path.of("basic-as-default", FILE)));
+        Files.createFile(testDirectory().resolve(Path.of("basic-as-default-with-filter", FILE)));
+        Files.createFile(testDirectory().resolve(Path.of("posix", FILE)));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                fromF("file://%s/basic?initialDelay=0&delay=10&extendedAttributes=basic:*", root).convertBodyTo(String.class)
+                fromF("file://%s/basic?initialDelay=0&delay=10&extendedAttributes=basic:*", testDirectory())
+                        .convertBodyTo(String.class)
                         .to("mock:basic");
-                fromF("file://%s/basic-as-default?initialDelay=0&delay=10&extendedAttributes=*", root)
+                fromF("file://%s/basic-as-default?initialDelay=0&delay=10&extendedAttributes=*", testDirectory())
                         .convertBodyTo(String.class).to("mock:basic-as-default");
                 fromF("file://%s/basic-as-default-with-filter?initialDelay=0&delay=10&extendedAttributes=size,lastModifiedTime,lastAccessTime",
-                        root).convertBodyTo(String.class)
+                        testDirectory()).convertBodyTo(String.class)
                         .to("mock:basic-as-default-with-filter");
-                fromF("file://%s/posix?initialDelay=0&delay=10&extendedAttributes=posix:*", root).convertBodyTo(String.class)
+                fromF("file://%s/posix?initialDelay=0&delay=10&extendedAttributes=posix:*", testDirectory())
+                        .convertBodyTo(String.class)
                         .to("mock:posix");
             }
         };

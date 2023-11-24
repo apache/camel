@@ -57,7 +57,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="dead">
         <route>
-            <from uri="file://target/data/SpringDeadLetterChannelUseOriginalBodyWithFileTest?initialDelay=0&amp;delay=10&amp;noop=true"/>
+            <from uri="file:{{testDirectory}}?initialDelay=0&amp;delay=10&amp;noop=true"/>
             <transform><simple>${in.body} World</simple></transform>
             <process ref="myThrowProcessor"/>
         </route>

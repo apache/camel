@@ -21,11 +21,15 @@ import org.apache.camel.component.wordpress.WordpressEndpoint;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.component.wordpress.api.model.Post;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Wordpress Post producer.
  */
 public class WordpressPostProducer extends AbstractWordpressProducer<Post> {
+    private static final Logger LOG = LoggerFactory.getLogger(WordpressPostProducer.class);
+
     private WordpressServicePosts servicePosts;
 
     public WordpressPostProducer(WordpressEndpoint endpoint) {

@@ -24,8 +24,7 @@ import org.junit.jupiter.api.Test;
 
 public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupport {
 
-    private String fileUrl = fileUri();
-    private String base = testDirectory().toAbsolutePath().toString();
+    private String base;
 
     @Test
     public void testMoveToSubDir() throws Exception {
@@ -37,15 +36,16 @@ public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupp
         mock.expectedFileExists(base + "/.done/hello.txt");
         mock.expectedFileExists(base + "/.done/goodday.txt");
 
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        base = testDirectory().toAbsolutePath().toString();
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

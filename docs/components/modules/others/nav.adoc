@@ -32,6 +32,7 @@
 ** xref:mail-microsoft-oauth.adoc[Mail Microsoft Oauth]
 ** xref:main.adoc[Main]
 ** xref:observation.adoc[Micrometer Observability]
+** xref:micrometer-prometheus.adoc[Micrometer Prometheus]
 ** xref:microprofile-config.adoc[Microprofile Config]
 ** xref:microprofile-fault-tolerance.adoc[Microprofile Fault Tolerance]
 ** xref:microprofile-health.adoc[Microprofile Health]

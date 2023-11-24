@@ -221,7 +221,7 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
  */
 public class MavenDownloaderImpl extends ServiceSupport implements MavenDownloader {
 
-    public static final Logger LOG = LoggerFactory.getLogger(MavenDownloader.class);
+    public static final Logger LOG = LoggerFactory.getLogger(MavenDownloaderImpl.class);
 
     public static final String MAVEN_CENTRAL_REPO = "https://repo1.maven.org/maven2";
     public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";

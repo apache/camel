@@ -133,6 +133,9 @@
           "setHeader" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SetHeaderDefinition"
           },
+          "setHeaders" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SetHeadersDefinition"
+          },
           "setProperty" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SetPropertyDefinition"
           },
@@ -853,6 +856,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -939,6 +944,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -984,6 +990,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -1072,6 +1080,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -1117,6 +1126,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -1229,6 +1240,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -1352,6 +1364,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -1431,6 +1445,14 @@
             "properties" : {
               "hl7terser" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.Hl7TerserExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "java" ],
+            "properties" : {
+              "java" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
               }
             }
           }, {
@@ -1571,6 +1593,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -1702,6 +1725,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -1784,6 +1809,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -1922,6 +1948,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -2024,6 +2052,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -2427,6 +2456,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -2519,6 +2550,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -3586,6 +3618,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -3693,6 +3727,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -3823,6 +3858,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -3972,6 +4009,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -4312,6 +4350,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -4415,6 +4455,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -4974,6 +5015,8 @@
                 }, {
                   "required" : [ "hl7terser" ]
                 }, {
+                  "required" : [ "java" ]
+                }, {
                   "required" : [ "joor" ]
                 }, {
                   "required" : [ "jq" ]
@@ -5061,6 +5104,7 @@
             "groovy" : { },
             "header" : { },
             "hl7terser" : { },
+            "java" : { },
             "joor" : { },
             "jq" : { },
             "js" : { },
@@ -5252,6 +5296,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -5323,6 +5369,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -5368,6 +5415,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -5440,6 +5489,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -5522,6 +5572,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -5598,6 +5650,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -5617,6 +5670,38 @@
           "expression" : { }
         },
         "required" : [ "name" ]
+      },
+      "org.apache.camel.model.SetHeadersDefinition" : {
+        "title" : "Set Headers",
+        "description" : "Allows to set multiple headers on the message at the same time.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "headers" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.SetHeaderDefinition"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          }
+        }
       },
       "org.apache.camel.model.SetPropertyDefinition" : {
         "title" : "Set Property",
@@ -5644,6 +5729,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -5721,6 +5808,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -5767,6 +5855,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -5844,6 +5934,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -5889,6 +5980,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -6034,6 +6127,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -6353,6 +6447,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -6449,6 +6545,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -6683,6 +6780,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -6764,6 +6863,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -7329,6 +7429,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "java" ]
+              }, {
                 "required" : [ "joor" ]
               }, {
                 "required" : [ "jq" ]
@@ -7405,6 +7507,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -7467,6 +7570,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -7545,6 +7650,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -7590,6 +7696,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
               }, {
@@ -7668,6 +7776,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -12179,6 +12288,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "java" ],
+            "properties" : {
+              "java" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "joor" ],
             "properties" : {
               "joor" : {
@@ -12315,6 +12432,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "java" : { },
           "joor" : { },
           "jq" : { },
           "js" : { },
@@ -12437,6 +12555,49 @@
         } ],
         "required" : [ "expression" ]
       },
+      "org.apache.camel.model.language.JavaExpression" : {
+        "title" : "Java",
+        "description" : "Evaluates a Java (Java compiled once at runtime) expression.",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "expression" : {
+              "type" : "string",
+              "title" : "Expression",
+              "description" : "The expression value in your chosen language syntax"
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "Sets the id of this node"
+            },
+            "preCompile" : {
+              "type" : "boolean",
+              "title" : "Pre Compile",
+              "description" : "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation."
+            },
+            "resultType" : {
+              "type" : "string",
+              "title" : "Result Type",
+              "description" : "Sets the class of the result type (type from output)"
+            },
+            "singleQuotes" : {
+              "type" : "boolean",
+              "title" : "Single Quotes",
+              "description" : "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings."
+            },
+            "trim" : {
+              "type" : "boolean",
+              "title" : "Trim",
+              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
+      },
       "org.apache.camel.model.language.JavaScriptExpression" : {
         "title" : "JavaScript",
         "description" : "Evaluates a JavaScript expression.",
@@ -12473,6 +12634,7 @@
       "org.apache.camel.model.language.JoorExpression" : {
         "title" : "jOOR",
         "description" : "Evaluates a jOOR (Java compiled once at runtime) expression.",
+        "deprecated" : true,
         "oneOf" : [ {
           "type" : "string"
         }, {

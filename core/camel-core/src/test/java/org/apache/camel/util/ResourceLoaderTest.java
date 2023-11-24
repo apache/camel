@@ -62,12 +62,12 @@ public class ResourceLoaderTest extends TestSupport {
 
     @Test
     public void testLoadFileWithSpace() throws Exception {
-        createDirectory("target/data/my space");
-        copyFile(new File("src/test/resources/log4j2.properties"), new File("target/data/my space/log4j2.properties"));
+        testDirectory("target/data/my space", true);
+        copyFile(new File("src/test/resources/log4j2.properties"), testFile("target/data/my space/log4j2.properties").toFile());
 
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource
-                = PluginHelper.getResourceLoader(context).resolveResource("file:target/data/my%20space/log4j2.properties");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                "file:" + testDirectory().toString() + "/target/data/my%20space/log4j2.properties");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);

@@ -28,12 +28,9 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
 
-    private final String baseUrl = fileUri();
-    private final String fileUrl = fileUri("?initialDelay=0&delay=10");
-
     @BeforeEach
     void sendDotFile() {
-        template.sendBodyAndHeader(baseUrl, "This is a dot file", Exchange.FILE_NAME, ".skipme");
+        template.sendBodyAndHeader(fileUri(), "This is a dot file", Exchange.FILE_NAME, ".skipme");
     }
 
     @Test
@@ -50,7 +47,7 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(baseUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
     }
@@ -59,7 +56,7 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

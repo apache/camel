@@ -49,7 +49,7 @@ public final class KnownReposResolver {
                 }
                 addRepos(map);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
     }

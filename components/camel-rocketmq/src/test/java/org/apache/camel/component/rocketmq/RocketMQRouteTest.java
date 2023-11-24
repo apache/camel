@@ -18,13 +18,14 @@
 package org.apache.camel.component.rocketmq;
 
 import java.io.IOException;
-import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,8 @@ public class RocketMQRouteTest extends RocketMQTestSupport {
     private static final String RESULT_ENDPOINT_URI = "mock:result";
 
     private MockEndpoint resultEndpoint;
+
+    private CountDownLatch latch = new CountDownLatch(1);
 
     @BeforeAll
     static void beforeAll() throws Exception {
@@ -70,7 +73,9 @@ public class RocketMQRouteTest extends RocketMQTestSupport {
 
             @Override
             public void configure() {
-                from(START_ENDPOINT_URI).to(RESULT_ENDPOINT_URI);
+                from(START_ENDPOINT_URI)
+                        .process(e -> latch.countDown())
+                        .to(RESULT_ENDPOINT_URI);
             }
         };
     }
@@ -84,7 +89,8 @@ public class RocketMQRouteTest extends RocketMQTestSupport {
 
         template.sendBody(START_ENDPOINT_URI, EXPECTED_MESSAGE);
 
-        Awaitility.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> resultEndpoint.assertIsSatisfied());
+        Assertions.assertTrue(latch.await(5, TimeUnit.SECONDS), "Should have received a message");
+        resultEndpoint.assertIsSatisfied();
     }
 
     @AfterAll

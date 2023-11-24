@@ -4,7 +4,7 @@
     "name": "joor",
     "title": "jOOR",
     "description": "Evaluates a jOOR (Java compiled once at runtime) expression.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.7.0",
     "label": "language",
     "javaType": "org.apache.camel.model.language.JoorExpression",

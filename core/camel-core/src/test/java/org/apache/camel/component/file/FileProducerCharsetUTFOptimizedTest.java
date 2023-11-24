@@ -23,7 +23,6 @@ import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,11 +59,6 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
 
         byte[] data = Files.readAllBytes(testFile("output.txt"));
         assertArrayEquals(utf, data);
-    }
-
-    @AfterEach
-    public void deleteData() {
-        deleteDirectory(testDirectory().toFile());
     }
 
     @Override

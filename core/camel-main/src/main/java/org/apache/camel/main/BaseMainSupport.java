@@ -51,13 +51,16 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
+import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.CamelTracingService;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
@@ -567,9 +570,21 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void configureRoutesLoader(CamelContext camelContext) {
         // use main based routes loader
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
+
+        // need to configure compile work dir as its used from routes loader when it discovered code to dynamic compile
+        if (mainConfigurationProperties.getCompileWorkDir() != null) {
+            CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+            if (cs == null) {
+                cs = new DefaultCompileStrategy();
+                ecc.addContextPlugin(CompileStrategy.class, cs);
+            }
+            cs.setWorkDir(mainConfigurationProperties.getCompileWorkDir());
+        }
+
         RoutesLoader loader = new DefaultRoutesLoader();
         loader.setIgnoreLoadingError(mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
-        camelContext.getCamelContextExtension().addContextPlugin(RoutesLoader.class, loader);
+        ecc.addContextPlugin(RoutesLoader.class, loader);
     }
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
@@ -952,6 +967,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties healthProperties = new OrderedLocationProperties();
         OrderedLocationProperties lraProperties = new OrderedLocationProperties();
         OrderedLocationProperties otelProperties = new OrderedLocationProperties();
+        OrderedLocationProperties metricsProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeTemplateProperties = new OrderedLocationProperties();
         OrderedLocationProperties beansProperties = new OrderedLocationProperties();
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
@@ -1015,6 +1031,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 otelProperties.put(loc, optionKey(option), value);
+            } else if (key.startsWith("camel.metrics.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(14);
+                validateOptionAndValue(key, option, value);
+                metricsProperties.put(loc, optionKey(option), value);
             } else if (key.startsWith("camel.routeTemplate")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1125,6 +1147,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!otelProperties.isEmpty() || mainConfigurationProperties.hasOtelConfiguration()) {
             LOG.debug("Auto-configuring OpenTelemetry from loaded properties: {}", otelProperties.size());
             setOtelProperties(camelContext, otelProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!metricsProperties.isEmpty() || mainConfigurationProperties.hasMetricsConfiguration()) {
+            LOG.debug("Auto-configuring Micrometer metrics from loaded properties: {}", metricsProperties.size());
+            setMetricsProperties(camelContext, metricsProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
         if (!devConsoleProperties.isEmpty()) {
@@ -1396,6 +1423,28 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    private void setMetricsProperties(
+            CamelContext camelContext, OrderedLocationProperties metricsProperties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        String loc = metricsProperties.getLocation("enabled");
+        Object obj = metricsProperties.remove("enabled");
+        if (ObjectHelper.isNotEmpty(obj)) {
+            autoConfiguredProperties.put(loc, "camel.metrics.enabled", obj.toString());
+        }
+        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        if (enabled) {
+            CamelMetricsService micrometer = resolveMicrometerService(camelContext);
+            setPropertiesOnTarget(camelContext, micrometer, metricsProperties, "camel.metrics.", failIfNotSet, true,
+                    autoConfiguredProperties);
+            if (camelContext.hasService(CamelMetricsService.class) == null) {
+                // add as service so micrometer can be active
+                camelContext.addService(micrometer, true, true);
+            }
+        }
+    }
+
     private void setDevConsoleProperties(
             CamelContext camelContext, OrderedLocationProperties properties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties) {
@@ -1526,7 +1575,7 @@ public abstract class BaseMainSupport extends BaseService {
         setPropertiesOnTarget(camelContext, config, properties, "camel.debug.",
                 failIfNotSet, true, autoConfiguredProperties);
 
-        if (!config.isEnabled()) {
+        if (!config.isEnabled() && !config.isStandby()) {
             return;
         }
 
@@ -1534,9 +1583,11 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.setSourceLocationEnabled(true);
 
         // enable debugger on camel
-        camelContext.setDebugging(true);
+        camelContext.setDebugging(config.isEnabled());
+        camelContext.setDebugStandby(config.isStandby());
 
         BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
+        debugger.setStandby(config.isStandby());
         debugger.setInitialBreakpoints(config.getBreakpoints());
         debugger.setSingleStepIncludeStartEnd(config.isSingleStepIncludeStartEnd());
         debugger.setBodyMaxChars(config.getBodyMaxChars());
@@ -1552,7 +1603,10 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
             @Override
             public void onContextStarted(CamelContext context) {
-                debugger.enableDebugger();
+                // only enable debugger if not in standby mode
+                if (!debugger.isStandby()) {
+                    debugger.enableDebugger();
+                }
             }
 
             @Override
@@ -2047,6 +2101,20 @@ public abstract class BaseMainSupport extends BaseService {
                     .newInstance("opentelemetry-tracer", CamelTracingService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find OpenTelemetryTracer on classpath. Add camel-opentelemetry to classpath."));
+        }
+        return answer;
+    }
+
+    private static CamelMetricsService resolveMicrometerService(CamelContext camelContext) throws Exception {
+        CamelMetricsService answer = camelContext.hasService(CamelMetricsService.class);
+        if (answer == null) {
+            answer = camelContext.getRegistry().findSingleByType(CamelMetricsService.class);
+        }
+        if (answer == null) {
+            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                    .newInstance("micrometer-prometheus", CamelMetricsService.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find CamelMetricsService on classpath. Add camel-micrometer-prometheus to classpath."));
         }
         return answer;
     }

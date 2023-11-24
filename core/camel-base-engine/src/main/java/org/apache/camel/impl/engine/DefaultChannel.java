@@ -174,7 +174,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
-        if (route.isDebugging()) {
+        if (camelContext.isDebugStandby() || route.isDebugging()) {
             final Debugger customDebugger = camelContext.getDebugger();
             if (customDebugger != null) {
                 // use custom debugger
@@ -186,14 +186,20 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 if (!camelContext.hasService(debugger)) {
                     camelContext.addService(debugger);
                 }
-                backlogDebuggerSetupInitialBreakpoints(definition, routeDefinition, first, debugger, targetOutputDef);
-                if (first && debugger.isSingleStepIncludeStartEnd()) {
-                    // add breakpoint on route input instead of first node
-                    addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
-                    // debugger captures message history, and we need to capture history of incoming
-                    addAdvice(new MessageHistoryAdvice(camelContext.getMessageHistoryFactory(), routeDefinition.getInput()));
+                // skip debugging inside rest-dsl (just a tiny facade) or kamelets / route-templates
+                boolean skip = routeDefinition != null
+                        && (routeDefinition.isCreatedFromRest() || routeDefinition.isCreatedFromTemplate());
+                if (!skip && routeDefinition != null) {
+                    backlogDebuggerSetupInitialBreakpoints(definition, routeDefinition, first, debugger, targetOutputDef);
+                    if (first && debugger.isSingleStepIncludeStartEnd()) {
+                        // add breakpoint on route input instead of first node
+                        addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
+                        // debugger captures message history, and we need to capture history of incoming
+                        addAdvice(
+                                new MessageHistoryAdvice(camelContext.getMessageHistoryFactory(), routeDefinition.getInput()));
+                    }
+                    addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
                 }
-                addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
             }
         }
 

@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -210,8 +211,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         configureChild(output);
         getOutputs().add(output);
 
-        if (context != null && (context.isSourceLocationEnabled() || context.isDebugging() || context.isTracing())) {
-            // we want to capture source location:line for every output
+        if (context != null && (context.isSourceLocationEnabled()
+                || context.isDebugging() || context.isDebugStandby()
+                || context.isTracing() || context.isTracingStandby())) {
+            // we want to capture source location:line for every output (also when debugging or tracing enabled/standby)
             Resource resource = this instanceof ResourceAware ? ((ResourceAware) this).getResource() : null;
             ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
         }
@@ -2573,6 +2576,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type setHeader(String name, Expression expression) {
         SetHeaderDefinition answer = new SetHeaderDefinition(name, expression);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Adds a processor which sets several headers on the IN message
+     *
+     * @param  headerNamesAndValues a sequence of header names and values or a Map containing names and values
+     * @return                      the builder
+     */
+    public Type setHeaders(Object... headerNamesAndValues) {
+        SetHeadersDefinition answer = new SetHeadersDefinition(headerNamesAndValues);
         addOutput(answer);
         return asType();
     }

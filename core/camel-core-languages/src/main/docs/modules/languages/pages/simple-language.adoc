@@ -134,6 +134,13 @@ classname
 |exchangeProperty.foo.*OGNL* |Object |refer to the foo property on the exchange and invoke its
 value using a Camel OGNL expression.
 
+|messageAs(_type_) |Type |Converts the message to the given type determined by its
+classname. The converted message can be null.
+
+|messageAs(_type_).*OGNL* |Object |Converts the message to the given type determined by its
+classname and then invoke methods using a Camel OGNL expression. The
+converted message can be null.
+
 |sys.foo |String |refer to the JVM system property
 
 |sysenv.foo |String |refer to the system environment variable
@@ -244,6 +251,9 @@ You can choose between `default`, `classic`, `short` and `simple` as the type.
 If no type is given the default is used. It is also possible to use a custom `UuidGenerator`
 and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator}`
 where the ID is _myGenerator_.
+
+|jq(exp) | Object | When working with JSon data, then this allows to use the JQ language
+for example to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
 
 |=======================================================================
 

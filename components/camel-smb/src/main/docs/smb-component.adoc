@@ -2,11 +2,11 @@
 :doctitle: SMB
 :shortname: smb
 :artifactid: camel-smb
-:description: SMB component which consumes natively from file shares using the Server Message Block (SMB, also known as Common Internet File System - CIFS) protocol
-:since: 4.2.0-SNAPSHOT
+:description: Receive files from SMB (Server Message Block) shares.
+:since: 4.3
 :supportlevel: Preview
 :tabs-sync-option:
-:component-header: Both producer and consumer are supported
+:component-header: Only consumer is supported
 
 *Since Camel {since}*
 

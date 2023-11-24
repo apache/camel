@@ -59,41 +59,35 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
             final AtomicBoolean timeout = new AtomicBoolean();
 
             try {
-                doAnswer(new Answer<InputStream>() {
-                    @Override
-                    public InputStream answer(InvocationOnMock invocation) throws Throwable {
-                        final InputStream stream = (InputStream) invocation.callRealMethod();
+                doAnswer((Answer<InputStream>) invocation12 -> {
+                    final InputStream stream = (InputStream) invocation12.callRealMethod();
 
-                        InputStream inputStream = new InputStream() {
-                            @Override
-                            public int read() throws IOException {
-                                if (timeout.get()) {
-                                    // emulate a timeout occurring in _getReply()
-                                    throw new SocketTimeoutException();
-                                }
-                                return stream.read();
+                    InputStream inputStream = new InputStream() {
+                        @Override
+                        public int read() throws IOException {
+                            if (timeout.get()) {
+                                // emulate a timeout occurring in _getReply()
+                                throw new SocketTimeoutException();
                             }
-                        };
+                            return stream.read();
+                        }
+                    };
 
-                        return inputStream;
-                    }
+                    return inputStream;
                 }).when(socket).getInputStream();
             } catch (IOException ignored) {
             }
 
             try {
-                doAnswer(new Answer<Object>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        if ((Integer) invocation.getArguments()[0] == CONNECT_TIMEOUT) {
-                            // setting of connect timeout
-                            timeout.set(true);
-                        } else {
-                            // non-connect timeout
-                            timeout.set(false);
-                        }
-                        return invocation.callRealMethod();
+                doAnswer((Answer<Object>) invocation1 -> {
+                    if ((Integer) invocation1.getArguments()[0] == CONNECT_TIMEOUT) {
+                        // setting of connect timeout
+                        timeout.set(true);
+                    } else {
+                        // non-connect timeout
+                        timeout.set(false);
                     }
+                    return invocation1.callRealMethod();
                 }).when(socket).setSoTimeout(anyInt());
             } catch (SocketException e) {
                 throw new RuntimeException(e);

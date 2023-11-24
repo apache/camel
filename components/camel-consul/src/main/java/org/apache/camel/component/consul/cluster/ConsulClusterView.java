@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class ConsulClusterView extends AbstractCamelClusterView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusterService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusterView.class);
 
     private final ConsulClusterConfiguration configuration;
     private final ConsulLocalMember localMember;

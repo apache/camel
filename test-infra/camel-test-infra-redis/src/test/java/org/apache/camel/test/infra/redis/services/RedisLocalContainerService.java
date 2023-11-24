@@ -25,7 +25,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class RedisLocalContainerService implements RedisService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "redis:6.0.9";
+    public static final String CONTAINER_IMAGE = "redis:6.2.14";
     public static final String CONTAINER_NAME = "redis";
 
     private static final Logger LOG = LoggerFactory.getLogger(RedisLocalContainerService.class);

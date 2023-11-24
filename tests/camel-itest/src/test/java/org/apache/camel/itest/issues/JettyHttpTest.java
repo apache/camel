@@ -17,7 +17,6 @@
 package org.apache.camel.itest.issues;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -55,11 +54,9 @@ public class JettyHttpTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(targetConsumerUri)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                                exchange.getMessage().setBody("Hi! " + path);
-                            }
+                        .process(exchange -> {
+                            String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+                            exchange.getMessage().setBody("Hi! " + path);
                         });
 
                 from(sourceUri)

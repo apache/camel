@@ -25,6 +25,8 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "CoordinatorContextPath": target.setCoordinatorContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "coordinatorurl":
         case "CoordinatorUrl": target.setCoordinatorUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "enabled":
+        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "localparticipantcontextpath":
         case "LocalParticipantContextPath": target.setLocalParticipantContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "localparticipanturl":
@@ -40,6 +42,8 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "CoordinatorContextPath": return java.lang.String.class;
         case "coordinatorurl":
         case "CoordinatorUrl": return java.lang.String.class;
+        case "enabled":
+        case "Enabled": return boolean.class;
         case "localparticipantcontextpath":
         case "LocalParticipantContextPath": return java.lang.String.class;
         case "localparticipanturl":
@@ -56,6 +60,8 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "CoordinatorContextPath": return target.getCoordinatorContextPath();
         case "coordinatorurl":
         case "CoordinatorUrl": return target.getCoordinatorUrl();
+        case "enabled":
+        case "Enabled": return target.isEnabled();
         case "localparticipantcontextpath":
         case "LocalParticipantContextPath": return target.getLocalParticipantContextPath();
         case "localparticipanturl":

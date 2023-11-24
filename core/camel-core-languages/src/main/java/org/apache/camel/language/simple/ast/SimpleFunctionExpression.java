@@ -77,8 +77,19 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return answer;
         }
 
+        // message first
+        answer = createSimpleExpressionMessage(camelContext, function, strict);
+        if (answer != null) {
+            return answer;
+        }
+
         // body and headers first
         answer = createSimpleExpressionBodyOrHeader(function, strict);
+        if (answer != null) {
+            return answer;
+        }
+        // custom languages
+        answer = createSimpleCustomLanguage(function, strict);
         if (answer != null) {
             return answer;
         }
@@ -303,6 +314,31 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
     }
 
+    private Expression createSimpleExpressionMessage(CamelContext camelContext, String function, boolean strict) {
+        // messageAs
+        String remainder = ifStartsWithReturnRemainder("messageAs(", function);
+        if (remainder != null) {
+            String type = StringHelper.before(remainder, ")");
+            if (type == null) {
+                throw new SimpleParserException("Valid syntax: ${messageAs(type)} was: " + function, token.getIndex());
+            }
+            type = StringHelper.removeQuotes(type);
+            remainder = StringHelper.after(remainder, ")");
+
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException("Valid syntax: ${messageAs(type).OGNL} was: " + function, token.getIndex());
+                }
+                return SimpleExpressionBuilder.messageOgnlExpression(type, remainder);
+            } else {
+                return ExpressionBuilder.messageExpression(type);
+            }
+        }
+
+        return null;
+    }
+
     private Expression createSimpleExpressionBodyOrHeader(String function, boolean strict) {
         // bodyAs
         String remainder = ifStartsWithReturnRemainder("bodyAs(", function);
@@ -322,7 +358,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             } else {
                 return ExpressionBuilder.bodyExpression(type);
             }
-
         }
         // mandatoryBodyAs
         remainder = ifStartsWithReturnRemainder("mandatoryBodyAs(", function);
@@ -411,6 +446,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 // regular header
                 return ExpressionBuilder.headerExpression(key);
             }
+        }
+
+        return null;
+    }
+
+    private Expression createSimpleCustomLanguage(String function, boolean strict) {
+        // jq
+        String remainder = ifStartsWithReturnRemainder("jq(", function);
+        if (remainder != null) {
+            String exp = StringHelper.beforeLast(remainder, ")");
+            if (exp == null) {
+                throw new SimpleParserException("Valid syntax: ${jq(exp)} was: " + function, token.getIndex());
+            }
+            exp = StringHelper.removeQuotes(exp);
+            return ExpressionBuilder.languageExpression("jq", exp);
         }
 
         return null;

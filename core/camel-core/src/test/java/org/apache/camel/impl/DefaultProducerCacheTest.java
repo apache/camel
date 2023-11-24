@@ -16,7 +16,14 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -206,6 +213,48 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         // should have stopped all 3 when the cache is stopped
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, stopCounter.get()));
+    }
+
+    @Test
+    public void testAcquireProducerConcurrency() throws InterruptedException, ExecutionException {
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 0);
+        cache.start();
+        List<Endpoint> endpoints = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Endpoint e = context.getEndpoint("direct:queue:" + i);
+            AsyncProducer p = cache.acquireProducer(e);
+            endpoints.add(e);
+        }
+
+        assertEquals(3, cache.size());
+
+        ExecutorService ex = Executors.newFixedThreadPool(16);
+
+        List<Callable<Boolean>> callables = new ArrayList<>();
+
+        for (int i = 0; i < 500; i++) {
+            int index = i % 3;
+            callables.add(() -> {
+                Producer producer = cache.acquireProducer(endpoints.get(index));
+                boolean isEqual
+                        = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
+
+                if (!isEqual) {
+                    log.info("Endpoint uri to acquire: {}, returned producer (uri): {}", endpoints.get(index).getEndpointUri(),
+                            producer.getEndpoint().getEndpointUri());
+                }
+
+                return isEqual;
+            });
+        }
+
+        for (int i = 1; i <= 100; i++) {
+            log.info("Iteration: {}", i);
+            List<Future<Boolean>> results = ex.invokeAll(callables);
+            for (Future<Boolean> future : results) {
+                assertEquals(true, future.get());
+            }
+        }
     }
 
     private static class MyProducerCache extends DefaultProducerCache {

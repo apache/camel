@@ -15,7 +15,7 @@
 *{component-header}*
 
 The GitHub component interacts with the GitHub API by
-encapsulating https://github.com/eclipse/egit-github[egit-github]. It
+encapsulating https://git.eclipse.org/c/egit/egit-github.git/[egit-github]. It
 currently provides polling for new pull requests, pull request comments,
 tags, and commits.  It is also able to produce comments on pull
 requests, as well as close the pull request entirely.

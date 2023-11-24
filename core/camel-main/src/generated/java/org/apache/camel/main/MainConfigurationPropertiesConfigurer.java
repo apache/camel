@@ -57,6 +57,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "CamelEventsTimestampEnabled": target.setCamelEventsTimestampEnabled(property(camelContext, boolean.class, value)); return true;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, boolean.class, value)); return true;
+        case "compileworkdir":
+        case "CompileWorkDir": target.setCompileWorkDir(property(camelContext, java.lang.String.class, value)); return true;
         case "configurationclasses":
         case "ConfigurationClasses": target.setConfigurationClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "configurations":
@@ -316,6 +318,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "CamelEventsTimestampEnabled": return boolean.class;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": return boolean.class;
+        case "compileworkdir":
+        case "CompileWorkDir": return java.lang.String.class;
         case "configurationclasses":
         case "ConfigurationClasses": return java.lang.String.class;
         case "configurations":
@@ -576,6 +580,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "CamelEventsTimestampEnabled": return target.isCamelEventsTimestampEnabled();
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
+        case "compileworkdir":
+        case "CompileWorkDir": return target.getCompileWorkDir();
         case "configurationclasses":
         case "ConfigurationClasses": return target.getConfigurationClasses();
         case "configurations":

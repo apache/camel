@@ -862,7 +862,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (endpointClassElement.getAnnotation(Metadata.class) != null) {
             deprecationNote = endpointClassElement.getAnnotation(Metadata.class).deprecationNote();
         }
-        model.setDeprecationNote(deprecationNote);
+        if (!isNullOrEmpty(deprecationNote)) {
+            model.setDeprecationNote(deprecationNote);
+        }
         model.setDeprecatedSince(project.getProperties().getProperty("deprecatedSince"));
 
         // this information is not available at compile time, and we enrich

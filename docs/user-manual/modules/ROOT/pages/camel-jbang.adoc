@@ -1458,6 +1458,48 @@ And finally the integration comes with embedded web console (started with the `-
 
 NOTE: For a service to be listed then Camel components must be able to advertise the services using xref:camel-console.adoc[].
 
+==== Observability with metrics
+
+Camel JBang comes with support for using Micrometer for metrics that easily can be made available.
+
+You simply either run with `--metrics` option, or enable and have more control of the configuration in the `application.properties` file as shown below:
+
+[source,properties]
+----
+# enable HTTP server with metrics
+camel.server.enabled=true
+camel.server.metricsEnabled=true
+
+# turn on micrometer metrics
+camel.metrics.enabled=true
+# include more camel details
+camel.metrics.enableMessageHistory=true
+# include additional out-of-the-box micrometer metrics for cpu, jvm and used file descriptors
+camel.metrics.binders=processor,jvm-info,file-descriptor
+----
+
+Then you can access metrics from the web browser at: http://localhost:8080/q/metrics
+
+You can also see metrics from the CLI as shown below:
+
+[source,bash]
+----
+$ camel get metric
+  PID   NAME         TYPE   METRIC                         ROUTE                  VALUE  MEAN  MAX  TOTAL
+ 11562  MyCoolCamel  timer  camel.exchange.event.notifier                             3    12   27     35
+ 11562  MyCoolCamel  timer  camel.exchange.event.notifier                             3     1    2      3
+ 11562  MyCoolCamel  gauge  camel.routes.added                                        3
+ 11562  MyCoolCamel  gauge  camel.routes.running                                      3
+ 11562  MyCoolCamel  gauge  jvm.info                                                  1
+ 11562  MyCoolCamel  gauge  process.cpu.usage                     0.0045185067010171795
+ 11562  MyCoolCamel  gauge  process.files.max                                     10240
+ 11562  MyCoolCamel  gauge  process.files.open                                      288
+ 11562  MyCoolCamel  gauge  system.cpu.count                                          8
+ 11562  MyCoolCamel  gauge  system.cpu.usage                        0.15222772277227722
+ 11562  MyCoolCamel  gauge  system.load.average.1m                        3.58935546875
+----
+
+
 ==== Listing state of Circuit Breakers
 
 If your Camel integration uses xref:components:eips:circuitBreaker-eip.adoc[Circuit Breaker] then
@@ -1907,12 +1949,12 @@ And in the bottom you can see content of the message (similar to the `camel trac
 2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.loggingLevel=DEBUG
 2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.singleStepIncludeStartEnd=true
 2023-11-03 18:15:06.787  INFO 33384 --- [           main] mel.cli.connector.LocalCliConnector : Camel CLI enabled (local)
-2023-11-03 18:15:06.833  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.2.0-SNAPSHOT (foo) is starting
+2023-11-03 18:15:06.833  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.3.0-SNAPSHOT (foo) is starting
 2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport : Property-placeholders summary
 2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [application.properties]       my-name=Donald Duck
 2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Routes startup (started:1)
 2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext :     Started route-07a6 (timer://yaml)
-2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.2.0-SNAPSHOT (foo) started in 91ms (build:0ms init:0ms start:91ms)
+2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.3.0-SNAPSHOT (foo) started in 91ms (build:0ms init:0ms start:91ms)
 2023-11-03 18:15:11.951  INFO 33384 --- [ - timer://yaml] foo.camel.yaml:10                   : Before:
 
 Source: foo.camel.yaml:13                                                         History
@@ -2484,11 +2526,33 @@ jkube.recreate=true
 
 TIP: You can specify the jib-maven-plugin version using the `camel.jbang.jib-maven-plugin-version` property in `application.properties`.
 
+===== Configuring from and to image
+
+The jib-maven-plugin must be configured with a from and to image. The from image will default be `eclipse-temurin:17-jre`
+for Java 17 and `eclipse-temurin:21-jre` for Java 21. However, companies often have their own base images to be used, so
+you can configure this in the properties (together with authentication if needed):
+
+[source,properties]
+----
+jib.from.image=com.mycompany/base-images/ubi17/java17-builder:latest
+jib.from.auth.username = myuser
+jib.from.auth.password = mypass
+----
+
+The to image is configured in the same way, such as:
+
+[source,properties]
+----
+jib.to.image=com.mycompany/myproject/myapp
+jib.to.auth.username = myuser
+jib.to.auth.password = mypass
+----
+
 You can find more details in the https://eclipse.dev/jkube/docs/[Eclipse JKube] and https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin[Jib] documentations.
 
 ===== Resource fragments
 
-Resource fragments allows to store external configuration in YAML resource descriptions, which
+Resource fragments for JKube allows to store external configuration in YAML resource descriptions, which
 will be exported to `src/main/jkube` directory.
 
 Camel JBang will export files that ends with `jkube.yaml` or `jkube.yml` into `src/main/jkube` directory.
@@ -2676,6 +2740,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.health`
 | Health check at /q/health on local HTTP server (port 8080 by default) when running standalone Camel
+
+|`camel.jbang.metrics`
+| Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) when running standalone Camel
 
 |`camel.jbang.ignoreLoadingError`
 | Whether to ignore route loading and compilation errors (use this with care!)

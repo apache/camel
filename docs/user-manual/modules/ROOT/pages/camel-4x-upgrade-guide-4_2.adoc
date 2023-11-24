@@ -10,9 +10,21 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Added `boolean` parameter to `matchProcess` method on `org.apache.camel.spi.Condition`.
 
+=== camel-base-engine
+
+The class `org.apache.camel.impl.DebuggerBacklogDebugger` has been refactored to an interface `org.apache.camel.spi.BacklogDebugger` and a default implementation `org.apache.camel.impl.debugger.DefaultBacklogDebugger`.
+
 === camel-main
 
 The option `camel.main.debugger` has been renamed to `camel.debug.enabled`.
+
+=== camel-management-api
+
+The `org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean.dumpTracedMessagesAsXml(String, boolean)` has been deprecated.
+The second parameter is ignored with default implementation.
+
+To continue to have access to exchange properties, call `setIncludeExchangeProperties(true)` before messages
+are sent to have access to exchange properties.
 
 === camel-file
 
@@ -51,6 +63,19 @@ The Apache Ignite project (v2.15) is not yet Java 21 compatible and therefore `c
 expected to function correctly if using Java 21.
 
 A new release of Apache Ignite is expected that will start to support Java 21.
+
+=== camel-dynamic-router EIP component (non-core)
+
+The Dynamic Router EIP component has been refactored to use the Multicast Processor for sending messages to recipients,
+and this brought some additional configuration options:
+
+- `parallelProcessing`, `parallelAggregate`, `stopOnException`, `ignoreInvalidEndpoints`, `streaming`, `timeout`,
+`onPrepare`, `shareUnitOfWork`, `executorService`, and `aggregationStrategy`.  These configuration items are for
+configuring the Multicast Processor within the Dynamic Router EIP component, so their description, meaning, and effect
+are identical to that of the Multicast Processor.
+
+When upgrading to this version, you should still be able to use this component with the configuration from previous
+versions.  The new options allow more specific configuration, if you need it.
 
 === camel-spring & camel-spring-boot
 

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultFtpClientActivityListener implements FtpClientActivityListener, CopyStreamListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FtpClientActivityListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultFtpClientActivityListener.class);
 
     private final CamelLogger logger;
     private final String host;

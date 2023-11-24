@@ -161,7 +161,7 @@ We removed `camel-jibx` component which wasn't working on JDK 8.
 
 We removed `camel-boon` dataformat which wasn't working on JDK 9 and later.
 
-We removed the `camel-linkedin` component as the Linkedin API 1.0 is no longer https://engineering.linkedin.com/blog/2018/12/developer-program-updates[supported]. Support for the new 2.0 API is tracked by https://issues.apache.org/jira/browse/CAMEL-13813[CAMEL-13813].
+We removed the `camel-linkedin` component and there is no replacement.
 
 The `camel-zookeeper` has its route policy functionality removed, instead use `ZooKeeperClusterService` or the `camel-zookeeper-master` component.
 

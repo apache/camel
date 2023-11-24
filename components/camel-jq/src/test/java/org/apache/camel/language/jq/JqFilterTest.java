@@ -42,4 +42,14 @@ public class JqFilterTest extends JqTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
+
+    @Test
+    public void testFilterStringJSon() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("{\"foo\": \"bar\"}");
+
+        template.sendBody("direct:start", "{\"foo\": \"baz\"}");
+        template.sendBody("direct:start", "{\"foo\": \"bar\"}");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
 }

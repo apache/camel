@@ -40,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
-    private File store = testFile("idempotentfilestore.dat").toFile();
     private IdempotentRepository repo;
+    private File store;
 
     @Test
     public void testTrunkFileStore() throws Exception {
@@ -90,6 +90,7 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
+        store = testFile("idempotentfilestore.dat").toFile();
         // delete file store before testing
         if (store.exists()) {
             store.delete();

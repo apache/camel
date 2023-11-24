@@ -196,6 +196,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "jackson-xml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "jacksonXml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JacksonXMLDataFormat": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
+            case "java": return new ModelDeserializers.JavaExpressionDeserializer();
+            case "org.apache.camel.model.language.JavaExpression": return new ModelDeserializers.JavaExpressionDeserializer();
             case "js": return new ModelDeserializers.JavaScriptExpressionDeserializer();
             case "org.apache.camel.model.language.JavaScriptExpression": return new ModelDeserializers.JavaScriptExpressionDeserializer();
             case "jaxb": return new ModelDeserializers.JaxbDataFormatDeserializer();
@@ -432,6 +434,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "set-header": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
             case "setHeader": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
             case "org.apache.camel.model.SetHeaderDefinition": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
+            case "set-headers": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
+            case "setHeaders": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
+            case "org.apache.camel.model.SetHeadersDefinition": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
             case "set-property": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "setProperty": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "org.apache.camel.model.SetPropertyDefinition": return new ModelDeserializers.SetPropertyDefinitionDeserializer();

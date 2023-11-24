@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentConsumerTest extends ContextTestSupport {
 
-    private File store = testFile("idempotentfilestore.dat").toFile();
     private IdempotentRepository repo;
 
     @Test
@@ -78,6 +77,7 @@ public class FileIdempotentConsumerTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        File store = testFile("idempotentfilestore.dat").toFile();
         return new RouteBuilder() {
             public void configure() {
                 repo = FileIdempotentRepository.fileIdempotentRepository(store);

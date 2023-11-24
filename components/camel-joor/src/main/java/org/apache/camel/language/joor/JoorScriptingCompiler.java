@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.joor;
 
+import java.lang.invoke.MethodHandles;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -32,6 +34,7 @@ import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.joor.CompileOptions;
 import org.joor.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +43,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
 
     private static final Pattern BEAN_INJECTION_PATTERN = Pattern.compile("(#bean:)([A-Za-z0-9-_]*)");
 
-    private static final Logger LOG = LoggerFactory.getLogger(JoorCompiler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JoorScriptingCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
     private Set<String> imports = new TreeSet<>();
     private Map<String, String> aliases;
@@ -82,8 +85,18 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Compiling code:\n\n{}\n", code);
             }
-            Reflect ref = Reflect.compile(className, code);
+            // include classloader from Camel, so we can load any already compiled and loaded classes
+            CompileOptions co = new CompileOptions();
+            ClassLoader parent = MethodHandles.lookup().lookupClass().getClassLoader();
+            if (parent instanceof URLClassLoader ucl) {
+                ClassLoader cl = new CamelJoorClassLoader(ucl, camelContext);
+                co = new CompileOptions();
+                co = co.classLoader(cl);
+            }
+            LOG.debug("Compiling: {}", className);
+            Reflect ref = Reflect.compile(className, code, co);
             Class<?> clazz = ref.type();
+            LOG.debug("Compiled to Java class: {}", clazz);
             answer = (JoorScriptingMethod) clazz.getConstructor(CamelContext.class).newInstance(camelContext);
         } catch (Exception e) {
             throw new JoorCompilationException(className, code, e);

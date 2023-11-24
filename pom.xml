@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>30</version>
+        <version>31</version>
     </parent>
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.2.0-SNAPSHOT</version>
+    <version>4.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -127,7 +127,7 @@
         <maven-assembly-plugin-version>3.6.0</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
-        <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
+        <maven-enforcer-plugin-version>3.4.1</maven-enforcer-plugin-version>
         <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
@@ -137,9 +137,9 @@
 
         <jaxb-core-version>4.0.3</jaxb-core-version>
         <jaxb-impl-version>4.0.3</jaxb-impl-version>
-        <jaxb-osgi-version>4.0.3</jaxb-osgi-version>
-        <jaxb-xjc-version>4.0.3</jaxb-xjc-version>
-        <jaxb-jxc-version>4.0.3</jaxb-jxc-version>
+        <jaxb-osgi-version>4.0.4</jaxb-osgi-version>
+        <jaxb-xjc-version>4.0.4</jaxb-xjc-version>
+        <jaxb-jxc-version>4.0.4</jaxb-jxc-version>
         <groovy-version>4.0.15</groovy-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>

@@ -81,6 +81,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     private VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
+    private boolean metricsEnabled;
     private boolean uploadEnabled;
     private String uploadSourceDir;
 
@@ -122,6 +123,17 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
      */
     public void setHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
+    }
+
+    public boolean isMetricsEnabled() {
+        return metricsEnabled;
+    }
+
+    /**
+     * Whether metrics is enabled (q/metrics)
+     */
+    public void setMetricsEnabled(boolean metricsEnabled) {
+        this.metricsEnabled = metricsEnabled;
     }
 
     public boolean isUploadEnabled() {
@@ -241,6 +253,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             }
             setupUploadConsole(uploadSourceDir);
         }
+        // metrics will be setup in camel-micrometer-prometheus
     }
 
     protected void setupStartupSummary() throws Exception {

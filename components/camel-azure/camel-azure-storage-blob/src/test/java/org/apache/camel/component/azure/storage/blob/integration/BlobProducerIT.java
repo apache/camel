@@ -187,7 +187,7 @@ class BlobProducerIT extends Base {
     }
 
     @AfterAll
-    public void tearDown() {
+    public void deleteClient() {
         containerClient.delete();
     }
 

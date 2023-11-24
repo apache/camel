@@ -17,7 +17,6 @@
 package org.apache.camel.itest.nettyhttp;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -32,25 +31,14 @@ public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
     private int port1;
     private int port2;
 
-    @Disabled("TODO: investigate for Camel 3.0")
-    @Test
-    void testNettyHttpClientChunked() {
-        invokeService(port1, true);
-    }
-
     @Test
     void testNettyHttpRouteClientChunked() {
         invokeService(port2, false);
     }
 
     private void invokeService(int port, boolean checkChunkedHeader) {
-        Exchange out = template.request("netty-http:http://localhost:" + port + "/test", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("Camel in chunks.");
-            }
-        });
+        Exchange out = template.request("netty-http:http://localhost:" + port + "/test",
+                exchange -> exchange.getIn().setBody("Camel in chunks."));
 
         assertNotNull(out);
         assertEquals("Bye Camel in chunks.", out.getMessage().getBody(String.class));

@@ -68,10 +68,7 @@ public final class RouteCoverageHelper {
                 for (int i = 0; i < routes.getLength(); i++) {
                     Node route = routes.item(i);
                     String id = route.getAttributes().getNamedItem("id").getNodeValue();
-                    String customId = route.getAttributes().getNamedItem("customId") != null
-                            ? route.getAttributes().getNamedItem("customId").getNodeValue() : "false";
-                    // must be the target route and the route must be explicit assigned with that route id (not anonymous route)
-                    if ("true".equals(customId) && routeId.equals(id)) {
+                    if (routeId.equals(id)) {
                         // parse each route and build a List<CoverageData> for line by line coverage data
                         AtomicInteger counter = new AtomicInteger();
                         parseRouteData(catalog, route, answer, counter);

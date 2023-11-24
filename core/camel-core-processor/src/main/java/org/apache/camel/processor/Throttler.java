@@ -187,7 +187,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
             }
             callback.done(doneSync);
             return doneSync;
-        } catch (final Throwable t) {
+        } catch (final Exception t) {
             exchange.setException(t);
             callback.done(doneSync);
             return doneSync;

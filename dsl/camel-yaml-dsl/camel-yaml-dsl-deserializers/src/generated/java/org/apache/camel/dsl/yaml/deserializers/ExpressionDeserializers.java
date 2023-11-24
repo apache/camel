@@ -62,6 +62,9 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "hl7terser": {
                 return asType(node, org.apache.camel.model.language.Hl7TerserExpression.class);
             }
+            case "java": {
+                return asType(node, org.apache.camel.model.language.JavaExpression.class);
+            }
             case "joor": {
                 return asType(node, org.apache.camel.model.language.JoorExpression.class);
             }
@@ -135,6 +138,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "groovy", type = "object:org.apache.camel.model.language.GroovyExpression", oneOf = "expression"),
                     @YamlProperty(name = "header", type = "object:org.apache.camel.model.language.HeaderExpression", oneOf = "expression"),
                     @YamlProperty(name = "hl7terser", type = "object:org.apache.camel.model.language.Hl7TerserExpression", oneOf = "expression"),
+                    @YamlProperty(name = "java", type = "object:org.apache.camel.model.language.JavaExpression", oneOf = "expression"),
                     @YamlProperty(name = "joor", type = "object:org.apache.camel.model.language.JoorExpression", oneOf = "expression"),
                     @YamlProperty(name = "jq", type = "object:org.apache.camel.model.language.JqExpression", oneOf = "expression"),
                     @YamlProperty(name = "js", type = "object:org.apache.camel.model.language.JavaScriptExpression", oneOf = "expression"),
@@ -172,6 +176,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "groovy", type = "object:org.apache.camel.model.language.GroovyExpression", oneOf = "expression"),
                     @YamlProperty(name = "header", type = "object:org.apache.camel.model.language.HeaderExpression", oneOf = "expression"),
                     @YamlProperty(name = "hl7terser", type = "object:org.apache.camel.model.language.Hl7TerserExpression", oneOf = "expression"),
+                    @YamlProperty(name = "java", type = "object:org.apache.camel.model.language.JavaExpression", oneOf = "expression"),
                     @YamlProperty(name = "joor", type = "object:org.apache.camel.model.language.JoorExpression", oneOf = "expression"),
                     @YamlProperty(name = "jq", type = "object:org.apache.camel.model.language.JqExpression", oneOf = "expression"),
                     @YamlProperty(name = "js", type = "object:org.apache.camel.model.language.JavaScriptExpression", oneOf = "expression"),

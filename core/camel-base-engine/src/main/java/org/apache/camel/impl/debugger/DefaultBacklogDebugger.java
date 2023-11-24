@@ -17,6 +17,7 @@
 package org.apache.camel.impl.debugger;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -28,7 +29,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -62,6 +65,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
     private final CamelLogger logger = new CamelLogger(LOG, loggingLevel);
     private final AtomicBoolean enabled = new AtomicBoolean();
+    private final AtomicBoolean standby = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong();
     private final Debugger debugger;
     private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<>();
@@ -135,7 +139,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         // must enable message history for debugger to capture more details
         context.setMessageHistory(true);
 
-        return new DefaultBacklogDebugger(context, resolveSuspendMode());
+        DefaultBacklogDebugger answer = new DefaultBacklogDebugger(context, resolveSuspendMode());
+        answer.setStandby(context.isDebugStandby());
+        return answer;
     }
 
     /**
@@ -194,6 +200,16 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     @Override
     public boolean isEnabled() {
         return enabled.get();
+    }
+
+    @Override
+    public boolean isStandby() {
+        return standby.get();
+    }
+
+    @Override
+    public void setStandby(boolean standby) {
+        this.standby.set(standby);
     }
 
     @Override
@@ -776,7 +792,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      * @return          the XML
      */
     private String dumpAsXml(Exchange exchange) {
-        return MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 2, isBodyIncludeStreams(),
+        return MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 2, true,
                 isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars());
     }
@@ -788,7 +804,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      * @return          the JSon
      */
     private String dumpAsJSon(Exchange exchange) {
-        return MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 2, isBodyIncludeStreams(),
+        return MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 2, true,
                 isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars(), true);
     }
@@ -945,17 +961,19 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
             if (event instanceof ExchangeCompletedEvent || event instanceof CamelEvent.ExchangeFailedEvent) {
                 Throwable cause = null;
                 if (event instanceof CamelEvent.ExchangeFailedEvent fe) {
                     cause = fe.getCause();
                 }
+                NamedRoute route = getOriginalRoute(exchange);
                 String completedId = event.getExchange().getExchangeId();
                 try {
                     if (isSingleStepIncludeStartEnd() && singleStepExchangeId != null
                             && singleStepExchangeId.equals(completedId)) {
-                        doCompleted(exchange, definition, cause);
+                        doCompleted(exchange, definition, route, cause);
                     }
                 } finally {
                     logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");
@@ -964,17 +982,33 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             }
         }
 
-        private void doCompleted(Exchange exchange, NamedNode definition, Throwable cause) {
+        private NamedRoute getOriginalRoute(Exchange exchange) {
+            List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+            if (list != null) {
+                for (MessageHistory h : list) {
+                    NamedNode n = h.getNode();
+                    NamedRoute nr = CamelContextHelper.getRoute(n);
+                    if (nr != null) {
+                        boolean skip = nr.isCreatedFromRest() || nr.isCreatedFromTemplate();
+                        if (!skip) {
+                            return nr;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private void doCompleted(Exchange exchange, NamedNode definition, NamedRoute route, Throwable cause) {
             // create pseudo-last step in single step mode
             long timestamp = System.currentTimeMillis();
             String toNode = CamelContextHelper.getRouteId(definition);
-            String routeId = CamelContextHelper.getRouteId(definition);
+            String routeId = route != null ? route.getRouteId() : toNode;
             String exchangeId = exchange.getExchangeId();
             String messageAsXml = dumpAsXml(exchange);
             String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
-            NamedRoute route = CamelContextHelper.getRoute(definition);
-            String source = LoggerHelper.getLineNumberLoggerName(route);
+            String source = LoggerHelper.getLineNumberLoggerName(route != null ? route : definition);
 
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(

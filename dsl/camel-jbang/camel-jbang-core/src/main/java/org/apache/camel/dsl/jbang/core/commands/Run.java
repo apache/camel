@@ -244,6 +244,10 @@ public class Run extends CamelCommand {
     @Option(names = { "--health" }, description = "Health check at /q/health on local HTTP server (port 8080 by default)")
     boolean health;
 
+    @Option(names = { "--metrics" },
+            description = "Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
+    boolean metrics;
+
     @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
     boolean modeline = true;
 
@@ -454,6 +458,7 @@ public class Run extends CamelCommand {
         if (ignoreLoadingError) {
             writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
         }
+        writeSetting(main, profileProperties, "camel.jbang.compileWorkDir", WORK_DIR + File.separator + "compile");
 
         if (gav != null) {
             writeSetting(main, profileProperties, "camel.jbang.gav", gav);
@@ -461,6 +466,7 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
+        writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.verbose", verbose ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.backlogTracing", "true");

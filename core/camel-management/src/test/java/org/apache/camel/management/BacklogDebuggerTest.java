@@ -53,6 +53,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
         assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
+        Boolean standby = (Boolean) mbeanServer.getAttribute(on, "Standby");
+        assertEquals(Boolean.FALSE, standby, "Should not be standby");
+
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
