@@ -171,7 +171,7 @@ To use attributes instead:
 Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests
 per period.
 
-Update throttle definitions using `maxRequestsPerPeriod` and optionally `timePeriodMillis`:
+Update throttle expressions configured with `maxRequestsPerPeriod` and remove any `timePeriodMillis` option:
 
 [source]
 ----
