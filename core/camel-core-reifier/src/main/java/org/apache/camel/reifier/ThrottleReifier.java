@@ -37,9 +37,6 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
         ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Throttle", definition, true);
 
-        // should be default 1000 millis
-        long period = parseDuration(definition.getTimePeriodMillis(), 1000L);
-
         // max requests per period is mandatory
         Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression();
         if (maxRequestsExpression == null) {
@@ -53,7 +50,7 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
         boolean reject = parseBoolean(definition.getRejectExecution(), false);
         Throttler answer = new Throttler(
-                camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
+                camelContext, maxRequestsExpression, threadPool, shutdownThreadPool, reject, correlation);
 
         answer.setAsyncDelayed(async);
         // should be true by default

@@ -17238,8 +17238,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression to configure the maximum number of messages to throttle per request", displayName = "Expression", oneOf = "expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "reject-execution", type = "boolean", description = "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false", displayName = "Reject Execution"),
-                    @YamlProperty(name = "time-period-millis", type = "string", defaultValue = "1000", description = "Sets the time period during which the maximum request count is valid for", displayName = "Time Period Millis")
+                    @YamlProperty(name = "reject-execution", type = "boolean", description = "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false", displayName = "Reject Execution")
             }
     )
     public static class ThrottleDefinitionDeserializer extends YamlDeserializerBase<ThrottleDefinition> {
@@ -17294,11 +17293,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "reject-execution": {
                     String val = asText(node);
                     target.setRejectExecution(val);
-                    break;
-                }
-                case "time-period-millis": {
-                    String val = asText(node);
-                    target.setTimePeriodMillis(val);
                     break;
                 }
                 case "id": {

@@ -49,7 +49,7 @@ public class ThrottlerDslTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         // now assert that they have actually been throttled
-        long minimumTime = (messageCount - 1) * INTERVAL;
+        long minimumTime = messageCount * INTERVAL;
         // add a little slack
         long delta = System.currentTimeMillis() - start + 200;
         assertTrue(delta >= minimumTime, "Should take at least " + minimumTime + "ms, was: " + delta);
@@ -61,7 +61,7 @@ public class ThrottlerDslTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").throttle().message(m -> m.getHeader("ThrottleCount", Integer.class))
-                        .timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                        .delay(INTERVAL).to("log:result", "mock:result");
             }
         };
     }

@@ -6538,12 +6538,6 @@
             "title" : "Reject Execution",
             "description" : "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false"
           },
-          "timePeriodMillis" : {
-            "type" : "string",
-            "title" : "Time Period Millis",
-            "description" : "Sets the time period during which the maximum request count is valid for",
-            "default" : "1000"
-          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },

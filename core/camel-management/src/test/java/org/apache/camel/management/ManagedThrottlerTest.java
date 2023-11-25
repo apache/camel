@@ -81,15 +81,13 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
 
-        Long timePeriod = (Long) mbeanServer.getAttribute(throttlerName, "TimePeriodMillis");
-        assertEquals(250, timePeriod.longValue());
-
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue(total < 1000, "Should take at most 1.0 sec: was " + total);
+        // 10 * delay (100) + tolerance (200)
+        assertTrue(total < 1200, "Should take at most 1.2 sec: was " + total);
 
         // change the throttler using JMX
-        mbeanServer.setAttribute(throttlerName, new Attribute("MaximumRequestsPerPeriod", (long) 2));
+        mbeanServer.setAttribute(throttlerName, new Attribute("MaximumConcurrentRequests", (long) 2));
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -99,15 +97,16 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
             template.sendBody("direct:start", "Message " + i);
         }
 
-        Long period = (Long) mbeanServer.getAttribute(throttlerName, "MaximumRequestsPerPeriod");
-        assertNotNull(period);
-        assertEquals(2, period.longValue());
+        Long requests = (Long) mbeanServer.getAttribute(throttlerName, "MaximumConcurrentRequests");
+        assertNotNull(requests);
+        assertEquals(2, requests.longValue());
 
         completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
         total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue(total > 1000, "Should be around 1 sec now: was " + total);
+        // 10 * delay (100) + tolerance (200)
+        assertTrue(total < 1200, "Should take at most 1.2 sec: was " + total);
     }
 
     @DisabledOnOs(OS.WINDOWS)
@@ -269,19 +268,20 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start").id("route1")
                         .to("log:foo")
-                        .throttle(10).timePeriodMillis(250).id("mythrottler")
+                        .throttle(10).id("mythrottler")
+                        .delay(100)
                         .to("mock:result");
 
                 from("seda:throttleCount").id("route2")
-                        .throttle(1).timePeriodMillis(250).id("mythrottler2")
+                        .throttle(1).id("mythrottler2").delay(250)
                         .to("mock:end");
 
                 from("seda:throttleCountAsync").id("route3")
-                        .throttle(1).asyncDelayed().timePeriodMillis(250).id("mythrottler3")
+                        .throttle(1).asyncDelayed().id("mythrottler3").delay(250)
                         .to("mock:endAsync");
 
                 from("seda:throttleCountAsyncException").id("route4")
-                        .throttle(1).asyncDelayed().timePeriodMillis(250).id("mythrottler4")
+                        .throttle(1).asyncDelayed().id("mythrottler4").delay(250)
                         .to("mock:endAsyncException")
                         .process(exchange -> {
                             throw new RuntimeException("Fail me");
@@ -289,21 +289,21 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
                 from("seda:throttleCountRejectExecutionCallerRuns").id("route5")
                         .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
                         .throttle(1)
-                        .timePeriodMillis(250)
                         .asyncDelayed()
                         .executorService(badService)
                         .callerRunsWhenRejected(true)
                         .id("mythrottler5")
+                        .delay(250)
                         .to("mock:endAsyncRejectCallerRuns");
 
                 from("seda:throttleCountRejectExecution").id("route6")
                         .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
                         .throttle(1)
-                        .timePeriodMillis(250)
                         .asyncDelayed()
                         .executorService(badService)
                         .callerRunsWhenRejected(false)
                         .id("mythrottler6")
+                        .delay(250)
                         .to("mock:endAsyncReject");
             }
         };

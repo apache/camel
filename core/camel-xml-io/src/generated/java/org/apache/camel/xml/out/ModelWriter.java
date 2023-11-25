@@ -2335,7 +2335,6 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("timePeriodMillis", def.getTimePeriodMillis());
         doWriteAttribute("rejectExecution", def.getRejectExecution());
         doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected());
         doWriteAttribute("executorService", def.getExecutorService());
