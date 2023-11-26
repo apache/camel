@@ -252,6 +252,9 @@ If no type is given the default is used. It is also possible to use a custom `Uu
 and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator}`
 where the ID is _myGenerator_.
 
+|jsonpath(exp) | Object | When working with JSon data, then this allows to use the JsonPath language
+for example to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
+
 |jq(exp) | Object | When working with JSon data, then this allows to use the JQ language
 for example to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
 
