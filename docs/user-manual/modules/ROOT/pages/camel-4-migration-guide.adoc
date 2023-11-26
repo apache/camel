@@ -166,40 +166,6 @@ To use attributes instead:
 </circuitBreaker>
 ----
 
-== Throttle EIP
-
-Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests
-per period.
-
-Update throttle expressions configured with `maxRequestsPerPeriod` and remove any `timePeriodMillis` option:
-
-[source]
-----
-long maxRequestsPerPeriod = 100;
-from("seda:a")
-  .throttle(maxRequestsPerPeriod).timePeriodMillis(500)
-  .to("seda:b")
-
-// 1000 ms default time period
-from("seda:c")
-  .throttle(maxRequestsPerPeriod)
-  .to("seda:d")
-----
-
-To use `maxConcurrentRequests`:
-
-[source]
-----
-long maxConcurrentRequests = 30;
-from("seda:a")
-  .throttle(maxConcurrentRequests)
-  .to("seda:b")
-
-from("seda:c")
-  .throttle(maxConcurrentRequests)
-  .to("seda:d")
-----
-
 
 == XML DSL
 
