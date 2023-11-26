@@ -25,5 +25,34 @@ the behavior described in the documentation.
 Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests
 per period.
 
-The `throttle` parameter now specifies the maximum number of concurrent requests,
-and there is no longer support for the `timePeriodMillis` option.
+Update throttle expressions configured with `maxRequestsPerPeriod` to use `maxConcurrentRequests` instead,
+and remove any `timePeriodMillis` option.
+
+For example, update the following:
+
+[source]
+----
+long maxRequestsPerPeriod = 100L;
+from("seda:a")
+  .throttle(maxRequestsPerPeriod).timePeriodMillis(500)
+  .to("seda:b")
+
+// 1000 ms default time period
+from("seda:c")
+  .throttle(maxRequestsPerPeriod)
+  .to("seda:d")
+----
+
+to use `maxConcurrentRequests`:
+
+[source]
+----
+long maxConcurrentRequests = 30L;
+from("seda:a")
+  .throttle(maxConcurrentRequests)
+  .to("seda:b")
+
+from("seda:c")
+  .throttle(maxConcurrentRequests)
+  .to("seda:d")
+----
