@@ -110,13 +110,14 @@ public class Run extends CamelCommand {
     private static final Pattern CLASS_PATTERN = Pattern.compile(
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
-    boolean silentRun;
+    public boolean silentRun;
     boolean scriptRun;
     boolean transformRun;
+    boolean transformMessageRun;
     boolean debugRun;
 
     private File logFile;
-    long spawnPid;
+    public long spawnPid;
 
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -129,7 +130,10 @@ public class Run extends CamelCommand {
     String sourceDir;
 
     @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
-    boolean background;
+    public boolean background;
+
+    @Option(names = { "--empty" }, defaultValue = "false", description = "Run an empty Camel without loading source files")
+    public boolean empty;
 
     @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
     String camelVersion;
@@ -286,7 +290,7 @@ public class Run extends CamelCommand {
         return run();
     }
 
-    protected Integer runSilent() throws Exception {
+    public Integer runSilent() throws Exception {
         return runSilent(false);
     }
 
@@ -300,6 +304,16 @@ public class Run extends CamelCommand {
         // just boot silently and exit
         this.transformRun = true;
         this.ignoreLoadingError = ignoreLoadingError;
+        return run();
+    }
+
+    public Integer runTransformMessage(String camelVersion) throws Exception {
+        // just boot silently an empty camel in the background and exit
+        this.transformMessageRun = true;
+        this.background = true;
+        this.camelVersion = camelVersion;
+        this.empty = true;
+        this.name = "transform";
         return run();
     }
 
@@ -358,7 +372,7 @@ public class Run extends CamelCommand {
     }
 
     private int run() throws Exception {
-        if (!files.isEmpty() && sourceDir != null) {
+        if (!empty && !files.isEmpty() && sourceDir != null) {
             // cannot have both files and source dir at the same time
             System.err.println("Cannot specify both file(s) and source-dir at the same time.");
             return 1;
@@ -368,14 +382,14 @@ public class Run extends CamelCommand {
         removeDir(work);
         work.mkdirs();
 
-        Properties profileProperties = loadProfileProperties();
+        Properties profileProperties = !empty ? loadProfileProperties() : null;
         configureLogging();
         if (openapi != null) {
             generateOpenApi();
         }
 
         // route code as option
-        if (code != null) {
+        if (!empty && code != null) {
             // store code in temporary file
             String codeFile = loadFromCode(code);
             // use code as first file
@@ -383,7 +397,7 @@ public class Run extends CamelCommand {
         }
 
         // if no specific file to run then try to auto-detect
-        if (files.isEmpty() && sourceDir == null) {
+        if (!empty && files.isEmpty() && sourceDir == null) {
             String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
             if (routes == null) {
                 if (!silentRun) {
@@ -501,6 +515,9 @@ public class Run extends CamelCommand {
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        } else if (transformMessageRun) {
+            // do not start any routes
+            main.addInitialProperty("camel.main.autoStartup", "false");
         } else if (scriptRun) {
             // auto terminate if being idle
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", "1");
@@ -800,6 +817,11 @@ public class Run extends CamelCommand {
     private Properties loadProfileProperties() throws Exception {
         Properties answer = null;
 
+        if (transformMessageRun) {
+            // do not load profile in transform message run as it should be vanilla empty
+            return answer;
+        }
+
         File profilePropertiesFile;
         if (sourceDir != null) {
             profilePropertiesFile = new File(sourceDir, getProfile() + ".properties");
@@ -861,7 +883,16 @@ public class Run extends CamelCommand {
     }
 
     protected int runCamelVersion(KameletMain main) throws Exception {
-        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        List<String> cmds;
+        if (spec != null) {
+            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        } else {
+            cmds = new ArrayList<>();
+            cmds.add("run");
+            if (transformMessageRun) {
+                cmds.add("--empty");
+            }
+        }
 
         if (background) {
             cmds.remove("--background=true");
@@ -893,11 +924,16 @@ public class Run extends CamelCommand {
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
+
+        System.out.println(jbangArgs);
+
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
-            System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
-                               + ") in background with PID: " + p.pid());
+            if (!silentRun) {
+                System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
+                                   + ") in background with PID: " + p.pid());
+            }
             return 0;
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -909,7 +945,16 @@ public class Run extends CamelCommand {
     }
 
     protected int runBackground(KameletMain main) throws Exception {
-        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        List<String> cmds;
+        if (spec != null) {
+            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        } else {
+            cmds = new ArrayList<>();
+            cmds.add("run");
+            if (transformMessageRun) {
+                cmds.add("--empty");
+            }
+        }
 
         cmds.remove("--background=true");
         cmds.remove("--background");
@@ -920,7 +965,9 @@ public class Run extends CamelCommand {
         pb.command(cmds);
         Process p = pb.start();
         this.spawnPid = p.pid();
-        System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+        if (!silentRun) {
+            System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+        }
         return 0;
     }
 
