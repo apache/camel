@@ -27,6 +27,7 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -52,6 +54,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.MessageHelper;
@@ -486,6 +489,74 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         IOHelper.writeText(jo.toJson(), outputFile);
                     }
                 }
+            } else if ("transform".equals(action)) {
+                StopWatch watch = new StopWatch();
+                long timestamp = System.currentTimeMillis();
+                String language = root.getString("language");
+                String template = Jsoner.unescape(root.getString("template"));
+                if (template.startsWith("file:")) {
+                    template = "resource:" + template;
+                }
+                String body = Jsoner.unescape(root.getString("body"));
+                InputStream is = null;
+                Object b = body;
+                Map<String, Object> map = null;
+                if (body.startsWith("file:")) {
+                    File file = new File(body.substring(5));
+                    is = new FileInputStream(file);
+                    b = IOHelper.loadText(is);
+                }
+                Collection<JsonObject> headers = root.getCollection("headers");
+                if (headers != null) {
+                    map = new LinkedHashMap<>();
+                    for (JsonObject jo : headers) {
+                        map.put(jo.getString("key"), jo.getString("value"));
+                    }
+                }
+                final Object inputBody = b;
+                final Map<String, Object> inputHeaders = map;
+                Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
+                try {
+                    Language lan = camelContext.resolveLanguage(language);
+                    Expression exp = lan.createExpression(template);
+                    exp.init(camelContext);
+                    // create dummy exchange with
+                    out.setPattern(ExchangePattern.InOut);
+                    out.getMessage().setBody(inputBody);
+                    if (inputHeaders != null) {
+                        out.getMessage().setHeaders(inputHeaders);
+                    }
+                    String result = exp.evaluate(out, String.class);
+                    out.getMessage().setBody(result);
+                    IOHelper.close(is);
+                } catch (Exception e) {
+                    out.setException(e);
+                }
+                LOG.trace("Updating output file: {}", outputFile);
+                if (out.getException() != null) {
+                    JsonObject jo = new JsonObject();
+                    jo.put("language", language);
+                    jo.put("exchangeId", out.getExchangeId());
+                    jo.put("timestamp", timestamp);
+                    jo.put("elapsed", watch.taken());
+                    jo.put("status", "failed");
+                    // avoid double wrap
+                    jo.put("exception",
+                            MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
+                    IOHelper.writeText(jo.toJson(), outputFile);
+                } else {
+                    JsonObject jo = new JsonObject();
+                    jo.put("language", language);
+                    jo.put("exchangeId", out.getExchangeId());
+                    jo.put("timestamp", timestamp);
+                    jo.put("elapsed", watch.taken());
+                    jo.put("status", "success");
+                    // avoid double wrap
+                    jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true,
+                            BODY_MAX_CHARS).getMap("message"));
+                    IOHelper.writeText(jo.toJson(), outputFile);
+                }
+                camelContext.getCamelContextExtension().getExchangeFactory().release(out);
             }
 
             // action done so delete file

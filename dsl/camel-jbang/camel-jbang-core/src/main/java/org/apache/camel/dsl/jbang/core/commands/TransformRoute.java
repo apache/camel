@@ -29,8 +29,8 @@ import org.apache.camel.util.StopWatch;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "transform", description = "Transform Camel routes to XML or YAML format", sortOptions = false)
-public class Transform extends CamelCommand {
+@Command(name = "route", description = "Transform Camel routes to XML or YAML format", sortOptions = false)
+public class TransformRoute extends CamelCommand {
 
     @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -60,7 +60,7 @@ public class Transform extends CamelCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
-    public Transform(CamelJBangMain main) {
+    public TransformRoute(CamelJBangMain main) {
         super(main);
     }
 
@@ -130,9 +130,9 @@ public class Transform extends CamelCommand {
         return null;
     }
 
-    static class FilesConsumer extends ParameterConsumer<Transform> {
+    static class FilesConsumer extends ParameterConsumer<TransformRoute> {
         @Override
-        protected void doConsumeParameters(Stack<String> args, Transform cmd) {
+        protected void doConsumeParameters(Stack<String> args, TransformRoute cmd) {
             String arg = args.pop();
             cmd.files.add(arg);
         }

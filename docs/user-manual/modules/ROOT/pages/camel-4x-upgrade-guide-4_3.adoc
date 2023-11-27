@@ -6,6 +6,52 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.2 to 4.3
 
+=== Throttle EIP
+
+Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests
+per period.
+
+Update throttle expressions configured with `maxRequestsPerPeriod` to use `maxConcurrentRequests` instead,
+and remove any `timePeriodMillis` option.
+
+For example, update the following:
+
+[source,java]
+----
+long maxRequestsPerPeriod = 100L;
+
+from("seda:a")
+  .throttle(maxRequestsPerPeriod).timePeriodMillis(500)
+  .to("seda:b")
+
+// 1000 ms default time period
+from("seda:c")
+  .throttle(maxRequestsPerPeriod)
+  .to("seda:d")
+----
+
+to use `maxConcurrentRequests`:
+
+[source,java]
+----
+long maxConcurrentRequests = 30L;
+
+from("seda:a")
+  .throttle(maxConcurrentRequests)
+  .to("seda:b")
+
+from("seda:c")
+  .throttle(maxConcurrentRequests)
+  .to("seda:d")
+----
+
+=== camel-jbang
+
+The `camel transform` command has been renamed to `camel transform route` as this command is used for transforming
+routes between DSLs such as XML to YAML.
+
+There is a new `camel transform message` command to do message transformation.
+
 === camel-kafka
 
 The behavior for `breakOnFirstError` was altered as numerous issues were fixed. The behavior related to committing 
@@ -20,39 +66,3 @@ the behavior described in the documentation.
 When using the `AsyncCommitManager` then the offset will be committed so that the payload is continually retried. This was
 the behavior described in the documentation.
 
-=== throttle
-
-Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests
-per period.
-
-Update throttle expressions configured with `maxRequestsPerPeriod` to use `maxConcurrentRequests` instead,
-and remove any `timePeriodMillis` option.
-
-For example, update the following:
-
-[source]
-----
-long maxRequestsPerPeriod = 100L;
-from("seda:a")
-  .throttle(maxRequestsPerPeriod).timePeriodMillis(500)
-  .to("seda:b")
-
-// 1000 ms default time period
-from("seda:c")
-  .throttle(maxRequestsPerPeriod)
-  .to("seda:d")
-----
-
-to use `maxConcurrentRequests`:
-
-[source]
-----
-long maxConcurrentRequests = 30L;
-from("seda:a")
-  .throttle(maxConcurrentRequests)
-  .to("seda:b")
-
-from("seda:c")
-  .throttle(maxConcurrentRequests)
-  .to("seda:d")
-----
