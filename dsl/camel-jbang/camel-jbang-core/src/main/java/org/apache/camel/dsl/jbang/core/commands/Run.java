@@ -925,8 +925,6 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
 
-        System.out.println(jbangArgs);
-
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
@@ -1042,8 +1040,10 @@ public class Run extends CamelCommand {
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
-            System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
-                               + ") in background with PID: " + p.pid());
+            if (!silentRun) {
+                System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
+                                   + ") in background with PID: " + p.pid());
+            }
             return 0;
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
