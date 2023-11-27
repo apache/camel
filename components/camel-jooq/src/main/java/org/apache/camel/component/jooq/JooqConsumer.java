@@ -35,7 +35,6 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
 
     private static final class DataHolder {
         private Exchange exchange;
-        private Object result;
 
         private DataHolder() {
         }
@@ -63,7 +62,6 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
 
         for (UpdatableRecord result : results) {
             DataHolder holder = new DataHolder();
-            holder.result = result;
             holder.exchange = createExchange(result);
             answer.add(holder);
         }

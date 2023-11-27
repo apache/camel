@@ -44,7 +44,6 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     private KinesisClient kinesisClient;
     private KinesisAsyncClient kinesisAsyncClient;
-    private static final String CONNECTION_CHECKER_EXECUTOR_NAME = "Kinesis_Streaming_Connection_Checker";
 
     public Kinesis2Endpoint(String uri, Kinesis2Configuration configuration, Kinesis2Component component) {
         super(uri, component);

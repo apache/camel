@@ -30,12 +30,10 @@ public class KameletMainInjector implements Injector {
 
     private final Injector delegate;
     private final String stubPattern;
-    private final boolean silent;
 
     public KameletMainInjector(Injector delegate, String stubPattern, boolean silent) {
         this.delegate = delegate;
         this.stubPattern = stubPattern;
-        this.silent = silent;
     }
 
     @Override

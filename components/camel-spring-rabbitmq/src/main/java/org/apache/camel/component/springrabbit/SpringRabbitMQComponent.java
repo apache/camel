@@ -124,7 +124,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
             messageConverter = new DefaultMessageConverter(getCamelContext());
         }
         if (messagePropertiesConverter == null) {
-            messagePropertiesConverter = new DefaultMessagePropertiesConverter(getCamelContext());
+            messagePropertiesConverter = new DefaultMessagePropertiesConverter();
         }
     }
 

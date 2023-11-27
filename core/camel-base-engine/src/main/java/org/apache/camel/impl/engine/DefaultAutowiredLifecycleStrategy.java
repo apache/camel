@@ -23,13 +23,8 @@ import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport implements AutowiredLifecycleStrategy, Ordered {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultAutowiredLifecycleStrategy.class);
-
     private final CamelContext camelContext;
 
     public DefaultAutowiredLifecycleStrategy(CamelContext camelContext) {
