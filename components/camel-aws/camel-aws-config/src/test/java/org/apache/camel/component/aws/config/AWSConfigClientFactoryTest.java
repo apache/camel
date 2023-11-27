@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AWSConfigClientFactoryTest {
 
     @Test
-    public void getStandardECS2ClientDefault() {
+    public void getStandardConfigClientDefault() {
         AWSConfigConfiguration configConfiguration = new AWSConfigConfiguration();
         AWSConfigInternalClient configClient = AWSConfigClientFactory.getConfigClient(configConfiguration);
         assertTrue(configClient instanceof AWSConfigClientStandardImpl);
     }
 
     @Test
-    public void getStandardECS2Client() {
+    public void getStandardConfigClient() {
         AWSConfigConfiguration configConfiguration = new AWSConfigConfiguration();
         configConfiguration.setUseDefaultCredentialsProvider(false);
         AWSConfigInternalClient configClient = AWSConfigClientFactory.getConfigClient(configConfiguration);
@@ -42,7 +42,7 @@ public class AWSConfigClientFactoryTest {
     }
 
     @Test
-    public void getIAMOptimizedECS2Client() {
+    public void getIAMOptimizedConfigClient() {
         AWSConfigConfiguration configConfiguration = new AWSConfigConfiguration();
         configConfiguration.setUseDefaultCredentialsProvider(true);
         AWSConfigInternalClient configClient = AWSConfigClientFactory.getConfigClient(configConfiguration);

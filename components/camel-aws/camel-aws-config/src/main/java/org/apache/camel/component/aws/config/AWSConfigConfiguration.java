@@ -112,7 +112,7 @@ public class AWSConfigConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy protocol when instantiating the ECS client
+     * To define a proxy protocol when instantiating the Config client
      */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
@@ -123,7 +123,7 @@ public class AWSConfigConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the ECS client
+     * To define a proxy host when instantiating the Config client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -134,7 +134,7 @@ public class AWSConfigConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the ECS client
+     * To define a proxy port when instantiating the Config client
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -145,7 +145,7 @@ public class AWSConfigConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which ECS client needs to work. When using this parameter, the configuration will expect the
+     * The region in which Config client needs to work. When using this parameter, the configuration will expect the
      * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
@@ -198,8 +198,8 @@ public class AWSConfigConfiguration implements Cloneable {
     }
 
     /**
-     * Set whether the ECS client should expect to load credentials through a default credentials provider or to expect
-     * static credentials to be passed in.
+     * Set whether the Config client should expect to load credentials through a default credentials provider or to
+     * expect static credentials to be passed in.
      */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
@@ -214,7 +214,7 @@ public class AWSConfigConfiguration implements Cloneable {
     }
 
     /**
-     * Set whether the ECS client should expect to load credentials through a profile credentials provider.
+     * Set whether the Config client should expect to load credentials through a profile credentials provider.
      */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;

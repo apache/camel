@@ -46,7 +46,7 @@ public class AWSConfigClientStandardImpl implements AWSConfigInternalClient {
      * Constructor that uses the config file.
      */
     public AWSConfigClientStandardImpl(AWSConfigConfiguration configuration) {
-        LOG.trace("Creating an AWS ECS manager using static credentials.");
+        LOG.trace("Creating an AWS Config manager using static credentials.");
         this.configuration = configuration;
     }
 

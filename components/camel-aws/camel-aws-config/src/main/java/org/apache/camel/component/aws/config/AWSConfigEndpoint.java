@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.config.ConfigClient;
 
 /**
- * Manage AWS ECS cluster instances.
+ * Manage AWS Config service.
  */
 @UriEndpoint(firstVersion = "4.3.0", scheme = "aws-config", title = "AWS Config Service",
              syntax = "aws-config:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },

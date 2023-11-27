@@ -1,10 +1,10 @@
-= AWS Elastic Container Service (ECS) Component
-:doctitle: AWS Elastic Container Service (ECS)
-:shortname: aws2-ecs
-:artifactid: camel-aws2-ecs
-:description: Manage AWS ECS cluster instances.
-:since: 3.1
-:supportlevel: Stable
+= AWS Config Service Component
+:doctitle: AWS Config Service
+:shortname: aws-config
+:artifactid: camel-aws-config
+:description: Manage AWS Config service.
+:since: 4.3
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -47,7 +47,7 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-Required ECS component options
+Required Config component options
 
 You have to provide the ConfigClient in the
 Registry or your accessKey and secretKey to access
