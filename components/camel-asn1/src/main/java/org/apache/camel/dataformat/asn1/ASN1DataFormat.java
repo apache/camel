@@ -62,12 +62,12 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
                 encodeGenericTypeObject(exchange, stream);
                 return;
             }
-            Object record = exchange.getIn().getBody();
-            if (record instanceof ASN1Primitive) {
-                ASN1Primitive asn1Primitive = ObjectHelper.cast(ASN1Primitive.class, record);
+            Object body = exchange.getIn().getBody();
+            if (body instanceof ASN1Primitive) {
+                ASN1Primitive asn1Primitive = ObjectHelper.cast(ASN1Primitive.class, body);
                 berOut = new ByteArrayInputStream(asn1Primitive.getEncoded());
-            } else if (record instanceof byte[]) {
-                berOut = new ByteArrayInputStream(ObjectHelper.cast(byte[].class, record));
+            } else if (body instanceof byte[]) {
+                berOut = new ByteArrayInputStream(ObjectHelper.cast(byte[].class, body));
             }
         } else {
             byte[] byteInput = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, graph);

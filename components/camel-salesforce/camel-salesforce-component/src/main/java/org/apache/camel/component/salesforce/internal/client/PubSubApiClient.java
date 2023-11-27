@@ -240,8 +240,8 @@ public class PubSubApiClient extends ServiceSupport {
         }
         byte[] bytes;
         if (body instanceof IndexedRecord indexedRecord) {
-            if (body instanceof GenericRecord record) {
-                bytes = getBytes(body, new GenericDatumWriter<>(record.getSchema()));
+            if (body instanceof GenericRecord genericRecord) {
+                bytes = getBytes(body, new GenericDatumWriter<>(genericRecord.getSchema()));
             } else if (body instanceof SpecificRecord) {
                 bytes = getBytes(body, new SpecificDatumWriter<>());
             } else {
@@ -367,7 +367,7 @@ public class PubSubApiClient extends ServiceSupport {
 
         private void processEvent(ConsumerEvent ce) throws IOException {
             final Schema schema = getSchema(ce.getEvent().getSchemaId());
-            Object record = switch (consumer.getDeserializeType()) {
+            Object recordObj = switch (consumer.getDeserializeType()) {
                 case AVRO -> deserializeAvro(ce, schema);
                 case GENERIC_RECORD -> deserializeGenericRecord(ce, schema);
                 case SPECIFIC_RECORD -> deserializeSpecificRecord(ce, schema);
@@ -375,7 +375,7 @@ public class PubSubApiClient extends ServiceSupport {
                 case JSON -> deserializeJson(ce, schema);
             };
             String replayId = PubSubApiClient.base64EncodeByteString(ce.getReplayId());
-            consumer.processEvent(record, replayId);
+            consumer.processEvent(recordObj, replayId);
         }
 
         private Object deserializeAvro(ConsumerEvent ce, Schema schema) throws IOException {
@@ -388,9 +388,9 @@ public class PubSubApiClient extends ServiceSupport {
         }
 
         private Object deserializeJson(ConsumerEvent ce, Schema schema) throws IOException {
-            final GenericRecord record = deserializeGenericRecord(ce, schema);
+            final GenericRecord genericRecord = deserializeGenericRecord(ce, schema);
             JsonAvroConverter converter = new JsonAvroConverter();
-            final byte[] bytes = converter.convertToJson(record);
+            final byte[] bytes = converter.convertToJson(genericRecord);
             return new String(bytes);
         }
 

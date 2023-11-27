@@ -21,10 +21,10 @@ package org.apache.camel.component.influxdb2.data;
  * Influxdb write Record
  */
 public class Record {
-    private String record;
+    private String recordObj;
 
-    public Record(String record) {
-        this.record = record;
+    public Record(String recordObj) {
+        this.recordObj = recordObj;
     }
 
     public static Record fromString(String record) {
@@ -32,10 +32,10 @@ public class Record {
     }
 
     public String getInfluxRecord() {
-        return record;
+        return recordObj;
     }
 
-    public void setRecord(String record) {
-        this.record = record;
+    public void setRecord(String recordObj) {
+        this.recordObj = recordObj;
     }
 }

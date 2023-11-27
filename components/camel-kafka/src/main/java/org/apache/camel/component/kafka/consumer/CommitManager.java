@@ -23,7 +23,7 @@ import org.apache.kafka.common.TopicPartition;
 
 public interface CommitManager {
 
-    KafkaManualCommit getManualCommit(Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record);
+    KafkaManualCommit getManualCommit(Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> consumerRecord);
 
     /**
      * Commits everything that has been cached

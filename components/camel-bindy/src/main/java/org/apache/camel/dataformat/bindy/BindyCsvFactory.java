@@ -627,71 +627,71 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             for (Class<?> cl : models) {
 
                 // Get annotation @CsvRecord from the class
-                CsvRecord record = cl.getAnnotation(CsvRecord.class);
+                CsvRecord csvRecord = cl.getAnnotation(CsvRecord.class);
 
                 // Get annotation @Section from the class
                 Section section = cl.getAnnotation(Section.class);
 
-                if (record != null) {
-                    LOG.debug("Csv record: {}", record);
+                if (csvRecord != null) {
+                    LOG.debug("Csv record: {}", csvRecord);
 
                     // Get skipFirstLine parameter
-                    skipFirstLine = record.skipFirstLine();
+                    skipFirstLine = csvRecord.skipFirstLine();
                     LOG.debug("Skip First Line parameter of the CSV: {}", skipFirstLine);
 
                     // Get skipFirstLine parameter
-                    skipField = record.skipField();
+                    skipField = csvRecord.skipField();
                     LOG.debug("Skip Field parameter of the CSV: {}", skipField);
 
                     // Get generateHeaderColumnNames parameter
-                    generateHeaderColumnNames = record.generateHeaderColumns();
+                    generateHeaderColumnNames = csvRecord.generateHeaderColumns();
                     LOG.debug("Generate header column names parameter of the CSV: {}", generateHeaderColumnNames);
 
                     // Get Separator parameter
-                    org.apache.camel.util.ObjectHelper.notNull(record.separator(),
+                    org.apache.camel.util.ObjectHelper.notNull(csvRecord.separator(),
                             "No separator has been defined in the @Record annotation");
-                    separator = record.separator();
+                    separator = csvRecord.separator();
                     LOG.debug("Separator defined for the CSV: {}", separator);
 
                     // Get carriage return parameter
-                    crlf = record.crlf();
+                    crlf = csvRecord.crlf();
                     LOG.debug("Carriage return defined for the CSV: {}", crlf);
 
                     // Get isOrdered parameter
-                    messageOrdered = record.isOrdered();
+                    messageOrdered = csvRecord.isOrdered();
                     LOG.debug("Must CSV record be ordered: {}", messageOrdered);
 
-                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(record.quote())) {
-                        quote = record.quote();
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(csvRecord.quote())) {
+                        quote = csvRecord.quote();
                         LOG.debug("Quoting columns with: {}", quote);
                     }
 
-                    quoting = record.quoting();
+                    quoting = csvRecord.quoting();
                     LOG.debug("CSV will be quoted: {}", quoting);
 
-                    autospanLine = record.autospanLine();
+                    autospanLine = csvRecord.autospanLine();
                     LOG.debug("Autospan line in last record: {}", autospanLine);
 
                     // Get allowEmptyStream parameter
-                    allowEmptyStream = record.allowEmptyStream();
+                    allowEmptyStream = csvRecord.allowEmptyStream();
                     LOG.debug("Allow empty stream parameter of the CSV: {}", allowEmptyStream);
 
                     // Get quotingEscaped parameter
-                    quotingEscaped = record.quotingEscaped();
+                    quotingEscaped = csvRecord.quotingEscaped();
                     LOG.debug("Escape quote character flag of the CSV: {}", quotingEscaped);
 
                     // Get quotingOnlyWhenNeeded parameter
-                    quotingOnlyWhenNeeded = record.quotingOnlyWhenNeeded();
+                    quotingOnlyWhenNeeded = csvRecord.quotingOnlyWhenNeeded();
                     LOG.debug("Quoting only when needed: {}", quotingOnlyWhenNeeded);
 
                     // Get endWithLineBreak parameter
-                    endWithLineBreak = record.endWithLineBreak();
+                    endWithLineBreak = csvRecord.endWithLineBreak();
                     LOG.debug("End with line break: {}", endWithLineBreak);
 
-                    removeQuotes = record.removeQuotes();
+                    removeQuotes = csvRecord.removeQuotes();
                     LOG.debug("Remove quotes: {}", removeQuotes);
 
-                    trimLine = record.trimLine();
+                    trimLine = csvRecord.trimLine();
                     LOG.debug("Trim line: {}", trimLine);
                 }
 

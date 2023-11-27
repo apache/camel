@@ -53,21 +53,21 @@ public class Records {
         return new Records(records);
     }
 
-    public static Records create(Record record) {
-        return new Records().addRecord(record);
+    public static Records create(Record recordObj) {
+        return new Records().addRecord(recordObj);
     }
 
-    public static Records create(String record) {
-        return create(Record.fromString(record));
+    public static Records create(String recordObj) {
+        return create(Record.fromString(recordObj));
     }
 
-    public Records addRecord(String record) {
-        this.records.add(Record.fromString(record));
+    public Records addRecord(String recordObj) {
+        this.records.add(Record.fromString(recordObj));
         return this;
     }
 
-    public Records addRecord(Record record) {
-        this.records.add(record);
+    public Records addRecord(Record recordObj) {
+        this.records.add(recordObj);
         return this;
     }
 
