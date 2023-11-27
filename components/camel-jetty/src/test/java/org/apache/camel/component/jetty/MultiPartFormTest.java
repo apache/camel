@@ -98,7 +98,8 @@ public class MultiPartFormTest extends BaseJettyTest {
                         // "text/plain", data.getContentType());
                         assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue(data.getDataSource().getInputStream().available() > 0,
+                        String fileContent = new String(data.getDataSource().getInputStream().readAllBytes());
+                        assertTrue(fileContent.length() > 0,
                                 "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message

@@ -28,7 +28,6 @@ import jakarta.activation.DataSource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;
@@ -37,7 +36,6 @@ import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
-import org.eclipse.jetty.http.HttpFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,12 +89,16 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         // method
         Map<String, Object> headers = message.getHeaders();
         // remove Content-Encoding from request
-        if (request instanceof org.eclipse.jetty.server.Request) {
-            org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request) request;
-            HttpFields originalFields = jettyRequest.getHeaders();
-            HttpFields newFields = HttpFields.build(originalFields).remove(Exchange.CONTENT_ENCODING);
-            //            jettyRequest.getHeaders().setHttpFields(newFields); TODO
-        }
+        // TODO in Jetty 12, HttpFields cannot be removed
+        //        if (request instanceof ServletApiRequest) {
+        //            Iterator<HttpField> httpFieldIterator = ((ServletApiRequest) request).getRequest().getHeaders().iterator();
+        //            while (httpFieldIterator.hasNext()) {
+        //                HttpField httpField = httpFieldIterator.next();
+        //                if (httpField.is(Exchange.CONTENT_ENCODING)) {
+        //                    httpFieldIterator.remove();
+        //                }
+        //            }
+        //        }
 
         // attachment is optional
         AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);

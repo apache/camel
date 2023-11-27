@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.net.URI;
+import java.io.File;
 import java.security.Principal;
 import java.util.Arrays;
 
@@ -35,7 +35,7 @@ import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
-import org.eclipse.jetty.util.resource.MountedPathResourceFactory;
+import org.eclipse.jetty.util.resource.URLResourceFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -50,8 +50,11 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
     @BindToRegistry("myAuthHandler")
     public SecurityHandler getSecurityHandler() {
-        Constraint constraint = new Constraint.Builder().name("user").build();//Constraint.__BASIC_AUTH, "user");
-        //        constraint.setAuthenticate(true);
+        Constraint constraint = new Constraint.Builder()
+                .name("BASIC")
+                .roles("user")
+                .authorization(Constraint.Authorization.SPECIFIC_ROLE)
+                .build();
 
         ConstraintMapping cm = new ConstraintMapping();
         cm.setPathSpec("/*");
@@ -63,7 +66,8 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
         HashLoginService loginService = new HashLoginService(
                 "MyRealm",
-                new MountedPathResourceFactory().newResource(URI.create("src/test/resources/myRealm.properties")));
+                new URLResourceFactory().newResource(
+                        new File("src/test/resources/myRealm.properties").toURI()));
         sh.setLoginService(loginService);
         sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 

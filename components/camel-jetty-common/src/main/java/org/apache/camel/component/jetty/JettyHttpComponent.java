@@ -1286,7 +1286,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         s.setHandler(collection);
         // setup the error handler if it set to Jetty component
         if (getErrorHandler() != null) {
-            s.addBean(getErrorHandler());
+            s.setErrorHandler(getErrorHandler());
         } else {
             //need an error handler that won't leak information about the exception back to the client.
             ErrorHandler eh = new ErrorHandler() {
