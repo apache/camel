@@ -27,6 +27,11 @@ public interface NamedRoute {
     String getRouteId();
 
     /**
+     * Gets the node prefix id.
+     */
+    String getNodePrefixId();
+
+    /**
      * Gets the route endpoint url.
      */
     String getEndpointUrl();

@@ -131,6 +131,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    public String getNodePrefixId() {
+        return (String) properties.get(Route.NODE_PREFIX_ID_PROPERTY);
+    }
+
+    @Override
     public boolean isCustomId() {
         return "true".equals(properties.get(Route.CUSTOM_ID_PROPERTY));
     }

@@ -69,6 +69,9 @@ public class RouteDevConsole extends AbstractDevConsole {
                 sb.append("\n");
             }
             sb.append(String.format("    Id: %s", mrb.getRouteId()));
+            if (mrb.getNodePrefixId() != null) {
+                sb.append(String.format("    Node Prefix Id: %s", mrb.getNodePrefixId()));
+            }
             sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
             if (mrb.getSourceLocation() != null) {
                 sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
@@ -148,6 +151,9 @@ public class RouteDevConsole extends AbstractDevConsole {
         for (ManagedProcessorMBean mp : mps) {
             sb.append("\n");
             sb.append(String.format("\n        Id: %s", mp.getProcessorId()));
+            if (mp.getNodePrefixId() != null) {
+                sb.append(String.format("\n        Node Prefix Id: %s", mp.getNodePrefixId()));
+            }
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
             sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
@@ -164,8 +170,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
             sb.append(String.format("\n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
             if (mp.getExchangesTotal() > 0) {
-                sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
-                sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
+                sb.append(String.format("\n        Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
+                sb.append(
+                        String.format("\n        Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
             }
             Date last = mp.getLastExchangeCompletedTimestamp();
             if (last != null) {
@@ -189,6 +196,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             JsonObject jo = new JsonObject();
             list.add(jo);
             jo.put("routeId", mrb.getRouteId());
+            if (mrb.getNodePrefixId() != null) {
+                jo.put("nodePrefixId", mrb.getNodePrefixId());
+            }
             jo.put("from", mrb.getEndpointUri());
             if (mrb.getSourceLocation() != null) {
                 jo.put("source", mrb.getSourceLocation());
@@ -276,6 +286,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             arr.add(jo);
 
             jo.put("id", mp.getProcessorId());
+            jo.put("nodePrefixId", mp.getNodePrefixId());
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {

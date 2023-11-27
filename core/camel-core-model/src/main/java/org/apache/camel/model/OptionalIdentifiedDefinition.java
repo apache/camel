@@ -61,6 +61,21 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         return id;
     }
 
+    @Override
+    public String getNodePrefixId() {
+        // prefix is only for nodes in the route (not the route id)
+        String prefix = null;
+        boolean iAmRoute = this instanceof RouteDefinition;
+        boolean allowPrefix = !iAmRoute && this instanceof ProcessorDefinition;
+        if (allowPrefix) {
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
+            if (route != null) {
+                prefix = route.getNodePrefixId();
+            }
+        }
+        return prefix;
+    }
+
     /**
      * Sets the id of this node
      */
@@ -153,26 +168,20 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      * Gets the node id, creating one if not already set.
      */
     public String idOrCreate(NodeIdFactory factory) {
-        // prefix is only for nodes in the route (not the route id)
-        String prefix = null;
-        boolean iAmRoute = this instanceof RouteDefinition;
-        boolean allowPrefix = !iAmRoute && this instanceof ProcessorDefinition;
-        if (allowPrefix) {
-            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
-            if (route != null) {
-                prefix = route.getNodePrefixId();
-            }
-        }
         if (id == null) {
             setGeneratedId(factory.createId(this));
         }
 
-        // return with prefix
-        if (prefix != null) {
-            return prefix + id;
-        } else {
-            return id;
+        // return with prefix if configured
+        boolean iAmRoute = this instanceof RouteDefinition;
+        boolean allowPrefix = !iAmRoute && this instanceof ProcessorDefinition;
+        if (allowPrefix) {
+            String prefix = getNodePrefixId();
+            if (prefix != null) {
+                return prefix + id;
+            }
         }
+        return id;
     }
 
     public Boolean getCustomId() {
