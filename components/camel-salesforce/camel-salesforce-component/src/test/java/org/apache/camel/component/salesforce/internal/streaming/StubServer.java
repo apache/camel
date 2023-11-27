@@ -34,8 +34,10 @@ import org.apache.camel.util.IOHelper;
 import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,10 +53,10 @@ class StubServer {
 
     class StubHandler extends AbstractHandler {
 
-        @Override
-        public void handle(
-                final String target, final Request baseRequest, final HttpServletRequest request,
-                final HttpServletResponse response)
+        public void handle(String target,
+                           Request baseRequest,
+                           HttpServletRequest request,
+                           HttpServletResponse response)
                 throws IOException, ServletException {
             final String body;
             try (Reader bodyReader = request.getReader()) {
@@ -92,6 +94,11 @@ class StubServer {
             return null;
         }
 
+        @Override
+        public boolean handle(Request request, Response response, Callback callback) throws Exception {
+            // TODO
+            return false;
+        }
     }
 
     final class StubResponse {

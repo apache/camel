@@ -19,8 +19,8 @@ package org.apache.camel.component.salesforce.internal.client;
 import java.net.URI;
 
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpConversation;
-import org.eclipse.jetty.client.HttpRequest;
+import org.eclipse.jetty.client.transport.HttpConversation;
+import org.eclipse.jetty.client.transport.HttpRequest;
 
 /**
  * Salesforce HTTP Request, exposes {@link HttpConversation} field.

@@ -37,13 +37,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
-import org.eclipse.jetty.client.HttpProxy;
-import org.eclipse.jetty.client.Origin;
-import org.eclipse.jetty.client.ProxyConfiguration;
-import org.eclipse.jetty.client.Socks4Proxy;
-import org.eclipse.jetty.client.api.Authentication;
-import org.eclipse.jetty.client.util.BasicAuthentication;
-import org.eclipse.jetty.client.util.DigestAuthentication;
+import org.eclipse.jetty.client.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 

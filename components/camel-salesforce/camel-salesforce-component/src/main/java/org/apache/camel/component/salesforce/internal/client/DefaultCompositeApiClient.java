@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce.internal.client;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,9 +44,8 @@ import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.eclipse.jetty.client.api.ContentProvider;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.client.InputStreamRequestContent;
+import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.util.StringUtil;
@@ -80,8 +80,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         }
         Request request = createRequest(compositeMethod, url, headers);
 
-        final ContentProvider content = new InputStreamContentProvider(raw);
-        request.content(content);
+        final Request.Content content = new InputStreamRequestContent(raw);
+        request.body(content);
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
@@ -98,8 +98,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
             throws SalesforceException {
         final String url = versionUrl() + "composite";
         final Request post = createRequest(HttpMethod.POST, url, headers);
-        final ContentProvider content = serialize(composite, composite.objectTypes());
-        post.content(content);
+        final Request.Content content = serialize(composite, composite.objectTypes());
+        post.body(content);
 
         doHttpRequest(post,
                 (response, responseHeaders, exception) -> callback.onResponse(
@@ -118,8 +118,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         final Request post = createRequest(HttpMethod.POST, url, headers);
 
-        final ContentProvider content = serialize(batch, batch.objectTypes());
-        post.content(content);
+        final Request.Content content = serialize(batch, batch.objectTypes());
+        post.body(content);
 
         doHttpRequest(post,
                 (response, responseHeaders, exception) -> callback.onResponse(
@@ -136,8 +136,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         final Request post = createRequest(HttpMethod.POST, url, headers);
 
-        final ContentProvider content = serialize(tree, tree.objectTypes());
-        post.content(content);
+        final Request.Content content = serialize(tree, tree.objectTypes());
+        post.body(content);
 
         doHttpRequest(post,
                 (response, responseHeaders, exception) -> callback.onResponse(
@@ -159,9 +159,9 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         // setup authorization
         setAccessToken(request);
 
-        request.header(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8);
-        request.header(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8);
-        request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
+        request.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
+        request.headers(h -> h.add(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8));
+        request.headers(h -> h.add(HttpHeader.ACCEPT_CHARSET, StandardCharsets.UTF_8.name()));
 
         return request;
     }
@@ -185,10 +185,10 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         return mapper.writerFor(type);
     }
 
-    ContentProvider serialize(final Object body, final Class<?>... additionalTypes)
+    Request.Content serialize(final Object body, final Class<?>... additionalTypes)
             throws SalesforceException {
         // input stream as entity content is needed for authentication retries
-        return new InputStreamContentProvider(toJson(body));
+        return new InputStreamRequestContent(toJson(body));
     }
 
     String servicesDataUrl() {
@@ -228,8 +228,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     @Override
     protected void setAccessToken(final Request request) {
-        request.header("Authorization", null);
-        request.header("Authorization", "Bearer " + accessToken);
+        request.headers(h -> h.add("Authorization", null));
+        request.headers(h -> h.add("Authorization", "Bearer " + accessToken));
     }
 
     static void checkCompositeBatchVersion(final String configuredVersion, final Version batchVersion)

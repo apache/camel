@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce.internal.client;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,11 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 
+import org.eclipse.jetty.client.BytesRequestContent;
+import org.eclipse.jetty.client.InputStreamRequestContent;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.http.HttpField;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -51,13 +57,8 @@ import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulk.ObjectFactory;
 import org.apache.camel.component.salesforce.api.dto.bulk.QueryResultList;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.util.BytesContentProvider;
-import org.eclipse.jetty.client.util.InputStreamContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiClient {
 
@@ -213,8 +214,9 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             InputStream batchStream, String jobId, ContentType contentTypeEnum, Map<String, List<String>> headers,
             final BatchInfoResponseCallback callback) {
         final Request post = getRequest(HttpMethod.POST, batchUrl(jobId, null), headers);
-        post.content(new InputStreamContentProvider(batchStream));
-        post.header(HttpHeader.CONTENT_TYPE, getContentType(contentTypeEnum) + ";charset=" + StringUtil.__UTF8);
+        post.body(new InputStreamRequestContent(batchStream));
+        post.headers(mutable -> mutable.add(
+                new HttpField(HttpHeader.CONTENT_TYPE, getContentType(contentTypeEnum) + ";charset=" + StandardCharsets.UTF_8.name())));
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
@@ -305,14 +307,15 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         final Request post = getRequest(HttpMethod.POST, batchUrl(jobId, null), headers);
         final byte[] queryBytes;
         try {
-            queryBytes = soqlQuery.getBytes(StringUtil.__UTF8);
+            queryBytes = soqlQuery.getBytes(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             callback.onResponse(null, Collections.emptyMap(),
                     new SalesforceException("Unexpected exception: " + e.getMessage(), e));
             return;
         }
-        post.content(new BytesContentProvider(queryBytes));
-        post.header(HttpHeader.CONTENT_TYPE, getContentType(jobContentType) + ";charset=" + StringUtil.__UTF8);
+        post.body(new BytesRequestContent(queryBytes));
+        post.headers(mutable -> mutable.add(
+                new HttpField(HttpHeader.CONTENT_TYPE, getContentType(jobContentType) + ";charset=" + StandardCharsets.UTF_8.name())));
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
@@ -367,8 +370,8 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     @Override
     protected void setAccessToken(Request request) {
         // Replace token
-        request.header(TOKEN_HEADER, null);
-        request.header(TOKEN_HEADER, accessToken);
+        request.headers(headers -> headers.add(TOKEN_HEADER, null));
+        request.headers(headers -> headers.add(TOKEN_HEADER, accessToken));
     }
 
     @Override
@@ -377,14 +380,14 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         setAccessToken(request);
 
         // set default charset
-        request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
+        request.headers(headers -> headers.add(HttpHeader.ACCEPT_CHARSET, StandardCharsets.UTF_8.name()));
 
         // TODO check if this is really needed or not, since SF response content
         // type seems fixed
         // check if the default accept content type must be used
         if (!request.getHeaders().contains(HttpHeader.ACCEPT)) {
             final String contentType = getContentType(DEFAULT_ACCEPT_TYPE);
-            request.header(HttpHeader.ACCEPT, contentType);
+            request.headers(headers -> headers.add(HttpHeader.ACCEPT, contentType));
             // request content type and charset is set by the request entity
         }
 
@@ -471,7 +474,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             marshaller.marshal(input, byteStream);
 
-            request.content(new BytesContentProvider(contentType, byteStream.toByteArray()));
+            request.body(new BytesRequestContent(contentType, byteStream.toByteArray()));
         } catch (Exception e) {
             throw new SalesforceException(
                     String.format("Error marshaling request for {%s:%s} : %s", request.getMethod(), request.getURI(),
