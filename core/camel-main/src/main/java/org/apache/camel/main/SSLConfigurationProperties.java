@@ -125,7 +125,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
-        return (SSLConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -133,7 +133,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withKeyStore(String keyStore) {
         this.keyStore = keyStore;
-        return (SSLConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -141,7 +141,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withKeystorePassword(String keystorePassword) {
         this.keystorePassword = keystorePassword;
-        return (SSLConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -149,7 +149,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withTrustStore(String trustStore) {
         this.trustStore = trustStore;
-        return (SSLConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -157,7 +157,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
-        return (SSLConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -165,7 +165,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withClientAuthentication(String clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
-        return (SSLConfigurationProperties) this;
+        return this;
     }
 
 }

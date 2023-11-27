@@ -213,7 +213,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -222,7 +222,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withStandby(boolean standby) {
         this.standby = standby;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -231,7 +231,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withWaitForAttach(boolean waitForAttach) {
         this.waitForAttach = waitForAttach;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -239,7 +239,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withLoggingLevel(LoggingLevel loggingLevel) {
         this.loggingLevel = loggingLevel;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -249,7 +249,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withBreakpoints(String breakpoints) {
         this.breakpoints = breakpoints;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -259,7 +259,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withSingleStepIncludeStartEnd(boolean singleStepIncludeStartEnd) {
         this.singleStepIncludeStartEnd = singleStepIncludeStartEnd;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -267,7 +267,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withBodyMaxChars(int bodyMaxChars) {
         this.bodyMaxChars = bodyMaxChars;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -276,7 +276,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withBodyIncludeStreams(boolean bodyIncludeStreams) {
         this.bodyIncludeStreams = bodyIncludeStreams;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -285,7 +285,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withBodyIncludeFiles(boolean bodyIncludeFiles) {
         this.bodyIncludeFiles = bodyIncludeFiles;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -293,7 +293,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withIncludeExchangeProperties(boolean includeExchangeProperties) {
         this.includeExchangeProperties = includeExchangeProperties;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -301,7 +301,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withIncludeException(boolean includeException) {
         this.includeException = includeException;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
     /**
@@ -310,7 +310,7 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withFallbackTimeout(long fallbackTimeout) {
         this.fallbackTimeout = fallbackTimeout;
-        return (DebuggerConfigurationProperties) this;
+        return this;
     }
 
 }
