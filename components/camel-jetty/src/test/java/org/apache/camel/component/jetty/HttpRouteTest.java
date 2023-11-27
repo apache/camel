@@ -41,6 +41,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.eclipse.jetty.ee10.servlet.HttpInput;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -258,7 +259,7 @@ public class HttpRouteTest extends BaseJettyTest {
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 InputStream is = (InputStream) exchange.getIn().getBody();
-                                assertTrue(is instanceof org.eclipse.jetty.server.HttpInput, "It should be a raw inputstream");
+                                assertTrue(is instanceof HttpInput, "It should be a raw inputstream");
                                 String request = exchange.getIn().getBody(String.class);
                                 assertEquals("This is a test", request, "Got a wrong request");
                                 exchange.getMessage().setBody("OK");

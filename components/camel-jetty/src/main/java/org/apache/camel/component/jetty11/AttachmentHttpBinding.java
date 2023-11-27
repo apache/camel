@@ -93,9 +93,9 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         // remove Content-Encoding from request
         if (request instanceof org.eclipse.jetty.server.Request) {
             org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request) request;
-            HttpFields originalFields = jettyRequest.getHttpFields();
+            HttpFields originalFields = jettyRequest.getHeaders();
             HttpFields newFields = HttpFields.build(originalFields).remove(Exchange.CONTENT_ENCODING);
-            jettyRequest.setHttpFields(newFields);
+            //            jettyRequest.getHeaders().setHttpFields(newFields); TODO
         }
 
         // attachment is optional

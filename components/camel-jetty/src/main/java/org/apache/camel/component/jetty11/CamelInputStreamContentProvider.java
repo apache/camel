@@ -18,9 +18,9 @@ package org.apache.camel.component.jetty11;
 
 import java.io.InputStream;
 
-import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.io.content.InputStreamContentSource;
 
-public class CamelInputStreamContentProvider extends InputStreamContentProvider {
+public class CamelInputStreamContentProvider extends InputStreamContentSource {
 
     private final int length;
 
