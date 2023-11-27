@@ -40,6 +40,10 @@
   </prerequisites>
 
   <properties>
+
+  <sonar.organization>mrasante</sonar.organization>
+  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
     <!-- enforce to require using at least this maven version -->
     <maven-enforcer-require-maven-version>3.2.5</maven-enforcer-require-maven-version>
 
