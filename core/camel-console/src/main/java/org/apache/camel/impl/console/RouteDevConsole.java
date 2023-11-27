@@ -151,6 +151,9 @@ public class RouteDevConsole extends AbstractDevConsole {
         for (ManagedProcessorMBean mp : mps) {
             sb.append("\n");
             sb.append(String.format("\n        Id: %s", mp.getProcessorId()));
+            if (mp.getNodePrefixId() != null) {
+                sb.append(String.format("\n        Node Prefix Id: %s", mp.getNodePrefixId()));
+            }
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
             sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
@@ -283,6 +286,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             arr.add(jo);
 
             jo.put("id", mp.getProcessorId());
+            jo.put("nodePrefixId", mp.getNodePrefixId());
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {
