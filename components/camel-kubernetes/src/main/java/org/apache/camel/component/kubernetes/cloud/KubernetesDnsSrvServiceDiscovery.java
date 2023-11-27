@@ -100,8 +100,8 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
                 List<ServiceDefinition> servers = new LinkedList<>();
 
                 while (resolved.hasMore()) {
-                    String record = (String) resolved.next();
-                    String[] items = record.split(" ", -1);
+                    String recordObj = (String) resolved.next();
+                    String[] items = recordObj.split(" ", -1);
                     String host = items[3].trim();
                     String port = items[2].trim();
 

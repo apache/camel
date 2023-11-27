@@ -79,8 +79,8 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
             }
             List<Record> records = result.records();
             Queue<Exchange> exchanges = new ArrayDeque<>();
-            for (Record record : records) {
-                exchanges.add(createExchange(record));
+            for (Record polledRecord : records) {
+                exchanges.add(createExchange(polledRecord));
             }
             processedExchangeCount += processBatch(CastUtils.cast(exchanges));
 

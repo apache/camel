@@ -66,10 +66,10 @@ public class PubSubApiConsumer extends DefaultConsumer {
         }
     }
 
-    public void processEvent(Object record, String replayId) throws IOException {
+    public void processEvent(Object recordObj, String replayId) throws IOException {
         final Exchange exchange = createExchange(true);
         final Message in = exchange.getIn();
-        in.setBody(record);
+        in.setBody(recordObj);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);

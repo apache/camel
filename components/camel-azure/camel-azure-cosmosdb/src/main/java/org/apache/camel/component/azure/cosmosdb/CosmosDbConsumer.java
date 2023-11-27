@@ -82,8 +82,8 @@ public class CosmosDbConsumer extends DefaultConsumer {
         return (CosmosDbEndpoint) super.getEndpoint();
     }
 
-    private void onEventListener(final List<Map<String, ?>> record) {
-        final Exchange exchange = createAzureCosmosDbExchange(record);
+    private void onEventListener(final List<Map<String, ?>> recordList) {
+        final Exchange exchange = createAzureCosmosDbExchange(recordList);
 
         // add exchange callback
         exchange.getExchangeExtension().addOnCompletion(onCompletion);
@@ -91,11 +91,11 @@ public class CosmosDbConsumer extends DefaultConsumer {
         getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
     }
 
-    private Exchange createAzureCosmosDbExchange(final List<Map<String, ?>> record) {
+    private Exchange createAzureCosmosDbExchange(final List<Map<String, ?>> recordList) {
         final Exchange exchange = createExchange(true);
         final Message message = exchange.getIn();
 
-        message.setBody(record);
+        message.setBody(recordList);
 
         return exchange;
     }

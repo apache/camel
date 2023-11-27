@@ -182,10 +182,10 @@ public class RestOpenApiSupport {
         Pattern p = Pattern.compile("\\{(.*?)}");
         Matcher m = p.matcher(url);
         while (m.find()) {
-            String var = m.group(1);
-            if (server != null && server.getVariables() != null && server.getVariables().get(var) != null) {
-                String varValue = server.getVariables().get(var).getDefault();
-                url = url.replace("{" + var + "}", varValue);
+            String variable = m.group(1);
+            if (server != null && server.getVariables() != null && server.getVariables().get(variable) != null) {
+                String varValue = server.getVariables().get(variable).getDefault();
+                url = url.replace("{" + variable + "}", varValue);
             }
         }
         return url;
