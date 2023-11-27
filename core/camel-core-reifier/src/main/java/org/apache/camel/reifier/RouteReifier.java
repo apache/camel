@@ -59,7 +59,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     private static final String[] RESERVED_PROPERTIES = new String[] {
             Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
-            Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY,
+            Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY, Route.NODE_PREFIX_ID_PROPERTY,
             Route.REST_PROPERTY, Route.CONFIGURATION_ID_PROPERTY };
 
     public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
@@ -371,6 +371,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         routeProperties.put(Route.DESCRIPTION_PROPERTY, definition.getDescriptionText());
         if (definition.getGroup() != null) {
             routeProperties.put(Route.GROUP_PROPERTY, definition.getGroup());
+        }
+        if (definition.getNodePrefixId() != null) {
+            routeProperties.put(Route.NODE_PREFIX_ID_PROPERTY, definition.getNodePrefixId());
         }
         String rest = Boolean.toString(definition.isRest() != null && definition.isRest());
         routeProperties.put(Route.REST_PROPERTY, rest);
