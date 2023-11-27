@@ -45,6 +45,11 @@ from("seda:c")
   .to("seda:d")
 ----
 
+=== camel-management
+
+If the `nodeIdPrefix` has been configured on routes, then the MBeans for the processors will now use the prefix
+in their `ObjectName` also.
+
 === camel-jbang
 
 The `camel transform` command has been renamed to `camel transform route` as this command is used for transforming

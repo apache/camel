@@ -858,8 +858,17 @@ public class DefaultModel implements Model {
             Collection<ProcessorDefinition> col
                     = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
             for (ProcessorDefinition proc : col) {
-                if (id.equals(proc.getId())) {
+                String pid = proc.getId();
+                // match direct by ids
+                if (id.equals(pid)) {
                     return proc;
+                }
+                // try to match via node prefix id
+                if (proc.getNodePrefixId() != null) {
+                    pid = proc.getNodePrefixId() + pid;
+                    if (id.equals(pid)) {
+                        return proc;
+                    }
                 }
             }
         }
