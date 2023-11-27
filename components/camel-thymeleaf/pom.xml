@@ -80,8 +80,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
+            <groupId>org.eclipse.jetty.ee9</groupId> <!-- ee10 is not compatible with wiremock -->
+            <artifactId>jetty-ee9-servlet</artifactId> <!-- ee10 is not compatible with wiremock -->
             <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
