@@ -30,11 +30,9 @@ import org.springframework.amqp.core.MessageProperties;
 
 public class DefaultMessagePropertiesConverter implements MessagePropertiesConverter {
 
-    private final CamelContext camelContext;
     private HeaderFilterStrategy headerFilterStrategy;
 
-    public DefaultMessagePropertiesConverter(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    public DefaultMessagePropertiesConverter() {
     }
 
     @Override

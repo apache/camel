@@ -34,7 +34,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
-import org.springframework.amqp.support.converter.MessageConverter;
 
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
@@ -45,8 +44,6 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
     private final SpringRabbitMQConsumer consumer;
     private final SpringRabbitMQEndpoint endpoint;
     private final AsyncProcessor processor;
-    private final MessagePropertiesConverter messagePropertiesConverter;
-    private final MessageConverter messageConverter;
     private RabbitTemplate template;
     private boolean disableReplyTo;
     private boolean async;
@@ -55,8 +52,6 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
         this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
-        this.messagePropertiesConverter = endpoint.getMessagePropertiesConverter();
-        this.messageConverter = endpoint.getMessageConverter();
     }
 
     public boolean isAsync() {

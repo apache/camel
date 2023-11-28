@@ -462,6 +462,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
             exp = StringHelper.removeQuotes(exp);
             return ExpressionBuilder.languageExpression("jq", exp);
         }
+        // jsonpath
+        remainder = ifStartsWithReturnRemainder("jsonpath(", function);
+        if (remainder != null) {
+            String exp = StringHelper.beforeLast(remainder, ")");
+            if (exp == null) {
+                throw new SimpleParserException("Valid syntax: ${jsonpath(exp)} was: " + function, token.getIndex());
+            }
+            exp = StringHelper.removeQuotes(exp);
+            return ExpressionBuilder.languageExpression("jsonpath", exp);
+        }
         remainder = ifStartsWithReturnRemainder("xpath(", function);
         if (remainder != null) {
             String exp = StringHelper.beforeLast(remainder, ")");

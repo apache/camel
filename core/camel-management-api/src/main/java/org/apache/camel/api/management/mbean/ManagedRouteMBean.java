@@ -28,6 +28,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route ID")
     String getRouteId();
 
+    @ManagedAttribute(description = "Node Prefix ID")
+    String getNodePrefixId();
+
     @ManagedAttribute(description = "Route Group")
     String getRouteGroup();
 

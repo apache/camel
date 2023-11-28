@@ -44,6 +44,7 @@ public interface Route extends RuntimeConfiguration {
     String CUSTOM_ID_PROPERTY = "customId";
     String PARENT_PROPERTY = "parent";
     String GROUP_PROPERTY = "group";
+    String NODE_PREFIX_ID_PROPERTY = "nodePrefixId";
     String REST_PROPERTY = "rest";
     String TEMPLATE_PROPERTY = "template";
     String DESCRIPTION_PROPERTY = "description";
@@ -56,6 +57,11 @@ public interface Route extends RuntimeConfiguration {
      * @return the route id
      */
     String getId();
+
+    /**
+     * Gets the node prefix id
+     */
+    String getNodePrefixId();
 
     /**
      * Whether the route id is custom assigned or auto assigned

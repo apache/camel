@@ -366,9 +366,9 @@ public class RouteService extends ChildServiceSupport {
         for (Service service : services) {
             StartupStep step = null;
             // skip internal services / route pipeline (starting point for route)
-            boolean record
+            boolean shouldRecord
                     = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
-            if (record) {
+            if (shouldRecord) {
                 step = beginStep(service, "Init");
             }
             ServiceHelper.initService(service);
@@ -384,9 +384,9 @@ public class RouteService extends ChildServiceSupport {
         for (Service service : services) {
             StartupStep step = null;
             // skip internal services / route pipeline (starting point for route)
-            boolean record
+            boolean shouldRecord
                     = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
-            if (record) {
+            if (shouldRecord) {
                 step = beginStep(service, "Start");
             }
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {

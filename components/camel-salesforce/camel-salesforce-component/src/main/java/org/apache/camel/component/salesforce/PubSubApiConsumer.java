@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
 import java.util.Map;
 
 import com.salesforce.eventbus.protobuf.ReplayPreset;
@@ -28,14 +27,11 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_REPLAY_ID;
 
 public class PubSubApiConsumer extends DefaultConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PubSubApiConsumer.class);
     private final String topic;
     private final ReplayPreset initialReplayPreset;
     private String initialReplayId;
@@ -66,10 +62,10 @@ public class PubSubApiConsumer extends DefaultConsumer {
         }
     }
 
-    public void processEvent(Object record, String replayId) throws IOException {
+    public void processEvent(Object recordObj, String replayId) {
         final Exchange exchange = createExchange(true);
         final Message in = exchange.getIn();
-        in.setBody(record);
+        in.setBody(recordObj);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);

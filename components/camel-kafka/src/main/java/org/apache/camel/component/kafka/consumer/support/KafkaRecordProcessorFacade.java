@@ -77,16 +77,16 @@ public class KafkaRecordProcessorFacade {
             logRecordsInPartition(partitionRecords, partition);
 
             while (!lastResult.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
-                ConsumerRecord<Object, Object> record = recordIterator.next();
+                ConsumerRecord<Object, Object> consumerRecord = recordIterator.next();
 
-                LOG.debug("Processing record on partition {} with offset {}", record.partition(), record.offset());
+                LOG.debug("Processing record on partition {} with offset {}", consumerRecord.partition(), consumerRecord.offset());
 
                 lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
-                        kafkaRecordProcessor, record);
+                        kafkaRecordProcessor, consumerRecord);
 
                 LOG.debug(
                         "Processed record on partition {} with offset {} and got ProcessingResult for partition {} and offset {}",
-                        record.partition(), record.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
+                        consumerRecord.partition(), consumerRecord.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
 
                 if (consumerListener != null) {
                     if (!consumerListener.afterProcess(lastResult)) {
@@ -125,15 +125,15 @@ public class KafkaRecordProcessorFacade {
             boolean recordHasNext,
             final ProcessingResult lastResult,
             KafkaRecordProcessor kafkaRecordProcessor,
-            ConsumerRecord<Object, Object> record) {
+            ConsumerRecord<Object, Object> consumerRecord) {
 
-        logRecord(record);
+        logRecord(consumerRecord);
 
         Exchange exchange = camelKafkaConsumer.createExchange(false);
 
         ProcessingResult currentResult
                 = kafkaRecordProcessor.processExchange(exchange, partition, partitionHasNext,
-                        recordHasNext, record, lastResult, camelKafkaConsumer.getExceptionHandler());
+                        recordHasNext, consumerRecord, lastResult, camelKafkaConsumer.getExceptionHandler());
 
         if (!currentResult.isBreakOnErrorHit()) {
             commitManager.recordOffset(partition, currentResult.getPartitionLastOffset());
@@ -145,10 +145,10 @@ public class KafkaRecordProcessorFacade {
         return currentResult;
     }
 
-    private void logRecord(ConsumerRecord<Object, Object> record) {
+    private void logRecord(ConsumerRecord<Object, Object> consumerRecord) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Partition = {}, offset = {}, key = {}, value = {}", record.partition(),
-                    record.offset(), record.key(), record.value());
+            LOG.trace("Partition = {}, offset = {}, key = {}, value = {}", consumerRecord.partition(),
+                    consumerRecord.offset(), consumerRecord.key(), consumerRecord.value());
         }
     }
 

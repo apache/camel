@@ -98,6 +98,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                             }
                             row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
+                            row.nodePrefixId = o.getString("nodePrefixId");
                             row.processor = o.getString("from");
                             row.source = o.getString("source");
                             row.state = o.getString("state");
@@ -170,6 +171,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             row.routeId = route.routeId;
             rows.add(row);
             row.processorId = o.getString("id");
+            row.nodePrefixId = o.getString("nodePrefixId");
             row.processor = o.getString("processor");
             row.level = o.getIntegerOrDefault("level", 0);
             row.source = o.getString("source");
@@ -285,7 +287,14 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         if (source && r.source != null) {
             answer = sourceLocLine(r.source);
         } else {
-            answer = r.processorId != null ? r.processorId : r.routeId;
+            if (r.processorId == null) {
+                answer = r.routeId;
+            } else {
+                answer = r.processorId;
+                if (r.nodePrefixId != null && answer.startsWith(r.nodePrefixId)) {
+                    answer = answer.substring(r.nodePrefixId.length());
+                }
+            }
         }
         return answer;
     }
@@ -316,6 +325,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         String name;
         long uptime;
         String routeId;
+        String nodePrefixId;
         String processorId;
         String processor;
         int level;

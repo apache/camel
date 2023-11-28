@@ -22,13 +22,11 @@ import org.apache.camel.tooling.maven.MavenGav;
 
 public class DependencyDownloaderPropertyBindingListener implements PropertyBindingListener {
 
-    private final CamelContext camelContext;
     private final KnownDependenciesResolver knownDependenciesResolver;
     private final DependencyDownloader downloader;
 
     public DependencyDownloaderPropertyBindingListener(CamelContext camelContext,
                                                        KnownDependenciesResolver knownDependenciesResolver) {
-        this.camelContext = camelContext;
         this.knownDependenciesResolver = knownDependenciesResolver;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }

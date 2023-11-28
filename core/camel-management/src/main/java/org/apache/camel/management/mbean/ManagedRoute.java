@@ -116,6 +116,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
+    public String getNodePrefixId() {
+        return route.getNodePrefixId();
+    }
+
+    @Override
     public String getRouteGroup() {
         return route.getGroup();
     }

@@ -25,16 +25,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Schematron Engine Factory
  *
  */
 public final class SchematronProcessorFactory {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SchematronProcessorFactory.class);
 
     /**
      * Private constructor.

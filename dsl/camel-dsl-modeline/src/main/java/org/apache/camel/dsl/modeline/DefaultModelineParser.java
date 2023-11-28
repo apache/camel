@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.StringHelper;
@@ -33,12 +32,9 @@ public class DefaultModelineParser implements ModelineParser {
 
     public static final String MODELINE_START = "camel-k:";
 
-    private final CamelContext camelContext;
     private final Map<String, Trait> traits = new HashMap<>();
 
-    public DefaultModelineParser(CamelContext camelContext) {
-        this.camelContext = camelContext;
-
+    public DefaultModelineParser() {
         // add known traits
         Trait trait = new DependencyTrait();
         this.traits.put(trait.getName(), trait);

@@ -71,8 +71,6 @@ public class PgEventEndpoint extends DefaultEndpoint {
 
     private final String uri;
 
-    private PGConnection dbConnection;
-
     public PgEventEndpoint(String uri, PgEventComponent component) {
         super(uri, component);
         this.uri = uri;

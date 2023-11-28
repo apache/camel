@@ -67,8 +67,6 @@ public class CoverageResultsProcessor {
 
     private final XmlToCamelRouteCoverageConverter xmlToCamelRouteCoverageConverter = new XmlToCamelRouteCoverageConverter();
 
-    private Log log;
-
     public String generateReport(MavenProject project, final File xmlPath, final File htmlPath) throws IOException {
 
         String out;

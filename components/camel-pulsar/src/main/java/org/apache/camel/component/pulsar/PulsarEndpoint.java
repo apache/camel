@@ -39,7 +39,6 @@ import org.apache.pulsar.client.api.PulsarClient;
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;
-    private String uri; // TODO this field is reported unread
 
     @UriPath(enums = "persistent,non-persistent")
     @Metadata(required = true)
@@ -148,8 +147,6 @@ public class PulsarEndpoint extends DefaultEndpoint {
         ObjectHelper.notNull(tenant, "tenant", this);
         ObjectHelper.notNull(namespace, "namespace", this);
         ObjectHelper.notNull(topic, "topic", this);
-
-        uri = persistence + "://" + tenant + "/" + namespace + "/" + topic;
     }
 
     @Override

@@ -57,7 +57,6 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
-    private Chat privateChat;
     private ChatManager chatManager;
     private XMPPTCPConnection connection;
     private ScheduledExecutorService scheduledExecutor;
@@ -96,7 +95,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         }
 
         if (endpoint.getRoom() == null) {
-            privateChat = chatManager.chatWith(JidCreate.entityBareFrom(endpoint.resolveParticipant(connection)));
+            chatManager.chatWith(JidCreate.entityBareFrom(endpoint.resolveParticipant(connection)));
         } else {
             // add the presence packet listener to the connection so we only get packets that concerns us
             // we must add the listener before creating the muc

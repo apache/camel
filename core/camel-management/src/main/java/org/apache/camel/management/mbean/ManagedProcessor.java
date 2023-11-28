@@ -167,6 +167,14 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     }
 
     @Override
+    public String getNodePrefixId() {
+        if (route != null) {
+            return route.getNodePrefixId();
+        }
+        return null;
+    }
+
+    @Override
     public String getProcessorId() {
         return id;
     }

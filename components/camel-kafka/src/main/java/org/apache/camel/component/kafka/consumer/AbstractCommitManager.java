@@ -71,14 +71,14 @@ public abstract class AbstractCommitManager implements CommitManager {
 
     @Override
     public KafkaManualCommit getManualCommit(
-            Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record) {
+            Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> consumerRecord) {
 
         KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
         if (manualCommitFactory == null) {
             manualCommitFactory = new DefaultKafkaManualCommitFactory();
         }
 
-        return getManualCommit(exchange, partition, record, manualCommitFactory);
+        return getManualCommit(exchange, partition, consumerRecord, manualCommitFactory);
     }
 
     @Override

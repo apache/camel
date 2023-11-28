@@ -32,11 +32,9 @@ import org.apache.camel.tooling.model.LanguageModel;
 public final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
-    private CamelContext camelContext;
     private final DependencyDownloader downloader;
 
     public DependencyDownloaderLanguageResolver(CamelContext camelContext) {
-        this.camelContext = camelContext;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 

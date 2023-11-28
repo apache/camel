@@ -714,8 +714,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 builder.tableName(tableName);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.RECORD))) {
-                Record record = exchange.getIn().getHeader(Timestream2Constants.RECORD, Record.class);
-                builder.commonAttributes(record);
+                Record recordObject = exchange.getIn().getHeader(Timestream2Constants.RECORD, Record.class);
+                builder.commonAttributes(recordObject);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.RECORD_LIST))) {
                 List<Record> records = exchange.getIn().getHeader(Timestream2Constants.RECORD_LIST, List.class);

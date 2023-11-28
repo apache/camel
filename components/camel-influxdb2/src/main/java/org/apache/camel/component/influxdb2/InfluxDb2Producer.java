@@ -120,12 +120,12 @@ public class InfluxDb2Producer extends DefaultProducer {
 
     private void insertRecord(Exchange exchange, String orgName, String bucketName, WritePrecision writePrecision)
             throws InvalidPayloadException {
-        Record record = exchange.getIn().getMandatoryBody(Record.class);
+        Record recordObj = exchange.getIn().getMandatoryBody(Record.class);
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing record {}", record);
+                LOG.debug("Writing record {}", recordObj);
             }
-            writeApi.writeRecord(bucketName, orgName, writePrecision, record.getInfluxRecord());
+            writeApi.writeRecord(bucketName, orgName, writePrecision, recordObj.getInfluxRecord());
         } catch (Exception ex) {
             exchange.setException(new CamelInfluxDb2Exception(ex));
         }

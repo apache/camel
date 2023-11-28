@@ -35,7 +35,7 @@ public interface SmbComponentBuilderFactory {
      * Receive files from SMB (Server Message Block) shares.
      * 
      * Category: file
-     * Since: 4.3.0-SNAPSHOT
+     * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-smb
      * 
      * @return the dsl builder

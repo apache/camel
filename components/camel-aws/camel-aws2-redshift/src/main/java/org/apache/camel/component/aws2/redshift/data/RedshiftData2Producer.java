@@ -43,9 +43,6 @@ public class RedshiftData2Producer extends DefaultProducer {
 
     private transient String redshiftDataProducerToString;
 
-    private HealthCheck producerHealthCheck;
-    private WritableHealthCheckRepository healthCheckRepository;
-
     public RedshiftData2Producer(final Endpoint endpoint) {
         super(endpoint);
     }

@@ -2121,6 +2121,130 @@ which is due to invalid configuration: `Invalid url in bootstrap.servers: value`
 
 TIP: Use `camel get health --help` to see all the various options.
 
+== Transforming message (data mapping)
+
+When integrating system you often need to transform messages from one system to another. Camel has rich set
+of capabilities for this such as various data formats, templating languages, and much more. However, for basic
+data mapping such as taking an existing incoming JSon document and transform this to a smaller JSon document,
+you may want to do this quickly with Camel.
+
+The `camel transform message` command can be used for such tasks, where it can take an existing source file as input,
+and then a template that defines how to transform the data, and then show the output (in real time).
+
+For example given this JSon document (in a file named `random.json`), we want to combine the name, and select a few fields:
+
+[source,json]
+----
+{
+  "id": 9914,
+  "uid": "eb5fa603-1db6-45f9-912a-431a6ed59b18",
+  "password": "ei7gvYKdnN",
+  "first_name": "Khalilah",
+  "last_name": "Monahan",
+  "username": "khalilah.monahan",
+  "email": "khalilah.monahan@email.com",
+  "avatar": "https://robohash.org/utnumquamexcepturi.png?size=300x300&set=set1",
+  "gender": "Agender",
+  "phone_number": "+54 (421) 591-5640 x333",
+  "social_insurance_number": "268418308",
+  "date_of_birth": "1975-03-11",
+  "employment": {
+    "title": "Product Design Director",
+    "key_skill": "Work under pressure"
+  },
+  "address": {
+    "city": "New Fritzchester",
+    "street_name": "Patrick Common",
+    "street_address": "4538 Reggie Inlet",
+    "zip_code": "16282-7045",
+    "state": "New York",
+    "country": "United States",
+    "coordinates": {
+      "lat": -1.9868753435474673,
+      "lng": 39.09763956726292
+    }
+  },
+  "credit_card": {
+    "cc_number": "4493983042212"
+  },
+  "subscription": {
+    "plan": "Student",
+    "status": "Active",
+    "payment_method": "Debit card",
+    "term": "Monthly"
+  }
+}
+----
+
+Then we can have a `transform.json` file as the beginning of the template, with the structure of the desired output:
+
+[source,json]
+----
+{
+    "sid": 123,
+	"name": "TODO",
+	"country": "TODO",
+	"phone": "TODO",
+	"student": false
+}
+----
+
+We can then run `camel transform message` and have it update (in real time) the output every time we change the template.
+
+[source,bash]
+----
+$ camel transform message --body=file:random.json --language=simple --template=file:transform.json --pretty --watch
+----
+
+What happens is then Camel will output on the console as you go:
+
+[source,bash]
+----
+ Exchange  (DefaultExchange)  InOut   23F5DD4CE6C260B-0000000000000002
+ Message   (DefaultMessage)
+ Body      (String) (bytes: 118)
+ {
+   "sid": 123,
+   "name": "TODO",
+   "country": "TODO",
+   "phone": "TODO",
+   "student": false
+ }
+----
+
+Then you can update the `transform.json` file and save it and see the generated output:
+
+[source,json]
+----
+{
+   "sid": ${jq(.id)},
+   "name": "${jq(.first_name)} ${jq(.last_name)}",
+   "country": "TODO",
+   "phone": "TODO",
+   "student": false
+}
+----
+
+And the output:
+
+[source,bash]
+----
+ Exchange  (DefaultExchange)  InOut   23F5DD4CE6C260B-0000000000000018
+ Message   (DefaultMessage)
+ Body      (String) (bytes: 158)
+ {
+   "sid": 9914,
+   "name": "Khalilah Monahan",
+   "country": "TODO",
+   "phone": "TODO",
+   "student": false
+ }
+----
+
+Then you can continue to update the `transform.json` until you have the desired result. And if you make a mistake
+then you see an error (in red) with stacktrace that hopefully can help you out how to fix this.
+
+
 == Listing what Camel components is available
 
 Camel comes with a lot of artifacts out of the box which comes as:

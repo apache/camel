@@ -126,7 +126,7 @@
         <license-maven-plugin-version>4.3</license-maven-plugin-version>
         <maven-assembly-plugin-version>3.6.0</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
-        <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
+        <maven-dependency-plugin-version>3.6.1</maven-dependency-plugin-version>
         <maven-enforcer-plugin-version>3.4.1</maven-enforcer-plugin-version>
         <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
@@ -136,7 +136,7 @@
         <versions-maven-plugin-version>2.16.0</versions-maven-plugin-version>
 
         <jaxb-core-version>4.0.3</jaxb-core-version>
-        <jaxb-impl-version>4.0.3</jaxb-impl-version>
+        <jaxb-impl-version>4.0.4</jaxb-impl-version>
         <jaxb-osgi-version>4.0.4</jaxb-osgi-version>
         <jaxb-xjc-version>4.0.4</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.4</jaxb-jxc-version>

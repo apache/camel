@@ -128,17 +128,17 @@ public class KafkaRecordProcessor {
 
     private boolean processException(
             Exchange exchange, TopicPartition topicPartition,
-            ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
+            ConsumerRecord<Object, Object> consumerRecord, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
             if (lastResult.getPartition() != -1 &&
-                    lastResult.getPartition() != record.partition()) {
+                    lastResult.getPartition() != consumerRecord.partition()) {
                 LOG.error("About to process an exception with UNEXPECTED partition & offset. Got topic partition {}. " +
                           " The last result was on partition {} with offset {} but was expecting partition {} with offset {}",
                         topicPartition.partition(), lastResult.getPartition(), lastResult.getPartitionLastOffset(),
-                        record.partition(), record.offset());
+                        consumerRecord.partition(), consumerRecord.offset());
             }
 
             // we are failing and we should break out
@@ -147,7 +147,7 @@ public class KafkaRecordProcessor {
                 LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(),
                         exc.getMessage());
                 LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.",
-                        record.offset(), record.partition());
+                        consumerRecord.offset(), consumerRecord.partition());
             }
 
             // force commit, so we resume on next poll where we failed

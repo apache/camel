@@ -289,7 +289,12 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_PROCESSOR).append(",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
+        String id = definition.getId();
+        String prefix = definition.getNodePrefixId();
+        if (prefix != null) {
+            id = prefix + id;
+        }
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
         return createObjectName(buffer);
     }
 
@@ -300,7 +305,12 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_STEP).append(",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
+        String id = definition.getId();
+        String prefix = definition.getNodePrefixId();
+        if (prefix != null) {
+            id = prefix + id;
+        }
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
         return createObjectName(buffer);
     }
 

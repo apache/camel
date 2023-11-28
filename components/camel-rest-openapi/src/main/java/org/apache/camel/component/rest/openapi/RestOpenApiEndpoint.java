@@ -97,11 +97,6 @@ import static org.apache.camel.util.StringHelper.notEmpty;
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     /**
-     * Regex pattern used to extract path parts from OpenApi specification paths
-     */
-    private static final Pattern PATH_EXTRACTOR = Pattern.compile("/([^{}/]+)");
-
-    /**
      * Remaining parameters specified in the Endpoint URI.
      */
     Map<String, Object> parameters = Collections.emptyMap();
@@ -421,10 +416,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         Matcher m = p.matcher(url);
         while (m.find()) {
 
-            String var = m.group(1);
-            if (server != null && server.getVariables() != null && server.getVariables().get(var) != null) {
-                String varValue = server.getVariables().get(var).getDefault();
-                url = url.replace("{" + var + "}", varValue);
+            String variable = m.group(1);
+            if (server != null && server.getVariables() != null && server.getVariables().get(variable) != null) {
+                String varValue = server.getVariables().get(variable).getDefault();
+                url = url.replace("{" + variable + "}", varValue);
             }
         }
         return url;

@@ -41,7 +41,6 @@ public final class YamlProperties {
         private boolean required;
         private boolean deprecated;
         private boolean secret;
-        private Schema schema;
         private String oneOf;
 
         public AnnotationBuilder withName(String name) {

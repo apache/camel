@@ -32,14 +32,12 @@ public class JGroupsRaftProducer extends DefaultProducer {
 
     // Producer settings
     private final JGroupsRaftEndpoint endpoint;
-    private final String clusterName;
 
     // Constructor
-    public JGroupsRaftProducer(JGroupsRaftEndpoint endpoint, String clusterName) {
+    public JGroupsRaftProducer(JGroupsRaftEndpoint endpoint) {
         super(endpoint);
 
         this.endpoint = endpoint;
-        this.clusterName = clusterName;
     }
 
     // Life cycle callbacks

@@ -89,7 +89,6 @@ public class SubscriptionHelper extends ServiceSupport {
     private volatile boolean reconnecting;
     private final AtomicLong handshakeBackoff;
     private final AtomicBoolean handshaking = new AtomicBoolean();
-    private final AtomicBoolean loggingIn = new AtomicBoolean();
 
     public SubscriptionHelper(final SalesforceComponent component) {
         this.component = component;
