@@ -56,7 +56,7 @@ public class TransformMessageAction extends ActionWatchCommand {
 
     @CommandLine.Option(names = {
             "--source" },
-                        description = "Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number to refer to location of the EIP)")
+                        description = "Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number or :id to refer to the exact location of the EIP to use)")
     private String source;
 
     @CommandLine.Option(names = {

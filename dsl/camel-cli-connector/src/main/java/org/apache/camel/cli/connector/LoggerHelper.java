@@ -97,4 +97,14 @@ public final class LoggerHelper {
         }
     }
 
+    public static String extractSourceLocationId(String location) {
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt >= 1) {
+            int pos = location.lastIndexOf(':');
+            return location.substring(pos + 1);
+        } else {
+            return null;
+        }
+    }
+
 }

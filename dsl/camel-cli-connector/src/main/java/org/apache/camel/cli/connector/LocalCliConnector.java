@@ -303,11 +303,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
         try {
             if (source != null) {
-                LOG.warn("Source: {}", source);
-
-                Integer line = LoggerHelper.extractSourceLocationLineNumber(source);
+                Integer sourceLine = LoggerHelper.extractSourceLocationLineNumber(source);
+                String sourceId = LoggerHelper.extractSourceLocationId(source);
                 source = LoggerHelper.stripSourceLocationLineNumber(source);
-                LOG.warn("Source: {} line: {}", source, line);
+                LOG.warn("Source: {} line: {} id: {}", source, sourceLine, sourceId);
 
                 boolean update = true;
                 File f = new File(source);
@@ -345,12 +344,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                                         ProcessorDefinition.class);
                         for (ProcessorDefinition p : defs) {
                             if (p instanceof HasExpressionType et) {
-                                if (line == null) {
-                                    found = et.getExpressionType();
-                                } else {
-                                    LOG.warn("Candidate at line {} target line: {}", p.getLineNumber(), line);
-                                    if (p.getLineNumber() == -1 || p.getLineNumber() <= line) {
-                                        found = et.getExpressionType();
+                                ExpressionDefinition def = et.getExpressionType();
+                                if (def != null) {
+                                    if (sourceLine != null) {
+                                        if (p.getLineNumber() == -1 || p.getLineNumber() <= sourceLine) {
+                                            found = def;
+                                        }
+                                    } else if (sourceId != null) {
+                                        if (sourceId.equals(p.getId()) || sourceId.equals(def.getId())) {
+                                            found = def;
+                                        }
+                                    } else {
+                                        found = def;
                                     }
                                 }
                             }
