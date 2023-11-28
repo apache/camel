@@ -21,7 +21,7 @@ public class JettyHttp9EndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(33);
+        Set<String> props = new HashSet<>(37);
         props.add("async");
         props.add("bridgeErrorHandler");
         props.add("chunked");
@@ -33,6 +33,8 @@ public class JettyHttp9EndpointUriFactory extends org.apache.camel.support.compo
         props.add("enableMultipartFilter");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("fileSizeThreshold");
+        props.add("filesLocation");
         props.add("filterInitParameters");
         props.add("filters");
         props.add("handlers");
@@ -44,6 +46,8 @@ public class JettyHttp9EndpointUriFactory extends org.apache.camel.support.compo
         props.add("mapHttpMessageFormUrlEncodedBody");
         props.add("mapHttpMessageHeaders");
         props.add("matchOnUriPrefix");
+        props.add("maxFileSize");
+        props.add("maxRequestSize");
         props.add("multipartFilter");
         props.add("muteException");
         props.add("optionsEnabled");

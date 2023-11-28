@@ -41,6 +41,10 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "filesizethreshold":
+        case "fileSizeThreshold": target.setFileSizeThreshold(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "fileslocation":
+        case "filesLocation": target.setFilesLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "filterinitparameters":
         case "filterInitParameters": target.setFilterInitParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "filters": target.setFilters(property(camelContext, java.util.List.class, value)); return true;
@@ -59,6 +63,10 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "mapHttpMessageHeaders": target.setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
         case "matchonuriprefix":
         case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
+        case "maxfilesize":
+        case "maxFileSize": target.setMaxFileSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxrequestsize":
+        case "maxRequestSize": target.setMaxRequestSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "multipartfilter":
         case "multipartFilter": target.setMultipartFilter(property(camelContext, javax.servlet.Filter.class, value)); return true;
         case "muteexception":
@@ -108,6 +116,10 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filesizethreshold":
+        case "fileSizeThreshold": return java.lang.Integer.class;
+        case "fileslocation":
+        case "filesLocation": return java.lang.String.class;
         case "filterinitparameters":
         case "filterInitParameters": return java.util.Map.class;
         case "filters": return java.util.List.class;
@@ -126,6 +138,10 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "mapHttpMessageHeaders": return boolean.class;
         case "matchonuriprefix":
         case "matchOnUriPrefix": return boolean.class;
+        case "maxfilesize":
+        case "maxFileSize": return java.lang.Long.class;
+        case "maxrequestsize":
+        case "maxRequestSize": return java.lang.Long.class;
         case "multipartfilter":
         case "multipartFilter": return javax.servlet.Filter.class;
         case "muteexception":
@@ -176,6 +192,10 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "filesizethreshold":
+        case "fileSizeThreshold": return target.getFileSizeThreshold();
+        case "fileslocation":
+        case "filesLocation": return target.getFilesLocation();
         case "filterinitparameters":
         case "filterInitParameters": return target.getFilterInitParameters();
         case "filters": return target.getFilters();
@@ -194,6 +214,10 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "mapHttpMessageHeaders": return target.isMapHttpMessageHeaders();
         case "matchonuriprefix":
         case "matchOnUriPrefix": return target.isMatchOnUriPrefix();
+        case "maxfilesize":
+        case "maxFileSize": return target.getMaxFileSize();
+        case "maxrequestsize":
+        case "maxRequestSize": return target.getMaxRequestSize();
         case "multipartfilter":
         case "multipartFilter": return target.getMultipartFilter();
         case "muteexception":

@@ -885,6 +885,58 @@ public interface JettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * The size threshold after which files will be written to disk for
+         * multipart/form-data requests. By default the files are not written to
+         * disk.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param fileSizeThreshold the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder fileSizeThreshold(
+                Integer fileSizeThreshold) {
+            doSetProperty("fileSizeThreshold", fileSizeThreshold);
+            return this;
+        }
+        /**
+         * The size threshold after which files will be written to disk for
+         * multipart/form-data requests. By default the files are not written to
+         * disk.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param fileSizeThreshold the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder fileSizeThreshold(
+                String fileSizeThreshold) {
+            doSetProperty("fileSizeThreshold", fileSizeThreshold);
+            return this;
+        }
+        /**
+         * The directory location where files will be store for
+         * multipart/form-data requests. By default the files are written in the
+         * system temporary folder.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param filesLocation the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder filesLocation(
+                String filesLocation) {
+            doSetProperty("filesLocation", filesLocation);
+            return this;
+        }
+        /**
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
@@ -1108,6 +1160,68 @@ public interface JettyHttpEndpointBuilderFactory {
         default AdvancedJettyHttpEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            return this;
+        }
+        /**
+         * The maximum size allowed for uploaded files. -1 means no limit.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxFileSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder maxFileSize(Long maxFileSize) {
+            doSetProperty("maxFileSize", maxFileSize);
+            return this;
+        }
+        /**
+         * The maximum size allowed for uploaded files. -1 means no limit.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxFileSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder maxFileSize(String maxFileSize) {
+            doSetProperty("maxFileSize", maxFileSize);
+            return this;
+        }
+        /**
+         * The maximum size allowed for multipart/form-data requests. -1 means
+         * no limit.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxRequestSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder maxRequestSize(
+                Long maxRequestSize) {
+            doSetProperty("maxRequestSize", maxRequestSize);
+            return this;
+        }
+        /**
+         * The maximum size allowed for multipart/form-data requests. -1 means
+         * no limit.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxRequestSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder maxRequestSize(
+                String maxRequestSize) {
+            doSetProperty("maxRequestSize", maxRequestSize);
             return this;
         }
         /**
