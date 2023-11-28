@@ -306,25 +306,31 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 Integer sourceLine = LoggerHelper.extractSourceLocationLineNumber(source);
                 String sourceId = LoggerHelper.extractSourceLocationId(source);
                 source = LoggerHelper.stripSourceLocationLineNumber(source);
-                LOG.warn("Source: {} line: {} id: {}", source, sourceLine, sourceId);
+                LOG.debug("Source: {} line: {} id: {}", source, sourceLine, sourceId);
 
                 boolean update = true;
                 File f = new File(source);
                 if (f.isFile() && f.exists()) {
                     byte[] data = Files.readAllBytes(f.toPath());
                     if (Arrays.equals(lastSource, data)) {
-                        LOG.warn("Source file: {} is not updated since last", source);
+                        LOG.debug("Source file: {} is not updated since last", source);
                         update = false;
                     }
                     lastSource = data;
                 }
                 if (update) {
+                    if (sourceLine != null) {
+                        LOG.info("Transforming from source: {}:{}", source, sourceLine);
+                    } else if (sourceId != null) {
+                        LOG.info("Transforming from source: {}:{}", source, sourceId);
+                    } else {
+                        LOG.info("Transforming from source: {}", source);
+                    }
+
                     // load route definition
                     if (!source.startsWith("file:")) {
                         source = "file:" + source;
                     }
-                    LOG.info("Transforming from source: {}", source);
-
                     Resource res = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
                             .resolveResource(source);
                     RoutesLoader loader = camelContext.getCamelContextExtension().getContextPlugin(RoutesLoader.class);
@@ -333,7 +339,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     // TODO: update routes and do NOT start routes
                     // TODO: API on RoutesBuilder to get model
 
-                    LOG.info("Updated routes: {}", ids);
+                    LOG.debug("Updated routes: {}", ids);
 
                     Model mcc = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
                     ExpressionDefinition found = null;
