@@ -30,9 +30,10 @@ public final class HttpUtil {
 
     /**
      * Given an exchange handling HTTP, determines the status response code to return for the caller
-     * @param camelExchange the exchange to evaluate
-     * @param body an optional payload (i.e.: the message body) carrying a response code
-     * @return An integer value with the response code
+     *
+     * @param  camelExchange the exchange to evaluate
+     * @param  body          an optional payload (i.e.: the message body) carrying a response code
+     * @return               An integer value with the response code
      */
     public static int determineResponseCode(Exchange camelExchange, Object body) {
         boolean failed = camelExchange.isFailed();
