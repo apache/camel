@@ -35,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.CamelObjectInputStream;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
@@ -55,11 +56,11 @@ public final class HttpHelper {
     }
 
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
-        org.apache.camel.http.base.HttpHelper.setCharsetFromContentType(contentType, exchange);
+        HttpUtil.setCharsetFromContentType(contentType, exchange);
     }
 
     public static String getCharsetFromContentType(String contentType) {
-        return org.apache.camel.http.base.HttpHelper.getCharsetFromContentType(contentType);
+        return HttpUtil.getCharsetFromContentType(contentType);
     }
 
     /**
