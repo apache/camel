@@ -57,6 +57,9 @@ public class AWSConfigProducer extends DefaultProducer {
             case removeConfigRule:
                 removeConfigRule(getEndpoint().getConfigClient(), exchange);
                 break;
+            case describeRuleCompliance:
+                describeRuleCompliance(getEndpoint().getConfigClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -163,6 +166,42 @@ public class AWSConfigProducer extends DefaultProducer {
                 result = configClient.deleteConfigRule(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("Delete Config Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+
+    private void describeRuleCompliance(ConfigClient configClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DescribeComplianceByConfigRuleRequest) {
+                DescribeComplianceByConfigRuleResponse result;
+                try {
+                    DescribeComplianceByConfigRuleRequest request = (DescribeComplianceByConfigRuleRequest) payload;
+                    result = configClient.describeComplianceByConfigRule(request);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Describe Compliance by Config rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            DescribeComplianceByConfigRuleRequest.Builder builder = DescribeComplianceByConfigRuleRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.RULE_NAME))) {
+                String ruleName = exchange.getIn().getHeader(AWSConfigConstants.RULE_NAME, String.class);
+                builder.configRuleNames(ruleName);
+            }
+            DescribeComplianceByConfigRuleResponse result;
+            try {
+                DescribeComplianceByConfigRuleRequest request = builder.build();
+                result = configClient.describeComplianceByConfigRule(request);
+            } catch (AwsServiceException ase) {
+                LOG.trace("Describe Compliance by Config Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
