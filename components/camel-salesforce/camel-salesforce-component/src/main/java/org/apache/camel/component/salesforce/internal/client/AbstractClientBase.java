@@ -165,14 +165,13 @@ public abstract class AbstractClientBase extends ServiceSupport
 		// but buffer the request content to allow it to be replayed for
 		// authentication retries
 		final Request.Content content = request.getBody();
-		//TODO
 		if (content instanceof InputStreamRequestContent) {
 			InputStreamRequestContent inputStreamRequestContent = (InputStreamRequestContent) content;
 			inputStreamRequestContent.read().getByteBuffer();
 			final List<ByteBuffer> buffers = new ArrayList<>();
 			while (true) {
 				Content.Chunk chunk = inputStreamRequestContent.read();
-				if (chunk == null) {
+				if (chunk.isLast()) {
 					break;
 				} else {
 					buffers.add(chunk.getByteBuffer());
