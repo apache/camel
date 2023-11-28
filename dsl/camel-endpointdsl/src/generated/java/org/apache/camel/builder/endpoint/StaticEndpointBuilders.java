@@ -1508,6 +1508,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Config Service (camel-aws-config)
+     * Manage AWS Config service.
+     * 
+     * Category: cloud,management
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-aws-config
+     * 
+     * Syntax: <code>aws-config:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.AWSConfigEndpointBuilderFactory.AWSConfigEndpointBuilder awsConfig(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.AWSConfigEndpointBuilderFactory.endpointBuilder("aws-config", path);
+    }
+    /**
+     * AWS Config Service (camel-aws-config)
+     * Manage AWS Config service.
+     * 
+     * Category: cloud,management
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-aws-config
+     * 
+     * Syntax: <code>aws-config:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.AWSConfigEndpointBuilderFactory.AWSConfigEndpointBuilder awsConfig(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.AWSConfigEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 

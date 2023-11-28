@@ -726,6 +726,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "AwsConfigComponentBuilderFactory": {
+    "kind": "component",
+    "name": "aws-config",
+    "title": "AWS Config Service",
+    "description": "Manage AWS Config service.",
+    "deprecated": false,
+    "firstVersion": "4.3.0",
+    "label": "cloud,management",
+    "javaType": "org.apache.camel.component.aws.config.AWSConfigComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws-config",
+    "version": "4.3.0-SNAPSHOT",
+    "scheme": "aws-config",
+    "extendsScheme": "",
+    "syntax": "aws-config:label",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "AwsSecretsManagerComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-secrets-manager",
