@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.knative.http;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,24 +29,6 @@ import org.apache.camel.component.knative.spi.KnativeResource;
 
 public final class KnativeHttpSupport {
     private KnativeHttpSupport() {
-    }
-
-    @SuppressWarnings("unchecked")
-    public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            Object existing = headers.get(key);
-            List<Object> list;
-            if (existing instanceof List) {
-                list = (List<Object>) existing;
-            } else {
-                list = new ArrayList<>();
-                list.add(existing);
-            }
-            list.add(value);
-            value = list;
-        }
-
-        headers.put(key, value);
     }
 
     public static Predicate<HttpServerRequest> createFilter(CloudEvent cloudEvent, KnativeResource resource) {

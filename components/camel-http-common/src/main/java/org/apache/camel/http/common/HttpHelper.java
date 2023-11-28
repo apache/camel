@@ -35,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.CamelObjectInputStream;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -278,8 +279,7 @@ public final class HttpHelper {
      */
     @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        org.apache.camel.http.base.HttpHelper.appendHeader(headers, key, value);
-
+        CollectionHelper.appendEntry(headers, key, value);
     }
 
     /**

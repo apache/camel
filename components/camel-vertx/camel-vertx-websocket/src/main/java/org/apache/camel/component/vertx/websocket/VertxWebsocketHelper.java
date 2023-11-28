@@ -17,11 +17,10 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import io.vertx.core.http.impl.HttpUtils;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public final class VertxWebsocketHelper {
@@ -42,19 +41,7 @@ public final class VertxWebsocketHelper {
      */
     @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            Object existing = headers.get(key);
-            List<Object> list;
-            if (existing instanceof List) {
-                list = (List<Object>) existing;
-            } else {
-                list = new ArrayList<>();
-                list.add(existing);
-            }
-            list.add(value);
-            value = list;
-        }
-        headers.put(key, value);
+        CollectionHelper.appendEntry(headers, key, value);
     }
 
     /**
