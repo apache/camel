@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,11 +52,20 @@ import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.model.HasExpressionType;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.ResourceReloadStrategy;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
@@ -98,6 +108,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File traceFile;
     private File debugFile;
     private long traceFilePos; // keep track of trace offset
+    private long sourceLastModified = -1;
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -213,6 +224,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Action: {}", root);
             }
+            LOG.warn("Action: {}", root);
 
             String action = root.getString("action");
             if ("route".equals(action)) {
@@ -492,8 +504,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             } else if ("transform".equals(action)) {
                 StopWatch watch = new StopWatch();
                 long timestamp = System.currentTimeMillis();
+                String source = root.getString("source");
                 String language = root.getString("language");
-                String template = Jsoner.unescape(root.getString("template"));
+                String template = Jsoner.unescape(root.getStringOrDefault("template", ""));
                 if (template.startsWith("file:")) {
                     template = "resource:" + template;
                 }
@@ -517,17 +530,74 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 final Map<String, Object> inputHeaders = map;
                 Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
                 try {
-                    Language lan = camelContext.resolveLanguage(language);
-                    Expression exp = lan.createExpression(template);
-                    exp.init(camelContext);
-                    // create dummy exchange with
-                    out.setPattern(ExchangePattern.InOut);
-                    out.getMessage().setBody(inputBody);
-                    if (inputHeaders != null) {
-                        out.getMessage().setHeaders(inputHeaders);
+                    if (source != null) {
+                        long last = -1;
+                        File f = new File(source);
+                        if (f.isFile() && f.exists()) {
+                            last = f.lastModified();
+                        }
+
+                        if (last != sourceLastModified) {
+                            // action done so delete file
+                            FileUtil.deleteFile(actionFile);
+                            return;
+                        } else {
+                            sourceLastModified = last;
+
+                            // load route definition
+                            if (!source.startsWith("file:")) {
+                                source = "file:" + source;
+                            }
+
+                            LOG.info("Transforming from source: {}", source);
+
+                            Resource res = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                                    .resolveResource(source);
+                            RoutesLoader loader = camelContext.getCamelContextExtension().getContextPlugin(RoutesLoader.class);
+                            Set<String> ids = loader.updateRoutes(res);
+
+                            // TODO: only update source if something is changed
+                            // TODO: update routes and do NOT start routes
+                            // TODO: API on RoutesBuilder to get model
+
+                            LOG.info("Updated routes: {}", ids);
+
+                            // TODO: find line location that matches, or use last expression
+                            Model mcc = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+                            for (String id : ids) {
+                                RouteDefinition rd = mcc.getRouteDefinition(id);
+                                Collection<ProcessorDefinition> defs
+                                        = ProcessorDefinitionHelper.filterTypeInOutputs(rd.getOutputs(),
+                                                ProcessorDefinition.class);
+                                for (ProcessorDefinition p : defs) {
+                                    if (p instanceof HasExpressionType et) {
+                                        ExpressionDefinition exp = et.getExpressionType();
+                                        // create dummy exchange with
+                                        out.setPattern(ExchangePattern.InOut);
+                                        out.getMessage().setBody(inputBody);
+                                        if (inputHeaders != null) {
+                                            out.getMessage().setHeaders(inputHeaders);
+                                        }
+                                        String result = exp.evaluate(out, String.class);
+                                        out.getMessage().setBody(result);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // transform via language
+                        Language lan = camelContext.resolveLanguage(language);
+                        Expression exp = lan.createExpression(template);
+                        exp.init(camelContext);
+                        // create dummy exchange with
+                        out.setPattern(ExchangePattern.InOut);
+                        out.getMessage().setBody(inputBody);
+                        if (inputHeaders != null) {
+                            out.getMessage().setHeaders(inputHeaders);
+                        }
+                        String result = exp.evaluate(out, String.class);
+                        out.getMessage().setBody(result);
                     }
-                    String result = exp.evaluate(out, String.class);
-                    out.getMessage().setBody(result);
                     IOHelper.close(is);
                 } catch (Exception e) {
                     out.setException(e);
@@ -535,7 +605,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 LOG.trace("Updating output file: {}", outputFile);
                 if (out.getException() != null) {
                     JsonObject jo = new JsonObject();
-                    jo.put("language", language);
+                    if (language != null) {
+                        jo.put("language", language);
+                    }
+                    if (source != null) {
+                        jo.put("source", source);
+                    }
                     jo.put("exchangeId", out.getExchangeId());
                     jo.put("timestamp", timestamp);
                     jo.put("elapsed", watch.taken());
@@ -546,7 +621,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     IOHelper.writeText(jo.toJson(), outputFile);
                 } else {
                     JsonObject jo = new JsonObject();
-                    jo.put("language", language);
+                    if (language != null) {
+                        jo.put("language", language);
+                    }
+                    if (source != null) {
+                        jo.put("source", source);
+                    }
                     jo.put("exchangeId", out.getExchangeId());
                     jo.put("timestamp", timestamp);
                     jo.put("elapsed", watch.taken());
@@ -564,7 +644,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
         } catch (Exception e) {
             // ignore
-            LOG.debug("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(),
+            LOG.warn("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(),
                     e);
         }
     }

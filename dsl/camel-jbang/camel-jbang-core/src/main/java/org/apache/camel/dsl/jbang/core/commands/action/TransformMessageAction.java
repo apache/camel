@@ -55,14 +55,17 @@ public class TransformMessageAction extends ActionWatchCommand {
     List<String> headers;
 
     @CommandLine.Option(names = {
+            "--source" },
+                        description = "Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number to refer to location of the EIP)")
+    private String source;
+
+    @CommandLine.Option(names = {
             "--language" },
-                        required = true,
                         description = "The language to use for message transformation")
     private String language;
 
     @CommandLine.Option(names = {
             "--template" },
-                        required = true,
                         description = "The template to use for message transformation (prefix with file: to refer to loading message body from file)")
     private String template;
 
@@ -108,6 +111,16 @@ public class TransformMessageAction extends ActionWatchCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // either source or language/template is required
+        if (source == null && template == null && language == null) {
+            System.err.println("Either source or template and language must be configured");
+            return -1;
+        }
+        if (source == null && (template == null || language == null)) {
+            System.err.println("Both template and language must be configured");
+            return -1;
+        }
+
         Integer exit;
         try {
             // start a new empty camel in the background
@@ -147,8 +160,15 @@ public class TransformMessageAction extends ActionWatchCommand {
 
         JsonObject root = new JsonObject();
         root.put("action", "transform");
-        root.put("language", language);
-        root.put("template", Jsoner.escape(template));
+        if (source != null) {
+            root.put("source", source);
+        }
+        if (language != null) {
+            root.put("language", language);
+        }
+        if (template != null) {
+            root.put("template", Jsoner.escape(template));
+        }
         root.put("body", Jsoner.escape(body));
         if (headers != null) {
             JsonArray arr = new JsonArray();
