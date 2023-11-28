@@ -424,7 +424,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     }
 
     /**
-     * Sets the maximum number of requests per time period expression
+     * Sets the maximum number of concurrent requests.
      */
     public void setMaximumConcurrentRequestsExpression(Expression maxConcurrentRequestsExpression) {
         this.maxConcurrentRequestsExpression = maxConcurrentRequestsExpression;
