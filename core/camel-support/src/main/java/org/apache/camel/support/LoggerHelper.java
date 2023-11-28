@@ -103,15 +103,17 @@ public final class LoggerHelper {
         int cnt = StringHelper.countChar(location, ':');
         if (cnt > 1) {
             int pos = location.lastIndexOf(':');
-            String num = location.substring(pos);
-            try {
-                return Integer.valueOf(num);
-            } catch (Exception e) {
-                return null;
+            // in case pos is end of line
+            if (pos < location.length() - 1) {
+                String num = location.substring(pos + 1);
+                try {
+                    return Integer.valueOf(num);
+                } catch (Exception e) {
+                    return null;
+                }
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
 }
