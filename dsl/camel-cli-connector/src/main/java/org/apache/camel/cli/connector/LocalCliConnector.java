@@ -26,6 +26,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -109,7 +111,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File traceFile;
     private File debugFile;
     private long traceFilePos; // keep track of trace offset
-    private long sourceLastModified = -1; // keep track of message transform by source updates
+    private byte[] lastSource;
+    private ExpressionDefinition lastSourceExpression;
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -300,25 +303,21 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
         try {
             if (source != null) {
-                long last = 0;
+                boolean update = true;
                 File f = new File(source);
                 if (f.isFile() && f.exists()) {
-                    last = f.lastModified();
+                    byte[] data = Files.readAllBytes(f.toPath());
+                    if (Arrays.equals(lastSource, data)) {
+                        LOG.warn("Source file: {} is not updated since last", source);
+                        update = false;
+                    }
+                    lastSource = data;
                 }
-
-                if (last == sourceLastModified) {
-                    LOG.debug("Source file: {} is not updated since last", source);
-                    // action done so delete file
-                    FileUtil.deleteFile(actionFile);
-                    return;
-                } else {
-                    sourceLastModified = last;
-
+                if (update) {
                     // load route definition
                     if (!source.startsWith("file:")) {
                         source = "file:" + source;
                     }
-
                     LOG.info("Transforming from source: {}", source);
 
                     Resource res = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
@@ -333,6 +332,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
                     // TODO: find line location that matches, or use last expression
                     Model mcc = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+                    ExpressionDefinition found = null;
                     for (String id : ids) {
                         RouteDefinition rd = mcc.getRouteDefinition(id);
                         Collection<ProcessorDefinition> defs
@@ -340,18 +340,23 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                                         ProcessorDefinition.class);
                         for (ProcessorDefinition p : defs) {
                             if (p instanceof HasExpressionType et) {
-                                ExpressionDefinition exp = et.getExpressionType();
-                                // create dummy exchange with
-                                out.setPattern(ExchangePattern.InOut);
-                                out.getMessage().setBody(inputBody);
-                                if (inputHeaders != null) {
-                                    out.getMessage().setHeaders(inputHeaders);
-                                }
-                                String result = exp.evaluate(out, String.class);
-                                out.getMessage().setBody(result);
+                                found = et.getExpressionType();
                             }
                         }
                     }
+                    if (found != null) {
+                        lastSourceExpression = found;
+                    }
+                }
+                if (lastSourceExpression != null) {
+                    // create dummy exchange with
+                    out.setPattern(ExchangePattern.InOut);
+                    out.getMessage().setBody(inputBody);
+                    if (inputHeaders != null) {
+                        out.getMessage().setHeaders(inputHeaders);
+                    }
+                    String result = lastSourceExpression.evaluate(out, String.class);
+                    out.getMessage().setBody(result);
                 }
             } else {
                 // transform via language
@@ -405,7 +410,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     BODY_MAX_CHARS).getMap("message"));
             IOHelper.writeText(jo.toJson(), outputFile);
         }
-        camelContext.getCamelContextExtension().getExchangeFactory().release(out);
+        camelContext.getCamelContextExtension().
+
+                getExchangeFactory().
+
+                release(out);
+
     }
 
     private void doActionSendTask(JsonObject root) throws Exception {
