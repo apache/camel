@@ -109,7 +109,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File traceFile;
     private File debugFile;
     private long traceFilePos; // keep track of trace offset
-    private long sourceLastModified = -1;
+    private long sourceLastModified = -1; // keep track of message transform by source updates
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -300,13 +300,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
         try {
             if (source != null) {
-                long last = -1;
+                long last = 0;
                 File f = new File(source);
                 if (f.isFile() && f.exists()) {
                     last = f.lastModified();
                 }
 
-                if (last != sourceLastModified) {
+                if (last == sourceLastModified) {
+                    LOG.debug("Source file: {} is not updated since last", source);
                     // action done so delete file
                     FileUtil.deleteFile(actionFile);
                     return;
@@ -325,7 +326,6 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     RoutesLoader loader = camelContext.getCamelContextExtension().getContextPlugin(RoutesLoader.class);
                     Set<String> ids = loader.updateRoutes(res);
 
-                    // TODO: only update source if something is changed
                     // TODO: update routes and do NOT start routes
                     // TODO: API on RoutesBuilder to get model
 
