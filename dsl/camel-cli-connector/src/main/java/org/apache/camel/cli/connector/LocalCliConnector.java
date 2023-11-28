@@ -303,6 +303,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
         try {
             if (source != null) {
+                LOG.warn("Source: {}", source);
+
+                Integer line = LoggerHelper.extractSourceLocationLineNumber(source);
+                source = LoggerHelper.stripSourceLocationLineNumber(source);
+                LOG.warn("Source: {} line: {}", source, line);
+
                 boolean update = true;
                 File f = new File(source);
                 if (f.isFile() && f.exists()) {
@@ -330,7 +336,6 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
                     LOG.info("Updated routes: {}", ids);
 
-                    // TODO: find line location that matches, or use last expression
                     Model mcc = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
                     ExpressionDefinition found = null;
                     for (String id : ids) {
@@ -340,7 +345,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                                         ProcessorDefinition.class);
                         for (ProcessorDefinition p : defs) {
                             if (p instanceof HasExpressionType et) {
-                                found = et.getExpressionType();
+                                if (line == null) {
+                                    found = et.getExpressionType();
+                                } else {
+                                    LOG.warn("Candidate at line {} target line: {}", p.getLineNumber(), line);
+                                    if (p.getLineNumber() == -1 || p.getLineNumber() <= line) {
+                                        found = et.getExpressionType();
+                                    }
+                                }
                             }
                         }
                     }
