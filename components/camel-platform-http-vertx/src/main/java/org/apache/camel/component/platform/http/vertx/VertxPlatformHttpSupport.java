@@ -316,25 +316,26 @@ public final class VertxPlatformHttpSupport {
             HttpServerRequest request) {
         final MultiMap requestHeaders = request.headers();
         applyAuthHeaders(headersMap, exchange, headerFilterStrategy, requestHeaders);
-        for (String name : requestHeaders.names()) {
-            applyHeaders(headersMap, exchange, headerFilterStrategy, name, requestHeaders);
-        }
+        applyHeaders(headersMap, exchange, headerFilterStrategy, requestHeaders);
 
         // process uri parameters as headers
         final MultiMap pathParameters = ctx.queryParams();
         // continue if the map is not empty, otherwise there are no params
         if (!pathParameters.isEmpty()) {
-            for (String name : pathParameters.names()) {
-                applyHeaders(headersMap, exchange, headerFilterStrategy, name, pathParameters);
-            }
+            applyHeaders(headersMap, exchange, headerFilterStrategy, pathParameters);
         }
     }
 
     private static void applyHeaders(
-            Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy, String name,
+            Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
             MultiMap requestHeaders) {
-        // add the headers one by one, and use the header filter strategy
-        for (String value : requestHeaders.getAll(name)) {
+
+        final List<Map.Entry<String, String>> entries = requestHeaders.entries();
+        for (var entry : entries) {
+            final String name = entry.getKey();
+            final String value = entry.getValue();
+
+            // add the headers one by one, and use the header filter strategy
             if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 appendHeader(headersMap, name, value);
             }
