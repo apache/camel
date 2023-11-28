@@ -21,11 +21,8 @@ import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CommitToOffsetManager extends AbstractCommitManager {
-    private static final Logger LOG = LoggerFactory.getLogger(CommitToOffsetManager.class);
     private final OffsetCache offsetCache = new OffsetCache();
     private final StateRepository<String, String> offsetRepository;
 

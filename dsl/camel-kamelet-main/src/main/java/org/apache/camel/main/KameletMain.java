@@ -102,7 +102,6 @@ public class KameletMain extends MainCommandLineSupport {
     private String repos;
     private boolean fresh;
     private boolean verbose;
-    private boolean debug;
     private String mavenSettings;
     private String mavenSettingsSecurity;
     private String stubPattern;
@@ -351,7 +350,6 @@ public class KameletMain extends MainCommandLineSupport {
     @Override
     protected CamelContext createCamelContext() {
         this.verbose = "true".equals(getInitialProperties().get("camel.jbang.verbose"));
-        this.debug = "true".equals(getInitialProperties().get("camel.jbang.debug"));
 
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
@@ -363,7 +361,7 @@ public class KameletMain extends MainCommandLineSupport {
             PluginHelper.getPackageScanClassResolver(answer).addClassLoader(dynamicCL);
             PluginHelper.getPackageScanResourceResolver(answer).addClassLoader(dynamicCL);
 
-            KnownReposResolver known = new KnownReposResolver(camelContext);
+            KnownReposResolver known = new KnownReposResolver();
             known.loadKnownDependencies();
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setKnownReposResolver(known);

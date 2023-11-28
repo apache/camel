@@ -34,11 +34,9 @@ import org.apache.thrift.async.AsyncMethodCallback;
  * Thrift server methods invocation handler
  */
 public class ThriftMethodHandler implements MethodHandler {
-    private final ThriftEndpoint endpoint;
     private final ThriftConsumer consumer;
 
-    public ThriftMethodHandler(ThriftEndpoint endpoint, ThriftConsumer consumer) {
-        this.endpoint = endpoint;
+    public ThriftMethodHandler(ThriftConsumer consumer) {
         this.consumer = consumer;
     }
 

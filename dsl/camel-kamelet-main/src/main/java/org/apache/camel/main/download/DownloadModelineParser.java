@@ -26,7 +26,7 @@ public class DownloadModelineParser extends DefaultModelineParser {
     private final DependencyDownloader downloader;
 
     public DownloadModelineParser(CamelContext camelContext) {
-        super(camelContext);
+        super();
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 

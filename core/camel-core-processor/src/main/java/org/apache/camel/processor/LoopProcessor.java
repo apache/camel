@@ -49,7 +49,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     private String id;
     private String routeId;
     private boolean shutdownPending;
-    private final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
     private final Expression expression;
     private final Predicate predicate;
@@ -60,7 +59,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     public LoopProcessor(CamelContext camelContext, Processor processor, Expression expression, Predicate predicate,
                          boolean copy, boolean breakOnShutdown) {
         super(processor);
-        this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.expression = expression;
         this.predicate = predicate;

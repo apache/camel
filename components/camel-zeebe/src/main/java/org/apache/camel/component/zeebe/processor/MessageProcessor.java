@@ -24,11 +24,8 @@ import org.apache.camel.component.zeebe.ZeebeEndpoint;
 import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.component.zeebe.model.MessageRequest;
 import org.apache.camel.component.zeebe.model.MessageResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MessageProcessor extends AbstractBaseProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(MessageProcessor.class);
 
     public MessageProcessor(ZeebeEndpoint endpoint) {
         super(endpoint);

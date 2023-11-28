@@ -32,11 +32,9 @@ import org.apache.camel.tooling.model.DataFormatModel;
 public final class DependencyDownloaderDataFormatResolver extends DefaultDataFormatResolver {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
-    private final CamelContext camelContext;
     private final DependencyDownloader downloader;
 
     public DependencyDownloaderDataFormatResolver(CamelContext camelContext) {
-        this.camelContext = camelContext;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 

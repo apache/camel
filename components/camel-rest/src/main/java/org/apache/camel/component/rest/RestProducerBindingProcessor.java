@@ -128,7 +128,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
         if (ObjectHelper.isEmpty(body)) {
             if (outType != null) {
                 // wrap callback to add reverse operation if we know the output type from the REST service
-                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, false);
             }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
@@ -139,7 +139,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             // the body is text based and thus not POJO so no binding needed
             if (outType != null) {
                 // wrap callback to add reverse operation if we know the output type from the REST service
-                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, false);
             }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
@@ -150,7 +150,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                 exchange.getIn().setBody(is);
                 if (outType != null) {
                     // wrap callback to add reverse operation if we know the output type from the REST service
-                    callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+                    callback = new RestProducerBindingUnmarshalCallback(exchange, callback, false);
                 }
                 // okay now we can continue routing to the producer
                 return getProcessor().process(exchange, callback);
@@ -189,7 +189,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             ExchangeHelper.prepareOutToIn(exchange);
             if (outType != null) {
                 // wrap callback to add reverse operation if we know the output type from the REST service
-                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, false);
             }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
@@ -206,7 +206,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             ExchangeHelper.prepareOutToIn(exchange);
             if (outType != null) {
                 // wrap callback to add reverse operation if we know the output type from the REST service
-                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, true);
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, true);
             }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
@@ -216,7 +216,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
         if ("off".equals(bindingMode) || bindingMode.equals("auto")) {
             if (outType != null) {
                 // wrap callback to add reverse operation if we know the output type from the REST service
-                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, false);
             }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
@@ -238,16 +238,11 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
-        private final AsyncProcessor jsonMarshal;
-        private final AsyncProcessor xmlMarshal;
         private boolean wasXml;
 
-        private RestProducerBindingUnmarshalCallback(Exchange exchange, AsyncCallback callback,
-                                                     AsyncProcessor jsonMarshal, AsyncProcessor xmlMarshal, boolean wasXml) {
+        private RestProducerBindingUnmarshalCallback(Exchange exchange, AsyncCallback callback, boolean wasXml) {
             this.exchange = exchange;
             this.callback = callback;
-            this.jsonMarshal = jsonMarshal;
-            this.xmlMarshal = xmlMarshal;
             this.wasXml = wasXml;
         }
 

@@ -69,8 +69,8 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
-        return new JGroupsRaftProducer(this, clusterName);
+    public Producer createProducer() {
+        return new JGroupsRaftProducer(this);
     }
 
     @Override
