@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import org.apache.camel.util.json.Jsoner;
+
 public final class CamelCommandHelper {
 
     private CamelCommandHelper() {
@@ -37,6 +39,52 @@ public final class CamelCommandHelper {
         } else {
             return "Terminated";
         }
+    }
+
+    public static String valueAsStringPretty(Object value, boolean loggingColor) {
+        if (value == null) {
+            return "null";
+        }
+        boolean json = false;
+        String s = value.toString();
+        if (!s.isEmpty()) {
+            try {
+                s = Jsoner.unescape(s);
+                if (loggingColor) {
+                    s = JSonHelper.colorPrint(s, 2, true);
+                } else {
+                    s = JSonHelper.prettyPrint(s, 2);
+                }
+                if (s != null && !s.isEmpty()) {
+                    json = true;
+                }
+            } catch (Exception e) {
+                // ignore as not json
+            }
+            if (s == null || s.isEmpty()) {
+                s = value.toString();
+            }
+            if (!json) {
+                // try with xml
+                try {
+                    s = Jsoner.unescape(s);
+                    if (loggingColor) {
+                        s = XmlHelper.colorPrint(s, 2, true);
+                    } else {
+                        s = XmlHelper.prettyPrint(s, 2);
+                    }
+                } catch (Exception e) {
+                    // ignore as not xml
+                }
+            }
+            if (s == null || s.isEmpty()) {
+                s = value.toString();
+            }
+        }
+        if (s == null) {
+            return "null";
+        }
+        return s;
     }
 
 }

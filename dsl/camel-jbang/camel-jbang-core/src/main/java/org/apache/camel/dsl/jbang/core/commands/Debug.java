@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
+import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -55,6 +57,10 @@ public class Debug extends Run {
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
     String breakpoint;
+
+    @CommandLine.Option(names = { "--output" },
+                        description = "File to store the current message body (will override). This allows for manual inspecting the message later.")
+    String output;
 
     @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true",
                         description = "Whether to stop the running Camel on exit")
@@ -431,6 +437,26 @@ public class Debug extends Run {
                 this.waitForUser.set(true);
             }
             if (this.waitForUser.get()) {
+                // save current message to file
+                if (output != null && this.suspendedRow != null) {
+                    JsonObject j = this.suspendedRow.message;
+                    if (j != null) {
+                        j = j.getMap("body");
+                        if (j != null) {
+                            String b = j.getString("value");
+                            if (b != null) {
+                                b = CamelCommandHelper.valueAsStringPretty(b, false);
+                                try {
+                                    File f = new File(output);
+                                    IOHelper.writeText(b, f);
+                                } catch (IOException e) {
+                                    // ignore
+                                }
+                            }
+                        }
+                    }
+                }
+
                 String msg = "    Breakpoint suspended. Press ENTER to continue.";
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
