@@ -24,8 +24,7 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
-import org.apache.camel.dsl.jbang.core.common.JSonHelper;
-import org.apache.camel.dsl.jbang.core.common.XmlHelper;
+import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -260,49 +259,7 @@ public class MessageTableHelper {
         }
 
         String valueAsStringPretty() {
-            if (value == null) {
-                return "null";
-            }
-            boolean json = false;
-            String s = value.toString();
-            if (!s.isEmpty()) {
-                try {
-                    s = Jsoner.unescape(s);
-                    if (loggingColor) {
-                        s = JSonHelper.colorPrint(s, 2, true);
-                    } else {
-                        s = JSonHelper.prettyPrint(s, 2);
-                    }
-                    if (s != null && !s.isEmpty()) {
-                        json = true;
-                    }
-                } catch (Exception e) {
-                    // ignore as not json
-                }
-                if (s == null || s.isEmpty()) {
-                    s = value.toString();
-                }
-                if (!json) {
-                    // try with xml
-                    try {
-                        s = Jsoner.unescape(s);
-                        if (loggingColor) {
-                            s = XmlHelper.colorPrint(s, 2, true);
-                        } else {
-                            s = XmlHelper.prettyPrint(s, 2);
-                        }
-                    } catch (Exception e) {
-                        // ignore as not xml
-                    }
-                }
-                if (s == null || s.isEmpty()) {
-                    s = value.toString();
-                }
-            }
-            if (s == null) {
-                return "null";
-            }
-            return s;
+            return CamelCommandHelper.valueAsStringPretty(value, loggingColor);
         }
 
         String valueAsStringRed() {
