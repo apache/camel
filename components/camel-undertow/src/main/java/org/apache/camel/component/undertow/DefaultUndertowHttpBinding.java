@@ -61,6 +61,7 @@ import org.xnio.channels.BlockingReadableByteChannel;
 import org.xnio.channels.StreamSourceChannel;
 import org.xnio.streams.ChannelInputStream;
 
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
 import static org.apache.camel.util.BufferCaster.cast;
 
 /**
@@ -391,27 +392,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             LOG.trace("Content-Type: {}", contentType);
         }
         return body;
-    }
-
-    /*
-     * set the HTTP status code
-     */
-    private int determineResponseCode(Exchange camelExchange, Object body) {
-        boolean failed = camelExchange.isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        Message message = camelExchange.getMessage();
-        Integer currentCode = message.getHeader(UndertowConstants.HTTP_RESPONSE_CODE, Integer.class);
-        int codeToUse = currentCode == null ? defaultCode : currentCode;
-
-        if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).isBlank()) {
-                // no content
-                codeToUse = currentCode == null ? 204 : currentCode;
-            }
-        }
-
-        return codeToUse;
     }
 
     @Override

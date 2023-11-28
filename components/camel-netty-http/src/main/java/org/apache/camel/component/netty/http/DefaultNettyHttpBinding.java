@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.TRANSFER_ENCODING;
 import static io.netty.handler.codec.http.HttpHeaderValues.CHUNKED;
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
 
 /**
  * Default {@link NettyHttpBinding}.
@@ -558,27 +559,6 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         LOG.trace("Connection: {}", connection);
 
         return response;
-    }
-
-    /*
-     * set the HTTP status code
-     */
-    private int determineResponseCode(Exchange camelExchange, Object body) {
-        boolean failed = camelExchange.isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        Message message = camelExchange.getMessage();
-        Integer currentCode = message.getHeader(NettyHttpConstants.HTTP_RESPONSE_CODE, Integer.class);
-        int codeToUse = currentCode == null ? defaultCode : currentCode;
-
-        if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).isBlank()) {
-                // no content
-                codeToUse = currentCode == null ? 204 : currentCode;
-            }
-        }
-
-        return codeToUse;
     }
 
     @Override

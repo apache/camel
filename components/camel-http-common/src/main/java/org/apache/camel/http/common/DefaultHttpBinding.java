@@ -60,6 +60,8 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
+
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
  * <p/>
@@ -449,30 +451,6 @@ public class DefaultHttpBinding implements HttpBinding {
                 doWriteDirectResponse(message, response, exchange);
             }
         }
-    }
-
-    /*
-     * set the HTTP status code
-     * NOTE: this is similar to the Netty-Http and Undertow approach
-     * TODO: we may want to refactor this class so that
-     * the status code is determined in one place
-     */
-    private int determineResponseCode(Exchange camelExchange, Object body) {
-        boolean failed = camelExchange.isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        Message message = camelExchange.getMessage();
-        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-        int codeToUse = currentCode == null ? defaultCode : currentCode;
-
-        if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).isBlank()) {
-                // no content
-                codeToUse = currentCode == null ? 204 : currentCode;
-            }
-        }
-
-        return codeToUse;
     }
 
     protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {

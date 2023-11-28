@@ -49,6 +49,8 @@ import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
+
 /*
  * Supporting class for the platform-http-vertx component.
  *
@@ -177,28 +179,7 @@ public final class VertxPlatformHttpSupport {
         return null;
     }
 
-    /*
-     * Copied from org.apache.camel.http.common.DefaultHttpBinding.determineResponseCode(Exchange, Object)
-     * If DefaultHttpBinding.determineResponseCode(Exchange, Object) is moved to a module without the servlet-api
-     * dependency we could eventually consume it from there.
-     */
-    static int determineResponseCode(Exchange camelExchange, Object body) {
-        boolean failed = camelExchange.isFailed();
-        int defaultCode = failed ? 500 : 200;
 
-        Message message = camelExchange.getMessage();
-        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-        int codeToUse = currentCode == null ? defaultCode : currentCode;
-
-        if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).isBlank()) {
-                // no content
-                codeToUse = currentCode == null ? 204 : currentCode;
-            }
-        }
-
-        return codeToUse;
-    }
 
     static Future<Void> writeResponse(
             RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
