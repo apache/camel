@@ -18,9 +18,11 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ThrottlingGroupingTest;
+import org.junit.jupiter.api.Disabled;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
+@Disabled("Disabled due to CAMEL-20158")
 public class SpringThrottlerGroupingTest extends ThrottlingGroupingTest {
 
     @Override

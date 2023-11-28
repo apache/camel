@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -60,6 +61,7 @@ public class ThrottlerTest extends ContextTestSupport {
         }
     }
 
+    @Disabled("Disabled due to CAMEL-20158")
     @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -74,6 +76,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertTrue(max <= CONCURRENT_REQUESTS);
     }
 
+    @Disabled("Disabled due to CAMEL-20158")
     @Test
     public void testConfigurationWithHeaderExpression() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -87,6 +90,7 @@ public class ThrottlerTest extends ContextTestSupport {
         }
     }
 
+    @Disabled("Disabled due to CAMEL-20158")
     @Test
     public void testConfigurationWithChangingHeaderExpression() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(5);
