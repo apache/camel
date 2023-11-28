@@ -24,6 +24,7 @@ import java.util.function.BiConsumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -108,20 +109,7 @@ public final class HttpHelper {
      */
     @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            Object existing = headers.get(key);
-            List<Object> list;
-            if (existing instanceof List) {
-                list = (List<Object>) existing;
-            } else {
-                list = new ArrayList<>();
-                list.add(existing);
-            }
-            list.add(value);
-            value = list;
-        }
-
-        headers.put(key, value);
+        CollectionHelper.appendEntry(headers, key, value);
     }
 
     /**

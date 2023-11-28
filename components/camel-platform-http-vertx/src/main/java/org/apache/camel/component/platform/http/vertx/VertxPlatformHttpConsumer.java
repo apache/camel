@@ -53,11 +53,11 @@ import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.appendHeader;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.populateCamelHeaders;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.writeResponse;
+import static org.apache.camel.util.CollectionHelper.appendEntry;
 
 /**
  * A {@link org.apache.camel.Consumer} for the {@link org.apache.camel.component.platform.http.spi.PlatformHttpEngine}
@@ -289,8 +289,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
                 for (String value : formData.getAll(key)) {
                     if (headerFilterStrategy != null
                             && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, message.getExchange())) {
-                        appendHeader(message.getHeaders(), key, value);
-                        appendHeader(body, key, value);
+                        appendEntry(message.getHeaders(), key, value);
+                        appendEntry(body, key, value);
                     }
                 }
             }

@@ -49,6 +49,7 @@ import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.CollectionHelper.appendEntry;
 import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
 
 /*
@@ -268,7 +269,7 @@ public final class VertxPlatformHttpSupport {
 
         // Path parameters
         for (Map.Entry<String, String> en : ctx.pathParams().entrySet()) {
-            appendHeader(headersMap, en.getKey(), en.getValue());
+            appendEntry(headersMap, en.getKey(), en.getValue());
         }
 
         SocketAddress localAddress = request.localAddress();
@@ -318,7 +319,7 @@ public final class VertxPlatformHttpSupport {
 
             // add the headers one by one, and use the header filter strategy
             if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                appendHeader(headersMap, name, value);
+                appendEntry(headersMap, name, value);
             }
         }
     }
@@ -330,31 +331,9 @@ public final class VertxPlatformHttpSupport {
         // store a special header that this request was authenticated using HTTP Basic
         if (authorization != null && authorization.trim().startsWith("Basic")) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
-                appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
+                appendEntry(headersMap, Exchange.AUTHENTICATION, "Basic");
             }
         }
-    }
-
-    static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            headers.put(key, addToList(headers, key, value));
-        } else {
-            headers.put(key, value);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Object addToList(Map<String, Object> headers, String key, Object value) {
-        Object existing = headers.get(key);
-        List<Object> list;
-        if (existing instanceof List) {
-            list = (List<Object>) existing;
-        } else {
-            list = new ArrayList<>();
-            list.add(existing);
-        }
-        list.add(value);
-        return list;
     }
 
     static boolean isMultiPartFormData(RoutingContext ctx) {
