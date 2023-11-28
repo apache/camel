@@ -2244,6 +2244,145 @@ And the output:
 Then you can continue to update the `transform.json` until you have the desired result. And if you make a mistake
 then you see an error (in red) with stacktrace that hopefully can help you out how to fix this.
 
+=== Transforming directly from Camel DSL source
+
+In the example above we externalize the transformation into a template file named `transform.json`.
+However, its also possible to transform directly in the Camel DSL route.
+
+In the following we cover the json-transform example from: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/json-transform
+
+In this example a random beer is fetched via the beer-source kamelet. The beer data is as follows:
+
+[source,json]
+----
+ {
+   "id": 2104,
+   "uid": "cefb36e1-e42f-4083-8f97-fc4ff85e56fb",
+   "brand": "Pabst Blue Ribbon",
+   "name": "St. Bernardus Abt 12",
+   "style": "Belgian Strong Ale",
+   "hop": "Amarillo",
+   "yeast": "1388 - Belgian Strong Ale",
+   "malts": "Caramel",
+   "ibu": "43 IBU",
+   "alcohol": "3.8%",
+   "blg": "16.0°Blg"
+ }
+----
+
+We save this beer into a file named `sample.json` as we want to use this as source for message transformation.
+
+Now suppose we want to transform this to a smaller JSon document with only a few elements, then we can do this
+directly in the route:
+
+[source,yaml]
+----
+- route:
+    nodePrefixId: route-c38
+    id: route-66b0
+    from:
+      uri: kamelet:beer-source
+      id: from-3996
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: >-
+                  TODO
+                id: simple-b320
+            id: setBody-fa01
+        - log:
+            message: ${body}
+            id: log-0c79
+----
+
+As we can see the route has a `setBody` where we want to transform the message, which we can do with the simple
+language combined with JQ (or JSonPath). At first, we just write TODO to get started:
+
+[source,bash]
+----
+camel transform message --body=file:sample.json --source=beer-jq.yaml  --watch --pretty
+----
+
+And the output from the transformation is:
+
+[source,text]
+----
+ Exchange  (DefaultExchange)  InOut   D9F909701338607-0000000000000004
+ Message   (DefaultMessage)
+ Body      (String) (bytes: 4)
+ TODO
+----
+
+We can now do live updates in the Camel route, and when we save the file, the transform command will output the changes in the terminal.
+So we modify the DSL to grab the details we want, such as:
+
+[source,yaml]
+----
+    expression: >-
+      {
+        "kind": "${jq(.brand)}",
+        "beer": "${jq(.name)}"
+      }
+    id: simple-b320
+----
+
+Notice how we use inlined JQ expressions to grab the desired data from the sample, and when saving the file, we have
+the result shown in the terminal:
+
+[source,text]
+----
+ Exchange  (DefaultExchange)  InOut   D9F909701338607-000000000000003E
+ Message   (DefaultMessage)
+ Body      (String) (bytes: 78)
+ {
+   "kind": "Pabst Blue Ribbon",
+   "beer": "St. Bernardus Abt 12"
+ }
+----
+
+And when we are done with the transformation we can stop by `ctrl + c` to exit the command.
+
+When transforming messages directly from the DSL (using the `--source` option), then by default
+Camel will pick the last expression in the route. If you only have one expression like in this example,
+then that is easy. But when you have many, then you need to tell which one to use.
+
+You can do this either by referring to the line number in the source code of the EIP / expression, or
+by its id (if specified).
+
+So suppose the example had many expressions, and the one we want to use is on line 11, then we can do as follows:
+
+[source,bash]
+----
+camel transform message --body=file:sample.json --source=beer-jq.yaml:11  --watch --pretty
+----
+
+Notice how we specify the line number in the source file name, by prefixing with `:line-number`.
+The line number does not have to be 100% accurate, as long the number is within range of the EIP, until
+the next EIP in the route. In the example this means you can pick number in range 8-17.
+
+If we want to use the id of the expression/EIP, we can do the same as shown below:
+
+[source,bash]
+----
+camel transform message --body=file:sample.json --source=beer-jq.yaml:setBody-fa01  --watch --pretty
+----
+
+You can also transform the message from JSon to XML as shown (or any other kind with fixed structure):
+
+[source,yaml]
+----
+- setBody:
+    expression:
+      simple:
+        expression: >-
+          <beer id="${jq(.id)}">
+            <name>${jq(.name)}</name>
+            <kind>${jq(.brand)}</kind>
+          </beer>
+        id: simple-b320
+    id: setBody-fa01
+----
 
 == Listing what Camel components is available
 

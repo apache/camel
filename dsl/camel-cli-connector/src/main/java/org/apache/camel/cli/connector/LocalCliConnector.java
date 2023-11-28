@@ -18,6 +18,7 @@ package org.apache.camel.cli.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.GarbageCollectorMXBean;
@@ -25,6 +26,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -48,14 +51,24 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.builder.ModelRoutesBuilder;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.model.HasExpressionType;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.ResourceReloadStrategy;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
@@ -98,6 +111,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File traceFile;
     private File debugFile;
     private long traceFilePos; // keep track of trace offset
+    private byte[] lastSource;
+    private ExpressionDefinition lastSourceExpression;
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -216,347 +231,35 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
             String action = root.getString("action");
             if ("route".equals(action)) {
-                // id is a pattern
-                String[] patterns = root.getString("id").split(",");
-                // find matching IDs
-                List<String> ids = camelContext.getRoutes()
-                        .stream().map(Route::getRouteId)
-                        .filter(routeId -> {
-                            for (String p : patterns) {
-                                if (PatternHelper.matchPattern(routeId, p)) {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        })
-                        .toList();
-                for (String id : ids) {
-                    try {
-                        String command = root.getString("command");
-                        if ("start".equals(command)) {
-                            if ("*".equals(id)) {
-                                camelContext.getRouteController().startAllRoutes();
-                            } else {
-                                camelContext.getRouteController().startRoute(id);
-                            }
-                        } else if ("stop".equals(command)) {
-                            if ("*".equals(id)) {
-                                camelContext.getRouteController().stopAllRoutes();
-                            } else {
-                                camelContext.getRouteController().stopRoute(id);
-                            }
-                        } else if ("suspend".equals(command)) {
-                            camelContext.getRouteController().suspendRoute(id);
-                        } else if ("resume".equals(command)) {
-                            camelContext.getRouteController().resumeRoute(id);
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
+                doActionRouteTask(root);
             } else if ("logger".equals(action)) {
-                try {
-                    String command = root.getString("command");
-                    if ("set-logging-level".equals(command)) {
-                        String logger = root.getString("logger-name");
-                        String level = root.getString("logging-level");
-                        LoggerHelper.changeLoggingLevel(logger, level);
-                    }
-                } catch (Exception e) {
-                    // ignore
-                }
+                doActionLoggerTask(root);
             } else if ("gc".equals(action)) {
                 System.gc();
             } else if ("reload".equals(action)) {
-                ContextReloadStrategy cr = camelContext.hasService(ContextReloadStrategy.class);
-                if (cr != null) {
-                    cr.onReload("Camel CLI");
-                } else {
-                    ResourceReloadStrategy rr = camelContext.hasService(ResourceReloadStrategy.class);
-                    if (rr != null) {
-                        rr.onReload("Camel CLI");
-                    }
-                }
+                doActionReloadTask();
             } else if ("debug".equals(action)) {
-                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("debug");
-                if (dc != null) {
-                    String cmd = root.getStringOrDefault("command", "");
-                    String bp = root.getStringOrDefault("breakpoint", "");
-                    String history = root.getStringOrDefault("history", "false");
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                            Map.of("command", cmd, "breakpoint", bp, "history", history));
-                    LOG.trace("Updating output file: {}", outputFile);
-                    IOHelper.writeText(json.toJson(), outputFile);
-                }
+                doActionDebugTask(root);
             } else if ("reset-stats".equals(action)) {
-                ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
-                if (mcc != null) {
-                    mcc.getManagedCamelContext().reset(true);
-                }
+                doActionResetStatsTask();
             } else if ("thread-dump".equals(action)) {
-                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("thread");
-                if (dc != null) {
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
-                    LOG.trace("Updating output file: {}", outputFile);
-                    IOHelper.writeText(json.toJson(), outputFile);
-                }
+                doActionThreadDumpTask();
             } else if ("top-processors".equals(action)) {
-                DevConsole dc
-                        = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("top");
-                if (dc != null) {
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
-                    LOG.trace("Updating output file: {}", outputFile);
-                    IOHelper.writeText(json.toJson(), outputFile);
-                }
+                doActionTopProcessorsTask();
             } else if ("source".equals(action)) {
-                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("source");
-                if (dc != null) {
-                    String filter = root.getString("filter");
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
-                    LOG.trace("Updating output file: {}", outputFile);
-                    IOHelper.writeText(json.toJson(), outputFile);
-                }
+                doActionSourceTask(root);
             } else if ("route-dump".equals(action)) {
-                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("route-dump");
-                if (dc != null) {
-                    String filter = root.getString("filter");
-                    String format = root.getString("format");
-                    String uriAsParameters = root.getString("uriAsParameters");
-                    JsonObject json
-                            = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                                    Map.of("filter", filter, "format", format, "uriAsParameters", uriAsParameters));
-                    LOG.trace("Updating output file: {}", outputFile);
-                    IOHelper.writeText(json.toJson(), outputFile);
-                }
+                doActionRouteDumpTask(root);
             } else if ("route-controller".equals(action)) {
-                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("route-controller");
-                if (dc != null) {
-                    String stacktrace = root.getString("stacktrace");
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stacktrace", stacktrace));
-                    LOG.trace("Updating output file: {}", outputFile);
-                    IOHelper.writeText(json.toJson(), outputFile);
-                }
+                doActionRouteControllerTask(root);
             } else if ("startup-recorder".equals(action)) {
-                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("startup-recorder");
-                if (dc != null) {
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
-                    LOG.trace("Updating output file: {}", outputFile);
-                    IOHelper.writeText(json.toJson(), outputFile);
-                }
+                doActionStartupRecorder();
             } else if ("stub".equals(action)) {
-                String filter = root.getString("filter");
-                String limit = root.getString("limit");
-                String browse = root.getString("browse");
-
-                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("stub");
-                if (dc != null) {
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                            Map.of("filter", filter, "limit", limit, "browse", browse));
-                    LOG.trace("Updating output file: {}", outputFile);
-                    IOHelper.writeText(json.toJson(), outputFile);
-                }
+                doActionStubTask(root);
             } else if ("send".equals(action)) {
-                StopWatch watch = new StopWatch();
-                long timestamp = System.currentTimeMillis();
-                String endpoint = root.getString("endpoint");
-                String body = root.getString("body");
-                String exchangePattern = root.getString("exchangePattern");
-                Collection<JsonObject> headers = root.getCollection("headers");
-                if (body != null) {
-                    InputStream is = null;
-                    Object b = body;
-                    Map<String, Object> map = null;
-                    if (body.startsWith("file:")) {
-                        File file = new File(body.substring(5));
-                        is = new FileInputStream(file);
-                        b = is;
-                    }
-                    if (headers != null) {
-                        map = new HashMap<>();
-                        for (JsonObject jo : headers) {
-                            map.put(jo.getString("key"), jo.getString("value"));
-                        }
-                    }
-                    final Object inputBody = b;
-                    final Map<String, Object> inputHeaders = map;
-                    Exchange out;
-                    Endpoint target = null;
-                    if (endpoint == null) {
-                        List<Route> routes = camelContext.getRoutes();
-                        if (!routes.isEmpty()) {
-                            // grab endpoint from 1st route
-                            target = routes.get(0).getEndpoint();
-                        }
-                    } else {
-                        // is the endpoint a pattern or route id
-                        boolean scheme = endpoint.contains(":");
-                        boolean pattern = endpoint.endsWith("*");
-                        if (!scheme || pattern) {
-                            if (!scheme) {
-                                endpoint = endpoint + "*";
-                            }
-                            for (Route route : camelContext.getRoutes()) {
-                                Endpoint e = route.getEndpoint();
-                                if (EndpointHelper.matchEndpoint(camelContext, e.getEndpointUri(), endpoint)) {
-                                    target = e;
-                                    break;
-                                }
-                            }
-                            if (target == null) {
-                                // okay it may refer to a route id
-                                for (Route route : camelContext.getRoutes()) {
-                                    String id = route.getRouteId();
-                                    Endpoint e = route.getEndpoint();
-                                    if (EndpointHelper.matchEndpoint(camelContext, id, endpoint)) {
-                                        target = e;
-                                        break;
-                                    }
-                                }
-                            }
-                        } else {
-                            target = camelContext.getEndpoint(endpoint);
-                        }
-                    }
-
-                    if (target != null) {
-                        out = producer.send(target, new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getMessage().setBody(inputBody);
-                                if (inputHeaders != null) {
-                                    exchange.getMessage().setHeaders(inputHeaders);
-                                }
-                                exchange.setPattern(
-                                        "InOut".equals(exchangePattern) ? ExchangePattern.InOut : ExchangePattern.InOnly);
-                            }
-                        });
-                        IOHelper.close(is);
-                        LOG.trace("Updating output file: {}", outputFile);
-                        if (out.getException() != null) {
-                            JsonObject jo = new JsonObject();
-                            jo.put("endpoint", target.getEndpointUri());
-                            jo.put("exchangeId", out.getExchangeId());
-                            jo.put("exchangePattern", exchangePattern);
-                            jo.put("timestamp", timestamp);
-                            jo.put("elapsed", watch.taken());
-                            jo.put("status", "failed");
-                            // avoid double wrap
-                            jo.put("exception",
-                                    MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
-                            IOHelper.writeText(jo.toJson(), outputFile);
-                        } else if ("InOut".equals(exchangePattern)) {
-                            JsonObject jo = new JsonObject();
-                            jo.put("endpoint", target.getEndpointUri());
-                            jo.put("exchangeId", out.getExchangeId());
-                            jo.put("exchangePattern", exchangePattern);
-                            jo.put("timestamp", timestamp);
-                            jo.put("elapsed", watch.taken());
-                            jo.put("status", "success");
-                            // avoid double wrap
-                            jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true,
-                                    BODY_MAX_CHARS).getMap("message"));
-                            IOHelper.writeText(jo.toJson(), outputFile);
-                        } else {
-                            JsonObject jo = new JsonObject();
-                            jo.put("endpoint", target.getEndpointUri());
-                            jo.put("exchangeId", out.getExchangeId());
-                            jo.put("exchangePattern", exchangePattern);
-                            jo.put("timestamp", timestamp);
-                            jo.put("elapsed", watch.taken());
-                            jo.put("status", "success");
-                            IOHelper.writeText(jo.toJson(), outputFile);
-                        }
-                    } else {
-                        // there is no valid endpoint
-                        JsonObject jo = new JsonObject();
-                        jo.put("endpoint", root.getString("endpoint"));
-                        jo.put("exchangeId", "");
-                        jo.put("exchangePattern", exchangePattern);
-                        jo.put("timestamp", timestamp);
-                        jo.put("elapsed", watch.taken());
-                        jo.put("status", "failed");
-                        // avoid double wrap
-                        jo.put("exception",
-                                MessageHelper.dumpExceptionAsJSonObject(new NoSuchEndpointException(root.getString("endpoint")))
-                                        .getMap("exception"));
-                        IOHelper.writeText(jo.toJson(), outputFile);
-                    }
-                }
+                doActionSendTask(root);
             } else if ("transform".equals(action)) {
-                StopWatch watch = new StopWatch();
-                long timestamp = System.currentTimeMillis();
-                String language = root.getString("language");
-                String template = Jsoner.unescape(root.getString("template"));
-                if (template.startsWith("file:")) {
-                    template = "resource:" + template;
-                }
-                String body = Jsoner.unescape(root.getString("body"));
-                InputStream is = null;
-                Object b = body;
-                Map<String, Object> map = null;
-                if (body.startsWith("file:")) {
-                    File file = new File(body.substring(5));
-                    is = new FileInputStream(file);
-                    b = IOHelper.loadText(is);
-                }
-                Collection<JsonObject> headers = root.getCollection("headers");
-                if (headers != null) {
-                    map = new LinkedHashMap<>();
-                    for (JsonObject jo : headers) {
-                        map.put(jo.getString("key"), jo.getString("value"));
-                    }
-                }
-                final Object inputBody = b;
-                final Map<String, Object> inputHeaders = map;
-                Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
-                try {
-                    Language lan = camelContext.resolveLanguage(language);
-                    Expression exp = lan.createExpression(template);
-                    exp.init(camelContext);
-                    // create dummy exchange with
-                    out.setPattern(ExchangePattern.InOut);
-                    out.getMessage().setBody(inputBody);
-                    if (inputHeaders != null) {
-                        out.getMessage().setHeaders(inputHeaders);
-                    }
-                    String result = exp.evaluate(out, String.class);
-                    out.getMessage().setBody(result);
-                    IOHelper.close(is);
-                } catch (Exception e) {
-                    out.setException(e);
-                }
-                LOG.trace("Updating output file: {}", outputFile);
-                if (out.getException() != null) {
-                    JsonObject jo = new JsonObject();
-                    jo.put("language", language);
-                    jo.put("exchangeId", out.getExchangeId());
-                    jo.put("timestamp", timestamp);
-                    jo.put("elapsed", watch.taken());
-                    jo.put("status", "failed");
-                    // avoid double wrap
-                    jo.put("exception",
-                            MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
-                    IOHelper.writeText(jo.toJson(), outputFile);
-                } else {
-                    JsonObject jo = new JsonObject();
-                    jo.put("language", language);
-                    jo.put("exchangeId", out.getExchangeId());
-                    jo.put("timestamp", timestamp);
-                    jo.put("elapsed", watch.taken());
-                    jo.put("status", "success");
-                    // avoid double wrap
-                    jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true,
-                            BODY_MAX_CHARS).getMap("message"));
-                    IOHelper.writeText(jo.toJson(), outputFile);
-                }
-                camelContext.getCamelContextExtension().getExchangeFactory().release(out);
+                doActionTransformTask(root);
             }
 
             // action done so delete file
@@ -564,8 +267,470 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
         } catch (Exception e) {
             // ignore
-            LOG.debug("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(),
+            // TODO: reduce to debug
+            LOG.warn("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(),
                     e);
+        }
+    }
+
+    private void doActionTransformTask(JsonObject root) throws Exception {
+        StopWatch watch = new StopWatch();
+        long timestamp = System.currentTimeMillis();
+        String source = root.getString("source");
+        String language = root.getString("language");
+        String template = Jsoner.unescape(root.getStringOrDefault("template", ""));
+        if (template.startsWith("file:")) {
+            template = "resource:" + template;
+        }
+        String body = Jsoner.unescape(root.getString("body"));
+        InputStream is = null;
+        Object b = body;
+        Map<String, Object> map = null;
+        if (body.startsWith("file:")) {
+            File file = new File(body.substring(5));
+            is = new FileInputStream(file);
+            b = IOHelper.loadText(is);
+        }
+        Collection<JsonObject> headers = root.getCollection("headers");
+        if (headers != null) {
+            map = new LinkedHashMap<>();
+            for (JsonObject jo : headers) {
+                map.put(jo.getString("key"), jo.getString("value"));
+            }
+        }
+        final Object inputBody = b;
+        final Map<String, Object> inputHeaders = map;
+        Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
+        try {
+            if (source != null) {
+                Integer sourceLine = LoggerHelper.extractSourceLocationLineNumber(source);
+                String sourceId = LoggerHelper.extractSourceLocationId(source);
+                source = LoggerHelper.stripSourceLocationLineNumber(source);
+                LOG.debug("Source: {} line: {} id: {}", source, sourceLine, sourceId);
+
+                boolean update = true;
+                File f = new File(source);
+                if (f.isFile() && f.exists()) {
+                    byte[] data = Files.readAllBytes(f.toPath());
+                    if (Arrays.equals(lastSource, data)) {
+                        LOG.debug("Source file: {} is not updated since last", source);
+                        update = false;
+                    }
+                    lastSource = data;
+                }
+                if (update) {
+                    if (sourceLine != null) {
+                        LOG.info("Transforming from source: {}:{}", source, sourceLine);
+                    } else if (sourceId != null) {
+                        LOG.info("Transforming from source: {}:{}", source, sourceId);
+                    } else {
+                        LOG.info("Transforming from source: {}", source);
+                    }
+
+                    // load route definition
+                    if (!source.startsWith("file:")) {
+                        source = "file:" + source;
+                    }
+                    // load the source via routes loader, and find the builders, which we can use to get to the model
+                    Resource res = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                            .resolveResource(source);
+                    RoutesLoader loader = camelContext.getCamelContextExtension().getContextPlugin(RoutesLoader.class);
+                    Collection<RoutesBuilder> builders = loader.findRoutesBuilders(res);
+                    for (RoutesBuilder builder : builders) {
+                        // use the model as we just want to find the EIP with the inlined expression
+                        ModelRoutesBuilder mrb = (ModelRoutesBuilder) builder;
+                        // must prepare model before we can access them
+                        mrb.prepareModel(camelContext);
+                        // find the EIP with the inlined expression to use
+                        ExpressionDefinition found = null;
+                        for (RouteDefinition rd : mrb.getRoutes().getRoutes()) {
+                            Collection<ProcessorDefinition> defs
+                                    = ProcessorDefinitionHelper.filterTypeInOutputs(rd.getOutputs(),
+                                            ProcessorDefinition.class);
+                            for (ProcessorDefinition p : defs) {
+                                if (p instanceof HasExpressionType et) {
+                                    ExpressionDefinition def = et.getExpressionType();
+                                    if (def != null) {
+                                        if (sourceLine != null) {
+                                            if (p.getLineNumber() == -1 || p.getLineNumber() <= sourceLine) {
+                                                found = def;
+                                            }
+                                        } else if (sourceId != null) {
+                                            if (sourceId.equals(p.getId()) || sourceId.equals(def.getId())) {
+                                                found = def;
+                                            }
+                                        } else {
+                                            found = def;
+                                        }
+                                    }
+                                }
+                            }
+                            if (found != null) {
+                                lastSourceExpression = found;
+                            }
+                        }
+                    }
+                }
+                if (lastSourceExpression != null) {
+                    // create dummy exchange with
+                    out.setPattern(ExchangePattern.InOut);
+                    out.getMessage().setBody(inputBody);
+                    if (inputHeaders != null) {
+                        out.getMessage().setHeaders(inputHeaders);
+                    }
+                    String result = lastSourceExpression.evaluate(out, String.class);
+                    out.getMessage().setBody(result);
+                }
+            } else {
+                // transform via language
+                Language lan = camelContext.resolveLanguage(language);
+                Expression exp = lan.createExpression(template);
+                exp.init(camelContext);
+                // create dummy exchange with
+                out.setPattern(ExchangePattern.InOut);
+                out.getMessage().setBody(inputBody);
+                if (inputHeaders != null) {
+                    out.getMessage().setHeaders(inputHeaders);
+                }
+                String result = exp.evaluate(out, String.class);
+                out.getMessage().setBody(result);
+            }
+            IOHelper.close(is);
+        } catch (Exception e) {
+            out.setException(e);
+        }
+        LOG.trace("Updating output file: {}", outputFile);
+        if (out.getException() != null) {
+            JsonObject jo = new JsonObject();
+            if (language != null) {
+                jo.put("language", language);
+            }
+            if (source != null) {
+                jo.put("source", source);
+            }
+            jo.put("exchangeId", out.getExchangeId());
+            jo.put("timestamp", timestamp);
+            jo.put("elapsed", watch.taken());
+            jo.put("status", "failed");
+            // avoid double wrap
+            jo.put("exception",
+                    MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
+            IOHelper.writeText(jo.toJson(), outputFile);
+        } else {
+            JsonObject jo = new JsonObject();
+            if (language != null) {
+                jo.put("language", language);
+            }
+            if (source != null) {
+                jo.put("source", source);
+            }
+            jo.put("exchangeId", out.getExchangeId());
+            jo.put("timestamp", timestamp);
+            jo.put("elapsed", watch.taken());
+            jo.put("status", "success");
+            // avoid double wrap
+            jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true,
+                    BODY_MAX_CHARS).getMap("message"));
+            IOHelper.writeText(jo.toJson(), outputFile);
+        }
+        camelContext.getCamelContextExtension().getExchangeFactory().release(out);
+    }
+
+    private void doActionSendTask(JsonObject root) throws Exception {
+        StopWatch watch = new StopWatch();
+        long timestamp = System.currentTimeMillis();
+        String endpoint = root.getString("endpoint");
+        String body = root.getString("body");
+        String exchangePattern = root.getString("exchangePattern");
+        Collection<JsonObject> headers = root.getCollection("headers");
+        if (body != null) {
+            InputStream is = null;
+            Object b = body;
+            Map<String, Object> map = null;
+            if (body.startsWith("file:")) {
+                File file = new File(body.substring(5));
+                is = new FileInputStream(file);
+                b = is;
+            }
+            if (headers != null) {
+                map = new HashMap<>();
+                for (JsonObject jo : headers) {
+                    map.put(jo.getString("key"), jo.getString("value"));
+                }
+            }
+            final Object inputBody = b;
+            final Map<String, Object> inputHeaders = map;
+            Exchange out;
+            Endpoint target = null;
+            if (endpoint == null) {
+                List<Route> routes = camelContext.getRoutes();
+                if (!routes.isEmpty()) {
+                    // grab endpoint from 1st route
+                    target = routes.get(0).getEndpoint();
+                }
+            } else {
+                // is the endpoint a pattern or route id
+                boolean scheme = endpoint.contains(":");
+                boolean pattern = endpoint.endsWith("*");
+                if (!scheme || pattern) {
+                    if (!scheme) {
+                        endpoint = endpoint + "*";
+                    }
+                    for (Route route : camelContext.getRoutes()) {
+                        Endpoint e = route.getEndpoint();
+                        if (EndpointHelper.matchEndpoint(camelContext, e.getEndpointUri(), endpoint)) {
+                            target = e;
+                            break;
+                        }
+                    }
+                    if (target == null) {
+                        // okay it may refer to a route id
+                        for (Route route : camelContext.getRoutes()) {
+                            String id = route.getRouteId();
+                            Endpoint e = route.getEndpoint();
+                            if (EndpointHelper.matchEndpoint(camelContext, id, endpoint)) {
+                                target = e;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    target = camelContext.getEndpoint(endpoint);
+                }
+            }
+
+            if (target != null) {
+                out = producer.send(target, new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getMessage().setBody(inputBody);
+                        if (inputHeaders != null) {
+                            exchange.getMessage().setHeaders(inputHeaders);
+                        }
+                        exchange.setPattern(
+                                "InOut".equals(exchangePattern) ? ExchangePattern.InOut : ExchangePattern.InOnly);
+                    }
+                });
+                IOHelper.close(is);
+                LOG.trace("Updating output file: {}", outputFile);
+                if (out.getException() != null) {
+                    JsonObject jo = new JsonObject();
+                    jo.put("endpoint", target.getEndpointUri());
+                    jo.put("exchangeId", out.getExchangeId());
+                    jo.put("exchangePattern", exchangePattern);
+                    jo.put("timestamp", timestamp);
+                    jo.put("elapsed", watch.taken());
+                    jo.put("status", "failed");
+                    // avoid double wrap
+                    jo.put("exception",
+                            MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
+                    IOHelper.writeText(jo.toJson(), outputFile);
+                } else if ("InOut".equals(exchangePattern)) {
+                    JsonObject jo = new JsonObject();
+                    jo.put("endpoint", target.getEndpointUri());
+                    jo.put("exchangeId", out.getExchangeId());
+                    jo.put("exchangePattern", exchangePattern);
+                    jo.put("timestamp", timestamp);
+                    jo.put("elapsed", watch.taken());
+                    jo.put("status", "success");
+                    // avoid double wrap
+                    jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true,
+                            BODY_MAX_CHARS).getMap("message"));
+                    IOHelper.writeText(jo.toJson(), outputFile);
+                } else {
+                    JsonObject jo = new JsonObject();
+                    jo.put("endpoint", target.getEndpointUri());
+                    jo.put("exchangeId", out.getExchangeId());
+                    jo.put("exchangePattern", exchangePattern);
+                    jo.put("timestamp", timestamp);
+                    jo.put("elapsed", watch.taken());
+                    jo.put("status", "success");
+                    IOHelper.writeText(jo.toJson(), outputFile);
+                }
+            } else {
+                // there is no valid endpoint
+                JsonObject jo = new JsonObject();
+                jo.put("endpoint", root.getString("endpoint"));
+                jo.put("exchangeId", "");
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "failed");
+                // avoid double wrap
+                jo.put("exception",
+                        MessageHelper.dumpExceptionAsJSonObject(new NoSuchEndpointException(root.getString("endpoint")))
+                                .getMap("exception"));
+                IOHelper.writeText(jo.toJson(), outputFile);
+            }
+        }
+    }
+
+    private void doActionStubTask(JsonObject root) throws Exception {
+        String filter = root.getString("filter");
+        String limit = root.getString("limit");
+        String browse = root.getString("browse");
+
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("stub");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                    Map.of("filter", filter, "limit", limit, "browse", browse));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionStartupRecorder() throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("startup-recorder");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionRouteControllerTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("route-controller");
+        if (dc != null) {
+            String stacktrace = root.getString("stacktrace");
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stacktrace", stacktrace));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionRouteDumpTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("route-dump");
+        if (dc != null) {
+            String filter = root.getString("filter");
+            String format = root.getString("format");
+            String uriAsParameters = root.getString("uriAsParameters");
+            JsonObject json
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                            Map.of("filter", filter, "format", format, "uriAsParameters", uriAsParameters));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionSourceTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("source");
+        if (dc != null) {
+            String filter = root.getString("filter");
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionTopProcessorsTask() throws IOException {
+        DevConsole dc
+                = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("top");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionThreadDumpTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("thread");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionResetStatsTask() throws Exception {
+        ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        if (mcc != null) {
+            mcc.getManagedCamelContext().reset(true);
+        }
+    }
+
+    private void doActionDebugTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("debug");
+        if (dc != null) {
+            String cmd = root.getStringOrDefault("command", "");
+            String bp = root.getStringOrDefault("breakpoint", "");
+            String history = root.getStringOrDefault("history", "false");
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                    Map.of("command", cmd, "breakpoint", bp, "history", history));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionReloadTask() {
+        ContextReloadStrategy cr = camelContext.hasService(ContextReloadStrategy.class);
+        if (cr != null) {
+            cr.onReload("Camel CLI");
+        } else {
+            ResourceReloadStrategy rr = camelContext.hasService(ResourceReloadStrategy.class);
+            if (rr != null) {
+                rr.onReload("Camel CLI");
+            }
+        }
+    }
+
+    private void doActionLoggerTask(JsonObject root) {
+        try {
+            String command = root.getString("command");
+            if ("set-logging-level".equals(command)) {
+                String logger = root.getString("logger-name");
+                String level = root.getString("logging-level");
+                LoggerHelper.changeLoggingLevel(logger, level);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    private void doActionRouteTask(JsonObject root) {
+        // id is a pattern
+        String[] patterns = root.getString("id").split(",");
+        // find matching IDs
+        List<String> ids = camelContext.getRoutes()
+                .stream().map(Route::getRouteId)
+                .filter(routeId -> {
+                    for (String p : patterns) {
+                        if (PatternHelper.matchPattern(routeId, p)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .toList();
+        for (String id : ids) {
+            try {
+                String command = root.getString("command");
+                if ("start".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.getRouteController().startAllRoutes();
+                    } else {
+                        camelContext.getRouteController().startRoute(id);
+                    }
+                } else if ("stop".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.getRouteController().stopAllRoutes();
+                    } else {
+                        camelContext.getRouteController().stopRoute(id);
+                    }
+                } else if ("suspend".equals(command)) {
+                    camelContext.getRouteController().suspendRoute(id);
+                } else if ("resume".equals(command)) {
+                    camelContext.getRouteController().resumeRoute(id);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 

@@ -123,7 +123,7 @@ public class Run extends CamelCommand {
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
 
-    List<String> files = new ArrayList<>();
+    public List<String> files = new ArrayList<>();
 
     @Option(names = { "--source-dir" },
             description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.")
@@ -313,6 +313,7 @@ public class Run extends CamelCommand {
         this.background = true;
         this.camelVersion = camelVersion;
         this.empty = true;
+        this.ignoreLoadingError = true;
         this.name = "transform";
         return run();
     }
