@@ -19,5 +19,7 @@ package org.apache.camel.component.aws.config;
 public enum AWSConfigOperations {
 
     putConfigRule,
-    removeConfigRule
+    removeConfigRule,
+
+    describeRuleCompliance
 }
