@@ -60,7 +60,6 @@ public class ThrottlerTest extends ContextTestSupport {
         }
     }
 
-    @Disabled("Disabled due to CAMEL-20158")
     @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         semaphore = new Semaphore(CONCURRENT_REQUESTS);
@@ -75,7 +74,6 @@ public class ThrottlerTest extends ContextTestSupport {
         sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:expressionConstant", MESSAGE_COUNT, resultEndpoint);
     }
 
-    @Disabled("Disabled due to CAMEL-20158")
     @Test
     public void testConfigurationWithHeaderExpression() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -89,7 +87,6 @@ public class ThrottlerTest extends ContextTestSupport {
         }
     }
 
-    @Disabled("Disabled due to CAMEL-20158")
     @Test
     public void testConfigurationWithChangingHeaderExpression() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(5);
