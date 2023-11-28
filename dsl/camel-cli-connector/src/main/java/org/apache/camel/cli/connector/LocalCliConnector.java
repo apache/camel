@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,11 +51,12 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.builder.ModelRoutesBuilder;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.model.HasExpressionType;
-import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -331,44 +331,44 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     if (!source.startsWith("file:")) {
                         source = "file:" + source;
                     }
+                    // load the source via routes loader, and find the builders, which we can use to get to the model
                     Resource res = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
                             .resolveResource(source);
                     RoutesLoader loader = camelContext.getCamelContextExtension().getContextPlugin(RoutesLoader.class);
-                    Set<String> ids = loader.updateRoutes(res);
-
-                    // TODO: update routes and do NOT start routes
-                    // TODO: API on RoutesBuilder to get model
-
-                    LOG.debug("Updated routes: {}", ids);
-
-                    Model mcc = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-                    ExpressionDefinition found = null;
-                    for (String id : ids) {
-                        RouteDefinition rd = mcc.getRouteDefinition(id);
-                        Collection<ProcessorDefinition> defs
-                                = ProcessorDefinitionHelper.filterTypeInOutputs(rd.getOutputs(),
-                                        ProcessorDefinition.class);
-                        for (ProcessorDefinition p : defs) {
-                            if (p instanceof HasExpressionType et) {
-                                ExpressionDefinition def = et.getExpressionType();
-                                if (def != null) {
-                                    if (sourceLine != null) {
-                                        if (p.getLineNumber() == -1 || p.getLineNumber() <= sourceLine) {
+                    Collection<RoutesBuilder> builders = loader.findRoutesBuilders(res);
+                    for (RoutesBuilder builder : builders) {
+                        // use the model as we just want to find the EIP with the inlined expression
+                        ModelRoutesBuilder mrb = (ModelRoutesBuilder) builder;
+                        // must prepare model before we can access them
+                        mrb.prepareModel(camelContext);
+                        // find the EIP with the inlined expression to use
+                        ExpressionDefinition found = null;
+                        for (RouteDefinition rd : mrb.getRoutes().getRoutes()) {
+                            Collection<ProcessorDefinition> defs
+                                    = ProcessorDefinitionHelper.filterTypeInOutputs(rd.getOutputs(),
+                                            ProcessorDefinition.class);
+                            for (ProcessorDefinition p : defs) {
+                                if (p instanceof HasExpressionType et) {
+                                    ExpressionDefinition def = et.getExpressionType();
+                                    if (def != null) {
+                                        if (sourceLine != null) {
+                                            if (p.getLineNumber() == -1 || p.getLineNumber() <= sourceLine) {
+                                                found = def;
+                                            }
+                                        } else if (sourceId != null) {
+                                            if (sourceId.equals(p.getId()) || sourceId.equals(def.getId())) {
+                                                found = def;
+                                            }
+                                        } else {
                                             found = def;
                                         }
-                                    } else if (sourceId != null) {
-                                        if (sourceId.equals(p.getId()) || sourceId.equals(def.getId())) {
-                                            found = def;
-                                        }
-                                    } else {
-                                        found = def;
                                     }
                                 }
                             }
+                            if (found != null) {
+                                lastSourceExpression = found;
+                            }
                         }
-                    }
-                    if (found != null) {
-                        lastSourceExpression = found;
                     }
                 }
                 if (lastSourceExpression != null) {
@@ -433,12 +433,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     BODY_MAX_CHARS).getMap("message"));
             IOHelper.writeText(jo.toJson(), outputFile);
         }
-        camelContext.getCamelContextExtension().
-
-                getExchangeFactory().
-
-                release(out);
-
+        camelContext.getCamelContextExtension().getExchangeFactory().release(out);
     }
 
     private void doActionSendTask(JsonObject root) throws Exception {

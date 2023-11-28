@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build {@link Route} instances in a
  * {@link CamelContext} for smart routing.
  */
-public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered, ResourceAware {
+public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, ModelRoutesBuilder, Ordered, ResourceAware {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     private Resource resource;
@@ -601,7 +601,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     @Override
-    public void addRoutesToCamelContext(CamelContext context) throws Exception {
+    public void prepareModel(CamelContext context) throws Exception {
         // must configure routes before rests
         configureRoutes(context);
         configureRests(context);
@@ -617,6 +617,13 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (RouteDefinition route : routeCollection.getRoutes()) {
             routeCollection.prepareRoute(route);
         }
+    }
+
+    @Override
+    public void addRoutesToCamelContext(CamelContext context) throws Exception {
+        prepareModel(context);
+
+        // this will add the routes to camel
         populateRoutes();
 
         if (this instanceof OnCamelContextEvent) {
@@ -885,6 +892,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
     }
 
+    @Override
+    public RoutesDefinition getRoutes() {
+        return getRouteCollection();
+    }
+
+    @Override
+    public RestsDefinition getRests() {
+        return getRestCollection();
+    }
+
     public List<RegistryBeanDefinition> getBeans() {
         return beans;
     }
@@ -903,10 +920,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public RoutesDefinition getRouteCollection() {
         return this.routeCollection;
-    }
-
-    public void setRouteCollection(RoutesDefinition routeCollection) {
-        this.routeCollection = routeCollection;
     }
 
     public RouteTemplatesDefinition getRouteTemplateCollection() {
