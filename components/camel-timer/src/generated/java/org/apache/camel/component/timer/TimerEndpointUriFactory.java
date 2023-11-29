@@ -21,7 +21,7 @@ public class TimerEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(15);
         props.add("bridgeErrorHandler");
         props.add("daemon");
         props.add("delay");
@@ -32,6 +32,7 @@ public class TimerEndpointUriFactory extends org.apache.camel.support.component.
         props.add("pattern");
         props.add("period");
         props.add("repeatCount");
+        props.add("runLoggingLevel");
         props.add("synchronous");
         props.add("time");
         props.add("timer");

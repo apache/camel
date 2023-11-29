@@ -452,16 +452,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-
     /**
      * Gets the error counter. If the counter is > 0 that means the consumer failed polling for the last N number of
      * times. When the consumer is successfully again, then the error counter resets to zero.
      *
      * @see #getSuccessCounter()
      */
-    protected long getErrorCounter() {
+    public long getErrorCounter() {
         return errorCounter;
     }
 
@@ -471,23 +468,26 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      *
      * @see #getErrorCounter()
      */
-    protected long getSuccessCounter() {
+    public long getSuccessCounter() {
         return successCounter;
     }
 
     /**
      * Gets the total number of polls run.
      */
-    protected long getCounter() {
+    public long getCounter() {
         return counter.get();
     }
 
     /**
      * Whether a first pool attempt has been done (also if the consumer has been restarted)
      */
-    protected boolean isFirstPollDone() {
+    public boolean isFirstPollDone() {
         return firstPollDone;
     }
+
+    // Implementation methods
+    // -------------------------------------------------------------------------
 
     /**
      * Gets the last caused error (exception) for the last poll that failed. When the consumer is successfully again,
