@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Slow test")
 public class InterfacesTest extends BaseJettyTest {
 
-    private static boolean isMacOS = System.getProperty("os.name").startsWith("Mac");
+    private static final boolean isMacOS = System.getProperty("os.name").startsWith("Mac");
 
     @RegisterExtension
     protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();

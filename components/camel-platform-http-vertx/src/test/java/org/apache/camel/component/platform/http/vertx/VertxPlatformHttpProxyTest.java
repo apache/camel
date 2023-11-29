@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.containsString;
 
 public class VertxPlatformHttpProxyTest {
     private final int port = AvailablePortFinder.getNextAvailable();
-    private WireMockServer wireMockServer = new WireMockServer(options().port(port));
+    private final WireMockServer wireMockServer = new WireMockServer(options().port(port));
 
     @BeforeEach
     void before() {

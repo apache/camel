@@ -452,8 +452,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     }
 
     static class FilePartDataSource extends FileDataSource {
-        private String name;
-        private String contentType;
+        private final String name;
+        private final String contentType;
 
         FilePartDataSource(FormValue value) {
             super(value.getPath().toFile());

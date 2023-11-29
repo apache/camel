@@ -27,9 +27,9 @@ import io.undertow.server.handlers.PathTemplateHandler;
  * Extended PathTemplateHandler to monitor add/remove handlers. Also this enables hot swapping a default handler.
  */
 public class CamelPathTemplateHandler implements HttpHandler {
-    private Map<String, CamelMethodHandler> handlers = new HashMap<>();
-    private Wrapper defaultHandlerWrapper = new Wrapper();
-    private PathTemplateHandler delegate;
+    private final Map<String, CamelMethodHandler> handlers = new HashMap<>();
+    private final Wrapper defaultHandlerWrapper = new Wrapper();
+    private final PathTemplateHandler delegate;
     private String handlerString;
 
     public CamelPathTemplateHandler(CamelMethodHandler defaultHandler) {

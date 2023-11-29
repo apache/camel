@@ -38,7 +38,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
 
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
 
-    protected Properties originalValues = new Properties();
+    protected final Properties originalValues = new Properties();
 
     @Override
     @BeforeEach

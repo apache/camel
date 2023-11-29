@@ -142,9 +142,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     }
 
     static class ConnectorRef {
-        Server server;
-        Connector connector;
-        CamelServlet servlet;
+        final Server server;
+        final Connector connector;
+        final CamelServlet servlet;
         int refCount;
 
         ConnectorRef(Server server, Connector connector, CamelServlet servlet) {

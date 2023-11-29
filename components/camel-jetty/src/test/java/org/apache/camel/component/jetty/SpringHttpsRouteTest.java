@@ -53,10 +53,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Isolated
 public class SpringHttpsRouteTest {
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
-    protected String expectedBody = "<hello>world!</hello>";
+    protected final String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
-    protected Properties originalValues = new Properties();
-    protected transient Logger log = LoggerFactory.getLogger(SpringHttpsRouteTest.class);
+    protected final Properties originalValues = new Properties();
+    protected final transient Logger log = LoggerFactory.getLogger(SpringHttpsRouteTest.class);
 
     @EndpointInject("mock:a")
     MockEndpoint mockEndpoint;

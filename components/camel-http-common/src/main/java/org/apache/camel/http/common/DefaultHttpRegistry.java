@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultHttpRegistry implements HttpRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpRegistry.class);
 
-    private static Map<String, HttpRegistry> registries = new HashMap<>();
+    private static final Map<String, HttpRegistry> registries = new HashMap<>();
 
     private final Object lock = new Object();
 

@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:" + getPort() + "/myservice";
-    private MyParamsProcessor processor = new MyParamsProcessor();
+    private final String serverUri = "http://localhost:" + getPort() + "/myservice";
+    private final MyParamsProcessor processor = new MyParamsProcessor();
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {

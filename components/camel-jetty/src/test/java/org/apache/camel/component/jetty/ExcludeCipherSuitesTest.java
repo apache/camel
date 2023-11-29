@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 @Disabled
 public class ExcludeCipherSuitesTest extends BaseJettyTest {
 
-    protected String pwd = "changeit";
+    protected final String pwd = "changeit";
 
     private SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();

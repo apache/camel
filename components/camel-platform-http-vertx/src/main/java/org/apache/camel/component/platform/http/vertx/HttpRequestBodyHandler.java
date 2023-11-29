@@ -26,7 +26,7 @@ import org.apache.camel.Message;
  * Abstraction to handle HTTP request body processing.
  */
 abstract class HttpRequestBodyHandler {
-    Handler<RoutingContext> delegate;
+    final Handler<RoutingContext> delegate;
 
     HttpRequestBodyHandler(Handler<RoutingContext> delegate) {
         this.delegate = delegate;

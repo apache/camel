@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class UndertowSuspendResumeTest extends BaseUndertowTest {
 
-    private String serverUri = "http://localhost:{{port}}/foo";
+    private final String serverUri = "http://localhost:{{port}}/foo";
 
     @Test
     public void testSuspendResume() {

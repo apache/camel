@@ -41,7 +41,7 @@ import org.apache.camel.util.StringHelper;
 public class VertxHttpEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private VertxHttpConfiguration configuration;
+    private final VertxHttpConfiguration configuration;
 
     private WebClient webClient;
     private int minOkRange;

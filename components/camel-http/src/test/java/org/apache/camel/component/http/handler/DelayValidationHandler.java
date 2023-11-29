@@ -25,7 +25,7 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class DelayValidationHandler extends BasicValidationHandler {
 
-    protected int delay;
+    protected final int delay;
 
     public DelayValidationHandler(String expectedMethod, String expectedQuery,
                                   Object expectedContent, String responseContent, int delay) {

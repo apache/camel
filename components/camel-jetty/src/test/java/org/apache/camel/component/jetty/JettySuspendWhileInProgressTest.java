@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class JettySuspendWhileInProgressTest extends BaseJettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(JettySuspendWhileInProgressTest.class);
 
-    private String serverUri = "http://localhost:" + getPort() + "/cool";
-    private CountDownLatch latch = new CountDownLatch(1);
+    private final String serverUri = "http://localhost:" + getPort() + "/cool";
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     @Test
     public void testJettySuspendWhileInProgress() throws Exception {

@@ -27,7 +27,7 @@ import io.undertow.util.URLUtils;
  * @see RestRootHandler
  */
 public class CamelRootHandler implements HttpHandler {
-    private CamelPathHandler pathHandler;
+    private final CamelPathHandler pathHandler;
 
     public CamelRootHandler(HttpHandler defaultHandler) {
         pathHandler = new CamelPathHandler(defaultHandler);

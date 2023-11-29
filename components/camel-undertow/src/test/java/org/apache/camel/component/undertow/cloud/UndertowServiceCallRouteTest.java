@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowServiceCallRouteTest extends CamelTestSupport {
-    private int port1 = AvailablePortFinder.getNextAvailable();
-    private int port2 = AvailablePortFinder.getNextAvailable();
+    private final int port1 = AvailablePortFinder.getNextAvailable();
+    private final int port2 = AvailablePortFinder.getNextAvailable();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

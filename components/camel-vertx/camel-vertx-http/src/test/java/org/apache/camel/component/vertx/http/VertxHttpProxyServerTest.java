@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxHttpProxyServerTest extends VertxHttpTestSupport {
 
-    private int port2 = AvailablePortFinder.getNextAvailable();
+    private final int port2 = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testProxyConfiguration() {

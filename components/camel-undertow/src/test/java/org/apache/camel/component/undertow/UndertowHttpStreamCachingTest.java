@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
 
-    private String data = "abcdefg";
+    private final String data = "abcdefg";
 
     @Test
     public void testTwoWayStreaming() {
