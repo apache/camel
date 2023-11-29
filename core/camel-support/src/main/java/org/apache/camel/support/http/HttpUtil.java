@@ -58,9 +58,10 @@ public final class HttpUtil {
 
     /**
      * Deprecated way to extract the charset value from the content type string
-     * @deprecated use {@link IOHelper#getCharsetNameFromContentType(String)}
-     * @param contentType the content type string
-     * @return the charset value or null if there is nothing to extract
+     *
+     * @deprecated             use {@link IOHelper#getCharsetNameFromContentType(String)}
+     * @param      contentType the content type string
+     * @return                 the charset value or null if there is nothing to extract
      */
     @Deprecated
     public static String getCharsetFromContentType(String contentType) {
@@ -81,8 +82,9 @@ public final class HttpUtil {
 
     /**
      * Extracts the charset value from the content type string and sets it on the given exchange
+     *
      * @param contentType the content type string
-     * @param exchange the exchange to set the charset value
+     * @param exchange    the exchange to set the charset value
      */
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         String charset = HttpUtil.getCharsetFromContentType(contentType);

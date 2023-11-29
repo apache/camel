@@ -246,11 +246,12 @@ public final class CollectionHelper {
     }
 
     /**
-     * When trying to set the value for a map, if the value already exists, appends it to a list. Otherwise, sets the entry to
-     * the given value.
+     * When trying to set the value for a map, if the value already exists, appends it to a list. Otherwise, sets the
+     * entry to the given value.
+     *
      * @param headers the map that whose entry will be set or appended
-     * @param key the key on the map
-     * @param value the value to set or append within the map
+     * @param key     the key on the map
+     * @param value   the value to set or append within the map
      */
     public static <T> void appendEntry(Map<String, ? super Object> headers, String key, T value) {
         if (headers.containsKey(key)) {
