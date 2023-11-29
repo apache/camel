@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.ByteBuffer;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -36,12 +33,9 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.util.Callback;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -102,18 +96,16 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
         ServerConnector http = new ServerConnector(server, new HttpConnectionFactory(httpconf));
         http.setPort(JETTY_PORT);
         server.addConnector(http);
-        server.setHandler(new AbstractHandler() {
+        server.setHandler(new Handler.Abstract() {
             @Override
-            public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                    throws IOException, ServletException {
-                response.setContentType("text/xml");
+            public boolean handle(Request request, Response response, Callback callback) throws Exception {
+                response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/xml");
                 // the Content-Length is correct for this response message
-                response.setContentLength(RESPONSE_MESSAGE.length());
+                response.getHeaders().put(HttpHeader.CONTENT_LENGTH, RESPONSE_MESSAGE.length());
                 response.setStatus(HttpServletResponse.SC_OK);
-                baseRequest.setHandled(true);
-                PrintWriter pw = response.getWriter();
-                pw.write(RESPONSE_MESSAGE);
-                pw.close();
+                response.write(true, ByteBuffer.wrap(RESPONSE_MESSAGE.getBytes()), callback);
+                callback.succeeded();
+                return true;
             }
         });
 
