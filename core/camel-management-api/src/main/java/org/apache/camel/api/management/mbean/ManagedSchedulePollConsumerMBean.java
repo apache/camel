@@ -39,6 +39,24 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
     @ManagedAttribute(description = "Scheduled Fixed Delay")
     void setUseFixedDelay(boolean useFixedDelay);
 
+    @ManagedAttribute(description = "Scheduled Greedy")
+    boolean isGreedy();
+
+    @ManagedAttribute(description = "Scheduled Greedy")
+    void setGreedy(boolean greedy);
+
+    @ManagedAttribute(description = "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead")
+    boolean isSendEmptyMessageWhenIdle();
+
+    @ManagedAttribute(description = "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead")
+    void setSendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle);
+
+    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    String getRunningLoggingLevel();
+
+    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    void setRunningLoggingLevel(String runningLoggingLevel);
+
     @ManagedAttribute(description = "Scheduled TimeUnit")
     String getTimeUnit();
 
