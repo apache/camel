@@ -18,6 +18,7 @@
 package org.apache.camel.support.http;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -107,5 +108,26 @@ public final class HttpUtil {
             url = url + "?" + query;
         }
         return url;
+    }
+
+    /**
+     * Add common in/out filters used in HTTP components
+     * @param filterSet The set instance containing the out filters
+     */
+    public static void addCommonFilters(Set<String> filterSet) {
+        filterSet.add("content-length");
+        filterSet.add("content-type");
+        filterSet.add("host");
+        // Add the filter for the Generic Message header
+        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
+        filterSet.add("cache-control");
+        filterSet.add("connection");
+        filterSet.add("date");
+        filterSet.add("pragma");
+        filterSet.add("trailer");
+        filterSet.add("transfer-encoding");
+        filterSet.add("upgrade");
+        filterSet.add("via");
+        filterSet.add("warning");
     }
 }
