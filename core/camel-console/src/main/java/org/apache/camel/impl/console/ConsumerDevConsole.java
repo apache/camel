@@ -16,7 +16,13 @@
  */
 package org.apache.camel.impl.console;
 
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -75,6 +81,43 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                                 mpc.getBackoffCounter(), mpc.getBackoffMultiplier(), mpc.getBackoffErrorThreshold(),
                                 mpc.getBackoffIdleThreshold()));
                     }
+                    if ("TimerConsumer".equals(mc.getServiceType())) {
+                        // need to use JMX to gather details for camel-timer consumer
+                        try {
+                            MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
+                            ObjectName on = getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForConsumer(getCamelContext(),
+                                            route.getConsumer());
+                            if (ms.isRegistered(on)) {
+                                String timerName = (String) ms.getAttribute(on, "TimerName");
+                                Long counter = (Long) ms.getAttribute(on, "Counter");
+                                Boolean polling = (Boolean) ms.getAttribute(on, "Polling");
+                                Boolean fixedRate = (Boolean) ms.getAttribute(on, "FixedRate");
+                                Long delay = (Long) ms.getAttribute(on, "Delay");
+                                Long period = (Long) ms.getAttribute(on, "Period");
+                                Long repeatCount = (Long) ms.getAttribute(on, "RepeatCount");
+                                String runLoggingLevel = (String) ms.getAttribute(on, "RunLoggingLevel");
+
+                                sb.append(String.format("\n    Timer Name: %s", timerName));
+                                sb.append(String.format("\n    Polling: %s", polling));
+                                sb.append(String.format("\n    Fixed Rate: %s", fixedRate));
+                                if (delay != null) {
+                                    sb.append(String.format("\n    Delay: %s", delay));
+                                }
+                                if (period != null) {
+                                    sb.append(String.format("\n    Period: %s", period));
+                                }
+                                if (repeatCount != null) {
+                                    sb.append(String.format("\n    Repeat Count: %s", repeatCount));
+                                }
+                                sb.append(String.format("\n    Running Logging Level: %s", runLoggingLevel));
+                                sb.append(String.format("\n    Counter(total: %s)", counter));
+
+                            }
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
                 }
             }
         }
@@ -84,7 +127,87 @@ public class ConsumerDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+        final JsonObject root = new JsonObject();
+        final List<JsonObject> list = new ArrayList<>();
+        root.put("consumers", list);
+
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        if (mcc != null) {
+            for (Route route : getCamelContext().getRoutes()) {
+                String id = route.getId();
+                ManagedConsumerMBean mc = mcc.getManagedConsumer(id);
+                if (mc != null) {
+                    JsonObject jo = new JsonObject();
+                    Integer inflight = mc.getInflightExchanges();
+                    if (inflight == null) {
+                        inflight = 0;
+                    }
+
+                    jo.put("id", id);
+                    jo.put("from", mc.getEndpointUri());
+                    jo.put("state", mc.getState());
+                    jo.put("class", mc.getServiceType());
+                    jo.put("inflight", inflight);
+                    if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {
+                        jo.put("polling", mpc.isPolling());
+                        jo.put("firstPollDone", mpc.isFirstPollDone());
+                        jo.put("schedulerStarted", mpc.isSchedulerStarted());
+                        jo.put("schedulerClass", mpc.getSchedulerClassName());
+                        jo.put("repeatCount", mpc.getRepeatCount());
+                        jo.put("fixedDelay", mpc.isUseFixedDelay());
+                        jo.put("initialDelay", mpc.getInitialDelay());
+                        jo.put("delay", mpc.getDelay());
+                        jo.put("timeUnit", mpc.getTimeUnit());
+                        jo.put("greedy", mpc.isGreedy());
+                        jo.put("runningLoggingLevel", mpc.getRunningLoggingLevel());
+                        jo.put("totalCounter", mpc.getCounter());
+                        jo.put("errorCounter", mpc.getErrorCounter());
+                        jo.put("successCounter", mpc.getSuccessCounter());
+                        jo.put("backoffCounter", mpc.getBackoffCounter());
+                        jo.put("backoffMultiplier", mpc.getBackoffMultiplier());
+                        jo.put("backoffErrorThreshold", mpc.getBackoffErrorThreshold());
+                        jo.put("backoffIdleThreshold", mpc.getBackoffIdleThreshold());
+                    }
+                    if ("TimerConsumer".equals(mc.getServiceType())) {
+                        // need to use JMX to gather details for camel-timer consumer
+                        try {
+                            MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
+                            ObjectName on = getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForConsumer(getCamelContext(),
+                                            route.getConsumer());
+                            if (ms.isRegistered(on)) {
+                                String timerName = (String) ms.getAttribute(on, "TimerName");
+                                Long counter = (Long) ms.getAttribute(on, "Counter");
+                                Boolean polling = (Boolean) ms.getAttribute(on, "Polling");
+                                Boolean fixedRate = (Boolean) ms.getAttribute(on, "FixedRate");
+                                Long delay = (Long) ms.getAttribute(on, "Delay");
+                                Long period = (Long) ms.getAttribute(on, "Period");
+                                Long repeatCount = (Long) ms.getAttribute(on, "RepeatCount");
+                                String runLoggingLevel = (String) ms.getAttribute(on, "RunLoggingLevel");
+
+                                jo.put("timerName", timerName);
+                                jo.put("polling", polling);
+                                jo.put("fixedRate", fixedRate);
+                                if (delay != null) {
+                                    jo.put("delay", delay);
+                                }
+                                if (period != null) {
+                                    jo.put("period", period);
+                                }
+                                if (repeatCount != null) {
+                                    jo.put("repeatCount", repeatCount);
+                                }
+                                jo.put("runningLoggingLevel", runLoggingLevel);
+                                jo.put("totalCounter", counter);
+                            }
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                    list.add(jo);
+                }
+            }
+        }
 
         return root;
     }

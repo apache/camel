@@ -29,6 +29,8 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
 import org.apache.camel.Suspendable;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The timer consumer.
  */
+@ManagedResource(description = "Managed TimerConsumer")
 public class TimerConsumer extends DefaultConsumer implements StartupListener, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
@@ -59,6 +62,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     /**
      * Total number of polls run
      */
+    @ManagedAttribute(description = "Total number of polls run")
     public long getCounter() {
         return counter.get();
     }
@@ -66,32 +70,39 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     /**
      * Whether polling is currently in progress
      */
+    @ManagedAttribute(description = "Whether polling is currently in progress")
     public boolean isPolling() {
         return polling;
     }
 
+    @ManagedAttribute(description = "Timer Name")
     public String getTimerName() {
         return getEndpoint().getTimerName();
     }
 
+    @ManagedAttribute(description = "Timer FixedRate")
     public boolean isFixedRate() {
         return getEndpoint().isFixedRate();
     }
 
+    @ManagedAttribute(description = "Timer Delay")
     public long getDelay() {
         return getEndpoint().getDelay();
     }
 
+    @ManagedAttribute(description = "Timer Period")
     public long getPeriod() {
         return getEndpoint().getPeriod();
     }
 
+    @ManagedAttribute(description = "Repeat Count")
     public long getRepeatCount() {
         return getEndpoint().getRepeatCount();
     }
 
-    public LoggingLevel getRunLoggingLevel() {
-        return getEndpoint().getRunLoggingLevel();
+    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    public String getRunLoggingLevel() {
+        return getEndpoint().getRunLoggingLevel().name();
     }
 
     @Override
