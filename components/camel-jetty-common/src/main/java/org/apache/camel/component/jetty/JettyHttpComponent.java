@@ -106,6 +106,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
     private static final String JETTY_SSL_PASSWORD = "org.eclipse.jetty.ssl.password";
+    /**
+     * The default value in bytes of the threshold beyond which the multipart files are written to disk to prevent OOME.
+     */
+    private static final int DEFAULT_FILE_SIZE_THRESHOLD = 10 * 1024 * 1024;
 
     protected String sslKeyPassword;
     protected String sslPassword;
@@ -1172,7 +1176,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
         //must register the MultipartConfig to make jetty server multipart aware
         holder.getRegistration()
-                .setMultipartConfig(new MultipartConfigElement(file.getParentFile().getAbsolutePath(), -1, -1, 0));
+                .setMultipartConfig(new MultipartConfigElement(
+                        file.getParentFile().getAbsolutePath(), -1, -1, DEFAULT_FILE_SIZE_THRESHOLD));
 
         // use rest enabled resolver in case we use rest
         camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
