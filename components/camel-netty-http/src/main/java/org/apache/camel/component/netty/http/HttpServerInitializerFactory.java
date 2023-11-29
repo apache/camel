@@ -42,6 +42,8 @@ import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.netty.http.InitializerHelper.logConfiguration;
+
 /**
  * {@link ServerInitializerFactory} for the Netty HTTP server.
  */
@@ -147,15 +149,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
-            if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
-                LOG.debug("keystorefile is null");
-            }
-            if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
-                LOG.debug("truststorefile is null");
-            }
-            if (configuration.getPassphrase() == null) {
-                LOG.debug("passphrase is null");
-            }
+            logConfiguration(configuration);
             char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
             SSLEngineFactory sslEngineFactory;
