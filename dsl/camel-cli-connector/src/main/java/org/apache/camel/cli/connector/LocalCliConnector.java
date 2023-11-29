@@ -889,6 +889,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     String data = json.toJson() + System.lineSeparator();
                     IOHelper.writeText(data, debugFile);
                 }
+                DevConsole dc14 = dcr.resolveById("consumer");
+                if (dc14 != null) {
+                    JsonObject json = (JsonObject) dc14.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("consumers", json);
+                    }
+                }
             }
             // various details
             JsonObject services = collectServices();

@@ -58,7 +58,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                         sb.append("\n");
                     }
                     sb.append(String.format("\n    Id: %s", id));
-                    sb.append(String.format("\n    From: %s", mc.getEndpointUri()));
+                    sb.append(String.format("\n    Uri: %s", mc.getEndpointUri()));
                     sb.append(String.format("\n    State: %s", mc.getState()));
                     sb.append(String.format("\n    Class: %s", mc.getServiceType()));
                     sb.append(String.format("\n    Inflight: %d", inflight));
@@ -144,7 +144,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     }
 
                     jo.put("id", id);
-                    jo.put("from", mc.getEndpointUri());
+                    jo.put("uri", mc.getEndpointUri());
                     jo.put("state", mc.getState());
                     jo.put("class", mc.getServiceType());
                     jo.put("inflight", inflight);
