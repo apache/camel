@@ -33,6 +33,10 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "enableJmx": target.setEnableJmx(property(camelContext, boolean.class, value)); return true;
         case "errorhandler":
         case "errorHandler": target.setErrorHandler(property(camelContext, org.eclipse.jetty.server.handler.ErrorHandler.class, value)); return true;
+        case "filesizethreshold":
+        case "fileSizeThreshold": target.setFileSizeThreshold(property(camelContext, int.class, value)); return true;
+        case "fileslocation":
+        case "filesLocation": target.setFilesLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpbinding":
@@ -42,6 +46,10 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "jettyhttpbinding":
         case "jettyHttpBinding": target.setJettyHttpBinding(property(camelContext, org.apache.camel.component.jetty.JettyHttpBinding.class, value)); return true;
         case "keystore": target.setKeystore(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxfilesize":
+        case "maxFileSize": target.setMaxFileSize(property(camelContext, long.class, value)); return true;
+        case "maxrequestsize":
+        case "maxRequestSize": target.setMaxRequestSize(property(camelContext, long.class, value)); return true;
         case "maxthreads":
         case "maxThreads": target.setMaxThreads(property(camelContext, java.lang.Integer.class, value)); return true;
         case "mbcontainer":
@@ -105,6 +113,10 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "enableJmx": return boolean.class;
         case "errorhandler":
         case "errorHandler": return org.eclipse.jetty.server.handler.ErrorHandler.class;
+        case "filesizethreshold":
+        case "fileSizeThreshold": return int.class;
+        case "fileslocation":
+        case "filesLocation": return java.lang.String.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "httpbinding":
@@ -114,6 +126,10 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "jettyhttpbinding":
         case "jettyHttpBinding": return org.apache.camel.component.jetty.JettyHttpBinding.class;
         case "keystore": return java.lang.String.class;
+        case "maxfilesize":
+        case "maxFileSize": return long.class;
+        case "maxrequestsize":
+        case "maxRequestSize": return long.class;
         case "maxthreads":
         case "maxThreads": return java.lang.Integer.class;
         case "mbcontainer":
@@ -178,6 +194,10 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "enableJmx": return target.isEnableJmx();
         case "errorhandler":
         case "errorHandler": return target.getErrorHandler();
+        case "filesizethreshold":
+        case "fileSizeThreshold": return target.getFileSizeThreshold();
+        case "fileslocation":
+        case "filesLocation": return target.getFilesLocation();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":
@@ -187,6 +207,10 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "jettyhttpbinding":
         case "jettyHttpBinding": return target.getJettyHttpBinding();
         case "keystore": return target.getKeystore();
+        case "maxfilesize":
+        case "maxFileSize": return target.getMaxFileSize();
+        case "maxrequestsize":
+        case "maxRequestSize": return target.getMaxRequestSize();
         case "maxthreads":
         case "maxThreads": return target.getMaxThreads();
         case "mbcontainer":

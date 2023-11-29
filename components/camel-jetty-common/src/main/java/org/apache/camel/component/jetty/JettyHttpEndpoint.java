@@ -80,6 +80,17 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "security",
               description = "To configure security using SSLContextParameters")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "consumer,advanced",
+              description = "The directory location where files will be store for multipart/form-data requests. By default the files are written in the system temporary folder")
+    private String filesLocation;
+    @UriParam(label = "consumer,advanced", description = "The maximum size allowed for uploaded files. -1 means no limit")
+    private Long maxFileSize;
+    @UriParam(label = "consumer,advanced",
+              description = "The size threshold after which files will be written to disk for multipart/form-data requests. By default the files are not written to disk")
+    private Integer fileSizeThreshold;
+    @UriParam(label = "consumer,advanced",
+              description = "The maximum size allowed for multipart/form-data requests. -1 means no limit")
+    private Long maxRequestSize;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) {
         super(uri, component, httpURL);
@@ -260,5 +271,37 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     }
 
     public abstract JettyContentExchange createContentExchange();
+
+    public String getFilesLocation() {
+        return filesLocation;
+    }
+
+    public void setFilesLocation(String filesLocation) {
+        this.filesLocation = filesLocation;
+    }
+
+    public Long getMaxFileSize() {
+        return maxFileSize;
+    }
+
+    public void setMaxFileSize(Long maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
+
+    public Integer getFileSizeThreshold() {
+        return fileSizeThreshold;
+    }
+
+    public void setFileSizeThreshold(Integer fileSizeThreshold) {
+        this.fileSizeThreshold = fileSizeThreshold;
+    }
+
+    public Long getMaxRequestSize() {
+        return maxRequestSize;
+    }
+
+    public void setMaxRequestSize(Long maxRequestSize) {
+        this.maxRequestSize = maxRequestSize;
+    }
 
 }

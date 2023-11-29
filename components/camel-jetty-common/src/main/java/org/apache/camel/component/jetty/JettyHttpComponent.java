@@ -134,6 +134,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     private Integer proxyPort;
     private boolean sendServerVersion = true;
     private QueuedThreadPool defaultQueuedThreadPool;
+    private String filesLocation;
+    private Long maxFileSize = -1L;
+    private Long maxRequestSize = -1L;
+    private Integer fileSizeThreshold = 0;
 
     public JettyHttpComponent() {
     }
@@ -186,6 +190,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class, getProxyPort());
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
         boolean muteException = getAndRemoveParameter(parameters, "muteException", boolean.class, isMuteException());
+        String filesLocation = getAndRemoveParameter(parameters, "filesLocation", String.class, getFilesLocation());
+        Integer fileSizeThreshold
+                = getAndRemoveParameter(parameters, "fileSizeThreshold", Integer.class, getFileSizeThreshold());
+        Long maxFileSize = getAndRemoveParameter(parameters, "maxFileSize", Long.class, getMaxFileSize());
+        Long maxRequestSize = getAndRemoveParameter(parameters, "maxRequestSize", Long.class, getMaxRequestSize());
 
         // extract filterInit. parameters
         Map filterInitParameters = PropertiesHelper.extractProperties(parameters, "filterInit.");
@@ -263,7 +272,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             endpoint.setSslContextParameters(ssl);
         }
         endpoint.setSendServerVersion(isSendServerVersion());
-
+        endpoint.setFilesLocation(filesLocation);
+        endpoint.setFileSizeThreshold(fileSizeThreshold);
+        endpoint.setMaxFileSize(maxFileSize);
+        endpoint.setMaxRequestSize(maxRequestSize);
         setProperties(endpoint, parameters);
 
         // re-create http uri after all parameters has been set on the endpoint, as the remainders are for http uri
@@ -1038,6 +1050,46 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         this.sendServerVersion = sendServerVersion;
     }
 
+    public long getMaxFileSize() {
+        return maxFileSize;
+    }
+
+    @Metadata(description = "The maximum size allowed for uploaded files. -1 means no limit",
+              defaultValue = "-1", label = "consumer,advanced")
+    public void setMaxFileSize(long maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
+
+    public long getMaxRequestSize() {
+        return maxRequestSize;
+    }
+
+    @Metadata(description = "The maximum size allowed for multipart/form-data requests. -1 means no limit",
+              defaultValue = "-1", label = "consumer,advanced")
+    public void setMaxRequestSize(long maxRequestSize) {
+        this.maxRequestSize = maxRequestSize;
+    }
+
+    public int getFileSizeThreshold() {
+        return fileSizeThreshold;
+    }
+
+    @Metadata(description = "The size threshold after which files will be written to disk for multipart/form-data requests. By default the files are not written to disk",
+              defaultValue = "0", label = "consumer,advanced")
+    public void setFileSizeThreshold(int fileSizeThreshold) {
+        this.fileSizeThreshold = fileSizeThreshold;
+    }
+
+    public String getFilesLocation() {
+        return filesLocation;
+    }
+
+    @Metadata(description = "The directory location where files will be store for multipart/form-data requests. By default the files are written in the system temporary folder",
+              label = "consumer,advanced")
+    public void setFilesLocation(String filesLocation) {
+        this.filesLocation = filesLocation;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -1164,15 +1216,19 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         holder.setInitParameter(CamelServlet.ASYNC_PARAM, Boolean.toString(endpoint.isAsync()));
         context.addServlet(holder, "/*");
 
-        File file = File.createTempFile("camel", "");
-        boolean result = file.delete();
-        if (!result) {
-            LOG.error("failed to delete {}", file);
+        String location = endpoint.getFilesLocation();
+        if (location == null) {
+            File file = File.createTempFile("camel", "");
+            if (!FileUtil.deleteFile(file)) {
+                LOG.error("failed to delete {}", file);
+            }
+            location = file.getParentFile().getAbsolutePath();
         }
 
         //must register the MultipartConfig to make jetty server multipart aware
         holder.getRegistration()
-                .setMultipartConfig(new MultipartConfigElement(file.getParentFile().getAbsolutePath(), -1, -1, 0));
+                .setMultipartConfig(new MultipartConfigElement(
+                        location, endpoint.getMaxFileSize(), endpoint.getMaxRequestSize(), endpoint.getFileSizeThreshold()));
 
         // use rest enabled resolver in case we use rest
         camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
