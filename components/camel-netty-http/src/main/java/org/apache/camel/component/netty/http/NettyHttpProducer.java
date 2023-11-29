@@ -35,6 +35,8 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.http.HttpUtil.isStatusCodeOk;
+
 /**
  * HTTP based {@link NettyProducer}.
  */
@@ -167,7 +169,7 @@ public class NettyHttpProducer extends NettyProducer {
                             if (minOkRange > 0) {
                                 ok = code >= minOkRange && code <= maxOkRange;
                             } else {
-                                ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
+                                ok = isStatusCodeOk(code, configuration.getOkStatusCodeRange());
                             }
 
                             if (ok) {

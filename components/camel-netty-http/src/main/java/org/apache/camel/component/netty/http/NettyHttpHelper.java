@@ -28,6 +28,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -228,31 +229,4 @@ public final class NettyHttpHelper {
         }
         return uri;
     }
-
-    /**
-     * Checks whether the given http status code is within the ok range
-     *
-     * @param  statusCode        the status code
-     * @param  okStatusCodeRange the ok range (inclusive)
-     * @return                   <tt>true</tt> if ok, <tt>false</tt> otherwise
-     */
-    public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
-        String[] ranges = okStatusCodeRange.split(",");
-        for (String range : ranges) {
-            boolean ok;
-            if (range.contains("-")) {
-                int from = Integer.parseInt(StringHelper.before(range, "-"));
-                int to = Integer.parseInt(StringHelper.after(range, "-"));
-                ok = statusCode >= from && statusCode <= to;
-            } else {
-                int exact = Integer.parseInt(range);
-                ok = exact == statusCode;
-            }
-            if (ok) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

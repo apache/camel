@@ -24,6 +24,7 @@ import java.util.function.BiConsumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -133,22 +134,7 @@ public final class HttpHelper {
      * @return                   <tt>true</tt> if ok, <tt>false</tt> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
-        String[] ranges = okStatusCodeRange.split(",");
-        for (String range : ranges) {
-            boolean ok;
-            if (range.contains("-")) {
-                int from = Integer.parseInt(StringHelper.before(range, "-"));
-                int to = Integer.parseInt(StringHelper.after(range, "-"));
-                ok = statusCode >= from && statusCode <= to;
-            } else {
-                int exact = Integer.parseInt(range);
-                ok = exact == statusCode;
-            }
-            if (ok) {
-                return true;
-            }
-        }
-        return false;
+        return HttpUtil.isStatusCodeOk(statusCode, okStatusCodeRange);
     }
 
     /**

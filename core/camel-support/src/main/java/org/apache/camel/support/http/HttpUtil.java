@@ -130,4 +130,30 @@ public final class HttpUtil {
         filterSet.add("via");
         filterSet.add("warning");
     }
+
+    /**
+     * Checks whether the given http status code is within the ok range
+     *
+     * @param  statusCode        the status code
+     * @param  okStatusCodeRange the ok range (inclusive)
+     * @return                   <tt>true</tt> if ok, <tt>false</tt> otherwise
+     */
+    public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
+        String[] ranges = okStatusCodeRange.split(",");
+        for (String range : ranges) {
+            boolean ok;
+            if (range.contains("-")) {
+                int from = Integer.parseInt(StringHelper.before(range, "-"));
+                int to = Integer.parseInt(StringHelper.after(range, "-"));
+                ok = statusCode >= from && statusCode <= to;
+            } else {
+                int exact = Integer.parseInt(range);
+                ok = exact == statusCode;
+            }
+            if (ok) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
