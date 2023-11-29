@@ -90,4 +90,18 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
     @ManagedAttribute(description = "Repeat count")
     long getRepeatCount();
 
+    @ManagedAttribute(description = "Whether a first pool attempt has been done (also if the consumer has been restarted)")
+    boolean isFirstPollDone();
+
+    @ManagedAttribute(description = "Total number of polls run")
+    long getCounter();
+
+    @ManagedAttribute(description = "Error counter. If the counter is > 0 that means the consumer failed polling for the last N number of times."
+                                    + " When the consumer is successfully again, then the error counter resets to zero.")
+    long getErrorCounter();
+
+    @ManagedAttribute(description = "Success counter. If the success is > 0 that means the consumer succeeded polling for the last N number of times."
+                                    + " When the consumer is failing again, then the success counter resets to zero.")
+    long getSuccessCounter();
+
 }

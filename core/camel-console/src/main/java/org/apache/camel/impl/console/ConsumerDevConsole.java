@@ -58,13 +58,16 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Inflight: %d", inflight));
                     if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {
                         sb.append(String.format("\n    Polling: %s", mpc.isPolling()));
+                        sb.append(String.format("\n    First Poll Done: %s", mpc.isFirstPollDone()));
                         sb.append(String.format("\n    Scheduler Started: %s", mpc.isSchedulerStarted()));
                         sb.append(String.format("\n    Scheduler Class: %s", mpc.getSchedulerClassName()));
-                        sb.append(String.format("\n    Running Logging Level: %s", mpc.getRunningLoggingLevel()));
+                        sb.append(String.format("\n    Repeat Count: %s", mpc.getRepeatCount()));
                         sb.append(String.format("\n    Fixed Delay: %s", mpc.isUseFixedDelay()));
                         sb.append(String.format("\n    Greedy: %s", mpc.isGreedy()));
+                        sb.append(String.format("\n    Running Logging Level: %s", mpc.getRunningLoggingLevel()));
                         sb.append(String.format("\n    Send Empty Message When Idle: %s", mpc.isSendEmptyMessageWhenIdle()));
-                        sb.append(String.format("\n    Repeat Count: %s", mpc.getRepeatCount()));
+                        sb.append(String.format("\n    Counter(total: %d success: %d error: %d)",
+                                mpc.getCounter(), mpc.getSuccessCounter(), mpc.getErrorCounter()));
                         sb.append(String.format("\n    Delay(initial: %d delay: %d unit: %s)",
                                 mpc.getInitialDelay(), mpc.getDelay(), mpc.getTimeUnit()));
                         sb.append(String.format(

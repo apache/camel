@@ -152,4 +152,24 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer implements Man
     public long getRepeatCount() {
         return getConsumer().getRepeatCount();
     }
+
+    @Override
+    public boolean isFirstPollDone() {
+        return getConsumer().isFirstPollDone();
+    }
+
+    @Override
+    public long getCounter() {
+        return getConsumer().getCounter();
+    }
+
+    @Override
+    public long getErrorCounter() {
+        return getConsumer().getErrorCounter();
+    }
+
+    @Override
+    public long getSuccessCounter() {
+        return getConsumer().getSuccessCounter();
+    }
 }
