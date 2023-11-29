@@ -90,7 +90,7 @@ public final class PackageHelper {
     }
 
     public static Set<File> findJsonFiles(File rootDir, Set<File> files) {
-        return findJsonFiles(rootDir, files, (f) -> true);
+        return findJsonFiles(rootDir, files, f -> true);
     }
 
     public static Set<File> findJsonFiles(File rootDir, Set<File> files, Predicate<File> filter) {
