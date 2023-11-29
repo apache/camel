@@ -360,7 +360,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         // honor the character encoding
         String contentType = in.getHeader(NettyHttpConstants.CONTENT_TYPE, String.class);
-        String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
+        String charset = org.apache.camel.support.http.HttpUtil.getCharsetFromContentType(contentType);
         if (charset != null) {
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(NettyHttpConstants.HTTP_CHARACTER_ENCODING, charset);

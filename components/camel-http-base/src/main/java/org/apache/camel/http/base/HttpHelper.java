@@ -78,26 +78,6 @@ public final class HttpHelper {
     }
 
     /**
-     * @deprecated use {@link IOHelper#getCharsetNameFromContentType(String)}
-     */
-    @Deprecated
-    public static String getCharsetFromContentType(String contentType) {
-        if (contentType != null) {
-            // find the charset and set it to the Exchange
-            int index = contentType.indexOf("charset=");
-            if (index > 0) {
-                String charset = contentType.substring(index + 8);
-                // there may be another parameter after a semi colon, so skip that
-                if (charset.contains(";")) {
-                    charset = StringHelper.before(charset, ";");
-                }
-                return IOHelper.normalizeCharset(charset);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Appends the key/value to the headers.
      * <p/>
      * This implementation supports keys with multiple values. In such situations the value will be a

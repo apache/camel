@@ -18,7 +18,10 @@
 package org.apache.camel.support.http;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 
 public final class HttpUtil {
     private static final int INTERNAL_SERVER_ERROR = 500;
@@ -51,6 +54,41 @@ public final class HttpUtil {
         }
 
         return codeToUse;
+    }
+
+    /**
+     * Deprecated way to extract the charset value from the content type string
+     * @deprecated use {@link IOHelper#getCharsetNameFromContentType(String)}
+     * @param contentType the content type string
+     * @return the charset value or null if there is nothing to extract
+     */
+    @Deprecated
+    public static String getCharsetFromContentType(String contentType) {
+        if (contentType != null) {
+            // find the charset and set it to the Exchange
+            int index = contentType.indexOf("charset=");
+            if (index > 0) {
+                String charset = contentType.substring(index + 8);
+                // there may be another parameter after a semi colon, so skip that
+                if (charset.contains(";")) {
+                    charset = StringHelper.before(charset, ";");
+                }
+                return IOHelper.normalizeCharset(charset);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extracts the charset value from the content type string and sets it on the given exchange
+     * @param contentType the content type string
+     * @param exchange the exchange to set the charset value
+     */
+    public static void setCharsetFromContentType(String contentType, Exchange exchange) {
+        String charset = HttpUtil.getCharsetFromContentType(contentType);
+        if (charset != null) {
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.normalizeCharset(charset));
+        }
     }
 
 }
