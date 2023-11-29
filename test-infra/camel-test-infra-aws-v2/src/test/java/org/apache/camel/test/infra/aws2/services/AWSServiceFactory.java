@@ -59,6 +59,10 @@ public final class AWSServiceFactory {
         return createService(AWSSNSLocalContainerService::new);
     }
 
+    public static AWSService createConfigService() {
+        return createService(AWSConfigLocalContainerService::new);
+    }
+
     public static AWSService createCloudWatchService() {
         return createService(AWSCloudWatchLocalContainerService::new);
     }
