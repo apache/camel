@@ -17,17 +17,39 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.processor.ThrottlerTest;
-import org.junit.jupiter.api.Disabled;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Disabled due to CAMEL-20158")
 public class SpringThrottlerTest extends ThrottlerTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/throttler.xml");
+    }
+
+    public static class IncrementProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            assertTrue(semaphore.tryAcquire(), "too many requests");
+        }
+    }
+
+    public static class DecrementProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            semaphore.release();
+        }
+    }
+
+    public static class RuntimeExceptionProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            throw new RuntimeException();
+        }
     }
 }

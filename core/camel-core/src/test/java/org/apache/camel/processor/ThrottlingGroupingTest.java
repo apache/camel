@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.Semaphore;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,11 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 public class ThrottlingGroupingTest extends ContextTestSupport {
-    private static final int INTERVAL = 500;
     private static final int MESSAGE_COUNT = 20;
-    private static final int CONCURRENT_REQUESTS = 2;
-    private Map<String, AtomicInteger> curr;
-    private static int max;
+    protected static final int CONCURRENT_REQUESTS = 2;
+    protected static Map<String, Semaphore> semaphores;
 
     @Test
     public void testGroupingWithSingleConstant() throws Exception {
@@ -78,17 +76,14 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnlyGetThroughAsConstantThrottleValue() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
-        sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:ga", CONCURRENT_REQUESTS, resultEndpoint);
+        sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:ga", resultEndpoint);
     }
 
     private void sendMessagesAndAwaitDelivery(
-            final int messageCount, final String endpointUri, final int throttle, final MockEndpoint receivingEndpoint)
+            final int messageCount, final String endpointUri, final MockEndpoint receivingEndpoint)
             throws InterruptedException {
-        max = 0;
-        curr = new ConcurrentHashMap<>();
-        // two throttle groups
-        curr.putIfAbsent("1", new AtomicInteger(0));
-        curr.putIfAbsent("2", new AtomicInteger(0));
+
+        semaphores = new ConcurrentHashMap<>();
         ExecutorService executor = Executors.newFixedThreadPool(messageCount);
         try {
             if (receivingEndpoint != null) {
@@ -115,7 +110,6 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         } finally {
             executor.shutdownNow();
         }
-        assertTrue(max <= throttle);
     }
 
     @Test
@@ -136,11 +130,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
             throws InterruptedException {
         resultEndpoint.expectedMessageCount(messageCount);
 
-        max = 0;
-        curr = new ConcurrentHashMap<>();
-        // two throttle groups
-        curr.putIfAbsent("1", new AtomicInteger(0));
-        curr.putIfAbsent("2", new AtomicInteger(0));
+        semaphores = new ConcurrentHashMap<>();
         for (int i = 0; i < messageCount; i++) {
             int finalI = i;
             executor.execute(() -> {
@@ -157,7 +147,6 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
-        assertTrue(max <= throttle);
     }
 
     @Override
@@ -173,21 +162,31 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
                 from("direct:ga").throttle(constant(CONCURRENT_REQUESTS), header("key"))
                         .process(exchange -> {
-                            curr.get(exchange.getMessage().getHeader("key")).getAndIncrement();
+                            String key = (String) exchange.getMessage().getHeader("key");
+                            // should be no more in-flight exchanges than set on the throttle
+                            assertTrue(semaphores.computeIfAbsent(key, k -> new Semaphore(CONCURRENT_REQUESTS)).tryAcquire(),
+                                    "'direct:ga' too many requests for key " + key);
                         })
-                        .delay(INTERVAL)
+                        .delay(100)
                         .process(exchange -> {
-                            max = Math.max(max, curr.get(exchange.getMessage().getHeader("key")).getAndDecrement());
+                            semaphores.get(exchange.getMessage().getHeader("key")).release();
                         })
                         .to("log:gresult", "mock:gresult");
 
                 from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key"))
                         .process(exchange -> {
-                            curr.get(exchange.getMessage().getHeader("key")).getAndIncrement();
+                            String key = (String) exchange.getMessage().getHeader("key");
+                            // should be no more in-flight exchanges than set on the throttle via the 'throttleValue' header
+                            assertTrue(
+                                    semaphores.computeIfAbsent(key,
+                                            k -> new Semaphore(
+                                                    (Integer) exchange.getMessage().getHeader("throttleValue")))
+                                            .tryAcquire(),
+                                    "'direct:gexpressionHeader' too many requests for key " + key);
                         })
-                        .delay(INTERVAL)
+                        .delay(100)
                         .process(exchange -> {
-                            max = Math.max(max, curr.get(exchange.getMessage().getHeader("key")).getAndDecrement());
+                            semaphores.get(exchange.getMessage().getHeader("key")).release();
                         })
                         .to("log:gresult", "mock:gresult");
             }

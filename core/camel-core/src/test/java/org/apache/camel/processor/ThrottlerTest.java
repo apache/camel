@@ -38,7 +38,7 @@ public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     private static final int MESSAGE_COUNT = 9;
     private static final int CONCURRENT_REQUESTS = 2;
-    private Semaphore semaphore;
+    protected static Semaphore semaphore;
 
     @Test
     public void testSendLotsOfMessagesWithRejectExecution() throws Exception {

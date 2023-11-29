@@ -23,9 +23,13 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+  <bean id="runtimeExceptionProcessor" class="org.apache.camel.spring.processor.SpringThrottlerTest$RuntimeExceptionProcessor"/>
+  <bean id="incrementProcessor" class="org.apache.camel.spring.processor.SpringThrottlerTest$IncrementProcessor"/>
+  <bean id="decrementProcessor" class="org.apache.camel.spring.processor.SpringThrottlerTest$DecrementProcessor"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>
+    <errorHandler type="DeadLetterChannel" id="myDLC" deadLetterUri="mock:error"/>
     <onException>
       <exception>org.apache.camel.processor.ThrottlerRejectedExecutionException</exception>
       <handled>
@@ -34,43 +38,47 @@
       <to uri="mock:error"/>
     </onException>
 
-    <!-- START SNIPPET: example -->
-    <route>
-      <from uri="seda:a"/>
-      <!-- throttle 3 messages per 1 sec -->
-      <throttle timePeriodMillis="1000">
-        <constant>3</constant>
-      </throttle>
-      <to uri="log:result"/>
-      <to uri="mock:result"/>
-    </route>
-    <!-- END SNIPPET: example -->
-
     <route>
       <from uri="direct:a"/>
-      <!-- throttle 5 messages per 0.5 sec -->
-      <throttle timePeriodMillis="500">
-        <constant>5</constant>
+      <!-- throttle max of 2 concurrent messages -->
+      <throttle>
+        <constant>2</constant>
       </throttle>
+      <process ref="incrementProcessor"/>
+      <delay>
+        <constant>100</constant>
+      </delay>
+      <process ref="decrementProcessor"/>
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>
 
     <route>
       <from uri="direct:expressionConstant"/>
-      <throttle timePeriodMillis="500">
-        <constant>5</constant>
+      <throttle>
+        <constant>2</constant>
       </throttle>
+      <process ref="incrementProcessor"/>
+      <delay>
+        <constant>100</constant>
+      </delay>
+      <process ref="decrementProcessor"/>
+      <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>
 
     <!-- START SNIPPET: e2 -->
     <route>
       <from uri="direct:expressionHeader"/>
-      <throttle timePeriodMillis="500">
-        <!-- use a header to determine how many messages to throttle per 0.5 sec -->
+      <throttle>
+        <!-- use a header to determine the max number of current messages -->
         <header>throttleValue</header>
       </throttle>
+      <process ref="incrementProcessor"/>
+      <delay>
+        <constant>100</constant>
+      </delay>
+      <process ref="decrementProcessor"/>
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>
@@ -78,19 +86,39 @@
 
     <route>
       <from uri="direct:start"/>
-      <!-- throttle 2 messages per 1 sec -->
-      <throttle timePeriodMillis="1000" rejectExecution="true">
+      <!-- throttle max of 2 concurrent messages -->
+      <throttle rejectExecution="true">
         <constant>2</constant>
       </throttle>
+      <delay>
+        <constant>1000</constant>
+      </delay>
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>
 
     <route>
-      <from uri="direct:highThrottleRate"/>
-      <throttle timePeriodMillis="500">
-        <constant>10000</constant>
+      <from uri="direct:fifo"/>
+      <!-- throttle max of 1 concurrent request -->
+      <throttle>
+        <constant>1</constant>
       </throttle>
+      <delay>
+        <constant>100</constant>
+      </delay>
+      <to uri="mock:result"/>
+    </route>
+
+    <route errorHandlerRef="myDLC">
+      <from uri="direct:release"/>
+      <!-- throttle max of 1 concurrent request -->
+      <throttle>
+        <constant>1</constant>
+      </throttle>
+      <delay>
+        <constant>100</constant>
+      </delay>
+      <process ref="runtimeExceptionProcessor"/>
       <to uri="mock:result"/>
     </route>
 
