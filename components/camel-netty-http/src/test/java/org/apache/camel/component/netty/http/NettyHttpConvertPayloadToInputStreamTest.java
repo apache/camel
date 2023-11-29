@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
 
-    protected String expectedBody = "<hello>world!</hello>";
+    protected final String expectedBody = "<hello>world!</hello>";
 
     @Test
     public void testConvertPayloadToInputStream() throws Exception {

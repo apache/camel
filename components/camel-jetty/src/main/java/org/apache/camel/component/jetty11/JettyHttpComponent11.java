@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 @Component("jetty")
 public class JettyHttpComponent11 extends JettyHttpComponent {
 
-    public static Map<String, Throwable> connectorCreation = new ConcurrentHashMap<>();
+    public static final Map<String, Throwable> connectorCreation = new ConcurrentHashMap<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent11.class);
 

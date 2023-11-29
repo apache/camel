@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestApiMatchUriNettyTest extends BaseNettyTest {
 
-    protected Logger log = LoggerFactory.getLogger(RestApiMatchUriNettyTest.class);
+    protected final Logger log = LoggerFactory.getLogger(RestApiMatchUriNettyTest.class);
 
     @Test
     public void testApi() {

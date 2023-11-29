@@ -32,7 +32,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProxyRouteTest.class);
 
-    private int size = 10;
+    private final int size = 10;
 
     @Test
     public void testHttpProxy() {

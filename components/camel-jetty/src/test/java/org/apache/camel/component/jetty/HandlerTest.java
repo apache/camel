@@ -32,13 +32,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HandlerTest extends BaseJettyTest {
     @BindToRegistry("statisticsHandler1")
-    private StatisticsHandler statisticsHandler1 = new StatisticsHandler();
+    private final StatisticsHandler statisticsHandler1 = new StatisticsHandler();
     @BindToRegistry("statisticsHandler2")
-    private StatisticsHandler statisticsHandler2 = new StatisticsHandler();
+    private final StatisticsHandler statisticsHandler2 = new StatisticsHandler();
     @BindToRegistry("statisticsHandler3")
-    private StatisticsHandler statisticsHandler3 = new StatisticsHandler();
+    private final StatisticsHandler statisticsHandler3 = new StatisticsHandler();
 
-    private String htmlResponse = "<html><body>Book 123 is Camel in Action</body></html>";
+    private final String htmlResponse = "<html><body>Book 123 is Camel in Action</body></html>";
 
     @Test
     public void testWithOneHandler() throws Exception {

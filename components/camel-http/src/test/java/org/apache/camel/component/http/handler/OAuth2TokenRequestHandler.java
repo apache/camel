@@ -36,9 +36,9 @@ import org.apache.hc.core5.net.WWWFormCodec;
 
 public class OAuth2TokenRequestHandler implements HttpRequestHandler {
 
-    private String clientId;
-    private String clientSecret;
-    private String expectedToken;
+    private final String clientId;
+    private final String clientSecret;
+    private final String expectedToken;
 
     public OAuth2TokenRequestHandler(String expectedToken, String clientId, String clientSecret) {
         this.expectedToken = expectedToken;

@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
 
     private static final String FAKE_TOKEN = "xxx.yyy.zzz";
-    private static String clientId = "test-client";
-    private static String clientSecret = "test-secret";
+    private static final String clientId = "test-client";
+    private static final String clientSecret = "test-secret";
 
     private HttpServer localServer;
 

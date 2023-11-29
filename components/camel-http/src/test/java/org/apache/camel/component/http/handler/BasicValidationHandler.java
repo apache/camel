@@ -33,10 +33,10 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 public class BasicValidationHandler implements HttpRequestHandler {
 
     protected String expectedUri;
-    protected String expectedMethod;
-    protected String expectedQuery;
-    protected Object expectedContent;
-    protected String responseContent;
+    protected final String expectedMethod;
+    protected final String expectedQuery;
+    protected final Object expectedContent;
+    protected final String responseContent;
 
     public BasicValidationHandler(String expectedMethod, String expectedQuery,
                                   Object expectedContent, String responseContent) {

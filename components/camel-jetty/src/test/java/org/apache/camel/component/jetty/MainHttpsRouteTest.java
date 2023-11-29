@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MainHttpsRouteTest extends BaseJettyTest {
 
     public static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
-    protected Properties originalValues = new Properties();
+    protected final Properties originalValues = new Properties();
 
     @Override
     @BeforeEach

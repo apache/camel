@@ -22,7 +22,7 @@ import org.eclipse.jetty.client.util.InputStreamContentProvider;
 
 public class CamelInputStreamContentProvider extends InputStreamContentProvider {
 
-    private int length;
+    private final int length;
 
     public CamelInputStreamContentProvider(InputStream stream, int length) {
         super(stream);

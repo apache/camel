@@ -33,7 +33,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
     public static final String SSL_SYSPROPS = "SslSystemProperties";
 
-    static CopyOnWriteArrayList<String> runningTests = new CopyOnWriteArrayList<>();
+    static final CopyOnWriteArrayList<String> runningTests = new CopyOnWriteArrayList<>();
 
     @RegisterExtension
     protected AvailablePortFinder.Port port1 = AvailablePortFinder.find();

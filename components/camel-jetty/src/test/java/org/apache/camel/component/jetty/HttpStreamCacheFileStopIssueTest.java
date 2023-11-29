@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
 
-    private String body = "12345678901234567890123456789012345678901234567890";
+    private final String body = "12345678901234567890123456789012345678901234567890";
 
     @Override
     @BeforeEach

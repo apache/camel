@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpProducerConnectionCloseTest extends BaseJettyTest {
 
-    private String url = "http://127.0.0.1:" + getPort() + "/cheese";
+    private final String url = "http://127.0.0.1:" + getPort() + "/cheese";
 
     @Test
     public void testConnectionCloseHeader() {

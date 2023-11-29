@@ -62,9 +62,9 @@ public class HttpsRouteTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpsRouteTest.class);
 
-    protected String expectedBody = "<hello>world!</hello>";
-    protected String pwd = "changeit";
-    protected Properties originalValues = new Properties();
+    protected final String expectedBody = "<hello>world!</hello>";
+    protected final String pwd = "changeit";
+    protected final Properties originalValues = new Properties();
 
     public String getHttpProducerScheme() {
         return "https://";

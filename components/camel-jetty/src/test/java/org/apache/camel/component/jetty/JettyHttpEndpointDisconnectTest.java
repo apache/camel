@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Isolated
 public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:" + getPort() + "/myservice";
+    private final String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
     public void testContextShutdownRemovesHttpConnector() {

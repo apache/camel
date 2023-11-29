@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  */
 public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:" + getPort() + "/myservice";
+    private final String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {

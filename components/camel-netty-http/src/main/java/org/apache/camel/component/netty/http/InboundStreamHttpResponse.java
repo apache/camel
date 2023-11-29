@@ -22,8 +22,8 @@ import java.io.InputStream;
 import io.netty.handler.codec.http.HttpResponse;
 
 public class InboundStreamHttpResponse {
-    private HttpResponse response;
-    private InputStream in;
+    private final HttpResponse response;
+    private final InputStream in;
 
     public InboundStreamHttpResponse(HttpResponse response, InputStream in) {
         this.response = response;
