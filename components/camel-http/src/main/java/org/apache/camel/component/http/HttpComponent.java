@@ -46,6 +46,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -623,11 +624,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             }
         }
 
-        // get the endpoint
-        String query = URISupport.createQueryString(map);
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
+        url = HttpUtil.recreateUrl(map, url);
 
         parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();
 

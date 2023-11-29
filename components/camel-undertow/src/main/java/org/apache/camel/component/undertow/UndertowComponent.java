@@ -59,6 +59,8 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.http.HttpUtil.recreateUrl;
+
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
@@ -317,11 +319,7 @@ public class UndertowComponent extends DefaultComponent
             }
         }
 
-        // get the endpoint
-        String query = URISupport.createQueryString(map);
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
+        url = recreateUrl(map, url);
 
         parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();
 
