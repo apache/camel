@@ -49,8 +49,8 @@ import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.CollectionHelper.appendEntry;
 import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
+import static org.apache.camel.util.CollectionHelper.appendEntry;
 
 /*
  * Supporting class for the platform-http-vertx component.
@@ -179,8 +179,6 @@ public final class VertxPlatformHttpSupport {
         }
         return null;
     }
-
-
 
     static Future<Void> writeResponse(
             RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
