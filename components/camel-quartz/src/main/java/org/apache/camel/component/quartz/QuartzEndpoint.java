@@ -439,7 +439,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
         // calculate whether the trigger can be triggered in the future
         Date ft = ot.computeFirstFireTime(cal);
-        return (ft == null && ignoreExpiredNextFireTime);
+        return ft == null && ignoreExpiredNextFireTime;
     }
 
     private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
