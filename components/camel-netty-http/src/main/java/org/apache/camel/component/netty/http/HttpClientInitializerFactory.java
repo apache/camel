@@ -95,25 +95,9 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
 
         pipeline.addLast("http", new HttpClientCodec());
 
-        List<ChannelHandler> encoders = producer.getConfiguration().getEncodersAsList();
-        for (int x = 0; x < encoders.size(); x++) {
-            ChannelHandler encoder = encoders.get(x);
-            if (encoder instanceof ChannelHandlerFactory) {
-                // use the factory to create a new instance of the channel as it may not be shareable
-                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
-            }
-            pipeline.addLast("encoder-" + x, encoder);
-        }
+        addToPipeline(producer.getConfiguration().getEncodersAsList(), pipeline, "encoder-");
 
-        List<ChannelHandler> decoders = producer.getConfiguration().getDecodersAsList();
-        for (int x = 0; x < decoders.size(); x++) {
-            ChannelHandler decoder = decoders.get(x);
-            if (decoder instanceof ChannelHandlerFactory) {
-                // use the factory to create a new instance of the channel as it may not be shareable
-                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
-            }
-            pipeline.addLast("decoder-" + x, decoder);
-        }
+        addToPipeline(producer.getConfiguration().getDecodersAsList(), pipeline, "decoder-");
         if (configuration.isDisableStreamCache()) {
             pipeline.addLast("inbound-streamer", new HttpInboundStreamHandler());
         }
@@ -131,6 +115,17 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
 
         // handler to route Camel messages
         pipeline.addLast("handler", new HttpClientChannelHandler(producer));
+    }
+
+    private void addToPipeline(List<ChannelHandler> handlers, ChannelPipeline pipeline, String prefix) {
+        for (int x = 0; x < handlers.size(); x++) {
+            ChannelHandler handler = handlers.get(x);
+            if (handler instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                handler = ((ChannelHandlerFactory) handler).newChannelHandler();
+            }
+            pipeline.addLast(prefix + x, handler);
+        }
     }
 
     private SSLContext createSSLContext(NettyProducer producer) throws Exception {
