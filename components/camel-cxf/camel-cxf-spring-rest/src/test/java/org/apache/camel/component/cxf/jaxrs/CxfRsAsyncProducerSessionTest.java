@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfRsAsyncProducerSessionTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
-    private static int port2 = CXFTestSupport.getPort("CxfRsProducerSessionTest.jetty");
+    private static int port2 = CXFTestSupport.getPort("CxfRsProducerSessionTest.undertow");
 
     public int getPort1() {
         return port1;

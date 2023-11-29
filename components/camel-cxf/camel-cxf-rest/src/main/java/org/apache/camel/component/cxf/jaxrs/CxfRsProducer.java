@@ -24,11 +24,7 @@ import java.lang.reflect.Type;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URLDecoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Entity;
@@ -246,7 +242,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             insertQueryParametersFromMap(client, maps);
         } else {
             String queryString = inMessage.getHeader(CxfConstants.HTTP_QUERY, String.class);
-            if (queryString != null) {
+            if (queryString != null && !queryString.isEmpty()) {
                 // Insert QueryParameters from HTTP_QUERY header
                 insertQueryParametersFromQueryString(client, queryString, ExchangeHelper.getCharsetName(exchange));
             } else {
@@ -360,6 +356,16 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             } else {
                 response = client.invoke(httpMethod, body, responseClass);
             }
+        }
+        // remove pseudo headers, Undertow transport add these headers
+        List<String> pseudoHeaders = new ArrayList<>();
+        client.getResponse().getHeaders().forEach((k, v) -> {
+            if (k.startsWith(":")) {
+                pseudoHeaders.add(k);
+            }
+        });
+        for (String pseudoHeader : pseudoHeaders) {
+            client.getResponse().getHeaders().remove(pseudoHeader);
         }
         int statesCode = client.getResponse().getStatus();
         // handle cookies

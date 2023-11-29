@@ -69,7 +69,7 @@
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jetty</artifactId>
+            <artifactId>camel-undertow</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -18,12 +18,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -212,13 +207,15 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             throws Exception {
 
         Object request = camelMessage.getBody(MessageContentsList.class);
-        if (request != null) {
+        if (request != null && request instanceof MessageContentsList) {
             return ((MessageContentsList) request).get(0);
         }
 
         request = camelMessage.getBody();
         if (request instanceof List) {
             request = ((List<?>) request).get(0);
+        } else if (request != null && request instanceof byte[]) {
+            return request;
         } else if (request != null && request.getClass().isArray()) {
             request = ((Object[]) request)[0];
         }

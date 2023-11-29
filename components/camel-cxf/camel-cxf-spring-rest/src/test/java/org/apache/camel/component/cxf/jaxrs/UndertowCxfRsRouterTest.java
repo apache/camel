@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Disabled;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JettyCxfRsRouterTest extends CxfRsRouterTest {
+public class UndertowCxfRsRouterTest extends CxfRsRouterTest {
     private static final int PORT2 = CXFTestSupport.getPort5();
 
     @Override
@@ -31,7 +31,7 @@ public class JettyCxfRsRouterTest extends CxfRsRouterTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/JettyCxfRsSpringRouter.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/UndertowCxfRsSpringRouter.xml");
     }
 
     @Override
