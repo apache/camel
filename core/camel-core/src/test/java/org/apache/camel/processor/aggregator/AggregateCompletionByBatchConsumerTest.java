@@ -39,17 +39,17 @@ public class AggregateCompletionByBatchConsumerTest extends ContextTestSupport {
         result.expectedMessageCount(4);
 
         //BATCH_SIZE and not BATCH_COMPLETE is used by aggregate to test for batch completion
-        final Integer batch_size = Integer.valueOf(8);
+        final Integer batchSize = Integer.valueOf(8);
 
         // then we sent the batch of message
-        template.sendBodyAndProperty("direct:start", "batch-4", Exchange.BATCH_SIZE, batch_size);
-        template.sendBodyAndProperty("direct:start", "batch-4", Exchange.BATCH_SIZE, batch_size);
-        template.sendBodyAndProperty("direct:start", "batch-3", Exchange.BATCH_SIZE, batch_size);
-        template.sendBodyAndProperty("direct:start", "batch-3", Exchange.BATCH_SIZE, batch_size);
-        template.sendBodyAndProperty("direct:start", "batch-2", Exchange.BATCH_SIZE, batch_size);
-        template.sendBodyAndProperty("direct:start", "batch-2", Exchange.BATCH_SIZE, batch_size);
-        template.sendBodyAndProperty("direct:start", "batch-1", Exchange.BATCH_SIZE, batch_size);
-        template.sendBodyAndProperty("direct:start", "batch-1", Exchange.BATCH_SIZE, batch_size);
+        template.sendBodyAndProperty("direct:start", "batch-4", Exchange.BATCH_SIZE, batchSize);
+        template.sendBodyAndProperty("direct:start", "batch-4", Exchange.BATCH_SIZE, batchSize);
+        template.sendBodyAndProperty("direct:start", "batch-3", Exchange.BATCH_SIZE, batchSize);
+        template.sendBodyAndProperty("direct:start", "batch-3", Exchange.BATCH_SIZE, batchSize);
+        template.sendBodyAndProperty("direct:start", "batch-2", Exchange.BATCH_SIZE, batchSize);
+        template.sendBodyAndProperty("direct:start", "batch-2", Exchange.BATCH_SIZE, batchSize);
+        template.sendBodyAndProperty("direct:start", "batch-1", Exchange.BATCH_SIZE, batchSize);
+        template.sendBodyAndProperty("direct:start", "batch-1", Exchange.BATCH_SIZE, batchSize);
 
         assertMockEndpointsSatisfied();
 
