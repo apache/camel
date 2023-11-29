@@ -150,15 +150,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
                 sniServerNames = answer.getSupportedSSLParameters().getServerNames();
             }
         } else {
-            if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
-                LOG.debug("keystorefile is null");
-            }
-            if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
-                LOG.debug("truststorefile is null");
-            }
-            if (configuration.getPassphrase() == null) {
-                LOG.debug("passphrase is null");
-            }
+            InitializerHelper.logConfiguration(configuration);
             char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
             SSLEngineFactory sslEngineFactory;
