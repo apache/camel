@@ -17,11 +17,14 @@
 
 package org.apache.camel.support.http;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 public final class HttpUtil {
     private static final int INTERNAL_SERVER_ERROR = 500;
@@ -93,4 +96,18 @@ public final class HttpUtil {
         }
     }
 
+    /**
+     * Recreates the URL from a map of options
+     * @param map the map of options
+     * @param url the base URL
+     * @return the recreated URL
+     */
+    public static String recreateUrl(Map<String, Object> map, String url) {
+        // get the endpoint
+        String query = URISupport.createQueryString(map);
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+        return url;
+    }
 }
