@@ -17,6 +17,7 @@
 package org.apache.camel.http.common;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.http.HttpUtil;
 
 public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
@@ -26,14 +27,11 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
 
     // Just add the http headers here
     protected void initialize() {
-        getInFilter().add("host");
 
         getInFilter().add("content-encoding");
         getInFilter().add("content-language");
         getInFilter().add("content-location");
         getInFilter().add("content-md5");
-        getInFilter().add("content-length");
-        getInFilter().add("content-type");
         getInFilter().add("content-range");
 
         getInFilter().add("dav");
@@ -54,7 +52,6 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         getInFilter().add("lock-token");
         getInFilter().add("max-forwards");
         getInFilter().add("overwrite");
-        getInFilter().add("pragma");
         getInFilter().add("proxy-authenticate");
         getInFilter().add("proxy-authorization");
         getInFilter().add("range");
@@ -70,16 +67,7 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
 
         getInFilter().add("www-authenticate");
 
-        // Add the filter for the Generic Message header
-        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
-        getInFilter().add("cache-control");
-        getInFilter().add("connection");
-        getInFilter().add("date");
-        getInFilter().add("trailer");
-        getInFilter().add("transfer-encoding");
-        getInFilter().add("upgrade");
-        getInFilter().add("via");
-        getInFilter().add("warning");
+        HttpUtil.addCommonFilters(getInFilter());
 
         setLowerCase(true);
     }
