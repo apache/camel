@@ -131,13 +131,13 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         if (route != null) {
             try {
                 Consumer consumer = route.getConsumer();
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForConsumer(camelContext, consumer);
+                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForConsumer(camelContext,
+                        consumer);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
-
 
         return null;
     }

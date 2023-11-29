@@ -22,6 +22,7 @@ import java.util.Timer;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -53,6 +54,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private long delay = 1000;
     @UriParam
     private long repeatCount;
+    @UriParam(defaultValue = "TRACE", label = "consumer,scheduler",
+              description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
     @UriParam
     private boolean fixedRate;
     @UriParam(defaultValue = "true", label = "advanced")
@@ -174,6 +178,16 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @ManagedAttribute(description = "Timer FixedRate")
     public void setFixedRate(boolean fixedRate) {
         this.fixedRate = fixedRate;
+    }
+
+    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    public LoggingLevel getRunLoggingLevel() {
+        return runLoggingLevel;
+    }
+
+    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    public void setRunLoggingLevel(LoggingLevel runLoggingLevel) {
+        this.runLoggingLevel = runLoggingLevel;
     }
 
     @ManagedAttribute(description = "Timer Period")

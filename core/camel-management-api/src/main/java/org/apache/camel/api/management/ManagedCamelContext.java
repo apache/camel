@@ -93,8 +93,8 @@ public interface ManagedCamelContext {
      * Gets the managed consumer client api from any of the routes which with the given route id
      *
      * @param  id                       route id having the consumer
-     * @param  type                     the managed consumer type from the
-     *                                  {@link org.apache.camel.api.management.mbean} package.
+     * @param  type                     the managed consumer type from the {@link org.apache.camel.api.management.mbean}
+     *                                  package.
      * @return                          the consumer or <tt>null</tt> if not found
      * @throws IllegalArgumentException if the type is not compliant
      */
