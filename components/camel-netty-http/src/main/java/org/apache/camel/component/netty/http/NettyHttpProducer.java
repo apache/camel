@@ -56,16 +56,21 @@ public class NettyHttpProducer extends NettyProducer {
         super.doInit();
 
         String range = getEndpoint().getConfiguration().getOkStatusCodeRange();
+        parseStatusRange(range);
+    }
+
+    private void parseStatusRange(String range) {
         if (!range.contains(",")) {
-            // default is 200-299 so lets optimize for this
-            if (range.contains("-")) {
-                minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
-                maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
-            } else {
+            if (!org.apache.camel.support.http.HttpUtil.parseStatusRange(range, this::setRanges)) {
                 minOkRange = Integer.parseInt(range);
                 maxOkRange = minOkRange;
             }
         }
+    }
+
+    private void setRanges(int minOkRange, int maxOkRange) {
+        this.minOkRange = minOkRange;
+        this.maxOkRange = maxOkRange;
     }
 
     @Override
