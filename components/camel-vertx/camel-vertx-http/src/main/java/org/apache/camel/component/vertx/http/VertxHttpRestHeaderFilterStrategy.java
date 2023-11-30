@@ -18,6 +18,8 @@ package org.apache.camel.component.vertx.http;
 
 import org.apache.camel.Exchange;
 
+import static org.apache.camel.support.http.HttpUtil.filterCheck;
+
 public class VertxHttpRestHeaderFilterStrategy extends VertxHttpHeaderFilterStrategy {
 
     private final String templateUri;
@@ -31,24 +33,7 @@ public class VertxHttpRestHeaderFilterStrategy extends VertxHttpHeaderFilterStra
     @Override
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
         boolean answer = super.applyFilterToExternalHeaders(headerName, headerValue, exchange);
-        // using rest producer then headers are mapping to uri and query parameters using {key} syntax
-        // if there is a match to an existing Camel Message header, then we should filter (=true) this
-        // header as its already been mapped by the RestProducer from camel-core, and we do not want
-        // the header to included as HTTP header also (eg as duplicate value)
-        if (!answer) {
-            if (templateUri != null) {
-                String token = "{" + headerName + "}";
-                if (templateUri.contains(token)) {
-                    answer = true;
-                }
-            }
-            if (!answer && queryParameters != null) {
-                String token = "=%7B" + headerName + "%7D"; // encoded values for { }
-                if (queryParameters.contains(token)) {
-                    answer = true;
-                }
-            }
-        }
-        return answer;
+
+        return filterCheck(templateUri, queryParameters, headerName, answer);
     }
 }
