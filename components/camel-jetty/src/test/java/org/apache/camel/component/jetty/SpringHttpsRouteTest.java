@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -116,7 +117,7 @@ public class SpringHttpsRouteTest {
 
         log.info("Headers: {}", headers);
 
-        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
+        assertFalse(headers.isEmpty(), "Should be more than one header but was: " + headers);
     }
 
     @Test

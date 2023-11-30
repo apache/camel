@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -116,7 +117,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         LOG.info("Headers: {}", headers);
 
-        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
+        assertFalse(headers.isEmpty(), "Should be more than one header but was: " + headers);
     }
 
     @Override

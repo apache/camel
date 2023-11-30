@@ -104,7 +104,7 @@ public class JettyHttpComponent11 extends JettyHttpComponent {
                     // must copy the map otherwise it will be deleted
                     Map<String, Object> properties = new HashMap<>(getSslSocketConnectorProperties());
                     PropertyBindingSupport.bindProperties(getCamelContext(), sslcf, properties);
-                    if (properties.size() > 0) {
+                    if (!properties.isEmpty()) {
                         throw new IllegalArgumentException(
                                 "There are " + properties.size() + " parameters that couldn't be set on the SocketConnector."
                                                            + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
