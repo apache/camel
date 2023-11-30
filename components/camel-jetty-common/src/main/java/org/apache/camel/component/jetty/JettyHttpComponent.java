@@ -418,16 +418,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             if (endpoint.getFilterInitParameters() != null) {
                 filterHolder.setInitParameters(endpoint.getFilterInitParameters());
             }
-            filterHolder.setFilter(new CamelFilterWrapper(filter));
-            String pathSpec = endpoint.getPath();
-            if (pathSpec == null || pathSpec.isEmpty()) {
-                pathSpec = "/";
-            }
-            if (endpoint.isMatchOnUriPrefix()) {
-                pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
-            }
-            addFilter(context, filterHolder, pathSpec);
+            addFilter(endpoint, filter, filterHolder, context);
         }
+    }
+
+    private void addFilter(
+            JettyHttpEndpoint endpoint, Filter filter, FilterHolder filterHolder, ServletContextHandler context) {
+        addFilter(endpoint, filterHolder, filter, context);
     }
 
     private void addFilter(ServletContextHandler context, FilterHolder filterHolder, String pathSpec) {
@@ -454,6 +451,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             // if no filter ref was provided, use the default filter
             filter = new MultiPartFilter();
         }
+        final String pathSpec = addFilter(endpoint, filterHolder, filter, context);
+        LOG.debug("using multipart filter implementation {} for path {}", filter.getClass().getName(), pathSpec);
+    }
+
+    private String addFilter(
+            HttpCommonEndpoint endpoint, FilterHolder filterHolder, Filter filter, ServletContextHandler context) {
         filterHolder.setFilter(new CamelFilterWrapper(filter));
         String pathSpec = endpoint.getPath();
         if (pathSpec == null || pathSpec.isEmpty()) {
@@ -463,7 +466,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
         addFilter(context, filterHolder, pathSpec);
-        LOG.debug("using multipart filter implementation {} for path {}", filter.getClass().getName(), pathSpec);
+        return pathSpec;
     }
 
     /**
