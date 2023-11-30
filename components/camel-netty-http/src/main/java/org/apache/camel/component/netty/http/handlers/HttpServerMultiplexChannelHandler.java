@@ -213,7 +213,6 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         return getHandler(request, method) != null;
     }
 
-    @SuppressWarnings("unchecked")
     private HttpServerChannelHandler getHandler(HttpRequest request, String method) {
         HttpServerChannelHandler answer = null;
 

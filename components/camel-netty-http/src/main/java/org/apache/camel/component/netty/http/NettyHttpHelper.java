@@ -54,7 +54,6 @@ public final class NettyHttpHelper {
      * @param key     the key
      * @param value   the value
      */
-    @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
         CollectionHelper.appendEntry(headers, key, value);
     }
