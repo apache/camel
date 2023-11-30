@@ -135,7 +135,7 @@
         <maven-surefire-plugin-version>3.2.2</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.16.0</versions-maven-plugin-version>
 
-        <jaxb-core-version>4.0.3</jaxb-core-version>
+        <jaxb-core-version>4.0.4</jaxb-core-version>
         <jaxb-impl-version>4.0.4</jaxb-impl-version>
         <jaxb-osgi-version>4.0.4</jaxb-osgi-version>
         <jaxb-xjc-version>4.0.4</jaxb-xjc-version>
