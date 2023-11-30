@@ -65,10 +65,7 @@ public final class HttpEntityConverter {
         ContentType contentType = null;
         if (exchange != null) {
             contentEncoding = exchange.getIn().getHeader(HttpConstants.CONTENT_ENCODING, String.class);
-            String contentTypeAsString = ExchangeHelper.getContentType(exchange);
-            if (contentTypeAsString != null) {
-                contentType = ContentType.parse(contentTypeAsString);
-            }
+            contentType = getContentType(exchange, contentType);
         }
 
         InputStreamEntity entity;
@@ -85,6 +82,14 @@ public final class HttpEntityConverter {
         return entity;
     }
 
+    private static ContentType getContentType(Exchange exchange, ContentType contentType) {
+        String contentTypeAsString = ExchangeHelper.getContentType(exchange);
+        if (contentTypeAsString != null) {
+            contentType = ContentType.parse(contentTypeAsString);
+        }
+        return contentType;
+    }
+
     private static HttpEntity asHttpEntity(byte[] data, Exchange exchange) throws Exception {
         AbstractHttpEntity entity;
 
@@ -92,10 +97,7 @@ public final class HttpEntityConverter {
         ContentType contentType = null;
         if (exchange != null) {
             contentEncoding = exchange.getIn().getHeader(HttpConstants.CONTENT_ENCODING, String.class);
-            String contentTypeAsString = ExchangeHelper.getContentType(exchange);
-            if (contentTypeAsString != null) {
-                contentType = ContentType.parse(contentTypeAsString);
-            }
+            contentType = getContentType(exchange, contentType);
         }
 
         if (exchange != null && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
