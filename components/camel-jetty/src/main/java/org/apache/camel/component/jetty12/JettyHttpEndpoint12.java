@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * Expose HTTP endpoints using Jetty 11.
+ * Expose HTTP endpoints using Jetty 12.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "jetty", extendsScheme = "http", title = "Jetty", syntax = "jetty:httpUri",
              category = { Category.HTTP }, consumerOnly = true, lenientProperties = true,

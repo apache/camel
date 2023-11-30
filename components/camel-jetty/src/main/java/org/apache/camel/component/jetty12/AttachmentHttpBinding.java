@@ -40,9 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * To handle attachments with Jetty 11.
+ * To handle attachments with Jetty 12.
  * <p/>
- * This implementation is needed to deal with attachments when using Jetty 11.
+ * This implementation is needed to deal with attachments when using Jetty 12.
  */
 final class AttachmentHttpBinding extends DefaultHttpBinding {
     private static final Logger LOG = LoggerFactory.getLogger(AttachmentHttpBinding.class);
