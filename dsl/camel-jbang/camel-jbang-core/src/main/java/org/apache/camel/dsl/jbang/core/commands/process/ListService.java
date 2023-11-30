@@ -119,7 +119,7 @@ public class ListService extends ProcessWatchCommand {
             jo = (JsonObject) jo.get(component);
         }
         if (jo != null) {
-            JsonArray arr = (JsonArray) jo.get("endpoints");
+            JsonArray arr = (JsonArray) jo.get("consumers");
             if (arr != null) {
                 for (Object o : arr) {
                     row = row.copy();
