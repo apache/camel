@@ -2585,7 +2585,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("factoryMethod", def.getFactoryMethod());
         doWriteAttribute("initMethod", def.getInitMethod());
         doWriteAttribute("scriptLanguage", def.getScriptLanguage());
+        doWriteAttribute("builderClass", def.getBuilderClass());
         doWriteAttribute("name", def.getName());
+        doWriteAttribute("builderMethod", def.getBuilderMethod());
         doWriteAttribute("destroyMethod", def.getDestroyMethod());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("factoryBean", def.getFactoryBean());

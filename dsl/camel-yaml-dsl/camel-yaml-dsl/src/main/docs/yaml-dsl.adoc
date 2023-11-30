@@ -267,6 +267,28 @@ public class MyHelper {
 
 NOTE: The factory method must be `public static`.
 
+=== Creating beans from builder classes
+
+A bean can also be created from another builder class as shown below:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    builderClass: com.acme.MyBeanBuilder
+    builderMethod: createMyBean
+    properties:
+      id: 123
+      name: 'Acme'
+----
+
+NOTE: The builder class must be `public` and have a no-arg default constructor.
+
+The builder class is then used to create the actual bean by using fluent builder style configuration.
+So the properties will be set on the builder class, and the bean is created by invoking the `builderMethod`
+at the end. The invocation of this method is done via Java reflection.
+
 === Creating beans using script language
 
 For advanced use-cases then Camel allows to inline a script language, such as groovy, java, javascript, etc, to create the bean.

@@ -7942,6 +7942,12 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "builderClass" : {
+            "type" : "string"
+          },
+          "builderMethod" : {
+            "type" : "string"
+          },
           "constructors" : {
             "type" : "object"
           },

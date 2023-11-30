@@ -193,6 +193,57 @@ PropertyBindingSupport.build().withCamelContext(context).withTarget(foo)
     .bind();
 ----
 
+=== Using fluent builder class
+
+When you are in need to configure a bean via _fluent builder class_, such as the following example:
+
+[source,java]
+----
+public class MyDriverBuilder {
+
+ private String url;
+ private String username;
+ private String password;
+
+ public MyDriverBuilder url(String url) {
+     this.url = url;
+     return this;
+ }
+
+ public MyDriverBuilder username(String username) {
+     this.username = username;
+     return this;
+ }
+
+ public MyDriverBuilder password(String password) {
+     this.password = password;
+     return this;
+ }
+
+ public MyDriver build() {
+     return new MyDriver(url, username, password);
+ }
+}
+----
+
+And you want to create an instance of `MyDriver` via the `MyDriverBuilder` class, then this can be done as follows:
+
+[source,java]
+----
+MyDriver driver = PropertyBindingSupport.build()
+  .withCamelContext(context)
+  .withTarget(new MyDriverBuilder())
+  .withFluentBuilder(true)
+  .withProperty("url", "localhost:1234")
+  .withProperty("username", "scott")
+  .withProperty("password", "tiger")
+  .build(MyDriver.class);
+----
+
+Notice how we use the `build(MyDriver.class)` to build the bean via the target class `.withTarget(new MyDriverBuilder())`.
+The build method will by default invoke `build` as the builder method, but you can specify the name, such as `.build(MyDriver.class, "myBuilderMethod");`
+
+
 == More details
 
 Property binding is notably used when running Camel in standalone mode with Camel Main, or using Camel Spring Boot, Camel K,

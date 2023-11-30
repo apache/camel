@@ -243,10 +243,35 @@ public class XmlLoadAppTest {
             assertEquals(1, context.getRoutes().size());
 
             // test that loaded route works
-            MockEndpoint y8 = context.getEndpoint("mock:y9", MockEndpoint.class);
-            y8.expectedBodiesReceived("Hi World from groovy Uranus");
+            MockEndpoint y9 = context.getEndpoint("mock:y9", MockEndpoint.class);
+            y9.expectedBodiesReceived("Hi World from groovy Uranus");
             context.createProducerTemplate().sendBody("direct:x9", "I'm Uranus");
-            y8.assertIsSatisfied();
+            y9.assertIsSatisfied();
+
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanBuilderClass() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app10.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r10"), "Loaded r10 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y10 = context.getEndpoint("mock:y10", MockEndpoint.class);
+            y10.expectedBodiesReceived("Hi World. I am Camel and 44 years old!");
+            context.createProducerTemplate().sendBody("direct:x10", "Hi");
+            y10.assertIsSatisfied();
 
             context.stop();
         }
