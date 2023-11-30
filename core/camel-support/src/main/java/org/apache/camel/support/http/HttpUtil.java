@@ -17,6 +17,9 @@
 
 package org.apache.camel.support.http;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -24,6 +27,8 @@ import java.util.function.BiConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -187,5 +192,39 @@ public final class HttpUtil {
         }
 
         return false;
+    }
+
+    /**
+     * Iterates over a list of values and passes them to the consumer after applying the filter strategy. This is mostly used to
+     * simplify setting headers for HTTP responses
+     * @param headerFilterStrategy the filter strategy to apply
+     * @param exchange an exchange to apply the header strategy
+     * @param it the iterator providing the values
+     * @param tc a type converter instance so that the values can be converted to string
+     * @param key a key associated with the values being iterated
+     * @param consumer a consumer method to receive the converted values. It can receive either a list of values or a single
+     *                 value.
+     */
+    public static void applyHeader(HeaderFilterStrategy headerFilterStrategy, Exchange exchange, Iterator<?> it,
+            TypeConverter tc, String key, BiConsumer<List<String>, String> consumer) {
+        String firstValue = null;
+        List<String> values = null;
+
+        while (it.hasNext()) {
+            final String headerValue = tc.convertTo(String.class, it.next());
+            if (headerValue != null && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
+                if (firstValue == null) {
+                    firstValue = headerValue;
+                } else {
+                    if (values == null) {
+                        values = new ArrayList<>();
+                        values.add(firstValue);
+                    }
+                    values.add(headerValue);
+                }
+            }
+        }
+
+        consumer.accept(values, firstValue);
     }
 }
