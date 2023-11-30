@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -108,6 +109,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                 receivingEndpoint.assertIsSatisfied();
             }
         } finally {
+            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
             executor.shutdownNow();
         }
     }
@@ -121,6 +123,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         try {
             sendMessagesWithHeaderExpression(executor, resultEndpoint, CONCURRENT_REQUESTS, MESSAGE_COUNT);
         } finally {
+            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
             executor.shutdownNow();
         }
     }
