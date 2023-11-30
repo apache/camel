@@ -104,7 +104,7 @@ public class SalesforceHttpClient extends HttpClient {
     }
 
     @Override
-    public  Request copyRequest(Request oldRequest, URI newURI) {
+    public Request copyRequest(Request oldRequest, URI newURI) {
         return super.copyRequest(oldRequest, newURI);
     }
 

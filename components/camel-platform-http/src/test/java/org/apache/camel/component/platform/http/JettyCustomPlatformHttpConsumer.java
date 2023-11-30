@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.platform.http;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.StringJoiner;
@@ -73,7 +76,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
             public boolean handle(Request request, Response response, Callback callback) throws Exception {
                 Exchange exchg = null;
                 try {
-                    String bodyRequest = "";
+                    StringBuilder bodyRequest = new StringBuilder();
                     while (true) {
                         Content.Chunk chunk = request.read();
                         if (chunk.isLast()) {
@@ -83,9 +86,9 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
                         byte[] bytes = new byte[chunk.getByteBuffer().remaining()];
                         chunk.getByteBuffer().get(bytes);
                         String chunkString = new String(bytes, StandardCharsets.UTF_8);
-                        bodyRequest += chunkString;
+                        bodyRequest.append(chunkString);
                     }
-                    final Exchange exchange = exchg = toExchange(request, bodyRequest);
+                    final Exchange exchange = exchg = toExchange(request, bodyRequest.toString());
                     if (getEndpoint().isHttpProxy()) {
                         exchange.getMessage().removeHeader("Proxy-Connection");
                     }

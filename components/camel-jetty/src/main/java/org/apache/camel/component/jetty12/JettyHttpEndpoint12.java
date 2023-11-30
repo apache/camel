@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty11;
+package org.apache.camel.component.jetty12;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,11 +36,11 @@ import org.apache.camel.spi.UriEndpoint;
              headersClass = JettyHttpConstants.class)
 @Metadata(excludeProperties = "authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
                               + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
-public class JettyHttpEndpoint11 extends JettyHttpEndpoint implements AsyncEndpoint {
+public class JettyHttpEndpoint12 extends JettyHttpEndpoint implements AsyncEndpoint {
 
     private HttpBinding binding;
 
-    public JettyHttpEndpoint11(JettyHttpComponent component, String uri, URI httpURL) {
+    public JettyHttpEndpoint12(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(component, uri, httpURL);
     }
 

@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty11;
+package org.apache.camel.component.jetty12;
 
 import java.io.InputStream;
 
 import org.eclipse.jetty.io.content.InputStreamContentSource;
 
-public class CamelInputStreamContentProvider extends InputStreamContentSource {
+public class CamelInputStreamContentSource extends InputStreamContentSource {
 
     private final int length;
 
-    public CamelInputStreamContentProvider(InputStream stream, int length) {
+    public CamelInputStreamContentSource(InputStream stream, int length) {
         super(stream);
         this.length = length;
     }

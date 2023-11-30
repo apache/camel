@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty11;
+package org.apache.camel.component.jetty12;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,15 +40,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component("jetty")
-public class JettyHttpComponent11 extends JettyHttpComponent {
+public class JettyHttpComponent12 extends JettyHttpComponent {
 
     public static final Map<String, Throwable> connectorCreation = new ConcurrentHashMap<>();
 
-    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent11.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent12.class);
 
     @Override
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
-        return new JettyHttpEndpoint11(this, endpointUri.toString(), httpUri);
+        return new JettyHttpEndpoint12(this, endpointUri.toString(), httpUri);
     }
 
     @Override

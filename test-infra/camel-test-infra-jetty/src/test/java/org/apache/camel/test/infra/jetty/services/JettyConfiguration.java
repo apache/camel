@@ -252,11 +252,9 @@ public class JettyConfiguration {
             l.setUserStore(us);
 
             Constraint.Builder constraintBuilder = new Constraint.Builder();
-            constraintBuilder.name("Basic Auth");
+            constraintBuilder.name("BASIC");
             constraintBuilder.roles("user");
-            //            constraint.setName(Constraint.__BASIC_AUTH);
-            //            constraint.setRoles(new String[] { "user" });
-            //            constraint.setAuthenticate(true);
+            constraintBuilder.authorization(Constraint.Authorization.SPECIFIC_ROLE);
 
             ConstraintMapping cm = new ConstraintMapping();
             cm.setConstraint(constraintBuilder.build());

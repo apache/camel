@@ -23,7 +23,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-    <bean id="jetty" class="org.apache.camel.component.jetty11.JettyHttpComponent11">
+    <bean id="jetty" class="org.apache.camel.component.jetty12.JettyHttpComponent12">
         <property name="sslPassword" value="changeit"/>
         <property name="sslKeyPassword" value="changeit"/>
         <property name="keystore" value="src/test/resources/jsse/localhost.p12"/>

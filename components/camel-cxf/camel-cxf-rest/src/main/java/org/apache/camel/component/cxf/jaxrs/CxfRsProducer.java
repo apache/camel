@@ -24,7 +24,12 @@ import java.lang.reflect.Type;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Entity;
