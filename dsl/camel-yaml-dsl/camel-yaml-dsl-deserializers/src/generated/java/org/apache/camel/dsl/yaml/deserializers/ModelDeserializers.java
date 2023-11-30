@@ -12308,6 +12308,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.app.RegistryBeanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "builder-class", type = "string"),
+                    @YamlProperty(name = "builder-method", type = "string"),
                     @YamlProperty(name = "constructors", type = "object"),
                     @YamlProperty(name = "destroy-method", type = "string"),
                     @YamlProperty(name = "factory-bean", type = "string"),
@@ -12334,6 +12336,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RegistryBeanDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "builder-class": {
+                    String val = asText(node);
+                    target.setBuilderClass(val);
+                    break;
+                }
+                case "builder-method": {
+                    String val = asText(node);
+                    target.setBuilderMethod(val);
+                    break;
+                }
                 case "constructors": {
                     java.util.Map val = asMap(node);
                     target.setConstructors(val);

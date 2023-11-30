@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyBean
+import org.apache.camel.dsl.yaml.support.model.MyBeanBuilder
 import org.apache.camel.dsl.yaml.support.model.MyCtrBean
 import org.apache.camel.dsl.yaml.support.model.MyDestroyBean
 import org.apache.camel.dsl.yaml.support.model.MyFacBean
@@ -226,6 +227,26 @@ class BeansTest extends YamlTestSupport {
         with(context.registry.lookupByName('myBean'), MyBean) {
             it.field1 == 'script1'
             it.field2 == 'script2'
+        }
+    }
+
+    def "beans with builder class"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myBean
+                    type: ${MyBean.class.name}
+                    builderClass: ${MyBeanBuilder.class.name}
+                    builderMethod: createTheBean
+                    properties:
+                      field1: builder1 
+                      field2: builder2 
+            """
+
+        then:
+        with(context.registry.lookupByName('myBean'), MyBean) {
+            it.field1 == 'builder1'
+            it.field2 == 'builder2'
         }
     }
 
