@@ -70,7 +70,7 @@ public class MllpConsole extends AbstractDevConsole {
             arr.add(jo);
         }
         if (!arr.isEmpty()) {
-            root.put("endpoints", arr);
+            root.put("consumers", arr);
         }
 
         return root;
