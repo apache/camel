@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -1872,6 +1873,36 @@ public final class PropertyBindingSupport {
         public Builder withListener(PropertyBindingListener listener) {
             this.listener = listener;
             return this;
+        }
+
+        /**
+         * Binds the properties to the target object, and builds the output as the given type, by invoking the build
+         * method (uses build as name)
+         *
+         * @param type the type of the output class
+         */
+        public <T> T build(Class<T> type) {
+            return build(type, "build");
+        }
+
+        /**
+         * Binds the properties to the target object, and builds the output as the given type, by invoking the build
+         * method (via reflection).
+         *
+         * @param type         the type of the output class
+         * @param buildMethod  the name of the builder method to invoke
+         */
+        public <T> T build(Class<T> type, String buildMethod) {
+            // first bind
+            bind();
+
+            // then invoke the build method on target via reflection
+            try {
+                Object out = ObjectHelper.invokeMethodSafe(buildMethod, target);
+                return camelContext.getTypeConverter().convertTo(type, out);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
         }
 
         /**
