@@ -398,6 +398,17 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 @Override
                 public void artifactDownloading(RepositoryEvent event) {
                     watch.restart();
+
+                    if (event.getArtifact() != null) {
+                        Artifact a = event.getArtifact();
+
+                        ArtifactRepository ar = event.getRepository();
+                        String url = ar instanceof RemoteRepository ? ((RemoteRepository) ar).getUrl() : null;
+                        String id = ar != null ? ar.getId() : null;
+                        String version = a.isSnapshot() ? a.getBaseVersion() : a.getVersion();
+                        remoteArtifactDownloadListener.artifactDownloading(a.getGroupId(), a.getArtifactId(), version,
+                                id, url);
+                    }
                 }
 
                 @Override
