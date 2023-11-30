@@ -262,7 +262,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             private volatile Set<HttpEndpointModel> last;
 
             @Override
-            public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+            public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
                 camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
 
                     @Override
@@ -272,7 +272,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     }
 
                     @Override
-                    public void notify(CamelEvent event) throws Exception {
+                    public void notify(CamelEvent event) {
                         // when reloading then there may be more routes in the same batch, so we only want
                         // to log the summary at the end
                         if (event instanceof CamelEvent.RouteReloadedEvent) {

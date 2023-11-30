@@ -63,7 +63,7 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
     }
 
     @Test
-    public void notBridgeEndpoint() throws Exception {
+    public void notBridgeEndpoint() {
         Exchange exchange = template.request("http://host/?bridgeEndpoint=false",
                 exchange1 -> exchange1.getIn().setHeader(HTTP_URI, url + "/"));
 
@@ -71,7 +71,7 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
     }
 
     @Test
-    public void bridgeEndpoint() throws Exception {
+    public void bridgeEndpoint() {
         Exchange exchange = template.request(url + "/?bridgeEndpoint=true",
                 exchange1 -> exchange1.getIn().setHeader(HTTP_URI, "http://host:8080/"));
 
@@ -79,7 +79,7 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
     }
 
     @Test
-    public void bridgeEndpointWithQuery() throws Exception {
+    public void bridgeEndpointWithQuery() {
         Exchange exchange = template.request(url + "/query?bridgeEndpoint=true", exchange1 -> {
             exchange1.getIn().setHeader(HTTP_URI, "http://host:8080/");
             exchange1.getIn().setHeader(HTTP_QUERY, "x=%3B");
@@ -89,7 +89,7 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
     }
 
     @Test
-    public void bridgeEndpointWithRawQueryAndQuery() throws Exception {
+    public void bridgeEndpointWithRawQueryAndQuery() {
         Exchange exchange = template.request(url + "/query?bridgeEndpoint=true", exchange1 -> {
             exchange1.getIn().setHeader(HTTP_URI, "http://host:8080/");
             exchange1.getIn().setHeader(HTTP_RAW_QUERY, "x=%3B");
@@ -100,7 +100,7 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
     }
 
     @Test
-    public void unsafeCharsInHttpURIHeader() throws Exception {
+    public void unsafeCharsInHttpURIHeader() {
         Exchange exchange
                 = template.request(url + "/?bridgeEndpoint=true", exchange1 -> exchange1.getIn().setHeader(HTTP_URI, "/<>{}"));
 

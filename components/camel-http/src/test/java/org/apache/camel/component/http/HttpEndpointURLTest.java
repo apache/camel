@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
-    public void testHttpEndpointURLWithIPv6() throws Exception {
+    public void testHttpEndpointURLWithIPv6() {
         HttpEndpoint endpoint = (HttpEndpoint) context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
         assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
     }
 
     @Test
-    public void testHttpEndpointHttpUri() throws Exception {
+    public void testHttpEndpointHttpUri() {
         HttpEndpoint http1 = context.getEndpoint("http://www.google.com", HttpEndpoint.class);
         HttpEndpoint http2 = context.getEndpoint(
                 "https://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
@@ -57,7 +57,7 @@ public class HttpEndpointURLTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectionManagerFromHttpUri() throws Exception {
+    public void testConnectionManagerFromHttpUri() {
         HttpEndpoint http1
                 = context.getEndpoint("http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
         HttpClientConnectionManager connectionManager = http1.getClientConnectionManager();
@@ -69,7 +69,7 @@ public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
     // Just for CAMEL-8607
-    public void testRawWithUnsafeCharacters() throws Exception {
+    public void testRawWithUnsafeCharacters() {
         HttpEndpoint http1 = context.getEndpoint(
                 "http://www.google.com?authenticationPreemptive=true&authPassword=RAW(foo%bar)&authUsername=RAW(username)",
                 HttpEndpoint.class);

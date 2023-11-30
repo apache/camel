@@ -53,7 +53,7 @@ public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
     }
 
     @Test
-    public void notBridgeEndpointWithDefault() throws Exception {
+    public void notBridgeEndpointWithDefault() {
 
         Exchange exchange = template.request("http://host/", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_URI,
                 "http://localhost:" + localServer.getLocalPort() + "/"));

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class HttpSNIHostNameTest extends CamelSpringTestSupport {
 
     @Test
-    public void testMnotDotNetDoesNotReturnStatusCode421() throws Exception {
+    public void testMnotDotNetDoesNotReturnStatusCode421() {
         String result = template.requestBody("direct:goodSNI", null, String.class);
         assertNotNull(result);
     }

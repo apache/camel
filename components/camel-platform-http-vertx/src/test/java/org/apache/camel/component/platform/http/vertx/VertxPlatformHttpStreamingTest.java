@@ -240,7 +240,7 @@ public class VertxPlatformHttpStreamingTest {
                     from("platform-http:/streaming?useStreaming=true")
                             .process(new Processor() {
                                 @Override
-                                public void process(Exchange exchange) throws Exception {
+                                public void process(Exchange exchange) {
                                     // Force a type conversion exception and verify the response promise.fail is called correctly
                                     exchange.getMessage().setBody(new TestBean());
                                 }

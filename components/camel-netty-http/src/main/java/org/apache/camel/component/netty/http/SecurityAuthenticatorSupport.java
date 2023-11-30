@@ -110,7 +110,7 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
         }
 
         @Override
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        public void handle(Callback[] callbacks) {
             for (Callback callback : callbacks) {
                 LOG.trace("Callback {}", callback);
                 if (callback instanceof PasswordCallback) {

@@ -58,10 +58,10 @@ public class HttpSendDynamicAwareRawParameterTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:dynamicAwareWithRaw")
                         .toD("http://localhost:" + localServer.getLocalPort()
                              + "/dynamicAware?par1=RAW(${headers.par1})&par2=RAW{${headers.par2}}");
@@ -70,7 +70,7 @@ public class HttpSendDynamicAwareRawParameterTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAwareHeadersQuery() throws Exception {
+    public void testDynamicAwareHeadersQuery() {
         Exchange e = fluentTemplate
                 .to("direct:dynamicAwareWithRaw")
                 .withHeader("par1", "val1")

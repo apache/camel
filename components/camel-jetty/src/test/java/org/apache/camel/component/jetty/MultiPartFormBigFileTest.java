@@ -75,7 +75,7 @@ class MultiPartFormBigFileTest extends BaseJettyTest {
                         tempDir.getAbsolutePath())
                         .process(new Processor() {
 
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
                                 assertEquals(1, in.getAttachments().size(), "Get a wrong attachment size");
                                 // The file name is attachment id

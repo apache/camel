@@ -102,7 +102,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     }
 
     @Test
-    public void httpsGetWithAuthentication() throws Exception {
+    public void httpsGetWithAuthentication() {
 
         Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters",
@@ -113,7 +113,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     }
 
     @Test
-    public void httpsGetWithHttpCache() throws Exception {
+    public void httpsGetWithHttpCache() {
 
         Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "?throwExceptionOnFailure=false&httpContext=#basicAuthContext",

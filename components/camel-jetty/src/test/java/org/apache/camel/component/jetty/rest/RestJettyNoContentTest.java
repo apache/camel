@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RestJettyNoContentTest extends BaseJettyTest {
 
     @Test
-    public void testEmptyJson200ConfigNoContentDisabled() throws Exception {
+    public void testEmptyJson200ConfigNoContentDisabled() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/v1/empty/country", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -44,7 +44,7 @@ public class RestJettyNoContentTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEmptyXml200ConfigNoContentDisabled() throws Exception {
+    public void testEmptyXml200ConfigNoContentDisabled() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/v1/empty/address", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -59,7 +59,7 @@ public class RestJettyNoContentTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEmptyJson204RestConfigNoContentEnabled() throws Exception {
+    public void testEmptyJson204RestConfigNoContentEnabled() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/v2/empty/country", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -72,7 +72,7 @@ public class RestJettyNoContentTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEmptyXml204RestConfigNoContentEnabled() throws Exception {
+    public void testEmptyXml204RestConfigNoContentEnabled() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/v2/empty/address", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -85,7 +85,7 @@ public class RestJettyNoContentTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEmpty204VerbNoContentEnabled() throws Exception {
+    public void testEmpty204VerbNoContentEnabled() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/v3/empty/country", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -98,7 +98,7 @@ public class RestJettyNoContentTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJson200ConfigNoContentEnabled() throws Exception {
+    public void testJson200ConfigNoContentEnabled() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/country", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -111,7 +111,7 @@ public class RestJettyNoContentTest extends BaseJettyTest {
     }
 
     @Test
-    public void testXml200ConfigNoContentEnabled() throws Exception {
+    public void testXml200ConfigNoContentEnabled() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/address", new Processor() {
             @Override
             public void process(Exchange exchange) {

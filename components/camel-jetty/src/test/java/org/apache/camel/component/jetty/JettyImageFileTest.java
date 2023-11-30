@@ -46,12 +46,12 @@ public class JettyImageFileTest extends BaseJettyTest {
     }
 
     @Test
-    public void testImageContentType() throws Exception {
+    public void testImageContentType() {
         sendImageContent(false);
     }
 
     @Test
-    public void testImageContentWithGZip() throws Exception {
+    public void testImageContentWithGZip() {
         sendImageContent(true);
     }
 

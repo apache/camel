@@ -60,7 +60,7 @@ public class VertxHttpCustomWebClientTest {
             context.addComponent("vertx-http", component);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("vertx-http:http://localhost:8080");
                 }

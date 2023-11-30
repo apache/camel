@@ -61,7 +61,7 @@ public class MultiPartFormTest extends BaseJettyTest {
     }
 
     @Test
-    public void testSendMultiPartFormFromCamelHttpComponnent() throws Exception {
+    public void testSendMultiPartFormFromCamelHttpComponnent() {
         String result
                 = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
         assertEquals("A binary file of some kind", result, "Get a wrong result");

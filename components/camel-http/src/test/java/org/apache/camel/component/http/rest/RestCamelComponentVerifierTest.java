@@ -108,7 +108,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     // Tests
     // *************************************************
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
 
         parameters.put("method", "get");
 
@@ -118,7 +118,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     }
 
     @Test
-    public void testMissingRestParameters() throws Exception {
+    public void testMissingRestParameters() {
         // This parameter does not belong to the rest component and validation
         // is delegated to the transport component
         parameters.put("copyHeaders", false);
@@ -153,7 +153,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
 
         parameters.put("method", "get");
 

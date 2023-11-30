@@ -89,7 +89,7 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
     }
 
     @Test
-    public void testContentLengthStream() throws Exception {
+    public void testContentLengthStream() {
         Exchange out = template.request(endpointUrl + "/content-streamed?bridgeEndpoint=true", exchange -> {
             exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
@@ -102,7 +102,7 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
     }
 
     @Test
-    public void testContentLengthNotStreamed() throws Exception {
+    public void testContentLengthNotStreamed() {
         Exchange out = template.request(endpointUrl + "/content-not-streamed?bridgeEndpoint=true", exchange -> {
             exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");

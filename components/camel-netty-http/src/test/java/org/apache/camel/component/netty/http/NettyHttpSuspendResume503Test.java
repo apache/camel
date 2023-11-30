@@ -35,7 +35,7 @@ public class NettyHttpSuspendResume503Test extends BaseNettyTest {
     private final String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true";
 
     @Test
-    public void testNettySuspendResume() throws Exception {
+    public void testNettySuspendResume() {
         context.getShutdownStrategy().setTimeout(50);
 
         String reply = template.requestBody(serverUri, "World", String.class);

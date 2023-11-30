@@ -62,7 +62,7 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
     }
 
     @Test
-    public void authorizationHeaderIsPresent() throws Exception {
+    public void authorizationHeaderIsPresent() {
 
         String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/token";
 

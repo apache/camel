@@ -50,7 +50,7 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     }
 
     @Override
-    public int read() throws IOException {
+    public int read() {
         return buffer.readByte();
     }
 
@@ -60,7 +60,7 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) {
         // are we at end, then return -1
         if (buffer.readerIndex() == buffer.capacity()) {
             return -1;
@@ -93,7 +93,7 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     }
 
     @Override
-    public StreamCache copy(Exchange exchange) throws IOException {
+    public StreamCache copy(Exchange exchange) {
         return new NettyChannelBufferStreamCache(buffer.copy());
     }
 

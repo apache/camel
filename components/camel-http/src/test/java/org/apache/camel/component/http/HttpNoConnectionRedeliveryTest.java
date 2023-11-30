@@ -60,7 +60,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpConnectionOk() throws Exception {
+    public void httpConnectionOk() {
         Exchange exchange = template.request("direct:start", null);
 
         assertExchange(exchange);
@@ -84,10 +84,10 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .onException(ConnectException.class)
                         .maximumRedeliveries(4)

@@ -288,8 +288,7 @@ public class CamelWebSocketHandler implements HttpHandler {
     class UndertowReceiveListener extends AbstractReceiveListener {
 
         @Override
-        protected void onFullBinaryMessage(final WebSocketChannel channel, BufferedBinaryMessage message)
-                throws IOException {
+        protected void onFullBinaryMessage(final WebSocketChannel channel, BufferedBinaryMessage message) {
             LOG.debug("onFullBinaryMessage()");
             final String connectionKey = (String) channel.getAttribute(UndertowConstants.CONNECTION_KEY);
             if (connectionKey == null) {

@@ -63,10 +63,10 @@ public class HttpSendDynamicAwareRawTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:moes")
                         .toD("http://localhost:" + localServer.getLocalPort()
                              + "/moes?throwExceptionOnFailure=false&drink=${header.drink}&password=RAW(se+%ret)");
@@ -79,7 +79,7 @@ public class HttpSendDynamicAwareRawTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAwareRaw() throws Exception {
+    public void testDynamicAwareRaw() {
         String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
 

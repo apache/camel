@@ -54,7 +54,7 @@ public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeader(Exchange.HTTP_METHOD, POST).to("http://www.google.com?httpClient.xxx=true");

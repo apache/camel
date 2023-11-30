@@ -40,7 +40,7 @@ public class JettyHttpEndpoint11 extends JettyHttpEndpoint implements AsyncEndpo
 
     private HttpBinding binding;
 
-    public JettyHttpEndpoint11(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
+    public JettyHttpEndpoint11(JettyHttpComponent component, String uri, URI httpURL) {
         super(component, uri, httpURL);
     }
 

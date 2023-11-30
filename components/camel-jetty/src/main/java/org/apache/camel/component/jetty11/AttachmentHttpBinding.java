@@ -140,7 +140,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         }
 
         @Override
-        public OutputStream getOutputStream() throws IOException {
+        public OutputStream getOutputStream() {
             return null;
         }
 

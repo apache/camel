@@ -80,7 +80,7 @@ public class HttpBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPostWithStringBody() throws Exception {
+    public void httpPostWithStringBody() {
         Exchange exchange = template.request(endpointUrl + "/post", exchange1 -> {
             // without this property, camel use the os default encoding
             // to create the byte array for the StringRequestEntity
@@ -92,7 +92,7 @@ public class HttpBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPostWithByteArrayBody() throws Exception {
+    public void httpPostWithByteArrayBody() {
         Exchange exchange
                 = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
 
@@ -100,7 +100,7 @@ public class HttpBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPostWithInputStreamBody() throws Exception {
+    public void httpPostWithInputStreamBody() {
         Exchange exchange = template.request(endpointUrl + "/post",
                 exchange1 -> exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
 
@@ -108,7 +108,7 @@ public class HttpBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPostWithImage() throws Exception {
+    public void httpPostWithImage() {
 
         Exchange exchange = template.send(endpointUrl + "/post1", exchange1 -> {
             exchange1.getIn().setBody(new File("src/test/data/logo.jpeg"));

@@ -397,7 +397,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         }
     }
 
-    private void enableSessionSupport(Server server, String connectorKey) throws Exception {
+    private void enableSessionSupport(Server server, String connectorKey) {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
@@ -431,7 +431,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         context.getServletHandler().addFilterWithMapping(filterHolder, pathSpec, 0);
     }
 
-    private void enableMultipartFilter(HttpCommonEndpoint endpoint, Server server) throws Exception {
+    private void enableMultipartFilter(HttpCommonEndpoint endpoint, Server server) {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();

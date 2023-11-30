@@ -72,7 +72,7 @@ public class HttpProducerContentTypeWithCharsetTest extends BaseHttpTest {
     }
 
     @Test
-    void testContentTypeWithCharsetInCharsetHeader() throws Exception {
+    void testContentTypeWithCharsetInCharsetHeader() {
         Exchange out = template.request(endpointUrl + "/content", exchange -> {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE_WITHOUT_CHARSET);
             exchange.getIn().setHeader(Exchange.CHARSET_NAME, "utf-8");
@@ -85,7 +85,7 @@ public class HttpProducerContentTypeWithCharsetTest extends BaseHttpTest {
     }
 
     @Test
-    void testContentTypeWithCharsetInContentTypeHeader() throws Exception {
+    void testContentTypeWithCharsetInContentTypeHeader() {
         Exchange out = template.request(endpointUrl + "/content", exchange -> {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE_WITH_CHARSET);
             exchange.getIn().setBody("This is content");

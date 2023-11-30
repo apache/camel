@@ -139,7 +139,7 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doStop() {
         LOG.info("Stopping NettySharedHttpServer on {}:{}", configuration.getHost(), configuration.getPort());
         ServiceHelper.stopService(bootstrapFactory, channelFactory);
     }

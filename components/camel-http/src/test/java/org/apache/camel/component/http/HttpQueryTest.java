@@ -61,7 +61,7 @@ public class HttpQueryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpQuery() throws Exception {
+    public void httpQuery() {
         Exchange exchange = template.request(baseUrl + "/?hl=en&q=camel", exchange1 -> {
         });
 
@@ -69,7 +69,7 @@ public class HttpQueryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpQueryHeader() throws Exception {
+    public void httpQueryHeader() {
         Exchange exchange = template.request(baseUrl + "/",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "hl=en&q=camel"));
 
@@ -77,7 +77,7 @@ public class HttpQueryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpQueryWithEscapedCharacter() throws Exception {
+    public void httpQueryWithEscapedCharacter() {
         Exchange exchange = template.request(baseUrl + "/test/?my=%40%20camel", exchange1 -> {
         });
 
@@ -85,7 +85,7 @@ public class HttpQueryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpQueryWithUsernamePassword() throws Exception {
+    public void httpQueryWithUsernamePassword() {
         Exchange exchange = template.request(baseUrl + "/user/pass?password=baa&username=foo", exchange1 -> {
         });
 

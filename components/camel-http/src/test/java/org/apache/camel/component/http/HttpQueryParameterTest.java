@@ -56,10 +56,10 @@ public class HttpQueryParameterTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:moes")
                         .to("http://localhost:" + localServer.getLocalPort()
                             + "/moes?drink=beer");
@@ -72,7 +72,7 @@ public class HttpQueryParameterTest extends BaseHttpTest {
     }
 
     @Test
-    public void testQueryParameter() throws Exception {
+    public void testQueryParameter() {
         String out = fluentTemplate.to("direct:moes").request(String.class);
         assertEquals("Drinking /moes?drink=beer", out);
 

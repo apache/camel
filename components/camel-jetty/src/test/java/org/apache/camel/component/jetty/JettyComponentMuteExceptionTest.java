@@ -49,7 +49,7 @@ public class JettyComponentMuteExceptionTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JettyHttpComponent11 jc = context.getComponent("jetty", JettyHttpComponent11.class);
                 jc.setMuteException(true);
 

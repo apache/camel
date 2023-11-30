@@ -54,7 +54,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
 
     @Override
     @Test
-    public void httpsGet() throws Exception {
+    public void httpsGet() {
 
         Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters",
