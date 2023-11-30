@@ -16,6 +16,8 @@
  */
 package org.apache.camel.openapi;
 
+import java.text.SimpleDateFormat;
+
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -63,6 +65,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
                         .dataType("array")
                         .arrayType("date-time")
                         .endParam()
+
                         .to("log:hi")
 
                         .get("/bye/{name}")
@@ -82,6 +85,82 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
                         .example("error", "-1")
                         .endResponseMessage()
                         .to("log:bye")
+
+                        .get("/array/params")
+                        .description("Array params")
+                        .param()
+                        .name("string_array")
+                        .dataType("array")
+                        .arrayType("string")
+                        .allowableValues("A", "B", "C")
+                        .endParam()
+                        .param()
+                        .name("int_array")
+                        .dataType("array")
+                        .arrayType("int")
+                        .allowableValues("1", "2", "3")
+                        .endParam()
+                        .param()
+                        .name("integer_array")
+                        .dataType("array")
+                        .arrayType("integer")
+                        .allowableValues("1", "2", "3")
+                        .endParam()
+                        .param()
+                        .name("long_array")
+                        .dataType("array")
+                        .arrayType("long")
+                        .allowableValues("1", "2", "3")
+                        .endParam()
+                        .param()
+                        .name("float_array")
+                        .dataType("array")
+                        .arrayType("float")
+                        .allowableValues("1.0", "2.0", "3.0")
+                        .endParam()
+                        .param()
+                        .name("double_array")
+                        .dataType("array")
+                        .arrayType("double")
+                        .allowableValues("1.0", "2.0", "3.0")
+                        .endParam()
+                        .param()
+                        .name("boolean_array")
+                        .dataType("array")
+                        .arrayType("boolean")
+                        .allowableValues("true", "false")
+                        .endParam()
+                        .param()
+                        .name("byte_array")
+                        .dataType("array")
+                        .arrayType("byte")
+                        .allowableValues("1", "2", "3")
+                        .endParam()
+                        .param()
+                        .name("binary_array")
+                        .dataType("array")
+                        .arrayType("binary")
+                        .allowableValues("1", "2", "3")
+                        .endParam()
+                        .param()
+                        .name("date_array")
+                        .dataType("array")
+                        .arrayType("date")
+                        .allowableValues("2023-01-01", "2023-02-02", "2023-03-03")
+                        .endParam()
+                        .param()
+                        .name("datetime_array")
+                        .dataType("array")
+                        .arrayType("date-time")
+                        .allowableValues("2011-12-03T10:15:30+01:00")
+                        .endParam()
+                        .param()
+                        .name("password_array")
+                        .dataType("array")
+                        .arrayType("password")
+                        .allowableValues("foo", "bar", "cheese")
+                        .endParam()
+                        .to("log:array")
 
                         .post("/bye")
                         .description("To update the greeting message")
@@ -146,6 +225,8 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         config.setBasePath("/api");
         config.setInfo(new Info());
         config.setVersion("2.0");
+
+        Json.mapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
         RestOpenApiReader reader = new RestOpenApiReader();
 
         OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
@@ -170,6 +251,14 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"success\" : \"123\""));
         assertTrue(json.contains("\"error\" : \"-1\""));
         assertTrue(json.contains("\"type\" : \"array\""));
+        assertTrue(json.contains("\"enum\" : [ \"A\", \"B\", \"C\" ]"));
+        assertTrue(json.contains("\"enum\" : [ 1, 2, 3 ]"));
+        assertTrue(json.contains("\"enum\" : [ 1.0, 2.0, 3.0 ]"));
+        assertTrue(json.contains("\"enum\" : [ \"true\", \"false\" ]"));
+        assertTrue(json.contains("\"enum\" : [ \"MQ==\", \"Mg==\", \"Mw==\" ]"));
+        assertTrue(json.contains("\"enum\" : [ \"2023-01-01\", \"2023-02-02\", \"2023-03-03\" ]"));
+        assertTrue(json.contains("\"enum\" : [ \"2011-12-03T10:15:30+01:00\" ]"));
+        assertTrue(json.contains("\"enum\" : [ \"foo\", \"bar\", \"cheese\" ]"));
 
         flatJson = flatJson.replaceAll("\"operationId\" : \"[^\\\"]*\", ", "").replaceAll("\"summary\" : \"[^\\\"]*\", ", "");
         log.info(flatJson);
@@ -195,6 +284,8 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         config.setBasePath("/api");
         Info info = new Info();
         config.setInfo(info);
+
+        Json.mapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
         RestOpenApiReader reader = new RestOpenApiReader();
 
         OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
@@ -218,6 +309,14 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"error\" : { \"value\" : \"-1\" }"));
         assertTrue(json.contains("\"type\" : \"array\""));
         assertTrue(json.contains("\"format\" : \"date-time\""));
+        assertTrue(json.contains("\"enum\" : [ \"A\", \"B\", \"C\" ]"));
+        assertTrue(json.contains("\"enum\" : [ 1, 2, 3 ]"));
+        assertTrue(json.contains("\"enum\" : [ 1.0, 2.0, 3.0 ]"));
+        assertTrue(json.contains("\"enum\" : [ true, false ]"));
+        assertTrue(json.contains("\"enum\" : [ \"MQ==\", \"Mg==\", \"Mw==\" ]"));
+        assertTrue(json.contains("\"enum\" : [ \"2023-01-01\", \"2023-02-02\", \"2023-03-03\" ]"));
+        assertTrue(json.contains("\"enum\" : [ \"2011-12-03T10:15:30+01:00\" ]"));
+        assertTrue(json.contains("\"enum\" : [ \"foo\", \"bar\", \"cheese\" ]"));
 
         assertTrue(json.contains("\"/hello/bye/{name}\" : { \"get\" : { \"tags\" : [ \"/hello\" ],"));
         assertTrue(json.matches(".*\"/tag/single\" : \\{ \"get\" : .* \"tags\" : \\[ \"Organisation\" ],.*"));

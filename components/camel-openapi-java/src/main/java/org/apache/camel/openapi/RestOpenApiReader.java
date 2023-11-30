@@ -18,6 +18,7 @@ package org.apache.camel.openapi;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BinarySchema;
+import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ByteArraySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.DateSchema;
@@ -79,6 +81,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -668,7 +671,8 @@ public class RestOpenApiReader {
             } else {
                 convertAndSetItemsEnum(parameterSchema, allowableValues, type);
             }
-        } else if (Objects.equals(parameterSchema.getType(), "array")) {
+        }
+        if (Objects.equals(parameterSchema.getType(), "array")) {
 
             Schema<?> itemsSchema;
 
@@ -680,11 +684,13 @@ public class RestOpenApiReader {
                 itemsSchema = new NumberSchema().format("float");
             } else if (Double.class.equals(type)) {
                 itemsSchema = new NumberSchema().format("double");
+            } else if (Boolean.class.equals(type)) {
+                itemsSchema = new BooleanSchema();
             } else if (ByteArraySchema.class.equals(type)) {
                 itemsSchema = new ByteArraySchema();
             } else if (BinarySchema.class.equals(type)) {
                 itemsSchema = new BinarySchema();
-            } else if (Date.class.equals(type)) {
+            } else if (DateSchema.class.equals(type)) {
                 itemsSchema = new DateSchema();
             } else if (DateTimeSchema.class.equals(type)) {
                 itemsSchema = new DateTimeSchema();
@@ -702,13 +708,26 @@ public class RestOpenApiReader {
             final Schema items, final List<String> allowableValues,
             final Class<?> type) {
         try {
-            final MethodHandle valueOf = publicLookup().findStatic(type, "valueOf",
-                    MethodType.methodType(type, String.class));
+            final MethodHandle valueOf = ClassUtils.isPrimitiveWrapper(type)
+                    ? publicLookup().findStatic(type, "valueOf", MethodType.methodType(type, String.class)) : null;
             final MethodHandle setEnum = publicLookup().bind(items, "setEnum",
                     MethodType.methodType(void.class, List.class));
+            final Method castSchema
+                    = type.getSuperclass().equals(Schema.class) ? type.getDeclaredMethod("cast", Object.class) : null;
+            if (castSchema != null) {
+                castSchema.setAccessible(true);
+            }
+            final Object schema = castSchema != null ? type.getDeclaredConstructor().newInstance() : null;
+
             final List<?> values = allowableValues.stream().map(v -> {
                 try {
-                    return valueOf.invoke(v);
+                    if (valueOf != null) {
+                        return valueOf.invoke(v);
+                    } else if (castSchema != null) {
+                        return castSchema.invoke(schema, v);
+                    } else {
+                        throw new RuntimeException("Can not convert allowable value " + v);
+                    }
                 } catch (RuntimeException e) {
                     throw e;
                 } catch (Throwable e) {
@@ -734,7 +753,7 @@ public class RestOpenApiReader {
 
         // must include an empty noop response if none exists
         if (op.getResponses().isEmpty()) {
-            op.getResponses().setDefault(new ApiResponse());
+            op.getResponses().addApiResponse(ApiResponses.DEFAULT, new ApiResponse());
         }
     }
 
