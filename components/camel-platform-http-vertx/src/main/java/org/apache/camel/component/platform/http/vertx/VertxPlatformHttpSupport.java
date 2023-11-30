@@ -46,6 +46,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,24 +147,12 @@ public final class VertxPlatformHttpSupport {
     private static void putHeader(
             HttpServerResponse response, HeaderFilterStrategy headerFilterStrategy, Exchange exchange, Iterator<?> it,
             TypeConverter tc, String key) {
-        String firstValue = null;
-        List<String> values = null;
 
-        while (it.hasNext()) {
-            final String headerValue = tc.convertTo(String.class, it.next());
-            if (headerValue != null && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
-                if (firstValue == null) {
-                    firstValue = headerValue;
-                } else {
-                    if (values == null) {
-                        values = new ArrayList<>();
-                        values.add(firstValue);
-                    }
-                    values.add(headerValue);
-                }
-            }
-        }
+        HttpUtil.applyHeader(headerFilterStrategy, exchange, it, tc, key,
+                (values, firstValue) -> applyHeader(response, key, values, firstValue));
+    }
 
+    private static void applyHeader(HttpServerResponse response, String key, List<String> values, String firstValue) {
         if (values != null) {
             response.putHeader(key, values);
         } else if (firstValue != null) {

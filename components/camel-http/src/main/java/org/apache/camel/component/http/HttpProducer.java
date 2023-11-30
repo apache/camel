@@ -205,37 +205,8 @@ public class HttpProducer extends DefaultProducer {
                         // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
                         final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
-                        // the value to add as request header
-                        List<String> multiValues = null;
-                        String prev = null;
-
-                        // if its a multi value then check each value if we can add it and for multi values they
-                        // should be combined into a single value
-                        while (it.hasNext()) {
-                            String value = tc.convertTo(String.class, it.next());
-                            if (value != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                                if (prev == null) {
-                                    prev = value;
-                                } else {
-                                    // only create array for multi values when really needed
-                                    if (multiValues == null) {
-                                        multiValues = new ArrayList<>();
-                                        multiValues.add(prev);
-                                    }
-                                    multiValues.add(value);
-                                }
-                            }
-                        }
-
-                        // add the value(s) as a http request header
-                        if (multiValues != null) {
-                            // use the default toString of a ArrayList to create in the form [xxx, yyy]
-                            // if multi valued, for a single value, then just output the value as is
-                            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
-                            httpRequest.addHeader(key, s);
-                        } else if (prev != null) {
-                            httpRequest.addHeader(key, prev);
-                        }
+                        HttpUtil.applyHeader(strategy, exchange, it, tc, key,
+                                (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
                     }
                 }
             }
@@ -351,6 +322,18 @@ public class HttpProducer extends DefaultProducer {
                 throw ex;
             }
             throw e;
+        }
+    }
+
+    private static void applyHeader(HttpUriRequest httpRequest, String key, List<String> multiValues, String prev) {
+        // add the value(s) as a http request header
+        if (multiValues != null) {
+            // use the default toString of a ArrayList to create in the form [xxx, yyy]
+            // if multi valued, for a single value, then just output the value as is
+            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
+            httpRequest.addHeader(key, s);
+        } else if (prev != null) {
+            httpRequest.addHeader(key, prev);
         }
     }
 
