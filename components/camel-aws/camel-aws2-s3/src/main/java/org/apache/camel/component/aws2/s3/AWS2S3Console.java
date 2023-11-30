@@ -43,8 +43,8 @@ public class AWS2S3Console extends AbstractDevConsole {
                 .filter(c -> AWS2S3Consumer.class.getName().equals(c.getClass().getName()))
                 .collect(Collectors.toList());
 
-        sb.append(String.format("    %s:%s:%s:%s\n", "bucket", "access keys", "default credentials provider",
-                "profile credentials provider"));
+        sb.append(String.format("    %s:%s:%s:%s\n", "bucket", "accessKeys", "defaultCredentialsProvider",
+                "profileCredentialsProvider"));
         for (Consumer c : list) {
             AWS2S3Consumer nc = (AWS2S3Consumer) c;
             AWS2S3Configuration conf = nc.getEndpoint().getConfiguration();
@@ -72,13 +72,13 @@ public class AWS2S3Console extends AbstractDevConsole {
 
             JsonObject jo = new JsonObject();
             jo.put("bucket", conf.getBucketName());
-            jo.put("access keys", !conf.isUseDefaultCredentialsProvider() && !conf.isUseProfileCredentialsProvider());
-            jo.put("default credentials provider", conf.isUseDefaultCredentialsProvider());
-            jo.put("profile credentials provider", conf.isUseProfileCredentialsProvider());
+            jo.put("accessKeys", !conf.isUseDefaultCredentialsProvider() && !conf.isUseProfileCredentialsProvider());
+            jo.put("defaultCredentialsProvider", conf.isUseDefaultCredentialsProvider());
+            jo.put("profileCredentialsProvider", conf.isUseProfileCredentialsProvider());
             arr.add(jo);
         }
         if (!arr.isEmpty()) {
-            root.put("endpoints", arr);
+            root.put("consumers", arr);
         }
 
         return root;
