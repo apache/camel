@@ -192,8 +192,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         assertTrue(wsclient1.await(10));
         assertTrue(wsclient2.await(10));
 
-        assertEquals(Arrays.asList("Gambas"), wsclient1.getReceived(String.class));
-        assertEquals(Arrays.asList("Calamares"), wsclient2.getReceived(String.class));
+        assertEquals(List.of("Gambas"), wsclient1.getReceived(String.class));
+        assertEquals(List.of("Calamares"), wsclient2.getReceived(String.class));
 
         wsclient1.close();
         wsclient2.close();
