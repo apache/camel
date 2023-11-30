@@ -31,6 +31,7 @@ import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -60,16 +61,21 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
     @Override
     protected void doInit() throws Exception {
         String range = configuration.getOkStatusCodeRange();
+        parseStatusRange(range);
+    }
+
+    private void parseStatusRange(String range) {
         if (!range.contains(",")) {
-            // default is 200-299 so lets optimize for this
-            if (range.contains("-")) {
-                minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
-                maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
-            } else {
+            if (!HttpUtil.parseStatusRange(range, this::setRanges)) {
                 minOkRange = Integer.parseInt(range);
                 maxOkRange = minOkRange;
             }
         }
+    }
+
+    private void setRanges(int minOkRange, int maxOkRange) {
+        this.minOkRange = minOkRange;
+        this.maxOkRange = maxOkRange;
     }
 
     @Override
