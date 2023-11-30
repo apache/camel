@@ -61,7 +61,7 @@ public class ExcludeCipherSuitesTest extends BaseJettyTest {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 jetty.setSslContextParameters(createSslContextParameters());
 

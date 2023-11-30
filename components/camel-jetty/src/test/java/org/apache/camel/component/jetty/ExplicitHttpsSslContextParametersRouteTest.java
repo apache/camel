@@ -52,7 +52,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
                 Map<Integer, Connector> connectors = new HashMap<>();

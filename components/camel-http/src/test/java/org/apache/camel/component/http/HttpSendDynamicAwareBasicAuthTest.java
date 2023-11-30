@@ -71,10 +71,10 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Providing the username and password as user info is considered as an HTTP protocol violation
                 // according to the RFC 7230, so its support has been removed
 
@@ -86,7 +86,7 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAware() throws Exception {
+    public void testDynamicAware() {
         String out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 

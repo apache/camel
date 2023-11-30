@@ -71,7 +71,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpHeadersShouldPresent() throws Exception {
+    public void httpHeadersShouldPresent() {
         assertExchange(doExchange());
     }
 

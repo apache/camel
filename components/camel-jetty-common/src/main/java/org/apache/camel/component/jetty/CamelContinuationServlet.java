@@ -304,11 +304,11 @@ public class CamelContinuationServlet extends CamelServlet {
 
     private class ExpiredListener implements AsyncListener {
         @Override
-        public void onComplete(AsyncEvent event) throws IOException {
+        public void onComplete(AsyncEvent event) {
         }
 
         @Override
-        public void onTimeout(AsyncEvent event) throws IOException {
+        public void onTimeout(AsyncEvent event) {
             HttpServletRequest request = (HttpServletRequest) event.getSuppliedRequest();
             String id = (String) request.getAttribute(EXCHANGE_ATTRIBUTE_ID);
             // remember this id as expired
@@ -318,11 +318,11 @@ public class CamelContinuationServlet extends CamelServlet {
         }
 
         @Override
-        public void onError(AsyncEvent event) throws IOException {
+        public void onError(AsyncEvent event) {
         }
 
         @Override
-        public void onStartAsync(AsyncEvent event) throws IOException {
+        public void onStartAsync(AsyncEvent event) {
         }
     }
 

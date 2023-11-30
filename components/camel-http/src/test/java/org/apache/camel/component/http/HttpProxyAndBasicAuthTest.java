@@ -86,7 +86,7 @@ public class HttpProxyAndBasicAuthTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWithProxyAndUser() throws Exception {
+    public void httpGetWithProxyAndUser() {
         Exchange exchange = template.request("http://authtest.org" + "?proxyAuthHost=localhost"
                                              + "&proxyAuthPort=" + proxy.getLocalPort()
                                              + "&proxyAuthUsername=" + proxyUser + "&proxyAuthPassword=" + proxyPassword

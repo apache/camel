@@ -75,7 +75,7 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     }
 
     @Test
-    public void basicAuthenticationShouldSuccess() throws Exception {
+    public void basicAuthenticationShouldSuccess() {
         Exchange exchange = template.request("http://localhost:"
                                              + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
                                              + password,
@@ -86,7 +86,7 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     }
 
     @Test
-    public void basicAuthenticationPreemptiveShouldSuccess() throws Exception {
+    public void basicAuthenticationPreemptiveShouldSuccess() {
         Exchange exchange = template.request("http://localhost:"
                                              + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
                                              + password + "&authenticationPreemptive=true",
@@ -97,7 +97,7 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     }
 
     @Test
-    public void basicAuthenticationShouldFailWithoutCreds() throws Exception {
+    public void basicAuthenticationShouldFailWithoutCreds() {
         Exchange exchange
                 = template.request("http://localhost:" + localServer.getLocalPort()
                                    + "/search?throwExceptionOnFailure=false",
@@ -108,7 +108,7 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     }
 
     @Test
-    public void basicAuthenticationShouldFailWithWrongCreds() throws Exception {
+    public void basicAuthenticationShouldFailWithWrongCreds() {
         Exchange exchange = template
                 .request("http://localhost:" + localServer.getLocalPort()
                          + "/search?throwExceptionOnFailure=false&authUsername=camel&authPassword=wrong",

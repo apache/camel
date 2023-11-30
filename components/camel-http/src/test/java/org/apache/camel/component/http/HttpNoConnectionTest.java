@@ -63,7 +63,7 @@ public class HttpNoConnectionTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpConnectionOk() throws Exception {
+    public void httpConnectionOk() {
         Exchange exchange = template.request(endpointUrl + "/search", exchange1 -> {
         });
 

@@ -71,7 +71,7 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpTo() throws Exception {
+    public void httpTo() {
         Exchange exchange = template.request("direct:to",
                 exchange1 -> {
                 });
@@ -79,7 +79,7 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpToD() throws Exception {
+    public void httpToD() {
         Exchange exchange = template.request("direct:toD",
                 exchange1 -> {
                 });
@@ -87,7 +87,7 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpToDoff() throws Exception {
+    public void httpToDoff() {
         Exchange exchange = template.request("direct:toDoff",
                 exchange1 -> {
                 });
@@ -95,10 +95,10 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:to")
                         .to(baseUrl + "/foo?httpClient.responseTimeout=5000");
 

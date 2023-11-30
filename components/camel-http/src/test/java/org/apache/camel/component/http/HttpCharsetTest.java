@@ -58,7 +58,7 @@ public class HttpCharsetTest extends BaseHttpTest {
     }
 
     @Test
-    public void sendCharsetInExchangeProperty() throws Exception {
+    public void sendCharsetInExchangeProperty() {
         Exchange exchange = template.request(
                 "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
                     exchange1.setProperty(Exchange.CHARSET_NAME, charset);
@@ -69,7 +69,7 @@ public class HttpCharsetTest extends BaseHttpTest {
     }
 
     @Test
-    public void sendByteArrayCharsetInExchangeProperty() throws Exception {
+    public void sendByteArrayCharsetInExchangeProperty() {
         Exchange exchange = template.request(
                 "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
                     exchange1.setProperty(Exchange.CHARSET_NAME, charset);
@@ -80,7 +80,7 @@ public class HttpCharsetTest extends BaseHttpTest {
     }
 
     @Test
-    public void sendInputStreamCharsetInExchangeProperty() throws Exception {
+    public void sendInputStreamCharsetInExchangeProperty() {
         Exchange exchange = template.request(
                 "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
                     exchange1.setProperty(Exchange.CHARSET_NAME, charset);

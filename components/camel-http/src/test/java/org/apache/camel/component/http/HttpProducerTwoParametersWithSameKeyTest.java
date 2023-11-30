@@ -71,7 +71,7 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseHttpTest {
     }
 
     @Test
-    public void testTwoParametersWithSameKey() throws Exception {
+    public void testTwoParametersWithSameKey() {
         String endpointUri = "http://localhost:" + localServer.getLocalPort()
                              + "/myapp?from=me&to=foo&to=bar";
 

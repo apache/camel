@@ -75,7 +75,7 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
     public void httpsTwoDifferentSSLContextNotSupported() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo")
                         .to("https://localhost:" + localServer.getLocalPort()
                             + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters");

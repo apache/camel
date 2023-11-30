@@ -77,7 +77,7 @@ public class MainHttpsRouteTest extends BaseJettyTest {
 
         main.configure().addRoutesBuilder(new RouteBuilder() {
 
-            public void configure() throws URISyntaxException {
+            public void configure() {
                 Processor proc = exchange -> exchange.getMessage().setBody("<b>Hello World</b>");
                 from("jetty:https://localhost:" + port1 + "/hello").process(proc);
             }

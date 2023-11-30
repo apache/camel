@@ -72,7 +72,7 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
     }
 
     @Test
-    public void testNoCamelHeader() throws Exception {
+    public void testNoCamelHeader() {
         Exchange out = template.request(
                 "http://localhost:" + localServer.getLocalPort() + "/hello",
                 exchange -> {

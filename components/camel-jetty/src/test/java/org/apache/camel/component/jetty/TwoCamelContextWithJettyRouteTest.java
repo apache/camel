@@ -37,9 +37,9 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
         CamelContext contextB = new DefaultCamelContext();
         contextB.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:" + port2 + "/myotherapp").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String in = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody("Hi " + in);
                     }
@@ -65,16 +65,16 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("http://localhost:" + port1 + "/myapp");
 
                 from("direct:b").to("http://localhost:" + port2 + "/myotherapp");
 
                 from("jetty://http://localhost:" + port1 + "/myapp").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String in = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody("Bye " + in);
                     }

@@ -167,7 +167,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public HttpEndpoint() {
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) throws URISyntaxException {
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) {
         this(endPointURI, component, httpURI, null);
     }
 

@@ -72,7 +72,7 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
     }
 
     @Test
-    public void testContentTypeWithBoundary() throws Exception {
+    public void testContentTypeWithBoundary() {
         Exchange out = template.request(endpointUrl + "/content", exchange -> {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
             exchange.getIn().setBody("This is content");
@@ -85,7 +85,7 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
     }
 
     @Test
-    public void testContentTypeWithBoundaryWithIgnoreResponseBody() throws Exception {
+    public void testContentTypeWithBoundaryWithIgnoreResponseBody() {
         Exchange out = template.request(endpointUrl + "/content?ignoreResponseBody=true", exchange -> {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
             exchange.getIn().setBody("This is content");

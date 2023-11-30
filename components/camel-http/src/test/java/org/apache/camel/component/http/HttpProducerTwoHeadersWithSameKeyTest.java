@@ -87,7 +87,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
     }
 
     @Test
-    public void testTwoHeadersWithSameKeyHeader() throws Exception {
+    public void testTwoHeadersWithSameKeyHeader() {
         String endpointUri
                 = "http://localhost:" + localServer.getLocalPort() + "/myapp";
 

@@ -74,7 +74,7 @@ public class HttpProducerRestartTest extends BaseHttpTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo")
                         .to(endpointUrl + "/hello?clientBuilder=#myClientBuilder");
             }

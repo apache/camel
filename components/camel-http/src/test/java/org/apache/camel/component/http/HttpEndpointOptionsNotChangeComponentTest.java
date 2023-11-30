@@ -54,7 +54,7 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
     }
 
     @Test
-    public void testDoNotMessWithComponent() throws Exception {
+    public void testDoNotMessWithComponent() {
         // get default
         HttpEndpoint end = context.getEndpoint("http://www.google.com", HttpEndpoint.class);
         assertIsInstanceOf(MyBinding.class, end.getHttpBinding());

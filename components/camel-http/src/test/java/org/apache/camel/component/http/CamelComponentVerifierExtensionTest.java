@@ -118,7 +118,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     // *************************************************
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/basic"));
 
@@ -128,7 +128,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     }
 
     @Test
-    public void testMissingMandatoryParameters() throws Exception {
+    public void testMissingMandatoryParameters() {
         Map<String, Object> parameters = new HashMap<>();
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
@@ -147,7 +147,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     // *************************************************
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/basic"));
 
@@ -157,7 +157,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     }
 
     @Test
-    public void testConnectivityWithWrongUri() throws Exception {
+    public void testConnectivityWithWrongUri() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", "http://www.not-existing-uri.unknown");
 
@@ -173,7 +173,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     }
 
     @Test
-    public void testConnectivityWithAuthentication() throws Exception {
+    public void testConnectivityWithAuthentication() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/auth"));
         parameters.put("authUsername", AUTH_USERNAME);
@@ -185,7 +185,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     }
 
     @Test
-    public void testConnectivityWithWrongAuthenticationData() throws Exception {
+    public void testConnectivityWithWrongAuthenticationData() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/auth"));
         parameters.put("authUsername", "unknown");
@@ -205,7 +205,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     }
 
     @Test
-    public void testConnectivityWithRedirect() throws Exception {
+    public void testConnectivityWithRedirect() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/redirect"));
 
@@ -215,7 +215,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     }
 
     @Test
-    public void testConnectivityWithRedirectDisabled() throws Exception {
+    public void testConnectivityWithRedirectDisabled() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/redirect"));
         parameters.put("httpClient.redirectsEnabled", "false");

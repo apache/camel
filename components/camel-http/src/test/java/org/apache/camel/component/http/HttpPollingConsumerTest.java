@@ -63,7 +63,7 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     }
 
     @Test
-    public void basicAuthenticationShouldSuccess() throws Exception {
+    public void basicAuthenticationShouldSuccess() {
         String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
                                            + password,
                 String.class);
@@ -72,7 +72,7 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     }
 
     @Test
-    public void basicAuthenticationPreemptiveShouldSuccess() throws Exception {
+    public void basicAuthenticationPreemptiveShouldSuccess() {
 
         String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
                                            + password + "&authenticationPreemptive=true",
@@ -81,19 +81,19 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     }
 
     @Test
-    public void testReceive() throws Exception {
+    public void testReceive() {
         String body = consumer.receiveBody(endpointUrl + "/", String.class);
         assertEquals(getExpectedContent(), body);
     }
 
     @Test
-    public void testReceiveTimeout() throws Exception {
+    public void testReceiveTimeout() {
         String body = consumer.receiveBody(endpointUrl + "/", 5000, String.class);
         assertEquals(getExpectedContent(), body);
     }
 
     @Test
-    public void testReceiveTimeoutTriggered() throws Exception {
+    public void testReceiveTimeoutTriggered() {
         try {
             consumer.receiveBody(endpointUrl + "/", 250, String.class);
             fail("Should have thrown an exception");
