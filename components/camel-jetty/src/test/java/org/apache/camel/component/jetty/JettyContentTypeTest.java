@@ -86,7 +86,7 @@ public class JettyContentTypeTest extends BaseJettyTest {
         };
     }
 
-    public class MyBookService implements Processor {
+    public static class MyBookService implements Processor {
         @Override
         public void process(Exchange exchange) {
             String user = exchange.getIn().getHeader("User", String.class);

@@ -116,7 +116,7 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
         };
     }
 
-    abstract class MockTypeConverter implements TypeConverter {
+    abstract static class MockTypeConverter implements TypeConverter {
         @Override
         public boolean allowNull() {
             return false;

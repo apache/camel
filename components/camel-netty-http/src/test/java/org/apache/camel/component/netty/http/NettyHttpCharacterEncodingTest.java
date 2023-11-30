@@ -45,7 +45,7 @@ public class NettyHttpCharacterEncodingTest extends BaseNettyTest {
         };
     }
 
-    public class MyBookService implements Processor {
+    public static class MyBookService implements Processor {
         @Override
         public void process(Exchange exchange) {
             // just get the body as a string

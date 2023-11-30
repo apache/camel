@@ -73,7 +73,7 @@ public class HttpBindingRefTest extends BaseJettyTest {
     }
 
     // START SNIPPET: e1
-    public class MyHttpBinding extends DefaultHttpBinding {
+    public static class MyHttpBinding extends DefaultHttpBinding {
 
         @Override
         public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
