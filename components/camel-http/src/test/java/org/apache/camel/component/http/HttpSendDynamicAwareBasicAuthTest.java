@@ -77,9 +77,6 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
             public void configure() throws Exception {
                 // Providing the username and password as user info is considered as an HTTP protocol violation
                 // according to the RFC 7230, so its support has been removed
-                //                from("direct:moes")
-                //                        .toD("http://{{myUsername}}:{{myPassword}}@localhost:" + localServer.getLocalPort()
-                //                             + "/moes?authMethod=Basic&authenticationPreemptive=true&throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
                         .toD("http://localhost:" + localServer.getLocalPort()
