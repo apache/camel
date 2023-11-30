@@ -1889,8 +1889,8 @@ public final class PropertyBindingSupport {
          * Binds the properties to the target object, and builds the output as the given type, by invoking the build
          * method (via reflection).
          *
-         * @param type         the type of the output class
-         * @param buildMethod  the name of the builder method to invoke
+         * @param type        the type of the output class
+         * @param buildMethod the name of the builder method to invoke
          */
         public <T> T build(Class<T> type, String buildMethod) {
             // first bind

@@ -144,8 +144,8 @@ public class RegistryBeanDefinition implements ResourceAware {
     }
 
     /**
-     * Fully qualified class name of builder class to use for creating and configuring the bean.
-     * The builder will use the properties values to configure the bean.
+     * Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use
+     * the properties values to configure the bean.
      */
     public void setBuilderClass(String builderClass) {
         this.builderClass = builderClass;
@@ -156,8 +156,8 @@ public class RegistryBeanDefinition implements ResourceAware {
     }
 
     /**
-     * Name of method when using builder class. This method is invoked after configuring to create
-     * the actual bean. This method is often named build (used by default).
+     * Name of method when using builder class. This method is invoked after configuring to create the actual bean. This
+     * method is often named build (used by default).
      */
     public void setBuilderMethod(String builderMethod) {
         this.builderMethod = builderMethod;
