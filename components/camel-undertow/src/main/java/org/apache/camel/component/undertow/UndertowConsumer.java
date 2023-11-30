@@ -165,30 +165,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     public void handleRequest(HttpServerExchange httpExchange) throws Exception {
         HttpString requestMethod = httpExchange.getRequestMethod();
         if (Methods.OPTIONS.equals(requestMethod) && !getEndpoint().isOptionsEnabled()) {
-            StringJoiner methodsBuilder = new StringJoiner(",");
-
-            Collection<HttpHandlerRegistrationInfo> handlers = getEndpoint().getComponent().getHandlers();
-            for (HttpHandlerRegistrationInfo reg : handlers) {
-                URI uri = reg.getUri();
-                // what other HTTP methods may exists for the same path
-                if (reg.getMethodRestrict() != null && getEndpoint().getHttpURI().equals(uri)) {
-                    String restrict = reg.getMethodRestrict();
-                    if (restrict.endsWith(",OPTIONS")) {
-                        restrict = restrict.substring(0, restrict.length() - 8);
-                    }
-                    methodsBuilder.add(restrict);
-                }
-            }
-            String allowedMethods = methodsBuilder.toString();
-            if (ObjectHelper.isEmpty(allowedMethods)) {
-                allowedMethods = getEndpoint().getHttpMethodRestrict();
-            }
-            if (ObjectHelper.isEmpty(allowedMethods)) {
-                allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
-            }
-            if (!allowedMethods.contains("OPTIONS")) {
-                allowedMethods = allowedMethods + ",OPTIONS";
-            }
+            final String allowedMethods = evalAllowedMethods();
             //return list of allowed methods in response headers
             httpExchange.setStatusCode(StatusCodes.OK);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
@@ -242,6 +219,34 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             doneUoW(camelExchange);
             releaseExchange(camelExchange, false);
         }
+    }
+
+    private String evalAllowedMethods() {
+        StringJoiner methodsBuilder = new StringJoiner(",");
+
+        Collection<HttpHandlerRegistrationInfo> handlers = getEndpoint().getComponent().getHandlers();
+        for (HttpHandlerRegistrationInfo reg : handlers) {
+            URI uri = reg.getUri();
+            // what other HTTP methods may exists for the same path
+            if (reg.getMethodRestrict() != null && getEndpoint().getHttpURI().equals(uri)) {
+                String restrict = reg.getMethodRestrict();
+                if (restrict.endsWith(",OPTIONS")) {
+                    restrict = restrict.substring(0, restrict.length() - 8);
+                }
+                methodsBuilder.add(restrict);
+            }
+        }
+        String allowedMethods = methodsBuilder.toString();
+        if (ObjectHelper.isEmpty(allowedMethods)) {
+            allowedMethods = getEndpoint().getHttpMethodRestrict();
+        }
+        if (ObjectHelper.isEmpty(allowedMethods)) {
+            allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+        }
+        if (!allowedMethods.contains("OPTIONS")) {
+            allowedMethods = allowedMethods + ",OPTIONS";
+        }
+        return allowedMethods;
     }
 
     private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange)

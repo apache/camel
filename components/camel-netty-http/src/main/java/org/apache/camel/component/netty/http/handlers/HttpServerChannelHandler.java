@@ -47,7 +47,6 @@ import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConstants;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
-import org.apache.camel.component.netty.http.NettyHttpHelper;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
 import org.apache.camel.spi.CamelLogger;
@@ -159,18 +158,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
             // we need the relative path without the hostname and port
             URI uri = new URI(request.uri());
-            String target = uri.getPath();
-
-            // strip the starting endpoint path so the target is relative to the endpoint uri
-            String path = consumer.getConfiguration().getPath();
-            if (path != null && target.startsWith(path)) {
-                // need to match by lower case as we want to ignore case on context-path
-                path = path.toLowerCase(Locale.US);
-                String match = target.toLowerCase(Locale.US);
-                if (match.startsWith(path)) {
-                    target = target.substring(path.length());
-                }
-            }
+            final String target = extractTarget(uri);
 
             // is it a restricted resource?
             String roles;
@@ -222,6 +210,22 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         // let Camel process this message
         super.channelRead0(ctx, msg);
+    }
+
+    private String extractTarget(URI uri) {
+        String target = uri.getPath();
+
+        // strip the starting endpoint path so the target is relative to the endpoint uri
+        String path = consumer.getConfiguration().getPath();
+        if (path != null && target.startsWith(path)) {
+            // need to match by lower case as we want to ignore case on context-path
+            path = path.toLowerCase(Locale.US);
+            String match = target.toLowerCase(Locale.US);
+            if (match.startsWith(path)) {
+                target = target.substring(path.length());
+            }
+        }
+        return target;
     }
 
     protected boolean matchesRoles(String roles, String userRoles) {
