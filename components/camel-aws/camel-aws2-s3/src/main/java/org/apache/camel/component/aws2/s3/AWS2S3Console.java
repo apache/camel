@@ -43,16 +43,16 @@ public class AWS2S3Console extends AbstractDevConsole {
                 .filter(c -> AWS2S3Consumer.class.getName().equals(c.getClass().getName()))
                 .collect(Collectors.toList());
 
-        sb.append(String.format("    %s:%s:%s:%s\n", "bucket", "accessKeys", "defaultCredentialsProvider",
-                "profileCredentialsProvider"));
+        sb.append(String.format("    %s:%s:%s:%s:%s:%s:%s\n", "bucket", "accessKeys", "defaultCredentialsProvider",
+                "profileCredentialsProvider", "maxMessages", "moveAfterRead", "deleteAfterRead"));
         for (Consumer c : list) {
             AWS2S3Consumer nc = (AWS2S3Consumer) c;
             AWS2S3Configuration conf = nc.getEndpoint().getConfiguration();
-            sb.append(String.format("    %s:%s:%s:%s\n", conf.getBucketName(),
+            sb.append(String.format("    %s:%s:%s:%s:%s:%s:%s\n", conf.getBucketName(),
                     (!conf.isUseDefaultCredentialsProvider() && !conf.isUseProfileCredentialsProvider()),
-                    conf.isUseDefaultCredentialsProvider(), conf.isUseProfileCredentialsProvider()));
+                    conf.isUseDefaultCredentialsProvider(), conf.isUseProfileCredentialsProvider(), nc.getMaxMessagesPerPoll(),
+                    conf.isMoveAfterRead(), conf.isDeleteAfterRead()));
         }
-
         return sb.toString();
     }
 
@@ -75,6 +75,9 @@ public class AWS2S3Console extends AbstractDevConsole {
             jo.put("accessKeys", !conf.isUseDefaultCredentialsProvider() && !conf.isUseProfileCredentialsProvider());
             jo.put("defaultCredentialsProvider", conf.isUseDefaultCredentialsProvider());
             jo.put("profileCredentialsProvider", conf.isUseProfileCredentialsProvider());
+            jo.put("maxMessages", nc.getMaxMessagesPerPoll());
+            jo.put("moveAfterRead", conf.isMoveAfterRead());
+            jo.put("deleteAfterRead", conf.isDeleteAfterRead());
             arr.add(jo);
         }
         if (!arr.isEmpty()) {
