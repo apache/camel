@@ -19,6 +19,7 @@ package org.apache.camel.support.http;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -158,6 +159,33 @@ public final class HttpUtil {
                 return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * Parse a HTTP status range and passes the values to the consumer method
+     * @param range the HTTP status range in the format "XXX-YYY" (i.e.: 200-299)
+     * @param consumer a consumer method to receive the parse ranges
+     * @return true if the range was parsed or false otherwise
+     */
+    public static boolean parseStatusRange(String range, BiConsumer<Integer, Integer> consumer) {
+        // default is 200-299 so lets optimize for this
+        if (range.contains("-")) {
+            final String minRangeStr = StringHelper.before(range, "-");
+            final String maxRangeStr = StringHelper.after(range, "-");
+
+            if (minRangeStr == null || maxRangeStr == null) {
+                return false;
+            }
+
+            final int minOkRange = Integer.parseInt(minRangeStr);
+            final int maxOkRange = Integer.parseInt(maxRangeStr);
+
+            consumer.accept(minOkRange, maxOkRange);
+
+            return true;
+        }
+
         return false;
     }
 }

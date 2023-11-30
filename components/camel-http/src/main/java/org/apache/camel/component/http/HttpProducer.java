@@ -54,6 +54,7 @@ import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -111,16 +112,7 @@ public class HttpProducer extends DefaultProducer {
         super.doInit();
 
         String range = getEndpoint().getOkStatusCodeRange();
-        if (!range.contains(",")) {
-            // default is 200-299 so lets optimize for this
-            if (range.contains("-")) {
-                minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
-                maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
-            } else {
-                minOkRange = Integer.parseInt(range);
-                maxOkRange = minOkRange;
-            }
-        }
+        parseStatusRange(range);
 
         // optimize and build default url when there are no override headers
         String url = getEndpoint().getHttpUri().toASCIIString();
@@ -137,6 +129,20 @@ public class HttpProducer extends DefaultProducer {
         defaultUri = uri;
         defaultUrl = uri.toASCIIString();
         defaultHttpHost = URIUtils.extractHost(uri);
+    }
+
+    private void parseStatusRange(String range) {
+        if (!range.contains(",")) {
+            if (!HttpUtil.parseStatusRange(range, this::setRanges)) {
+                minOkRange = Integer.parseInt(range);
+                maxOkRange = minOkRange;
+            }
+        }
+    }
+
+    private void setRanges(int minOkRange, int maxOkRange) {
+        this.minOkRange = minOkRange;
+        this.maxOkRange = maxOkRange;
     }
 
     @Override
