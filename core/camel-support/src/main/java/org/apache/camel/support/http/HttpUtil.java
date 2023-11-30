@@ -99,9 +99,10 @@ public final class HttpUtil {
 
     /**
      * Recreates the URL from a map of options
-     * @param map the map of options
-     * @param url the base URL
-     * @return the recreated URL
+     *
+     * @param  map the map of options
+     * @param  url the base URL
+     * @return     the recreated URL
      */
     public static String recreateUrl(Map<String, Object> map, String url) {
         // get the endpoint
@@ -114,6 +115,7 @@ public final class HttpUtil {
 
     /**
      * Add common in/out filters used in HTTP components
+     *
      * @param filterSet The set instance containing the out filters
      */
     public static void addCommonFilters(Set<String> filterSet) {
