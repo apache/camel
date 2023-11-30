@@ -65,7 +65,7 @@ public final class UndertowHelper {
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }
-            if (path.length() > 0) {
+            if (!path.isEmpty()) {
                 // make sure that there is exactly one "/" between HTTP_URI and
                 // HTTP_PATH
                 if (!uri.endsWith("/")) {

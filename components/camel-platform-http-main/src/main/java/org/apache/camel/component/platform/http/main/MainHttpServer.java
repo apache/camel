@@ -545,7 +545,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                             }
                         }
                     });
-                    if (sb.length() > 0) {
+                    if (!sb.isEmpty()) {
                         String out = sb.toString();
                         if (html) {
                             ctx.response().putHeader("content-type", "text/html");
@@ -584,7 +584,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                             }
                         }
                     });
-                    if (sb.length() > 0) {
+                    if (!sb.isEmpty()) {
                         String out = sb.toString();
                         ctx.end(out);
                     } else if (!root.isEmpty()) {

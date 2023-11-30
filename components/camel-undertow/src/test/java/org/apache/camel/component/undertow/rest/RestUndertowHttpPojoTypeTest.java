@@ -46,7 +46,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         List<RestDefinition> restDefinitions
                 = context().getCamelContextExtension().getContextPlugin(Model.class).getRestDefinitions();
         assertNotNull(restDefinitions);
-        assertTrue(restDefinitions.size() > 0);
+        assertTrue(!restDefinitions.isEmpty());
 
         RestDefinition restDefinition = restDefinitions.get(0);
         List<VerbDefinition> verbs = restDefinition.getVerbs();

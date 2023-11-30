@@ -204,7 +204,7 @@ public final class HttpHelper {
             if (path.length() > 1 && path.startsWith("/")) {
                 path = path.substring(1);
             }
-            if (path.length() > 0) {
+            if (!path.isEmpty()) {
                 // inject the dynamic path before the query params, if there are any
                 int idx = uri.indexOf('?');
 

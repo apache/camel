@@ -123,7 +123,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
             message.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
         }
 
-        message.setBody(body.length() != 0 ? body : null);
+        message.setBody(!body.isEmpty() ? body : null);
         exchange.setMessage(message);
         return exchange;
     }

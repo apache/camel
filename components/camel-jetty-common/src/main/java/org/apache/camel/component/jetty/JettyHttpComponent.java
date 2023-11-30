@@ -1348,7 +1348,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (CONNECTORS.size() > 0) {
+        if (!CONNECTORS.isEmpty()) {
             for (Map.Entry<String, ConnectorRef> connectorEntry : CONNECTORS.entrySet()) {
                 ConnectorRef connectorRef = connectorEntry.getValue();
                 if (connectorRef != null && connectorRef.getRefCount() == 0) {
