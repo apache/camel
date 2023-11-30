@@ -45,14 +45,6 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
 
-        // From Camel 2.5.0 Camel-Jetty is using SslSelectChannelConnector
-        // instead of SslSocketConnector
-        // SslSelectChannelConnector sslSocketConnector = new
-        // SslSelectChannelConnector();
-        // sslSocketConnector.getSslContextFactory().setSslContext(sslContextParameters.createSSLContext());
-        // sslSocketConnector.setPort(port);
-
-        // return sslSocketConnector;
         return null;
     }
     // END SNIPPET: e2
