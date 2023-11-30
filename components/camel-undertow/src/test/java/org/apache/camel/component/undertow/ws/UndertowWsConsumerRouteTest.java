@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow.ws;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,7 +103,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         testClient.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result1");
-        final byte[] testmessage = "Test".getBytes("utf-8");
+        final byte[] testmessage = "Test".getBytes(StandardCharsets.UTF_8);
         result.expectedBodiesReceived(testmessage);
 
         testClient.sendBytesMessage(testmessage);
@@ -120,7 +121,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         MockEndpoint result = getMockEndpoint("mock:result2");
         result.expectedMessageCount(1);
 
-        final byte[] testmessage = "Test".getBytes("utf-8");
+        final byte[] testmessage = "Test".getBytes(StandardCharsets.UTF_8);
         testClient.sendBytesMessage(testmessage);
 
         result.await(60, TimeUnit.SECONDS);
