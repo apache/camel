@@ -385,7 +385,19 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             if (target == null) {
                 throw new NoSuchBeanException(def.getName(), "Creating bean using script returned null");
             }
+        } else if (def.getBuilderClass() != null) {
+            // builder class and method
+            Class<?> clazz = context.getClassResolver().resolveMandatoryClass(def.getBuilderClass());
+            Object builder = context.getInjector().newInstance(clazz);
+            String bm = def.getBuilderMethod() != null ? def.getBuilderMethod() : "build";
 
+            // create bean via builder and assign as target output
+            target = PropertyBindingSupport.build()
+                    .withCamelContext(context)
+                    .withTarget(builder)
+                    .withRemoveParameters(true)
+                    .withProperties(def.getProperties())
+                    .build(Object.class, bm);
         } else {
             // factory bean/method
             if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
