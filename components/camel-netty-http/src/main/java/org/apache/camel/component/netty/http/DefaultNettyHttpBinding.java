@@ -179,15 +179,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         headers.put(Exchange.HTTP_PORT, port > 0 ? port : configuration.isSsl() || "https".equals(uri.getScheme()) ? 443 : 80);
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
-        String path = uri.getRawPath();
-        if (configuration.getPath() != null) {
-            // need to match by lower case as we want to ignore case on context-path
-            String matchPath = path.toLowerCase(Locale.US);
-            String match = configuration.getPath() != null ? configuration.getPath().toLowerCase(Locale.US) : null;
-            if (match != null && matchPath.startsWith(match)) {
-                path = path.substring(configuration.getPath().length());
-            }
-        }
+        final String path = stripPath(configuration, uri);
         // keep the path uri using the case the request provided (do not convert to lower case)
         headers.put(NettyHttpConstants.HTTP_PATH, path);
 
@@ -286,6 +278,19 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
 
+    }
+
+    private static String stripPath(NettyHttpConfiguration configuration, URI uri) {
+        String path = uri.getRawPath();
+        if (configuration.getPath() != null) {
+            // need to match by lower case as we want to ignore case on context-path
+            String matchPath = path.toLowerCase(Locale.US);
+            String match = configuration.getPath() != null ? configuration.getPath().toLowerCase(Locale.US) : null;
+            if (match != null && matchPath.startsWith(match)) {
+                path = path.substring(configuration.getPath().length());
+            }
+        }
+        return path;
     }
 
     /**

@@ -198,17 +198,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             throws Exception {
         LOG.trace("populateCamelHeaders: {}", exchange.getMessage().getHeaders());
 
-        String path = httpExchange.getRequestPath();
-        UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
-        if (endpoint.getHttpURI() != null) {
-            // need to match by lower case as we want to ignore case on context-path
-            String endpointPath = endpoint.getHttpURI().getPath();
-            String matchPath = path.toLowerCase(Locale.US);
-            String match = endpointPath.toLowerCase(Locale.US);
-            if (matchPath.startsWith(match)) {
-                path = path.substring(endpointPath.length());
-            }
-        }
+        final String path = stripPath(httpExchange, exchange);
         headersMap.put(UndertowConstants.HTTP_PATH, path);
 
         if (LOG.isTraceEnabled()) {
@@ -288,6 +278,21 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         headersMap.put(UndertowConstants.HTTP_URI, httpExchange.getRequestURI());
         headersMap.put(UndertowConstants.HTTP_QUERY, httpExchange.getQueryString());
         headersMap.put(Exchange.HTTP_RAW_QUERY, httpExchange.getQueryString());
+    }
+
+    private static String stripPath(HttpServerExchange httpExchange, Exchange exchange) {
+        String path = httpExchange.getRequestPath();
+        UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
+        if (endpoint.getHttpURI() != null) {
+            // need to match by lower case as we want to ignore case on context-path
+            String endpointPath = endpoint.getHttpURI().getPath();
+            String matchPath = path.toLowerCase(Locale.US);
+            String match = endpointPath.toLowerCase(Locale.US);
+            if (matchPath.startsWith(match)) {
+                path = path.substring(endpointPath.length());
+            }
+        }
+        return path;
     }
 
     @Override

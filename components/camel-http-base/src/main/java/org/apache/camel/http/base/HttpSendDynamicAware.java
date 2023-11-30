@@ -61,18 +61,7 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         if (path != null || !entry.getLenientProperties().isEmpty()) {
             // the context path can be dynamic or any lenient properties
             // and therefore build a new static uri without path or lenient options
-            Map<String, Object> params = entry.getProperties();
-            for (String k : entry.getLenientProperties().keySet()) {
-                params.remove(k);
-            }
-            if (path != null) {
-                params.remove("httpUri");
-                params.remove("httpURI");
-                if ("netty-http".equals(getScheme())) {
-                    // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
-                    params.remove("path");
-                }
-            }
+            final Map<String, Object> params = getParams(entry, path);
 
             // build static url with the known parameters
             String url;
@@ -90,6 +79,22 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             // no need for optimisation
             return null;
         }
+    }
+
+    private Map<String, Object> getParams(DynamicAwareEntry entry, String path) {
+        Map<String, Object> params = entry.getProperties();
+        for (String k : entry.getLenientProperties().keySet()) {
+            params.remove(k);
+        }
+        if (path != null) {
+            params.remove("httpUri");
+            params.remove("httpURI");
+            if ("netty-http".equals(getScheme())) {
+                // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
+                params.remove("path");
+            }
+        }
+        return params;
     }
 
     @Override

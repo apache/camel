@@ -243,17 +243,22 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
             // creating the url to use takes 2-steps
             final String url = UndertowHelper.createURL(exchange, endpoint);
             final URI uri = UndertowHelper.createURI(exchange, url, endpoint);
-            final HeaderMap headerMap = clientExchange.getResponse().getResponseHeaders();
-            final Map<String, List<String>> m = new HashMap<>();
-            for (final HttpString headerName : headerMap.getHeaderNames()) {
-                final List<String> headerValue = new LinkedList<>();
-                for (int i = 0; i < headerMap.count(headerName); i++) {
-                    headerValue.add(headerMap.get(headerName, i));
-                }
-                m.put(headerName.toString(), headerValue);
-            }
+            final Map<String, List<String>> m = extractHeaders(clientExchange);
             endpoint.getCookieHandler().storeCookies(exchange, uri, m);
         }
+    }
+
+    private static Map<String, List<String>> extractHeaders(ClientExchange clientExchange) {
+        final HeaderMap headerMap = clientExchange.getResponse().getResponseHeaders();
+        final Map<String, List<String>> m = new HashMap<>();
+        for (final HttpString headerName : headerMap.getHeaderNames()) {
+            final List<String> headerValue = new LinkedList<>();
+            for (int i = 0; i < headerMap.count(headerName); i++) {
+                headerValue.add(headerMap.get(headerName, i));
+            }
+            m.put(headerName.toString(), headerValue);
+        }
+        return m;
     }
 
     protected void writeRequest(final ClientExchange clientExchange) {
