@@ -64,7 +64,7 @@ public class JettyImageFileTest extends BaseJettyTest {
         };
     }
 
-    public class MyImageService implements Processor {
+    public static class MyImageService implements Processor {
         @Override
         public void process(Exchange exchange) {
             exchange.getMessage().setBody(new File("src/test/data/logo.jpeg"));
