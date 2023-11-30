@@ -186,7 +186,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             engine.setUseClientMode(true);
             SSLParameters sslParameters = engine.getSSLParameters();
             sslParameters
-                    .setServerNames(sniServerNames != null ? sniServerNames : Arrays.asList(new SNIHostName(uri.getHost())));
+                    .setServerNames(sniServerNames != null ? sniServerNames : List.of(new SNIHostName(uri.getHost())));
             engine.setSSLParameters(sslParameters);
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
