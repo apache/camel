@@ -79,7 +79,7 @@ public class MinaConsole extends AbstractDevConsole {
             }
         }
         if (!arr.isEmpty()) {
-            root.put("endpoints", arr);
+            root.put("consumers", arr);
         }
 
         return root;
