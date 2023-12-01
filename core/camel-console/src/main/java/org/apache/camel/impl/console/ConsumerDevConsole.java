@@ -18,6 +18,7 @@ package org.apache.camel.impl.console;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +28,11 @@ import javax.management.ObjectName;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedSchedulePollConsumerMBean;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("consumer")
@@ -135,6 +138,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
         if (mcc != null) {
             for (Route route : getCamelContext().getRoutes()) {
                 String id = route.getId();
+                ManagedRouteMBean mr = mcc.getManagedRoute(id);
                 ManagedConsumerMBean mc = mcc.getManagedConsumer(id);
                 if (mc != null) {
                     JsonObject jo = new JsonObject();
@@ -207,6 +211,32 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                             // ignore
                         }
                     }
+
+                    if (mr != null) {
+                        JsonObject stats = new JsonObject();
+                        stats.put("exchangesTotal", mr.getExchangesTotal());
+                        stats.put("exchangesFailed", mr.getExchangesFailed());
+                        stats.put("exchangesInflight", mr.getExchangesInflight());
+                        stats.put("meanProcessingTime", mr.getMeanProcessingTime());
+                        stats.put("maxProcessingTime", mr.getMaxProcessingTime());
+                        stats.put("minProcessingTime", mr.getMinProcessingTime());
+                        if (mr.getExchangesTotal() > 0) {
+                            stats.put("lastProcessingTime", mr.getLastProcessingTime());
+                            stats.put("deltaProcessingTime", mr.getDeltaProcessingTime());
+                        }
+                        Date last = mr.getLastExchangeCompletedTimestamp();
+                        if (last != null) {
+                            String ago = TimeUtils.printSince(last.getTime());
+                            stats.put("sinceLastCompletedExchange", ago);
+                        }
+                        last = mr.getLastExchangeFailureTimestamp();
+                        if (last != null) {
+                            String ago = TimeUtils.printSince(last.getTime());
+                            stats.put("sinceLastFailedExchange", ago);
+                        }
+                        jo.put("statistics", stats);
+                    }
+
                     list.add(jo);
                 }
             }

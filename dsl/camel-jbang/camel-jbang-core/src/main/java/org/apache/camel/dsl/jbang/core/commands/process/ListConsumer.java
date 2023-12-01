@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -103,8 +104,25 @@ public class ListConsumer extends ProcessWatchCommand {
                                 row.inflight = o.getInteger("inflight");
                                 row.polling = o.getBoolean("polling");
                                 row.totalCounter = o.getLong("totalCounter");
+                                row.delay = o.getLong("delay");
+                                row.period = o.getLong("period");
                                 row.uptime = extractSince(ph);
                                 row.age = TimeUtils.printSince(row.uptime);
+                                Map<String, ?> stats = o.getMap("statistics");
+                                if (stats != null) {
+                                    Object last = stats.get("sinceLastCreatedExchange");
+                                    if (last != null) {
+                                        row.sinceLastStarted = last.toString();
+                                    }
+                                    last = stats.get("sinceLastCompletedExchange");
+                                    if (last != null) {
+                                        row.sinceLastCompleted = last.toString();
+                                    }
+                                    last = stats.get("sinceLastFailedExchange");
+                                    if (last != null) {
+                                        row.sinceLastFailed = last.toString();
+                                    }
+                                }
                                 boolean add = true;
                                 if (filter != null) {
                                     String f = filter;
@@ -157,6 +175,8 @@ public class ListConsumer extends ProcessWatchCommand {
                         .with(this::getType),
                 new Column().header("INFLIGHT").with(r -> "" + r.inflight),
                 new Column().header("POLL").with(this::getTotal),
+                new Column().header("PERIOD").visible(scheduled).with(this::getPeriod),
+                new Column().header("SINCE-LAST").with(this::getSinceLast),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),
@@ -198,6 +218,23 @@ public class ListConsumer extends ProcessWatchCommand {
         return "";
     }
 
+    private String getPeriod(Row r) {
+        // favour using period, fallback to delay
+        if (r.period != null) {
+            return String.valueOf(r.period);
+        } else if (r.delay != null) {
+            return String.valueOf(r.delay);
+        }
+        return "";
+    }
+
+    protected String getSinceLast(Row r) {
+        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
+        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
+        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
+        return s1 + "/" + s2 + "/" + s3;
+    }
+
     protected int sortRow(Row o1, Row o2) {
         String s = sort;
         int negate = 1;
@@ -230,6 +267,11 @@ public class ListConsumer extends ProcessWatchCommand {
         int inflight;
         Boolean polling;
         Long totalCounter;
+        Long delay;
+        Long period;
+        String sinceLastStarted;
+        String sinceLastCompleted;
+        String sinceLastFailed;
     }
 
 }
