@@ -31,4 +31,13 @@ public interface AWSConfigConstants {
     String SOURCE = "CamelAwsConfigRuleSource";
     @Metadata(description = "The Managed rule name", javaType = "String")
     String RULE_NAME = "CamelAwsConfigRuleName";
+
+    @Metadata(description = "The Conformance pack name", javaType = "String")
+    String CONFORMACE_PACK_NAME = "CamelAwsConformancePackName";
+
+    @Metadata(description = "The location of the file containing the template body in S3", javaType = "String")
+    String CONFORMACE_PACK_S3_TEMPLATE_URI = "CamelAwsConfigConformacePackS3TemplateURI";
+
+    @Metadata(description = "A string containing the full conformance pack template body", javaType = "String")
+    String CONFORMACE_PACK_TEMPLATE_BODY = "CamelAwsConfigConformacePackTemplateBody";
 }
