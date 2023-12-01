@@ -63,6 +63,9 @@ public class AWSConfigProducer extends DefaultProducer {
             case putConformancePack:
                 putConformancePack(getEndpoint().getConfigClient(), exchange);
                 break;
+            case removeConformancePack:
+                removeConformancePack(getEndpoint().getConfigClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -256,6 +259,42 @@ public class AWSConfigProducer extends DefaultProducer {
                 result = configClient.putConformancePack(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("Put Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+
+    private void removeConformancePack(ConfigClient configClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteConformancePackRequest) {
+                DeleteConformancePackResponse result;
+                try {
+                    DeleteConformancePackRequest request = (DeleteConformancePackRequest) payload;
+                    result = configClient.deleteConformancePack(request);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Remove Conformance Pack rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            DeleteConformancePackRequest.Builder builder = DeleteConformancePackRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME))) {
+                String conformancePackName = exchange.getIn().getHeader(AWSConfigConstants.RULE_NAME, String.class);
+                builder.conformancePackName(conformancePackName);
+            } else {
+                throw new IllegalArgumentException("Conformance Pack Name must be specified");
+            }
+            DeleteConformancePackResponse result;
+            try {
+                DeleteConformancePackRequest request = builder.build();
+                result = configClient.deleteConformancePack(request);
+            } catch (AwsServiceException ase) {
+                LOG.trace("Remove Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
