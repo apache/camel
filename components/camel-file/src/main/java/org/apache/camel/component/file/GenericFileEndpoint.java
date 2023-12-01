@@ -162,6 +162,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                 + "To specify new-line (slash-n or slash-r) or tab (slash-t) characters then escape with an extra slash, "
                                                 + "eg slash-slash-n.")
     protected String appendChars;
+    @UriParam(label = "producer",
+              description = "If provided, then Camel will write a checksum file when the original file has been written. The checksum file "
+                            + "will contain the checksum created with the provided algorithm for the original file. The checksum file will "
+                            + "always be written in the same folder as the original file.")
+    protected String checksumFileAlgorithm;
 
     // consumer options
 
@@ -1516,6 +1521,19 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public String getChecksumFileAlgorithm() {
+        return checksumFileAlgorithm;
+    }
+
+    /**
+     * If provided, then Camel will write a checksum file when the original file has been written. The checksum file
+     * will contain the checksum created with the provided algorithm for the original file. The checksum file will
+     * always be written in the same folder as the original file.
+     */
+    public void setChecksumFileAlgorithm(String checksumFileAlgorithm) {
+        this.checksumFileAlgorithm = checksumFileAlgorithm;
     }
 
     /**
