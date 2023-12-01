@@ -163,9 +163,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                 + "eg slash-slash-n.")
     protected String appendChars;
     @UriParam(label = "producer",
-              description = "If provided, then Camel will write a checksum file when the original file has been written. The checksum file "
-                            + "will contain the checksum created with the provided algorithm for the original file. The checksum file will "
-                            + "always be written in the same folder as the original file.")
+              enums = "MD2,MD5,SHA_1,SHA_224,SHA_256,SHA_384,SHA_512,SHA_512_224,SHA_512_256,SHA3_224,SHA3_256,SHA3_384,SHA3_512",
+              description = "If provided, then Camel will write a checksum file when the original file has been written. The checksum file"
+                            + " will contain the checksum created with the provided algorithm for the original file. The checksum file will"
+                            + " always be written in the same folder as the original file.")
     protected String checksumFileAlgorithm;
 
     // consumer options

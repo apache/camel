@@ -250,7 +250,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         postWriteCheck(exchange);
     }
 
-    public void writeChecksumFile(Exchange exchange, String target) throws Exception {
+    protected void writeChecksumFile(Exchange exchange, String target) throws Exception {
         String algorithm = endpoint.getChecksumFileAlgorithm();
         String checksumFileName = target + "." + algorithm;
 

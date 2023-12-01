@@ -614,6 +614,47 @@ public interface AWSConfigEndpointBuilderFactory {
         public String awsConfigRuleName() {
             return "CamelAwsConfigRuleName";
         }
+
+        /**
+         * The Conformance pack name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsConformancePackName}.
+         */
+        public String awsConformancePackName() {
+            return "CamelAwsConformancePackName";
+        }
+
+        /**
+         * The location of the file containing the template body in S3.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsConfigConformacePackS3TemplateURI}.
+         */
+        public String awsConfigConformacePackS3TemplateURI() {
+            return "CamelAwsConfigConformacePackS3TemplateURI";
+        }
+
+        /**
+         * A string containing the full conformance pack template body.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsConfigConformacePackTemplateBody}.
+         */
+        public String awsConfigConformacePackTemplateBody() {
+            return "CamelAwsConfigConformacePackTemplateBody";
+        }
     }
     static AWSConfigEndpointBuilder endpointBuilder(
             String componentName,

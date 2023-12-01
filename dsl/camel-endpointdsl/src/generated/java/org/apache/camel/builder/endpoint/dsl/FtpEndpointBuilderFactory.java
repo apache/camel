@@ -3562,6 +3562,25 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * If provided, then Camel will write a checksum file when the original
+         * file has been written. The checksum file will contain the checksum
+         * created with the provided algorithm for the original file. The
+         * checksum file will always be written in the same folder as the
+         * original file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param checksumFileAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default FtpEndpointProducerBuilder checksumFileAlgorithm(
+                String checksumFileAlgorithm) {
+            doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
+            return this;
+        }
+        /**
          * What to do if a file already exists with the same name. Override,
          * which is the default, replaces the existing file. - Append - adds
          * content to the existing file. - Fail - throws a
