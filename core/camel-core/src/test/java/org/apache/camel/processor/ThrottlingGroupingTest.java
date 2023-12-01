@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated
 public class ThrottlingGroupingTest extends ContextTestSupport {
@@ -109,8 +110,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                 receivingEndpoint.assertIsSatisfied();
             }
         } finally {
-            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
-            executor.shutdownNow();
+            shutdownAndAwait(executor);
         }
     }
 
@@ -123,8 +123,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         try {
             sendMessagesWithHeaderExpression(executor, resultEndpoint, CONCURRENT_REQUESTS, MESSAGE_COUNT);
         } finally {
-            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
-            executor.shutdownNow();
+            shutdownAndAwait(executor);
         }
     }
 
@@ -150,6 +149,16 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
+    }
+
+    private void shutdownAndAwait(final ExecutorService executorService) {
+        executorService.shutdown();
+        try {
+            assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS),
+                    "Test ExecutorService shutdown is not expected to take longer than 10 seconds.");
+        } catch (InterruptedException e) {
+            fail("Test ExecutorService shutdown is not expected to be interrupted.");
+        }
     }
 
     @Override

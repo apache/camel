@@ -31,6 +31,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 // time-bound that does not run well in shared environments
 @DisabledOnOs(OS.WINDOWS)
@@ -56,8 +57,7 @@ public class ThrottlerTest extends ContextTestSupport {
             }
             assertMockEndpointsSatisfied();
         } finally {
-            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
-            executor.shutdownNow();
+            shutdownAndAwait(executor);
         }
     }
 
@@ -84,8 +84,7 @@ public class ThrottlerTest extends ContextTestSupport {
         try {
             sendMessagesWithHeaderExpression(executor, resultEndpoint, CONCURRENT_REQUESTS, MESSAGE_COUNT);
         } finally {
-            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
-            executor.shutdownNow();
+            shutdownAndAwait(executor);
         }
     }
 
@@ -114,8 +113,7 @@ public class ThrottlerTest extends ContextTestSupport {
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 4, MESSAGE_COUNT);
         } finally {
-            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
-            executor.shutdownNow();
+            shutdownAndAwait(executor);
         }
     }
 
@@ -156,8 +154,7 @@ public class ThrottlerTest extends ContextTestSupport {
                 receivingEndpoint.assertIsSatisfied();
             }
         } finally {
-            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
-            executor.shutdownNow();
+            shutdownAndAwait(executor);
         }
     }
 
@@ -183,6 +180,16 @@ public class ThrottlerTest extends ContextTestSupport {
     private void sendBody(String endpoint) {
         Arrays.stream(new String[] { "A", "B", "C", "D", "E", "F", "G", "H" })
                 .forEach(b -> template.sendBody(endpoint, b));
+    }
+
+    private void shutdownAndAwait(final ExecutorService executorService) {
+        executorService.shutdown();
+        try {
+            assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS),
+                    "Test ExecutorService shutdown is not expected to take longer than 10 seconds.");
+        } catch (InterruptedException e) {
+            fail("Test ExecutorService shutdown is not expected to be interrupted.");
+        }
     }
 
     @Override
