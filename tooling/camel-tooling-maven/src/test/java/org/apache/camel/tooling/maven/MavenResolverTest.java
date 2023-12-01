@@ -201,7 +201,7 @@ public class MavenResolverTest {
 
             // now, org.eclipse.aether.RepositorySystem can be obtained
             RepositorySystem repositorySystem
-                    = downloader.configureRepositorySystem(registry, systemProperties, localSettingsSecurity);
+                    = downloader.configureRepositorySystem(registry, systemProperties, localSettingsSecurity, false);
 
             Settings settings = downloader.mavenConfiguration(registry, repositorySystem,
                     systemProperties, localSettings);

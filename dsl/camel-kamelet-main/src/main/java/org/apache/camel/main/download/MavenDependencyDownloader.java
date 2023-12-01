@@ -70,6 +70,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private final Set<ArtifactDownloadListener> artifactDownloadListeners = new LinkedHashSet<>();
     private final Map<String, DownloadRecord> downloadRecords = new HashMap<>();
     private KnownReposResolver knownReposResolver;
+    private boolean download = true;
 
     // all maven-resolver work is delegated to camel-tooling-maven
     private MavenDownloader mavenDownloader;
@@ -146,6 +147,14 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     @Override
     public void setFresh(boolean fresh) {
         this.fresh = fresh;
+    }
+
+    public boolean isDownload() {
+        return download;
+    }
+
+    public void setDownload(boolean download) {
+        this.download = download;
     }
 
     @Override
@@ -463,6 +472,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloaderImpl.setMavenSettingsSecurityLocation(mavenSettingsSecurity);
         mavenDownloaderImpl.setRepos(repos);
         mavenDownloaderImpl.setFresh(fresh);
+        mavenDownloaderImpl.setOffline(!download);
         // use listener to keep track of which JARs was downloaded from a remote Maven repo (and how long time it took)
         mavenDownloaderImpl.setRemoteArtifactDownloadListener(new RemoteArtifactDownloadListener() {
             @Override
