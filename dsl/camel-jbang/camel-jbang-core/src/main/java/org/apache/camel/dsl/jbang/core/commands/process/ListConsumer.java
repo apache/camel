@@ -52,6 +52,10 @@ public class ListConsumer extends ProcessWatchCommand {
                         description = "Filter consumers by URI")
     String filter;
 
+    @CommandLine.Option(names = { "--scheduled" },
+                        description = "Filter consumer to only show scheduled based consumers")
+    boolean scheduled;
+
     @CommandLine.Option(names = { "--short-uri" },
                         description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
@@ -95,6 +99,7 @@ public class ListConsumer extends ProcessWatchCommand {
                                 row.uri = o.getString("uri");
                                 row.state = o.getString("state");
                                 row.className = o.getString("class");
+                                row.scheduled = o.getBoolean("scheduled");
                                 row.inflight = o.getInteger("inflight");
                                 row.polling = o.getBoolean("polling");
                                 row.totalCounter = o.getLong("totalCounter");
@@ -114,6 +119,9 @@ public class ListConsumer extends ProcessWatchCommand {
                                     if (!match) {
                                         add = false;
                                     }
+                                }
+                                if (scheduled && !row.scheduled) {
+                                    add = false;
                                 }
                                 if (limit > 0 && rows.size() >= limit) {
                                     add = false;
@@ -142,10 +150,13 @@ public class ListConsumer extends ProcessWatchCommand {
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("ID").with(r -> r.id),
-                new Column().header("STATE").with(this::getState),
+                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(r -> r.id),
+                new Column().header("STATE").headerAlign(HorizontalAlign.CENTER).with(this::getState),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getType),
                 new Column().header("INFLIGHT").with(r -> "" + r.inflight),
-                new Column().header("POLLS").with(this::getTotal),
+                new Column().header("POLL").with(this::getTotal),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),
@@ -170,6 +181,14 @@ public class ListConsumer extends ProcessWatchCommand {
             return "Polling";
         }
         return r.state;
+    }
+
+    private String getType(Row r) {
+        String s = r.className;
+        if (s.endsWith("Consumer")) {
+            s = s.substring(0, s.length() - 8);
+        }
+        return s;
     }
 
     private String getTotal(Row r) {
@@ -207,6 +226,7 @@ public class ListConsumer extends ProcessWatchCommand {
         String uri;
         String state;
         String className;
+        boolean scheduled;
         int inflight;
         Boolean polling;
         Long totalCounter;

@@ -148,7 +148,9 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     jo.put("state", mc.getState());
                     jo.put("class", mc.getServiceType());
                     jo.put("inflight", inflight);
+                    jo.put("scheduled", false);
                     if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {
+                        jo.put("scheduled", true);
                         jo.put("polling", mpc.isPolling());
                         jo.put("firstPollDone", mpc.isFirstPollDone());
                         jo.put("schedulerStarted", mpc.isSchedulerStarted());
@@ -169,6 +171,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                         jo.put("backoffIdleThreshold", mpc.getBackoffIdleThreshold());
                     }
                     if ("TimerConsumer".equals(mc.getServiceType())) {
+                        jo.put("scheduled", true);
                         // need to use JMX to gather details for camel-timer consumer
                         try {
                             MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
