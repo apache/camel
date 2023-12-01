@@ -169,9 +169,10 @@ public final class HttpUtil {
 
     /**
      * Parse a HTTP status range and passes the values to the consumer method
-     * @param range the HTTP status range in the format "XXX-YYY" (i.e.: 200-299)
-     * @param consumer a consumer method to receive the parse ranges
-     * @return true if the range was parsed or false otherwise
+     *
+     * @param  range    the HTTP status range in the format "XXX-YYY" (i.e.: 200-299)
+     * @param  consumer a consumer method to receive the parse ranges
+     * @return          true if the range was parsed or false otherwise
      */
     public static boolean parseStatusRange(String range, BiConsumer<Integer, Integer> consumer) {
         // default is 200-299 so lets optimize for this
@@ -195,17 +196,19 @@ public final class HttpUtil {
     }
 
     /**
-     * Iterates over a list of values and passes them to the consumer after applying the filter strategy. This is mostly used to
-     * simplify setting headers for HTTP responses
+     * Iterates over a list of values and passes them to the consumer after applying the filter strategy. This is mostly
+     * used to simplify setting headers for HTTP responses
+     *
      * @param headerFilterStrategy the filter strategy to apply
-     * @param exchange an exchange to apply the header strategy
-     * @param it the iterator providing the values
-     * @param tc a type converter instance so that the values can be converted to string
-     * @param key a key associated with the values being iterated
-     * @param consumer a consumer method to receive the converted values. It can receive either a list of values or a single
-     *                 value.
+     * @param exchange             an exchange to apply the header strategy
+     * @param it                   the iterator providing the values
+     * @param tc                   a type converter instance so that the values can be converted to string
+     * @param key                  a key associated with the values being iterated
+     * @param consumer             a consumer method to receive the converted values. It can receive either a list of
+     *                             values or a single value.
      */
-    public static void applyHeader(HeaderFilterStrategy headerFilterStrategy, Exchange exchange, Iterator<?> it,
+    public static void applyHeader(
+            HeaderFilterStrategy headerFilterStrategy, Exchange exchange, Iterator<?> it,
             TypeConverter tc, String key, BiConsumer<List<String>, String> consumer) {
         String firstValue = null;
         List<String> values = null;
