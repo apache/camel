@@ -60,6 +60,9 @@ public class AWSConfigProducer extends DefaultProducer {
             case describeRuleCompliance:
                 describeRuleCompliance(getEndpoint().getConfigClient(), exchange);
                 break;
+            case putConformancePack:
+                putConformancePack(getEndpoint().getConfigClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -202,6 +205,57 @@ public class AWSConfigProducer extends DefaultProducer {
             } catch (AwsServiceException ase) {
                 LOG.trace("Describe Compliance by Config Rule command returned the error code {}",
                         ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+
+    private void putConformancePack(ConfigClient configClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof PutConformancePackRequest) {
+                PutConformancePackResponse result;
+                try {
+                    PutConformancePackRequest request = (PutConformancePackRequest) payload;
+                    result = configClient.putConformancePack(request);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Put Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            PutConformancePackRequest.Builder builder = PutConformancePackRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME))) {
+                String conformancePackName = exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME, String.class);
+                builder.conformancePackName(conformancePackName);
+            } else {
+                throw new IllegalArgumentException("Rule Name must be specified");
+            }
+            String conformancePackS3TemplateUri = null;
+            String conformancePackTemplateBody = null;
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_S3_TEMPLATE_URI))) {
+                conformancePackS3TemplateUri
+                        = exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_S3_TEMPLATE_URI, String.class);
+                builder.templateS3Uri(conformancePackS3TemplateUri);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_TEMPLATE_BODY))) {
+                conformancePackTemplateBody
+                        = exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_TEMPLATE_BODY, String.class);
+                builder.templateBody(conformancePackTemplateBody);
+            }
+            if (ObjectHelper.isEmpty(conformancePackS3TemplateUri) && ObjectHelper.isEmpty(conformancePackTemplateBody)) {
+                throw new IllegalArgumentException("One of Conformace Pack S3 Template URI or Template Body must be specified");
+            }
+            PutConformancePackResponse result;
+            try {
+                PutConformancePackRequest request = builder.build();
+                result = configClient.putConformancePack(request);
+            } catch (AwsServiceException ase) {
+                LOG.trace("Put Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

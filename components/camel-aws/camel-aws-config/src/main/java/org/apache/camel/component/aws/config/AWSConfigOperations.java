@@ -20,6 +20,7 @@ public enum AWSConfigOperations {
 
     putConfigRule,
     removeConfigRule,
+    describeRuleCompliance,
+    putConformancePack
 
-    describeRuleCompliance
 }
