@@ -21,8 +21,9 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(25);
+        Set<String> props = new HashSet<>(26);
         props.add("allowNullBody");
+        props.add("checksumFileAlgorithm");
         props.add("chmod");
         props.add("ciphers");
         props.add("connectTimeout");

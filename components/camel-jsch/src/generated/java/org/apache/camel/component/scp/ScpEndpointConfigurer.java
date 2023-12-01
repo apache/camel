@@ -23,6 +23,8 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
         case "ciphers": target.getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -67,6 +69,8 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": return boolean.class;
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": return java.lang.String.class;
         case "chmod": return java.lang.String.class;
         case "ciphers": return java.lang.String.class;
         case "connecttimeout":
@@ -112,6 +116,8 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
         case "chmod": return target.getConfiguration().getChmod();
         case "ciphers": return target.getConfiguration().getCiphers();
         case "connecttimeout":
