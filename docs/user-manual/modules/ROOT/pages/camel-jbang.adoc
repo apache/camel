@@ -2247,7 +2247,9 @@ then you see an error (in red) with stacktrace that hopefully can help you out h
 === Transforming directly from Camel DSL source
 
 In the example above we externalize the transformation into a template file named `transform.json`.
-However, its also possible to transform directly in the Camel DSL route.
+However, it's possible to transform directly in the Camel DSL route.
+
+NOTE: Currently Java DSL is not working in --watch mode (reload on change)
 
 In the following we cover the json-transform example from: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/json-transform
 
