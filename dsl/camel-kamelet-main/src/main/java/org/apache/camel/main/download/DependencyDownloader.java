@@ -55,6 +55,16 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      */
     void setRepos(String repos);
 
+    /**
+     * Whether downloading from remote Maven repositories is enabled
+     */
+    void setDownload(boolean download);
+
+    /**
+     * Whether downloading from remote Maven repositories is enabled
+     */
+    boolean isDownload();
+
     boolean isFresh();
 
     /**
