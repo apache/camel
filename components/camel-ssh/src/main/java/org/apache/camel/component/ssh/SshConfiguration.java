@@ -74,7 +74,8 @@ public class SshConfiguration implements Cloneable {
     private String signatures;
     @UriParam(label = "advanced")
     private String compressions;
-    @UriParam(label = "advanced")
+    @UriParam
+    @Metadata(label = "advanced", autowired = true)
     private ClientBuilder clientBuilder;
 
     public SshConfiguration() {
