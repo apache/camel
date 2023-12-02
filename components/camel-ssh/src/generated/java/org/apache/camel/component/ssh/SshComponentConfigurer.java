@@ -74,6 +74,11 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"clientBuilder"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
