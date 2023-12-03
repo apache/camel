@@ -167,6 +167,22 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
+    public long getIdleSince() {
+        // must not have any inflight
+        if (getExchangesInflight() <= 0) {
+            // what is the last time since completed/failed
+            long max = Math.max(lastExchangeCompletedTimestamp.getValue(), lastExchangeFailureTimestamp.getValue());
+            if (max > 0) {
+                long delta = System.currentTimeMillis() - max;
+                if (delta > 0) {
+                    return delta;
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Override
     public Date getLastExchangeCreatedTimestamp() {
         long value = lastExchangeCreatedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
@@ -314,6 +330,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         sb.append(String.format(" lastProcessingTime=\"%s\"", lastProcessingTime.getValue()));
         sb.append(String.format(" deltaProcessingTime=\"%s\"", deltaProcessingTime.getValue()));
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
+        sb.append(String.format(" idleSince=\"%s\"", getIdleSince()));
 
         if (fullStats) {
             sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getTime())));

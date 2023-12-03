@@ -95,6 +95,12 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
             sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
             sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
+            long idle = mrb.getIdleSince();
+            if (idle > 0) {
+                sb.append(String.format("\n    Idle Since: %s", TimeUtils.printDuration(idle)));
+            } else {
+                sb.append(String.format("\n    Idle Since: %s", ""));
+            }
             sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
             sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
             sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
@@ -166,6 +172,12 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n        Total: %s", mp.getExchangesTotal()));
             sb.append(String.format("\n        Failed: %s", mp.getExchangesFailed()));
             sb.append(String.format("\n        Inflight: %s", mp.getExchangesInflight()));
+            long idle = mp.getIdleSince();
+            if (idle > 0) {
+                sb.append(String.format("\n        Idle Since: %s", TimeUtils.printDuration(idle)));
+            } else {
+                sb.append(String.format("\n        Idle Since: %s", ""));
+            }
             sb.append(String.format("\n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
             sb.append(String.format("\n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
             sb.append(String.format("\n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
@@ -222,6 +234,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (!thp.isEmpty()) {
                 stats.put("exchangesThroughput", thp);
             }
+            stats.put("idleSince", mrb.getIdleSince());
             stats.put("exchangesTotal", mrb.getExchangesTotal());
             stats.put("exchangesFailed", mrb.getExchangesFailed());
             stats.put("exchangesInflight", mrb.getExchangesInflight());
@@ -309,6 +322,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             jo.put("processor", mp.getProcessorName());
             jo.put("level", mp.getLevel());
             JsonObject stats = new JsonObject();
+            stats.put("idleSince", mp.getIdleSince());
             stats.put("exchangesTotal", mp.getExchangesTotal());
             stats.put("exchangesFailed", mp.getExchangesFailed());
             stats.put("exchangesInflight", mp.getExchangesInflight());
