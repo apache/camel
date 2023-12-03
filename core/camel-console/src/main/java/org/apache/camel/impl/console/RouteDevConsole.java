@@ -247,18 +247,15 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             Date last = mrb.getLastExchangeCreatedTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastCreatedExchange", ago);
+                stats.put("lastCreatedExchangeTimestamp", last.getTime());
             }
             last = mrb.getLastExchangeCompletedTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastCompletedExchange", ago);
+                stats.put("lastCompletedExchangeTimestamp", last.getTime());
             }
             last = mrb.getLastExchangeFailureTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastFailedExchange", ago);
+                stats.put("lastFailedExchangeTimestamp", last.getTime());
             }
             jo.put("statistics", stats);
             if (processors) {
@@ -333,15 +330,17 @@ public class RouteDevConsole extends AbstractDevConsole {
                 stats.put("lastProcessingTime", mp.getLastProcessingTime());
                 stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
             }
-            Date last = mp.getLastExchangeCompletedTimestamp();
+            Date last = mp.getLastExchangeCreatedTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastCompletedExchange", ago);
+                stats.put("lastCreatedExchangeTimestamp", last.getTime());
+            }
+            last = mp.getLastExchangeCompletedTimestamp();
+            if (last != null) {
+                stats.put("lastCompletedExchangeTimestamp", last.getTime());
             }
             last = mp.getLastExchangeFailureTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastFailedExchange", ago);
+                stats.put("lastFailedExchangeTimestamp", last.getTime());
             }
             jo.put("statistics", stats);
         }

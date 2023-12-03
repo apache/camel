@@ -33,6 +33,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -130,9 +131,18 @@ public class RouteControllerAction extends ActionWatchCommand {
 
                 if (supervising) {
                     row.attempts = jt.getLong("attempts");
-                    row.lastAttemptAgo = jt.getString("lastAttemptAgo");
-                    row.nextAttempt = jt.getString("nextAttempt");
-                    row.elapsed = jt.getString("elapsed");
+                    long time = jt.getLong("lastAttempt");
+                    if (time > 0) {
+                        row.lastAttempt = TimeUtils.printDuration(time);
+                    }
+                    time = jt.getLong("nextAttempt");
+                    if (time > 0) {
+                        row.nextAttempt = TimeUtils.printDuration(time);
+                    }
+                    time = jt.getLong("elapsed");
+                    if (time > 0) {
+                        row.elapsed = TimeUtils.printDuration(time);
+                    }
                     row.supervising = jt.getString("supervising");
                     row.error = jt.getString("error");
                     row.stackTrace = jt.getCollection("stackTrace");
@@ -280,8 +290,8 @@ public class RouteControllerAction extends ActionWatchCommand {
     }
 
     protected String getLast(Row r) {
-        if (r.lastAttemptAgo != null && !r.lastAttemptAgo.isEmpty()) {
-            String s = r.lastAttemptAgo;
+        if (r.lastAttempt != null && !r.lastAttempt.isEmpty()) {
+            String s = r.lastAttempt;
             if (r.elapsed != null && !r.elapsed.isEmpty()) {
                 s += " (" + r.elapsed + ")";
             }
@@ -295,7 +305,7 @@ public class RouteControllerAction extends ActionWatchCommand {
         String status;
         String uri;
         long attempts;
-        String lastAttemptAgo;
+        String lastAttempt;
         String nextAttempt;
         String elapsed;
         String supervising;

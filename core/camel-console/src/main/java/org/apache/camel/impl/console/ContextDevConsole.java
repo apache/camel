@@ -154,18 +154,15 @@ public class ContextDevConsole extends AbstractDevConsole {
                 }
                 Date last = mb.getLastExchangeCreatedTimestamp();
                 if (last != null) {
-                    String ago = TimeUtils.printSince(last.getTime());
-                    stats.put("sinceLastCreatedExchange", ago);
+                    stats.put("lastCreatedExchangeTimestamp", last.getTime());
                 }
                 last = mb.getLastExchangeCompletedTimestamp();
                 if (last != null) {
-                    String ago = TimeUtils.printSince(last.getTime());
-                    stats.put("sinceLastCompletedExchange", ago);
+                    stats.put("lastCompletedExchangeTimestamp", last.getTime());
                 }
                 last = mb.getLastExchangeFailureTimestamp();
                 if (last != null) {
-                    String ago = TimeUtils.printSince(last.getTime());
-                    stats.put("sinceLastFailedExchange", ago);
+                    stats.put("lastFailedExchangeTimestamp", last.getTime());
                 }
                 root.put("statistics", stats);
             }

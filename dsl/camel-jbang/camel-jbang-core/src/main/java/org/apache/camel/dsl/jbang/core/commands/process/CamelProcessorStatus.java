@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -121,17 +122,20 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                                 if (last != null) {
                                     row.delta = last.toString();
                                 }
-                                last = stats.get("sinceLastCreatedExchange");
+                                last = stats.get("lastCreatedExchangeTimestamp");
                                 if (last != null) {
-                                    row.sinceLastStarted = last.toString();
+                                    long time = Long.parseLong(last.toString());
+                                    row.sinceLastStarted = TimeUtils.printSince(time);
                                 }
-                                last = stats.get("sinceLastCompletedExchange");
+                                last = stats.get("lastCompletedExchangeTimestamp");
                                 if (last != null) {
-                                    row.sinceLastCompleted = last.toString();
+                                    long time = Long.parseLong(last.toString());
+                                    row.sinceLastCompleted = TimeUtils.printSince(time);
                                 }
-                                last = stats.get("sinceLastFailedExchange");
+                                last = stats.get("lastFailedExchangeTimestamp");
                                 if (last != null) {
-                                    row.sinceLastFailed = last.toString();
+                                    long time = Long.parseLong(last.toString());
+                                    row.sinceLastFailed = TimeUtils.printSince(time);
                                 }
                             }
 
@@ -194,13 +198,15 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 if (last != null) {
                     row.delta = last.toString();
                 }
-                last = stats.get("sinceLastCompletedExchange");
+                last = stats.get("lastCompletedExchangeTimestamp");
                 if (last != null) {
-                    row.sinceLastCompleted = last.toString();
+                    long time = Long.parseLong(last.toString());
+                    row.sinceLastCompleted = TimeUtils.printSince(time);
                 }
-                last = stats.get("sinceLastFailedExchange");
+                last = stats.get("lastFailedExchangeTimestamp");
                 if (last != null) {
-                    row.sinceLastFailed = last.toString();
+                    long time = Long.parseLong(last.toString());
+                    row.sinceLastFailed = TimeUtils.printSince(time);
                 }
             }
             if (source) {
