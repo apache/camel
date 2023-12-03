@@ -214,6 +214,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
 
                     if (mr != null) {
                         JsonObject stats = new JsonObject();
+                        stats.put("idleSince", mr.getIdleSince());
                         stats.put("exchangesTotal", mr.getExchangesTotal());
                         stats.put("exchangesFailed", mr.getExchangesFailed());
                         stats.put("exchangesInflight", mr.getExchangesInflight());
