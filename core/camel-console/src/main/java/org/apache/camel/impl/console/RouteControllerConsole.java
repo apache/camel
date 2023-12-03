@@ -199,30 +199,21 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 BackOffTimer.Task state = src.getRestartingRouteState(routeId);
                 String supervising = state != null ? state.getStatus().name() : null;
                 long attempts = state != null ? state.getCurrentAttempts() : 0;
-                String elapsed = "";
-                String last = "";
-                String next = "";
+                long elapsed;
+                long last;
+                long next;
                 // we can only track elapsed/time for active supervised routes
-                long time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
+                elapsed = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
                         ? state.getCurrentElapsedTime() : 0;
-                if (time > 0) {
-                    elapsed = TimeUtils.printDuration(time);
-                }
-                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
-                if (time > 0) {
-                    last = TimeUtils.printSince(time);
-                }
-                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getNextAttemptTime() : 0;
-                if (time > 0) {
-                    next = TimeUtils.printSince(time);
-                }
+                last = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
+                next = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getNextAttemptTime() : 0;
                 JsonObject jo = new JsonObject();
                 list.add(jo);
                 jo.put("routeId", routeId);
                 jo.put("status", status);
                 jo.put("uri", uri);
                 jo.put("attempts", attempts);
-                jo.put("lastAttemptAgo", last);
+                jo.put("lastAttempt", last);
                 jo.put("nextAttempt", next);
                 jo.put("elapsed", elapsed);
                 if (supervising != null) {

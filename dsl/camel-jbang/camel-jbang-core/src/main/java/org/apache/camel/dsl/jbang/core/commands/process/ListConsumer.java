@@ -110,17 +110,20 @@ public class ListConsumer extends ProcessWatchCommand {
                                 row.age = TimeUtils.printSince(row.uptime);
                                 Map<String, ?> stats = o.getMap("statistics");
                                 if (stats != null) {
-                                    Object last = stats.get("sinceLastCreatedExchange");
+                                    Object last = stats.get("lastCreatedExchangeTimestamp");
                                     if (last != null) {
-                                        row.sinceLastStarted = last.toString();
+                                        long time = Long.parseLong(last.toString());
+                                        row.sinceLastStarted = TimeUtils.printSince(time);
                                     }
-                                    last = stats.get("sinceLastCompletedExchange");
+                                    last = stats.get("lastCompletedExchangeTimestamp");
                                     if (last != null) {
-                                        row.sinceLastCompleted = last.toString();
+                                        long time = Long.parseLong(last.toString());
+                                        row.sinceLastCompleted = TimeUtils.printSince(time);
                                     }
-                                    last = stats.get("sinceLastFailedExchange");
+                                    last = stats.get("lastFailedExchangeTimestamp");
                                     if (last != null) {
-                                        row.sinceLastFailed = last.toString();
+                                        long time = Long.parseLong(last.toString());
+                                        row.sinceLastFailed = TimeUtils.printSince(time);
                                     }
                                 }
                                 boolean add = true;

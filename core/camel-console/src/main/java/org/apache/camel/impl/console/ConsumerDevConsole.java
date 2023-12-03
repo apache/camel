@@ -32,7 +32,6 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedSchedulePollConsumerMBean;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("consumer")
@@ -225,15 +224,17 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                             stats.put("lastProcessingTime", mr.getLastProcessingTime());
                             stats.put("deltaProcessingTime", mr.getDeltaProcessingTime());
                         }
-                        Date last = mr.getLastExchangeCompletedTimestamp();
+                        Date last = mr.getLastExchangeCreatedTimestamp();
                         if (last != null) {
-                            String ago = TimeUtils.printSince(last.getTime());
-                            stats.put("sinceLastCompletedExchange", ago);
+                            stats.put("lastCreatedExchangeTimestamp", last.getTime());
+                        }
+                        last = mr.getLastExchangeCompletedTimestamp();
+                        if (last != null) {
+                            stats.put("lastCompletedExchangeTimestamp", last.getTime());
                         }
                         last = mr.getLastExchangeFailureTimestamp();
                         if (last != null) {
-                            String ago = TimeUtils.printSince(last.getTime());
-                            stats.put("sinceLastFailedExchange", ago);
+                            stats.put("lastFailedExchangeTimestamp", last.getTime());
                         }
                         jo.put("statistics", stats);
                     }

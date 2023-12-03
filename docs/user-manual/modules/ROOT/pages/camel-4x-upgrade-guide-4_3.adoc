@@ -50,6 +50,20 @@ from("seda:c")
 If the `nodeIdPrefix` has been configured on routes, then the MBeans for the processors will now use the prefix
 in their `ObjectName` also.
 
+=== camel-console
+
+The context and route consoles has changed some values in their JSon output data for timestamp for created, completed and failed exchanges.
+
+|===
+|**Old Key** |**New Key**
+| `sinceLastCreatedExchange` | `lastCreatedExchangeTimestamp`
+| `sinceLastCompletedExchange` | `lastCompletedExchangeTimestamp`
+| `sinceLastFailedExchange` | `lastFailedExchangeTimestamp`
+|===
+
+The values are also changed from String ago to timestamp in millis.For example old value `3m5s` is now `1701599263337`.
+
+
 === camel-jbang
 
 The `camel transform` command has been renamed to `camel transform route` as this command is used for transforming
