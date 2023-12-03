@@ -2386,6 +2386,56 @@ You can also transform the message from JSon to XML as shown (or any other kind 
     id: setBody-fa01
 ----
 
+=== Transforming message using Components
+
+Some components can also be used for message transformation such as Flatpack, Velocity, Freemarker, Thymaleaf, and good old XSLT.
+
+TIP: You can use `camel catalog component --filter=transform` to see which components can be transformation.
+
+Given the below XML in the `sample.xml` file:
+
+[source,xml]
+----
+<hash>
+  <id type="integer">1369</id>
+  <uid>8c946e1a-fdc5-40d3-9098-44271bdfad65</uid>
+  <account-number>8673088731</account-number>
+  <iban>GB38EFUA27474531363797</iban>
+  <bank-name>ABN AMRO MEZZANINE (UK) LIMITED</bank-name>
+  <routing-number>053228004</routing-number>
+  <swift-bic>AACCGB21</swift-bic>
+</hash>
+----
+
+Then you can transform this using an XSLT named `mystyle.xsl`:
+
+[source,xml]
+----
+<?xml version = "1.0"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+  <xsl:template match="/">
+    <bank>
+    	<name><xsl:value-of select="/hash/bank-name/text()"/></name>
+    	<bic><xsl:value-of select="/hash/swift-bic/text()"/></bic>
+    </bank>
+  </xsl:template>
+
+</xsl:stylesheet>
+----
+
+Then you can do live changes to the stylesheet and see the output in real-time with Camel JBang by running:
+
+[source,bash]
+----
+$ camel transform message --body=file:sample.xml --component=xslt --template=file:mystyle.xsl --pretty --watch
+----
+
+You can then edit the `mystyle.xsl` file, and save the file, and watch the terminal for updated result.
+
+You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/xslt-transform
+
+
 == Listing what Camel components is available
 
 Camel comes with a lot of artifacts out of the box which comes as:

@@ -64,6 +64,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
@@ -277,8 +278,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         long timestamp = System.currentTimeMillis();
         String source = root.getString("source");
         String language = root.getString("language");
+        String component = root.getString("component");
         String template = Jsoner.unescape(root.getStringOrDefault("template", ""));
-        if (template.startsWith("file:")) {
+        if (component == null && template.startsWith("file:")) {
             template = "resource:" + template;
         }
         String body = Jsoner.unescape(root.getString("body"));
@@ -380,6 +382,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     String result = lastSourceExpression.evaluate(out, String.class);
                     out.getMessage().setBody(result);
                 }
+            } else if (component != null) {
+                // transform via component
+                out.setPattern(ExchangePattern.InOut);
+                out.getMessage().setBody(inputBody);
+                if (inputHeaders != null) {
+                    out.getMessage().setHeaders(inputHeaders);
+                }
+                String uri = component + ":" + template;
+                // must disable any kind of content cache on the component, so template is always reloaded
+                EndpointUriFactory euf = camelContext.getCamelContextExtension().getEndpointUriFactory(component);
+                if (euf.propertyNames().contains("contentCache")) {
+                    uri = uri + "?contentCache=false";
+                }
+                out = producer.send(uri, out);
             } else {
                 // transform via language
                 Language lan = camelContext.resolveLanguage(language);

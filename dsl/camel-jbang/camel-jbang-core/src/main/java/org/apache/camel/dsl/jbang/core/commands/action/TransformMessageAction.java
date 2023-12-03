@@ -65,6 +65,11 @@ public class TransformMessageAction extends ActionWatchCommand {
     private String language;
 
     @CommandLine.Option(names = {
+            "--component" },
+                        description = "The component to use for message transformation")
+    private String component;
+
+    @CommandLine.Option(names = {
             "--template" },
                         description = "The template to use for message transformation (prefix with file: to refer to loading message body from file)")
     private String template;
@@ -112,12 +117,12 @@ public class TransformMessageAction extends ActionWatchCommand {
     @Override
     public Integer doCall() throws Exception {
         // either source or language/template is required
-        if (source == null && template == null && language == null) {
-            System.err.println("Either source or template and language must be configured");
+        if (source == null && template == null && language == null && component == null) {
+            System.err.println("Either source or template and language/component must be configured");
             return -1;
         }
-        if (source == null && (template == null || language == null)) {
-            System.err.println("Both template and language must be configured");
+        if (source == null && (template == null || language == null && component == null)) {
+            System.err.println("Both template and language/component must be configured");
             return -1;
         }
 
@@ -165,6 +170,9 @@ public class TransformMessageAction extends ActionWatchCommand {
         }
         if (language != null) {
             root.put("language", language);
+        }
+        if (component != null) {
+            root.put("component", component);
         }
         if (template != null) {
             root.put("template", Jsoner.escape(template));
