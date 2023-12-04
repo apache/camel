@@ -312,7 +312,6 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
 
     @Override
     protected void setAccessToken(Request request) {
-        request.headers(h -> h.add(AUTHORIZATION_HEADER, null));
         request.headers(h -> h.add(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken));
     }
 

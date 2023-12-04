@@ -370,7 +370,6 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     @Override
     protected void setAccessToken(Request request) {
         // Replace token
-        request.headers(headers -> headers.add(TOKEN_HEADER, null));
         request.headers(headers -> headers.add(TOKEN_HEADER, accessToken));
     }
 

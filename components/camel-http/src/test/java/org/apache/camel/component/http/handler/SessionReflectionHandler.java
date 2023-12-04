@@ -21,19 +21,19 @@ import java.io.OutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.util.IOHelper;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Session;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.Callback;
 
-public class SessionReflectionHandler extends AbstractHandler {
+public class SessionReflectionHandler extends Handler.Abstract.NonBlocking {
 
     @Override
     public boolean handle(Request request, Response response, Callback callback) throws Exception {
-        Session session = request.getSession(false);
+        Session session = request.getSession(true);
         OutputStream os = Response.asBufferedOutputStream(request, response);
-        if (session.getAttribute("foo") == null) {
+        if (session != null && session.getAttribute("foo") == null) {
             session.setAttribute("foo", "bar");
             os.write("New ".getBytes());
         } else {
@@ -42,6 +42,7 @@ public class SessionReflectionHandler extends AbstractHandler {
         IOHelper.copyAndCloseInput(Request.asInputStream(request), os);
         response.setStatus(HttpServletResponse.SC_OK);
 
+        callback.succeeded();
         return true;
     }
 }

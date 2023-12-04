@@ -228,7 +228,6 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     @Override
     protected void setAccessToken(final Request request) {
-        request.headers(h -> h.add("Authorization", null));
         request.headers(h -> h.add("Authorization", "Bearer " + accessToken));
     }
 

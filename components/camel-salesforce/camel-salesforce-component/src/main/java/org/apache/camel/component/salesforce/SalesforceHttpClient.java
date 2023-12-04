@@ -97,7 +97,7 @@ public class SalesforceHttpClient extends HttpClient {
         return connector;
     }
 
-    public HttpRequest newHttpRequest(HttpConversation conversation, URI uri) {
+    public SalesforceHttpRequest newHttpRequest(HttpConversation conversation, URI uri) {
         final SalesforceHttpRequest request = new SalesforceHttpRequest(this, conversation, uri);
         request.timeout(timeout, TimeUnit.MILLISECONDS);
         return request;

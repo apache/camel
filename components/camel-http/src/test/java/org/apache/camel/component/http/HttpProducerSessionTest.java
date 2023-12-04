@@ -27,8 +27,8 @@ import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
 import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
 import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.eclipse.jetty.ee10.servlet.SessionHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.session.SessionHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -39,8 +39,10 @@ public class HttpProducerSessionTest extends CamelTestSupport {
             .emptyTemplate()
             .withPort(PORT)
             .withContextPath("/session")
-            .withContextHandlerConfiguration().withCustomizer(HttpProducerSessionTest::customizer)
-            .build().build();
+            .withContextHandlerConfiguration()
+            .withCustomizer(HttpProducerSessionTest::customizer)
+            .build()
+            .build();
 
     @RegisterExtension
     public JettyEmbeddedService service = new JettyEmbeddedService(jettyConfiguration);

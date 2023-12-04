@@ -403,7 +403,6 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     protected void setAccessToken(Request request) {
         // replace old token
-        request.headers(h -> h.add(TOKEN_HEADER, null));
         request.headers(h -> h.add(TOKEN_HEADER, TOKEN_PREFIX + accessToken));
     }
 

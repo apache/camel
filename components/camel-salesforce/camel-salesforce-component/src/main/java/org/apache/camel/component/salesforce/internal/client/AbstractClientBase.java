@@ -39,6 +39,8 @@ import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.client.Response;
 import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.client.internal.HttpContentResponse;
+import org.eclipse.jetty.client.transport.HttpConversation;
+import org.eclipse.jetty.client.transport.HttpRequest;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpMethod;
@@ -49,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -162,7 +165,7 @@ public abstract class AbstractClientBase extends ServiceSupport
 	}
 
 	protected Request getRequest(String method, String url, Map<String, List<String>> headers) {
-		SalesforceHttpRequest request = (SalesforceHttpRequest) httpClient.newRequest(url).method(method)
+		SalesforceHttpRequest request = (SalesforceHttpRequest) httpClient.newHttpRequest(new HttpConversation(), URI.create(url)).method(method)
 				.timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
 		request.getConversation().setAttribute(SalesforceSecurityHandler.CLIENT_ATTRIBUTE, this);
 		addHeadersTo(request, headers);

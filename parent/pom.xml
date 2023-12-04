@@ -309,7 +309,7 @@
         <logback-version>1.4.13</logback-version>
         <lucene-version>9.8.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
-        <littleproxy-version>2.0.19</littleproxy-version>
+        <littleproxy-version>2.1.0</littleproxy-version>
         <mapstruct-version>1.5.5.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.9.6</maven-version>

@@ -181,7 +181,6 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     @Override
     protected void setAccessToken(final Request request) {
-        request.headers(h -> h.add("Authorization", null));
         request.headers(h -> h.add("Authorization", "Bearer " + accessToken));
     }
 
