@@ -17,14 +17,15 @@
 package org.apache.camel.test.infra.kafka.services;
 
 import com.github.dockerjava.api.command.InspectContainerResponse;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.testcontainers.images.builder.Transferable;
 import org.testcontainers.redpanda.RedpandaContainer;
 
 public class RedpandaTransactionsEnabledContainer extends RedpandaContainer {
-
-    public static final String DEFAULT_REDPANDA_CONTAINER = "docker.redpanda.com/vectorized/redpanda:v23.1.1";
-    public static final String REDPANDA_CONTAINER
-            = System.getProperty("itest.redpanda.container.image", DEFAULT_REDPANDA_CONTAINER);
+    public static final String REDPANDA_CONTAINER = LocalPropertyResolver.getProperty(
+            RedpandaTransactionsEnabledContainer.class,
+            KafkaProperties.REDPANDA_CONTAINER);
     public static final int REDPANDA_PORT = 9092;
 
     public RedpandaTransactionsEnabledContainer(String image) {

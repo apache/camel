@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.mongodb.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class MongoDBLocalContainerService implements MongoDBService, ContainerSe
     private final MongoDBContainer container;
 
     public MongoDBLocalContainerService() {
-        this(System.getProperty(MongoDBProperties.MONGODB_CONTAINER));
+        this(LocalPropertyResolver.getProperty(MongoDBLocalContainerService.class, MongoDBProperties.MONGODB_CONTAINER));
     }
 
     public MongoDBLocalContainerService(String imageName) {

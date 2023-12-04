@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.couchdb.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchdb.common.CouchDbProperties;
 import org.slf4j.Logger;
@@ -25,7 +26,6 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class CouchDbLocalContainerService implements CouchDbService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "couchdb:2.3.1"; // tested against 2.1.2, 2.2.0 & 2.3.1
     public static final String CONTAINER_NAME = "couchdb";
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchDbLocalContainerService.class);
@@ -33,7 +33,9 @@ public class CouchDbLocalContainerService implements CouchDbService, ContainerSe
     private final GenericContainer container;
 
     public CouchDbLocalContainerService() {
-        this(System.getProperty(CouchDbProperties.COUCHDB_CONTAINER, CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(
+                CouchDbLocalContainerService.class,
+                CouchDbProperties.COUCHDB_CONTAINER));
     }
 
     public CouchDbLocalContainerService(String imageName) {

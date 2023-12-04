@@ -17,18 +17,19 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /*
  The reason we are not using LocalStack containers here is because they bundle AWS SDK v1. They would
@@ -36,14 +37,14 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
  behave as in runtime.
  */
 public class AWSContainer extends GenericContainer<AWSContainer> {
-
-    public static final String LOCALSTACK_CONTAINER = "localstack/localstack:3.0.0";
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private static final int SERVICE_PORT = 4566;
 
     public AWSContainer() {
-        this(System.getProperty(AWSProperties.AWS_CONTAINER, LOCALSTACK_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                AWSContainer.class,
+                AWSProperties.AWS_CONTAINER));
     }
 
     public AWSContainer(String imageName) {
