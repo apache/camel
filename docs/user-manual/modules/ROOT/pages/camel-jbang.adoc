@@ -2017,6 +2017,65 @@ To set a breakpoint at line 18 and 34
 camel debug hello.yaml --breakpoint=18,34
 ----
 
+==== Editing code using VSCode or IDEA editors
+
+You can use JBang to edit the source code by using the `jbang` CLI to download dependencies
+and setup project for being ready to load into an IDE of choice, such as IDEA, VSCode, or Eclipse.
+
+This is typically in use when you use Java DSL and have Camel routes in .java source code.
+To let JBang understand which dependencies are in use, then you need to use JBang style for specifying
+dependencies by using `//DEPS` code comments in Java code.
+
+Given the following source file in `foo.java` file:
+
+[source,java]
+----
+//DEPS org.apache.camel:camel-bom:4.3.0@pom
+//DEPS org.apache.camel:camel-endpointdsl
+//DEPS org.apache.camel:camel-netty-http
+//DEPS org.apache.camel:camel-stream
+
+// add more dependencies here
+
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+import org.apache.camel.component.netty.http.NettyHttpMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class foo extends EndpointRouteBuilder {
+
+    private static final Logger LOG = LoggerFactory.getLogger(foo.class);
+
+    @Override
+    public void configure() {
+        from(timer("trigger").period(5000).repeatCount(3))
+                .to(nettyHttp("https://random-data-api.com/api/v2/banks").keepAlive(true))
+                .process(e -> {
+                    // use classes from camel-netty-http dependency in the source code
+                    // and have jbang able to generate project with the dependencies ready
+                    // to use in your IDE of choice
+                    NettyHttpMessage msg = e.getMessage(NettyHttpMessage.class);
+                    LOG.info("Netty HTTP response:\n\n\n{}\n\n\n", msg.getHttpResponse());
+                })
+                .log("Found bank:")
+          .to(stream("out"));
+    }
+}
+----
+
+Notice how we in the top of the file specify https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang dependencies] we want JBang to know and prepare for the IDE of choice.
+The first `//DEPS` is the `@pom` which set up the Camel version to use.
+The following `//DEPS` declares the Camel component we use.
+
+You can now open this source file for editing in your IDE of choice by using jbang CLI as follows:
+
+[source,bash]
+----
+$ jbang edit -b foo.java
+----
+
+You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/jbang-edit
+
 
 ==== Camel route debugging using VSCode or IDEA editors
 
