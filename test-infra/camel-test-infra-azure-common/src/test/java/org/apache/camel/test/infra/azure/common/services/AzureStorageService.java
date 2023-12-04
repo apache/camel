@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.azure.common.services;
 
 import org.apache.camel.test.infra.azure.common.AzureConfigs;
 import org.apache.camel.test.infra.azure.common.AzureProperties;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public abstract class AzureStorageService implements AzureService, ContainerServ
     private final AzuriteContainer container;
 
     public AzureStorageService() {
-        this(System.getProperty(AzureProperties.AZURE_CONTAINER, AzuriteContainer.IMAGE_NAME));
+        this(LocalPropertyResolver.getProperty(AzureStorageService.class, AzureProperties.AZURE_CONTAINER));
     }
 
     public AzureStorageService(String imageName) {
