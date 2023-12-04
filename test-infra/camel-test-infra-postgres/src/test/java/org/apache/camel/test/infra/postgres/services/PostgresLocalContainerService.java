@@ -24,11 +24,12 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public class PostgresLocalContainerService implements PostgresService, ContainerService<PostgreSQLContainer> {
+    public static final String DEFAULT_POSTGRES_CONTAINER = LocalPropertyResolver.getProperty(PostgresLocalContainerService.class, PostgresProperties.POSTGRES_CONTAINER);
     private static final Logger LOG = LoggerFactory.getLogger(PostgresLocalContainerService.class);
     private final PostgreSQLContainer container;
 
     public PostgresLocalContainerService() {
-        this(LocalPropertyResolver.getProperty(PostgresLocalContainerService.class, PostgresProperties.POSTGRES_CONTAINER));
+        this(DEFAULT_POSTGRES_CONTAINER);
     }
 
     public PostgresLocalContainerService(String imageName) {
