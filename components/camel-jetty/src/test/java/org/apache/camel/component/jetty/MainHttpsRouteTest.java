@@ -18,7 +18,6 @@ package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;

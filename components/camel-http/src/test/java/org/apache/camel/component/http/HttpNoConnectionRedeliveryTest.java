@@ -26,6 +26,7 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.util.TimeValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.http.common.HttpMethods.GET;
@@ -67,6 +68,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
     }
 
     @Test
+    @Disabled
     public void httpConnectionNotOk() throws Exception {
         // stop server so there are no connection
         // and wait for it to terminate

@@ -1303,7 +1303,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                     return super.handle(baseRequest, response, callback);
                 }
             };
-            s.addBean(eh, false);
+            s.setErrorHandler(eh);
         }
         return s;
     }
