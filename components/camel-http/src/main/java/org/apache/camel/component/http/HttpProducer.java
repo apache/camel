@@ -56,7 +56,6 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.hc.client5.http.classic.HttpClient;

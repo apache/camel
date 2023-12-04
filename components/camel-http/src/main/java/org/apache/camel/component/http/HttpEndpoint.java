@@ -18,7 +18,6 @@ package org.apache.camel.component.http;
 
 import java.io.Closeable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;

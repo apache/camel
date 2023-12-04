@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.http.base.HttpOperationFailedException;
