@@ -16,8 +16,7 @@
  */
 package org.apache.camel.test.infra.pulsar.services;
 
-import java.time.Duration;
-
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.pulsar.common.PulsarProperties;
 import org.slf4j.Logger;
@@ -25,15 +24,16 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PulsarContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.Duration;
+
 public class PulsarLocalContainerService implements PulsarService, ContainerService<PulsarContainer> {
-    public static final String CONTAINER_IMAGE = "apachepulsar/pulsar:3.1.1";
 
     private static final Logger LOG = LoggerFactory.getLogger(PulsarLocalContainerService.class);
 
     private final PulsarContainer container;
 
     public PulsarLocalContainerService() {
-        this(System.getProperty(PulsarProperties.PULSAR_CONTAINER, CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(PulsarLocalContainerService.class, PulsarProperties.PULSAR_CONTAINER));
     }
 
     public PulsarLocalContainerService(String imageName) {

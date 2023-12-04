@@ -17,15 +17,7 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.net.ssl.SSLContext;
-
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.elasticsearch.common.ElasticSearchProperties;
@@ -34,8 +26,15 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Objects;
+import java.util.Optional;
+
 public class ElasticSearchLocalContainerService implements ElasticSearchService, ContainerService<ElasticsearchContainer> {
-    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch:8.10.4";
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerService.class);
     private static final int ELASTIC_SEARCH_PORT = 9200;
     private static final String USER_NAME = "elastic";
@@ -45,7 +44,9 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
     private final ElasticsearchContainer container;
 
     public ElasticSearchLocalContainerService() {
-        this(System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER, DEFAULT_ELASTIC_SEARCH_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                ElasticSearchLocalContainerService.class,
+                ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER));
     }
 
     public ElasticSearchLocalContainerService(String imageName) {

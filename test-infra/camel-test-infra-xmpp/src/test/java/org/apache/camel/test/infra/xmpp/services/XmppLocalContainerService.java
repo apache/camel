@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.xmpp.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class XmppLocalContainerService implements XmppService, ContainerService<
     private XmppServerContainer container;
 
     public XmppLocalContainerService() {
-        this(System.getProperty(XmppProperties.XMPP_CONTAINER, XmppServerContainer.VYSPER_IMAGE));
+        this(LocalPropertyResolver.getProperty(XmppServerContainer.class, XmppProperties.XMPP_CONTAINER));
     }
 
     public XmppLocalContainerService(String imageName) {

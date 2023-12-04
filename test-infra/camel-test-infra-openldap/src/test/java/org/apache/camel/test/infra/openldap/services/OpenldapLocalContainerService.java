@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.openldap.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 import org.slf4j.Logger;
@@ -24,7 +25,8 @@ import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
 
 public class OpenldapLocalContainerService implements OpenldapService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "osixia/openldap:1.5.0";
+
+    public static final String OPENLDAP_CONTAINER_PROPERTY = "openldap.container";
     public static final String CONTAINER_NAME = "openldap";
     public static final int CONTAINER_PORT_LDAP = 389;
     public static final int CONTAINER_PORT_LDAP_OVER_SSL = 636;
@@ -34,11 +36,13 @@ public class OpenldapLocalContainerService implements OpenldapService, Container
     private final GenericContainer container;
 
     public OpenldapLocalContainerService() {
-        this(CONTAINER_IMAGE);
+        this(LocalPropertyResolver.getProperty(OpenldapLocalContainerService.class, OPENLDAP_CONTAINER_PROPERTY));
     }
 
     public OpenldapLocalContainerService(int port, int sslPort) {
-        String imageName = System.getProperty(OpenldapProperties.OPENLDAP_CONTAINER, CONTAINER_IMAGE);
+        String imageName = System.getProperty(
+                OpenldapProperties.OPENLDAP_CONTAINER,
+                LocalPropertyResolver.getProperty(OpenldapLocalContainerService.class, OPENLDAP_CONTAINER_PROPERTY));
 
         container = initContainer(imageName, port, sslPort);
     }

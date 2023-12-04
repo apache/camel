@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.zookeeper.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.zookeeper.common.ZooKeeperProperties;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class ZooKeeperLocalContainerService implements ZooKeeperService, Contain
     private final ZooKeeperContainer container;
 
     public ZooKeeperLocalContainerService() {
-        this(System.getProperty(ZooKeeperProperties.ZOOKEEPER_CONTAINER, ZooKeeperContainer.CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(ZooKeeperLocalContainerService.class, ZooKeeperProperties.ZOOKEEPER_CONTAINER));
     }
 
     public ZooKeeperLocalContainerService(String imageName) {

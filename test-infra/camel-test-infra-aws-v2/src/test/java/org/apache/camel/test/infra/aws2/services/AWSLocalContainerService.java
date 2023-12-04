@@ -17,24 +17,25 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-import java.net.URI;
-import java.util.Properties;
-
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
 import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.regions.Region;
 
+import java.net.URI;
+import java.util.Properties;
+
 public abstract class AWSLocalContainerService implements AWSService, ContainerService<AWSContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private final AWSContainer container;
 
     public AWSLocalContainerService(Service... services) {
-        this(System.getProperty(AWSProperties.AWS_CONTAINER, AWSContainer.LOCALSTACK_CONTAINER), services);
+        this(LocalPropertyResolver.getProperty(AWSContainer.class, AWSProperties.AWS_CONTAINER), services);
     }
 
     public AWSLocalContainerService(AWSContainer container) {

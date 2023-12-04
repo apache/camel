@@ -1,4 +1,4 @@
-/*
+    /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +16,19 @@
  */
 package org.apache.camel.test.infra.hashicorp.vault.services;
 
-import java.util.function.Consumer;
+    import org.apache.camel.test.infra.common.LocalPropertyResolver;
+    import org.apache.camel.test.infra.common.services.ContainerService;
+    import org.apache.camel.test.infra.hashicorp.vault.common.HashicorpVaultProperties;
+    import org.slf4j.Logger;
+    import org.slf4j.LoggerFactory;
+    import org.testcontainers.containers.GenericContainer;
+    import org.testcontainers.containers.output.OutputFrame;
+    import org.testcontainers.containers.output.Slf4jLogConsumer;
+    import org.testcontainers.containers.wait.strategy.Wait;
 
-import org.apache.camel.test.infra.common.services.ContainerService;
-import org.apache.camel.test.infra.hashicorp.vault.common.HashicorpVaultProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.output.OutputFrame;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.containers.wait.strategy.Wait;
+    import java.util.function.Consumer;
 
 public class HashicorpVaultLocalContainerService implements HashicorpVaultService, ContainerService<GenericContainer<?>> {
-    public static final String CONTAINER_IMAGE = "hashicorp/vault:1.15.2";
     public static final String CONTAINER_NAME = "hashicorp-vault";
     private static final String DEFAULT_TOKEN = "myToken";
 
@@ -37,7 +37,9 @@ public class HashicorpVaultLocalContainerService implements HashicorpVaultServic
     private final GenericContainer container;
 
     public HashicorpVaultLocalContainerService() {
-        this(System.getProperty(HashicorpVaultProperties.HASHICORP_VAULT_CONTAINER, CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(
+                HashicorpVaultLocalContainerService.class,
+                HashicorpVaultProperties.HASHICORP_VAULT_CONTAINER));
     }
 
     public HashicorpVaultLocalContainerService(String containerImage) {
