@@ -279,6 +279,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         String source = root.getString("source");
         String language = root.getString("language");
         String component = root.getString("component");
+        String dataformat = root.getString("dataformat");
         String template = Jsoner.unescape(root.getStringOrDefault("template", ""));
         if (component == null && template.startsWith("file:")) {
             template = "resource:" + template;
@@ -395,6 +396,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 if (euf.propertyNames().contains("contentCache")) {
                     uri = uri + "?contentCache=false";
                 }
+                out = producer.send(uri, out);
+            } else if (dataformat != null) {
+                // transform via dataformat
+                out.setPattern(ExchangePattern.InOut);
+                out.getMessage().setBody(inputBody);
+                if (inputHeaders != null) {
+                    out.getMessage().setHeaders(inputHeaders);
+                }
+                String uri = "dataformat:" + dataformat + ":unmarshal";
                 out = producer.send(uri, out);
             } else {
                 // transform via language

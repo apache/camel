@@ -2435,6 +2435,49 @@ You can then edit the `mystyle.xsl` file, and save the file, and watch the termi
 
 You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/xslt-transform
 
+=== Transforming message using Data Formats
+
+Some data-formats can also be used for message transformation such as Base64, Csv, Flatpack.
+
+TIP: You can use `camel catalog dataformat --filter=transform` to see which components can be transformation.
+
+Given the below CSV file in the `daltons.csv`:
+
+[source,text]
+----
+Jack Dalton, 115, mad at Averell
+Joe Dalton, 105, calming Joe
+William Dalton, 105, keeping Joe from killing Averell
+Averell Dalton, 80, playing with Rantanplan
+Lucky Luke, 120, capturing the Daltons
+----
+
+Then you can transform this via Camel CSV dataformat from its form into Java objects (unmarshal).
+This will NOT transform the CSV into another format such as XML, but allows you to quickly try out the dataformat,
+and be able to inspect the Java object inside Camel.
+
+[source,bash]
+----
+$ camel transform message --body=file:daltons.csv --dataformat=csv
+----
+
+This will then output:
+
+[source,text]
+----
+2023-12-04 10:53:45.578  55793 --- Message transformed (success) (176ms)
+ Exchange  (DefaultExchange)  InOut   6673987D34F3B54-0000000000000000
+ Message   (DefaultMessage)
+ Body      (ArrayList) (size: 5 bytes: 224)
+ [[Jack Dalton,  115,  mad at Averell], [Joe Dalton,  105,  calming Joe], [William Dalton,  105,  keeping Joe from killing Averell], [Averell Dalton,  80,
+ playing with Rantanplan], [Lucky Luke,  120,  capturing the Daltons]]
+----
+
+As you can see Camel CSV dataformat will then unarmshal the input (from CSV file) to a `java.util.ArrayList` object
+with 5 elements (one per row), and each row is another List of the columns.
+
+NOTE: The transform message with dataformat is limited as some dataformat requires additional configuration that is not possible
+from the Camel JBang CLI.
 
 == Listing what Camel components is available
 
