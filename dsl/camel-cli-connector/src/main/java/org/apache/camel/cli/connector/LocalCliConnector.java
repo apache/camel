@@ -79,6 +79,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -287,12 +288,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         String body = Jsoner.unescape(root.getString("body"));
         InputStream is = null;
         Object b = body;
-        Map<String, Object> map = null;
         if (body.startsWith("file:")) {
             File file = new File(body.substring(5));
             is = new FileInputStream(file);
             b = IOHelper.loadText(is);
         }
+        final Object inputBody = b;
+        Map<String, Object> map = null;
         Collection<JsonObject> headers = root.getCollection("headers");
         if (headers != null) {
             map = new LinkedHashMap<>();
@@ -300,8 +302,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 map.put(jo.getString("key"), jo.getString("value"));
             }
         }
-        final Object inputBody = b;
         final Map<String, Object> inputHeaders = map;
+        Map<String, Object> map2 = null;
+        Collection<JsonObject> options = root.getCollection("options");
+        if (options != null) {
+            map2 = new LinkedHashMap<>();
+            for (JsonObject jo : options) {
+                map2.put(jo.getString("key"), jo.getString("value"));
+            }
+        }
+        final Map<String, Object> componentOptions = map2;
         Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
         try {
             if (source != null) {
@@ -396,6 +406,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 if (euf.propertyNames().contains("contentCache")) {
                     uri = uri + "?contentCache=false";
                 }
+                if (componentOptions != null) {
+                    uri = URISupport.appendParametersToURI(uri, componentOptions);
+                }
                 out = producer.send(uri, out);
             } else if (dataformat != null) {
                 // transform via dataformat
@@ -405,6 +418,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     out.getMessage().setHeaders(inputHeaders);
                 }
                 String uri = "dataformat:" + dataformat + ":unmarshal";
+                if (componentOptions != null) {
+                    uri = URISupport.appendParametersToURI(uri, componentOptions);
+                }
                 out = producer.send(uri, out);
             } else {
                 // transform via language

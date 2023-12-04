@@ -2435,6 +2435,17 @@ You can then edit the `mystyle.xsl` file, and save the file, and watch the termi
 
 You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/xslt-transform
 
+You can configure options that the XSLT component format should use, such as shown below:
+
+[source,bash]
+----
+$ camel transform message --body=file:sample.xml --component=xslt --template=file:mystyle.xsl --option=output=bytes --pretty --watch
+----
+
+TIP: You can specify multiple options by repeating the `--option` argument.
+
+NOTE: The transform message with component is limited as some components requires configuring complex options that cannot be set from command line.
+
 === Transforming message using Data Formats
 
 Some data-formats can also be used for message transformation such as Base64, Csv, Flatpack.
@@ -2476,8 +2487,16 @@ This will then output:
 As you can see Camel CSV dataformat will then unarmshal the input (from CSV file) to a `java.util.ArrayList` object
 with 5 elements (one per row), and each row is another List of the columns.
 
-NOTE: The transform message with dataformat is limited as some dataformat requires additional configuration that is not possible
-from the Camel JBang CLI.
+You can configure options that the CSV data format should use, such as shown below:
+
+[source,bash]
+----
+$ camel transform message --body=file:daltons.csv --dataformat=csv --option=captureHeaderRecord=true
+----
+
+TIP: You can specify multiple options by repeating the `--option` argument.
+
+NOTE: The transform message with dataformat is limited as some dataformat requires configuring complex options that cannot be set from command line.
 
 == Listing what Camel components is available
 

@@ -79,6 +79,10 @@ public class TransformMessageAction extends ActionWatchCommand {
                         description = "The template to use for message transformation (prefix with file: to refer to loading message body from file)")
     private String template;
 
+    @CommandLine.Option(names = { "--option" },
+                        description = "Option for component or dataformat (key=value)")
+    List<String> options;
+
     @CommandLine.Option(names = {
             "--output" },
                         description = "File to store output. If none provide then output is printed to console.")
@@ -201,6 +205,20 @@ public class TransformMessageAction extends ActionWatchCommand {
                 arr.add(jo);
             }
             root.put("headers", arr);
+        }
+        if (options != null) {
+            JsonArray arr = new JsonArray();
+            for (String h : options) {
+                JsonObject jo = new JsonObject();
+                if (!h.contains("=")) {
+                    System.out.println("Option must be in key=value format, was: " + h);
+                    return 0;
+                }
+                jo.put("key", StringHelper.before(h, "="));
+                jo.put("value", StringHelper.after(h, "="));
+                arr.add(jo);
+            }
+            root.put("options", arr);
         }
         File f = getActionFile(Long.toString(pid));
         try {
