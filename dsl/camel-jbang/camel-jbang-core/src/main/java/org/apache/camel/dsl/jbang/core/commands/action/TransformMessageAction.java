@@ -80,7 +80,7 @@ public class TransformMessageAction extends ActionWatchCommand {
     private String template;
 
     @CommandLine.Option(names = { "--option" },
-                        description = "Option for component or dataformat (key=value)")
+                        description = "Option for additional configuration of the used language, component or dataformat (key=value)")
     List<String> options;
 
     @CommandLine.Option(names = {
@@ -133,6 +133,24 @@ public class TransformMessageAction extends ActionWatchCommand {
             }
             if (source == null && (template == null || language == null && component == null)) {
                 System.err.println("Both template and one of language/component must be configured");
+                return -1;
+            }
+        }
+
+        // does files exists
+        if (source != null && source.startsWith("file:")) {
+            String s = source.substring(5);
+            s = StringHelper.beforeLast(s, ":", s); // remove line number
+            File f = new File(s);
+            if (!f.exists()) {
+                System.err.println("Source file does not exist: " + f);
+                return -1;
+            }
+        }
+        if (template != null && template.startsWith("file:")) {
+            File f = new File(template.substring(5));
+            if (!f.exists()) {
+                System.err.println("Template file does not exist: " + f);
                 return -1;
             }
         }

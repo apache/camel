@@ -2386,6 +2386,29 @@ You can also transform the message from JSon to XML as shown (or any other kind 
     id: setBody-fa01
 ----
 
+You can configure options that the language format should use, such as shown below:
+
+[source,bash]
+----
+$ camel transform message --body=file:sample.json --language=jsonpath --template="beer.unknown" --option=suppressExceptions=true
+----
+
+TIP: You can specify multiple options by repeating the `--option` argument.
+
+Pay attention that we now use JSONPath as the language, and the template is a tiny json path expression.
+Because the sample does not have a `beer.unknown` path, then JSonPath would normally throw an exception.
+This can be suppressed by setting the option `suppressExceptions` to `true` as shown above. Then the output is as follows:
+
+[source,text]
+----
+2023-12-04 13:02:50.923  66291 --- Message transformed (success) (239ms)
+ Exchange  (DefaultExchange)  InOut   6118686CA3995FF-0000000000000000
+ Message   (DefaultMessage)
+ Body      (null) (bytes: 14)
+ [Body is null]
+----
+
+
 === Transforming message using Components
 
 Some components can also be used for message transformation such as Flatpack, Velocity, Freemarker, Thymaleaf, and good old XSLT.

@@ -74,6 +74,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -311,7 +312,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 map2.put(jo.getString("key"), jo.getString("value"));
             }
         }
-        final Map<String, Object> componentOptions = map2;
+        final Map<String, Object> inputOptions = map2;
         Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
         try {
             if (source != null) {
@@ -406,8 +407,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 if (euf.propertyNames().contains("contentCache")) {
                     uri = uri + "?contentCache=false";
                 }
-                if (componentOptions != null) {
-                    uri = URISupport.appendParametersToURI(uri, componentOptions);
+                if (inputOptions != null) {
+                    uri = URISupport.appendParametersToURI(uri, inputOptions);
                 }
                 out = producer.send(uri, out);
             } else if (dataformat != null) {
@@ -418,14 +419,19 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     out.getMessage().setHeaders(inputHeaders);
                 }
                 String uri = "dataformat:" + dataformat + ":unmarshal";
-                if (componentOptions != null) {
-                    uri = URISupport.appendParametersToURI(uri, componentOptions);
+                if (inputOptions != null) {
+                    uri = URISupport.appendParametersToURI(uri, inputOptions);
                 }
                 out = producer.send(uri, out);
             } else {
                 // transform via language
                 Language lan = camelContext.resolveLanguage(language);
                 Expression exp = lan.createExpression(template);
+                // configure expression if options provided
+                if (inputOptions != null) {
+                    PropertyBindingSupport.build()
+                            .withCamelContext(camelContext).withTarget(exp).withProperties(inputOptions).bind();
+                }
                 exp.init(camelContext);
                 // create dummy exchange with
                 out.setPattern(ExchangePattern.InOut);
