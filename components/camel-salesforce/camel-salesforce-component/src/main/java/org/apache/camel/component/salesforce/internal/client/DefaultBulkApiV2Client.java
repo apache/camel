@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce.internal.client;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,13 +38,12 @@ import org.apache.camel.component.salesforce.api.dto.bulkv2.QueryJob;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.QueryJobs;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.util.BytesContentProvider;
-import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.client.BytesRequestContent;
+import org.eclipse.jetty.client.InputStreamRequestContent;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkApiV2Client {
 
@@ -84,8 +84,8 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     public void createBatch(
             InputStream batchStream, String jobId, Map<String, List<String>> headers, ResponseCallback callback) {
         final Request request = getRequest(HttpMethod.PUT, jobUrl(jobId) + "/batches", headers);
-        request.content(new InputStreamContentProvider(batchStream));
-        request.header(HttpHeader.CONTENT_TYPE, "text/csv");
+        request.body(new InputStreamRequestContent(batchStream));
+        request.headers(h -> h.add(HttpHeader.CONTENT_TYPE, "text/csv"));
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(
@@ -289,10 +289,10 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
         // set access token for all requests
         setAccessToken(request);
         if (!request.getHeaders().contains(HttpHeader.CONTENT_TYPE)) {
-            request.header(HttpHeader.CONTENT_TYPE, "application/json");
+            request.headers(h -> h.add(HttpHeader.CONTENT_TYPE, "application/json"));
         }
-        request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
-        request.header(HttpHeader.ACCEPT, "application/json");
+        request.headers(h -> h.add(HttpHeader.ACCEPT_CHARSET, StandardCharsets.UTF_8.name()));
+        request.headers(h -> h.add(HttpHeader.ACCEPT, "application/json"));
         super.doHttpRequest(request, callback);
     }
 
@@ -312,8 +312,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
 
     @Override
     protected void setAccessToken(Request request) {
-        request.header(AUTHORIZATION_HEADER, null);
-        request.header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken);
+        request.headers(h -> h.add(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken));
     }
 
     private String jobUrl(String jobId) {
@@ -377,7 +376,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             String message = "Error marshaling request: " + e.getMessage();
             throw new SalesforceException(message, e);
         }
-        request.content(new BytesContentProvider(outputStream.toByteArray()));
+        request.body(new BytesRequestContent(outputStream.toByteArray()));
     }
 
     private <T> T unmarshalResponse(InputStream response, Request request, Class<T> resultClass)

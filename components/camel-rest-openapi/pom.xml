@@ -124,19 +124,8 @@
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock</artifactId>
             <!-- TODO: needs code changes to update -->
-            <version>3.0.0-beta-3</version>
+            <version>3.0.1</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <!--
-                     Adding `camel-jetty` forces WireMock to use mixed Jetty
-                     versions, here we exclude WireMocks Jetty dependencies so
-                     that we only use the ones declared by the `jetty` component
-                     -->
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -163,11 +152,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+        <!-- To be restored once wiremock releases jetty 12 support https://github.com/wiremock/wiremock/issues/2395 -->
+        <!--dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jetty</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.apache.camel</groupId>

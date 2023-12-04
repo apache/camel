@@ -40,9 +40,8 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.dto.composite.RetrieveSObjectCollectionsDto;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.eclipse.jetty.client.api.ContentProvider;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.client.InputStreamRequestContent;
+import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
 
 public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientBase
@@ -74,8 +73,8 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         String url = versionUrl() + "composite/sobjects/" + sObjectName;
         Request request = createRequest("POST", url, headers);
 
-        final ContentProvider content = serialize(retrieveDto);
-        request.content(content);
+        final Request.Content content = serialize(retrieveDto);
+        request.body(content);
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
@@ -113,8 +112,8 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         String url = versionUrl() + "composite/sobjects";
         Request request = createRequest(method, url, headers);
 
-        final ContentProvider content = serialize(collection);
-        request.content(content);
+        final Request.Content content = serialize(collection);
+        request.body(content);
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
@@ -143,8 +142,8 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
         Request request = createRequest("PATCH", url, headers);
 
-        final ContentProvider content = serialize(collection);
-        request.content(content);
+        final Request.Content content = serialize(collection);
+        request.body(content);
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
@@ -182,8 +181,7 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     @Override
     protected void setAccessToken(final Request request) {
-        request.header("Authorization", null);
-        request.header("Authorization", "Bearer " + accessToken);
+        request.headers(h -> h.add("Authorization", "Bearer " + accessToken));
     }
 
     private Request createRequest(final String method, final String url, final Map<String, List<String>> headers) {
@@ -195,8 +193,8 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         // setup authorization
         setAccessToken(request);
 
-        request.header(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8);
-        request.header(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8);
+        request.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
+        request.headers(h -> h.add(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8));
 
         return request;
     }
@@ -212,9 +210,9 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         return mapper.writerFor(type);
     }
 
-    private ContentProvider serialize(final Object body)
+    private Request.Content serialize(final Object body)
             throws SalesforceException {
-        return new InputStreamContentProvider(toJson(body));
+        return new InputStreamRequestContent(toJson(body));
     }
 
     private String servicesDataUrl() {

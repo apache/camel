@@ -14,22 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.jetty12;
 
-import java.awt.Image;
+import org.apache.camel.spi.annotations.SendDynamic;
 
-import jakarta.xml.ws.BindingType;
-import jakarta.xml.ws.Holder;
+@SendDynamic("jetty")
+public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {
 
-import org.apache.camel.cxf.mtom_feature.Hello;
-
-@BindingType(value = jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-public class HelloImpl implements Hello {
-    public void detail(Holder<byte[]> photo, Holder<Image> image) {
-        // echo through Holder
-    }
-
-    public void echoData(Holder<byte[]> data) {
-        // echo through Holder
-    }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.File;
 import java.security.Principal;
 import java.util.Arrays;
 
@@ -27,12 +28,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.http.common.HttpConfiguration;
-import org.eclipse.jetty.security.ConstraintMapping;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintMapping;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
-import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.util.resource.URLResourceFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,8 +44,11 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
     @BindToRegistry("myAuthHandler")
     public SecurityHandler getSecurityHandler() {
-        Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
-        constraint.setAuthenticate(true);
+        Constraint constraint = new Constraint.Builder()
+                .name("BASIC")
+                .roles("user")
+                .authorization(Constraint.Authorization.SPECIFIC_ROLE)
+                .build();
 
         ConstraintMapping cm = new ConstraintMapping();
         cm.setPathSpec("/*");
@@ -53,7 +58,10 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
         sh.setAuthenticator(new BasicAuthenticator());
         sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
-        HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
+        HashLoginService loginService = new HashLoginService(
+                "MyRealm",
+                new URLResourceFactory().newResource(
+                        new File("src/test/resources/myRealm.properties").toURI()));
         sh.setLoginService(loginService);
         sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 

@@ -20,7 +20,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.jetty11.JettyHttpComponent11;
+import org.apache.camel.component.jetty12.JettyHttpComponent12;
 
 /**
  * Expose HTTP endpoints using Jetty 11.
@@ -49,7 +49,7 @@ public interface JettyComponentBuilderFactory {
      */
     interface JettyComponentBuilder
             extends
-                ComponentBuilder<JettyHttpComponent11> {
+                ComponentBuilder<JettyHttpComponent12> {
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
@@ -660,12 +660,12 @@ public interface JettyComponentBuilderFactory {
 
     class JettyComponentBuilderImpl
             extends
-                AbstractComponentBuilder<JettyHttpComponent11>
+                AbstractComponentBuilder<JettyHttpComponent12>
             implements
                 JettyComponentBuilder {
         @Override
-        protected JettyHttpComponent11 buildConcreteComponent() {
-            return new JettyHttpComponent11();
+        protected JettyHttpComponent12 buildConcreteComponent() {
+            return new JettyHttpComponent12();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -673,42 +673,38 @@ public interface JettyComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((JettyHttpComponent11) component).setBridgeErrorHandler((boolean) value); return true;
-            case "continuationTimeout": ((JettyHttpComponent11) component).setContinuationTimeout((java.lang.Long) value); return true;
-            case "enableJmx": ((JettyHttpComponent11) component).setEnableJmx((boolean) value); return true;
-            case "maxThreads": ((JettyHttpComponent11) component).setMaxThreads((java.lang.Integer) value); return true;
-            case "minThreads": ((JettyHttpComponent11) component).setMinThreads((java.lang.Integer) value); return true;
-            case "muteException": ((JettyHttpComponent11) component).setMuteException((boolean) value); return true;
-            case "requestBufferSize": ((JettyHttpComponent11) component).setRequestBufferSize((java.lang.Integer) value); return true;
-            case "requestHeaderSize": ((JettyHttpComponent11) component).setRequestHeaderSize((java.lang.Integer) value); return true;
-            case "responseBufferSize": ((JettyHttpComponent11) component).setResponseBufferSize((java.lang.Integer) value); return true;
-            case "responseHeaderSize": ((JettyHttpComponent11) component).setResponseHeaderSize((java.lang.Integer) value); return true;
-            case "sendServerVersion": ((JettyHttpComponent11) component).setSendServerVersion((boolean) value); return true;
-            case "useContinuation": ((JettyHttpComponent11) component).setUseContinuation((boolean) value); return true;
-            case "useXForwardedForHeader": ((JettyHttpComponent11) component).setUseXForwardedForHeader((boolean) value); return true;
-            case "fileSizeThreshold": ((JettyHttpComponent11) component).setFileSizeThreshold((int) value); return true;
-            case "filesLocation": ((JettyHttpComponent11) component).setFilesLocation((java.lang.String) value); return true;
-            case "maxFileSize": ((JettyHttpComponent11) component).setMaxFileSize((long) value); return true;
-            case "maxRequestSize": ((JettyHttpComponent11) component).setMaxRequestSize((long) value); return true;
-            case "threadPool": ((JettyHttpComponent11) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
-            case "allowJavaSerializedObject": ((JettyHttpComponent11) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "autowiredEnabled": ((JettyHttpComponent11) component).setAutowiredEnabled((boolean) value); return true;
-            case "errorHandler": ((JettyHttpComponent11) component).setErrorHandler((org.eclipse.jetty.server.handler.ErrorHandler) value); return true;
-            case "httpBinding": ((JettyHttpComponent11) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
-            case "httpConfiguration": ((JettyHttpComponent11) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
-            case "mbContainer": ((JettyHttpComponent11) component).setMbContainer((org.eclipse.jetty.jmx.MBeanContainer) value); return true;
-            case "headerFilterStrategy": ((JettyHttpComponent11) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "proxyHost": ((JettyHttpComponent11) component).setProxyHost((java.lang.String) value); return true;
-            case "proxyPort": ((JettyHttpComponent11) component).setProxyPort((java.lang.Integer) value); return true;
-            case "keystore": ((JettyHttpComponent11) component).setKeystore((java.lang.String) value); return true;
-            case "socketConnectorProperties": ((JettyHttpComponent11) component).setSocketConnectorProperties((java.util.Map) value); return true;
-            case "socketConnectors": ((JettyHttpComponent11) component).setSocketConnectors((java.util.Map) value); return true;
-            case "sslContextParameters": ((JettyHttpComponent11) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "sslKeyPassword": ((JettyHttpComponent11) component).setSslKeyPassword((java.lang.String) value); return true;
-            case "sslPassword": ((JettyHttpComponent11) component).setSslPassword((java.lang.String) value); return true;
-            case "sslSocketConnectorProperties": ((JettyHttpComponent11) component).setSslSocketConnectorProperties((java.util.Map) value); return true;
-            case "sslSocketConnectors": ((JettyHttpComponent11) component).setSslSocketConnectors((java.util.Map) value); return true;
-            case "useGlobalSslContextParameters": ((JettyHttpComponent11) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "bridgeErrorHandler": ((JettyHttpComponent12) component).setBridgeErrorHandler((boolean) value); return true;
+            case "continuationTimeout": ((JettyHttpComponent12) component).setContinuationTimeout((java.lang.Long) value); return true;
+            case "enableJmx": ((JettyHttpComponent12) component).setEnableJmx((boolean) value); return true;
+            case "maxThreads": ((JettyHttpComponent12) component).setMaxThreads((java.lang.Integer) value); return true;
+            case "minThreads": ((JettyHttpComponent12) component).setMinThreads((java.lang.Integer) value); return true;
+            case "muteException": ((JettyHttpComponent12) component).setMuteException((boolean) value); return true;
+            case "requestBufferSize": ((JettyHttpComponent12) component).setRequestBufferSize((java.lang.Integer) value); return true;
+            case "requestHeaderSize": ((JettyHttpComponent12) component).setRequestHeaderSize((java.lang.Integer) value); return true;
+            case "responseBufferSize": ((JettyHttpComponent12) component).setResponseBufferSize((java.lang.Integer) value); return true;
+            case "responseHeaderSize": ((JettyHttpComponent12) component).setResponseHeaderSize((java.lang.Integer) value); return true;
+            case "sendServerVersion": ((JettyHttpComponent12) component).setSendServerVersion((boolean) value); return true;
+            case "useContinuation": ((JettyHttpComponent12) component).setUseContinuation((boolean) value); return true;
+            case "useXForwardedForHeader": ((JettyHttpComponent12) component).setUseXForwardedForHeader((boolean) value); return true;
+            case "threadPool": ((JettyHttpComponent12) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
+            case "allowJavaSerializedObject": ((JettyHttpComponent12) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "autowiredEnabled": ((JettyHttpComponent12) component).setAutowiredEnabled((boolean) value); return true;
+            case "errorHandler": ((JettyHttpComponent12) component).setErrorHandler((org.eclipse.jetty.server.handler.ErrorHandler) value); return true;
+            case "httpBinding": ((JettyHttpComponent12) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
+            case "httpConfiguration": ((JettyHttpComponent12) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
+            case "mbContainer": ((JettyHttpComponent12) component).setMbContainer((org.eclipse.jetty.jmx.MBeanContainer) value); return true;
+            case "headerFilterStrategy": ((JettyHttpComponent12) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "proxyHost": ((JettyHttpComponent12) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": ((JettyHttpComponent12) component).setProxyPort((java.lang.Integer) value); return true;
+            case "keystore": ((JettyHttpComponent12) component).setKeystore((java.lang.String) value); return true;
+            case "socketConnectorProperties": ((JettyHttpComponent12) component).setSocketConnectorProperties((java.util.Map) value); return true;
+            case "socketConnectors": ((JettyHttpComponent12) component).setSocketConnectors((java.util.Map) value); return true;
+            case "sslContextParameters": ((JettyHttpComponent12) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "sslKeyPassword": ((JettyHttpComponent12) component).setSslKeyPassword((java.lang.String) value); return true;
+            case "sslPassword": ((JettyHttpComponent12) component).setSslPassword((java.lang.String) value); return true;
+            case "sslSocketConnectorProperties": ((JettyHttpComponent12) component).setSslSocketConnectorProperties((java.util.Map) value); return true;
+            case "sslSocketConnectors": ((JettyHttpComponent12) component).setSslSocketConnectors((java.util.Map) value); return true;
+            case "useGlobalSslContextParameters": ((JettyHttpComponent12) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

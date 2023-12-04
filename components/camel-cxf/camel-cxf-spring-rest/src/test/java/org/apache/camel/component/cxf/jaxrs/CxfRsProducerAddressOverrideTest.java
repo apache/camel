@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
-    private static int port2 = CXFTestSupport.getPort("CxfRsProducerAddressOverrideTest.jetty");
+    private static int port2 = CXFTestSupport.getPort("CxfRsProducerAddressOverrideTest.undertow");
 
     public int getPort1() {
         return port1;

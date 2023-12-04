@@ -16,30 +16,29 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.eclipse.jetty.client.HttpContentResponse;
-import org.eclipse.jetty.client.HttpConversation;
+import org.eclipse.jetty.client.BufferingResponseListener;
+import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.ProtocolHandler;
-import org.eclipse.jetty.client.ResponseNotifier;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.client.util.BufferingResponseListener;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.client.Result;
+import org.eclipse.jetty.client.internal.HttpContentResponse;
+import org.eclipse.jetty.client.transport.HttpConversation;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 public class SalesforceSecurityHandler implements ProtocolHandler {
 
@@ -55,7 +54,8 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
     private final SalesforceSession session;
     private final int maxAuthenticationRetries;
     private final int maxContentLength;
-    private final ResponseNotifier notifier;
+//    TODO
+//    private final ResponseNotifier notifier;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public SalesforceSecurityHandler(SalesforceHttpClient httpClient) {
@@ -65,7 +65,8 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
 
         this.maxAuthenticationRetries = httpClient.getMaxRetries();
         this.maxContentLength = httpClient.getMaxContentLength();
-        this.notifier = new ResponseNotifier();
+        // TODO
+//        this.notifier = new ResponseNotifier();
     }
 
     @Override
@@ -288,7 +289,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                     client.setAccessToken(newRequest);
                 } else {
                     // plain request not made by an AbstractClientBase
-                    newRequest.header(HttpHeader.AUTHORIZATION, "OAuth " + currentToken);
+                    newRequest.headers(h -> h.add(HttpHeader.AUTHORIZATION, "OAuth " + currentToken));
                 }
             }
 
@@ -313,15 +314,17 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
         private void forwardSuccessComplete(SalesforceHttpRequest request, Response response) {
             HttpConversation conversation = request.getConversation();
             conversation.updateResponseListeners(null);
-            notifier.forwardSuccessComplete(conversation.getResponseListeners(), request, response);
+            // TODO
+//            notifier.forwardSuccessComplete(conversation.getResponseListeners(), request, response);
         }
 
         private void forwardFailureComplete(
                 SalesforceHttpRequest request, Throwable requestFailure, Response response, Throwable responseFailure) {
             HttpConversation conversation = request.getConversation();
             conversation.updateResponseListeners(null);
-            notifier.forwardFailureComplete(conversation.getResponseListeners(), request, requestFailure, response,
-                    responseFailure);
+            // TODO
+//            notifier.forwardFailureComplete(conversation.getResponseListeners(), request, requestFailure, response,
+//                    responseFailure);
         }
 
     }

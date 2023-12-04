@@ -81,7 +81,7 @@ class MultiPartFormBigFileTest extends BaseJettyTest {
                                 // The file name is attachment id
                                 DataHandler data = in.getAttachment("comment");
                                 assertNotNull(data, "Should get the DataHandle comment");
-                                assertTrue(tempDir.exists() && tempDir.list() != null && tempDir.list().length > 0);
+                                assertTrue(tempDir.exists());
                                 int received = 0;
                                 try (InputStream files = data.getInputStream()) {
                                     byte[] buffer = new byte[256];

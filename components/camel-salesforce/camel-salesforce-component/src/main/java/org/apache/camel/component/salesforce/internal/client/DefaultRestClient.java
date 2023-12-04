@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,10 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.client.InputStreamRequestContent;
+import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultRestClient extends AbstractClientBase implements RestClient {
 
@@ -53,8 +53,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     protected void doHttpRequest(Request request, ClientResponseCallback callback) {
         // set standard headers for all requests
-        request.header(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8);
-        request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
+        request.headers(h -> h.add(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8));
+        request.headers(h -> h.add(HttpHeader.ACCEPT_CHARSET, StandardCharsets.UTF_8.name()));
         // request content type and charset is set by the request entity
 
         super.doHttpRequest(request, callback);
@@ -68,8 +68,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(post);
 
         // input stream as entity content
-        post.content(new InputStreamContentProvider(request));
-        post.header(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8);
+        post.body(new InputStreamRequestContent(request));
+        post.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
 
         doHttpRequest(post, new DelegatingClientCallback(callback));
     }
@@ -158,8 +158,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(post);
 
         // input stream as entity content
-        post.content(new InputStreamContentProvider(sObject));
-        post.header(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8);
+        post.body(new InputStreamRequestContent(sObject));
+        post.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
 
         doHttpRequest(post, new DelegatingClientCallback(callback));
     }
@@ -172,8 +172,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(patch);
 
         // input stream as entity content
-        patch.content(new InputStreamContentProvider(sObject));
-        patch.header(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8);
+        patch.body(new InputStreamRequestContent(sObject));
+        patch.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
 
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
@@ -210,9 +210,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(patch);
 
         // input stream as entity content
-        patch.content(new InputStreamContentProvider(sObject));
+        patch.body(new InputStreamRequestContent(sObject));
         // TODO will the encoding always be UTF-8??
-        patch.header(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8);
+        patch.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
 
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
@@ -323,8 +323,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                     case "PUT":
                     case "PATCH":
                     case "POST":
-                        request.content(new InputStreamContentProvider(requestDto));
-                        request.header(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8);
+                        request.body(new InputStreamRequestContent(requestDto));
+                        request.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
                         break;
                     default:
                         // ignore body for other methods
@@ -403,12 +403,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     protected void setAccessToken(Request request) {
         // replace old token
-        request.header(TOKEN_HEADER, null);
-        request.header(TOKEN_HEADER, TOKEN_PREFIX + accessToken);
+        request.headers(h -> h.add(TOKEN_HEADER, TOKEN_PREFIX + accessToken));
     }
 
     private String urlEncode(String query) throws UnsupportedEncodingException {
-        String encodedQuery = URLEncoder.encode(query, StringUtil.__UTF8);
+        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         // URLEncoder likes to use '+' for spaces
         encodedQuery = encodedQuery.replace("+", "%20");
         return encodedQuery;

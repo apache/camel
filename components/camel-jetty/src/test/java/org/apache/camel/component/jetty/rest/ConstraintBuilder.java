@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty11;
+package org.apache.camel.component.jetty.rest;
 
-import java.io.InputStream;
+import org.eclipse.jetty.security.Constraint;
 
-import org.eclipse.jetty.client.util.InputStreamContentProvider;
+public class ConstraintBuilder {
 
-public class CamelInputStreamContentProvider extends InputStreamContentProvider {
+    private final String name;
+    private final String[] roles;
 
-    private final int length;
-
-    public CamelInputStreamContentProvider(InputStream stream, int length) {
-        super(stream);
-        this.length = length;
+    public ConstraintBuilder(String name, String... roles) {
+        this.name = name;
+        this.roles = roles;
     }
 
-    @Override
-    public long getLength() {
-        return length;
+    public Constraint build() {
+        return new Constraint.Builder()
+                .name(name)
+                .roles(roles)
+                .authorization(Constraint.Authorization.SPECIFIC_ROLE)
+                .build();
     }
 }

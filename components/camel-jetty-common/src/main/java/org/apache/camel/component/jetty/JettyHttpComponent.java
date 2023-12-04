@@ -18,14 +18,12 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +32,6 @@ import java.util.Map;
 import jakarta.servlet.Filter;
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import javax.management.MBeanServer;
 
@@ -70,22 +65,17 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
+import org.eclipse.jetty.ee10.servlets.CrossOriginFilter;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.jmx.MBeanContainer;
-import org.eclipse.jetty.server.AbstractConnector;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerWrapper;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.component.Container;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -355,8 +345,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                 // check if there are any new handlers, and if so then we need to re-start the server
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
                     List<Handler> existingHandlers = new ArrayList<>();
-                    if (connectorRef.server.getHandlers() != null && connectorRef.server.getHandlers().length > 0) {
-                        existingHandlers = Arrays.asList(connectorRef.server.getHandlers());
+                    if (connectorRef.server.getHandlers() != null && !connectorRef.server.getHandlers().isEmpty()) {
+                        existingHandlers = connectorRef.server.getHandlers();
                     }
                     List<Handler> newHandlers = new ArrayList<>(endpoint.getHandlers());
                     boolean changed = !existingHandlers.containsAll(newHandlers) && !newHandlers.containsAll(existingHandlers);
@@ -397,8 +387,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         }
     }
 
-    private void enableSessionSupport(Server server, String connectorKey) {
-        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
+    private void enableSessionSupport(Server server, String connectorKey) throws Exception {
+        ServletContextHandler context = server.getDescendant(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
             if (context.isStarted()) {
@@ -411,7 +401,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     }
 
     private void setFilters(JettyHttpEndpoint endpoint, Server server) {
-        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
+        ServletContextHandler context = server.getDescendant(ServletContextHandler.class);
         List<Filter> filters = endpoint.getFilters();
         for (Filter filter : filters) {
             FilterHolder filterHolder = new FilterHolder();
@@ -431,8 +421,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         context.getServletHandler().addFilterWithMapping(filterHolder, pathSpec, 0);
     }
 
-    private void enableMultipartFilter(HttpCommonEndpoint endpoint, Server server) {
-        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
+    private void enableMultipartFilter(HttpCommonEndpoint endpoint, Server server) throws Exception {
+        ServletContextHandler context = server.getDescendant(ServletContextHandler.class);
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
         filterHolder.setInitParameter("deleteFiles", "true");
@@ -1186,7 +1176,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             List<Handler> handlers, JettyHttpEndpoint endpoint)
             throws Exception {
         ServletContextHandler context
-                = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
+                = new ServletContextHandler("/", false, false);
+        server.setHandler(context);
 
         addJettyHandlers(server, handlers);
 
@@ -1220,14 +1211,14 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     protected void addJettyHandlers(Server server, List<Handler> handlers) {
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
-                if (handler instanceof HandlerWrapper) {
+                if (handler instanceof Handler.Wrapper) {
                     // avoid setting a handler more than once
                     if (!isHandlerInChain(server.getHandler(), handler)) {
-                        ((HandlerWrapper) handler).setHandler(server.getHandler());
+                        ((Handler.Wrapper) handler).setHandler(server.getHandler());
                         server.setHandler(handler);
                     }
                 } else {
-                    HandlerCollection handlerCollection = new HandlerCollection();
+                    ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
                     handlerCollection.addHandler(server.getHandler());
                     handlerCollection.addHandler(handler);
                     server.setHandler(handlerCollection);
@@ -1241,9 +1232,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         if (handler.equals(current)) {
             //Found a match in the chain
             return true;
-        } else if (current instanceof HandlerWrapper) {
+        } else if (current instanceof Handler.Wrapper) {
             //Inspect the next handler in the chain
-            return isHandlerInChain(((HandlerWrapper) current).getHandler(), handler);
+            return isHandlerInChain(((Handler.Wrapper) current).getHandler(), handler);
         } else {
             //End of chain
             return false;
@@ -1295,34 +1286,24 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         s.setHandler(collection);
         // setup the error handler if it set to Jetty component
         if (getErrorHandler() != null) {
-            s.addBean(getErrorHandler());
+            s.setErrorHandler(getErrorHandler());
         } else {
             //need an error handler that won't leak information about the exception back to the client.
             ErrorHandler eh = new ErrorHandler() {
                 @Override
-                public void handle(
-                        String target, Request baseRequest,
-                        HttpServletRequest request, HttpServletResponse response)
-                        throws IOException, ServletException {
+                public boolean handle(
+                        Request baseRequest, Response response, Callback callback) {
                     String msg = HttpStatus.getMessage(response.getStatus());
-                    Object timeout = request.getAttribute(CamelContinuationServlet.TIMEOUT_ERROR);
+                    Object timeout = baseRequest.getAttribute(CamelContinuationServlet.TIMEOUT_ERROR);
                     if (Boolean.TRUE.equals(timeout)) {
-                        request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 504);
+                        baseRequest.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 504);
                         response.setStatus(504);
                     }
-                    request.setAttribute(RequestDispatcher.ERROR_MESSAGE, msg);
-                    super.handle(target, baseRequest, request, response);
-                }
-
-                @Override
-                protected void writeErrorPage(
-                        HttpServletRequest request, Writer writer, int code,
-                        String message, boolean showStacks)
-                        throws IOException {
-                    super.writeErrorPage(request, writer, code, message, false);
+                    baseRequest.setAttribute(RequestDispatcher.ERROR_MESSAGE, msg);
+                    return super.handle(baseRequest, response, callback);
                 }
             };
-            s.addBean(eh, false);
+            s.setErrorHandler(eh);
         }
         return s;
     }

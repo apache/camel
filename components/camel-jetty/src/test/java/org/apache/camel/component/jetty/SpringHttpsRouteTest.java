@@ -74,6 +74,7 @@ public class SpringHttpsRouteTest {
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = Thread.currentThread().getContextClassLoader().getResource("jsse/localhost.p12");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
+        setSystemProp("javax.net.ssl.trustStorePassword", pwd);
     }
 
     @AfterEach

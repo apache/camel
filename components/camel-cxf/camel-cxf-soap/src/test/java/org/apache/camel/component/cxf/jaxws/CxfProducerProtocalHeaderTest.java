@@ -43,7 +43,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:" + port + "/CxfProducerProtocalHeaderTest/user")
+                from("undertow:http://localhost:" + port + "/CxfProducerProtocalHeaderTest/user")
                         .process(new Processor() {
 
                             public void process(Exchange exchange) throws Exception {

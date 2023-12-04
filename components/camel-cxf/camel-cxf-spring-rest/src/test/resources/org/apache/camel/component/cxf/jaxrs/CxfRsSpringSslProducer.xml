@@ -22,14 +22,14 @@
        xmlns:cxf="http://camel.apache.org/schema/cxf/jaxrs"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:sec="http://cxf.apache.org/configuration/security"
-       xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration"
+       xmlns:httpj="http://cxf.apache.org/transports/http-undertow/configuration"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/cxf/jaxrs http://camel.apache.org/schema/cxf/jaxrs/camel-cxf.xsd
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
-       http://cxf.apache.org/transports/http-jetty/configuration http://cxf.apache.org/schemas/configuration/http-jetty.xsd
+       http://cxf.apache.org/transports/http-undertow/configuration http://cxf.apache.org/schemas/configuration/http-undertow.xsd
     ">
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 

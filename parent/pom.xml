@@ -87,8 +87,8 @@
         <cglib-version>3.3.0</cglib-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.165</classgraph-version>
-        <cometd-java-client-version>7.0.11</cometd-java-client-version>
-        <cometd-java-server-version>7.0.11</cometd-java-server-version>
+        <cometd-java-client-version>8.0.0.beta0</cometd-java-client-version>
+        <cometd-java-server-version>8.0.0.beta0</cometd-java-server-version>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
         <commons-codec-version>1.16.0</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
@@ -197,7 +197,7 @@
         <hazelcast-version>5.3.6</hazelcast-version>
         <hdrhistrogram-version>2.1.12</hdrhistrogram-version>
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
-        <hibernate-version>5.6.15.Final</hibernate-version>
+        <hibernate-version>6.3.2.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.2</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
@@ -254,9 +254,9 @@
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
         <jcache-version>1.1.1</jcache-version>
         <jcr-version>2.0</jcr-version>
-        <jedis-client-version>5.1.0</jedis-client-version>
+        <jedis-client-version>5.0.2</jedis-client-version>
         <jetcd-version>0.7.5</jetcd-version>
-        <jetty-version>11.0.18</jetty-version>
+        <jetty-version>12.0.3</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
@@ -309,7 +309,7 @@
         <logback-version>1.4.13</logback-version>
         <lucene-version>9.8.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
-        <littleproxy-version>2.0.19</littleproxy-version>
+        <littleproxy-version>2.1.0</littleproxy-version>
         <mapstruct-version>1.5.5.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.9.6</maven-version>
@@ -458,7 +458,7 @@
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
         <wildfly-elytron>1.20.4.Final</wildfly-elytron>
-        <wiremock-version>3.0.0-beta-10</wiremock-version>
+        <wiremock-version>3.0.1</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>6.5.1</woodstox-core-version>
         <xbean-spring-version>4.23</xbean-spring-version>

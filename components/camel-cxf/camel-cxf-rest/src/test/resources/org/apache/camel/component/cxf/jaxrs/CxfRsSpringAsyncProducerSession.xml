@@ -48,7 +48,7 @@
     <cxf:rsClient id="rsClientHttp" address="http://127.0.0.1:${CXFTestSupport.port1}/CxfRsProducerSessionTest/"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="fromEndpoint" uri="jetty://http://127.0.0.1:${CxfRsProducerSessionTest.jetty}/CxfRsProducerSessionTest/echoservice"/>
+        <endpoint id="fromEndpoint" uri="undertow://http://127.0.0.1:${CxfRsProducerSessionTest.undertow}/CxfRsProducerSessionTest/echoservice"/>
         <route>
             <from uri="direct://proxy"/>
             <to uri="cxfrs://bean://rsClientProxy"/>
