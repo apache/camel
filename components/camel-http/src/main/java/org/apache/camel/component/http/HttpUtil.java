@@ -32,4 +32,17 @@ public final class HttpUtil {
     public static Optional<String> responseHeaderValue(HttpResponse response, String headerName) {
         return responseHeader(response, headerName).map(Header::getValue);
     }
+
+    public static String removeHttpOrHttpsProtocol(String uri) {
+        if (uri.startsWith("http://")) {
+            uri = uri.substring(7);
+        } else if (uri.startsWith("http:")) {
+            uri = uri.substring(5);
+        } else if (uri.startsWith("https://")) {
+            uri = uri.substring(8);
+        } else if (uri.startsWith("https:")) {
+            uri = uri.substring(6);
+        }
+        return uri;
+    }
 }

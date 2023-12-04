@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -25,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpEndpointURLTest extends CamelTestSupport {
 
@@ -46,14 +44,17 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         assertEquals("https://www.google.com?test=parameter", http2.getHttpUri().toString(), "Get a wrong HttpUri of http2");
         assertEquals(http2.getHttpUri(), http3.getHttpUri(), "Get a wrong HttpUri of http2 andhttp3");
 
-        try {
-            // need to catch the exception here
-            context.getEndpoint("https://http://www.google.com", HttpEndpoint.class);
-            fail("need to throw an exception here");
-        } catch (ResolveEndpointFailedException ex) {
-            assertTrue(ex.getMessage().indexOf("You have duplicated the http(s) protocol") > 0,
-                    "Get a wrong exception message");
-        }
+        // secure because protocol in remainder is https
+        HttpEndpoint http4 = context.getEndpoint("http://https://www.google.com", HttpEndpoint.class);
+        assertEquals("https://www.google.com", http4.getHttpUri().toString(), "Get a wrong HttpUri of http1");
+
+        // secure because protocol in remainder is https
+        HttpEndpoint http5 = context.getEndpoint("https://https://www.google.com", HttpEndpoint.class);
+        assertEquals("https://www.google.com", http5.getHttpUri().toString(), "Get a wrong HttpUri of http1");
+
+        // not secure because protocol in remainder is plain http
+        HttpEndpoint http6 = context.getEndpoint("https://http://www.google.com", HttpEndpoint.class);
+        assertEquals("http://www.google.com", http6.getHttpUri().toString(), "Get a wrong HttpUri of http1");
     }
 
     @Test

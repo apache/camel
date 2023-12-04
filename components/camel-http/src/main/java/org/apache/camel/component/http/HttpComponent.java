@@ -28,7 +28,6 @@ import javax.net.ssl.HostnameVerifier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.base.HttpHelper;
@@ -359,7 +358,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HeaderFilterStrategy headerFilterStrategy
                 = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
-        boolean secure = HttpHelper.isSecureConnection(uri) || sslContextParameters != null;
+        // the actual protocol if present in the remainder part should take precedence
+        String secureProtocol = uri;
+        if (remaining.startsWith("http:") || remaining.startsWith("https:")) {
+            secureProtocol = remaining;
+        }
+        boolean secure = HttpHelper.isSecureConnection(secureProtocol) || sslContextParameters != null;
+
+        // remaining part should be without protocol as that was how this component was originally created
+        remaining = org.apache.camel.component.http.HttpUtil.removeHttpOrHttpsProtocol(remaining);
 
         // need to set scheme on address uri depending on if its secure or not
         String addressUri = (secure ? "https://" : "http://") + remaining;
@@ -367,23 +374,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI uriHttpUriAddress = new URI(addressUri);
 
-        // validate http uri that end-user did not duplicate the http part that can be a common error
-        int pos = uri.indexOf("//");
-        if (pos != -1) {
-            String part = uri.substring(pos + 2);
-            if (part.startsWith("http:") || part.startsWith("https:")) {
-                throw new ResolveEndpointFailedException(
-                        uri,
-                        "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
-            }
-        }
+        // the endpoint uri should use the component name as scheme, so we need to re-create it once more
+        String scheme = StringHelper.before(uri, "://");
+
+        // uri part should be without protocol as that was how this component was originally created
+        uri = org.apache.camel.component.http.HttpUtil.removeHttpOrHttpsProtocol(uri);
 
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure);
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, httpClientParameters);
 
-        // the endpoint uri should use the component name as scheme, so we need to re-create it once more
-        String scheme = StringHelper.before(uri, "://");
         endpointUri = URISupport.createRemainingURI(
                 new URI(
                         scheme,
