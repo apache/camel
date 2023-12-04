@@ -684,6 +684,36 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of allowed/supported ciphers in their order of
+         * preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param ciphers the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointConsumerBuilder ciphers(String ciphers) {
+            doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Comma-separated list of allowed/supported key exchange algorithms in
+         * their order of preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kex the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointConsumerBuilder kex(String kex) {
+            doSetProperty("kex", kex);
+            return this;
+        }
+        /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
          * 
@@ -736,6 +766,22 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of allowed/supported message authentication code
+         * algorithms in their order of preference. The MAC algorithm is used
+         * for data integrity protection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param macs the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointConsumerBuilder macs(String macs) {
+            doSetProperty("macs", macs);
+            return this;
+        }
+        /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
@@ -748,6 +794,21 @@ public interface SshEndpointBuilderFactory {
          */
         default SshEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Comma-separated list of allowed/supported signature algorithms in
+         * their order of preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signatures the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointConsumerBuilder signatures(String signatures) {
+            doSetProperty("signatures", signatures);
             return this;
         }
         /**
@@ -956,6 +1017,55 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Instance of ClientBuilder used by the producer or consumer to create
+         * a new SshClient.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointConsumerBuilder clientBuilder(
+                org.apache.sshd.client.ClientBuilder clientBuilder) {
+            doSetProperty("clientBuilder", clientBuilder);
+            return this;
+        }
+        /**
+         * Instance of ClientBuilder used by the producer or consumer to create
+         * a new SshClient.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointConsumerBuilder clientBuilder(
+                String clientBuilder) {
+            doSetProperty("clientBuilder", clientBuilder);
+            return this;
+        }
+        /**
+         * Whether to use compression, and if so which.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param compressions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointConsumerBuilder compressions(
+                String compressions) {
+            doSetProperty("compressions", compressions);
+            return this;
+        }
+        /**
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
          * 
@@ -1131,6 +1241,36 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of allowed/supported ciphers in their order of
+         * preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param ciphers the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder ciphers(String ciphers) {
+            doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Comma-separated list of allowed/supported key exchange algorithms in
+         * their order of preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kex the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder kex(String kex) {
+            doSetProperty("kex", kex);
+            return this;
+        }
+        /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
          * 
@@ -1183,6 +1323,22 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of allowed/supported message authentication code
+         * algorithms in their order of preference. The MAC algorithm is used
+         * for data integrity protection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param macs the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder macs(String macs) {
+            doSetProperty("macs", macs);
+            return this;
+        }
+        /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
@@ -1195,6 +1351,21 @@ public interface SshEndpointBuilderFactory {
          */
         default SshEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Comma-separated list of allowed/supported signature algorithms in
+         * their order of preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signatures the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder signatures(String signatures) {
+            doSetProperty("signatures", signatures);
             return this;
         }
         /**
@@ -1286,6 +1457,55 @@ public interface SshEndpointBuilderFactory {
         default AdvancedSshEndpointProducerBuilder channelType(
                 String channelType) {
             doSetProperty("channelType", channelType);
+            return this;
+        }
+        /**
+         * Instance of ClientBuilder used by the producer or consumer to create
+         * a new SshClient.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointProducerBuilder clientBuilder(
+                org.apache.sshd.client.ClientBuilder clientBuilder) {
+            doSetProperty("clientBuilder", clientBuilder);
+            return this;
+        }
+        /**
+         * Instance of ClientBuilder used by the producer or consumer to create
+         * a new SshClient.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointProducerBuilder clientBuilder(
+                String clientBuilder) {
+            doSetProperty("clientBuilder", clientBuilder);
+            return this;
+        }
+        /**
+         * Whether to use compression, and if so which.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param compressions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointProducerBuilder compressions(
+                String compressions) {
+            doSetProperty("compressions", compressions);
             return this;
         }
         /**
@@ -1462,6 +1682,36 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of allowed/supported ciphers in their order of
+         * preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param ciphers the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointBuilder ciphers(String ciphers) {
+            doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Comma-separated list of allowed/supported key exchange algorithms in
+         * their order of preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kex the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointBuilder kex(String kex) {
+            doSetProperty("kex", kex);
+            return this;
+        }
+        /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
          * 
@@ -1513,6 +1763,22 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of allowed/supported message authentication code
+         * algorithms in their order of preference. The MAC algorithm is used
+         * for data integrity protection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param macs the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointBuilder macs(String macs) {
+            doSetProperty("macs", macs);
+            return this;
+        }
+        /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
@@ -1525,6 +1791,21 @@ public interface SshEndpointBuilderFactory {
          */
         default SshEndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Comma-separated list of allowed/supported signature algorithms in
+         * their order of preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signatures the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointBuilder signatures(String signatures) {
+            doSetProperty("signatures", signatures);
             return this;
         }
         /**
@@ -1567,6 +1848,53 @@ public interface SshEndpointBuilderFactory {
          */
         default AdvancedSshEndpointBuilder channelType(String channelType) {
             doSetProperty("channelType", channelType);
+            return this;
+        }
+        /**
+         * Instance of ClientBuilder used by the producer or consumer to create
+         * a new SshClient.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointBuilder clientBuilder(
+                org.apache.sshd.client.ClientBuilder clientBuilder) {
+            doSetProperty("clientBuilder", clientBuilder);
+            return this;
+        }
+        /**
+         * Instance of ClientBuilder used by the producer or consumer to create
+         * a new SshClient.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointBuilder clientBuilder(String clientBuilder) {
+            doSetProperty("clientBuilder", clientBuilder);
+            return this;
+        }
+        /**
+         * Whether to use compression, and if so which.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param compressions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointBuilder compressions(String compressions) {
+            doSetProperty("compressions", compressions);
             return this;
         }
         /**
