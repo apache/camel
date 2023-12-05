@@ -97,7 +97,6 @@ public class KubernetesCronJobProducer extends DefaultProducer {
     protected void doListCronJobByLabel(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
-            LOG.error("List CronJob by labels require specify a labels set");
             throw new IllegalArgumentException("Cron Job by labels require specify a labels set");
         }
 
@@ -113,11 +112,9 @@ public class KubernetesCronJobProducer extends DefaultProducer {
         String cronjobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(cronjobName)) {
-            LOG.error("Get a specific cronjob require specify a cronjob name");
             throw new IllegalArgumentException("Get a specific cronjob require specify a cronnjob name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Get a specific cronjob require specify a namespace name");
             throw new IllegalArgumentException("Get a specific cronjob require specify a namespace name");
         }
         CronJob cronJob = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespaceName)
@@ -140,17 +137,14 @@ public class KubernetesCronJobProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         CronJobSpec cronjobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_SPEC, CronJobSpec.class);
         if (ObjectHelper.isEmpty(cronjobName)) {
-            LOG.error("{} a specific cronjob require specify a cronjob name", operationName);
             throw new IllegalArgumentException(
                     String.format("%s a specific cronjob require specify a cronjob name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("{} a specific cronjob require specify a namespace name", operationName);
             throw new IllegalArgumentException(
                     String.format("%s a specific cronjob require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(cronjobSpec)) {
-            LOG.error("{} a specific cronjob require specify a cronjob spec bean", operationName);
             throw new IllegalArgumentException(
                     String.format("%s a specific cronjob require specify a cronjob spec bean", operationName));
         }
@@ -168,11 +162,9 @@ public class KubernetesCronJobProducer extends DefaultProducer {
         String cronjobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(cronjobName)) {
-            LOG.error("Delete a specific cronjob require specify a cronjob name");
             throw new IllegalArgumentException("Delete a specific cronjob require specify a cronjob name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Delete a specific cronjob require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific cronjob require specify a namespace name");
         }
 

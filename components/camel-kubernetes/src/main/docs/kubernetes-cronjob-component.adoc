@@ -6,7 +6,7 @@
 :since: 4.3
 :supportlevel: Preview
 :tabs-sync-option:
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes
 :camel-spring-boot-name: kubernetes
@@ -16,7 +16,7 @@
 *{component-header}*
 
 The Kubernetes CronJob component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes CronJob operations and a consumer to consume events related to CronJob objects.
+provides a producer to execute kubernetes CronJob operations.
 
 
 // component-configure options: START

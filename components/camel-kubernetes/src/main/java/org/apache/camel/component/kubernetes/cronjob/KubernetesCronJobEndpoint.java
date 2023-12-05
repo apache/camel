@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_C
  * Perform operations on Kubernetes CronJob.
  */
 @UriEndpoint(firstVersion = "4.3.0", scheme = SCHEME_CRON_JOB, title = "Kubernetes Cronjob",
-             syntax = "kubernetes-cronjob:masterUrl",
+             syntax = "kubernetes-cronjob:masterUrl", producerOnly = true,
              category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesCronJobEndpoint extends AbstractKubernetesEndpoint {
 
