@@ -2063,6 +2063,8 @@ public class foo extends EndpointRouteBuilder {
 }
 ----
 
+TIP: You can use `camel dependency update --source=foo.java` to update the dependencies.
+
 Notice how we in the top of the file specify https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang dependencies] we want JBang to know and prepare for the IDE of choice.
 The first `//DEPS` is the `@pom` which set up the Camel version to use.
 The following `//DEPS` declares the Camel component we use.
@@ -2075,6 +2077,22 @@ $ jbang edit -b foo.java
 ----
 
 You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/jbang-edit
+
+==== Updating dependencies in source code
+
+When working with Java source code, then you can keep the JBang dependencies up-to-date using the following command:
+
+[source,bash]
+----
+$ camel dependency update --source=foo.java
+----
+
+TIP: You can use `--clean` to not keep any existing dependencies and generate a clean fresh list.
+
+This will then automatic insert or update the JBang depencies (`//DEPS`) in the top of the source file.
+
+You may want to use this for making it easier to load the source into an IDE editor to do coding.
+See previous section for more details.
 
 
 ==== Camel route debugging using VSCode or IDEA editors
