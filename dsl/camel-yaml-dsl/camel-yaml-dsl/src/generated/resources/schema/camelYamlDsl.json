@@ -31,6 +31,9 @@
           "convertBodyTo" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ConvertBodyDefinition"
           },
+          "convertHeaderTo" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.ConvertHeaderDefinition"
+          },
           "delay" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.DelayDefinition"
           },
@@ -798,6 +801,50 @@
           }
         } ],
         "required" : [ "type" ]
+      },
+      "org.apache.camel.model.ConvertHeaderDefinition" : {
+        "title" : "Convert Header To",
+        "description" : "Converts the message header to another type",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "charset" : {
+            "type" : "string",
+            "title" : "Charset",
+            "description" : "To use a specific charset when converting"
+          },
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "mandatory" : {
+            "type" : "boolean",
+            "title" : "Mandatory",
+            "description" : "When mandatory then the conversion must return a value (cannot be null), if this is not possible then NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the value is null."
+          },
+          "name" : {
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Name of message header to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
+          },
+          "type" : {
+            "type" : "string",
+            "title" : "Type",
+            "description" : "The java type to convert to"
+          }
+        },
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.DataFormatDefinition" : {
         "type" : "object",

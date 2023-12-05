@@ -8,6 +8,7 @@ ClaimCheckDefinition
 ClaimCheckOperation
 ContextScanDefinition
 ConvertBodyDefinition
+ConvertHeaderDefinition
 DataFormatDefinition
 DelayDefinition
 DynamicRouterDefinition

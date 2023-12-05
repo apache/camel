@@ -159,6 +159,15 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
+    public void testParseConvertHeaderXml() throws Exception {
+        RouteDefinition route = assertOneRoute("convertHeader.xml");
+        assertFrom(route, "seda:a");
+        ConvertHeaderDefinition node = assertOneProcessorInstanceOf(ConvertHeaderDefinition.class, route);
+        assertEquals("foo", node.getName());
+        assertEquals("java.lang.Integer", node.getType());
+    }
+
+    @Test
     public void testParseRoutingSlipXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlip.xml");
         assertFrom(route, "seda:a");
