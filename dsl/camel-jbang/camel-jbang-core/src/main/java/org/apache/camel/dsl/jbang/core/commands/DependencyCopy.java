@@ -66,7 +66,7 @@ public class DependencyCopy extends DependencyList {
     }
 
     @Override
-    protected void outputGav(MavenGav gav, int index) {
+    protected void outputGav(MavenGav gav, int index, int total) {
         try {
             List<MavenArtifact> artifacts = getDownloader().resolveArtifacts(
                     List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));

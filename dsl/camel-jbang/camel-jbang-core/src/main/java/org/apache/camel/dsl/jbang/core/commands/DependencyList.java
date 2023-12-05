@@ -144,8 +144,9 @@ public class DependencyList extends Export {
                 // sort GAVs
                 gavs.sort(mavenGavComparator());
                 int i = 0;
+                int total = gavs.size();
                 for (MavenGav gav : gavs) {
-                    outputGav(gav, i);
+                    outputGav(gav, i, total);
                     i++;
                 }
             }
@@ -156,7 +157,7 @@ public class DependencyList extends Export {
         return answer;
     }
 
-    protected void outputGav(MavenGav gav, int index) {
+    protected void outputGav(MavenGav gav, int index, int total) {
         if ("gav".equals(output)) {
             System.out.println(gav);
         } else if ("maven".equals(output)) {
