@@ -33,7 +33,7 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
         public TransientAuthenticatedKafkaContainer(String jaasConfigFile) {
             super(DockerImageName.parse(System.getProperty(
                     KafkaProperties.KAFKA_CONTAINER,
-                            ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
+                    ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
                     .asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME));
 
             withEmbeddedZookeeper();

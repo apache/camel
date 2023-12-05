@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.minio.services;
 
+import java.time.Duration;
+
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.minio.common.MinioProperties;
@@ -23,8 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
-
-import java.time.Duration;
 
 public class MinioLocalContainerService implements MinioService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "minio";

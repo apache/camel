@@ -275,7 +275,8 @@ public class AWSConfigProducer extends DefaultProducer {
                     DeleteConformancePackRequest request = (DeleteConformancePackRequest) payload;
                     result = configClient.deleteConformancePack(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Remove Conformance Pack rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Remove Conformance Pack rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);

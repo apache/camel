@@ -17,6 +17,15 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
@@ -25,14 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
-
-import javax.net.ssl.SSLContext;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.Optional;
 
 public class ElasticSearchLocalContainerService implements ElasticSearchService, ContainerService<ElasticsearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerService.class);

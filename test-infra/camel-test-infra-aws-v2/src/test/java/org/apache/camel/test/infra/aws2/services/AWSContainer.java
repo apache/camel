@@ -17,6 +17,11 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
@@ -26,18 +31,13 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 /*
  The reason we are not using LocalStack containers here is because they bundle AWS SDK v1. They would
  be added to the classpath during the test and, potentially, cause errors or cause the code to not
  behave as in runtime.
  */
 public class AWSContainer extends GenericContainer<AWSContainer> {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private static final int SERVICE_PORT = 4566;
 

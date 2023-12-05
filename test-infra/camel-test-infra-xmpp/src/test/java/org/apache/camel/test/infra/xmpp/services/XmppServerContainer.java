@@ -16,6 +16,10 @@
  */
 package org.apache.camel.test.infra.xmpp.services;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 import org.slf4j.Logger;
@@ -23,10 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class XmppServerContainer extends GenericContainer {
 
