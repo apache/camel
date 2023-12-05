@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.infinispan.services;
 
+import java.util.function.Consumer;
+
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
@@ -26,8 +28,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
-
-import java.util.function.Consumer;
 
 public class InfinispanLocalContainerService implements InfinispanService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "infinispan";

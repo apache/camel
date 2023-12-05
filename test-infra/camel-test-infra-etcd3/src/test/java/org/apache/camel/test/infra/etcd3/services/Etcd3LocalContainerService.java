@@ -16,6 +16,9 @@
  */
 package org.apache.camel.test.infra.etcd3.services;
 
+import java.util.List;
+import java.util.UUID;
+
 import io.etcd.jetcd.launcher.EtcdContainer;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
@@ -23,9 +26,6 @@ import org.apache.camel.test.infra.etcd3.common.Etcd3Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.Wait;
-
-import java.util.List;
-import java.util.UUID;
 
 public class Etcd3LocalContainerService implements Etcd3Service, ContainerService<EtcdContainer> {
     public static final String CONTAINER_NAME = "etcd";

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.fhir.services;
 
+import java.time.Duration;
+
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.fhir.common.FhirProperties;
@@ -23,8 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-
-import java.time.Duration;
 
 public class FhirLocalContainerService implements FhirService, ContainerService<GenericContainer> {
     // needs https://github.com/hapifhir/hapi-fhir-jpaserver-starter/commit/54120f374eea5084634830d34c99a9137b22a310
