@@ -41,6 +41,7 @@ import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.ClaimCheckDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
+import org.apache.camel.model.ConvertHeaderDefinition;
 import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
@@ -214,6 +215,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new ClaimCheckReifier(route, definition);
         } else if (definition instanceof ConvertBodyDefinition) {
             return new ConvertBodyReifier(route, definition);
+        } else if (definition instanceof ConvertHeaderDefinition) {
+            return new ConvertHeaderReifier(route, definition);
         } else if (definition instanceof DelayDefinition) {
             return new DelayReifier(route, definition);
         } else if (definition instanceof DynamicRouterDefinition) {

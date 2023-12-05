@@ -15,6 +15,7 @@
 ** xref:content-enricher.adoc[Content Enricher]
 ** xref:content-filter-eip.adoc[Content Filter]
 ** xref:convertBodyTo-eip.adoc[Convert Body To]
+** xref:convertHeaderTo-eip.adoc[Convert Header To]
 ** xref:correlation-identifier.adoc[Correlation Identifier]
 ** xref:customLoadBalancer-eip.adoc[Custom Load Balancer]
 ** xref:dead-letter-channel.adoc[Dead Letter Channel]

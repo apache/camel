@@ -312,6 +312,18 @@ public class ModelParser extends BaseParser {
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected ConvertHeaderDefinition doParseConvertHeaderDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ConvertHeaderDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "charset": def.setCharset(val); break;
+                case "mandatory": def.setMandatory(val); break;
+                case "name": def.setName(val); break;
+                case "type": def.setType(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
     protected DataFormatDefinition doParseDataFormatDefinition() throws IOException, XmlPullParserException {
         return doParse(new DataFormatDefinition(), 
             identifiedTypeAttributeHandler(),  noElementHandler(), noValueHandler());
@@ -3426,6 +3438,7 @@ public class ModelParser extends BaseParser {
             case "onFallback": return doParseOnFallbackDefinition();
             case "claimCheck": return doParseClaimCheckDefinition();
             case "convertBodyTo": return doParseConvertBodyDefinition();
+            case "convertHeaderTo": return doParseConvertHeaderDefinition();
             case "delay": return doParseDelayDefinition();
             case "dynamicRouter": return doParseDynamicRouterDefinition();
             case "enrich": return doParseEnrichDefinition();

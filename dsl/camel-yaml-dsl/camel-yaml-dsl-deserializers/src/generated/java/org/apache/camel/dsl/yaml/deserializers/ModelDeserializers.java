@@ -18,6 +18,7 @@ import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.ClaimCheckDefinition;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
+import org.apache.camel.model.ConvertHeaderDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
@@ -2503,6 +2504,89 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "mandatory": {
                     String val = asText(node);
                     target.setMandatory(val);
+                    break;
+                }
+                case "type": {
+                    String val = asText(node);
+                    target.setType(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "convert-header-to",
+                    "convertHeaderTo"
+            },
+            types = org.apache.camel.model.ConvertHeaderDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Convert Header To",
+            description = "Converts the message header to another type",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "charset", type = "string", description = "To use a specific charset when converting", displayName = "Charset"),
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "mandatory", type = "boolean", description = "When mandatory then the conversion must return a value (cannot be null), if this is not possible then NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the value is null.", displayName = "Mandatory"),
+                    @YamlProperty(name = "name", type = "string", required = true, description = "Name of message header to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used.", displayName = "Name"),
+                    @YamlProperty(name = "type", type = "string", required = true, description = "The java type to convert to", displayName = "Type")
+            }
+    )
+    public static class ConvertHeaderDefinitionDeserializer extends YamlDeserializerBase<ConvertHeaderDefinition> {
+        public ConvertHeaderDefinitionDeserializer() {
+            super(ConvertHeaderDefinition.class);
+        }
+
+        @Override
+        protected ConvertHeaderDefinition newInstance() {
+            return new ConvertHeaderDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(ConvertHeaderDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "charset": {
+                    String val = asText(node);
+                    target.setCharset(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "inherit-error-handler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "mandatory": {
+                    String val = asText(node);
+                    target.setMandatory(val);
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
                     break;
                 }
                 case "type": {

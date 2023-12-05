@@ -83,6 +83,11 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteConvertBodyDefinition("convertBodyTo", def);
     }
+    public void writeConvertHeaderDefinition(
+            ConvertHeaderDefinition def)
+            throws IOException {
+        doWriteConvertHeaderDefinition("convertHeaderTo", def);
+    }
     public void writeDelayDefinition(DelayDefinition def) throws IOException {
         doWriteDelayDefinition("delay", def);
     }
@@ -1157,6 +1162,18 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("charset", def.getCharset());
+        doWriteAttribute("type", def.getType());
+        doWriteAttribute("mandatory", def.getMandatory());
+        endElement(name);
+    }
+    protected void doWriteConvertHeaderDefinition(
+            String name,
+            ConvertHeaderDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("charset", def.getCharset());
+        doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("mandatory", def.getMandatory());
         endElement(name);
@@ -4741,6 +4758,7 @@ public class ModelWriter extends BaseWriter {
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
                 case "ClaimCheckDefinition" -> doWriteClaimCheckDefinition("claimCheck", (ClaimCheckDefinition) v);
                 case "ConvertBodyDefinition" -> doWriteConvertBodyDefinition("convertBodyTo", (ConvertBodyDefinition) v);
+                case "ConvertHeaderDefinition" -> doWriteConvertHeaderDefinition("convertHeaderTo", (ConvertHeaderDefinition) v);
                 case "DelayDefinition" -> doWriteDelayDefinition("delay", (DelayDefinition) v);
                 case "DynamicRouterDefinition" -> doWriteDynamicRouterDefinition("dynamicRouter", (DynamicRouterDefinition) v);
                 case "EnrichDefinition" -> doWriteEnrichDefinition("enrich", (EnrichDefinition) v);
@@ -4845,6 +4863,7 @@ public class ModelWriter extends BaseWriter {
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
                 case "ClaimCheckDefinition" -> doWriteClaimCheckDefinition("claimCheck", (ClaimCheckDefinition) v);
                 case "ConvertBodyDefinition" -> doWriteConvertBodyDefinition("convertBodyTo", (ConvertBodyDefinition) v);
+                case "ConvertHeaderDefinition" -> doWriteConvertHeaderDefinition("convertHeaderTo", (ConvertHeaderDefinition) v);
                 case "DelayDefinition" -> doWriteDelayDefinition("delay", (DelayDefinition) v);
                 case "DynamicRouterDefinition" -> doWriteDynamicRouterDefinition("dynamicRouter", (DynamicRouterDefinition) v);
                 case "EnrichDefinition" -> doWriteEnrichDefinition("enrich", (EnrichDefinition) v);

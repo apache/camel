@@ -2766,6 +2766,44 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Converts the IN message header to the specified type
+     *
+     * @param  name the header name
+     * @param  type the type to convert to
+     * @return      the builder
+     */
+    public Type convertHeaderTo(String name, Class<?> type) {
+        addOutput(new ConvertHeaderDefinition(name, type));
+        return asType();
+    }
+
+    /**
+     * Converts the IN message header to the specified type
+     *
+     * @param  name      the header name
+     * @param  type      the type to convert to
+     * @param  mandatory whether to use mandatory type conversion or not
+     * @return           the builder
+     */
+    public Type convertHeaderTo(String name, Class<?> type, boolean mandatory) {
+        addOutput(new ConvertHeaderDefinition(name, type, mandatory));
+        return asType();
+    }
+
+    /**
+     * Converts the IN message header to the specified type
+     *
+     * @param  name    the header name
+     * @param  type    the type to convert to
+     * @param  charset the charset to use by type converters (not all converters support specific charset)
+     * @return         the builder
+     */
+    public Type convertHeaderTo(String name, Class<?> type, String charset) {
+        addOutput(new ConvertHeaderDefinition(name, type, charset));
+        return asType();
+    }
+
+    /**
      * Sorts the expression using a default sorting based on toString representation.
      *
      * @param  expression the expression, must be convertable to {@link List}
