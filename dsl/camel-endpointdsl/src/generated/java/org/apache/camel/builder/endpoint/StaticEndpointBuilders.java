@@ -7765,7 +7765,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Jetty (camel-jetty)
-     * Expose HTTP endpoints using Jetty 11.
+     * Expose HTTP endpoints using Jetty 12.
      * 
      * Category: http
      * Since: 1.2
@@ -7779,13 +7779,13 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory.JettyHttp11EndpointBuilder jetty(
+    public static org.apache.camel.builder.endpoint.dsl.JettyHttp12EndpointBuilderFactory.JettyHttp12EndpointBuilder jetty(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory.endpointBuilder("jetty", path);
+        return org.apache.camel.builder.endpoint.dsl.JettyHttp12EndpointBuilderFactory.endpointBuilder("jetty", path);
     }
     /**
      * Jetty (camel-jetty)
-     * Expose HTTP endpoints using Jetty 11.
+     * Expose HTTP endpoints using Jetty 12.
      * 
      * Category: http
      * Since: 1.2
@@ -7801,10 +7801,10 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory.JettyHttp11EndpointBuilder jetty(
+    public static org.apache.camel.builder.endpoint.dsl.JettyHttp12EndpointBuilderFactory.JettyHttp12EndpointBuilder jetty(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.JettyHttp12EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * JGroups (camel-jgroups)
