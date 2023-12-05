@@ -1292,7 +1292,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             ErrorHandler eh = new ErrorHandler() {
                 @Override
                 public boolean handle(
-                        Request baseRequest, Response response, Callback callback) {
+                        Request baseRequest, Response response, Callback callback)
+                        throws Exception {
                     String msg = HttpStatus.getMessage(response.getStatus());
                     Object timeout = baseRequest.getAttribute(CamelContinuationServlet.TIMEOUT_ERROR);
                     if (Boolean.TRUE.equals(timeout)) {
