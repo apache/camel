@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -29,24 +30,36 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
 @EnabledIfSystemProperties({
         @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
         @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
 })
 public class S3ComponentManualIT extends CamelTestSupport {
+    private static final String ACCESS_KEY = System.getProperty("aws.manual.access.key");
+    private static final String SECRET_KEY = System.getProperty("aws.manual.secret.key");
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    @BindToRegistry("amazonS3Client")
+    S3Client client
+            = S3Client.builder()
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
+                    .region(Region.EU_WEST_1).build();
 
     @Test
     public void sendInOnly() throws Exception {
@@ -121,7 +134,7 @@ public class S3ComponentManualIT extends CamelTestSupport {
             @Override
             public void configure() {
                 String s3EndpointUri
-                        = "aws2-s3://mycamelbucket?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&region=us-west-1&autoCreateBucket=false";
+                        = "aws2-s3://mycamelbucket?autoCreateBucket=true";
 
                 from("direct:start").to(s3EndpointUri);
 
