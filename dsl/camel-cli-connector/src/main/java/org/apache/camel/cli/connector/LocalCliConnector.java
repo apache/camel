@@ -89,7 +89,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CLI Connector for local management of Camel integrations from the Camel CLI.
+ * CLI Connector for local management of Camel integrations from Camel JBang.
  */
 public class LocalCliConnector extends ServiceSupport implements CliConnector, CamelContextAware {
 
@@ -178,9 +178,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             traceFile = createLockFile(lockFile.getName() + "-trace.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
-            LOG.info("Camel CLI enabled (local)");
+            LOG.info("Management from Camel JBang enabled");
         } else {
-            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI.", getPid());
+            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel JBang.", getPid());
         }
     }
 
@@ -197,7 +197,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         terminateExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                LOG.info("Camel CLI terminating JVM");
+                LOG.info("Camel JBang terminating JVM");
                 try {
                     camelContext.stop();
                 } finally {
@@ -718,11 +718,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private void doActionReloadTask() {
         ContextReloadStrategy cr = camelContext.hasService(ContextReloadStrategy.class);
         if (cr != null) {
-            cr.onReload("Camel CLI");
+            cr.onReload("Camel JBang");
         } else {
             ResourceReloadStrategy rr = camelContext.hasService(ResourceReloadStrategy.class);
             if (rr != null) {
-                rr.onReload("Camel CLI");
+                rr.onReload("Camel JBang");
             }
         }
     }
