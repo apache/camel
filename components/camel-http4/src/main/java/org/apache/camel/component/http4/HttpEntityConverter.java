@@ -1,4 +1,4 @@
-/*
+---------------------------------------------------------/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -67,13 +67,7 @@ public final class HttpEntityConverter {
             entity = new InputStreamEntity(stream, stream instanceof ByteArrayInputStream
                 ? stream.available() != 0 ? stream.available() : -1 : -1);
         } else {
-            long length = -1;
-            try {
-                length = exchange.getProperty(Exchange.CONTENT_LENGTH) == null
-                        ? length
-                        : Long.parseLong(String.valueOf(exchange.getProperty(Exchange.CONTENT_LENGTH)));
-            } catch (NumberFormatException ignore) {}
-            entity = new InputStreamEntity(in, length);
+            entity = new InputStreamEntity(in, -1);
         }
         if (exchange != null) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
