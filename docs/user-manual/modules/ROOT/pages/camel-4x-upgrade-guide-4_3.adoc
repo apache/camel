@@ -63,7 +63,6 @@ The context and route consoles has changed some values in their JSon output data
 
 The values are also changed from String ago to timestamp in millis.For example old value `3m5s` is now `1701599263337`.
 
-
 === camel-jbang
 
 The `camel transform` command has been renamed to `camel transform route` as this command is used for transforming
@@ -84,4 +83,9 @@ the behavior described in the documentation.
 
 When using the `AsyncCommitManager` then the offset will be committed so that the payload is continually retried. This was
 the behavior described in the documentation.
+
+=== camel-yaml-dsl
+
+The `camelYamlDsl.json` Schema file has removed `inheritErrorHandler` option for all EIPs where it was not applicable.
+This option is only intended for the Load Balancer EIP. This makes the YAML schema in-line with the XML DSL schema.
 

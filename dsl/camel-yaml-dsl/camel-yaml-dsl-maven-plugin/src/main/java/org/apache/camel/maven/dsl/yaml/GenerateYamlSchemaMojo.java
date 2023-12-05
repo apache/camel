@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -279,6 +280,24 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             }
             if (propertyName.startsWith("__")) {
                 // this is an internal name
+                continue;
+            }
+            // we want to skip inheritErrorHandler which is only applicable for the load-balancer
+            boolean skip = false;
+            if (propertyName.equals("inherit-error-handler")) {
+                skip = true;
+                Optional<AnnotationValue> av = annotationValue(info, YAML_TYPE_ANNOTATION, "nodes");
+                if (av.isPresent()) {
+                    String[] sn = av.get().asStringArray();
+                    for (String n : sn) {
+                        if ("load-balance".equals(n) || "loadBalance".equals(n)) {
+                            skip = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (skip) {
                 continue;
             }
 

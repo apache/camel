@@ -468,9 +468,6 @@
             "title" : "Ignore Invalid Correlation Keys",
             "description" : "If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just ignore the incoming Exchange."
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "optimisticLockRetryPolicy" : {
             "title" : "Optimistic Lock Retry Policy",
             "description" : "Allows to configure retry settings when using optimistic locking.",
@@ -529,9 +526,6 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "method" : {
               "type" : "string",
               "title" : "Method",
@@ -581,9 +575,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "onWhen" : {
             "title" : "On When",
             "description" : "Sets an additional predicate that should be true before the onCatch is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.",
@@ -617,9 +608,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "otherwise" : {
             "title" : "Otherwise",
@@ -671,9 +659,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "onFallback" : {
             "title" : "On Fallback",
@@ -728,9 +713,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "key" : {
             "type" : "string",
@@ -802,9 +784,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "mandatory" : {
               "type" : "boolean",
@@ -934,9 +913,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -1063,9 +1039,6 @@
             "type" : "boolean",
             "title" : "Ignore Invalid Endpoints",
             "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "uriDelimiter" : {
             "type" : "string",
@@ -1224,9 +1197,6 @@
             "type" : "boolean",
             "title" : "Ignore Invalid Endpoint",
             "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "shareUnitOfWork" : {
             "type" : "boolean",
@@ -1788,9 +1758,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "statusPropertyName" : {
             "type" : "string",
             "title" : "Status Property Name",
@@ -1849,9 +1816,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -2026,9 +1990,6 @@
             "title" : "Idempotent Repository",
             "description" : "Sets the reference name of the message id repository"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "removeOnFailure" : {
             "type" : "boolean",
             "title" : "Remove On Failure",
@@ -2123,9 +2084,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -2157,9 +2115,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "steps" : {
               "type" : "array",
@@ -2204,9 +2159,6 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "skipSendToOriginalEndpoint" : {
               "type" : "string",
               "title" : "Skip Send To Original Endpoint",
@@ -2234,9 +2186,6 @@
           "type" : "object",
           "additionalProperties" : false,
           "properties" : {
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "name" : {
               "type" : "string"
             },
@@ -2395,9 +2344,6 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "logName" : {
               "type" : "string",
               "title" : "Log Name",
@@ -2533,9 +2479,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -2998,9 +2941,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "asn1" : { },
           "avro" : { },
           "barcode" : { },
@@ -3084,9 +3024,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "onPrepare" : {
             "type" : "string",
             "title" : "On Prepare",
@@ -3161,9 +3098,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "mode" : {
             "type" : "string",
@@ -3244,9 +3178,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "onExceptionOccurredRef" : {
             "type" : "string",
             "title" : "On Exception Occurred Ref",
@@ -3321,9 +3252,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -3388,9 +3316,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -3411,9 +3336,6 @@
           },
           "id" : {
             "type" : "string"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -3510,9 +3432,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "untilCheck" : {
             "type" : "string",
             "title" : "Until Check",
@@ -3542,9 +3461,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -3573,9 +3489,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "ref" : {
             "type" : "string",
@@ -3711,9 +3624,6 @@
             "title" : "Ignore Invalid Endpoint",
             "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "timeout" : {
             "type" : "string",
             "title" : "Timeout",
@@ -3767,9 +3677,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "ref" : {
             "type" : "string",
@@ -3957,9 +3864,6 @@
             "type" : "boolean",
             "title" : "Ignore Invalid Endpoints",
             "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "onPrepare" : {
             "type" : "string",
@@ -4193,9 +4097,6 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "name" : {
               "type" : "string",
               "title" : "Name",
@@ -4233,9 +4134,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "pattern" : {
               "type" : "string",
@@ -4275,9 +4173,6 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "pattern" : {
               "type" : "string",
               "title" : "Pattern",
@@ -4310,9 +4205,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "name" : {
               "type" : "string",
@@ -4438,9 +4330,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -4641,9 +4530,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "intermittent" : {
             "type" : "boolean",
             "title" : "Intermittent",
@@ -4686,9 +4572,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "markRollbackOnly" : {
               "type" : "boolean",
@@ -5088,9 +4971,6 @@
               "title" : "Ignore Invalid Endpoints",
               "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint"
             },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "uriDelimiter" : {
               "type" : "string",
               "title" : "Uri Delimiter",
@@ -5141,9 +5021,6 @@
             "id" : {
               "type" : "string"
             },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "parameters" : {
               "type" : "object"
             },
@@ -5191,9 +5068,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "option" : {
             "type" : "array",
@@ -5251,9 +5125,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "messageFrequency" : {
               "type" : "number",
@@ -5358,9 +5229,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "constant" : { },
           "csimple" : { },
@@ -5479,9 +5347,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -5532,9 +5397,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "pattern" : {
               "type" : "string",
@@ -5635,9 +5497,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "name" : {
             "type" : "string",
             "title" : "Name",
@@ -5697,9 +5556,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           }
         }
       },
@@ -5792,9 +5648,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "name" : {
             "type" : "string",
@@ -5923,9 +5776,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "constant" : { },
           "csimple" : { },
@@ -6070,9 +5920,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "onPrepare" : {
             "type" : "string",
             "title" : "On Prepare",
@@ -6168,9 +6015,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -6199,9 +6043,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           }
         }
       },
@@ -6377,9 +6218,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "keepAliveTime" : {
             "type" : "number",
             "title" : "Keep Alive Time",
@@ -6530,9 +6368,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "rejectExecution" : {
             "type" : "boolean",
             "title" : "Reject Execution",
@@ -6591,9 +6426,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "message" : {
             "type" : "string",
             "title" : "Message",
@@ -6629,9 +6461,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "parameters" : {
               "type" : "object"
@@ -6695,9 +6524,6 @@
               "title" : "Ignore Invalid Endpoint",
               "description" : "Whether to ignore invalid endpoint URIs and skip sending the message."
             },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
             "parameters" : {
               "type" : "object"
             },
@@ -6736,9 +6562,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "ref" : {
             "type" : "string",
@@ -6848,9 +6671,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "toType" : {
             "type" : "string",
             "title" : "To Type",
@@ -6913,9 +6733,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -6949,9 +6766,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "asn1" : { },
           "avro" : { },
@@ -7492,9 +7306,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "predicateExceptionFactory" : {
             "type" : "string",
             "title" : "Predicate Exception Factory",
@@ -7634,9 +7445,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -7760,9 +7568,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -7851,9 +7656,6 @@
             "type" : "boolean",
             "title" : "Ignore Invalid Endpoint",
             "description" : "Whether to ignore invalid endpoint URIs and skip sending the message."
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
           },
           "onPrepare" : {
             "type" : "string",
@@ -8925,9 +8727,6 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
             },
             "loadBalancerRef" : {
               "type" : "string",
