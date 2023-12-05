@@ -54,7 +54,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
 
         log.info(json);
 
@@ -94,8 +94,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        String json = io.swagger.v3.core.util.Json.pretty(openApi);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
         assertTrue(json.contains("\"securitySchemes\" : {"));

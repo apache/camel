@@ -474,7 +474,7 @@ public class OpenAPI3to2 {
                             if (v instanceof byte[]) {
                                 return new String(Base64.getEncoder().encode((byte[]) v));
                             } else if (v instanceof Date) {
-                                return io.swagger.v3.core.util.Json.mapper().getDateFormat().format(v);
+                                return RestOpenApiSupport.DEFAULT_DATE_FORMAT.format(v);
                             } else {
                                 return v.toString();
                             }

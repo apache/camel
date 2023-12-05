@@ -16,16 +16,23 @@
  */
 package org.apache.camel.openapi;
 
+import java.util.Map;
+
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.ComposedSchema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.Server;
+import org.apache.camel.tooling.util.Version;
 
 public class BeanConfig {
     public static final String DEFAULT_MEDIA_TYPE = "application/json";
+    public static final Version OPENAPI_VERSION_30 = new Version("3.0.0");
+    public static final Version OPENAPI_VERSION_31 = new Version("3.1.0");
 
     String[] schemes;
     String title;
-    String version;
+    Version version = new Version("3.0.1");
     String licenseUrl;
     String license;
 
@@ -52,11 +59,11 @@ public class BeanConfig {
     }
 
     public String getVersion() {
-        return version;
+        return version.toString();
     }
 
     public void setVersion(String version) {
-        this.version = version;
+        this.version = new Version(version);
     }
 
     public String getLicenseUrl() {
@@ -129,11 +136,36 @@ public class BeanConfig {
             Server server = new Server().url(scheme + "://" + this.host + this.basePath);
             openApi.addServersItem(server);
         }
+        if (isOpenApi31()) {
+            // This is a workaround to addType on ComposedSchema
+            // It should be removed if https://github.com/swagger-api/swagger-core/issues/4574 resolved
+            if (openApi.getComponents() != null) {
+                Map<String, Schema> schemas = openApi.getComponents().getSchemas();
+                if (schemas != null) {
+                    for (Schema schema : schemas.values()) {
+                        if (schema instanceof ComposedSchema) {
+                            String type = schema.getType();
+                            if (type != null) {
+                                schema.addType(type);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return openApi;
     }
 
-    public boolean isOpenApi3() {
-        return this.version == null || this.version.startsWith("3");
+    public boolean isOpenApi2() {
+        return version.compareTo(OPENAPI_VERSION_30) < 0;
+    }
+
+    public boolean isOpenApi30() {
+        return version.compareTo(OPENAPI_VERSION_30) >= 0 && version.compareTo(OPENAPI_VERSION_31) < 0;
+    }
+
+    public boolean isOpenApi31() {
+        return version.compareTo(OPENAPI_VERSION_31) >= 0;
     }
 
 }

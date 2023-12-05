@@ -16,7 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.apache.camel.BindToRegistry;
@@ -24,7 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,44 +50,30 @@ public class RestOpenApiReaderFileResponseModelTest extends CamelTestSupport {
         };
     }
 
-    @Test
-    public void testReaderRead() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    public void testReaderRead(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setInfo(new Info());
-        config.setVersion("2.0");
+        config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
 
         OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         LOG.info(json);
-        assertTrue(json.contains("\"type\" : \"file\""));
 
-        context.stop();
-    }
-
-    @Test
-    public void testReaderReadV3() throws Exception {
-        BeanConfig config = new BeanConfig();
-        config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
-        config.setBasePath("/api");
-        Info info = new Info();
-        config.setInfo(info);
-        RestOpenApiReader reader = new RestOpenApiReader();
-
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
-        assertNotNull(openApi);
-        String json = Json.pretty(openApi);
-        LOG.info(json);
-        assertTrue(json.contains("\"format\" : \"binary\""));
-        assertTrue(json.contains("\"type\" : \"string\""));
+        if (config.isOpenApi2()) {
+            assertTrue(json.contains("\"type\" : \"file\""));
+        } else {
+            assertTrue(json.contains("\"format\" : \"binary\""));
+            assertTrue(json.contains("\"type\" : \"string\""));
+        }
 
         context.stop();
     }

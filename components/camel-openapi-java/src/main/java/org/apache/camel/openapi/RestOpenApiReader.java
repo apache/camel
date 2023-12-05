@@ -32,6 +32,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -133,7 +134,10 @@ public class RestOpenApiReader {
             String camelContextId, ClassResolver classResolver)
             throws ClassNotFoundException {
 
-        OpenAPI openApi = new OpenAPI();
+        OpenAPI openApi = config.isOpenApi31() ? new OpenAPI(SpecVersion.V31) : new OpenAPI();
+        if (config.getVersion() != null) {
+            openApi.setOpenapi(config.getVersion());
+        }
 
         for (RestDefinition rest : rests) {
             Boolean disabled = CamelContextHelper.parseBoolean(camelContext, rest.getDisabled());
@@ -174,7 +178,7 @@ public class RestOpenApiReader {
     }
 
     private void checkCompatOpenApi2(OpenAPI openApi, BeanConfig config) {
-        if (!config.isOpenApi3()) {
+        if (config.isOpenApi2()) {
             // Verify that the OpenAPI 3 model can be downgraded to OpenApi 2
             OpenAPI3to2 converter = new OpenAPI3to2();
             converter.convertOpenAPI3to2(openApi);
@@ -494,7 +498,9 @@ public class RestOpenApiReader {
                     final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
                     if (param.getDataType() != null) {
                         parameter.setSchema(schema);
-                        schema.setType(getValue(camelContext, param.getDataType()));
+                        String type = getValue(camelContext, param.getDataType());
+                        schema.setType(type);
+                        schema.addType(type);
                         if (param.getDataFormat() != null) {
                             schema.setFormat(getValue(camelContext, param.getDataFormat()));
                         }

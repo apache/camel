@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RestOpenApiDefaultProducesConsumesTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final String[] OPENAPI_VERSIONS = { "3.0", "2.0" };
+    private static final String[] OPENAPI_VERSIONS = { "3.1", "3.0", "2.0" };
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @ParameterizedTest
@@ -149,7 +149,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
         log.info(json);
 
         JsonNode root = MAPPER.readTree(json);
-        if (openApiVersion.equals("3.0")) {
+        if (!openApiVersion.equals("2.0")) {
             JsonNode requestBody = root.findValue("requestBody");
             assertConsumesMatches(requestBody, openApiVersion, DEFAULT_MEDIA_TYPE);
 
@@ -197,7 +197,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
         log.info(json);
 
         JsonNode root = MAPPER.readTree(json);
-        if (openApiVersion.equals("3.0")) {
+        if (!openApiVersion.equals("2.0")) {
             JsonNode requestBody = root.findValue("requestBody");
             assertConsumesMatches(requestBody, openApiVersion, "text/plain");
 
@@ -245,7 +245,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
         log.info(json);
 
         JsonNode root = MAPPER.readTree(json);
-        if (openApiVersion.equals("3.0")) {
+        if (!openApiVersion.equals("2.0")) {
             JsonNode requestBody = root.findValue("requestBody");
             assertConsumesMatches(requestBody, openApiVersion, "text/plain");
 
@@ -262,12 +262,12 @@ public class RestOpenApiDefaultProducesConsumesTest {
     }
 
     private void assertProducesMatches(JsonNode json, String openApiVersion, String match) {
-        String fieldName = openApiVersion.equals("3.0") ? "content" : "produces";
+        String fieldName = !openApiVersion.equals("2.0") ? "content" : "produces";
         assertContentTypeMatches(json, openApiVersion, fieldName, match);
     }
 
     private void assertConsumesMatches(JsonNode json, String openApiVersion, String match) {
-        String fieldName = openApiVersion.equals("3.0") ? "content" : "consumes";
+        String fieldName = !openApiVersion.equals("2.0") ? "content" : "consumes";
         assertContentTypeMatches(json, openApiVersion, fieldName, match);
     }
 
@@ -277,7 +277,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
         assertEquals(1, content.size());
 
         JsonNode contentNode = content.get(0);
-        if (openApiVersion.equals("3.0")) {
+        if (!openApiVersion.equals("2.0")) {
             assertTrue(contentNode.has(match));
         } else {
             assertEquals(1, contentNode.size());
