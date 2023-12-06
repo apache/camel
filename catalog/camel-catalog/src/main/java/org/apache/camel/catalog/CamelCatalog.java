@@ -405,6 +405,9 @@ public interface CamelCatalog {
     /**
      * Parses and validates the language as a predicate
      * <p/>
+     * It is possible to specify language options as query parameters in the language parameter, such as
+     * jsonpath?unpackArray=true&allowEasyPredicate=false
+     *
      * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
      *
      * @param  classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for
@@ -418,6 +421,9 @@ public interface CamelCatalog {
     /**
      * Parses and validates the language as an expression
      * <p/>
+     * It is possible to specify language options as query parameters in the language parameter, such as
+     * jsonpath?unpackArray=true&allowEasyPredicate=false
+     *
      * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
      *
      * @param  classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for

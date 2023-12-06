@@ -54,6 +54,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -1400,6 +1401,18 @@ public abstract class AbstractCamelCatalog {
 
         LanguageValidationResult answer = new LanguageValidationResult(text);
 
+        Map<String, Object> options = null;
+        if (language.contains("?")) {
+            String query = URISupport.extractQuery(language);
+            language = StringHelper.before(language, "?");
+            try {
+                options = URISupport.parseQuery(query);
+            } catch (Exception e) {
+                answer.setError("Cannot parse language options: " + query);
+                return answer;
+            }
+        }
+
         LanguageModel model = languageModel(language);
         if (model == null) {
             answer.setError("Unknown language " + language);
@@ -1418,6 +1431,17 @@ public abstract class AbstractCamelCatalog {
             instance = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             // ignore
+        }
+        // set options on the language
+        if (options != null) {
+            final Map<String, Object> fOptions = options;
+            final Object fInstance = instance;
+            ReflectionHelper.doWithFields(clazz, field -> {
+                Object value = fOptions.get(field.getName());
+                if (value != null) {
+                    ReflectionHelper.setField(field, fInstance, value);
+                }
+            });
         }
 
         if (clazz != null && instance != null) {

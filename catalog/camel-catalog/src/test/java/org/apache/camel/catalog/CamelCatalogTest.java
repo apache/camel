@@ -1089,6 +1089,11 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertEquals("$.store.book[?(@.price ^^^ 10)]", result.getText());
         assertEquals("Expected character: )", result.getError());
+
+        // just to call via a configuration option
+        result = catalog.validateLanguageExpression(null, "jsonpath?unpackArray=true", "$.store.book[?(@.price < 10)]");
+        assertTrue(result.isSuccess());
+        assertEquals("$.store.book[?(@.price < 10)]", result.getText());
     }
 
     @Test
