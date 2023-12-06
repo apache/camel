@@ -79,14 +79,16 @@ public class KafkaRecordProcessorFacade {
             while (!lastResult.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
                 ConsumerRecord<Object, Object> consumerRecord = recordIterator.next();
 
-                LOG.debug("Processing record on partition {} with offset {}", consumerRecord.partition(), consumerRecord.offset());
+                LOG.debug("Processing record on partition {} with offset {}", consumerRecord.partition(),
+                        consumerRecord.offset());
 
                 lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
                         kafkaRecordProcessor, consumerRecord);
 
                 LOG.debug(
                         "Processed record on partition {} with offset {} and got ProcessingResult for partition {} and offset {}",
-                        consumerRecord.partition(), consumerRecord.offset(), lastResult.getPartition(), lastResult.getPartitionLastOffset());
+                        consumerRecord.partition(), consumerRecord.offset(), lastResult.getPartition(),
+                        lastResult.getPartitionLastOffset());
 
                 if (consumerListener != null) {
                     if (!consumerListener.afterProcess(lastResult)) {

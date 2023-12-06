@@ -27,10 +27,10 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 @DisabledIfSystemProperties({
         @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
-                disabledReason = "Apache CI nodes are too resource constrained for this test"),
+                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
         @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions"),
         @DisabledIfSystemProperty(named = "couchbase.enable.it", matches = "false",
-                disabledReason = "Too resource intensive for most systems to run reliably"),
+                                  disabledReason = "Too resource intensive for most systems to run reliably"),
 })
 @Tags({ @Tag("couchbase-7") })
 public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
