@@ -259,7 +259,7 @@ public class RestOpenApiReader {
         // use annotation scanner to find models (annotated classes)
         for (String type : types) {
             Class<?> clazz = classResolver.resolveMandatoryClass(type);
-            appendModels(clazz, openApi);
+            appendModels(clazz, openApi, config.isOpenApi31());
         }
 
         doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTags, config);
@@ -500,7 +500,9 @@ public class RestOpenApiReader {
                         parameter.setSchema(schema);
                         String type = getValue(camelContext, param.getDataType());
                         schema.setType(type);
-                        schema.addType(type);
+                        if (openApi.getSpecVersion().equals(SpecVersion.V31)) {
+                            schema.addType(type);
+                        }
                         if (param.getDataFormat() != null) {
                             schema.setFormat(getValue(camelContext, param.getDataFormat()));
                         }
@@ -962,8 +964,8 @@ public class RestOpenApiReader {
      * @param clazz   the class such as pojo with openApi annotation
      * @param openApi the openApi model
      */
-    private void appendModels(Class<?> clazz, OpenAPI openApi) {
-        RestModelConverters converters = new RestModelConverters();
+    private void appendModels(Class<?> clazz, OpenAPI openApi, boolean openapi31) {
+        RestModelConverters converters = new RestModelConverters(openapi31);
         List<? extends Schema<?>> models = converters.readClass(openApi, clazz);
         if (models == null) {
             return;

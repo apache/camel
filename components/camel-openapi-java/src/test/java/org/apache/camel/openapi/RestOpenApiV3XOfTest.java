@@ -122,8 +122,13 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         assertTrue(json.contains(
                 "\"XOfFormB\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"x\" : { \"type\" : \"integer\", \"format\" : \"int32\" }, \"y\" : { \"type\" : \"string\" } },"));
 
-        assertTrue(json.contains(
-                "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"$ref\" : \"#/components/schemas/OneOfForm\" } },"));
+        if (config.isOpenApi30()) {
+            assertTrue(json.contains(
+                    "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"$ref\" : \"#/components/schemas/OneOfForm\" } },"));
+        } else if (config.isOpenApi31()) {
+            assertTrue(json.contains(
+                    "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : { \"a-123\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormA\", \"b-456\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormB\" } }, \"oneOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ], \"x-className\" : { \"format\" : \"org.apache.camel.openapi.model.OneOfForm\", \"type\" : \"string\" } } }, \"x-className\" : { \"format\" : \"org.apache.camel.openapi.model.OneOfFormWrapper\", \"type\" : \"string\" } }"));
+        }
         assertTrue(json.contains(
                 "\"OneOfForm\" : { \"type\" : \"object\", " +
                                  "\"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : " +

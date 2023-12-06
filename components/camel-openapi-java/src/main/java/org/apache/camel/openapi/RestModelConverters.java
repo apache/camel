@@ -38,6 +38,13 @@ import io.swagger.v3.oas.models.media.Schema;
 @SuppressWarnings("rawtypes")
 public class RestModelConverters {
 
+    private static final ModelConverters MODEL31_CONVERTERS;
+
+    static {
+        MODEL31_CONVERTERS = ModelConverters.getInstance(true);
+        MODEL31_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver(true)));
+    }
+
     private static final ModelConverters MODEL30_CONVERTERS;
 
     static {
@@ -50,6 +57,12 @@ public class RestModelConverters {
     static {
         MODEL20_CONVERTERS = ModelConverters.getInstance();
         MODEL20_CONVERTERS.addConverter(new ClassNameExtensionModelResolver());
+    }
+
+    private final boolean openapi31;
+
+    public RestModelConverters(boolean openapi31) {
+        this.openapi31 = openapi31;
     }
 
     public List<? extends Schema<?>> readClass(OpenAPI oasDocument, Class<?> clazz) {
@@ -67,7 +80,8 @@ public class RestModelConverters {
             return null;
         }
 
-        Map<String, Schema> swaggerModel = MODEL30_CONVERTERS.readAll(clazz);
+        ModelConverters modelConverters = openapi31 ? MODEL31_CONVERTERS : MODEL30_CONVERTERS;
+        Map<String, Schema> swaggerModel = modelConverters.readAll(clazz);
         List<Schema<?>> modelSchemas = new java.util.ArrayList<>();
         swaggerModel.forEach((key, schema) -> {
             schema.setName(key);
@@ -78,7 +92,12 @@ public class RestModelConverters {
 
     private static class FqnModelResolver extends ModelResolver {
         public FqnModelResolver() {
+            this(false);
+        }
+
+        public FqnModelResolver(boolean openapi31) {
             this(new ObjectMapper());
+            openapi31(openapi31);
         }
 
         public FqnModelResolver(ObjectMapper mapper) {
@@ -124,5 +143,4 @@ public class RestModelConverters {
             return result;
         }
     }
-
 }
