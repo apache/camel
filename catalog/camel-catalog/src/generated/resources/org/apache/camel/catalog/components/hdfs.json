@@ -4,7 +4,7 @@
     "name": "hdfs",
     "title": "HDFS",
     "description": "Read and write from\/to an HDFS filesystem using Hadoop 2.x.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.14.0",
     "label": "bigdata,file",
     "javaType": "org.apache.camel.component.hdfs.HdfsComponent",
