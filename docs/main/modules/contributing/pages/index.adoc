@@ -165,6 +165,11 @@ mvn clean install -Dquickly
 On Camel 4, you can also use `-Pfastinstall` to trigger a fast build, but we encourage contributors to switch to the new command.
 ====
 
+[NOTE]
+====
+On Camel 4, Virtual Threads can only be enabled by compiling with JDK 21 or greater and adding the system property `-Dcamel.threads.virtual.enabled=true` to your build command.
+====
+
 You can find more details about building Camel on the xref:contributing:building.adoc[Building Camel] page.
 
 **Tips**: if you aren’t able to build a component after adding some new URI parameters due to `Empty doc for option: [OPTION], parent options: <null>` please make sure that you either added properly javadoc for get/set method or description in `@UriPath` annotation.

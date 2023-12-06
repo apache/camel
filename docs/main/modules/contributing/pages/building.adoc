@@ -82,6 +82,11 @@ mvn clean install -Dquickly
 On Camel 4, you can also use `-Pfastinstall` to trigger a fast build, but we encourage contributors to switch to the new command.
 ====
 
+[NOTE]
+====
+On Camel 4, Virtual Threads can only be enabled by compiling with JDK 21 or greater and adding the system property `-Dcamel.threads.virtual.enabled=true` to your build command.
+====
+
 The commands above will build Camel in a quick way: skipping build optional artifacts and running tests. In most modern computers, this should complete in at most 30 minutes (usually much less, for newer hardware).
 
 
