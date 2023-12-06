@@ -24,20 +24,14 @@ public class LocalPropertyResolver {
 
     public static final String CONTAINER_PROPERTIES_FILE_NAME = "container.properties";
 
-    public static String getProperty(Class clazz, String propertyName) {
+    public static String getProperty(Class<?> clazz, String propertyName) {
         return System.getProperty(propertyName, getPropertyFromContainersPropertiesFile(clazz, propertyName));
     }
 
-    private static String getPropertyFromContainersPropertiesFile(Class clazz, String propertyName) {
-        ClassLoader classLoader = clazz.getClassLoader();
-        if (classLoader == null)
-            throw new RuntimeException(
-                    "Error when trying to read file " + CONTAINER_PROPERTIES_FILE_NAME
-                                       + ": classLoader is null for class " + clazz.getCanonicalName());
-
+    private static String getPropertyFromContainersPropertiesFile(Class<?> clazz, String propertyName) {
         Properties properties = new Properties();
 
-        try (InputStream inputStream = classLoader.getResourceAsStream(CONTAINER_PROPERTIES_FILE_NAME)) {
+        try (InputStream inputStream = clazz.getResourceAsStream(CONTAINER_PROPERTIES_FILE_NAME)) {
             properties.load(inputStream);
         } catch (IOException e) {
             String errorMessage = "Error when reading file " + CONTAINER_PROPERTIES_FILE_NAME
