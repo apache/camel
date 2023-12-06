@@ -44,10 +44,12 @@ public class GoogleStorageCloudEventDataTypeTransformer extends Transformer {
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.google.storage.downloadTo");
 
         if (message.getHeaders().containsKey(GoogleCloudStorageConstants.BUCKET_NAME)) {
-            headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE, "google.storage.bucket." + message.getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class));
+            headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
+                    "google.storage.bucket." + message.getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class));
         }
 
-        headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class));
+        headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT,
+                message.getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class));
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
     }
 }
