@@ -430,13 +430,16 @@ conditions external to the component itself (such as an external system being un
 [source,java]
 ----
 from("kafka:topic")
-    .pausable(new KafkaConsumerListener(), () -> canContinue())
+    .pausable(new KafkaConsumerListener(), () -> canContinue()) // the pausable check gets called if the exchange fails to be processed ...
     .routeId("pausable-route")
-    .process(exchange -> LOG.info("Got record from Kafka: {}", exchange.getMessage().getBody()))
-    .to("some:destination");
+    .process(this::process) // Kafka consumer will be paused if this one throws an exception ...
+    .to("some:destination"); // or this one
 ----
 
 In this example, consuming messages can pause (by calling the Kafka's Consumer pause method) if the result from `canContinue` is false.
+
+The pausable EIP is meant to be used as a support mechanism when there is an exception somewhere in the route that prevents the exchange from being processed. More specifically,
+the check called by the `pausable` EIP should be used to test for transient conditions preventing the exchange from being processed.
 
 == Kafka Headers propagation
 
