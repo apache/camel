@@ -108,7 +108,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
      *
      */
     protected void produce(byte[] key, byte[] message, UpdateCallBack updateCallBack) {
-        ProducerRecord<byte[], byte[]> producerRecord = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
+        ProducerRecord<byte[], byte[]> producerRecord
+                = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
 
         producer.send(producerRecord, (recordMetadata, e) -> {
             if (e != null) {
@@ -243,7 +244,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
                             consumerRecord.timestampType(), value);
                 }
 
-                if (!deserializable.deserialize(ByteBuffer.wrap(consumerRecord.key()), ByteBuffer.wrap(consumerRecord.value()))) {
+                if (!deserializable.deserialize(ByteBuffer.wrap(consumerRecord.key()),
+                        ByteBuffer.wrap(consumerRecord.value()))) {
                     LOG.warn("Deserializer indicates that this is the last record to deserialize");
                 }
             }
