@@ -365,6 +365,11 @@ This will release the artifacts.
 
   cd ${CAMEL_ROOT_DIR}/etc/scripts
   ./release-distro.sh <Camel version>
+  
+. Copy SBOMs to Apache website:
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./release-sbom.sh <Camel version>
 
 . Remove the old distribution version from the Apache website:
 
