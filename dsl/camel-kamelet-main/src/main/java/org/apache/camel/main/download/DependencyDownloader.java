@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.RepositoryResolver;
 
 /**
  * To download dependencies at runtime.
@@ -183,5 +184,10 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      * Gets the records for the downloaded artifacts
      */
     Collection<DownloadRecord> downloadRecords();
+
+    /**
+     * Gets the {@link RepositoryResolver}
+     */
+    RepositoryResolver getRepositoryResolver();
 
 }

@@ -50,6 +50,7 @@ import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.tooling.maven.RemoteArtifactDownloadListener;
+import org.apache.camel.tooling.maven.RepositoryResolver;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +116,15 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     public void setKnownReposResolver(KnownReposResolver knownReposResolver) {
         this.knownReposResolver = knownReposResolver;
+    }
+
+    @Override
+    public RepositoryResolver getRepositoryResolver() {
+        if (mavenDownloader != null) {
+            return mavenDownloader.getRepositoryResolver();
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -1295,6 +1295,16 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     @Override
+    public RepositoryResolver getRepositoryResolver() {
+        return repositoryResolver;
+    }
+
+    @Override
+    public void setRepositoryResolver(RepositoryResolver repositoryResolver) {
+        this.repositoryResolver = repositoryResolver;
+    }
+
+    @Override
     public void setRepos(String repos) {
         this.repos = repos;
     }

@@ -110,7 +110,7 @@ public class VersionList extends CamelCommand {
                 a = "camel-quarkus-catalog";
             }
 
-            RepositoryResolver rr = main.getCamelContext().hasService(RepositoryResolver.class);
+            RepositoryResolver rr = downloader.getRepositoryResolver();
             if (rr != null) {
                 repo = rr.resolveRepository(repo);
             }

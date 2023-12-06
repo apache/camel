@@ -91,4 +91,14 @@ public interface MavenDownloader {
      */
     void setMavenSettingsLocation(String mavenSettings);
 
+    /**
+     * Gets the repository resolver.
+     */
+    RepositoryResolver getRepositoryResolver();
+
+    /**
+     * Sets a custom repository resolver.
+     */
+    void setRepositoryResolver(RepositoryResolver repositoryResolver);
+
 }
