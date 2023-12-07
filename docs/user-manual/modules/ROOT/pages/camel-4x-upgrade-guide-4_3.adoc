@@ -101,6 +101,10 @@ routes between DSLs such as XML to YAML.
 
 There is a new `camel transform message` command to do message transformation.
 
+=== camel-jetty
+
+Jetty has been upgraded from v11 to v12. End users may need to adjust to changes in Jetty.
+
 === camel-kafka
 
 The behavior for `breakOnFirstError` was altered as numerous issues were fixed. The behavior related to committing 
