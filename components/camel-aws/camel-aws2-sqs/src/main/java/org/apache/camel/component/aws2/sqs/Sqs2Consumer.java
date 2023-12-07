@@ -122,6 +122,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             LOG.trace("Received {} messages", messageResult.messages().size());
         }
 
+        // okay we have some response from aws so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         Queue<Exchange> exchanges = createExchanges(messageResult.messages());
         return processBatch(CastUtils.cast(exchanges));
     }

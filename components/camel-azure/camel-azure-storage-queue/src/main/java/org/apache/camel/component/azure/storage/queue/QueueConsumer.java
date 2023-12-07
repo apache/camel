@@ -49,7 +49,6 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
 
     public QueueConsumer(final QueueEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
-
     }
 
     @Override
@@ -70,6 +69,9 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
             final List<QueueMessageItem> messageItems = clientWrapper.receiveMessages(getConfiguration().getMaxMessages(),
                     getConfiguration().getVisibilityTimeout(),
                     getConfiguration().getTimeout());
+
+            // okay we have some response from azure so lets mark the consumer as ready
+            forceConsumerAsReady();
 
             LOG.trace("Receiving messages [{}]...", messageItems);
 

@@ -93,6 +93,9 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
     @ManagedAttribute(description = "Whether a first pool attempt has been done (also if the consumer has been restarted)")
     boolean isFirstPollDone();
 
+    @ManagedAttribute(description = "Whether the consumer is ready to handle incoming traffic (used for readiness health-check)")
+    boolean isConsumerReady();
+
     @ManagedAttribute(description = "Total number of polls run")
     long getCounter();
 

@@ -83,13 +83,13 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         }
 
         long ec = consumer.getErrorCounter();
-        boolean first = consumer.isFirstPollDone();
+        boolean ready = consumer.isConsumerReady();
         Throwable cause = consumer.getLastError();
 
         boolean healthy = ec == 0;
         boolean readiness = kind.equals(Kind.READINESS);
-        if (readiness && !first) {
-            // special for readiness check before first poll is done
+        if (readiness && !ready) {
+            // special for readiness check before first poll is done or not yet ready
             // if initial state is UP or UNKNOWN then return that
             // otherwise we are DOWN
             boolean down = builder.state().equals(State.DOWN);

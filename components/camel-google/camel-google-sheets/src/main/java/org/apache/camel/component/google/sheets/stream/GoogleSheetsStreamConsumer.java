@@ -80,6 +80,9 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
 
             BatchGetValuesResponse response = request.execute();
 
+            // okay we have some response from Google so lets mark the consumer as ready
+            forceConsumerAsReady();
+
             if (response.getValueRanges() != null) {
                 if (getConfiguration().isSplitResults()) {
                     for (ValueRange valueRange : response.getValueRanges()) {

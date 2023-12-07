@@ -45,6 +45,37 @@ from("seda:c")
   .to("seda:d")
 ----
 
+=== Consumer health checks
+
+The scheduled consumers has been improved to mark the consumer as _ready_ sooner, when possible. Previously a consumer,
+would mark as ready after the first poll was completed. For example, a FTP consumer downloading a big file on first poll,
+could take soo long time, that the readiness check would timeout and fail during startup of your Camel application.
+
+The following components is now marking the consumer as ready sooner:
+
+- camel-aws
+- camel-azure
+- camel-box
+- camel-dhis2
+- camel-fhir
+- camel-couchbase
+- camel-ftp
+- camel-google
+- camel-ironmq
+- camel-jooq
+- camel-jpa
+- camel-mail
+- camel-minio
+- camel-mybatis
+- camel-olingo2
+- camel-olingo4
+- camel-slack
+- camel-splunk
+- camel-sql
+- camel-twilio
+- camel-zendesk
+
+
 === camel-management
 
 If the `nodeIdPrefix` has been configured on routes, then the MBeans for the processors will now use the prefix

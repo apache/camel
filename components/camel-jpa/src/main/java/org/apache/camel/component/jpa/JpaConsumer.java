@@ -119,6 +119,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 List<?> results = toExecute.getResultList();
                 LOG.trace("Got result list from query {}", results);
 
+                // okay we have some response from jpa so lets mark the consumer as ready
+                forceConsumerAsReady();
+
                 for (Object result : results) {
                     DataHolder holder = new DataHolder();
                     holder.manager = entityManager;

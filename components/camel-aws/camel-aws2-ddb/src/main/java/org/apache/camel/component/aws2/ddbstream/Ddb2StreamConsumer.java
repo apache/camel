@@ -55,7 +55,12 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected int poll() throws Exception {
         int processedExchangeCount = 0;
+
         Map<String, String> shardIterators = shardIteratorHandler.getShardIterators();
+
+        // okay we have some response from azure so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         for (Entry<String, String> shardIteratorEntry : shardIterators.entrySet()) {
             int limitPerRecordsRequest = Math.max(1,
                     getEndpoint().getConfiguration().getMaxResultsPerRequest() / shardIterators.size());

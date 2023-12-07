@@ -78,6 +78,9 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
         LOG.trace("Polling: {}", endpoint);
         List<?> data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
 
+        // okay we have some response from MyBatis so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         // create a list of exchange objects with the data
         Queue<DataHolder> answer = new LinkedList<>();
         if (useIterator) {

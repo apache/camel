@@ -80,6 +80,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile Map<String, Object> lastErrorDetails;
     private final AtomicLong counter = new AtomicLong();
     private volatile boolean firstPollDone;
+    private volatile boolean forceReady;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -480,14 +481,39 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     }
 
     /**
-     * Whether a first pool attempt has been done (also if the consumer has been restarted)
+     * Whether a first pool attempt has been done (also if the consumer has been restarted).
      */
     public boolean isFirstPollDone() {
         return firstPollDone;
     }
 
+    /**
+     * Whether the consumer is ready and has established connection to its target system, or first poll has been
+     * completed successfully.
+     *
+     * The health-check is using this information to know when the consumer is ready for readiness checks.
+     */
+    public boolean isConsumerReady() {
+        // we regard the consumer as ready if it was explicit forced to be ready (component specific)
+        // or that it has completed its first poll without an exception was thrown
+        // during connecting to target system and accepting data
+        return forceReady || firstPollDone;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Forces the consumer to be marked as ready. This can be used by components that need to mark this sooner than
+     * usual (default marked as ready after first poll is done). This allows health-checks to be ready before an entire
+     * poll is completed.
+     *
+     * This is for example needed by the FTP component as polling a large file can take long time, causing a
+     * health-check to not be ready within reasonable time.
+     */
+    protected void forceConsumerAsReady() {
+        forceReady = true;
+    }
 
     /**
      * Gets the last caused error (exception) for the last poll that failed. When the consumer is successfully again,
@@ -672,7 +698,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         errorCounter = 0;
         successCounter = 0;
         counter.set(0);
+        // clear ready state
         firstPollDone = false;
+        forceReady = false;
 
         super.doStop();
     }

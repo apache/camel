@@ -87,15 +87,17 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
                 = new DataLakeFileSystemOperations(getEndpoint().getConfiguration(), fileSystemClientWrapper);
 
         final List<PathItem> items = (List<PathItem>) fileSystemOperations.listPaths(null).getBody();
-        final Queue<Exchange> exchanges = new LinkedList<>();
 
+        // okay we have some response from azure so lets mark the consumer as ready
+        forceConsumerAsReady();
+
+        final Queue<Exchange> exchanges = new LinkedList<>();
         for (PathItem pathItem : items) {
             if (!pathItem.isDirectory()) {
                 exchanges.add(createExchangeFromFile(pathItem.getName(), dataLakeFileSystemClient));
             }
         }
         return exchanges;
-
     }
 
     private Exchange createExchangeFromFile(final String fileName, final DataLakeFileSystemClient dataLakeFileSystemClient)

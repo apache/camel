@@ -60,7 +60,10 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
         Queue<DataHolder> answer = new LinkedList<>();
         Result<UpdatableRecord<?>> results = context.selectFrom(getTable(entityType)).fetch();
 
-        for (UpdatableRecord result : results) {
+        // okay we have some response from jooq so lets mark the consumer as ready
+        forceConsumerAsReady();
+
+        for (UpdatableRecord<?> result : results) {
             DataHolder holder = new DataHolder();
             holder.exchange = createExchange(result);
             answer.add(holder);
