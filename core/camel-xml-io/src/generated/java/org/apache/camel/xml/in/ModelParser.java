@@ -861,8 +861,8 @@ public class ModelParser extends BaseParser {
         return doParse(new ResequenceDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
             switch (key) {
-                case "batch-config": def.setResequencerConfig(doParseBatchResequencerConfig()); break;
-                case "stream-config": def.setResequencerConfig(doParseStreamResequencerConfig()); break;
+                case "batchConfig": def.setResequencerConfig(doParseBatchResequencerConfig()); break;
+                case "streamConfig": def.setResequencerConfig(doParseStreamResequencerConfig()); break;
                 default: 
                     ExpressionDefinition v = doParseExpressionDefinitionRef(key);
                     if (v != null) { 

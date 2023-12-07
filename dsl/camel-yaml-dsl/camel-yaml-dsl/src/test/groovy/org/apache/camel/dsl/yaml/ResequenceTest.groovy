@@ -49,7 +49,7 @@ class ResequenceTest extends YamlTestSupport {
                         steps:    
                           - resequence:
                               simple: "${in.header.seqnum}"
-                              stream-config:
+                              streamConfig:
                                 capacity: 5000
                                 timeout: 4000  
                               steps:
@@ -64,7 +64,7 @@ class ResequenceTest extends YamlTestSupport {
                           - resequence:
                               expression:
                                 simple: "${in.header.seqnum}"
-                              stream-config:
+                              streamConfig:
                                 capacity: 5000
                                 timeout: 4000  
                               steps:

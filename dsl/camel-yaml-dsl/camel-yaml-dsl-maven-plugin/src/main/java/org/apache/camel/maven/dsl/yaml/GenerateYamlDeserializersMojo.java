@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -195,12 +194,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             cb.beginControlFlow("case $S:", e.getKey());
                             cb.addStatement("return asType(node, $L.class)", e.getValue().name().toString());
                             cb.endControlFlow();
-
-                            if (!e.getKey().equals(StringHelper.camelCaseToDash(e.getKey()))) {
-                                cb.beginControlFlow("case $S:", StringHelper.camelCaseToDash(e.getKey()));
-                                cb.addStatement("return asType(node, $L.class)", e.getValue().name().toString());
-                                cb.endControlFlow();
-                            }
                         });
 
         cb.beginControlFlow("case \"expression\":");
@@ -247,17 +240,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                             "object",
                                             e.getValue().name().toString(),
                                             oneOfGroup));
-
-                            if (!e.getKey().equals(StringHelper.camelCaseToDash(e.getKey()))) {
-                                edAnnotation.addMember(
-                                        "properties",
-                                        "$L",
-                                        yamlPropertyWithSubtype(
-                                                StringHelper.camelCaseToDash(e.getKey()),
-                                                "object",
-                                                e.getValue().name().toString(),
-                                                oneOfGroup));
-                            }
                         });
 
         type.addType(
@@ -294,17 +276,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                             "object",
                                             e.getValue().name().toString(),
                                             oneOfGroup));
-
-                            if (!e.getKey().equals(StringHelper.camelCaseToDash(e.getKey()))) {
-                                esdAnnotation.addMember(
-                                        "properties",
-                                        "$L",
-                                        yamlPropertyWithSubtype(
-                                                StringHelper.camelCaseToDash(e.getKey()),
-                                                "object",
-                                                e.getValue().name().toString(),
-                                                oneOfGroup));
-                            }
                         });
 
         type.addType(
@@ -513,6 +484,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         boolean caseAdded = false;
 
         CodeBlock.Builder setProperty = CodeBlock.builder();
+        setProperty.addStatement("propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey)");
         setProperty.beginControlFlow("switch(propertyKey)");
 
         final Schema descriptor = schemes.computeIfAbsent(
@@ -715,9 +687,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             AnnotationInstance[] elements = field.annotation(XML_ELEMENTS_ANNOTATION_CLASS).value().asNestedArray();
 
             if (elements.length > 1) {
-                //TODO: org.apache.camel.model.cloud.ServiceCallExpressionConfiguration#expressionConfiguration is
-                //      wrongly defined and need to be fixed
-                cb.beginControlFlow("case $S:", StringHelper.camelCaseToDash(field.name()).toLowerCase(Locale.US));
+                cb.beginControlFlow("case $S:", field.name());
                 cb.addStatement("$T val = asMappingNode(node)", CN_MAPPING_NODE);
                 cb.addStatement("setProperties(target, val)");
                 cb.addStatement("break");
@@ -732,7 +702,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     AnnotationValue type = element.value("type");
 
                     if (name != null && type != null) {
-                        String fieldName = StringHelper.camelCaseToDash(name.asString()).toLowerCase(Locale.US);
+                        String fieldName = name.asString();
                         String paramType = parameterized.name().toString();
 
                         cb.beginControlFlow("case $S:", fieldName);
@@ -764,7 +734,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     AnnotationValue type = element.value("type");
 
                     if (name != null && type != null) {
-                        String fieldName = StringHelper.camelCaseToDash(name.asString()).toLowerCase(Locale.US);
+                        String fieldName = name.asString();
 
                         cb.beginControlFlow("case $S:", fieldName);
                         cb.addStatement("$L val = asType(node, $L.class)", type.asString(), type.asString());
@@ -850,7 +820,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             return false;
         }
 
-        final String fieldName = StringHelper.camelCaseToDash(fieldName(field)).toLowerCase(Locale.US);
+        final String fieldName = fieldName(field);
 
         //
         // Parametrized
@@ -886,7 +856,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             ClassInfo ci = view.getClassByName(parametrizedType.name());
                             String name = fieldName(ci, field);
 
-                            cb.beginControlFlow("case $S:", StringHelper.camelCaseToDash(name).toLowerCase(Locale.US));
+                            cb.beginControlFlow("case $S:", name);
                             cb.addStatement("java.util.List<$L> val = asFlatList(node, $L.class)",
                                     parametrizedType.name().toString(), parametrizedType.name().toString());
                             cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
@@ -895,7 +865,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
                             annotations.add(
                                     YamlProperties
-                                            .annotation(StringHelper.camelCaseToDash(name).toLowerCase(Locale.US), "array")
+                                            .annotation(name, "array")
                                             .withSubType(parametrizedType.name().toString())
                                             .withRequired(isRequired(field))
                                             .withDescription(descriptor.description(name))
@@ -926,7 +896,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             ClassInfo ci = view.getClassByName(parametrizedType.name());
                             String name = fieldName(ci, field);
 
-                            cb.beginControlFlow("case $S:", StringHelper.camelCaseToDash(name).toLowerCase(Locale.US));
+                            cb.beginControlFlow("case $S:", name);
                             cb.addStatement("var val = asFlatSet(node, $L.class)", parametrizedType.name().toString());
                             cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                             cb.addStatement("break");
@@ -934,7 +904,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
                             annotations.add(
                                     YamlProperties
-                                            .annotation(StringHelper.camelCaseToDash(name).toLowerCase(Locale.US), "array")
+                                            .annotation(name, "array")
                                             .withSubType(parametrizedType.name().toString())
                                             .withRequired(isRequired(field))
                                             .withDescription(descriptor.description(name))

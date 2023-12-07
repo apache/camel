@@ -284,7 +284,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             }
             // we want to skip inheritErrorHandler which is only applicable for the load-balancer
             boolean skip = false;
-            if (propertyName.equals("inherit-error-handler")) {
+            if (propertyName.equals("inheritErrorHandler")) {
                 skip = true;
                 Optional<AnnotationValue> av = annotationValue(info, YAML_TYPE_ANNOTATION, "nodes");
                 if (av.isPresent()) {

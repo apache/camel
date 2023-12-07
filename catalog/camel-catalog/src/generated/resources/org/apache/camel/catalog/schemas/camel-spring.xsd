@@ -62,7 +62,7 @@ Rest security basic auth definition
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="batch-config" type="tns:batchResequencerConfig">
+  <xs:element name="batchConfig" type="tns:batchResequencerConfig">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -1806,20 +1806,20 @@ Stops the processing of the current message
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="stream-config" type="tns:streamResequencerConfig">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Configures stream-processing resequence eip.
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="streamCaching" type="tns:camelStreamCachingStrategyDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
 Stream caching configuration.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="streamConfig" type="tns:streamResequencerConfig">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Configures stream-processing resequence eip.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -11354,8 +11354,8 @@ Name of property to remove.
       <xs:extension base="tns:output">
         <xs:sequence>
           <xs:choice minOccurs="0">
-            <xs:element ref="tns:batch-config"/>
-            <xs:element ref="tns:stream-config"/>
+            <xs:element ref="tns:batchConfig"/>
+            <xs:element ref="tns:streamConfig"/>
           </xs:choice>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>

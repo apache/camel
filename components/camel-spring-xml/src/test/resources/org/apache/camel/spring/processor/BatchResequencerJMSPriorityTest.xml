@@ -32,7 +32,7 @@
             <!-- sort by JMSPriority by allowing duplicates (message can have same JMSPriority)
                  and use reverse ordering so 9 is first output (most important), and 0 is last -->
             <resequence>
-                <batch-config allowDuplicates="true" reverse="true"/>
+                <batchConfig allowDuplicates="true" reverse="true"/>
                 <header>JMSPriority</header>
                 <to uri="mock:result"/>
             </resequence>

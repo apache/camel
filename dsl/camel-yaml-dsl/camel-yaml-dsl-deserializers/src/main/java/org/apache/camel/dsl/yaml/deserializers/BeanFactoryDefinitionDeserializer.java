@@ -27,6 +27,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
  * @param <T> the type of nodes that define a bean factory
  */
 public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDefinition<?, ?>> extends YamlDeserializerBase<T> {
+
     protected BeanFactoryDefinitionDeserializer(Class<T> clazz) {
         super(clazz);
     }
@@ -35,6 +36,7 @@ public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDef
     protected boolean setProperty(
             T target, String propertyKey,
             String propertyName, Node node) {
+        propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
         switch (propertyKey) {
             case "name": {
                 String val = asText(node);
@@ -51,8 +53,7 @@ public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDef
                 target.setProperties(asMap(node));
                 break;
             }
-            case "scriptLanguage":
-            case "script-language": {
+            case "scriptLanguage": {
                 String val = asText(node);
                 target.setScriptLanguage(val);
                 break;

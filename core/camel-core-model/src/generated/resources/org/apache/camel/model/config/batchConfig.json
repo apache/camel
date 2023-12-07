@@ -1,8 +1,8 @@
 {
   "model": {
     "kind": "model",
-    "name": "batch-config",
-    "title": "Batch-config",
+    "name": "batchConfig",
+    "title": "Batch Config",
     "description": "Configures batch-processing resequence eip.",
     "deprecated": false,
     "label": "configuration,eip",

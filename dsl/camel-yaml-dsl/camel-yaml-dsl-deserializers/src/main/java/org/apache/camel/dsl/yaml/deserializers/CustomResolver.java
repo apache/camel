@@ -44,6 +44,7 @@ public class CustomResolver implements YamlDeserializerResolver {
                     id, StringHelper.dashToCamelCase(id));
         }
 
+        id = org.apache.camel.util.StringHelper.dashToCamelCase(id);
         switch (id) {
             //
             // Route
@@ -55,15 +56,12 @@ public class CustomResolver implements YamlDeserializerResolver {
             case "route":
             case "org.apache.camel.model.RouteDefinition":
                 return new RouteDefinitionDeserializer();
-            case "route-configuration":
             case "routeConfiguration":
             case "org.apache.camel.model.RouteConfigurationDefinition":
                 return new RouteConfigurationDefinitionDeserializer();
-            case "route-template":
             case "routeTemplate":
             case "org.apache.camel.model.RouteTemplateDefinition":
                 return new RouteTemplateDefinitionDeserializer();
-            case "templated-route":
             case "templatedRoute":
             case "org.apache.camel.model.TemplatedRouteDefinition":
                 return new TemplatedRouteDefinitionDeserializer();
@@ -89,7 +87,6 @@ public class CustomResolver implements YamlDeserializerResolver {
             //
             case "beans":
                 return beansDeserializer;
-            case "error-handler":
             case "errorHandler":
                 return new ErrorHandlerBuilderDeserializer();
             case "org.apache.camel.model.ProcessorDefinition":
