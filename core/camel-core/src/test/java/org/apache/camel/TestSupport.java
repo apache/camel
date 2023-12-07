@@ -102,7 +102,11 @@ public abstract class TestSupport {
     }
 
     protected Path testFile(String file) {
-        return testDirectory().resolve(file);
+        return testFile(testDirectory(), file);
+    }
+
+    protected static Path testFile(Path testDirectory, String file) {
+        return testDirectory.resolve(file);
     }
 
     protected Path testDirectory(String path) {
