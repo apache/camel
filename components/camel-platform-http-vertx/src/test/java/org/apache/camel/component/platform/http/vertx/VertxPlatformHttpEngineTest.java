@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.activation.DataHandler;
@@ -32,6 +33,8 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.http.Cookie;
+import io.vertx.core.http.impl.ServerCookie;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.auth.User;
@@ -66,7 +69,10 @@ import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class VertxPlatformHttpEngineTest {
     public static SSLContextParameters serverSSLParameters;
@@ -901,6 +907,113 @@ public class VertxPlatformHttpEngineTest {
                     .statusCode(200)
                     .header("beer", "Heineken")
                     .body(is("request path: /vertx/objects"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testAddCookie() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/add")
+                            .process(exchange -> {
+                                HttpMessage message = (HttpMessage) exchange.getMessage();
+                                message.getRequest().response().addCookie(Cookie.cookie("foo", "bar"));
+                            })
+                            .setBody().constant("add");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .header("cookie", "foo=bar")
+                    .when()
+                    .get("/add")
+                    .then()
+                    .statusCode(200)
+                    .header("set-cookie", "foo=bar")
+                    .body(equalTo("add"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRemoveCookie() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/remove")
+                            .process(exchange -> {
+                                HttpMessage message = (HttpMessage) exchange.getMessage();
+                                Cookie removed = message.getRequest().response().removeCookie("foo");
+                                assertNotNull(removed);
+                                assertEquals("foo", removed.getName());
+                                assertEquals("", removed.getValue());
+                            })
+                            .setBody().constant("remove");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .header("cookie", "foo=bar")
+                    .when()
+                    .get("/remove")
+                    .then()
+                    .statusCode(200)
+                    .header("set-cookie", startsWith("foo=; Max-Age=0; Expires="))
+                    .body(equalTo("remove"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testReplaceCookie() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/replace")
+                            .process(exchange -> {
+                                HttpMessage message = (HttpMessage) exchange.getMessage();
+                                assertEquals(1, message.getRequest().cookieCount());
+                                message.getRequest().response()
+                                        .addCookie(Cookie.cookie("XSRF-TOKEN", "88533580000c314").setPath("/"));
+                                Map<String, Cookie> deprecatedMap = message.getRequest().cookieMap();
+                                assertFalse(((ServerCookie) deprecatedMap.get("XSRF-TOKEN")).isFromUserAgent());
+                                assertEquals("/", deprecatedMap.get("XSRF-TOKEN").getPath());
+                            })
+                            .setBody().constant("replace");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .header("cookie", "XSRF-TOKEN=c359b44aef83415")
+                    .when()
+                    .get("/replace")
+                    .then()
+                    .statusCode(200)
+                    .header("set-cookie", "XSRF-TOKEN=88533580000c314; Path=/")
+                    .body(equalTo("replace"));
+
         } finally {
             context.stop();
         }
