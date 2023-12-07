@@ -47,16 +47,16 @@ wget -e robots=off --wait 3 --no-check-certificate \
 
 DOWNLOAD_LOCATION="${DOWNLOAD}/${VERSION}/org/apache/camel/camel/${VERSION}"
 
-mv ${DOWNLOAD_LOCATION}/camel-${VERSION}-cyclonedx.json ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-cyclonedx.json
-mv ${DOWNLOAD_LOCATION}/camel-${VERSION}-cyclonedx.xml ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-cyclonedx.xml
+mv ${DOWNLOAD_LOCATION}/camel-${VERSION}-cyclonedx.json ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-sbom.json
+mv ${DOWNLOAD_LOCATION}/camel-${VERSION}-cyclonedx.xml ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-sbom.xml
 ./sign.sh ${DOWNLOAD_LOCATION}/
 
-svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-cyclonedx.json https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-cyclonedx.json -m "Import Camel SBOMs JSON release"
-svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-cyclonedx.json.asc https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-cyclonedx.json.asc -m "Import Camel SBOMs JSON release"
-svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-cyclonedx.json.sha512 https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-cyclonedx.json.sha512 -m "Import Camel SBOMs JSON release"
-svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-cyclonedx.xml https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-cyclonedx.xml -m "Import Camel SBOMs XML release"
-svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-cyclonedx.xml.asc https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-cyclonedx.xml.asc -m "Import Camel SBOMs XML release"
-svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-cyclonedx.xml.sha512 https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-cyclonedx.xml.sha512 -m "Import Camel SBOMs XML release"
+svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-sbom.json https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-sbom.json -m "Import Camel SBOMs JSON release"
+svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-sbom.json.asc https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-sbom.json.asc -m "Import Camel SBOMs JSON release"
+svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-sbom.json.sha512 https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-sbom.json.sha512 -m "Import Camel SBOMs JSON release"
+svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-sbom.xml https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-sbom.xml -m "Import Camel SBOMs XML release"
+svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-sbom.xml.asc https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-sbom.xml.asc -m "Import Camel SBOMs XML release"
+svn import ${DOWNLOAD_LOCATION}/apache-camel-${VERSION}-sbom.xml.sha512 https://dist.apache.org/repos/dist/release/camel/apache-camel/${VERSION}/apache-camel-${VERSION}-sbom.xml.sha512 -m "Import Camel SBOMs XML release"
 echo "SBOM uploaded in dist/release"
 
 rm -rf ${DOWNLOAD_LOCATION}/
