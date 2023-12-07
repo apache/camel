@@ -480,7 +480,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     }
 
     /**
-     * Whether a first pool attempt has been done (also if the consumer has been restarted)
+     * Whether a first pool attempt has been done (also if the consumer has been restarted).
+     *
+     * The health-check is using this information to know when the consumer is ready for readiness checks.
+     *
+     * @see #forceFirstPollDone()
      */
     public boolean isFirstPollDone() {
         return firstPollDone;
@@ -488,6 +492,18 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Forces the consumer to be marked as ready. This can be used by components that
+     * need to mark this sooner than usual (default marked as ready after first poll is done).
+     * This allows health-checks to be ready before an entire poll is completed.
+     *
+     * This is for example needed by the FTP component as polling a large file can take long time,
+     * causing a health-check to not be ready within reasonable time.
+     */
+    protected void forceConsumerAsReady() {
+        firstPollDone = true;
+    }
 
     /**
      * Gets the last caused error (exception) for the last poll that failed. When the consumer is successfully again,
