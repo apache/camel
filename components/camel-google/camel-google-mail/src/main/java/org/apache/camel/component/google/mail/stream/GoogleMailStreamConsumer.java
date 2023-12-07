@@ -86,6 +86,10 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> answer = new LinkedList<>();
 
         ListMessagesResponse c = request.execute();
+
+        // okay we have some response from Google so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         if (c.getMessages() != null) {
             for (Message message : c.getMessages()) {
                 Message mess = getClient().users().messages().get("me", message.getId()).setFormat("FULL").execute();
