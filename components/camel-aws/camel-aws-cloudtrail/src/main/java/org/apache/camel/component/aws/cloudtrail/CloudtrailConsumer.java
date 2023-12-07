@@ -63,6 +63,9 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
         LookupEventsResponse response = getClient().lookupEvents(eventsRequestBuilder.build());
 
+        // okay we have some response from aws so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         if (!response.events().isEmpty()) {
             lastTime = response.events().get(0).eventTime();
         }

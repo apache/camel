@@ -160,6 +160,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
             exchanges = createExchanges(listObjects.contents());
         }
+
+        // okay we have some response from azure so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         return processBatch(CastUtils.cast(exchanges));
     }
 

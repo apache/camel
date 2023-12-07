@@ -113,6 +113,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                     });
         }
 
+        // okay we have some response from aws so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         return processedExchangeCount.get();
     }
 

@@ -22,8 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
