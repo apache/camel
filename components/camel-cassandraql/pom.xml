@@ -33,6 +33,13 @@
     <name>Camel :: Cassandra CQL</name>
     <description>Cassandra CQL3 support</description>
 
+    <properties>
+        <!-- Cassandra does not run reliably on Power.
+            See https://issues.apache.org/jira/browse/INFRA-25195
+        -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+    </properties>
+
     <dependencies>
 
         <dependency>
