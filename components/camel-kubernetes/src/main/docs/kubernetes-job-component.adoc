@@ -6,7 +6,7 @@
 :since: 2.23
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes
 :camel-spring-boot-name: kubernetes
@@ -16,7 +16,7 @@
 *{component-header}*
 
 The Kubernetes Job component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes Job operations and a consumer to consume events related to Job objects.
+provides a producer to execute kubernetes Job operations.
 
 
 // component-configure options: START
