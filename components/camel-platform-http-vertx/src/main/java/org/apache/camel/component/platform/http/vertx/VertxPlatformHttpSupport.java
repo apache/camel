@@ -215,7 +215,7 @@ public final class VertxPlatformHttpSupport {
             HeaderFilterStrategy headerFilterStrategy) {
 
         final HttpServerRequest request = ctx.request();
-        headersMap.put(Exchange.HTTP_PATH, request.path());
+        headersMap.put(Exchange.HTTP_PATH, ctx.normalizedPath());
 
         if (headerFilterStrategy != null) {
             final MultiMap requestHeaders = request.headers();

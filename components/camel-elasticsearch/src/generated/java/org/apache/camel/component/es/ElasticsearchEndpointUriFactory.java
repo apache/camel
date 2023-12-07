@@ -21,12 +21,13 @@ public class ElasticsearchEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(20);
+        Set<String> props = new HashSet<>(21);
         props.add("certificatePath");
         props.add("clusterName");
         props.add("connectionTimeout");
         props.add("disconnect");
         props.add("documentClass");
+        props.add("enableDocumentOnlyMode");
         props.add("enableSSL");
         props.add("enableSniffer");
         props.add("from");

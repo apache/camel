@@ -1813,7 +1813,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the name of the header {@code Iec60870Value}.
          */
         public String iec60870Value() {
-            return "Iec60870Value";
+            return "CamelIec60870Value";
         }
 
         /**
@@ -1826,7 +1826,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the name of the header {@code Iec60870Timestamp}.
          */
         public String iec60870Timestamp() {
-            return "Iec60870Timestamp";
+            return "CamelIec60870Timestamp";
         }
 
         /**
@@ -1841,7 +1841,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the name of the header {@code Iec60870Quality}.
          */
         public String iec60870Quality() {
-            return "Iec60870Quality";
+            return "CamelIec60870Quality";
         }
 
         /**
@@ -1854,7 +1854,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the name of the header {@code Iec60870Overflow}.
          */
         public String iec60870Overflow() {
-            return "Iec60870Overflow";
+            return "CamelIec60870Overflow";
         }
     }
     static ClientEndpointBuilder endpointBuilder(

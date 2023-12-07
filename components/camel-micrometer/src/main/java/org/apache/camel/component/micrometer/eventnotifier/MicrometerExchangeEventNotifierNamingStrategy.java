@@ -37,12 +37,30 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
 
     Predicate<Meter.Id> EVENT_NOTIFIERS
             = id -> MicrometerEventNotifierService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
+
+    /**
+     * Default naming strategy that uses micrometer naming convention.
+     */
     MicrometerExchangeEventNotifierNamingStrategy DEFAULT = (event, endpoint) -> DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME;
+
+    /**
+     * Naming strategy that uses the classic/legacy naming style (camelCase)
+     */
+    MicrometerExchangeEventNotifierNamingStrategy LEGACY = new MicrometerExchangeEventNotifierNamingStrategy() {
+        @Override
+        public String getName(Exchange exchange, Endpoint endpoint) {
+            return formatName(DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME);
+        }
+    };
 
     String getName(Exchange exchange, Endpoint endpoint);
 
+    default String formatName(String name) {
+        return name;
+    }
+
     default String getInflightExchangesName(Exchange exchange, Endpoint endpoint) {
-        return DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
+        return formatName(DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT);
     }
 
     default Tags getTags(ExchangeEvent event, Endpoint endpoint) {

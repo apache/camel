@@ -67,6 +67,25 @@ public interface ElasticsearchComponentBuilderFactory {
             return this;
         }
         /**
+         * Indicates whether the body of the message contains only documents. By
+         * default, it is set to false to be able to do the same requests as
+         * what the Document API supports (see
+         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode especially if your routes do update operations.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param enableDocumentOnlyMode the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchComponentBuilder enableDocumentOnlyMode(
+                boolean enableDocumentOnlyMode) {
+            doSetProperty("enableDocumentOnlyMode", enableDocumentOnlyMode);
+            return this;
+        }
+        /**
          * Comma separated list with ip:port formatted remote transport
          * addresses to use. The ip and port options must be left blank for
          * hostAddresses to be considered instead.
@@ -308,6 +327,7 @@ public interface ElasticsearchComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "connectionTimeout": ((ElasticsearchComponent) component).setConnectionTimeout((int) value); return true;
+            case "enableDocumentOnlyMode": ((ElasticsearchComponent) component).setEnableDocumentOnlyMode((boolean) value); return true;
             case "hostAddresses": ((ElasticsearchComponent) component).setHostAddresses((java.lang.String) value); return true;
             case "lazyStartProducer": ((ElasticsearchComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxRetryTimeout": ((ElasticsearchComponent) component).setMaxRetryTimeout((int) value); return true;

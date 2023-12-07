@@ -28,6 +28,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
         case "client": target.setClient(property(camelContext, org.elasticsearch.client.RestClient.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "enabledocumentonlymode":
+        case "enableDocumentOnlyMode": target.setEnableDocumentOnlyMode(property(camelContext, boolean.class, value)); return true;
         case "enablessl":
         case "enableSSL": target.setEnableSSL(property(camelContext, boolean.class, value)); return true;
         case "enablesniffer":
@@ -65,6 +67,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
         case "client": return org.elasticsearch.client.RestClient.class;
         case "connectiontimeout":
         case "connectionTimeout": return int.class;
+        case "enabledocumentonlymode":
+        case "enableDocumentOnlyMode": return boolean.class;
         case "enablessl":
         case "enableSSL": return boolean.class;
         case "enablesniffer":
@@ -98,6 +102,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
         case "client": return target.getClient();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConnectionTimeout();
+        case "enabledocumentonlymode":
+        case "enableDocumentOnlyMode": return target.isEnableDocumentOnlyMode();
         case "enablessl":
         case "enableSSL": return target.isEnableSSL();
         case "enablesniffer":

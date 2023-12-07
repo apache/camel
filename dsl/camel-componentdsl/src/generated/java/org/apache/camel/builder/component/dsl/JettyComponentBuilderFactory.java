@@ -271,6 +271,71 @@ public interface JettyComponentBuilderFactory {
             return this;
         }
         /**
+         * The size threshold after which files will be written to disk for
+         * multipart/form-data requests. By default the files are not written to
+         * disk.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer (advanced)
+         * 
+         * @param fileSizeThreshold the value to set
+         * @return the dsl builder
+         */
+        default JettyComponentBuilder fileSizeThreshold(int fileSizeThreshold) {
+            doSetProperty("fileSizeThreshold", fileSizeThreshold);
+            return this;
+        }
+        /**
+         * The directory location where files will be store for
+         * multipart/form-data requests. By default the files are written in the
+         * system temporary folder.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param filesLocation the value to set
+         * @return the dsl builder
+         */
+        default JettyComponentBuilder filesLocation(
+                java.lang.String filesLocation) {
+            doSetProperty("filesLocation", filesLocation);
+            return this;
+        }
+        /**
+         * The maximum size allowed for uploaded files. -1 means no limit.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: consumer (advanced)
+         * 
+         * @param maxFileSize the value to set
+         * @return the dsl builder
+         */
+        default JettyComponentBuilder maxFileSize(long maxFileSize) {
+            doSetProperty("maxFileSize", maxFileSize);
+            return this;
+        }
+        /**
+         * The maximum size allowed for multipart/form-data requests. -1 means
+         * no limit.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: consumer (advanced)
+         * 
+         * @param maxRequestSize the value to set
+         * @return the dsl builder
+         */
+        default JettyComponentBuilder maxRequestSize(long maxRequestSize) {
+            doSetProperty("maxRequestSize", maxRequestSize);
+            return this;
+        }
+        /**
          * To use a custom thread pool for the server. This option should only
          * be used in special circumstances.
          * 
@@ -634,6 +699,10 @@ public interface JettyComponentBuilderFactory {
             case "sendServerVersion": ((JettyHttpComponent9) component).setSendServerVersion((boolean) value); return true;
             case "useContinuation": ((JettyHttpComponent9) component).setUseContinuation((boolean) value); return true;
             case "useXForwardedForHeader": ((JettyHttpComponent9) component).setUseXForwardedForHeader((boolean) value); return true;
+            case "fileSizeThreshold": ((JettyHttpComponent9) component).setFileSizeThreshold((int) value); return true;
+            case "filesLocation": ((JettyHttpComponent9) component).setFilesLocation((java.lang.String) value); return true;
+            case "maxFileSize": ((JettyHttpComponent9) component).setMaxFileSize((long) value); return true;
+            case "maxRequestSize": ((JettyHttpComponent9) component).setMaxRequestSize((long) value); return true;
             case "threadPool": ((JettyHttpComponent9) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
             case "allowJavaSerializedObject": ((JettyHttpComponent9) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "autowiredEnabled": ((JettyHttpComponent9) component).setAutowiredEnabled((boolean) value); return true;

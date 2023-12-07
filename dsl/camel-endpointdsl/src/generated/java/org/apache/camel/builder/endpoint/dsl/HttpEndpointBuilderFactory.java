@@ -1578,7 +1578,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseCode}.
          */
         public String httpResponseCode() {
-            return "HttpResponseCode";
+            return "CamelHttpResponseCode";
         }
 
         /**
@@ -1591,7 +1591,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseText}.
          */
         public String httpResponseText() {
-            return "HttpResponseText";
+            return "CamelHttpResponseText";
         }
 
         /**
@@ -1605,7 +1605,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpQuery}.
          */
         public String httpQuery() {
-            return "HttpQuery";
+            return "CamelHttpQuery";
         }
 
         /**
@@ -1618,7 +1618,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpProtocolVersion}.
          */
         public String httpProtocolVersion() {
-            return "HttpProtocolVersion";
+            return "CamelHttpProtocolVersion";
         }
 
         /**
@@ -1644,7 +1644,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpUri}.
          */
         public String restHttpUri() {
-            return "RestHttpUri";
+            return "CamelRestHttpUri";
         }
 
         /**
@@ -1661,7 +1661,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpUri}.
          */
         public String httpUri() {
-            return "HttpUri";
+            return "CamelHttpUri";
         }
 
         /**
@@ -1675,7 +1675,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpPath}.
          */
         public String httpPath() {
-            return "HttpPath";
+            return "CamelHttpPath";
         }
 
         /**
@@ -1688,7 +1688,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpQuery}.
          */
         public String restHttpQuery() {
-            return "RestHttpQuery";
+            return "CamelRestHttpQuery";
         }
 
         /**
@@ -1701,7 +1701,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpRawQuery}.
          */
         public String httpRawQuery() {
-            return "HttpRawQuery";
+            return "CamelHttpRawQuery";
         }
 
         /**
@@ -1715,7 +1715,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpMethod}.
          */
         public String httpMethod() {
-            return "HttpMethod";
+            return "CamelHttpMethod";
         }
 
         /**
@@ -1728,7 +1728,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpCharacterEncoding}.
          */
         public String httpCharacterEncoding() {
-            return "HttpCharacterEncoding";
+            return "CamelHttpCharacterEncoding";
         }
 
         /**

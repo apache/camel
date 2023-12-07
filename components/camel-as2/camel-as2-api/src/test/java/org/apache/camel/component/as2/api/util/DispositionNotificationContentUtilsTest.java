@@ -118,4 +118,18 @@ public class DispositionNotificationContentUtilsTest {
                 "Unexpected Digest Algorithm ID");
     }
 
+    @Test
+    public void testDispoistionTypeCaseSensitivity() throws Exception {
+        String dispoistionTypeMixedCase = "automatic-action/MDN-Sent-automatically";
+        String dispoistionTypeLowerCase = "automatic-action/mdn-sent-automatically";
+
+        DispositionMode resultMixedCase = DispositionMode.parseDispositionMode(dispoistionTypeMixedCase);
+        DispositionMode resultLowerCase = DispositionMode.parseDispositionMode(dispoistionTypeLowerCase);
+
+        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, resultMixedCase,
+                "DispositionMode should be case insensitive");
+        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, resultLowerCase,
+                "DispositionMode should be case insensitive");
+    }
+
 }

@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -165,10 +166,12 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         Set<File> files = new HashSet<>();
         PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files);
         PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files);
+        // spring/blueprint should not include SpringErrorHandlerDefinition (duplicates a file from camel-core-model)
+        Predicate<File> filter = f -> !f.getName().equals("errorHandler.json");
         if (blueprint) {
-            PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files);
+            PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files, filter);
         } else {
-            PackageHelper.findJsonFiles(new File(targetDir, pathToSpringModelDir), files);
+            PackageHelper.findJsonFiles(new File(targetDir, pathToSpringModelDir), files, filter);
         }
         Map<String, File> jsonFiles = new HashMap<>();
         files.forEach(f -> jsonFiles.put(PackageHelper.asName(f.toPath()), f));

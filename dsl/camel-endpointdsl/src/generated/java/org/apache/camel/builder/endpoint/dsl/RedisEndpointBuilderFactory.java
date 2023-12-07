@@ -827,7 +827,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Command}.
          */
         public String redisCommand() {
-            return "Redis.Command";
+            return "CamelRedis.Command";
         }
 
         /**
@@ -840,7 +840,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Key}.
          */
         public String redisKey() {
-            return "Redis.Key";
+            return "CamelRedis.Key";
         }
 
         /**
@@ -853,7 +853,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Keys}.
          */
         public String redisKeys() {
-            return "Redis.Keys";
+            return "CamelRedis.Keys";
         }
 
         /**
@@ -866,7 +866,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Field}.
          */
         public String redisField() {
-            return "Redis.Field";
+            return "CamelRedis.Field";
         }
 
         /**
@@ -879,7 +879,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Fields}.
          */
         public String redisFields() {
-            return "Redis.Fields";
+            return "CamelRedis.Fields";
         }
 
         /**
@@ -892,7 +892,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Value}.
          */
         public String redisValue() {
-            return "Redis.Value";
+            return "CamelRedis.Value";
         }
 
         /**
@@ -906,7 +906,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Values}.
          */
         public String redisValues() {
-            return "Redis.Values";
+            return "CamelRedis.Values";
         }
 
         /**
@@ -919,7 +919,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Start}.
          */
         public String redisStart() {
-            return "Redis.Start";
+            return "CamelRedis.Start";
         }
 
         /**
@@ -932,7 +932,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.End}.
          */
         public String redisEnd() {
-            return "Redis.End";
+            return "CamelRedis.End";
         }
 
         /**
@@ -945,7 +945,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Timeout}.
          */
         public String redisTimeout() {
-            return "Redis.Timeout";
+            return "CamelRedis.Timeout";
         }
 
         /**
@@ -958,7 +958,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Offset}.
          */
         public String redisOffset() {
-            return "Redis.Offset";
+            return "CamelRedis.Offset";
         }
 
         /**
@@ -971,7 +971,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Destination}.
          */
         public String redisDestination() {
-            return "Redis.Destination";
+            return "CamelRedis.Destination";
         }
 
         /**
@@ -984,7 +984,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Channel}.
          */
         public String redisChannel() {
-            return "Redis.Channel";
+            return "CamelRedis.Channel";
         }
 
         /**
@@ -997,7 +997,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Message}.
          */
         public String redisMessage() {
-            return "Redis.Message";
+            return "CamelRedis.Message";
         }
 
         /**
@@ -1010,7 +1010,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Index}.
          */
         public String redisIndex() {
-            return "Redis.Index";
+            return "CamelRedis.Index";
         }
 
         /**
@@ -1023,7 +1023,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Position}.
          */
         public String redisPosition() {
-            return "Redis.Position";
+            return "CamelRedis.Position";
         }
 
         /**
@@ -1036,7 +1036,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Pivot}.
          */
         public String redisPivot() {
-            return "Redis.Pivot";
+            return "CamelRedis.Pivot";
         }
 
         /**
@@ -1049,7 +1049,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Count}.
          */
         public String redisCount() {
-            return "Redis.Count";
+            return "CamelRedis.Count";
         }
 
         /**
@@ -1062,7 +1062,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Timestamp}.
          */
         public String redisTimestamp() {
-            return "Redis.Timestamp";
+            return "CamelRedis.Timestamp";
         }
 
         /**
@@ -1075,7 +1075,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Pattern}.
          */
         public String redisPattern() {
-            return "Redis.Pattern";
+            return "CamelRedis.Pattern";
         }
 
         /**
@@ -1088,7 +1088,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Db}.
          */
         public String redisDb() {
-            return "Redis.Db";
+            return "CamelRedis.Db";
         }
 
         /**
@@ -1101,7 +1101,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Score}.
          */
         public String redisScore() {
-            return "Redis.Score";
+            return "CamelRedis.Score";
         }
 
         /**
@@ -1114,7 +1114,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Min}.
          */
         public String redisMin() {
-            return "Redis.Min";
+            return "CamelRedis.Min";
         }
 
         /**
@@ -1127,7 +1127,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Max}.
          */
         public String redisMax() {
-            return "Redis.Max";
+            return "CamelRedis.Max";
         }
 
         /**
@@ -1140,7 +1140,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Increment}.
          */
         public String redisIncrement() {
-            return "Redis.Increment";
+            return "CamelRedis.Increment";
         }
 
         /**
@@ -1153,7 +1153,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.WithScore}.
          */
         public String redisWithscore() {
-            return "Redis.WithScore";
+            return "CamelRedis.WithScore";
         }
 
         /**
@@ -1166,7 +1166,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Latitude}.
          */
         public String redisLatitude() {
-            return "Redis.Latitude";
+            return "CamelRedis.Latitude";
         }
 
         /**
@@ -1179,7 +1179,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Longitude}.
          */
         public String redisLongitude() {
-            return "Redis.Longitude";
+            return "CamelRedis.Longitude";
         }
 
         /**
@@ -1192,7 +1192,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the name of the header {@code Redis.Radius}.
          */
         public String redisRadius() {
-            return "Redis.Radius";
+            return "CamelRedis.Radius";
         }
     }
     static RedisEndpointBuilder endpointBuilder(

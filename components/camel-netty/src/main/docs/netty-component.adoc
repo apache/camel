@@ -236,7 +236,7 @@ SSLContextParameters scp = new SSLContextParameters();
 scp.setKeyManagers(kmp);
 
 NettyComponent nettyComponent = getContext().getComponent("netty", NettyComponent.class);
-nettyComponent.setSslContextParameters(scp);
+nettyComponent.getConfiguration().setSslContextParameters(scp);
 ----
 
 [[Netty-SpringDSLbasedconfigurationofendpoint]]

@@ -372,12 +372,16 @@ public interface KafkaEndpointBuilderFactory {
          * This options controls what happens when a consumer is processing an
          * exchange and it fails. If the option is false then the consumer
          * continues to the next message and processes it. If the option is true
-         * then the consumer breaks out, and will seek back to offset of the
-         * message that caused a failure, and then re-attempt to process this
-         * message. However this can lead to endless processing of the same
-         * message if its bound to fail every time, eg a poison message.
-         * Therefore its recommended to deal with that for example by using
-         * Camel's error handler.
+         * then the consumer breaks out. Using the default NoopCommitManager
+         * will cause the consumer to not commit the offset so that the message
+         * is re-attempted. The consumer should use the KafkaManualCommit to
+         * determine the best way to handle the message. Using either the
+         * SynchCommitManager or the AsynchCommitManager the consumer will seek
+         * back to the offset of the message that caused a failure, and then
+         * re-attempt to process this message. However this can lead to endless
+         * processing of the same message if its bound to fail every time, eg a
+         * poison message. Therefore its recommended to deal with that for
+         * example by using Camel's error handler.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -396,12 +400,16 @@ public interface KafkaEndpointBuilderFactory {
          * This options controls what happens when a consumer is processing an
          * exchange and it fails. If the option is false then the consumer
          * continues to the next message and processes it. If the option is true
-         * then the consumer breaks out, and will seek back to offset of the
-         * message that caused a failure, and then re-attempt to process this
-         * message. However this can lead to endless processing of the same
-         * message if its bound to fail every time, eg a poison message.
-         * Therefore its recommended to deal with that for example by using
-         * Camel's error handler.
+         * then the consumer breaks out. Using the default NoopCommitManager
+         * will cause the consumer to not commit the offset so that the message
+         * is re-attempted. The consumer should use the KafkaManualCommit to
+         * determine the best way to handle the message. Using either the
+         * SynchCommitManager or the AsynchCommitManager the consumer will seek
+         * back to the offset of the message that caused a failure, and then
+         * re-attempt to process this message. However this can lead to endless
+         * processing of the same message if its bound to fail every time, eg a
+         * poison message. Therefore its recommended to deal with that for
+         * example by using Camel's error handler.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -497,7 +505,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 40000
+         * Default: 30000
          * Group: consumer
          * 
          * @param consumerRequestTimeoutMs the value to set
@@ -517,7 +525,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 40000
+         * Default: 30000
          * Group: consumer
          * 
          * @param consumerRequestTimeoutMs the value to set
@@ -1115,7 +1123,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 10000
+         * Default: 45000
          * Group: consumer
          * 
          * @param sessionTimeoutMs the value to set
@@ -1133,7 +1141,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 10000
+         * Default: 45000
          * Group: consumer
          * 
          * @param sessionTimeoutMs the value to set
@@ -2567,7 +2575,7 @@ public interface KafkaEndpointBuilderFactory {
          * time waiting for more records to show up. This setting defaults to 0
          * (i.e. no delay). Setting linger.ms=5, for example, would have the
          * effect of reducing the number of requests sent but would add up to
-         * 5ms of latency to records sent in the absense of load.
+         * 5ms of latency to records sent in the absence of load.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -2599,7 +2607,7 @@ public interface KafkaEndpointBuilderFactory {
          * time waiting for more records to show up. This setting defaults to 0
          * (i.e. no delay). Setting linger.ms=5, for example, would have the
          * effect of reducing the number of requests sent but would add up to
-         * 5ms of latency to records sent in the absense of load.
+         * 5ms of latency to records sent in the absence of load.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -5188,7 +5196,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the name of the header {@code KafkaManualCommit}.
          */
         public String kafkaManualCommit() {
-            return "KafkaManualCommit";
+            return "CamelKafkaManualCommit";
         }
     }
     static KafkaEndpointBuilder endpointBuilder(

@@ -697,7 +697,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastObjectId}.
          */
         public String hazelcastObjectId() {
-            return "HazelcastObjectId";
+            return "CamelHazelcastObjectId";
         }
 
         /**
@@ -710,7 +710,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastDrainToCollection}.
          */
         public String hazelcastDrainToCollection() {
-            return "HazelcastDrainToCollection";
+            return "CamelHazelcastDrainToCollection";
         }
 
         /**
@@ -723,7 +723,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerAction}.
          */
         public String hazelcastListenerAction() {
-            return "HazelcastListenerAction";
+            return "CamelHazelcastListenerAction";
         }
 
         /**
@@ -736,7 +736,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerType}.
          */
         public String hazelcastListenerType() {
-            return "HazelcastListenerType";
+            return "CamelHazelcastListenerType";
         }
 
         /**
@@ -749,7 +749,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastListenerTime}.
          */
         public String hazelcastListenerTime() {
-            return "HazelcastListenerTime";
+            return "CamelHazelcastListenerTime";
         }
 
         /**
@@ -762,7 +762,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastCacheName}.
          */
         public String hazelcastCacheName() {
-            return "HazelcastCacheName";
+            return "CamelHazelcastCacheName";
         }
 
         /**
@@ -775,7 +775,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastOperationType}.
          */
         public String hazelcastOperationType() {
-            return "HazelcastOperationType";
+            return "CamelHazelcastOperationType";
         }
     }
     static HazelcastQueueEndpointBuilder endpointBuilder(

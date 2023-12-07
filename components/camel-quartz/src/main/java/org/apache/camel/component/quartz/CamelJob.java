@@ -17,6 +17,7 @@
 package org.apache.camel.component.quartz;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -53,6 +54,12 @@ public class CamelJob implements Job, InterruptableJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         Exchange exchange = null;
         try {
+            if (hasTriggerExpired(context)) {
+                LOG.warn("Trigger exists outside StartTime={} and EndTime={}. Skipping CamelJob jobExecutionContext={}",
+                        context.getTrigger().getStartTime(), context.getTrigger().getEndTime(), context);
+                return;
+            }
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running CamelJob jobExecutionContext={}", context);
             }
@@ -92,6 +99,29 @@ public class CamelJob implements Job, InterruptableJob {
             }
             throw new JobExecutionException(e);
         }
+    }
+
+    /**
+     * Validates if the Fire Time lies within the Start Time and End Time
+     *
+     * @param  context
+     *
+     * @return
+     */
+    private boolean hasTriggerExpired(JobExecutionContext context) {
+        Date fireTime = context.getFireTime();
+
+        // Trigger valid if Start Time is null or before Fire Time
+        Date startTime = context.getTrigger().getStartTime();
+        boolean validStartTime
+                = context.getTrigger().getStartTime() == null || fireTime.equals(startTime) || fireTime.after(startTime);
+
+        // Trigger valid if End Time is null or after Fire Time
+        Date endTime = context.getTrigger().getEndTime();
+        boolean validEndTime
+                = context.getTrigger().getEndTime() == null || fireTime.equals(endTime) || fireTime.before(endTime);
+
+        return !(validStartTime && validEndTime);
     }
 
     protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
