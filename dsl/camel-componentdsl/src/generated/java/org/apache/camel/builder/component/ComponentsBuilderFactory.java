@@ -1851,6 +1851,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.HdfsComponentBuilderFactory.HdfsComponentBuilder hdfs() {
         return org.apache.camel.builder.component.dsl.HdfsComponentBuilderFactory.hdfs();
     }
@@ -2479,6 +2480,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.KubernetesConfigMapsComponentBuilderFactory.KubernetesConfigMapsComponentBuilder kubernetesConfigMaps() {
         return org.apache.camel.builder.component.dsl.KubernetesConfigMapsComponentBuilderFactory.kubernetesConfigMaps();
+    }
+    /**
+     * Kubernetes Cronjob (camel-kubernetes)
+     * Perform operations on Kubernetes CronJob.
+     * 
+     * Category: container,cloud
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesCronjobComponentBuilderFactory.KubernetesCronjobComponentBuilder kubernetesCronjob() {
+        return org.apache.camel.builder.component.dsl.KubernetesCronjobComponentBuilderFactory.kubernetesCronjob();
     }
     /**
      * Kubernetes Custom Resources (camel-kubernetes)

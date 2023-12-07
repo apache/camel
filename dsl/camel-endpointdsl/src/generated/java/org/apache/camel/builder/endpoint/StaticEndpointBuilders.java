@@ -6461,6 +6461,7 @@ public class StaticEndpointBuilders {
      * @param path hostName:port/path
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsEndpointBuilder hdfs(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.endpointBuilder("hdfs", path);
@@ -6490,6 +6491,7 @@ public class StaticEndpointBuilders {
      * @param path hostName:port/path
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsEndpointBuilder hdfs(
             String componentName,
             String path) {
@@ -8678,6 +8680,49 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Kubernetes Cronjob (camel-kubernetes)
+     * Perform operations on Kubernetes CronJob.
+     * 
+     * Category: container,cloud
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-cronjob:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param path masterUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesCronJobEndpointBuilderFactory.KubernetesCronJobEndpointBuilder kubernetesCronjob(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesCronJobEndpointBuilderFactory.endpointBuilder("kubernetes-cronjob", path);
+    }
+    /**
+     * Kubernetes Cronjob (camel-kubernetes)
+     * Perform operations on Kubernetes CronJob.
+     * 
+     * Category: container,cloud
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-cronjob:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path masterUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesCronJobEndpointBuilderFactory.KubernetesCronJobEndpointBuilder kubernetesCronjob(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesCronJobEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Kubernetes Custom Resources (camel-kubernetes)

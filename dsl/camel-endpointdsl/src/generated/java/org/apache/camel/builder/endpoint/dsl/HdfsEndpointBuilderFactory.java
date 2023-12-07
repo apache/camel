@@ -2662,6 +2662,7 @@ public interface HdfsEndpointBuilderFactory {
          * @param path hostName:port/path
          * @return the dsl builder
          */
+        @Deprecated
         default HdfsEndpointBuilder hdfs(String path) {
             return HdfsEndpointBuilderFactory.endpointBuilder("hdfs", path);
         }
@@ -2690,6 +2691,7 @@ public interface HdfsEndpointBuilderFactory {
          * @param path hostName:port/path
          * @return the dsl builder
          */
+        @Deprecated
         default HdfsEndpointBuilder hdfs(String componentName, String path) {
             return HdfsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -2786,6 +2788,7 @@ public interface HdfsEndpointBuilderFactory {
             return "CamelFileLength";
         }
     }
+    @Deprecated
     static HdfsEndpointBuilder endpointBuilder(String componentName, String path) {
         class HdfsEndpointBuilderImpl extends AbstractEndpointBuilder implements HdfsEndpointBuilder, AdvancedHdfsEndpointBuilder {
             public HdfsEndpointBuilderImpl(String path) {

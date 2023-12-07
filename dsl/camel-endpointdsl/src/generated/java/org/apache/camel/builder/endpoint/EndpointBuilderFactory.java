@@ -192,6 +192,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2Builders,
             org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.KnativeBuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsBuilders,
+            org.apache.camel.builder.endpoint.dsl.KubernetesCronJobEndpointBuilderFactory.KubernetesCronJobBuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesBuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsBuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesEventsEndpointBuilderFactory.KubernetesEventsBuilders,

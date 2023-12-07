@@ -3016,7 +3016,7 @@
     "name": "hdfs",
     "title": "HDFS",
     "description": "Read and write from\/to an HDFS filesystem using Hadoop 2.x.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.14.0",
     "label": "bigdata,file",
     "javaType": "org.apache.camel.component.hdfs.HdfsComponent",
@@ -4075,6 +4075,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "KubernetesCronjobComponentBuilderFactory": {
+    "kind": "component",
+    "name": "kubernetes-cronjob",
+    "title": "Kubernetes Cronjob",
+    "description": "Perform operations on Kubernetes CronJob.",
+    "deprecated": false,
+    "firstVersion": "4.3.0",
+    "label": "container,cloud",
+    "javaType": "org.apache.camel.component.kubernetes.cronjob.KubernetesCronJobComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kubernetes",
+    "version": "4.3.0-SNAPSHOT",
+    "scheme": "kubernetes-cronjob",
+    "extendsScheme": "",
+    "syntax": "kubernetes-cronjob:masterUrl",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "KubernetesCustomResourcesComponentBuilderFactory": {
     "kind": "component",
     "name": "kubernetes-custom-resources",
@@ -4182,7 +4204,7 @@
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "KubernetesNamespacesComponentBuilderFactory": {

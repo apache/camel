@@ -40,6 +40,7 @@ public interface HdfsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static HdfsComponentBuilder hdfs() {
         return new HdfsComponentBuilderImpl();
     }
