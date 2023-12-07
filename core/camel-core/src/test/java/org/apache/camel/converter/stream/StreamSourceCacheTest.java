@@ -24,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.xml.StreamSourceCache;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,8 +40,30 @@ public class StreamSourceCacheTest extends ContextTestSupport {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         cache.writeTo(bos);
-
         String s = context.getTypeConverter().convertTo(String.class, bos);
+        assertEquals("<foo>bar</foo>", s);
+    }
+
+    @Test
+    public void testStreamSourceCacheIsEmpty() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+
+        StreamSource source = context.getTypeConverter().convertTo(StreamSource.class, "");
+        StreamSourceCache cache = new StreamSourceCache(source, exchange);
+        Assertions.assertTrue(cache.isEmpty());
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        cache.writeTo(bos);
+        String s = context.getTypeConverter().convertTo(String.class, bos);
+        assertEquals("", s);
+
+        source = context.getTypeConverter().convertTo(StreamSource.class, "<foo>bar</foo>");
+        cache = new StreamSourceCache(source, exchange);
+        Assertions.assertFalse(cache.isEmpty());
+
+        bos = new ByteArrayOutputStream();
+        cache.writeTo(bos);
+        s = context.getTypeConverter().convertTo(String.class, bos);
         assertEquals("<foo>bar</foo>", s);
     }
 
