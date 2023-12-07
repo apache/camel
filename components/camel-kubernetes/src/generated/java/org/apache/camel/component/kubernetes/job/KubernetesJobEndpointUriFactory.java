@@ -21,9 +21,8 @@ public class KubernetesJobEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(22);
         props.add("apiVersion");
-        props.add("bridgeErrorHandler");
         props.add("caCertData");
         props.add("caCertFile");
         props.add("clientCertData");
@@ -33,27 +32,16 @@ public class KubernetesJobEndpointUriFactory extends org.apache.camel.support.co
         props.add("clientKeyFile");
         props.add("clientKeyPassphrase");
         props.add("connectionTimeout");
-        props.add("crdGroup");
-        props.add("crdName");
-        props.add("crdPlural");
-        props.add("crdScope");
-        props.add("crdVersion");
         props.add("dnsDomain");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
         props.add("kubernetesClient");
-        props.add("labelKey");
-        props.add("labelValue");
         props.add("lazyStartProducer");
         props.add("masterUrl");
         props.add("namespace");
         props.add("oauthToken");
         props.add("operation");
         props.add("password");
-        props.add("poolSize");
         props.add("portName");
         props.add("portProtocol");
-        props.add("resourceName");
         props.add("trustCerts");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

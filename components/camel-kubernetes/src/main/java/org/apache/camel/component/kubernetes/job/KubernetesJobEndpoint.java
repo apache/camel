@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_J
  * Perform operations on Kubernetes Jobs.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_JOB, title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+             category = { Category.CONTAINER, Category.CLOUD }, producerOnly = true, headersClass = KubernetesConstants.class)
 public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesJobEndpoint(String uri, KubernetesJobComponent component, KubernetesConfiguration config) {
