@@ -85,6 +85,9 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             throw new RuntimeCamelException("API request conversations.history to Slack failed: " + response);
         }
 
+        // okay we have some response from slack so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         Queue<Exchange> exchanges = createExchanges(response.getMessages());
         return processBatch(CastUtils.cast(exchanges));
     }
