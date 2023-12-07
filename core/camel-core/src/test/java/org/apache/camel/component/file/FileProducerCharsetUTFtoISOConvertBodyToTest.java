@@ -20,13 +20,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,12 +60,16 @@ class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
         }
     }
 
-    @RepeatedTest(10)
+    @Test
     void testFileProducerCharsetUTFtoISOConvertBodyTo() throws Exception {
         assertTrue(oneExchangeDone.matchesWaitTime());
 
-        assertFileExists(testFile("output.txt"));
-        byte[] data = Files.readAllBytes(testFile("output.txt"));
+        final Path outputFile = testFile("output.txt");
+
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertFileExists(outputFile));
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(Files.size(outputFile) > 0));
+
+        byte[] data = Files.readAllBytes(outputFile);
 
         assertEquals(DATA, new String(data, StandardCharsets.ISO_8859_1));
     }
