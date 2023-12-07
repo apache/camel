@@ -162,45 +162,54 @@ public class GenerateMojo extends AbstractExecMojo {
             final List<CSimpleGeneratedCode> classes = new ArrayList<>();
 
             for (CamelCSimpleExpressionDetails cs : csimpleExpressions) {
-                String script = cs.getCsimple();
-                String fqn = cs.getClassName();
-                if (script != null && fqn == null) {
-                    // its from XML file so use a pseduo fqn name instead
-                    fqn = "org.apache.camel.language.csimple.XmlRouteBuilder";
-                }
-                if (script != null) {
-                    CSimpleGeneratedCode code;
-                    if (cs.isPredicate()) {
-                        code = generator.generatePredicate(fqn, script);
-                    } else {
-                        code = generator.generateExpression(fqn, script);
-                    }
-                    classes.add(code);
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug("Generated source code:\n\n\n" + code.getCode() + "\n\n\n");
-                    }
-                    String fileName = code.getFqn().replace('.', '/') + ".java";
-                    outputDir.mkdirs();
-                    boolean saved = updateResource(outputDir.toPath().resolve(fileName), code.getCode());
-                    if (saved) {
-                        getLog().info("Generated csimple source code file: " + fileName);
-                    }
-                }
+                doGenerate(generator, cs, classes);
             }
             if (!classes.isEmpty()) {
                 // generate .properties file
-                StringWriter w = new StringWriter();
-                w.append("# " + GENERATED_MSG + "\n");
-                classes.forEach(c -> w.write(c.getFqn() + "\n"));
-                String fileName = RESOURCE_FILE;
-                outputResourceDir.mkdirs();
-                boolean saved = updateResource(outputResourceDir.toPath().resolve(fileName), w.toString());
-                if (saved) {
-                    getLog().info("Generated csimple resource file: " + fileName);
-                }
+                generatePropertiesFile(classes);
             }
         }
 
+    }
+
+    private void generatePropertiesFile(List<CSimpleGeneratedCode> classes) {
+        StringWriter w = new StringWriter();
+        w.append("# " + GENERATED_MSG + "\n");
+        classes.forEach(c -> w.write(c.getFqn() + "\n"));
+        String fileName = RESOURCE_FILE;
+        outputResourceDir.mkdirs();
+        boolean saved = updateResource(outputResourceDir.toPath().resolve(fileName), w.toString());
+        if (saved) {
+            getLog().info("Generated csimple resource file: " + fileName);
+        }
+    }
+
+    private void doGenerate(
+            CSimpleCodeGenerator generator, CamelCSimpleExpressionDetails cs, List<CSimpleGeneratedCode> classes) {
+        String script = cs.getCsimple();
+        String fqn = cs.getClassName();
+        if (script != null && fqn == null) {
+            // its from XML file so use a pseduo fqn name instead
+            fqn = "org.apache.camel.language.csimple.XmlRouteBuilder";
+        }
+        if (script != null) {
+            CSimpleGeneratedCode code;
+            if (cs.isPredicate()) {
+                code = generator.generatePredicate(fqn, script);
+            } else {
+                code = generator.generateExpression(fqn, script);
+            }
+            classes.add(code);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Generated source code:\n\n\n" + code.getCode() + "\n\n\n");
+            }
+            String fileName = code.getFqn().replace('.', '/') + ".java";
+            outputDir.mkdirs();
+            boolean saved = updateResource(outputDir.toPath().resolve(fileName), code.getCode());
+            if (saved) {
+                getLog().info("Generated csimple source code file: " + fileName);
+            }
+        }
     }
 
     private void addXmlFiles(File file, List<CamelCSimpleExpressionDetails> csimpleExpressions) {
@@ -243,23 +252,10 @@ public class GenerateMojo extends AbstractExecMojo {
     private void loadConfiguration() {
         String configFile = resourceDir.getPath() + "/camel-csimple.properties";
 
-        String loaded;
-        InputStream is = null;
-        try {
-            // load from file system
-            File file = new File(configFile);
-            if (file.exists()) {
-                is = new FileInputStream(file);
-            }
-            if (is == null) {
-                return;
-            }
-            loaded = IOHelper.loadText(is);
-        } catch (IOException e) {
-            throw new RuntimeCamelException("Cannot load " + configFile);
-
+        final String loaded = load(configFile);
+        if (loaded == null) {
+            return;
         }
-        IOHelper.close(is);
 
         int counter1 = 0;
         int counter2 = 0;
@@ -294,6 +290,27 @@ public class GenerateMojo extends AbstractExecMojo {
             getLog().info("Loaded csimple language imports: " + counter1 + " and aliases: " + counter2 + " from configuration: "
                           + configFile);
         }
+    }
+
+    private static String load(String configFile) {
+        String loaded;
+        InputStream is = null;
+        try {
+            // load from file system
+            File file = new File(configFile);
+            if (file.exists()) {
+                is = new FileInputStream(file);
+            }
+            if (is == null) {
+                return null;
+            }
+            loaded = IOHelper.loadText(is);
+        } catch (IOException e) {
+            throw new RuntimeCamelException("Cannot load " + configFile);
+
+        }
+        IOHelper.close(is);
+        return loaded;
     }
 
     private boolean matchRouteFile(File file) {

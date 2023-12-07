@@ -319,25 +319,10 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
 
         private void loadConfiguration() {
             InputStream is;
-            String loaded;
-            is = getCamelContext().getClassResolver().loadResourceAsStream(CONFIG_FILE);
-            try {
-                if (is == null) {
-                    // load from file system
-                    File file = new File(configResource);
-                    if (file.exists()) {
-                        is = new FileInputStream(file);
-                    }
-                }
-                if (is == null) {
-                    return;
-                }
-                loaded = IOHelper.loadText(is);
-            } catch (IOException e) {
-                throw new RuntimeCamelException("Cannot load " + CONFIG_FILE + " from classpath");
-
+            final String loaded = load(configResource);
+            if (loaded == null) {
+                return;
             }
-            IOHelper.close(is);
 
             int counter1 = 0;
             int counter2 = 0;
@@ -374,6 +359,30 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
             }
         }
 
+    }
+
+    private String load(String configResource) {
+        InputStream is;
+        String loaded;
+        is = getCamelContext().getClassResolver().loadResourceAsStream(CONFIG_FILE);
+        try {
+            if (is == null) {
+                // load from file system
+                File file = new File(configResource);
+                if (file.exists()) {
+                    is = new FileInputStream(file);
+                }
+            }
+            if (is == null) {
+                return null;
+            }
+            loaded = IOHelper.loadText(is);
+        } catch (IOException e) {
+            throw new RuntimeCamelException("Cannot load " + CONFIG_FILE + " from classpath");
+
+        }
+        IOHelper.close(is);
+        return loaded;
     }
 
 }
