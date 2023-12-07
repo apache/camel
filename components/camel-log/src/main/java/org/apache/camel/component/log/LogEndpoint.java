@@ -73,6 +73,10 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
     private Boolean logMask;
     @UriParam(label = "advanced")
     private ExchangeFormatter exchangeFormatter;
+    @UriParam(label = "formatting", description = "Show route ID.")
+    private boolean showRouteId;
+    @UriParam(label = "formatting", description = "Show route Group.")
+    private boolean showRouteGroup;
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
     @UriParam(label = "formatting",
@@ -158,6 +162,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
             // are any options configured if not we can optimize to use shared default
             boolean changed = showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
                     || style != DefaultExchangeFormatter.OutputStyle.Default || plain;
+            changed |= showRouteId || showRouteGroup;
             changed |= showExchangeId || showProperties || showAllProperties || showHeaders || showException
                     || showCaughtException
                     || showStackTrace;
@@ -166,6 +171,8 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
             if (changed) {
                 DefaultExchangeFormatter def = new DefaultExchangeFormatter();
                 def.setPlain(plain);
+                def.setShowRouteId(showRouteId);
+                def.setShowRouteGroup(showRouteGroup);
                 def.setShowAll(showAll);
                 def.setShowBody(showBody);
                 def.setShowBodyType(showBodyType);
@@ -438,6 +445,22 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
      */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
+    }
+
+    public boolean isShowRouteId() {
+        return showRouteId;
+    }
+
+    public void setShowRouteId(boolean showRouteId) {
+        this.showRouteId = showRouteId;
+    }
+
+    public boolean isShowRouteGroup() {
+        return showRouteGroup;
+    }
+
+    public void setShowRouteGroup(boolean showRouteGroup) {
+        this.showRouteGroup = showRouteGroup;
     }
 
     public boolean isShowExchangeId() {
