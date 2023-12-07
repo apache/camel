@@ -1866,6 +1866,23 @@ public class ExpressionBuilder {
         };
     }
 
+    /**
+     * Returns an Expression for the route group
+     */
+    public static Expression routeGroupExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return ExchangeHelper.getRouteGroup(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "routeGroup";
+            }
+        };
+    }
+
     public static Expression simpleExpression(final String expression) {
         if (LanguageSupport.hasSimpleFunction(expression)) {
             return new ExpressionAdapter() {

@@ -518,6 +518,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.camelContextNameExpression();
         } else if (ObjectHelper.equal(expression, "routeId")) {
             return ExpressionBuilder.routeIdExpression();
+        } else if (ObjectHelper.equal(expression, "routeGroup")) {
+            return ExpressionBuilder.routeGroupExpression();
         } else if (ObjectHelper.equal(expression, "stepId")) {
             return ExpressionBuilder.stepIdExpression();
         } else if (ObjectHelper.equal(expression, "null")) {

@@ -187,8 +187,11 @@ specified.
 |propertiesExist:key |String |Checks whether a property placeholder with the given key exists or not.
 The result can be negated by prefixing the key with `!`.
 
-|routeId |String |Returns the id of the current route the
+|routeId |String |Returns the route id of the current route the
 Exchange is being routed.
+
+|routeGroup |String |Returns the route group of the current route the
+Exchange is being routed. Not all routes has a group assigned, so this may be null.
 
 |stepId |String |Returns the id of the current step the
 Exchange is being routed.

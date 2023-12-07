@@ -1027,6 +1027,14 @@ public final class ExchangeHelper {
         return answer;
     }
 
+    public static String getRouteGroup(Exchange exchange) {
+        Route rc = getRoute(exchange);
+        if (rc != null) {
+            return rc.getGroup();
+        }
+        return null;
+    }
+
     public static Route getRoute(Exchange exchange) {
         UnitOfWork uow = exchange.getUnitOfWork();
         return uow != null ? uow.getRoute() : null;
