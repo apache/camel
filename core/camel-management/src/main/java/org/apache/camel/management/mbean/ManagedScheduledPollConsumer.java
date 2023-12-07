@@ -159,6 +159,11 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer implements Man
     }
 
     @Override
+    public boolean isConsumerReady() {
+        return getConsumer().isConsumerReady();
+    }
+
+    @Override
     public long getCounter() {
         return getConsumer().getCounter();
     }
