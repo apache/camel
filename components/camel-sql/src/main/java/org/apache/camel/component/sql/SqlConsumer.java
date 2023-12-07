@@ -178,6 +178,9 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                     }
                 }
 
+                // okay we have some response from SQL so lets mark the consumer as ready
+                forceConsumerAsReady();
+
                 // process all the exchanges in this batch
                 try {
                     if (answer.isEmpty()) {
