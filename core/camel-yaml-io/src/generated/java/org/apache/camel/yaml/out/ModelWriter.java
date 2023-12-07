@@ -597,12 +597,12 @@ public class ModelWriter extends BaseWriter {
     public void writeBatchResequencerConfig(
             BatchResequencerConfig def)
             throws IOException {
-        doWriteBatchResequencerConfig("batch-config", def);
+        doWriteBatchResequencerConfig("batchConfig", def);
     }
     public void writeStreamResequencerConfig(
             StreamResequencerConfig def)
             throws IOException {
-        doWriteStreamResequencerConfig("stream-config", def);
+        doWriteStreamResequencerConfig("streamConfig", def);
     }
     public void writeASN1DataFormat(ASN1DataFormat def) throws IOException {
         doWriteASN1DataFormat("asn1", def);
@@ -1894,8 +1894,8 @@ public class ModelWriter extends BaseWriter {
         doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
         doWriteElement(null, def.getResequencerConfig(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
-                case "BatchResequencerConfig" -> doWriteBatchResequencerConfig("batch-config", (BatchResequencerConfig) def.getResequencerConfig());
-                case "StreamResequencerConfig" -> doWriteStreamResequencerConfig("stream-config", (StreamResequencerConfig) def.getResequencerConfig());
+                case "BatchResequencerConfig" -> doWriteBatchResequencerConfig("batchConfig", (BatchResequencerConfig) def.getResequencerConfig());
+                case "StreamResequencerConfig" -> doWriteStreamResequencerConfig("streamConfig", (StreamResequencerConfig) def.getResequencerConfig());
             }
         });
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);

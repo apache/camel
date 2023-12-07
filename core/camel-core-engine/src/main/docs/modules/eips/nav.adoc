@@ -3,7 +3,7 @@
 
 * xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 ** xref:aggregate-eip.adoc[Aggregate]
-** xref:batch-config-eip.adoc[Batch-config]
+** xref:batchConfig-eip.adoc[Batch-config]
 ** xref:bean-eip.adoc[Bean]
 ** xref:change-data-capture.adoc[Change Data Capture]
 ** xref:channel-adapter.adoc[Channel Adapter]
@@ -92,7 +92,7 @@
 ** xref:step-eip.adoc[Step]
 ** xref:sticky-eip.adoc[Sticky]
 ** xref:stop-eip.adoc[Stop]
-** xref:stream-config-eip.adoc[Stream-config]
+** xref:streamConfig-eip.adoc[Stream-config]
 ** xref:threads-eip.adoc[Threads]
 ** xref:throttle-eip.adoc[Throttle]
 ** xref:to-eip.adoc[To]

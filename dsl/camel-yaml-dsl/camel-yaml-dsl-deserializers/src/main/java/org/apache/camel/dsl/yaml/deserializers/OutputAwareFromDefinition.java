@@ -25,6 +25,7 @@ import org.apache.camel.model.OutputNode;
 import org.apache.camel.model.ProcessorDefinition;
 
 public class OutputAwareFromDefinition implements OutputNode, Block {
+
     private final List<ProcessorDefinition<?>> outputs;
     private FromDefinition delegate;
 

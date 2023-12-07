@@ -84,29 +84,24 @@ public class ErrorHandlerBuilderDeserializer implements ConstructNode {
         final YamlDeserializationContext dc = getDeserializationContext(node);
 
         for (NodeTuple tuple : bn.getValue()) {
-            final String key = asText(tuple.getKeyNode());
-            final Node val = tuple.getValueNode();
+            String key = asText(tuple.getKeyNode());
+            Node val = tuple.getValueNode();
 
             setDeserializationContext(val, dc);
 
+            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "deadLetterChannel":
-                case "dead-letter-channel":
                     return customizer(asType(val, DeadLetterChannelDefinition.class));
                 case "defaultErrorHandler":
-                case "default-error-handler":
                     return customizer(asType(val, DefaultErrorHandlerDefinition.class));
                 case "jtaTransactionErrorHandler":
-                case "jta-transaction-error-handler":
                     return customizer(asType(val, JtaTransactionErrorHandlerDefinition.class));
                 case "noErrorHandler":
-                case "no-error-handler":
                     return customizer(asType(val, NoErrorHandlerDefinition.class));
                 case "refErrorHandler":
-                case "ref-error-handler":
                     return customizer(asType(val, RefErrorHandlerDefinition.class));
                 case "springTransactionErrorHandler":
-                case "spring-transaction-error-handler":
                     return customizer(asType(val, JtaTransactionErrorHandlerDefinition.class));
                 default:
                     throw new UnsupportedFieldException(val, key);

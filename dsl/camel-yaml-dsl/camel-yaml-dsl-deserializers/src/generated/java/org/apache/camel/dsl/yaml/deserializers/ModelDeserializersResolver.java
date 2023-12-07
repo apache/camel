@@ -32,6 +32,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "basicAuth": return new ModelDeserializers.BasicAuthDefinitionDeserializer();
             case "org.apache.camel.model.rest.BasicAuthDefinition": return new ModelDeserializers.BasicAuthDefinitionDeserializer();
             case "batch-config": return new ModelDeserializers.BatchResequencerConfigDeserializer();
+            case "batchConfig": return new ModelDeserializers.BatchResequencerConfigDeserializer();
             case "org.apache.camel.model.config.BatchResequencerConfig": return new ModelDeserializers.BatchResequencerConfigDeserializer();
             case "org.apache.camel.model.app.BeanConstructorDefinition": return new ModelDeserializers.BeanConstructorDefinitionDeserializer();
             case "org.apache.camel.model.app.BeanConstructorsDefinition": return new ModelDeserializers.BeanConstructorsDefinitionDeserializer();
@@ -466,6 +467,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "stop": return new ModelDeserializers.StopDefinitionDeserializer();
             case "org.apache.camel.model.StopDefinition": return new ModelDeserializers.StopDefinitionDeserializer();
             case "stream-config": return new ModelDeserializers.StreamResequencerConfigDeserializer();
+            case "streamConfig": return new ModelDeserializers.StreamResequencerConfigDeserializer();
             case "org.apache.camel.model.config.StreamResequencerConfig": return new ModelDeserializers.StreamResequencerConfigDeserializer();
             case "swift-mt": return new ModelDeserializers.SwiftMtDataFormatDeserializer();
             case "swiftMt": return new ModelDeserializers.SwiftMtDataFormatDeserializer();

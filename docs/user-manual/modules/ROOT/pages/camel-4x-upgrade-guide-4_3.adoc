@@ -6,6 +6,32 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.2 to 4.3
 
+=== Resequence EIP
+
+The configuration for batch and stream has been renamed from `batch-config` to `batchConfig` and `stream-config` to `streamConfig`.
+
+For example before:
+
+[source,xml]
+----
+<resequence>
+    <stream-config timeout="1000" deliveryAttemptInterval="10"/>
+    <simple>${header.seqnum}</simple>
+    <to uri="mock:result" />
+</resequence>
+----
+
+And now after:
+
+[source,xml]
+----
+<resequence>
+    <streamConfig timeout="1000" deliveryAttemptInterval="10"/>
+    <simple>${header.seqnum}</simple>
+    <to uri="mock:result" />
+</resequence>
+----
+
 === Throttle EIP
 
 Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests
@@ -75,7 +101,6 @@ The following components is now marking the consumer as ready sooner:
 - camel-twilio
 - camel-zendesk
 
-
 === camel-management
 
 If the `nodeIdPrefix` has been configured on routes, then the MBeans for the processors will now use the prefix
@@ -107,8 +132,8 @@ Jetty has been upgraded from v11 to v12. End users may need to adjust to changes
 
 === camel-kafka
 
-The behavior for `breakOnFirstError` was altered as numerous issues were fixed. The behavior related to committing 
-the offset is now determined by the `CommitManager` that is configured. 
+The behavior for `breakOnFirstError` was altered as numerous issues were fixed. The behavior related to committing
+the offset is now determined by the `CommitManager` that is configured.
 
 When the default `CommitManager` is used (`NoopCommitManager`) then no commit is performed. The route implementation will
 be responsible for managing the offset using `KafkaManualCommit` to manage the retrying of the payload.

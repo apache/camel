@@ -1,8 +1,8 @@
 {
   "model": {
     "kind": "model",
-    "name": "stream-config",
-    "title": "Stream-config",
+    "name": "streamConfig",
+    "title": "Stream Config",
     "description": "Configures stream-processing resequence eip.",
     "deprecated": false,
     "label": "configuration,eip",

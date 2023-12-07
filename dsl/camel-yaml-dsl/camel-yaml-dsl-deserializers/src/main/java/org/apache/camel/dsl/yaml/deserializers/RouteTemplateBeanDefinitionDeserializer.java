@@ -38,6 +38,7 @@ import org.apache.camel.spi.annotations.YamlType;
                   @YamlProperty(name = "script", type = "string")
           })
 public class RouteTemplateBeanDefinitionDeserializer extends BeanFactoryDefinitionDeserializer<RouteTemplateBeanDefinition> {
+
     public RouteTemplateBeanDefinitionDeserializer() {
         super(RouteTemplateBeanDefinition.class);
     }

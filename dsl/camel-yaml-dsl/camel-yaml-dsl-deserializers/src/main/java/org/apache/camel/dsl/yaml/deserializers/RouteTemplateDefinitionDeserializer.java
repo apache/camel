@@ -49,6 +49,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
                                 type = "array:org.apache.camel.model.RouteTemplateBeanDefinition")
           })
 public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateDefinition> {
+
     public RouteTemplateDefinitionDeserializer() {
         super(RouteTemplateDefinition.class);
     }
@@ -62,6 +63,7 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
     protected boolean setProperty(
             RouteTemplateDefinition target, String propertyKey, String propertyName, Node node) {
 
+        propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
         switch (propertyKey) {
             case "id": {
                 target.setId(asText(node));

@@ -30,7 +30,7 @@
     <route>
       <from uri="direct:start"/>
       <resequence>
-        <stream-config timeout="1000" deliveryAttemptInterval="10"/>
+        <streamConfig timeout="1000" deliveryAttemptInterval="10"/>
         <simple>${header.seqnum}</simple>
         <to uri="mock:result" />
       </resequence>

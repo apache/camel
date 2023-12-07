@@ -9041,7 +9041,7 @@
         "required" : [ "basePath", "nodes" ]
       },
       "org.apache.camel.model.config.BatchResequencerConfig" : {
-        "title" : "Batch-config",
+        "title" : "Batch Config",
         "description" : "Configures batch-processing resequence eip.",
         "type" : "object",
         "additionalProperties" : false,
@@ -9076,7 +9076,7 @@
         }
       },
       "org.apache.camel.model.config.StreamResequencerConfig" : {
-        "title" : "Stream-config",
+        "title" : "Stream Config",
         "description" : "Configures stream-processing resequence eip.",
         "type" : "object",
         "additionalProperties" : false,
@@ -9479,8 +9479,10 @@
             "description" : "The JCE algorithm name indicating the Message Authentication algorithm.",
             "default" : "HmacSHA1"
           },
-          "shouldAppendHmac" : {
-            "type" : "boolean"
+          "shouldAppendHMAC" : {
+            "type" : "boolean",
+            "title" : "Should Append HMAC",
+            "description" : "Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data."
           }
         }
       },
@@ -10290,16 +10292,20 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
-          "ignoreJaxbElement" : {
-            "type" : "boolean"
+          "ignoreJAXBElement" : {
+            "type" : "boolean",
+            "title" : "Ignore JAXBElement",
+            "description" : "Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases."
           },
           "jaxbProviderProperties" : {
             "type" : "string",
             "title" : "Jaxb Provider Properties",
             "description" : "Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties to be used with the JAXB marshaller."
           },
-          "mustBeJaxbElement" : {
-            "type" : "boolean"
+          "mustBeJAXBElement" : {
+            "type" : "boolean",
+            "title" : "Must Be JAXBElement",
+            "description" : "Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be set to false to relax that, such as when the data is already in XML format."
           },
           "namespacePrefixRef" : {
             "type" : "string",
@@ -13482,8 +13488,10 @@
             "title" : "Disabled",
             "description" : "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime."
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -13593,8 +13601,10 @@
             "title" : "Disabled",
             "description" : "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime."
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -13704,8 +13714,10 @@
             "title" : "Disabled",
             "description" : "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime."
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -13982,8 +13994,10 @@
             "title" : "Disabled",
             "description" : "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime."
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -14093,8 +14107,10 @@
             "title" : "Disabled",
             "description" : "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime."
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -14204,8 +14220,10 @@
             "title" : "Disabled",
             "description" : "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime."
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -14402,8 +14420,10 @@
             "title" : "Description",
             "description" : "Sets the description of this node"
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -14532,8 +14552,10 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
             }
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -14652,8 +14674,10 @@
             "title" : "Disabled",
             "description" : "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime."
           },
-          "enableCors" : {
-            "type" : "boolean"
+          "enableCORS" : {
+            "type" : "boolean",
+            "title" : "Enable CORS",
+            "description" : "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false."
           },
           "enableNoContentResponse" : {
             "type" : "boolean",
@@ -14764,7 +14788,7 @@
           "bearer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.BearerTokenDefinition"
           },
-          "mutualTls" : {
+          "mutualTLS" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.MutualTLSDefinition"
           },
           "oauth2" : {

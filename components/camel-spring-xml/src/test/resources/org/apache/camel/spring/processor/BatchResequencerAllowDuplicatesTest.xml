@@ -30,7 +30,7 @@
         <route>
             <from uri="direct:start"/>
             <resequence>
-                <batch-config allowDuplicates="true"/>
+                <batchConfig allowDuplicates="true"/>
                 <header>id</header>
                 <to uri="mock:result"/>
             </resequence>

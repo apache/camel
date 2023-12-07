@@ -38,7 +38,6 @@ import org.apache.camel.maven.htmlxlsx.model.Route;
 import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
 import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 public class CoverageResultsProcessor {

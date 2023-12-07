@@ -42,6 +42,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
           })
 public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<OutputAwareFromDefinition> {
+
     public OutputAwareFromDefinitionDeserializer() {
         super(OutputAwareFromDefinition.class);
     }
@@ -71,11 +72,12 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
         Map<String, Object> parameters = null;
 
         for (NodeTuple tuple : node.getValue()) {
-            final String key = asText(tuple.getKeyNode());
-            final Node val = tuple.getValueNode();
+            String key = asText(tuple.getKeyNode());
+            Node val = tuple.getValueNode();
 
             setDeserializationContext(val, dc);
 
+            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "id":
                     id = asText(val);

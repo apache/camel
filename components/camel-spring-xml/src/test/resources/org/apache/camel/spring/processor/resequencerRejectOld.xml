@@ -33,7 +33,7 @@
                 <to uri="mock:error"/>
             </onException>
             <resequence>
-                <stream-config capacity="3" timeout="1000" rejectOld="true" deliveryAttemptInterval="10"/>
+                <streamConfig capacity="3" timeout="1000" rejectOld="true" deliveryAttemptInterval="10"/>
                 <header>seqno</header>
                 <to uri="mock:result"/>
             </resequence>
