@@ -102,6 +102,9 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
         var listedFileItems = listFileItems(path);
 
+        // okay we have some response from azure so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         if (listedFileItems == null || listedFileItems.length == 0) {
             LOG.trace("No files found in directory: {}", path);
             return true;

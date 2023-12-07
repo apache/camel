@@ -29,8 +29,8 @@
     <artifactId>camel-azure-storage-datalake</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Azure :: Datalake Gen2</name>
-    <description>Camel Azure Datalake Gen2 Component</description>
+    <name>Camel :: Azure :: Storage Datalake</name>
+    <description>Camel Azure Datalake Component</description>
 
     <dependencies>
         <dependency>

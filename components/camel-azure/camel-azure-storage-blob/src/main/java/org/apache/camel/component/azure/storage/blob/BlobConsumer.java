@@ -108,8 +108,10 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
 
         final List<BlobItem> blobs = (List<BlobItem>) containerOperations.listBlobs(null).getBody();
 
-        final Queue<Exchange> exchanges = new LinkedList<>();
+        // okay we have some response from azure so lets mark the consumer as ready
+        forceConsumerAsReady();
 
+        final Queue<Exchange> exchanges = new LinkedList<>();
         for (BlobItem blobItem : blobs) {
             exchanges.add(createExchangeFromBlob(blobItem.getName(), blobContainerClient));
         }
