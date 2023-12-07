@@ -131,4 +131,9 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
     public long position() {
         return -1;
     }
+
+    @Override
+    public boolean isEmpty() {
+        return length() == 0;
+    }
 }
