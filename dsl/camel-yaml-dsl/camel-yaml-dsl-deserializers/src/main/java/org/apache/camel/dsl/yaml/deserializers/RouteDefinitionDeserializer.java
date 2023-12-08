@@ -50,6 +50,12 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "messageHistory", type = "boolean"),
                   @YamlProperty(name = "logMask", type = "boolean"),
                   @YamlProperty(name = "trace", type = "boolean"),
+                  @YamlProperty(name = "shutdownRoute", type = "enum:Default,Defer",
+                                defaultValue = "Default",
+                                description = "To control how to shut down the route."),
+                  @YamlProperty(name = "shutdownRunningTask", type = "enum:CompleteCurrentTaskOnly,CompleteAllTasks",
+                                defaultValue = "CompleteCurrentTaskOnly",
+                                description = "To control how to shut down the route."),
                   @YamlProperty(name = "inputType", type = "object:org.apache.camel.model.InputTypeDefinition"),
                   @YamlProperty(name = "outputType", type = "object:org.apache.camel.model.OutputTypeDefinition"),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
@@ -112,6 +118,12 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "messageHistory":
                     target.setMessageHistory(asText(val));
+                    break;
+                case "shutdownRoute":
+                    target.setShutdownRoute(asText(val));
+                    break;
+                case "shutdownRunningTask":
+                    target.setShutdownRunningTask(asText(val));
                     break;
                 case "trace":
                     target.setTrace(asText(val));

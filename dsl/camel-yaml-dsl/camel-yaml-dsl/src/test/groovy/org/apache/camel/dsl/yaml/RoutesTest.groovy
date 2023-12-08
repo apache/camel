@@ -201,6 +201,8 @@ class RoutesTest extends YamlTestSupport {
                     autoStartup: false
                     startupOrder: 123
                     routePolicy: "myPolicy"
+                    shutdownRoute: "Defer"
+                    shutdownRunningTask: "CompleteAllTasks"
                     from:
                       uri: "direct:info"
                       steps:
@@ -215,6 +217,8 @@ class RoutesTest extends YamlTestSupport {
             autoStartup == 'false'
             startupOrder == 123
             routePolicyRef == 'myPolicy'
+            shutdownRoute == "Defer"
+            shutdownRunningTask == "CompleteAllTasks"
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {

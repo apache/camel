@@ -4818,6 +4818,18 @@
           "routePolicy" : {
             "type" : "string"
           },
+          "shutdownRoute" : {
+            "type" : "string",
+            "description" : "To control how to shut down the route.",
+            "default" : "Default",
+            "enum" : [ "Default", "Defer" ]
+          },
+          "shutdownRunningTask" : {
+            "type" : "string",
+            "description" : "To control how to shut down the route.",
+            "default" : "CompleteCurrentTaskOnly",
+            "enum" : [ "CompleteCurrentTaskOnly", "CompleteAllTasks" ]
+          },
           "startupOrder" : {
             "type" : "number"
           },
