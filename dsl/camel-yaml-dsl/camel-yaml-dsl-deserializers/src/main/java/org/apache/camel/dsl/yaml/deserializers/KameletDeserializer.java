@@ -36,7 +36,6 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           nodes = "kamelet",
           properties = {
-                  @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                   @YamlProperty(name = "name", type = "string", required = true),
                   @YamlProperty(name = "parameters", type = "object"),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -80,9 +79,6 @@ public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition>
                     break;
                 case "name":
                     name = asText(val);
-                    break;
-                case "inheritErrorHandler":
-                    target.setInheritErrorHandler(asBoolean(val));
                     break;
                 case "parameters":
                     parameters = asScalarMap(tuple.getValueNode());
