@@ -224,7 +224,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
     }
 
     protected void injectSecondPass(Object bean, String beanName, Function<Class<?>, Boolean> filter) {
-        // on second pass do bind to registry beforehand as they may be used by field/method injections below
+        // on second pass do bind to fields first
+        injectFields(bean, beanName, filter);
+
         if (bindToRegistrySupported()) {
             injectClass(bean, beanName);
             injectNestedClasses(bean, beanName);
@@ -232,7 +234,6 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             injectBindToRegistryMethods(bean, beanName, filter);
         }
 
-        injectFields(bean, beanName, filter);
         injectMethods(bean, beanName, filter);
     }
 
