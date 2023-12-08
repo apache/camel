@@ -59,6 +59,7 @@ import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
+import org.apache.camel.main.download.StubBeanRepository;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ClipboardReloadStrategy;
@@ -403,6 +404,10 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         answer.getCamelContextExtension().setRegistry(registry);
+        if (silent || "*".equals(stubPattern)) {
+            registry.addBeanRepository(new StubBeanRepository(stubPattern));
+        }
+
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
         // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans

@@ -163,6 +163,16 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         }
     }
 
+    /**
+     * Adds a custom {@link BeanRepository}.
+     */
+    public void addBeanRepository(BeanRepository repository) {
+        if (repository == null) {
+            repositories = new ArrayList<>();
+        }
+        repositories.add(repository);
+    }
+
     @Override
     public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
         if (bean != null) {
