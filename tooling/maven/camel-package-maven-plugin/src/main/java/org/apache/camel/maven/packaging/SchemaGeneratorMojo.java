@@ -270,6 +270,10 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             // filter out outputs if we do not support it
             eipModel.getOptions().removeIf(o -> "outputs".equals(o.getName()));
         }
+        if ("route".equals(eipModel.getName())) {
+            // route should not have disabled
+            eipModel.getOptions().removeIf(o -> "disabled".equals(o.getName()));
+        }
 
         // write json schema file
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf('.'));
@@ -711,10 +715,18 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 false, null, null, false, false);
         eipOptions.add(ep);
 
-        // precondition
-        docComment = findJavaDoc(null, "precondition", null, classElement, true);
-        ep = createOption("precondition", "Precondition", "attribute", "java.lang.String", false, "", "", docComment, false,
+        // autoStartup
+        docComment = findJavaDoc(null, "autoStartup", null, classElement, true);
+        ep = createOption("autoStartup", "Auto Startup", "attribute", "java.lang.String", false, "true", "", docComment, false,
                 null, false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // startupOrder
+        docComment = findJavaDoc(null, "startupOrder", null, classElement, true);
+        ep = createOption("startupOrder", "Startup Order", "attribute", "java.lang.Integer", false, "", "advanced", docComment,
+                false,
+                null,
+                false, null, null, false, false);
         eipOptions.add(ep);
 
         // stream cache
@@ -745,21 +757,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // delayer
         docComment = findJavaDoc(null, "delayer", null, classElement, true);
-        ep = createOption("delayer", "Delayer", "attribute", "java.lang.String", false, "", "", docComment, false, null, false,
+        ep = createOption("delayer", "Delayer", "attribute", "java.lang.String", false, "advanced", "", docComment, false, null,
+                false,
                 null, null, false, true);
-        eipOptions.add(ep);
-
-        // autoStartup
-        docComment = findJavaDoc(null, "autoStartup", null, classElement, true);
-        ep = createOption("autoStartup", "Auto Startup", "attribute", "java.lang.String", false, "true", "", docComment, false,
-                null, false, null, null, false, false);
-        eipOptions.add(ep);
-
-        // startupOrder
-        docComment = findJavaDoc(null, "startupOrder", null, classElement, true);
-        ep = createOption("startupOrder", "Startup Order", "attribute", "java.lang.Integer", false, "", "", docComment, false,
-                null,
-                false, null, null, false, false);
         eipOptions.add(ep);
 
         // errorHandlerRef
@@ -781,7 +781,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         enums.add("Default");
         enums.add("Defer");
         docComment = findJavaDoc(null, "shutdownRoute", "Default", classElement, true);
-        ep = createOption("shutdownRoute", "Shutdown Route", "attribute", "org.apache.camel.ShutdownRoute", false, "", "",
+        ep = createOption("shutdownRoute", "Shutdown Route", "attribute", "org.apache.camel.ShutdownRoute", false, "",
+                "advanced",
                 docComment, false, null, true, enums, null, false, false);
         eipOptions.add(ep);
 
@@ -791,8 +792,29 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         enums.add("CompleteAllTasks");
         docComment = findJavaDoc(null, "shutdownRunningTask", "CompleteCurrentTaskOnly", classElement, true);
         ep = createOption("shutdownRunningTask", "Shutdown Running Task", "attribute", "org.apache.camel.ShutdownRunningTask",
-                false, "", "", docComment, false, null, true, enums,
+                false, "", "advanced", docComment, false, null, true, enums,
                 null, false, false);
+        eipOptions.add(ep);
+
+        // precondition
+        docComment = findJavaDoc(null, "precondition", null, classElement, true);
+        ep = createOption("precondition", "Precondition", "attribute", "java.lang.String", false, "", "advanced", docComment,
+                false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // input type
+        docComment = findJavaDoc(null, "inputType", null, classElement, true);
+        ep = createOption("inputType", "Input Type", "element", "org.apache.camel.model.InputTypeDefinition", false, "",
+                "advanced", docComment, false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // output type
+        docComment = findJavaDoc(null, "outputType", null, classElement, true);
+        ep = createOption("outputType", "Output Type", "element", "org.apache.camel.model.OutputTypeDefinition", false, "",
+                "advanced", docComment, false,
+                null, false, null, null, false, false);
         eipOptions.add(ep);
 
         // input
@@ -1479,19 +1501,19 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 return 20;
             }
 
-            // these should be first
+            // these should be in top
             if ("expression".equals(name)) {
                 return 10;
             }
 
-            // these should be last
+            // these should be first
             if ("description".equals(name)) {
-                return -10;
+                return 99;
             } else if ("id".equals(name)) {
-                return -9;
+                return 100;
             } else if ("pattern".equals(name) && "to".equals(model.getName())) {
                 // and pattern only for the to model
-                return -8;
+                return -10;
             }
             return 0;
         }
