@@ -1507,7 +1507,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             // these should be first
-            if ("description".equals(name)) {
+            if ("disabled".equals(name)) {
+                return 98;
+            } else if ("description".equals(name)) {
                 return 99;
             } else if ("id".equals(name)) {
                 return 100;
