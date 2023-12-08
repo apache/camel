@@ -181,8 +181,10 @@ public class FilesOperations extends NormalizedOperations {
     }
 
     private boolean renameRemote(ShareFileClient fileClient, String shareRelativeTo) {
-        // TODO set the replace flag? likely yes, callers strategy should avoid this call when otherwise 
         var options = new ShareFileRenameOptions(shareRelativeTo);
+        // known strategies try to remove an existing target file before calling rename
+        // but it is neither atomic nor sure so instruct Azure Files to overwrite the file
+        options.setReplaceIfExists(Boolean.TRUE);
         var renamed = fileClient.renameWithResponse(options, endpoint.getMetadataTimeout(), Context.NONE).getValue();
         return existsRemote(renamed);
     }
