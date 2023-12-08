@@ -4683,6 +4683,9 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "errorHandler" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ErrorHandlerDefinition"
           },
