@@ -3465,6 +3465,7 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("compressionCodecName", def.getCompressionCodecName());
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName());
+        doWriteAttribute("lazyLoad", def.getLazyLoad());
         endElement(name);
     }
     protected void doWriteProtobufDataFormat(
