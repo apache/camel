@@ -20,34 +20,26 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.LegacyDeadLetterChannelBuilder;
 import org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder;
-import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ErrorHandlerDefinitionParserTest {
-    protected ClassPathXmlApplicationContext ctx;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        ctx = new ClassPathXmlApplicationContext("org/apache/camel/spring/xml/handler/ErrorHandlerDefinitionParser.xml");
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        IOHelper.close(ctx);
+public class ErrorHandlerDefinitionParserTest extends SpringTestSupport {
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/xml/handler/ErrorHandlerDefinitionParser.xml");
     }
 
     @Test
     public void testDefaultErrorHandler() {
         LegacyDefaultErrorHandlerBuilder errorHandler
-                = ctx.getBean("defaultErrorHandler", LegacyDefaultErrorHandlerBuilder.class);
+                = applicationContext.getBean("defaultErrorHandler", LegacyDefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
         assertNotNull(policy);
@@ -55,14 +47,14 @@ public class ErrorHandlerDefinitionParserTest {
         assertEquals(0, policy.getRedeliveryDelay(), "Wrong redeliveryDelay");
         assertEquals(false, policy.isLogStackTrace(), "Wrong logStackTrace");
 
-        errorHandler = ctx.getBean("errorHandler", LegacyDefaultErrorHandlerBuilder.class);
+        errorHandler = applicationContext.getBean("errorHandler", LegacyDefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
     }
 
     @Test
     public void testTransactionErrorHandler() {
         LegacyTransactionErrorHandlerBuilder errorHandler
-                = ctx.getBean("transactionErrorHandler", LegacyTransactionErrorHandlerBuilder.class);
+                = applicationContext.getBean("transactionErrorHandler", LegacyTransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
         Processor processor = errorHandler.getOnRedelivery();
@@ -71,7 +63,8 @@ public class ErrorHandlerDefinitionParserTest {
 
     @Test
     public void testTXErrorHandler() {
-        LegacyTransactionErrorHandlerBuilder errorHandler = ctx.getBean("txEH", LegacyTransactionErrorHandlerBuilder.class);
+        LegacyTransactionErrorHandlerBuilder errorHandler
+                = applicationContext.getBean("txEH", LegacyTransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
     }
@@ -79,7 +72,7 @@ public class ErrorHandlerDefinitionParserTest {
     @Test
     public void testDeadLetterErrorHandler() {
         LegacyDeadLetterChannelBuilder errorHandler
-                = ctx.getBean("deadLetterErrorHandler", LegacyDeadLetterChannelBuilder.class);
+                = applicationContext.getBean("deadLetterErrorHandler", LegacyDeadLetterChannelBuilder.class);
         assertNotNull(errorHandler);
         assertEquals("log:dead", errorHandler.getDeadLetterUri(), "Get wrong deadletteruri");
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
