@@ -717,7 +717,7 @@ public final class MessageHelper {
             label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(exchange.getFromEndpoint().getEndpointUri(), 100))
                     + "]";
         }
-        long elapsed = new StopWatch(exchange.getCreated()).taken();
+        long elapsed = System.currentTimeMillis() - exchange.getCreated();
 
         List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
         boolean enabled = list != null;
