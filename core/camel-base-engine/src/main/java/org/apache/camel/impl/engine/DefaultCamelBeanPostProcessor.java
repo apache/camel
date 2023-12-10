@@ -221,6 +221,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             injectBindToRegistryFields(bean, beanName, filter);
             injectBindToRegistryMethods(bean, beanName, filter);
         }
+
+        // camel endpoint specific fields last
+        injectEndpointFields(bean, beanName, filter);
     }
 
     protected void injectSecondPass(Object bean, String beanName, Function<Class<?>, Boolean> filter) {
@@ -233,8 +236,33 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             injectBindToRegistryFields(bean, beanName, filter);
             injectBindToRegistryMethods(bean, beanName, filter);
         }
-
         injectMethods(bean, beanName, filter);
+
+        // camel endpoint specific fields last
+        injectEndpointFields(bean, beanName, filter);
+    }
+
+    protected void injectEndpointFields(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
+        ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            if (accept != null && !accept.apply(field.getType())) {
+                return;
+            }
+
+            EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+            if (endpointInject != null) {
+                injectField(field, endpointInject.value(), endpointInject.property(), bean, beanName);
+            }
+
+            Produce produce = field.getAnnotation(Produce.class);
+            if (produce != null) {
+                injectField(field, produce.value(), produce.property(), bean, beanName, produce.binding());
+            }
+
+            // custom bean injector on the field
+            for (CamelBeanPostProcessorInjector injector : beanPostProcessorInjectors) {
+                injector.onFieldInject(field, bean, beanName);
+            }
+        });
     }
 
     protected void injectFields(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
@@ -256,16 +284,6 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             BeanConfigInject beanConfigInject = field.getAnnotation(BeanConfigInject.class);
             if (beanConfigInject != null) {
                 injectFieldBeanConfig(field, beanConfigInject.value(), bean, beanName);
-            }
-
-            EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-            if (endpointInject != null) {
-                injectField(field, endpointInject.value(), endpointInject.property(), bean, beanName);
-            }
-
-            Produce produce = field.getAnnotation(Produce.class);
-            if (produce != null) {
-                injectField(field, produce.value(), produce.property(), bean, beanName, produce.binding());
             }
 
             // custom bean injector on the field
