@@ -42,7 +42,6 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
