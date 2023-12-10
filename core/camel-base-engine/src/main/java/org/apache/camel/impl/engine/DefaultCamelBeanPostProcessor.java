@@ -257,11 +257,6 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             if (produce != null) {
                 injectField(field, produce.value(), produce.property(), bean, beanName, produce.binding());
             }
-
-            // custom bean injector on the field
-            for (CamelBeanPostProcessorInjector injector : beanPostProcessorInjectors) {
-                injector.onFieldInject(field, bean, beanName);
-            }
         });
     }
 
