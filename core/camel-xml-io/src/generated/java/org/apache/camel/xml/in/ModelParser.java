@@ -2450,6 +2450,7 @@ public class ModelParser extends BaseParser {
         return doParse(new ParquetAvroDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "compressionCodecName": def.setCompressionCodecName(val); break;
+                case "lazyLoad": def.setLazyLoad(val); break;
                 case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }

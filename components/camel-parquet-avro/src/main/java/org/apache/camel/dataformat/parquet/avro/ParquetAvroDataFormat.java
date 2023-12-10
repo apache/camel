@@ -58,10 +58,14 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
 
     private Class<?> unmarshalType;
 
+    private boolean lazyLoad;
+
+    @Override
     public String getDataFormatName() {
         return "parquetAvro";
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         // marshal from the Java object or GenericRecord (graph) to the parquet-avro type
         Configuration conf = new Configuration();
@@ -103,9 +107,9 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
         }
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         // unmarshal from the input stream of parquet-avro to Java object or GenericRecord (graph)
-        List<Object> parquetObjects = new ArrayList<>();
         Configuration conf = new Configuration();
 
         ParquetInputStream parquetInputStream = new ParquetInputStream(
@@ -119,18 +123,26 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
             model = new ReflectData(unmarshalType.getClassLoader());
         }
 
-        try (ParquetReader<?> reader = AvroParquetReader.builder(parquetInputStream)
+        ParquetReader.Builder<?> builder = AvroParquetReader.builder(parquetInputStream)
                 .withDataModel(model)
                 .disableCompatibility() // always use this (since this is a new project)
-                .withConf(conf)
-                .build()) {
-            Object pojo;
-            while ((pojo = type.cast(reader.read())) != null) {
-                parquetObjects.add(pojo);
+                .withConf(conf);
+
+        if (lazyLoad) {
+            ParquetIterator<?> iterator = new ParquetIterator<>(builder.build());
+            exchange.getExchangeExtension()
+                    .addOnCompletion(new ParquetUnmarshalOnCompletion(iterator));
+            return iterator;
+        } else {
+            try (ParquetReader<?> reader = builder.build()) {
+                List<Object> parquetObjects = new ArrayList<>();
+                Object pojo;
+                while ((pojo = type.cast(reader.read())) != null) {
+                    parquetObjects.add(pojo);
+                }
+                return parquetObjects;
             }
         }
-
-        return parquetObjects;
     }
 
     @Override
@@ -165,6 +177,21 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    /**
+     * Indicates whether the unmarshalling should produce an iterator of records or read all the records at once.
+     */
+    public boolean isLazyLoad() {
+        return lazyLoad;
+    }
+
+    /**
+     * Sets whether the unmarshalling should produce an iterator of records or read all the records at once.
+     */
+    public ParquetAvroDataFormat setLazyLoad(boolean lazyLoad) {
+        this.lazyLoad = lazyLoad;
+        return this;
     }
 
 }

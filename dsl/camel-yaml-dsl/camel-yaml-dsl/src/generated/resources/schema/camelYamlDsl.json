@@ -10685,6 +10685,11 @@
               "title" : "Id",
               "description" : "The id of this node"
             },
+            "lazyLoad" : {
+              "type" : "boolean",
+              "title" : "Lazy Load",
+              "description" : "Whether the unmarshalling should produce an iterator of records or read all the records at once."
+            },
             "unmarshalType" : {
               "type" : "string",
               "title" : "Unmarshal Type",

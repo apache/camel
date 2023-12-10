@@ -8860,6 +8860,15 @@ and input objects are assumed as GenericRecords for marshalling.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="lazyLoad" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether the unmarshalling should produce an iterator of records or read all the records at once. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
