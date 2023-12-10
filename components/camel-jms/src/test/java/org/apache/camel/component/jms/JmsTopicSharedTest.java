@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms2;
+package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class Jms2TopicSharedTest extends BaseJms2TestSupport {
+public class JmsTopicSharedTest extends AbstractPersistentJMSTest {
 
-    private static final String TEST_DESTINATION_NAME = "jms:topic:in.only.topic.consumer.test";
+    private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.consumer.test";
 
     @Test
     void testSharedTopic() throws Exception {
