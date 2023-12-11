@@ -32,7 +32,7 @@ public class RestJettyInvalidContentTypeClientRequestValidationTest extends Base
 
     @Test
     public void testJettyInvalidContentType() {
-        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json; charset=utf-8")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{\"name\": \"Donald\"}")
                 .to("http://localhost:" + getPort() + "/users/123/update");
