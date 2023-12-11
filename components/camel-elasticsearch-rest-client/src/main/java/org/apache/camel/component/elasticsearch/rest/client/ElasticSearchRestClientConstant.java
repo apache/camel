@@ -21,20 +21,16 @@ import org.apache.camel.spi.Metadata;
 public class ElasticSearchRestClientConstant {
 
     @Metadata(description = " ID of the object to index or retrieve or delete", javaType = "String")
-
     public static final String ID = "ID";
 
     @Metadata(description = "The JSON Query to perform for search", javaType = "String")
-
     public static final String SEARCH_QUERY = "SEARCH_QUERY";
 
     @Metadata(description = "Advanced - The JSON Index Settings and/or Mappings Query to perform to create an index",
               javaType = "String")
-
     public static final String INDEX_SETTINGS = "INDEX_SETTINGS";
 
     @Metadata(description = "The Index name", javaType = "String")
-
     public static final String INDEX_NAME = "INDEX_NAME";
 
     public static final int SOCKET_CONNECTION_TIMEOUT = 30000;

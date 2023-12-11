@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.elasticsearch.rest.client;
 
-import java.util.List;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,9 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.elasticsearch.client.RestClient;
 
 /**
- * ElasticsearchRestClient component which allows you to interface with Elasticsearch or OpenSearch using the Java Low
- * level Rest Client
- * <p>
+ * Perform queries and other operations on Elasticsearch or OpenSearch (uses low-level client).
  */
 @UriEndpoint(firstVersion = "4.3.0", scheme = "elasticsearch-rest-client",
              title = "Elasticsearch Low level Rest Client",
@@ -43,7 +39,7 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String clusterName;
-    @UriParam
+    @UriParam(secret = true)
     ElasticsearchRestClientOperation operation;
 
     @UriParam(label = "advanced")
@@ -52,13 +48,11 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     @UriParam
     String indexName;
-
     @UriParam
     String hostAddressesList;
 
     @UriParam(defaultValue = "" + ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
-
     @UriParam(defaultValue = "" + ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT)
     private int socketTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
 
@@ -72,7 +66,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "advanced")
     private boolean enableSniffer;
-
     @UriParam(label = "advanced", defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
     private int snifferInterval = ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY;
     @UriParam(label = "advanced", defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
@@ -109,8 +102,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     /**
      * Operation
-     *
-     * @return
      */
     public ElasticsearchRestClientOperation getOperation() {
         return operation;
@@ -122,8 +113,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     /**
      * Rest Client of type org.elasticsearch.client.RestClient. This is only for advanced usage
-     *
-     * @return
      */
     public RestClient getRestClient() {
         return restClient;
@@ -135,8 +124,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     /**
      * Index Name
-     *
-     * @return
      */
     public String getIndexName() {
         return indexName;
@@ -147,9 +134,7 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * List of host Adresses, separeted by comma
-     *
-     * @return
+     * List of host Addresses, multiple hosts can be separated by comma.
      */
     public String getHostAddressesList() {
         return hostAddressesList;
@@ -161,8 +146,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     /**
      * Connection timeout
-     *
-     * @return
      */
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -174,8 +157,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     /**
      * Socket timeout
-     *
-     * @return
      */
     public int getSocketTimeout() {
         return socketTimeout;
@@ -186,9 +167,7 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * User
-     *
-     * @return
+     * Username
      */
     public String getUser() {
         return user;
@@ -200,8 +179,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     /**
      * Password
-     *
-     * @return
      */
     public String getPassword() {
         return password;
@@ -212,9 +189,7 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Certifcate Path
-     *
-     * @return
+     * Certificate Path
      */
     public String getCertificatePath() {
         return certificatePath;
@@ -226,8 +201,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
 
     /**
      * Enabling Sniffer
-     *
-     * @return
      */
     public boolean isEnableSniffer() {
         return enableSniffer;
@@ -238,9 +211,7 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sniffer Interval
-     *
-     * @return
+     * Sniffer interval (in millis)
      */
     public int getSnifferInterval() {
         return snifferInterval;
@@ -251,9 +222,7 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sniffer After Failure Delay
-     *
-     * @return
+     * Sniffer after failure delay (in millis)
      */
     public int getSniffAfterFailureDelay() {
         return sniffAfterFailureDelay;

@@ -2,7 +2,7 @@
 :doctitle: Elasticsearch Low level Rest Client
 :shortname: elasticsearch-rest-client
 :artifactid: camel-elasticsearch-rest-client
-:description: ElasticsearchRestClient component which allows you to interface with Elasticsearch or OpenSearch using the Java Low level Rest Client
+:description: Perform queries and other operations on Elasticsearch or OpenSearch (uses low-level client).
 :since: 4.3
 :supportlevel: Preview
 :tabs-sync-option:

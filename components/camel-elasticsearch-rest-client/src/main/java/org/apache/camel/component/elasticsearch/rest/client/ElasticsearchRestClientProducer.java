@@ -35,8 +35,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -62,8 +64,8 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     public static final String GET = "GET";
 
     private ElasticsearchRestClientEndpoint endpoint;
-
     private RestClient restClient;
+    private boolean createdRestClient;
 
     public ElasticsearchRestClientProducer(ElasticsearchRestClientEndpoint endpoint) {
         super(endpoint);
@@ -93,28 +95,34 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         }
 
         Request request = generateRequest(exchange, indexName);
-
         performRequest(exchange, callback, request);
     }
 
     @Override
     protected void doStart() throws Exception {
-        // create RestClient
+        super.doStart();
+
         restClient = this.endpoint.getRestClient();
         if (restClient == null) {
-            createClient();
+            restClient = createClient();
+            createdRestClient = true;
         }
+    }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (createdRestClient && restClient != null) {
+            IOHelper.close(restClient);
+            restClient = null;
+        }
     }
 
     /**
      * Generate REST Request depending on content of Exchange
-     *
-     * @param  exchange
-     * @param  indexName
-     * @return
      */
-    private Request generateRequest(Exchange exchange, String indexName) {
+    private Request generateRequest(Exchange exchange, String indexName) throws Exception {
         return switch (this.endpoint.getOperation()) {
             case CREATE_INDEX -> createIndexRequest(indexName, exchange);
             case DELETE_INDEX -> deleteIndexRequest(indexName);
@@ -127,10 +135,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Async request to Elasticsearch or equivalent Server
-     *
-     * @param exchange
-     * @param callback
-     * @param request
      */
     private void performRequest(
             Exchange exchange, AsyncCallback callback, Request request) {
@@ -165,8 +169,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
                     /**
                      * Generate response Body of the Exchange, depending on operation Type
-                     *
-                     * @param doc
                      */
                     private void populateExchange(JsonObject doc) {
                         switch (endpoint.getOperation()) {
@@ -188,9 +190,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /***
      * Generate the Request for operation CREATE_INDEX
-     *
-     * @param  indexName
-     * @return
      */
     private Request createIndexRequest(String indexName, Exchange exchange) {
         var endpoint = String.format("/%s", indexName);
@@ -205,29 +204,17 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /***
      * Generate the Request for operation DELETE_INDEX
-     *
-     * @param  indexName
-     * @return
      */
     private Request deleteIndexRequest(String indexName) {
         var endpoint = String.format("/%s", indexName);
         return new Request(DELETE, endpoint);
-
     }
 
     /**
      * Generate the Request for operation INDEX_OR_UPDATE
-     *
-     * @param  indexName
-     * @param  exchange
-     * @return
      */
-    private Request indexRequest(String indexName, Exchange exchange) {
-        var jsonBody = exchange.getMessage().getBody(String.class);
-        if (jsonBody == null) {
-            throw new IllegalArgumentException(
-                    "Document is mandatory");
-        }
+    private Request indexRequest(String indexName, Exchange exchange) throws InvalidPayloadException {
+        var jsonBody = exchange.getMessage().getMandatoryBody(String.class);
 
         var endpoint = String.format("/%s/_doc", indexName);
 
@@ -245,10 +232,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Generate the Request for operation GET_BY_ID
-     *
-     * @param  indexName
-     * @param  exchange
-     * @return
      */
     private Request getById(String indexName, Exchange exchange) {
         var id = exchange.getMessage().getBody(String.class);
@@ -265,10 +248,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Generate the Request for DELETE
-     *
-     * @param  indexName
-     * @param  exchange
-     * @return
      */
     private Request delete(String indexName, Exchange exchange) {
         var id = exchange.getMessage().getBody(String.class);
@@ -285,10 +264,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Generate the Request for operation SEARCH
-     *
-     * @param  indexName
-     * @param  exchange
-     * @return
      */
     private Request search(String indexName, Exchange exchange) {
         var endpoint = String.format("/%s/_search", indexName);
@@ -313,9 +288,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * creates an Elasticsearch Json Query based on matches
-     *
-     * @param  queryParameters
-     * @return
      */
     private String createQueryFromMap(Map<String, String> queryParameters) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -339,8 +311,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /***
      * Extract ACK value from Response Body from API server
-     *
-     * @return
      */
     boolean extractAck(JsonObject doc) {
         return doc.getBoolean("acknowledged");
@@ -348,9 +318,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Extract Deleted from Response Body from API Server
-     *
-     * @param  doc
-     * @return
      */
     boolean extractDeleted(JsonObject doc) {
         return "deleted".equals(doc.getString("result"));
@@ -358,9 +325,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Extract ID value from Response Body from API server
-     *
-     * @param  doc
-     * @return
      */
     String extractID(JsonObject doc) {
         return doc.getString("_id");
@@ -368,9 +332,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Extract Document from response
-     *
-     * @param  doc
-     * @return
      */
     String extractDocument(JsonObject doc) {
         // check if document exists
@@ -387,9 +348,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Extract Document from response
-     *
-     * @param  doc
-     * @return
      */
     String extractSearch(JsonObject doc) {
         Map<String, Object> hitsLevel1 = doc.getMap("hits");
@@ -404,9 +362,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     /**
      * Creates Rest Client from information in the Endpoint
-     *
-     * @return
-     * @throws Exception
      */
     private RestClient createClient() throws Exception {
         final RestClientBuilder builder = RestClient.builder(getHttpHosts());
@@ -430,7 +385,6 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
         // initiate Sniffer
         if (this.endpoint.isEnableSniffer()) {
-
             Sniffer.builder(restClient)
                     .setSniffIntervalMillis(this.endpoint.getSnifferInterval())
                     .setSniffAfterFailureDelayMillis(this.endpoint.getSniffAfterFailureDelay())

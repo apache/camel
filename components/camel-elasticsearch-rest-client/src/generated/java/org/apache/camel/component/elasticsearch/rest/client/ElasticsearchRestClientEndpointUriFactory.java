@@ -37,7 +37,8 @@ public class ElasticsearchRestClientEndpointUriFactory extends org.apache.camel.
         props.add("socketTimeout");
         props.add("user");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("operation");
         secretProps.add("password");
         secretProps.add("user");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
