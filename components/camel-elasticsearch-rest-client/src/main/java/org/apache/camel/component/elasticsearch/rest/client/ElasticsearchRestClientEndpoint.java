@@ -36,10 +36,12 @@ import org.elasticsearch.client.RestClient;
              syntax = "elasticsearch-rest-client:clusterName", producerOnly = true,
              category = { Category.SEARCH })
 public class ElasticsearchRestClientEndpoint extends DefaultEndpoint {
+
     @UriPath
     @Metadata(required = true)
     private String clusterName;
-    @UriParam(secret = true)
+    @UriParam
+    @Metadata(required = true)
     ElasticsearchRestClientOperation operation;
 
     @UriParam(label = "advanced")

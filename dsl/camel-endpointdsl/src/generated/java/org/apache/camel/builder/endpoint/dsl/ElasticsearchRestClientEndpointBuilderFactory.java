@@ -113,6 +113,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
@@ -129,6 +130,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
