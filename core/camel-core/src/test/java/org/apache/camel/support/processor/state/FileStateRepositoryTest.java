@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.support.processor.state;
 
 import java.io.File;
 
 import org.apache.camel.TestSupport;
-import org.apache.camel.impl.engine.FileStateRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.impl.engine.FileStateRepository.fileStateRepository;
+import static org.apache.camel.support.processor.state.FileStateRepository.fileStateRepository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

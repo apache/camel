@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.camel.impl.engine.MemoryStateRepository;
 import org.apache.camel.processor.DefaultClaimCheckRepository;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.spi.AggregationRepository;
@@ -31,6 +30,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.state.MemoryStateRepository;
 
 public class StubBeanRepository implements BeanRepository {
 

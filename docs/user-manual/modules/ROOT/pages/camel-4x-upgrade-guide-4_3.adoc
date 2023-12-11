@@ -6,6 +6,12 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.2 to 4.3
 
+=== camel-core
+
+Moved class `org.apache.camel.impl.engine.MemoryStateRepository` from camel-base-engine to `org.apache.camel.support.processor.state.MemoryStateRepository` in camel-support.
+
+Moved class `org.apache.camel.impl.engine.FileStateRepository` from camel-base-engine to `org.apache.camel.support.processor.state.FileStateRepository` in camel-support.
+
 === Resequence EIP
 
 The configuration for batch and stream has been renamed from `batch-config` to `batchConfig` and `stream-config` to `streamConfig`.
@@ -155,5 +161,4 @@ This option is only intended for the Load Balancer EIP. This makes the YAML sche
 
 === camel-hdfs
 
-The HDFS component has been deprecated and it will be removed in 4.4.0. More information at CAMEL-20196 issue.
-
+The HDFS component has been deprecated, and planned to be removed in 4.4 (see CAMEL-20196).
