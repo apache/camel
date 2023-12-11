@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,8 +53,6 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
-import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
-import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ErrorHandlerAware;
@@ -269,21 +268,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
             processorExchangeFactory.setId(id);
             processorExchangeFactory.setRouteId(routeId);
         }
-
-        // eager load classes
-        Object dummy = new MulticastReactiveTask();
-        LOG.trace("Loaded {}", dummy.getClass().getName());
-        Object dummy2 = new MulticastTransactedTask();
-        LOG.trace("Loaded {}", dummy2.getClass().getName());
-        Object dummy3 = new UseOriginalAggregationStrategy();
-        LOG.trace("Loaded {}", dummy3.getClass().getName());
-        if (isShareUnitOfWork()) {
-            Object dummy4 = new ShareUnitOfWorkAggregationStrategy(null);
-            LOG.trace("Loaded {}", dummy4.getClass().getName());
-        }
-        Object dummy5 = new DefaultProcessorExchangePair(0, null, null, null);
-        LOG.trace("Loaded {}", dummy5.getClass().getName());
-
         ServiceHelper.buildService(processorExchangeFactory);
     }
 
@@ -418,16 +402,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
         final Map<String, String> mdc;
-
-        private MulticastTask() {
-            // used for eager classloading
-            this.original = null;
-            this.pairs = null;
-            this.callback = null;
-            this.iterator = null;
-            this.mdc = null;
-            this.completion = null;
-        }
+        final ScheduledFuture<?> timeoutTask;
 
         MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int capacity) {
             this.original = original;
@@ -435,7 +410,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
             this.callback = callback;
             this.iterator = pairs.iterator();
             if (timeout > 0) {
-                schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
+                timeoutTask = schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
+            } else {
+                timeoutTask = null;
             }
             // if MDC is enabled we must make a copy in this constructor when the task
             // is created by the caller thread, and then propagate back when run is called
@@ -506,15 +483,30 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 } catch (Throwable e) {
                     original.setException(e);
                     // and do the done work
-                    doDone(null, false);
+                    doTimeoutDone(null, false);
                 } finally {
                     lock.unlock();
                 }
             }
         }
 
+        protected void doTimeoutDone(Exchange exchange, boolean forceExhaust) {
+            if (done.compareAndSet(false, true)) {
+                MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
+            }
+        }
+
         protected void doDone(Exchange exchange, boolean forceExhaust) {
             if (done.compareAndSet(false, true)) {
+                // cancel timeout if we are done normally (we cannot cancel if called via onTimeout)
+                if (timeoutTask != null) {
+                    try {
+                        timeoutTask.cancel(true);
+                    } catch (Exception e) {
+                        // ignore
+                        LOG.debug("Cancel timeout task caused an exception. This exception is ignored.", e);
+                    }
+                }
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
         }
@@ -524,9 +516,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * Sub task processed reactive via the {@link ReactiveExecutor}.
      */
     protected class MulticastReactiveTask extends MulticastTask {
-
-        private MulticastReactiveTask() {
-        }
 
         public MulticastReactiveTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback,
                                      int size) {
@@ -625,9 +614,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * while loop control flow.
      */
     protected class MulticastTransactedTask extends MulticastTask {
-
-        private MulticastTransactedTask() {
-        }
 
         public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback,
                                        int size) {
@@ -738,9 +724,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
     }
 
-    protected void schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {
+    protected ScheduledFuture<?> schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {
         if (executor instanceof ScheduledExecutorService) {
-            ((ScheduledExecutorService) executor).schedule(runnable, delay, unit);
+            return ((ScheduledExecutorService) executor).schedule(runnable, delay, unit);
         } else {
             executor.execute(() -> {
                 try {
@@ -751,6 +737,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 runnable.run();
             });
         }
+        return null;
     }
 
     protected StopWatch beforeSend(ProcessorExchangePair pair) {
