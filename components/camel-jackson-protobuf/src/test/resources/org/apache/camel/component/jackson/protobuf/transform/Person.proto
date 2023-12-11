@@ -15,36 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.jackson;
-
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
-
-/**
- * Supported schema types for Java object serialization/deserialization
- */
-public enum SchemaType {
-    PROTOBUF("proto"),
-    AVRO("avsc"),
-    JSON("json");
-
-    private static final SchemaType[] VALUES = values();
-
-    private final String schemaType;
-
-    SchemaType(String type) {
-        this.schemaType = type;
-    }
-
-    public String type() {
-        return schemaType;
-    }
-
-    public static SchemaType of(String type) {
-        return Arrays.stream(VALUES)
-                .filter(s -> Objects.equals(s.schemaType, type))
-                .findFirst()
-                .orElseGet(() -> SchemaType.valueOf(type.toUpperCase(Locale.US)));
-    }
+message Person {
+   required string name = 1;
+   optional int32 age = 2;
 }
