@@ -38,7 +38,6 @@ import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
@@ -658,7 +657,7 @@ public final class MessageHelper {
             label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(exchange.getFromEndpoint().getEndpointUri(), 100))
                     + "]";
         }
-        long elapsed = new StopWatch(exchange.getCreated()).taken();
+        long elapsed = System.currentTimeMillis() - exchange.getCreated();
 
         List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
         boolean enabled = list != null;
