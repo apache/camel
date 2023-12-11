@@ -1,6 +1,6 @@
 = Batch-config EIP
-:doctitle: Batch-config
-:shortname: batch-config
+:doctitle: BatchConfig
+:shortname: batchConfig
 :description: Configures batch-processing resequence eip.
 :since: 
 :supportlevel: Stable
