@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.jackson.avro.transform;
+package org.apache.camel.component.jackson.protobuf.transform;
 
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.component.jackson.transform.Json;
@@ -33,10 +33,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class AvroPojoDataTypeTransformerTest {
+class ProtobufPojoDataTypeTransformerTest {
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
-    private final AvroPojoDataTypeTransformer transformer = new AvroPojoDataTypeTransformer();
+    private final ProtobufPojoDataTypeTransformer transformer = new ProtobufPojoDataTypeTransformer();
 
     @BeforeEach
     void setup() {
@@ -47,8 +47,8 @@ class AvroPojoDataTypeTransformerTest {
     void shouldHandleJsonString() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        AvroSchema avroSchema = getSchema();
-        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
+        ProtobufSchema protobufSchema = getSchema();
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
         exchange.getMessage().setBody("""
                     { "name": "Christoph", "age": 32 }
@@ -64,8 +64,8 @@ class AvroPojoDataTypeTransformerTest {
     void shouldHandlePojo() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        AvroSchema avroSchema = getSchema();
-        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
+        ProtobufSchema protobufSchema = getSchema();
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
         exchange.getMessage().setBody(new Person("Mickey", 20));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
@@ -75,14 +75,14 @@ class AvroPojoDataTypeTransformerTest {
     }
 
     @Test
-    void shouldHandleAvroBinary() throws Exception {
+    void shouldHandleProtobufBinary() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        AvroSchema avroSchema = getSchema();
-        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
+        ProtobufSchema protobufSchema = getSchema();
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
-        exchange.getMessage()
-                .setBody(Avro.mapper().writer(avroSchema).writeValueAsBytes(new Person("Goofy", 25)));
+        exchange.getMessage().setBody(Protobuf.mapper().writer(protobufSchema)
+                .writeValueAsBytes(new Person("Goofy", 25)));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
@@ -94,14 +94,14 @@ class AvroPojoDataTypeTransformerTest {
     void shouldHandleAvroJsonNode() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        AvroSchema avroSchema = getSchema();
-        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
+        ProtobufSchema protobufSchema = getSchema();
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
         exchange.getMessage()
-                .setBody(Avro.mapper().writerFor(JsonNode.class).with(avroSchema)
+                .setBody(Protobuf.mapper().writerFor(JsonNode.class).with(protobufSchema)
                         .writeValueAsBytes(Json.mapper().readTree("""
-                            { "name": "Goofy", "age": 25 }
-                        """)));
+                                    { "name": "Goofy", "age": 25 }
+                                """)));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
@@ -113,8 +113,8 @@ class AvroPojoDataTypeTransformerTest {
     void shouldHandleExplicitContentClass() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        AvroSchema avroSchema = getSchema();
-        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
+        ProtobufSchema protobufSchema = getSchema();
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
         exchange.getMessage().setBody(new Person("Donald", 19));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
@@ -127,12 +127,13 @@ class AvroPojoDataTypeTransformerTest {
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("avro-x-java-object"));
+                .resolveTransformer(new TransformerKey("protobuf-x-java-object"));
         Assertions.assertNotNull(transformer);
-        Assertions.assertEquals(AvroPojoDataTypeTransformer.class, transformer.getClass());
+        Assertions.assertEquals(ProtobufPojoDataTypeTransformer.class, transformer.getClass());
     }
 
-    private AvroSchema getSchema() throws IOException {
-        return Avro.mapper().schemaFrom(AvroPojoDataTypeTransformerTest.class.getResourceAsStream("Person.avsc"));
+    private ProtobufSchema getSchema() throws IOException {
+        return Protobuf.mapper().schemaLoader()
+                .load(ProtobufPojoDataTypeTransformerTest.class.getResourceAsStream("Person.proto"));
     }
 }
