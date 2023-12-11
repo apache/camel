@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 @DisabledOnOs(OS.WINDOWS)
 public class NettyHttpSuspendResumeTest extends BaseNettyTest {
 
-    private final String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
+    private final String serverUri
+            = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
 
     @Test
     public void testNettySuspendResume() {
