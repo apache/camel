@@ -35,14 +35,6 @@ public final class StopWatch {
     }
 
     /**
-     * Starts the stop watch from the given timestamp
-     */
-    @Deprecated
-    public StopWatch(long timeMillis) {
-        start = Duration.ofMillis(timeMillis).toNanos();
-    }
-
-    /**
      * Creates the stop watch
      *
      * @param start whether it should start immediately
