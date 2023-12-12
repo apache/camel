@@ -17,7 +17,6 @@
 package org.apache.camel.component.azure.key.vault;
 
 import com.azure.core.credential.TokenCredential;
-import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
