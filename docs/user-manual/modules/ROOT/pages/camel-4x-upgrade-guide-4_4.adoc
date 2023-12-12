@@ -11,6 +11,8 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 Removed the deprecated constructor from the internal class `org.apache.camel.util.StopWatch`. Users of this class are advised to
 use the default constructor if necessary.
 
+The method `getCreated` is now deprecated. Access to the time-related information from the exchange should be done via `getClock`.
+
 === camel-azure-cosmosdb
 
 The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between SHARED_ACCOUNT_KEY and AZURE_IDENTITY.

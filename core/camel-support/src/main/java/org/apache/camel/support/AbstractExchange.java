@@ -53,7 +53,6 @@ abstract class AbstractExchange implements Exchange {
 
     protected final CamelContext context;
     protected Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
-    protected long created;
     protected Message in;
     protected Message out;
     protected Exception exception;
@@ -81,7 +80,6 @@ abstract class AbstractExchange implements Exchange {
     public AbstractExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
         this.pattern = pattern;
-        this.created = System.currentTimeMillis();
 
         internalProperties = new EnumMap<>(ExchangePropertyKey.class);
         privateExtension = new ExtendedExchangeExtension(this);
@@ -90,7 +88,6 @@ abstract class AbstractExchange implements Exchange {
     public AbstractExchange(Exchange parent) {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
-        this.created = parent.getCreated();
 
         internalProperties = new EnumMap<>(ExchangePropertyKey.class);
 
@@ -103,7 +100,6 @@ abstract class AbstractExchange implements Exchange {
     AbstractExchange(AbstractExchange parent) {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
-        this.created = parent.getCreated();
 
         this.internalProperties = new EnumMap<>(parent.internalProperties);
 
@@ -140,7 +136,6 @@ abstract class AbstractExchange implements Exchange {
     public AbstractExchange(Endpoint fromEndpoint) {
         this.context = fromEndpoint.getCamelContext();
         this.pattern = fromEndpoint.getExchangePattern();
-        this.created = System.currentTimeMillis();
 
         internalProperties = new EnumMap<>(ExchangePropertyKey.class);
         privateExtension = new ExtendedExchangeExtension(this);
@@ -150,7 +145,6 @@ abstract class AbstractExchange implements Exchange {
     public AbstractExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
         this.context = fromEndpoint.getCamelContext();
         this.pattern = pattern;
-        this.created = System.currentTimeMillis();
 
         internalProperties = new EnumMap<>(ExchangePropertyKey.class);
         privateExtension = new ExtendedExchangeExtension(this);
@@ -159,7 +153,7 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public long getCreated() {
-        return created;
+        return getClock().getCreated();
     }
 
     abstract AbstractExchange newCopy();

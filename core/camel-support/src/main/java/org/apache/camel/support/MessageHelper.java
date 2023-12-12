@@ -716,7 +716,7 @@ public final class MessageHelper {
             label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(exchange.getFromEndpoint().getEndpointUri(), 100))
                     + "]";
         }
-        long elapsed = System.currentTimeMillis() - exchange.getCreated();
+        final long elapsed = exchange.getClock().elapsed();
 
         List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
         boolean enabled = list != null;
@@ -768,9 +768,8 @@ public final class MessageHelper {
                 // fast
                 label = URISupport.sanitizeUri(StringHelper.limitLength(label, 100));
                 // we do not have elapsed time
-                elapsed = 0;
                 sb.append("\t...\n");
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, 0));
                 sb.append("\n");
             }
         } else {
@@ -790,9 +789,8 @@ public final class MessageHelper {
                 // characters in the sanitizeUri method and will be reasonably
                 // fast
                 label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
-                elapsed = history.getElapsed();
 
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, history.getElapsed()));
                 sb.append("\n");
             }
         }

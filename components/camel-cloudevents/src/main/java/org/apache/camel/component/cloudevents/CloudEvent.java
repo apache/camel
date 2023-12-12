@@ -77,7 +77,7 @@ public interface CloudEvent {
      */
     default String getEventTime(Exchange exchange) {
         final ZonedDateTime created
-                = ZonedDateTime.ofInstant(Instant.ofEpochMilli(exchange.getCreated()), ZoneId.systemDefault());
+                = ZonedDateTime.ofInstant(Instant.ofEpochMilli(exchange.getClock().getCreated()), ZoneId.systemDefault());
         return DateTimeFormatter.ISO_INSTANT.format(created);
     }
 

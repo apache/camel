@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.support.DefaultPooledExchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResetableClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +73,7 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
         }
 
         // reset exchange for reuse
-        PooledExchange ee = (PooledExchange) answer;
-        ee.reset(System.currentTimeMillis());
-
+        ((ResetableClock) exchange.getClock()).reset();
         ExchangeHelper.copyResults(answer, exchange);
         return answer;
     }
@@ -98,8 +97,7 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
         }
 
         // reset exchange for reuse
-        PooledExchange ee = (PooledExchange) answer;
-        ee.reset(System.currentTimeMillis());
+        ((ResetableClock) exchange.getClock()).reset();
 
         ExchangeHelper.copyResults(answer, exchange);
         // do not reuse message id on copy
@@ -129,9 +127,7 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
         }
 
         // reset exchange for reuse
-        PooledExchange ee = (PooledExchange) answer;
-        ee.reset(System.currentTimeMillis());
-
+        ((ResetableClock) answer.getClock()).reset();
         return answer;
     }
 

@@ -648,7 +648,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (first) {
                     // use route as pseudo source when first
                     String source = LoggerHelper.getLineNumberLoggerName(routeDefinition);
-                    long created = exchange.getCreated();
+                    final long created = exchange.getClock().getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, exchangeId,
                             rest, template, messageAsXml, messageAsJSon);
@@ -675,7 +675,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
                     String exchangeId = exchange.getExchangeId();
                     boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
-                    long created = exchange.getCreated();
+                    long created = exchange.getClock().getCreated();
                     String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 4,
                             true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                             backlogTracer.getBodyMaxChars());
