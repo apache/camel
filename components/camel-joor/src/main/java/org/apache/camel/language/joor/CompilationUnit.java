@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.java.joor;
+package org.apache.camel.language.joor;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -108,7 +108,7 @@ public class CompilationUnit {
         return this;
     }
 
-    Map<String, String> getInput() {
+    public Map<String, String> getInput() {
         return files;
     }
 

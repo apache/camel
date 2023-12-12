@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 public class JoorScriptingCompiler extends ServiceSupport implements StaticService {
 
+    // TODO: Use MultiCompile
+
     private static final Pattern BEAN_INJECTION_PATTERN = Pattern.compile("(#bean:)([A-Za-z0-9-_]*)");
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorScriptingCompiler.class);
