@@ -23,6 +23,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
+        case "azureidentityenabled":
+        case "AzureIdentityEnabled": target.setAzureIdentityEnabled(property(camelContext, boolean.class, value)); return true;
         case "azurevaultconfiguration":
         case "AzureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
         case "blobaccesskey":
@@ -60,6 +62,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
+        case "azureidentityenabled":
+        case "AzureIdentityEnabled": return boolean.class;
         case "azurevaultconfiguration":
         case "AzureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
         case "blobaccesskey":
@@ -98,6 +102,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": return target.getAwsVaultConfiguration();
+        case "azureidentityenabled":
+        case "AzureIdentityEnabled": return target.isAzureIdentityEnabled();
         case "azurevaultconfiguration":
         case "AzureVaultConfiguration": return target.getAzureVaultConfiguration();
         case "blobaccesskey":
