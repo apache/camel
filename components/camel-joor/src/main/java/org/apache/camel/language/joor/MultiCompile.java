@@ -90,13 +90,14 @@ public final class MultiCompile {
 
         Lookup lookup = MethodHandles.lookup();
         ClassLoader cl = unit.getClassLoader() != null ? unit.getClassLoader() : lookup.lookupClass().getClassLoader();
+        LOG.warn("Using classloader: {}", System.identityHashCode(cl));
         unit.getInput().forEach((cn, code) -> {
             try {
                 Class<?> clazz = cl.loadClass(cn);
                 result.addResult(cn, clazz, null);
-                LOG.debug("Class already compiled: {}", cn);
+                LOG.warn("Class already compiled: {}", cn);
             } catch (ClassNotFoundException ignore) {
-                LOG.debug("Class must be compiled: {}", cn);
+                LOG.warn("Class must be compiled: {}", cn);
                 files.add(new CharSequenceJavaFileObject(cn, code));
             }
         });
