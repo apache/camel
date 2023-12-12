@@ -14,46 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms2;
+package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class Jms1TopicDurableTest extends BaseJms2TestSupport {
+public class JmsTopicSharedTest extends AbstractPersistentJMSTest {
 
-    // Jms1TopicDurableTest and Jms2TopicDurableTest are similar
-    // as the test using JMS 1.1 style durable topic which does not
-    // use any of the JMS 2.0 APIs but it works on a JMS 2.0 broker as well
+    private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.consumer.test";
 
     @Test
-    void testJms11DurableTopic() throws Exception {
+    void testSharedTopic() throws Exception {
+        final String expectedBody = "Hello World";
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
         MockEndpoint mock2 = getMockEndpoint("mock:result2");
+        mock2.expectedMessageCount(1);
         mock2.expectedBodiesReceived("Hello World");
 
-        // wait a bit and send the message
-        Thread.sleep(500);
+        template.sendBody("direct:start", expectedBody);
 
-        template.sendBody("jms:topic:foo", "Hello World");
-
-        MockEndpoint.assertIsSatisfied(context);
+        mock.assertIsSatisfied();
+        mock2.assertIsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            @Override
             public void configure() {
-                from("jms:topic:foo?clientId=123&durableSubscriptionName=bar")
-                        .to("mock:result");
+                from("direct:start")
+                        .to(TEST_DESTINATION_NAME);
 
-                from("jms:topic:foo?clientId=456&durableSubscriptionName=bar")
-                        .to("mock:result2");
+                from(TEST_DESTINATION_NAME)
+                        .to("log:test.log.1?showBody=true", "mock:result");
+
+                from(TEST_DESTINATION_NAME + "?subscriptionName=sharedTest&subscriptionShared=true")
+                        .to("log:test.log.2?showBody=true", "mock:result2");
+
+                from(TEST_DESTINATION_NAME + "?subscriptionName=sharedTest&subscriptionShared=true")
+                        .to("log:test.log.3?showBody=true", "mock:result2");
             }
         };
     }
-
 }

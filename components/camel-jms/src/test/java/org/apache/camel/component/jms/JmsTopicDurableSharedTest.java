@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms2;
+package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class Jms2TopicDurableSharedTest extends BaseJms2TestSupport {
+public class JmsTopicDurableSharedTest extends AbstractPersistentJMSTest {
 
-    private static final String TEST_DESTINATION_NAME = "jms:topic:in.only.topic.consumer.test";
+    private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.consumer.test";
 
     @Test
     void testDurableSharedTopic() throws Exception {
@@ -51,10 +51,12 @@ public class Jms2TopicDurableSharedTest extends BaseJms2TestSupport {
                 from(TEST_DESTINATION_NAME)
                         .to("log:test.log.1?showBody=true", "mock:result");
 
-                from(TEST_DESTINATION_NAME + "?subscriptionName=sharedTest&subscriptionShared=true&subscriptionDurable=true")
+                from(TEST_DESTINATION_NAME
+                     + "?subscriptionName=durableSharedTest&subscriptionShared=true&subscriptionDurable=true")
                         .to("log:test.log.2?showBody=true", "mock:result2");
 
-                from(TEST_DESTINATION_NAME + "?subscriptionName=sharedTest&subscriptionShared=true&subscriptionDurable=true")
+                from(TEST_DESTINATION_NAME
+                     + "?subscriptionName=durableSharedTest&subscriptionShared=true&subscriptionDurable=true")
                         .to("log:test.log.3?showBody=true", "mock:result2");
             }
         };

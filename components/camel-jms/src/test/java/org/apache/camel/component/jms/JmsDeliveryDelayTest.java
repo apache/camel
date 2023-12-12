@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms2;
+package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * bugs which is why we keep them here.
  */
 @Isolated("These tests are highly susceptible to flakiness as they verify the results based on duration - which can vary a LOT in loaded systems")
-public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
+public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
 
     @Test
     void testInOnlyWithDelay() throws Exception {
@@ -40,7 +40,7 @@ public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
         mock.expectedBodiesReceived("Hello World");
 
         StopWatch watch = new StopWatch();
-        template.sendBody("jms:topic:foo?deliveryDelay=1000", "Hello World");
+        template.sendBody("activemq:topic:foo?deliveryDelay=1000", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
@@ -49,7 +49,7 @@ public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
     @Test
     void testInOutWithDelay() {
         StopWatch watch = new StopWatch();
-        template.requestBody("jms:topic:foo?deliveryDelay=1000", "Hello World");
+        template.requestBody("activemq:topic:foo?deliveryDelay=1000", "Hello World");
         assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
     }
 
@@ -58,7 +58,7 @@ public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:topic:foo")
+                from("activemq:topic:foo")
                         .to("mock:result");
             }
         };
