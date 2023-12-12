@@ -28,7 +28,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -37,16 +39,28 @@ import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JoorScriptingCompiler extends ServiceSupport implements StaticService {
+public class JoorScriptingCompiler extends ServiceSupport implements StaticService, CamelContextAware {
 
     private static final Pattern BEAN_INJECTION_PATTERN = Pattern.compile("(#bean:)([A-Za-z0-9-_]*)");
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorScriptingCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
+    private CamelContext camelContext;
+    private JavaJoorClassLoader classLoader;
     private Set<String> imports = new TreeSet<>();
     private Map<String, String> aliases;
     private int counter;
     private long taken;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public Set<String> getImports() {
         return imports;
@@ -65,8 +79,26 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        // register jOOR classloader to camel, so we are able to load classes we have compiled
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            // use existing class loader if available
+            classLoader = (JavaJoorClassLoader) context.getClassResolver().getClassLoader("CamelJoorClassLoader");
+            if (classLoader == null) {
+                classLoader = new JavaJoorClassLoader();
+                context.getClassResolver().addClassLoader(classLoader);
+            }
+            // use work dir for classloader as it writes compiled classes to disk
+            CompileStrategy cs = context.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+            if (cs != null && cs.getWorkDir() != null) {
+                classLoader.setCompileDirectory(cs.getWorkDir());
+            }
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
-        super.doStop();
         if (counter > 0) {
             LOG.info("jOOR scripting language compiled {} scripts in {} millis", counter, taken);
         }

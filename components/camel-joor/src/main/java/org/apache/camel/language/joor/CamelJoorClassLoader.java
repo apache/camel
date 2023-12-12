@@ -66,18 +66,25 @@ public class CamelJoorClassLoader extends URLClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        for (ClassLoader cl : camelContext.getClassResolver().getClassLoaders()) {
-            try {
-                return cl.loadClass(name);
-            } catch (ClassNotFoundException e) {
-                // ignore
-            }
-        }
-        return parent.loadClass(name);
+        return doLoadClass(name);
     }
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return doLoadClass(name);
+    }
+
+    public Class<?> doLoadClass(String name) throws ClassNotFoundException {
+        // first try CamelJoorClassLoader
+        ClassLoader joorClassLoader = camelContext.getClassResolver().getClassLoader("CamelJoorClassLoader");
+        if (joorClassLoader != null) {
+            try {
+                return joorClassLoader.loadClass(name);
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }
+        }
+        // then try all of them
         for (ClassLoader cl : camelContext.getClassResolver().getClassLoaders()) {
             try {
                 return cl.loadClass(name);
@@ -85,6 +92,8 @@ public class CamelJoorClassLoader extends URLClassLoader {
                 // ignore
             }
         }
+        // and then parent last
         return parent.loadClass(name);
     }
+
 }

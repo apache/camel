@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
@@ -144,16 +145,19 @@ public class JavaLanguage extends TypedLanguageSupport implements ScriptingLangu
     public void init() {
         // attempt to load optional configuration from classpath
         loadConfiguration();
+
+        CamelContextAware.trySetCamelContext(compiler, getCamelContext());
+        CamelContextAware.trySetCamelContext(scriptingCompiler, getCamelContext());
     }
 
     @Override
     public void start() {
-        ServiceHelper.startService(compiler);
+        ServiceHelper.startService(compiler, scriptingCompiler);
     }
 
     @Override
     public void stop() {
-        ServiceHelper.stopService(compiler);
+        ServiceHelper.stopService(compiler, scriptingCompiler);
     }
 
     private void loadConfiguration() {

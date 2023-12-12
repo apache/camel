@@ -60,7 +60,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
     private final ConcurrentMap<Collection<Resource>, CompilationUnit.Result> compiled = new ConcurrentHashMap<>();
     private final Map<String, Resource> nameToResource = new HashMap<>();
-    private final JavaJoorClassLoader classLoader = new JavaJoorClassLoader();
+    private JavaJoorClassLoader classLoader;
 
     public JavaRoutesBuilderLoader() {
         super(EXTENSION);
@@ -73,7 +73,12 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         // register jOOR classloader to camel, so we are able to load classes we have compiled
         CamelContext context = getCamelContext();
         if (context != null) {
-            context.getClassResolver().addClassLoader(classLoader);
+            // use existing class loader if available
+            classLoader = (JavaJoorClassLoader) context.getClassResolver().getClassLoader("CamelJoorClassLoader");
+            if (classLoader == null) {
+                classLoader = new JavaJoorClassLoader();
+                context.getClassResolver().addClassLoader(classLoader);
+            }
             // use work dir for classloader as it writes compiled classes to disk
             CompileStrategy cs = context.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
             if (cs != null && cs.getWorkDir() != null) {

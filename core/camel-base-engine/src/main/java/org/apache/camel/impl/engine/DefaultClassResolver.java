@@ -72,6 +72,18 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
     }
 
     @Override
+    public ClassLoader getClassLoader(String name) {
+        if (classLoaders != null) {
+            for (ClassLoader cl : classLoaders) {
+                if (name.equals(cl.getName())) {
+                    return cl;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Class<?> resolveClass(String name) {
         Class<?> answer;
         if (classLoaders != null) {
