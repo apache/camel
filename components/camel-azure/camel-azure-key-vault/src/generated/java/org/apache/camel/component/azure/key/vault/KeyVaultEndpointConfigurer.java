@@ -25,6 +25,8 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.key.vault.CredentialType.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.key.vault.KeyVaultOperation.class, value)); return true;
@@ -48,6 +50,8 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.key.vault.CredentialType.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.azure.key.vault.KeyVaultOperation.class;
@@ -67,6 +71,8 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
         case "clientId": return target.getConfiguration().getClientId();
         case "clientsecret":
         case "clientSecret": return target.getConfiguration().getClientSecret();
+        case "credentialtype":
+        case "credentialType": return target.getConfiguration().getCredentialType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();

@@ -23,6 +23,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.azure.key.vault.CredentialType.AZURE_IDENTITY;
+import static org.apache.camel.component.azure.key.vault.CredentialType.CLIENT_SECRET;
+
 @UriParams
 public class KeyVaultConfiguration implements Cloneable {
 
@@ -39,6 +42,9 @@ public class KeyVaultConfiguration implements Cloneable {
     private String tenantId;
     @UriParam(label = "producer")
     private KeyVaultOperation operation = KeyVaultOperation.createSecret;
+    @UriParam(label = "common", enums = "CLIENT_SECRET,AZURE_IDENTITY",
+            defaultValue = "CLIENT_SECRET")
+    private CredentialType credentialType = CLIENT_SECRET;
 
     /**
      * Instance of Secret client
@@ -104,6 +110,18 @@ public class KeyVaultConfiguration implements Cloneable {
 
     public void setOperation(KeyVaultOperation operation) {
         this.operation = operation;
+    }
+
+
+    public CredentialType getCredentialType() {
+        return credentialType;
+    }
+
+    /**
+     * Determines the credential strategy to adopt
+     */
+    public void setCredentialType(CredentialType credentialType) {
+        this.credentialType = credentialType;
     }
 
     // *************************************************

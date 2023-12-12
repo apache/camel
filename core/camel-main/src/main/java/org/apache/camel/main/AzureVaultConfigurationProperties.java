@@ -82,6 +82,14 @@ public class AzureVaultConfigurationProperties extends AzureVaultConfiguration i
     }
 
     /**
+     * Whether the Azure Identity Authentication should be used or not.
+     */
+    public AzureVaultConfigurationProperties withAzureIdentityEnabled(boolean azureIdentityEnabled) {
+        setAzureIdentityEnabled(azureIdentityEnabled);
+        return this;
+    }
+
+    /**
      * Whether to automatically reload Camel upon secrets being updated in Azure.
      */
     public AzureVaultConfigurationProperties withRefreshEnabled(boolean refreshEnabled) {
