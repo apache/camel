@@ -75,8 +75,8 @@ public class CamelJoorClassLoader extends URLClassLoader {
     }
 
     public Class<?> doLoadClass(String name) throws ClassNotFoundException {
-        // first try CamelJoorClassLoader
-        ClassLoader joorClassLoader = camelContext.getClassResolver().getClassLoader("CamelJoorClassLoader");
+        // first try JavaJoorClassLoader
+        ClassLoader joorClassLoader = camelContext.getClassResolver().getClassLoader("JavaJoorClassLoader");
         if (joorClassLoader != null) {
             try {
                 return joorClassLoader.loadClass(name);
