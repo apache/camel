@@ -207,7 +207,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     private static long getExchangeDuration(Exchange exchange) {
-        return System.currentTimeMillis() - exchange.getCreated();
+        return exchange.getClock().elapsed();
     }
 
     private static final class InflightExchangeEntry implements InflightExchange {

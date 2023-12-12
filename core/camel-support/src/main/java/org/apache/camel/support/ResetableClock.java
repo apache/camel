@@ -14,26 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.event;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.util.TimeUtils;
+package org.apache.camel.support;
 
-public class ExchangeCompletedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeCompletedEvent {
-    private static final long serialVersionUID = -3231801412021356098L;
-    private final long timeTaken;
+import org.apache.camel.Clock;
 
-    public ExchangeCompletedEvent(Exchange source) {
-        super(source);
+public final class ResetableClock implements Clock {
+    private long created;
 
-        this.timeTaken = getExchange().getClock().elapsed();
+    ResetableClock(Clock clock) {
+        this.created = clock.getCreated();
+    }
+
+    ResetableClock() {
+        this.created = System.currentTimeMillis();
     }
 
     @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange completed"
-               + " took: " + TimeUtils.printDuration(timeTaken, true);
+    public long elapsed() {
+        return System.currentTimeMillis() - created;
+    }
 
+    @Override
+    public long getCreated() {
+        return created;
+    }
+
+    /**
+     * Reset the clock to the current point in time
+     */
+    public void reset() {
+        this.created = System.currentTimeMillis();
+    }
+
+    /**
+     * Unset the clock (set to zero). This is part of the pooling exchange support, so that the exchange can be marked
+     * as done and reused
+     */
+    void unset() {
+        this.created = 0;
     }
 }

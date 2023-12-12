@@ -14,26 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.event;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.util.TimeUtils;
+package org.apache.camel.support;
 
-public class ExchangeCompletedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeCompletedEvent {
-    private static final long serialVersionUID = -3231801412021356098L;
-    private final long timeTaken;
+import org.apache.camel.Clock;
 
-    public ExchangeCompletedEvent(Exchange source) {
-        super(source);
+public class MonotonicClock implements Clock {
+    private final long created;
 
-        this.timeTaken = getExchange().getClock().elapsed();
+    MonotonicClock() {
+        this.created = System.currentTimeMillis();
     }
 
     @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange completed"
-               + " took: " + TimeUtils.printDuration(timeTaken, true);
+    public long elapsed() {
+        return System.currentTimeMillis() - created;
+    }
 
+    @Override
+    public long getCreated() {
+        return created;
     }
 }

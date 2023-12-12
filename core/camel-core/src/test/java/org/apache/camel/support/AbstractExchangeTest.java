@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Clock;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataType;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class AbstractExchangeTest {
 
     static class CustomAbstractExchange extends AbstractExchange {
+        private final Clock clock = new MonotonicClock();
 
         CustomAbstractExchange(CustomAbstractExchange abstractExchange) {
             super(abstractExchange);
@@ -44,6 +46,11 @@ public class AbstractExchangeTest {
         @Override
         AbstractExchange newCopy() {
             return new CustomAbstractExchange(this);
+        }
+
+        @Override
+        public Clock getClock() {
+            return clock;
         }
     }
 

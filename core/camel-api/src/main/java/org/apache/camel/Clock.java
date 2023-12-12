@@ -14,26 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.event;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.util.TimeUtils;
+package org.apache.camel;
 
-public class ExchangeCompletedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeCompletedEvent {
-    private static final long serialVersionUID = -3231801412021356098L;
-    private final long timeTaken;
+/**
+ * A clock used to track the lifetime of an exchange
+ */
+public interface Clock {
+    /**
+     * The elapsed time since the creation of the exchange
+     *
+     * @return The elapsed time, in milliseconds, since the creation of the exchange
+     */
+    long elapsed();
 
-    public ExchangeCompletedEvent(Exchange source) {
-        super(source);
-
-        this.timeTaken = getExchange().getClock().elapsed();
-    }
-
-    @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange completed"
-               + " took: " + TimeUtils.printDuration(timeTaken, true);
-
-    }
+    /**
+     * The point in time the exchange was created
+     *
+     * @return The point in time, in milliseconds, the exchange was created.
+     * @see    System#currentTimeMillis()
+     */
+    long getCreated();
 }

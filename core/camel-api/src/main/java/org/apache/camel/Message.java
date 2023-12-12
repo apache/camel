@@ -64,7 +64,7 @@ public interface Message {
      * components when the consumer is able to extract the timestamp from the source event.
      *
      * @return the timestamp, or <tt>0</tt> if the message has no source timestamp.
-     * @see    Exchange#getCreated()
+     * @see    Exchange#getClock()
      */
     long getMessageTimestamp();
 

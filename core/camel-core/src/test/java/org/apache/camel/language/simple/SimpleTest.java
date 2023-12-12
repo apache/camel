@@ -650,7 +650,8 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testDateExchangeCreated() throws Exception {
-        Object out = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", ("" + exchange.getCreated()).getClass());
+        Object out
+                = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", ("" + exchange.getClock().getCreated()).getClass());
         assertNotNull(out);
     }
 

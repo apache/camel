@@ -123,7 +123,7 @@ abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
             setCloudEventHeader(headers, CloudEvent.CAMEL_CLOUD_EVENT_VERSION, ce::version);
             setCloudEventHeader(headers, CloudEvent.CAMEL_CLOUD_EVENT_TIME, () -> {
                 final ZonedDateTime created
-                        = ZonedDateTime.ofInstant(Instant.ofEpochMilli(exchange.getCreated()), ZoneId.systemDefault());
+                        = ZonedDateTime.ofInstant(Instant.ofEpochMilli(exchange.getClock().getCreated()), ZoneId.systemDefault());
 
                 return DateTimeFormatter.ISO_INSTANT.format(created);
             });
