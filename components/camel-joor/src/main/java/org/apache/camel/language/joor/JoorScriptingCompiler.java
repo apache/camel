@@ -87,10 +87,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
             classLoader = (JavaJoorClassLoader) context.getClassResolver().getClassLoader("JavaJoorClassLoader");
             if (classLoader == null) {
                 classLoader = new JavaJoorClassLoader();
-                LOG.warn("Creating new JavaJoorClassLoader");
                 context.getClassResolver().addClassLoader(classLoader);
-            } else {
-                LOG.warn("Using existing JavaJoorClassLoader");
             }
             // use work dir for classloader as it writes compiled classes to disk
             CompileStrategy cs = context.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
@@ -103,7 +100,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
     @Override
     protected void doStop() throws Exception {
         if (counter > 0) {
-            LOG.info("jOOR scripting language compiled {} scripts in {} millis", counter, taken);
+            LOG.info("Java language compiled {} scripts in {} millis", counter, taken);
         }
     }
 

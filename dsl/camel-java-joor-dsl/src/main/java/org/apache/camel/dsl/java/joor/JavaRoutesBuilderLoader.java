@@ -80,10 +80,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             classLoader = (JavaJoorClassLoader) context.getClassResolver().getClassLoader("JavaJoorClassLoader");
             if (classLoader == null) {
                 classLoader = new JavaJoorClassLoader();
-                LOG.warn("Creating new JavaJoorClassLoader");
                 context.getClassResolver().addClassLoader(classLoader);
-            } else {
-                LOG.warn("Using existing JavaJoorClassLoader");
             }
             // use work dir for classloader as it writes compiled classes to disk
             CompileStrategy cs = context.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
