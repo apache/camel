@@ -40,6 +40,14 @@ public interface ClassResolver {
     Set<ClassLoader> getClassLoaders();
 
     /**
+     * Gets a custom class loader by its name
+     *
+     * @param name the name of the custom classloader
+     * @return the class loader or <tt>null</tt> if not found
+     */
+    ClassLoader getClassLoader(String name);
+
+    /**
      * Resolves the given class by its name
      *
      * @param  name full qualified name of class

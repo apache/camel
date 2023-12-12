@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.java.joor;
+package org.apache.camel.language.joor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -89,7 +89,7 @@ public final class MultiCompile {
         List<CharSequenceJavaFileObject> files = new ArrayList<>();
 
         Lookup lookup = MethodHandles.lookup();
-        ClassLoader cl = lookup.lookupClass().getClassLoader();
+        ClassLoader cl = unit.getClassLoader() != null ? unit.getClassLoader() : lookup.lookupClass().getClassLoader();
         unit.getInput().forEach((cn, code) -> {
             try {
                 Class<?> clazz = cl.loadClass(cn);
@@ -124,7 +124,7 @@ public final class MultiCompile {
 
                 if (cl instanceof URLClassLoader) {
                     for (URL url : ((URLClassLoader) cl).getURLs()) {
-                        if (classpath.length() > 0) {
+                        if (!classpath.isEmpty()) {
                             classpath.append(separator);
                         }
 
