@@ -27,6 +27,7 @@ import java.util.Set;
 public class CompilationUnit {
 
     private final Map<String, String> files = new LinkedHashMap<>();
+    private ClassLoader classLoader;
 
     /**
      * The result of the compilation that holds mapping for each className -> class.
@@ -108,8 +109,20 @@ public class CompilationUnit {
         return this;
     }
 
+    /**
+     * To use a custom classloader
+     */
+    public CompilationUnit withClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+        return this;
+    }
+
     public Map<String, String> getInput() {
         return files;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     @Override
