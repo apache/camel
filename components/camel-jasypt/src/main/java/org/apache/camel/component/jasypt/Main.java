@@ -150,12 +150,6 @@ public class Main {
                 randomIvGeneratorAlgorithm = parameter;
             }
         });
-
-        addOption(new ParameterOption("a", "algorithm", "Optional algorithm to use", "algorithm") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                algorithm = parameter;
-            }
-        });
     }
 
     private void addOption(Option option) {
