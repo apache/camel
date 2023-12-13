@@ -1224,6 +1224,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());
+        doWriteAttribute("autoStartComponents", def.getAutoStartComponents());
         doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents());
         doWriteAttribute("aggregateOnException", def.getAggregateOnException());
         doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName());
@@ -1734,6 +1735,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());
+        doWriteAttribute("autoStartComponents", def.getAutoStartComponents());
         doWriteAttribute("aggregateOnException", def.getAggregateOnException());
         doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName());
         doWriteAttribute("timeout", def.getTimeout());

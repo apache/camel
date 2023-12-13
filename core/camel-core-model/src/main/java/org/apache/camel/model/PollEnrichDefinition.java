@@ -60,6 +60,9 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String autoStartComponents;
 
     public PollEnrichDefinition() {
     }
@@ -234,6 +237,16 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
         return this;
     }
 
+    /**
+     * Whether to auto startup components when poll enricher is starting up.
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition autoStartComponents(String autoStartComponents) {
+        setAutoStartComponents(autoStartComponents);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -314,5 +327,13 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
 
     public void setIgnoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
+    }
+
+    public String getAutoStartComponents() {
+        return autoStartComponents;
+    }
+
+    public void setAutoStartComponents(String autoStartComponents) {
+        this.autoStartComponents = autoStartComponents;
     }
 }

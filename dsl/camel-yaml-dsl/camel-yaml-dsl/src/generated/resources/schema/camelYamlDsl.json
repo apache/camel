@@ -1220,6 +1220,11 @@
             "title" : "Allow Optimised Components",
             "description" : "Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware ."
           },
+          "autoStartComponents" : {
+            "type" : "boolean",
+            "title" : "Auto Start Components",
+            "description" : "Whether to auto startup components when enricher is starting up."
+          },
           "cacheSize" : {
             "type" : "number",
             "title" : "Cache Size",
@@ -3645,6 +3650,11 @@
             "type" : "string",
             "title" : "Aggregation Strategy Method Name",
             "description" : "This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy."
+          },
+          "autoStartComponents" : {
+            "type" : "boolean",
+            "title" : "Auto Start Components",
+            "description" : "Whether to auto startup components when poll enricher is starting up."
           },
           "cacheSize" : {
             "type" : "number",

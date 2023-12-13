@@ -42,8 +42,8 @@ public interface ClassResolver {
     /**
      * Gets a custom class loader by its name
      *
-     * @param name the name of the custom classloader
-     * @return the class loader or <tt>null</tt> if not found
+     * @param  name the name of the custom classloader
+     * @return      the class loader or <tt>null</tt> if not found
      */
     ClassLoader getClassLoader(String name);
 

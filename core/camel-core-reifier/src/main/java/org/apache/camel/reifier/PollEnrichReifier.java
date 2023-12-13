@@ -44,11 +44,12 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         if (definition.getExpression() instanceof ConstantExpression) {
             Expression exp = createExpression(definition.getExpression());
             Exchange ex = new DefaultExchange(camelContext);
-            String dest = exp.evaluate(ex, String.class);
-            enricher = new PollEnricher(dest, time);
+            String uri = exp.evaluate(ex, String.class);
+            enricher = new PollEnricher(uri, time);
         } else {
             Expression exp = createExpression(definition.getExpression());
-            enricher = new PollEnricher(exp, time);
+            String uri = definition.getExpression().getExpression();
+            enricher = new PollEnricher(exp, uri, time);
         }
 
         AggregationStrategy strategy = getConfiguredAggregationStrategy(definition);
@@ -61,6 +62,9 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         }
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
         enricher.setAggregateOnException(isAggregateOnException);
+        if (definition.getAutoStartComponents() != null) {
+            enricher.setAutoStartupComponents(parseBoolean(definition.getAutoStartComponents(), true));
+        }
 
         return enricher;
     }
