@@ -65,7 +65,7 @@ abstract class AbstractExchange implements Exchange {
     private final ExtendedExchangeExtension privateExtension;
     private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
-    AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
+    protected AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
                      Map<String, Object> properties) {
         this.context = context;
         this.internalProperties = new EnumMap<>(internalProperties);
@@ -73,11 +73,11 @@ abstract class AbstractExchange implements Exchange {
         this.properties = safeCopyProperties(properties);
     }
 
-    public AbstractExchange(CamelContext context) {
+    protected AbstractExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
     }
 
-    public AbstractExchange(CamelContext context, ExchangePattern pattern) {
+    protected AbstractExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
         this.pattern = pattern;
 
@@ -85,7 +85,7 @@ abstract class AbstractExchange implements Exchange {
         privateExtension = new ExtendedExchangeExtension(this);
     }
 
-    public AbstractExchange(Exchange parent) {
+    protected AbstractExchange(Exchange parent) {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
 
@@ -97,7 +97,7 @@ abstract class AbstractExchange implements Exchange {
         privateExtension.setUnitOfWork(parent.getUnitOfWork());
     }
 
-    AbstractExchange(AbstractExchange parent) {
+    protected AbstractExchange(AbstractExchange parent) {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
 
@@ -133,16 +133,11 @@ abstract class AbstractExchange implements Exchange {
         }
     }
 
-    public AbstractExchange(Endpoint fromEndpoint) {
-        this.context = fromEndpoint.getCamelContext();
-        this.pattern = fromEndpoint.getExchangePattern();
-
-        internalProperties = new EnumMap<>(ExchangePropertyKey.class);
-        privateExtension = new ExtendedExchangeExtension(this);
-        privateExtension.setFromEndpoint(fromEndpoint);
+    protected AbstractExchange(Endpoint fromEndpoint) {
+        this(fromEndpoint, fromEndpoint.getExchangePattern());
     }
 
-    public AbstractExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
+    protected AbstractExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
         this.context = fromEndpoint.getCamelContext();
         this.pattern = pattern;
 
