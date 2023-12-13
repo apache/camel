@@ -119,7 +119,7 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2023-11-14T11:50:56Z</project.build.outputTimestamp>
 
-        <cyclonedx-maven-plugin-version>2.7.9</cyclonedx-maven-plugin-version>
+        <cyclonedx-maven-plugin-version>2.7.10</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.5.0</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <license-maven-plugin-version>4.2</license-maven-plugin-version>
@@ -749,6 +749,23 @@
                                 <phase>none</phase><!-- No need to even load the plugin during releases -->
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.cyclonedx</groupId>
+                        <artifactId>cyclonedx-maven-plugin</artifactId>
+                        <version>${cyclonedx-maven-plugin-version}</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>makeAggregateBom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <outputName>${project.artifactId}-${project.version}-sbom</outputName>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
