@@ -92,7 +92,7 @@ public class CosmosDbConfiguration implements Cloneable {
     private CosmosQueryRequestOptions queryRequestOptions;
     @UriParam(label = "producer", defaultValue = "listDatabases")
     private CosmosDbOperationsDefinition operation = CosmosDbOperationsDefinition.listDatabases;
-    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,AZURE_IDENTITY",
+    @UriParam(label = "security", enums = "SHARED_ACCOUNT_KEY,AZURE_IDENTITY",
               defaultValue = "AZURE_IDENTITY")
     private CredentialType credentialType = SHARED_ACCOUNT_KEY;
 
