@@ -10,3 +10,8 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Removed the deprecated constructor from the internal class `org.apache.camel.util.StopWatch`. Users of this class are advised to
 use the default constructor if necessary.
+
+=== camel-azure-cosmosdb
+
+The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between SHARED_ACCOUNT_KEY and AZURE_IDENTITY.
+This is part of the effort explained in CAMEL-18590.
