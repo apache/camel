@@ -63,6 +63,9 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowOptimisedComponents;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String autoStartComponents;
 
     public EnrichDefinition() {
         this(null);
@@ -226,6 +229,16 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
         return this;
     }
 
+    /**
+     * Whether to auto startup components when enricher is starting up.
+     *
+     * @return the builder
+     */
+    public EnrichDefinition autoStartComponents(String autoStartComponents) {
+        setAutoStartComponents(autoStartComponents);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -315,4 +328,11 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
         this.allowOptimisedComponents = allowOptimisedComponents;
     }
 
+    public String getAutoStartComponents() {
+        return autoStartComponents;
+    }
+
+    public void setAutoStartComponents(String autoStartComponents) {
+        this.autoStartComponents = autoStartComponents;
+    }
 }

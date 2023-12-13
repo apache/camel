@@ -5254,6 +5254,15 @@ Whether to allow components to optimise enricher if they are org.apache.camel.sp
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="autoStartComponents" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to auto startup components when enricher is starting up. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -11002,6 +11011,15 @@ storing too many non frequent used producers.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Ignore the invalidate endpoint exception when try to create a producer with that endpoint. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="autoStartComponents" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to auto startup components when poll enricher is starting up. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>

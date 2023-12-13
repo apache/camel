@@ -17,12 +17,15 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.processor.Enricher;
+import org.apache.camel.support.DefaultExchange;
 
 public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
@@ -32,12 +35,22 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Expression exp = createExpression(definition.getExpression());
         boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
         boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
         boolean isAggregateOnException = parseBoolean(definition.getAggregateOnException(), false);
 
-        Enricher enricher = new Enricher(exp);
+        Enricher enricher;
+        if (definition.getExpression() instanceof ConstantExpression) {
+            Expression exp = createExpression(definition.getExpression());
+            Exchange ex = new DefaultExchange(camelContext);
+            String uri = exp.evaluate(ex, String.class);
+            enricher = new Enricher(exp, uri);
+        } else {
+            Expression exp = createExpression(definition.getExpression());
+            String uri = definition.getExpression().getExpression();
+            enricher = new Enricher(exp, uri);
+        }
+
         enricher.setShareUnitOfWork(isShareUnitOfWork);
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
         enricher.setAggregateOnException(isAggregateOnException);
@@ -54,6 +67,9 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         }
         if (definition.getAllowOptimisedComponents() != null) {
             enricher.setAllowOptimisedComponents(parseBoolean(definition.getAllowOptimisedComponents(), true));
+        }
+        if (definition.getAutoStartComponents() != null) {
+            enricher.setAutoStartupComponents(parseBoolean(definition.getAutoStartComponents(), true));
         }
 
         return enricher;
