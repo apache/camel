@@ -415,7 +415,8 @@ public class ValidateMojo extends AbstractExecMojo {
 
     private void validateResults(
             CamelCatalog catalog, List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions,
-            List<CamelRouteDetails> routeIds) throws MojoExecutionException {
+            List<CamelRouteDetails> routeIds)
+            throws MojoExecutionException {
         int endpointErrors = 0;
         int unknownComponents = 0;
         int incapableErrors = 0;

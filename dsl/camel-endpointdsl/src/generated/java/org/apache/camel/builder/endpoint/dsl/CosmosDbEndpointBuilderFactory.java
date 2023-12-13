@@ -689,38 +689,37 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointConsumerBuilder useDefaultIdentity(
-                boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointConsumerBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointConsumerBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointConsumerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
     }
@@ -1505,38 +1504,37 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointProducerBuilder useDefaultIdentity(
-                boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointProducerBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointProducerBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointProducerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
     }
@@ -2124,38 +2122,36 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointBuilder useDefaultIdentity(
-                boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
     }

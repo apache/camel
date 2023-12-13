@@ -223,8 +223,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             }
 
             // grab dump data for the route
-            totalNumberOfNodes =
-                    grabDumpData(t, routeId, totalNumberOfNodes, fileName, notCovered, coveredNodes, report, document,
+            totalNumberOfNodes
+                    = grabDumpData(t, routeId, totalNumberOfNodes, fileName, notCovered, coveredNodes, report, document,
                             sourceFileName, pack);
         }
 
@@ -292,7 +292,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     private int handleAnonymousRoutes(
             List<CamelNodeDetails> anonymousRouteTrees, int totalNumberOfNodes, AtomicInteger notCovered,
-            AtomicInteger coveredNodes) throws MojoExecutionException {
+            AtomicInteger coveredNodes)
+            throws MojoExecutionException {
         // grab dump data for the route
         try {
             Map<String, List<CoverageData>> datas = RouteCoverageHelper

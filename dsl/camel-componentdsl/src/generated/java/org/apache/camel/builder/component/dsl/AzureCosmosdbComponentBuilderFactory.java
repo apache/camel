@@ -224,23 +224,6 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
-         * 
-         * Default: AZURE_IDENTITY
-         * Group: common
-         * 
-         * @param credentialType the value to set
-         * @return the dsl builder
-         */
-        default AzureCosmosdbComponentBuilder credentialType(
-                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
-            doSetProperty("credentialType", credentialType);
-            return this;
-        }
-        /**
          * Sets the Azure Cosmos database endpoint the component will connect
          * to.
          * 
@@ -637,6 +620,23 @@ public interface AzureCosmosdbComponentBuilderFactory {
             doSetProperty("accountKey", accountKey);
             return this;
         }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: AZURE_IDENTITY
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
     }
 
     class AzureCosmosdbComponentBuilderImpl
@@ -670,7 +670,6 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "cosmosAsyncClient": getOrCreateConfiguration((CosmosDbComponent) component).setCosmosAsyncClient((com.azure.cosmos.CosmosAsyncClient) value); return true;
             case "createContainerIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateContainerIfNotExists((boolean) value); return true;
             case "createDatabaseIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateDatabaseIfNotExists((boolean) value); return true;
-            case "credentialType": getOrCreateConfiguration((CosmosDbComponent) component).setCredentialType((org.apache.camel.component.azure.cosmosdb.CredentialType) value); return true;
             case "databaseEndpoint": getOrCreateConfiguration((CosmosDbComponent) component).setDatabaseEndpoint((java.lang.String) value); return true;
             case "multipleWriteRegionsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setMultipleWriteRegionsEnabled((boolean) value); return true;
             case "preferredRegions": getOrCreateConfiguration((CosmosDbComponent) component).setPreferredRegions((java.lang.String) value); return true;
@@ -692,6 +691,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "indexingPolicy": getOrCreateConfiguration((CosmosDbComponent) component).setIndexingPolicy((com.azure.cosmos.models.IndexingPolicy) value); return true;
             case "autowiredEnabled": ((CosmosDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accountKey": getOrCreateConfiguration((CosmosDbComponent) component).setAccountKey((java.lang.String) value); return true;
+            case "credentialType": getOrCreateConfiguration((CosmosDbComponent) component).setCredentialType((org.apache.camel.component.azure.cosmosdb.CredentialType) value); return true;
             default: return false;
             }
         }
