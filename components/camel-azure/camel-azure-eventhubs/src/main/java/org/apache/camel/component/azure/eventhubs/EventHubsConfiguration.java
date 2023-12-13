@@ -34,6 +34,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.azure.eventhubs.CredentialType.CONNECTION_STRING;
+
 @UriParams
 public class EventHubsConfiguration implements Cloneable {
 
@@ -80,6 +82,9 @@ public class EventHubsConfiguration implements Cloneable {
     private String partitionKey;
     @UriParam(label = "producer")
     private String partitionId;
+    @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
+              defaultValue = "CONNECTION_STRING")
+    private CredentialType credentialType = CONNECTION_STRING;
 
     /**
      * EventHubs namespace created in Azure Portal.
@@ -349,6 +354,17 @@ public class EventHubsConfiguration implements Cloneable {
      */
     public void setCheckpointBatchTimeout(int checkpointBatchTimeout) {
         this.checkpointBatchTimeout = checkpointBatchTimeout;
+    }
+
+    public CredentialType getCredentialType() {
+        return credentialType;
+    }
+
+    /**
+     * Determines the credential strategy to adopt
+     */
+    public void setCredentialType(CredentialType credentialType) {
+        this.credentialType = credentialType;
     }
 
     public EventHubsConfiguration copy() {

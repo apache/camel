@@ -55,6 +55,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "connectionString": getOrCreateConfiguration(target).setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "consumergroupname":
         case "consumerGroupName": getOrCreateConfiguration(target).setConsumerGroupName(property(camelContext, java.lang.String.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.eventhubs.CredentialType.class, value)); return true;
         case "eventposition":
         case "eventPosition": getOrCreateConfiguration(target).setEventPosition(property(camelContext, java.util.Map.class, value)); return true;
         case "lazystartproducer":
@@ -112,6 +114,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "connectionString": return java.lang.String.class;
         case "consumergroupname":
         case "consumerGroupName": return java.lang.String.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.eventhubs.CredentialType.class;
         case "eventposition":
         case "eventPosition": return java.util.Map.class;
         case "lazystartproducer":
@@ -165,6 +169,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "connectionString": return getOrCreateConfiguration(target).getConnectionString();
         case "consumergroupname":
         case "consumerGroupName": return getOrCreateConfiguration(target).getConsumerGroupName();
+        case "credentialtype":
+        case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "eventposition":
         case "eventPosition": return getOrCreateConfiguration(target).getEventPosition();
         case "lazystartproducer":
