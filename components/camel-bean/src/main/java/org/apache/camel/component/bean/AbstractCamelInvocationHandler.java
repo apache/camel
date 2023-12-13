@@ -97,7 +97,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     @SuppressWarnings("unchecked")
     protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding)
             throws Throwable {
-        final Exchange exchange = new DefaultExchange(endpoint, pattern);
+        final Exchange exchange = DefaultExchange.newFromEndpoint(endpoint, pattern);
 
         //Need to check if there are mutiple arguments and the parameters have no annotations for binding,
         //then use the original bean invocation.
@@ -172,7 +172,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     }
 
     protected Object invokeWithBody(final Method method, Object body, final ExchangePattern pattern) throws Throwable {
-        final Exchange exchange = new DefaultExchange(endpoint, pattern);
+        final Exchange exchange = DefaultExchange.newFromEndpoint(endpoint, pattern);
         exchange.getIn().setBody(body);
 
         return doInvoke(method, exchange);

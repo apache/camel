@@ -133,19 +133,6 @@ abstract class AbstractExchange implements Exchange {
         }
     }
 
-    protected AbstractExchange(Endpoint fromEndpoint) {
-        this(fromEndpoint, fromEndpoint.getExchangePattern());
-    }
-
-    protected AbstractExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        this.context = fromEndpoint.getCamelContext();
-        this.pattern = pattern;
-
-        internalProperties = new EnumMap<>(ExchangePropertyKey.class);
-        privateExtension = new ExtendedExchangeExtension(this);
-        privateExtension.setFromEndpoint(fromEndpoint);
-    }
-
     @Override
     public long getCreated() {
         return getClock().getCreated();

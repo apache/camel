@@ -101,7 +101,7 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
         if (statisticsEnabled) {
             statistics.created.increment();
         }
-        return new DefaultExchange(fromEndpoint);
+        return DefaultExchange.newFromEndpoint(fromEndpoint);
     }
 
     @Override

@@ -63,16 +63,9 @@ public final class DefaultExchange extends AbstractExchange {
         this.timeInfo = parent.getClock();
     }
 
-    public DefaultExchange(Endpoint fromEndpoint) {
-        super(fromEndpoint);
-
-        this.timeInfo = new MonotonicClock();
-    }
-
-    public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        super(fromEndpoint, pattern);
-
-        this.timeInfo = new MonotonicClock();
+    @Override
+    public Clock getClock() {
+        return timeInfo;
     }
 
     @Override
@@ -80,8 +73,15 @@ public final class DefaultExchange extends AbstractExchange {
         return new DefaultExchange(this);
     }
 
-    @Override
-    public Clock getClock() {
-        return timeInfo;
+    public static DefaultExchange newFromEndpoint(Endpoint fromEndpoint) {
+        return newFromEndpoint(fromEndpoint, fromEndpoint.getExchangePattern());
+    }
+
+    public static DefaultExchange newFromEndpoint(Endpoint fromEndpoint, ExchangePattern exchangePattern) {
+        DefaultExchange exchange = new DefaultExchange(fromEndpoint.getCamelContext(), exchangePattern);
+
+        exchange.getExchangeExtension().setFromEndpoint(fromEndpoint);
+
+        return exchange;
     }
 }
