@@ -118,6 +118,7 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1702124783</project.build.outputTimestamp>
 
+        <cyclonedx-maven-plugin-version>2.7.10</cyclonedx-maven-plugin-version>
         <maven-compiler-plugin-version>3.10.1</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
@@ -783,6 +784,23 @@
                         <configuration>
                             <skipTests>true</skipTests>
                             <failIfNoTests>false</failIfNoTests>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.cyclonedx</groupId>
+                        <artifactId>cyclonedx-maven-plugin</artifactId>
+                        <version>${cyclonedx-maven-plugin-version}</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>makeAggregateBom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <outputName>${project.artifactId}-${project.version}-sbom</outputName>
                         </configuration>
                     </plugin>
                 </plugins>
