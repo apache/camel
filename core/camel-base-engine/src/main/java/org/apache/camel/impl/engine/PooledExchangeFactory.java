@@ -123,7 +123,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     private PooledExchange createPooledExchange(Endpoint fromEndpoint, boolean autoRelease) {
         PooledExchange answer;
         if (fromEndpoint != null) {
-            answer = new DefaultPooledExchange(fromEndpoint);
+            answer = DefaultPooledExchange.newFromEndpoint(fromEndpoint);
         } else {
             answer = new DefaultPooledExchange(camelContext);
         }

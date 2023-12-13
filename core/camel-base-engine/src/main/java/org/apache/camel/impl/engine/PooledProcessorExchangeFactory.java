@@ -116,7 +116,7 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
         Exchange answer = pool.poll();
         if (answer == null) {
             // create a new exchange as there was no free from the pool
-            answer = new DefaultPooledExchange(fromEndpoint, exchangePattern);
+            answer = DefaultPooledExchange.newFromEndpoint(fromEndpoint, exchangePattern);
             if (statisticsEnabled) {
                 statistics.created.increment();
             }

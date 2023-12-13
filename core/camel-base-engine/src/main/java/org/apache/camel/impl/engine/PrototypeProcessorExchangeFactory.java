@@ -92,7 +92,7 @@ public class PrototypeProcessorExchangeFactory extends PooledObjectFactorySuppor
 
     @Override
     public Exchange create(Endpoint fromEndpoint, ExchangePattern exchangePattern) {
-        return new DefaultExchange(fromEndpoint, exchangePattern);
+        return DefaultExchange.newFromEndpoint(fromEndpoint, exchangePattern);
     }
 
     @Override
