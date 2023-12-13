@@ -70,6 +70,7 @@ public class EventProcessorTest {
         assertNotNull(EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setTokenCredential(new IntelliJCredentialBuilder().tenantId("tenantId").build());
+        configuration.setCredentialType(CredentialType.TOKEN_CREDENTIAL);
         assertThrows(IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
