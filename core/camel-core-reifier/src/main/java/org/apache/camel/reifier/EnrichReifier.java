@@ -23,9 +23,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.EndpointHelper;
 
 public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
@@ -35,25 +38,27 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
-        boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
-        boolean isAggregateOnException = parseBoolean(definition.getAggregateOnException(), false);
-
-        Enricher enricher;
+        Expression exp;
+        String uri;
         if (definition.getExpression() instanceof ConstantExpression) {
-            Expression exp = createExpression(definition.getExpression());
+            exp = createExpression(definition.getExpression());
             Exchange ex = new DefaultExchange(camelContext);
-            String uri = exp.evaluate(ex, String.class);
-            enricher = new Enricher(exp, uri);
+            uri = exp.evaluate(ex, String.class);
         } else {
-            Expression exp = createExpression(definition.getExpression());
-            String uri = definition.getExpression().getExpression();
-            enricher = new Enricher(exp, uri);
+            exp = createExpression(definition.getExpression());
+            uri = definition.getExpression().getExpression();
         }
 
-        enricher.setShareUnitOfWork(isShareUnitOfWork);
-        enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
-        enricher.setAggregateOnException(isAggregateOnException);
+        // route templates should pre parse uri as they have dynamic values as part of their template parameters
+        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+        if (rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+        }
+
+        Enricher enricher = new Enricher(exp, uri);
+        enricher.setShareUnitOfWork(parseBoolean(definition.getShareUnitOfWork(), false));
+        enricher.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
+        enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         Integer num = parseInt(definition.getCacheSize());
         if (num != null) {
             enricher.setCacheSize(num);
