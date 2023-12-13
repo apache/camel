@@ -62,6 +62,8 @@ Apache Camel Jasypt takes the following options
   -p or -password <password> = Password to use
   -i or -input <input> = Text to encrypt or decrypt
   -a or -algorithm <algorithm> = Optional algorithm to use
+  -rsga or -algorithm <algorithm> = Optional random salt generator algorithm to use
+  -riga or -algorithm <algorithm> = Optional random iv generator algorithm to use
 --------------------------------------------------------------
 
 For example to encrypt the value `tiger` you run with the following
@@ -170,6 +172,20 @@ xref:ROOT:properties-component.adoc[Properties] component as show below:
 The properties file `myproperties.properties` then contain the encrypted
 value, such as shown below. Notice how the password value is encrypted
 and the value has the tokens surrounding `ENC(value here)`
+
+[TIP]
+====
+It is possible to configure custom algorithms on the JasyptPropertiesParser like this
+
+[source,java]
+-----------------------------------------------------------------------------------------------------------
+JasyptPropertiesParser jasyptPropertiesParser = new JasyptPropertiesParser();
+
+jasyptPropertiesParser.setAlgorithm("PBEWithHmacSHA256AndAES_256");
+jasyptPropertiesParser.setRandomSaltGeneratorAlgorithm("PKCS11");
+jasyptPropertiesParser.setRandomIvGeneratorAlgorithm("PKCS11");
+-----------------------------------------------------------------------------------------------------------
+====
 
 == Example with Spring XML
 
