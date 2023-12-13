@@ -663,6 +663,26 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.uuidExpression(null);
         }
 
+        // hash function
+        remainder = ifStartsWithReturnRemainder("hash(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = values.split(",", 2);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, token.getIndex());
+                }
+                return SimpleExpressionBuilder.hashExpression(tokens[0].trim(), tokens[1].trim());
+            } else {
+                return SimpleExpressionBuilder.hashExpression(values.trim(), "SHA-256");
+            }
+        }
+
         // empty function
         remainder = ifStartsWithReturnRemainder("empty(", function);
         if (remainder != null) {
