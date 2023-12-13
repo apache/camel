@@ -2,7 +2,7 @@
   "other": {
     "kind": "other",
     "name": "groovy-dsl",
-    "title": "Groovy Dsl",
+    "title": "Groovy DSL",
     "description": "Camel DSL with Groovy",
     "deprecated": false,
     "firstVersion": "3.9.0",
