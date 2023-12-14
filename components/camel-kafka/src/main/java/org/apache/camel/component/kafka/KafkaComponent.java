@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.spi.Metadata;
@@ -30,9 +30,12 @@ import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("kafka")
 public class KafkaComponent extends HealthCheckComponent implements SSLContextParametersAware {
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaComponent.class);
 
     @Metadata
     private KafkaConfiguration configuration = new KafkaConfiguration();
@@ -232,7 +235,7 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
             kafkaClientFactory = new DefaultKafkaClientFactory();
         }
         if (configuration.isAllowManualCommit() && kafkaManualCommitFactory == null) {
-            kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
+            LOG.warn("The component was setup for allowing manual commits, but a manual commit factory was not set");
         }
     }
 
