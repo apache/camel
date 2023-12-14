@@ -14,11 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.Date;
+package org.apache.camel.processor.converter;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,6 +26,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;

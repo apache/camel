@@ -14,11 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.Date;
+package org.apache.camel.processor.converter;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,9 +24,14 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.converter.custom.MyBean;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -199,6 +200,16 @@ public class ConvertBodyTest extends ContextTestSupport {
         result.assertIsNotSatisfied();
     }
 
+    @Test
+    public void testLoadedCustomConverter() throws InterruptedException {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived(new MyBean("foo", "bar"));
+
+        template.sendBody("direct:loadedCustomConverter", "foo:bar");
+
+        result.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -209,6 +220,7 @@ public class ConvertBodyTest extends ContextTestSupport {
                 from("direct:charset").convertBodyTo(byte[].class, "iso-8859-1").to("mock:result");
                 from("direct:charset2").convertBodyTo(byte[].class, "utf-16").to("mock:result");
                 from("direct:charset3").convertBodyTo(String.class, "utf-16").to("mock:result");
+                from("direct:loadedCustomConverter").convertBodyTo(MyBean.class).to("mock:result");
             }
         };
     }
