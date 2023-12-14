@@ -4934,6 +4934,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregationStrategyMethodAllowNull", type = "string", description = "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Allow Null"),
                     @YamlProperty(name = "aggregationStrategyMethodName", type = "string", description = "This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Name"),
                     @YamlProperty(name = "allowOptimisedComponents", type = "boolean", description = "Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware .", displayName = "Allow Optimised Components"),
+                    @YamlProperty(name = "autoStartComponents", type = "boolean", description = "Whether to auto startup components when enricher is starting up.", displayName = "Auto Start Components"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producer when uris are reused. Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches. However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the default size (1000). If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help reduce memory usage to avoid storing too many non frequent used producers.", displayName = "Cache Size"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
@@ -4982,6 +4983,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "allowOptimisedComponents": {
                     String val = asText(node);
                     target.setAllowOptimisedComponents(val);
+                    break;
+                }
+                case "autoStartComponents": {
+                    String val = asText(node);
+                    target.setAutoStartComponents(val);
                     break;
                 }
                 case "cacheSize": {
@@ -10703,6 +10709,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "compressionCodecName", type = "string", defaultValue = "GZIP", description = "Compression codec to use when marshalling.", displayName = "Compression Codec Name"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "lazyLoad", type = "boolean", description = "Whether the unmarshalling should produce an iterator of records or read all the records at once.", displayName = "Lazy Load"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for unmarshalling and input objects are assumed as GenericRecords for marshalling.", displayName = "Unmarshal Type")
             }
     )
@@ -10734,6 +10741,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "lazyLoad": {
+                    String val = asText(node);
+                    target.setLazyLoad(val);
                     break;
                 }
                 case "unmarshalType": {
@@ -11164,6 +11176,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregationStrategy", type = "string", description = "Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message. By default Camel will use the reply from the external service as outgoing message.", displayName = "Aggregation Strategy"),
                     @YamlProperty(name = "aggregationStrategyMethodAllowNull", type = "string", description = "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Allow Null"),
                     @YamlProperty(name = "aggregationStrategyMethodName", type = "string", description = "This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Name"),
+                    @YamlProperty(name = "autoStartComponents", type = "boolean", description = "Whether to auto startup components when poll enricher is starting up.", displayName = "Auto Start Components"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse consumers when uris are reused. Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches. However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the default size (1000). If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help reduce memory usage to avoid storing too many non frequent used producers.", displayName = "Cache Size"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
@@ -11207,6 +11220,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "aggregationStrategyMethodName": {
                     String val = asText(node);
                     target.setAggregationStrategyMethodName(val);
+                    break;
+                }
+                case "autoStartComponents": {
+                    String val = asText(node);
+                    target.setAutoStartComponents(val);
                     break;
                 }
                 case "cacheSize": {

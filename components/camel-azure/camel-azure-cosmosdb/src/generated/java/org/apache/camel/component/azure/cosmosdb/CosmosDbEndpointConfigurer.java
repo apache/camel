@@ -47,6 +47,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "createLeaseContainerIfNotExists": target.getConfiguration().setCreateLeaseContainerIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "createleasedatabaseifnotexists":
         case "createLeaseDatabaseIfNotExists": target.getConfiguration().setCreateLeaseDatabaseIfNotExists(property(camelContext, boolean.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.cosmosdb.CredentialType.class, value)); return true;
         case "databaseendpoint":
         case "databaseEndpoint": target.getConfiguration().setDatabaseEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -79,8 +81,6 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readRequestsFallbackEnabled": target.getConfiguration().setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         case "throughputproperties":
         case "throughputProperties": target.getConfiguration().setThroughputProperties(property(camelContext, com.azure.cosmos.models.ThroughputProperties.class, value)); return true;
-        case "usedefaultidentity":
-        case "useDefaultIdentity": target.getConfiguration().setUseDefaultIdentity(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -119,6 +119,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "createLeaseContainerIfNotExists": return boolean.class;
         case "createleasedatabaseifnotexists":
         case "createLeaseDatabaseIfNotExists": return boolean.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.cosmosdb.CredentialType.class;
         case "databaseendpoint":
         case "databaseEndpoint": return java.lang.String.class;
         case "exceptionhandler":
@@ -151,8 +153,6 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readRequestsFallbackEnabled": return boolean.class;
         case "throughputproperties":
         case "throughputProperties": return com.azure.cosmos.models.ThroughputProperties.class;
-        case "usedefaultidentity":
-        case "useDefaultIdentity": return boolean.class;
         default: return null;
         }
     }
@@ -187,6 +187,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "createLeaseContainerIfNotExists": return target.getConfiguration().isCreateLeaseContainerIfNotExists();
         case "createleasedatabaseifnotexists":
         case "createLeaseDatabaseIfNotExists": return target.getConfiguration().isCreateLeaseDatabaseIfNotExists();
+        case "credentialtype":
+        case "credentialType": return target.getConfiguration().getCredentialType();
         case "databaseendpoint":
         case "databaseEndpoint": return target.getConfiguration().getDatabaseEndpoint();
         case "exceptionhandler":
@@ -219,8 +221,6 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readRequestsFallbackEnabled": return target.getConfiguration().isReadRequestsFallbackEnabled();
         case "throughputproperties":
         case "throughputProperties": return target.getConfiguration().getThroughputProperties();
-        case "usedefaultidentity":
-        case "useDefaultIdentity": return target.getConfiguration().isUseDefaultIdentity();
         default: return null;
         }
     }

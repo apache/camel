@@ -18,6 +18,7 @@
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "compressionCodecName": { "index": 1, "kind": "attribute", "displayName": "Compression Codec Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "GZIP", "description": "Compression codec to use when marshalling." },
-    "unmarshalType": { "index": 2, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for unmarshalling and input objects are assumed as GenericRecords for marshalling." }
+    "unmarshalType": { "index": 2, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for unmarshalling and input objects are assumed as GenericRecords for marshalling." },
+    "lazyLoad": { "index": 3, "kind": "attribute", "displayName": "Lazy Load", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the unmarshalling should produce an iterator of records or read all the records at once." }
   }
 }

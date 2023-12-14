@@ -93,6 +93,7 @@
 ** xref:dynamic-router-component.adoc[Dynamic Router]
 ** xref:ehcache-component.adoc[Ehcache]
 ** xref:elasticsearch-component.adoc[Elasticsearch]
+** xref:elasticsearch-rest-client-component.adoc[Elasticsearch Low level Rest Client]
 ** xref:etcd3-component.adoc[Etcd v3]
 ** xref:exec-component.adoc[Exec]
 ** xref:facebook-component.adoc[Facebook]

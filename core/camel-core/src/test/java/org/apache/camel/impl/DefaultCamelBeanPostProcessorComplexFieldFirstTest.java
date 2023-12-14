@@ -16,6 +16,14 @@
  */
 package org.apache.camel.impl;
 
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
+
+import javax.sql.DataSource;
+
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.ContextTestSupport;
@@ -23,14 +31,6 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.sql.DataSource;
-
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

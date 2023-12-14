@@ -39,6 +39,18 @@ class AvroStructDataTypeTransformerTest {
     private final AvroStructDataTypeTransformer transformer = new AvroStructDataTypeTransformer();
 
     @Test
+    void shouldHandleAvroBinary() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        AvroSchema avroSchema = getSchema();
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
+        exchange.getMessage().setBody(Avro.mapper().writer(avroSchema).writeValueAsBytes(new Person("Christoph", 32)));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        Assertions.assertEquals(ObjectNode.class, exchange.getMessage().getBody().getClass());
+    }
+
+    @Test
     void shouldHandleJsonString() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
@@ -100,6 +112,6 @@ class AvroStructDataTypeTransformerTest {
     }
 
     private AvroSchema getSchema() throws IOException {
-        return Avro.mapper().schemaFrom(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc"));
+        return Avro.mapper().schemaFrom(AvroStructDataTypeTransformerTest.class.getResourceAsStream("Person.avsc"));
     }
 }

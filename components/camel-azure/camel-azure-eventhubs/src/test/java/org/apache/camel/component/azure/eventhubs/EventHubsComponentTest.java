@@ -139,6 +139,25 @@ class EventHubsComponentTest extends CamelTestSupport {
         assertEquals(1000, endpoint.getConfiguration().getCheckpointBatchTimeout());
     }
 
+    @Test
+    public void testCreateEndpointWithConfigAzureIdentity() {
+        final String uri = "azure-eventhubs:namespace/hubName?sharedAccessName=DummyAccessKeyName"
+                           + "&sharedAccessKey=DummyKey"
+                           + "&consumerGroupName=testConsumer&prefetchCount=100"
+                           + "&checkpointBatchSize=100&checkpointBatchTimeout=1000"
+                           + "&credentialType=AZURE_IDENTITY";
+
+        final EventHubsEndpoint endpoint = context.getEndpoint(uri, EventHubsEndpoint.class);
+
+        assertEquals("namespace", endpoint.getConfiguration().getNamespace());
+        assertEquals("hubName", endpoint.getConfiguration().getEventHubName());
+        assertEquals("testConsumer", endpoint.getConfiguration().getConsumerGroupName());
+        assertEquals(CredentialType.AZURE_IDENTITY, endpoint.getConfiguration().getCredentialType());
+        assertEquals(100, endpoint.getConfiguration().getPrefetchCount());
+        assertEquals(100, endpoint.getConfiguration().getCheckpointBatchSize());
+        assertEquals(1000, endpoint.getConfiguration().getCheckpointBatchTimeout());
+    }
+
     private String getErrorMessage(final String uri) {
         ResolveEndpointFailedException exception
                 = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint(uri));

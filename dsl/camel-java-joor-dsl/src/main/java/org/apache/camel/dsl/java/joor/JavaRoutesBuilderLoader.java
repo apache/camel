@@ -18,7 +18,9 @@ package org.apache.camel.dsl.java.joor;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Modifier;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,6 +36,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
+import org.apache.camel.language.joor.CamelJoorClassLoader;
+import org.apache.camel.language.joor.CompilationUnit;
+import org.apache.camel.language.joor.JavaJoorClassLoader;
+import org.apache.camel.language.joor.MultiCompile;
 import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.Resource;
@@ -57,7 +63,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
     private final ConcurrentMap<Collection<Resource>, CompilationUnit.Result> compiled = new ConcurrentHashMap<>();
     private final Map<String, Resource> nameToResource = new HashMap<>();
-    private final JavaJoorClassLoader classLoader = new JavaJoorClassLoader();
+    private JavaJoorClassLoader classLoader;
 
     public JavaRoutesBuilderLoader() {
         super(EXTENSION);
@@ -70,7 +76,12 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         // register jOOR classloader to camel, so we are able to load classes we have compiled
         CamelContext context = getCamelContext();
         if (context != null) {
-            context.getClassResolver().addClassLoader(classLoader);
+            // use existing class loader if available
+            classLoader = (JavaJoorClassLoader) context.getClassResolver().getClassLoader("JavaJoorClassLoader");
+            if (classLoader == null) {
+                classLoader = new JavaJoorClassLoader();
+                context.getClassResolver().addClassLoader(classLoader);
+            }
             // use work dir for classloader as it writes compiled classes to disk
             CompileStrategy cs = context.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
             if (cs != null && cs.getWorkDir() != null) {
@@ -179,6 +190,13 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 unit.addClass(name, content);
                 nameToResource.put(name, resource);
             }
+        }
+
+        // include classloader from Camel, so we can load any already compiled and loaded classes
+        ClassLoader parent = MethodHandles.lookup().lookupClass().getClassLoader();
+        if (parent instanceof URLClassLoader ucl) {
+            ClassLoader cl = new CamelJoorClassLoader(ucl, getCamelContext());
+            unit.withClassLoader(cl);
         }
 
         if (LOG.isDebugEnabled()) {

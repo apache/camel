@@ -25,6 +25,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.RandomIvGenerator;
+import org.jasypt.salt.RandomSaltGenerator;
 
 /**
  * A {@link org.apache.camel.component.properties.PropertiesParser} which is using
@@ -44,6 +46,8 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     private StringEncryptor encryptor;
     private String password;
     private String algorithm;
+    private String randomSaltGeneratorAlgorithm;
+    private String randomIvGeneratorAlgorithm;
 
     public JasyptPropertiesParser() {
     }
@@ -69,6 +73,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         if (encryptor == null) {
             StringHelper.notEmpty("password", password);
             StandardPBEStringEncryptor pbeStringEncryptor = new StandardPBEStringEncryptor();
+
             pbeStringEncryptor.setPassword(password);
             if (algorithm != null) {
                 pbeStringEncryptor.setAlgorithm(algorithm);
@@ -76,6 +81,14 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
             } else {
                 log.debug("Initialized encryptor using default algorithm and provided password");
             }
+
+            if (randomSaltGeneratorAlgorithm != null) {
+                pbeStringEncryptor.setSaltGenerator(new RandomSaltGenerator(randomSaltGeneratorAlgorithm));
+            }
+            if (randomIvGeneratorAlgorithm != null) {
+                pbeStringEncryptor.setIvGenerator(new RandomIvGenerator(randomIvGeneratorAlgorithm));
+            }
+
             encryptor = pbeStringEncryptor;
         }
     }
@@ -86,6 +99,14 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public void setRandomSaltGeneratorAlgorithm(String randomSaltGeneratorAlgorithm) {
+        this.randomSaltGeneratorAlgorithm = randomSaltGeneratorAlgorithm;
+    }
+
+    public void setRandomIvGeneratorAlgorithm(String randomIvGeneratorAlgorithm) {
+        this.randomIvGeneratorAlgorithm = randomIvGeneratorAlgorithm;
     }
 
     public void setPassword(String password) {

@@ -709,6 +709,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-elasticsearch-rest-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-elytron</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1250,6 +1255,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-knative-http</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-kotlin-dsl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

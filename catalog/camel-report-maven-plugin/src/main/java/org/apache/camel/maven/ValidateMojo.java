@@ -243,36 +243,13 @@ public class ValidateMojo extends AbstractExecMojo {
         List<ConfigurationPropertiesValidationResult> results = new ArrayList<>();
 
         for (File file : propertiesFiles) {
-            if (matchPropertiesFile(file)) {
-                try (InputStream is = new FileInputStream(file)) {
-                    Properties prop = new OrderedProperties();
-                    prop.load(is);
-
-                    // validate each line
-                    for (String name : prop.stringPropertyNames()) {
-                        String value = prop.getProperty(name);
-                        if (value != null) {
-                            String text = name + "=" + value;
-                            ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
-                            // only include lines that camel can accept (as there may be non camel properties too)
-                            if (result.isAccepted()) {
-                                // try to find line number
-                                int lineNumber = findLineNumberInPropertiesFile(file, name);
-                                if (lineNumber != -1) {
-                                    result.setLineNumber(lineNumber);
-                                }
-                                results.add(result);
-                                result.setText(text);
-                                result.setFileName(file.getName());
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
-                }
-            }
+            parseProperties(catalog, file, results);
         }
 
+        validateResults(results);
+    }
+
+    private void validateResults(List<ConfigurationPropertiesValidationResult> results) throws MojoExecutionException {
         int configurationErrors = 0;
         int unknownComponents = 0;
         int incapableErrors = 0;
@@ -355,6 +332,37 @@ public class ValidateMojo extends AbstractExecMojo {
         }
     }
 
+    private void parseProperties(CamelCatalog catalog, File file, List<ConfigurationPropertiesValidationResult> results) {
+        if (matchPropertiesFile(file)) {
+            try (InputStream is = new FileInputStream(file)) {
+                Properties prop = new OrderedProperties();
+                prop.load(is);
+
+                // validate each line
+                for (String name : prop.stringPropertyNames()) {
+                    String value = prop.getProperty(name);
+                    if (value != null) {
+                        String text = name + "=" + value;
+                        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+                        // only include lines that camel can accept (as there may be non camel properties too)
+                        if (result.isAccepted()) {
+                            // try to find line number
+                            int lineNumber = findLineNumberInPropertiesFile(file, name);
+                            if (lineNumber != -1) {
+                                result.setLineNumber(lineNumber);
+                            }
+                            results.add(result);
+                            result.setText(text);
+                            result.setFileName(file.getName());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
+            }
+        }
+    }
+
     private int findLineNumberInPropertiesFile(File file, String name) {
         name = name.trim();
         // try to find the line number
@@ -402,6 +410,13 @@ public class ValidateMojo extends AbstractExecMojo {
         }
 
         // endpoint uris
+        validateResults(catalog, endpoints, simpleExpressions, routeIds);
+    }
+
+    private void validateResults(
+            CamelCatalog catalog, List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions,
+            List<CamelRouteDetails> routeIds)
+            throws MojoExecutionException {
         int endpointErrors = 0;
         int unknownComponents = 0;
         int incapableErrors = 0;
@@ -488,23 +503,33 @@ public class ValidateMojo extends AbstractExecMojo {
         int duplicateRouteIdErrors = validateDuplicateRouteId(routeIds);
         String routeIdSummary = "";
         if (duplicateRouteId) {
-            if (duplicateRouteIdErrors == 0) {
-                routeIdSummary = String.format("Duplicate route id validation success: (%s = ids)", routeIds.size());
-            } else {
-                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)",
-                        routeIds.size(), duplicateRouteIdErrors);
-            }
-            if (duplicateRouteIdErrors > 0) {
-                getLog().warn(routeIdSummary);
-            } else {
-                getLog().info(routeIdSummary);
-            }
+            routeIdSummary = handleDuplicateRouteId(duplicateRouteIdErrors, routeIds);
         }
 
-        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0) || sedaDirectErrors > 0) {
+        if (failOnError && hasErrors(endpointErrors, simpleErrors, duplicateRouteIdErrors) || sedaDirectErrors > 0) {
             throw new MojoExecutionException(
                     endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
         }
+    }
+
+    private static boolean hasErrors(int endpointErrors, int simpleErrors, int duplicateRouteIdErrors) {
+        return endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0;
+    }
+
+    private String handleDuplicateRouteId(int duplicateRouteIdErrors, List<CamelRouteDetails> routeIds) {
+        String routeIdSummary;
+        if (duplicateRouteIdErrors == 0) {
+            routeIdSummary = String.format("Duplicate route id validation success: (%s = ids)", routeIds.size());
+        } else {
+            routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)",
+                    routeIds.size(), duplicateRouteIdErrors);
+        }
+        if (duplicateRouteIdErrors > 0) {
+            getLog().warn(routeIdSummary);
+        } else {
+            getLog().info(routeIdSummary);
+        }
+        return routeIdSummary;
     }
 
     private String buildSimpleSummaryMessage(List<CamelSimpleExpressionDetails> simpleExpressions, int simpleErrors) {

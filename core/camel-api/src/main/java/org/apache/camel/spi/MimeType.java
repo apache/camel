@@ -25,6 +25,9 @@ import java.util.Objects;
 public enum MimeType {
     JSON("application/json"),
     PROTOBUF("application/protobuf"),
+    PROTOBUF_BINARY("protobuf/binary"),
+    PROTOBUF_STRUCT("protobuf/x-struct"),
+    PROTOBUF_JAVA_OBJECT("protobuf/x-java-object"),
     AVRO("application/avro"),
     AVRO_BINARY("avro/binary"),
     AVRO_STRUCT("avro/x-struct"),

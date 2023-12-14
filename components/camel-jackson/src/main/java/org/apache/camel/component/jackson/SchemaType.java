@@ -25,7 +25,7 @@ import java.util.Objects;
  * Supported schema types for Java object serialization/deserialization
  */
 public enum SchemaType {
-    PROTOBUF("protobuf"),
+    PROTOBUF("proto"),
     AVRO("avsc"),
     JSON("json");
 

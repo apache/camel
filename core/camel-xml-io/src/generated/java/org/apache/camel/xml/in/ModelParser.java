@@ -390,6 +390,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "allowOptimisedComponents": def.setAllowOptimisedComponents(val); break;
+                case "autoStartComponents": def.setAutoStartComponents(val); break;
                 case "cacheSize": def.setCacheSize(val); break;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); break;
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); break;
@@ -743,6 +744,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategy": def.setAggregationStrategy(val); break;
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
+                case "autoStartComponents": def.setAutoStartComponents(val); break;
                 case "cacheSize": def.setCacheSize(val); break;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); break;
                 case "timeout": def.setTimeout(val); break;
@@ -2450,6 +2452,7 @@ public class ModelParser extends BaseParser {
         return doParse(new ParquetAvroDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "compressionCodecName": def.setCompressionCodecName(val); break;
+                case "lazyLoad": def.setLazyLoad(val); break;
                 case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }

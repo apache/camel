@@ -36,6 +36,7 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
         props.add("createDatabaseIfNotExists");
         props.add("createLeaseContainerIfNotExists");
         props.add("createLeaseDatabaseIfNotExists");
+        props.add("credentialType");
         props.add("databaseEndpoint");
         props.add("databaseName");
         props.add("exceptionHandler");
@@ -54,7 +55,6 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
         props.add("queryRequestOptions");
         props.add("readRequestsFallbackEnabled");
         props.add("throughputProperties");
-        props.add("useDefaultIdentity");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("accountKey");

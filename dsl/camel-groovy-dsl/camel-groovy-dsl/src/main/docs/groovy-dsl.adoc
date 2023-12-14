@@ -1,5 +1,5 @@
-= Groovy Dsl Component
-:doctitle: Groovy Dsl
+= Groovy DSL Component
+:doctitle: Groovy DSL
 :shortname: groovy-dsl
 :artifactid: camel-groovy-dsl
 :description: Camel DSL with Groovy

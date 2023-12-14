@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,6 +46,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.InetAddressUtil;
+import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
@@ -2151,6 +2154,49 @@ public class SimpleTest extends LanguageTestSupport {
         // custom generator
         context.getRegistry().bind("mygen", (UuidGenerator) () -> "1234");
         assertExpression("${uuid(mygen)}", "1234");
+    }
+
+    @Test
+    public void testHash() throws Exception {
+        Expression expression = context.resolveLanguage("simple").createExpression("${hash(hello)}");
+        String s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] bytes = digest.digest("hello".getBytes(StandardCharsets.UTF_8));
+        String expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        digest = MessageDigest.getInstance("SHA-256");
+        bytes = digest.digest(exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8));
+        expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${header.foo})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(hello,SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${body},SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        digest = MessageDigest.getInstance("SHA3-256");
+        bytes = digest.digest(exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8));
+        expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${header.foo},SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${header.unknown})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
     }
 
     @Test

@@ -82,7 +82,24 @@ class AvroPojoDataTypeTransformerTest {
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
         exchange.getMessage()
-                .setBody(Avro.mapper().writerFor(JsonNode.class).with(avroSchema).writeValueAsBytes(Json.mapper().readTree("""
+                .setBody(Avro.mapper().writer(avroSchema).writeValueAsBytes(new Person("Goofy", 25)));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
+        Assertions.assertEquals("Goofy", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(25, exchange.getMessage().getBody(Person.class).age());
+    }
+
+    @Test
+    void shouldHandleAvroJsonNode() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        AvroSchema avroSchema = getSchema();
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
+        exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+        exchange.getMessage()
+                .setBody(Avro.mapper().writerFor(JsonNode.class).with(avroSchema)
+                        .writeValueAsBytes(Json.mapper().readTree("""
                             { "name": "Goofy", "age": 25 }
                         """)));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
@@ -116,6 +133,6 @@ class AvroPojoDataTypeTransformerTest {
     }
 
     private AvroSchema getSchema() throws IOException {
-        return Avro.mapper().schemaFrom(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc"));
+        return Avro.mapper().schemaFrom(AvroPojoDataTypeTransformerTest.class.getResourceAsStream("Person.avsc"));
     }
 }

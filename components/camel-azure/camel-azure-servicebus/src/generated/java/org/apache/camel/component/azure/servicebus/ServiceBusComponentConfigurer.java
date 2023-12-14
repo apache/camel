@@ -44,6 +44,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "connectionString": getOrCreateConfiguration(target).setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "consumeroperation":
         case "consumerOperation": getOrCreateConfiguration(target).setConsumerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.servicebus.CredentialType.class, value)); return true;
         case "disableautocomplete":
         case "disableAutoComplete": getOrCreateConfiguration(target).setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
         case "fullyqualifiednamespace":
@@ -106,6 +108,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "connectionString": return java.lang.String.class;
         case "consumeroperation":
         case "consumerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.servicebus.CredentialType.class;
         case "disableautocomplete":
         case "disableAutoComplete": return boolean.class;
         case "fullyqualifiednamespace":
@@ -164,6 +168,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "connectionString": return getOrCreateConfiguration(target).getConnectionString();
         case "consumeroperation":
         case "consumerOperation": return getOrCreateConfiguration(target).getConsumerOperation();
+        case "credentialtype":
+        case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "disableautocomplete":
         case "disableAutoComplete": return getOrCreateConfiguration(target).isDisableAutoComplete();
         case "fullyqualifiednamespace":

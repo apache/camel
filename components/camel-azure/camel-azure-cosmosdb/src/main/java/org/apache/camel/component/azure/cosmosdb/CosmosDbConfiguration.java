@@ -28,6 +28,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.azure.cosmosdb.CredentialType.SHARED_ACCOUNT_KEY;
+
 @UriParams
 public class CosmosDbConfiguration implements Cloneable {
 
@@ -38,9 +40,6 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     @Metadata(required = false)
     private String accountKey;
-    @UriParam(label = "security", secret = false)
-    @Metadata(required = false)
-    private boolean useDefaultIdentity;
     @UriParam(label = "common")
     @Metadata(required = true)
     private String databaseEndpoint;
@@ -93,6 +92,9 @@ public class CosmosDbConfiguration implements Cloneable {
     private CosmosQueryRequestOptions queryRequestOptions;
     @UriParam(label = "producer", defaultValue = "listDatabases")
     private CosmosDbOperationsDefinition operation = CosmosDbOperationsDefinition.listDatabases;
+    @UriParam(label = "security", enums = "SHARED_ACCOUNT_KEY,AZURE_IDENTITY",
+              defaultValue = "SHARED_ACCOUNT_KEY")
+    private CredentialType credentialType = SHARED_ACCOUNT_KEY;
 
     public CosmosDbConfiguration() {
     }
@@ -132,15 +134,15 @@ public class CosmosDbConfiguration implements Cloneable {
         this.accountKey = accountKey;
     }
 
-    /**
-     * Indicates whether to use the default identity mechanism instead of the access key.
-     */
-    public boolean isUseDefaultIdentity() {
-        return useDefaultIdentity;
+    public CredentialType getCredentialType() {
+        return credentialType;
     }
 
-    public void setUseDefaultIdentity(boolean useDefaultIdentity) {
-        this.useDefaultIdentity = useDefaultIdentity;
+    /**
+     * Determines the credential strategy to adopt
+     */
+    public void setCredentialType(CredentialType credentialType) {
+        this.credentialType = credentialType;
     }
 
     /**

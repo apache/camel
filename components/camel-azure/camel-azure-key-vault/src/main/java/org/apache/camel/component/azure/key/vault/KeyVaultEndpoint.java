@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
-import com.azure.identity.ClientSecretCredential;
+import com.azure.core.credential.TokenCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import org.apache.camel.Category;
@@ -61,12 +62,17 @@ public class KeyVaultEndpoint extends DefaultEndpoint {
         // Build key vault URI
         String keyVaultUri = "https://" + getConfiguration().getVaultName() + ".vault.azure.net";
 
+        TokenCredential credential = null;
         // Credential
-        ClientSecretCredential credential = new ClientSecretCredentialBuilder()
-                .tenantId(getConfiguration().getTenantId())
-                .clientId(getConfiguration().getClientId())
-                .clientSecret(getConfiguration().getClientSecret())
-                .build();
+        if (configuration.getCredentialType().equals(CredentialType.CLIENT_SECRET)) {
+            credential = new ClientSecretCredentialBuilder()
+                    .tenantId(getConfiguration().getTenantId())
+                    .clientId(getConfiguration().getClientId())
+                    .clientSecret(getConfiguration().getClientSecret())
+                    .build();
+        } else if (configuration.getCredentialType().equals(CredentialType.AZURE_IDENTITY)) {
+            credential = new DefaultAzureCredentialBuilder().build();
+        }
 
         // Build Client
         localClient = new SecretClientBuilder()

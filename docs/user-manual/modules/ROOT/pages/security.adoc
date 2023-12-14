@@ -330,6 +330,22 @@ camel.vault.azure.clientSecret = clientSecret
 camel.vault.azure.vaultName = vaultName
 ----
 
+Or you can enable the usage of Azure Identity in the following way:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AZURE_IDENTITY_ENABLED=true
+export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+----
+
+You can also enable the usage of Azure Identity in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.azure.azureIdentityEnabled = true
+camel.vault.azure.vaultName = vaultName
+----
+
 At this point you'll be able to reference a property in the following way:
 
 [source,xml]
@@ -644,6 +660,22 @@ or as plain Camel main properties:
 camel.vault.azure.tenantId = accessKey
 camel.vault.azure.clientId = clientId
 camel.vault.azure.clientSecret = clientSecret
+camel.vault.azure.vaultName = vaultName
+----
+
+If you want to use Azure Identity with environment variables, you can do in the following way:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AZURE_IDENTITY_ENABLED=true
+export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+----
+
+You can also enable the usage of Azure Identity in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.azure.azureIdentityEnabled = true
 camel.vault.azure.vaultName = vaultName
 ----
 

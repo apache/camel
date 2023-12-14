@@ -1260,6 +1260,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ElasticsearchComponentBuilderFactory.elasticsearch();
     }
     /**
+     * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
+     * Perform queries and other operations on Elasticsearch or OpenSearch (uses
+     * low-level client).
+     * 
+     * Category: search
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest-client
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.ElasticsearchRestClientComponentBuilderFactory.ElasticsearchRestClientComponentBuilder elasticsearchRestClient() {
+        return org.apache.camel.builder.component.dsl.ElasticsearchRestClientComponentBuilderFactory.elasticsearchRestClient();
+    }
+    /**
      * Etcd v3 (camel-etcd3)
      * Get, set, delete or watch keys in etcd key-value store.
      * 

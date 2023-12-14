@@ -4327,6 +4327,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
+     * Perform queries and other operations on Elasticsearch or OpenSearch (uses
+     * low-level client).
+     * 
+     * Category: search
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest-client
+     * 
+     * Syntax: <code>elasticsearch-rest-client:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * Cluster Name
+     * 
+     * @param path clusterName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchRestClientEndpointBuilderFactory.ElasticsearchRestClientEndpointBuilder elasticsearchRestClient(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ElasticsearchRestClientEndpointBuilderFactory.endpointBuilder("elasticsearch-rest-client", path);
+    }
+    /**
+     * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
+     * Perform queries and other operations on Elasticsearch or OpenSearch (uses
+     * low-level client).
+     * 
+     * Category: search
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest-client
+     * 
+     * Syntax: <code>elasticsearch-rest-client:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * Cluster Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path clusterName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchRestClientEndpointBuilderFactory.ElasticsearchRestClientEndpointBuilder elasticsearchRestClient(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ElasticsearchRestClientEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Etcd v3 (camel-etcd3)
      * Get, set, delete or watch keys in etcd key-value store.
      * 

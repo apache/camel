@@ -223,27 +223,9 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             }
 
             // grab dump data for the route
-            try {
-                List<CoverageData> coverageData = RouteCoverageHelper
-                        .parseDumpRouteCoverageByRouteId(project.getBasedir() + "/target/camel-route-coverage", routeId);
-                if (coverageData.isEmpty()) {
-                    getLog().warn("No route coverage data found for route: " + routeId
-                                  + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
-                } else {
-                    List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(List.of(t), coverageData);
-                    totalNumberOfNodes += coverage.size();
-                    String out = templateCoverageData(fileName, routeId, coverage, notCovered, coveredNodes);
-                    getLog().info("Route coverage summary:\n\n" + out);
-                    getLog().info("");
-
-                    if (generateJacocoXmlReport && report != null) {
-                        appendSourcefileNode(document, sourceFileName, pack, coverage);
-                    }
-                }
-
-            } catch (Exception e) {
-                throw new MojoExecutionException("Error during gathering route coverage data for route: " + routeId, e);
-            }
+            totalNumberOfNodes
+                    = grabDumpData(t, routeId, totalNumberOfNodes, fileName, notCovered, coveredNodes, report, document,
+                            sourceFileName, pack);
         }
 
         if (generateJacocoXmlReport && report != null) {
@@ -271,6 +253,34 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         }
     }
 
+    private int grabDumpData(
+            CamelNodeDetails t, String routeId, int totalNumberOfNodes, String fileName, AtomicInteger notCovered,
+            AtomicInteger coveredNodes, Element report, Document document, String sourceFileName, Element pack)
+            throws MojoExecutionException {
+        try {
+            List<CoverageData> coverageData = RouteCoverageHelper
+                    .parseDumpRouteCoverageByRouteId(project.getBasedir() + "/target/camel-route-coverage", routeId);
+            if (coverageData.isEmpty()) {
+                getLog().warn("No route coverage data found for route: " + routeId
+                              + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
+            } else {
+                List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(List.of(t), coverageData);
+                totalNumberOfNodes += coverage.size();
+                String out = templateCoverageData(fileName, routeId, coverage, notCovered, coveredNodes);
+                getLog().info("Route coverage summary:\n\n" + out);
+                getLog().info("");
+
+                if (generateJacocoXmlReport && report != null) {
+                    appendSourcefileNode(document, sourceFileName, pack, coverage);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error during gathering route coverage data for route: " + routeId, e);
+        }
+        return totalNumberOfNodes;
+    }
+
     private void doGenerateJacocoReport(File file, Document document) {
         try {
             getLog().info("Generating Jacoco XML report: " + file + "\n\n");
@@ -282,7 +292,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     private int handleAnonymousRoutes(
             List<CamelNodeDetails> anonymousRouteTrees, int totalNumberOfNodes, AtomicInteger notCovered,
-            AtomicInteger coveredNodes) throws MojoExecutionException {
+            AtomicInteger coveredNodes)
+            throws MojoExecutionException {
         // grab dump data for the route
         try {
             Map<String, List<CoverageData>> datas = RouteCoverageHelper

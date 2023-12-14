@@ -22,6 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.RandomIvGenerator;
+import org.jasypt.salt.RandomSaltGenerator;
 
 public class Main {
 
@@ -31,6 +33,8 @@ public class Main {
     private String password;
     private String input;
     private String algorithm;
+    private String randomSaltGeneratorAlgorithm;
+    private String randomIvGeneratorAlgorithm;
 
     private abstract class Option {
         private String abbreviation;
@@ -134,6 +138,18 @@ public class Main {
                 algorithm = parameter;
             }
         });
+
+        addOption(new ParameterOption("rsga", "salt", "Optional random salt generator algorithm to use", "salt") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                randomSaltGeneratorAlgorithm = parameter;
+            }
+        });
+
+        addOption(new ParameterOption("riga", "iv", "Optional random iv generator algorithm to use", "iv") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                randomIvGeneratorAlgorithm = parameter;
+            }
+        });
     }
 
     private void addOption(Option option) {
@@ -203,6 +219,12 @@ public class Main {
         encryptor.setPassword(password);
         if (algorithm != null) {
             encryptor.setAlgorithm(algorithm);
+        }
+        if (randomSaltGeneratorAlgorithm != null) {
+            encryptor.setSaltGenerator(new RandomSaltGenerator(randomSaltGeneratorAlgorithm));
+        }
+        if (randomIvGeneratorAlgorithm != null) {
+            encryptor.setIvGenerator(new RandomIvGenerator(randomIvGeneratorAlgorithm));
         }
         if ("encrypt".equals(command)) {
             System.out.println("Encrypted text: " + encryptor.encrypt(input));

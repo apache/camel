@@ -53,17 +53,20 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     private String id;
     private String routeId;
     private final Expression expression;
+    private final String uri;
     private AggregationStrategy aggregationStrategy;
     private boolean aggregateOnException;
     private boolean shareUnitOfWork;
     private int cacheSize;
     private boolean ignoreInvalidEndpoint;
     private boolean allowOptimisedComponents = true;
+    private boolean autoStartupComponents = true;
     private ProcessorExchangeFactory processorExchangeFactory;
     private SendDynamicProcessor sendDynamicProcessor;
 
-    public Enricher(Expression expression) {
+    public Enricher(Expression expression, String uri) {
         this.expression = expression;
+        this.uri = uri;
     }
 
     @Override
@@ -152,6 +155,14 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         this.allowOptimisedComponents = allowOptimisedComponents;
     }
 
+    public boolean isAutoStartupComponents() {
+        return autoStartupComponents;
+    }
+
+    public void setAutoStartupComponents(boolean autoStartupComponents) {
+        this.autoStartupComponents = autoStartupComponents;
+    }
+
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
@@ -231,11 +242,12 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     @Override
     protected void doBuild() throws Exception {
         // use send dynamic to send to endpoint
-        this.sendDynamicProcessor = new SendDynamicProcessor(null, getExpression());
+        this.sendDynamicProcessor = new SendDynamicProcessor(uri, expression);
         this.sendDynamicProcessor.setCamelContext(camelContext);
         this.sendDynamicProcessor.setCacheSize(cacheSize);
         this.sendDynamicProcessor.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
         this.sendDynamicProcessor.setAllowOptimisedComponents(allowOptimisedComponents);
+        this.sendDynamicProcessor.setAutoStartupComponents(autoStartupComponents);
 
         // create a per processor exchange factory
         this.processorExchangeFactory = getCamelContext().getCamelContextExtension()

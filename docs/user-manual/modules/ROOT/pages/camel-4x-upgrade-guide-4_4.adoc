@@ -1,0 +1,33 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.3 to 4.4
+
+=== camel-core
+
+Removed the deprecated constructor from the internal class `org.apache.camel.util.StopWatch`. Users of this class are advised to
+use the default constructor if necessary.
+
+=== camel-azure-cosmosdb
+
+The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between SHARED_ACCOUNT_KEY and AZURE_IDENTITY.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-azure-eventhubs
+
+The credentialType parameter has been introduced with three possible values: AZURE_IDENTITY, CONNECTION_STRING and TOKEN_CREDENTIAL.
+With the CONNECTION_STRING mode the user could explicitly set the connectionString parameters or use the sharedAccessName and sharedAccessKey to automatically build the connection string.
+With the TOKEN_CREDENTIAL mode the user could pass a TokenCredential instance.
+With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-azure-servicebus
+
+The credentialType parameter has been introduced with three possible values: AZURE_IDENTITY, CONNECTION_STRING and TOKEN_CREDENTIAL.
+With the CONNECTION_STRING mode the user could explicitly set the connectionString parameter.
+With the TOKEN_CREDENTIAL mode the user could pass a TokenCredential instance.
+With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+This is part of the effort explained in CAMEL-18590.

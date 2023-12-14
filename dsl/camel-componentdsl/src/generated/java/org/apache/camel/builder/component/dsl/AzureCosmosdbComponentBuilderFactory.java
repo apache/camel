@@ -621,20 +621,20 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default AzureCosmosdbComponentBuilder useDefaultIdentity(
-                boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default AzureCosmosdbComponentBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
     }
@@ -691,7 +691,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "indexingPolicy": getOrCreateConfiguration((CosmosDbComponent) component).setIndexingPolicy((com.azure.cosmos.models.IndexingPolicy) value); return true;
             case "autowiredEnabled": ((CosmosDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accountKey": getOrCreateConfiguration((CosmosDbComponent) component).setAccountKey((java.lang.String) value); return true;
-            case "useDefaultIdentity": getOrCreateConfiguration((CosmosDbComponent) component).setUseDefaultIdentity((boolean) value); return true;
+            case "credentialType": getOrCreateConfiguration((CosmosDbComponent) component).setCredentialType((org.apache.camel.component.azure.cosmosdb.CredentialType) value); return true;
             default: return false;
             }
         }

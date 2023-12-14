@@ -34,6 +34,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "connectionString": target.getConfiguration().setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "consumeroperation":
         case "consumerOperation": target.getConfiguration().setConsumerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.servicebus.CredentialType.class, value)); return true;
         case "disableautocomplete":
         case "disableAutoComplete": target.getConfiguration().setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -97,6 +99,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "connectionString": return java.lang.String.class;
         case "consumeroperation":
         case "consumerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.servicebus.CredentialType.class;
         case "disableautocomplete":
         case "disableAutoComplete": return boolean.class;
         case "exceptionhandler":
@@ -156,6 +160,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "connectionString": return target.getConfiguration().getConnectionString();
         case "consumeroperation":
         case "consumerOperation": return target.getConfiguration().getConsumerOperation();
+        case "credentialtype":
+        case "credentialType": return target.getConfiguration().getCredentialType();
         case "disableautocomplete":
         case "disableAutoComplete": return target.getConfiguration().isDisableAutoComplete();
         case "exceptionhandler":

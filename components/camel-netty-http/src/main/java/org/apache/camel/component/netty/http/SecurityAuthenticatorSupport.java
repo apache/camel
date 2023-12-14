@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Locale;
 
@@ -25,7 +24,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;

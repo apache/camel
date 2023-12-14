@@ -23,6 +23,7 @@ import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 
 public class MongoDBLocalContainerService implements MongoDBService, ContainerService<MongoDBContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLocalContainerService.class);
@@ -45,7 +46,8 @@ public class MongoDBLocalContainerService implements MongoDBService, ContainerSe
         if (imageName == null || imageName.isEmpty()) {
             return new MongoDBContainer();
         } else {
-            return new MongoDBContainer(imageName);
+            return new MongoDBContainer(
+                    DockerImageName.parse(imageName).asCompatibleSubstituteFor("mongo"));
         }
     }
 

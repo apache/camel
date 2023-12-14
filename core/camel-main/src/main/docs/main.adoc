@@ -316,11 +316,12 @@ The camel.vault.gcp supports 7 options, which are listed below.
 
 
 === Camel Azure Key Vault configurations
-The camel.vault.azure supports 11 options, which are listed below.
+The camel.vault.azure supports 12 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.vault.azure.azure{zwsp}IdentityEnabled* | Whether the Azure Identity Authentication should be used or not. | false | boolean
 | *camel.vault.azure.blobAccess{zwsp}Key* | The Eventhubs Blob Access Key for CheckpointStore purpose |  | String
 | *camel.vault.azure.blobAccount{zwsp}Name* | The Eventhubs Blob Account Name for CheckpointStore purpose |  | String
 | *camel.vault.azure.blob{zwsp}ContainerName* | The Eventhubs Blob Container Name for CheckpointStore purpose |  | String

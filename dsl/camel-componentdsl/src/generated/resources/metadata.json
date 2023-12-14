@@ -2036,6 +2036,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "ElasticsearchRestClientComponentBuilderFactory": {
+    "kind": "component",
+    "name": "elasticsearch-rest-client",
+    "title": "Elasticsearch Low level Rest Client",
+    "description": "Perform queries and other operations on Elasticsearch or OpenSearch (uses low-level client).",
+    "deprecated": false,
+    "firstVersion": "4.3.0",
+    "label": "search",
+    "javaType": "org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-elasticsearch-rest-client",
+    "version": "4.3.0-SNAPSHOT",
+    "scheme": "elasticsearch-rest-client",
+    "extendsScheme": "",
+    "syntax": "elasticsearch-rest-client:clusterName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "Etcd3ComponentBuilderFactory": {
     "kind": "component",
     "name": "etcd3",
