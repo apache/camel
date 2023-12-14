@@ -90,7 +90,7 @@ public class ServiceBusConfiguration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "false")
     private boolean binary;
     @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
-            defaultValue = "CONNECTION_STRING")
+              defaultValue = "CONNECTION_STRING")
     private CredentialType credentialType = CONNECTION_STRING;
 
     /**
@@ -357,7 +357,6 @@ public class ServiceBusConfiguration implements Cloneable {
     public void setBinary(boolean binary) {
         this.binary = binary;
     }
-
 
     public CredentialType getCredentialType() {
         return credentialType;
