@@ -107,6 +107,7 @@ public final class XmlPrettyPrinter {
         final StringBuilder sb = new StringBuilder();
         final DefaultHandler handler = new DefaultHandler() {
             int indent;
+            boolean inElement;
 
             @Override
             public void declaration(String version, String encoding, String standalone) throws SAXException {
@@ -132,26 +133,33 @@ public final class XmlPrettyPrinter {
 
             @Override
             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                inElement = true;
                 sb.append(XmlPrettyPrinter.padString(indent, blanks));
 
                 StringBuilder lb = new StringBuilder();
                 lb.append("<");
                 lb.append(qName);
+
+                boolean empty = attributes.getLength() == 0;
+                if (empty) {
+                    lb.append(">");
+                }
                 String value = color.color(ColorPrintElement.ELEMENT, lb.toString());
                 sb.append(value);
 
-                lb.setLength(0);
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    String k = color.color(ColorPrintElement.ATTRIBUTE_KEY, attributes.getQName(i));
-                    String v = color.color(ColorPrintElement.ATTRIBUTE_VALUE, attributes.getValue(i));
-                    String eq = color.color(ColorPrintElement.ATTRIBUTE_EQUAL, "=");
-                    String quote = color.color(ColorPrintElement.ATTRIBUTE_QUOTE, "\"");
-                    lb.append(" ").append(k).append(eq).append(quote).append(v).append(quote);
+                if (!empty) {
+                    lb.setLength(0);
+                    for (int i = 0; i < attributes.getLength(); i++) {
+                        String k = color.color(ColorPrintElement.ATTRIBUTE_KEY, attributes.getQName(i));
+                        String v = color.color(ColorPrintElement.ATTRIBUTE_VALUE, attributes.getValue(i));
+                        String eq = color.color(ColorPrintElement.ATTRIBUTE_EQUAL, "=");
+                        String quote = color.color(ColorPrintElement.ATTRIBUTE_QUOTE, "\"");
+                        lb.append(" ").append(k).append(eq).append(quote).append(v).append(quote);
+                    }
+                    sb.append(lb);
+                    value = color.color(ColorPrintElement.ELEMENT, ">");
+                    sb.append(value);
                 }
-                sb.append(lb);
-
-                value = color.color(ColorPrintElement.ELEMENT, ">");
-                sb.append(value);
                 sb.append("\n");
 
                 indent++;
@@ -159,6 +167,7 @@ public final class XmlPrettyPrinter {
 
             @Override
             public void endElement(String uri, String localName, String qName) throws SAXException {
+                inElement = false;
                 --indent;
 
                 StringBuilder lb = new StringBuilder();
@@ -176,13 +185,15 @@ public final class XmlPrettyPrinter {
 
             @Override
             public void characters(char[] ch, int start, int length) throws SAXException {
-                char[] chars = new char[length];
-                System.arraycopy(ch, start, chars, 0, length);
-                String value = color.color(ColorPrintElement.VALUE, new String(chars));
+                if (inElement && indent > 1) {
+                    char[] chars = new char[length];
+                    System.arraycopy(ch, start, chars, 0, length);
+                    String value = color.color(ColorPrintElement.VALUE, new String(chars));
 
-                sb.append(XmlPrettyPrinter.padString(indent, blanks));
-                sb.append(value);
-                sb.append("\n");
+                    sb.append(XmlPrettyPrinter.padString(indent, blanks));
+                    sb.append(value);
+                    sb.append("\n");
+                }
             }
         };
 
