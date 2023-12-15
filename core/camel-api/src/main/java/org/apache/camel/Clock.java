@@ -17,6 +17,11 @@
 
 package org.apache.camel;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
+
 /**
  * A clock used to track the lifetime of an exchange
  */
@@ -35,4 +40,12 @@ public interface Clock {
      * @see    System#currentTimeMillis()
      */
     long getCreated();
+
+    /**
+     * Get the creation date/time as with time-zone information
+     * @return A ZonedDateTime instance from the computed creation time
+     */
+    default ZonedDateTime asZonedCreationDateTime() {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getCreated()), ZoneId.systemDefault());
+    }
 }
