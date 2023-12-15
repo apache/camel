@@ -48,4 +48,12 @@ public interface Clock {
     default ZonedDateTime asZonedCreationDateTime() {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getCreated()), ZoneId.systemDefault());
     }
+
+    /**
+     * Get the creation date/time as regular Java Date instance
+     * @return A Date instance from the computed creation time
+     */
+    default Date asDate() {
+        return new Date(getCreated());
+    }
 }
