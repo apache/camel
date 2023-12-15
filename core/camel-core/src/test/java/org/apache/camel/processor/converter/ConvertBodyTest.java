@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor.converter;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.Date;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -28,10 +32,6 @@ import org.apache.camel.processor.converter.custom.MyBean;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
