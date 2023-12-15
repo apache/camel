@@ -44,6 +44,11 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-file-share</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-identity</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -60,6 +65,12 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

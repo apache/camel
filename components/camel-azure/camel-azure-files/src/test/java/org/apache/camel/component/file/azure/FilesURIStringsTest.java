@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("static-method")
-public class FilesURIStringsTests {
+public class FilesURIStringsTest {
 
     @Test
     void encodeTokenValueShouldEncodeBase64PlusSlashAndPadding() throws Exception {

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FilesEndpointTests extends CamelTestSupport {
+public class FilesEndpointTest extends CamelTestSupport {
 
     @Test
     void sasTokenForCopyPastedURIShouldBePreserved() {

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @SuppressWarnings("static-method")
-public class FilesPathTests {
+public class FilesPathTest {
 
     @Test
     void splitAbsolutePreservingRootShouldReturnRootAndSteps() {
