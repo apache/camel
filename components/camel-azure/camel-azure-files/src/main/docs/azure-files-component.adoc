@@ -63,8 +63,11 @@ according to the protocol (https 443).
 You can append query options to the URI in the following format
 `?option=value&option2=value&...`.
 
-The SAS token or shared key based auth is supported, the options
-for selected one must be present.
+To use this component, you have multiple options in order to provide the required Azure authentication information:
+
+- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. 
+- Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `sharedKey` for your Azure account, this is the simplest way to get started. The sharedKey can be generated through your Azure portal.
+- Via Azure SAS, when specifying `credentialType=AZURE_SAS` and providing a SAS Token parameter through the `token` parameter.
 
 // component-configure options: START
 
