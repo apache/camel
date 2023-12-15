@@ -17,22 +17,27 @@
 
 package org.apache.camel.support;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Clock;
 
 public final class ResetableClock implements Clock {
     private long created;
+    private long createdNano;
 
     ResetableClock(Clock clock) {
         this.created = clock.getCreated();
+        this.createdNano = System.nanoTime();
     }
 
     ResetableClock() {
         this.created = System.currentTimeMillis();
+        this.createdNano = System.nanoTime();
     }
 
     @Override
     public long elapsed() {
-        return System.currentTimeMillis() - created;
+        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - createdNano);
     }
 
     @Override
@@ -45,6 +50,7 @@ public final class ResetableClock implements Clock {
      */
     public void reset() {
         this.created = System.currentTimeMillis();
+        this.createdNano = System.nanoTime();
     }
 
     /**
@@ -53,5 +59,6 @@ public final class ResetableClock implements Clock {
      */
     void unset() {
         this.created = 0;
+        this.createdNano = 0;
     }
 }
