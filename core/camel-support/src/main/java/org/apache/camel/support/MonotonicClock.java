@@ -17,18 +17,22 @@
 
 package org.apache.camel.support;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Clock;
 
 public class MonotonicClock implements Clock {
     private final long created;
+    private final long createdNano;
 
     MonotonicClock() {
         this.created = System.currentTimeMillis();
+        this.createdNano = System.nanoTime();
     }
 
     @Override
     public long elapsed() {
-        return System.currentTimeMillis() - created;
+        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - createdNano);
     }
 
     @Override
