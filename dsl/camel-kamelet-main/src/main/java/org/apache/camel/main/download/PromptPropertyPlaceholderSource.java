@@ -1,8 +1,3 @@
-package org.apache.camel.main.download;
-
-import org.apache.camel.Ordered;
-import org.apache.camel.spi.PropertiesSource;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -19,6 +14,11 @@ import org.apache.camel.spi.PropertiesSource;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.main.download;
+
+import org.apache.camel.Ordered;
+import org.apache.camel.spi.PropertiesSource;
+
 public class PromptPropertyPlaceholderSource implements PropertiesSource, Ordered {
 
     @Override
