@@ -76,6 +76,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
             sb.append(String.format("\nBackoff Max Elapsed Time: %d", src.getBackOffMaxElapsedTime()));
             sb.append(String.format("\nBackoff Max Attempts: %d", src.getBackOffMaxAttempts()));
             sb.append(String.format("\nThread Pool Size: %d", src.getThreadPoolSize()));
+            sb.append(String.format("\nUnhealthy On Restarting: %b", src.isUnhealthyOnRestarting()));
             sb.append(String.format("\nUnhealthy On Exhaust: %b", src.isUnhealthyOnExhausted()));
             sb.append("\n\nRoutes:\n");
 
@@ -187,6 +188,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
             root.put("backoffMaxElapsedTime", src.getBackOffMaxElapsedTime());
             root.put("backoffMaxAttempts", src.getBackOffMaxAttempts());
             root.put("threadPoolSize", src.getThreadPoolSize());
+            root.put("unhealthyOnRestarting", src.isUnhealthyOnRestarting());
             root.put("unhealthyOnExhausted", src.isUnhealthyOnExhausted());
             root.put("routes", list);
 

@@ -378,6 +378,7 @@ public final class DefaultConfigurationConfigurer {
                 src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
             }
             src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
+            src.setUnhealthyOnRestarting(config.isRouteControllerUnhealthyOnRestarting());
         }
     }
 

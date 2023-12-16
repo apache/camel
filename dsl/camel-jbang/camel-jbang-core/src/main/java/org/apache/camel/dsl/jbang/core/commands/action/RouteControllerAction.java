@@ -133,7 +133,7 @@ public class RouteControllerAction extends ActionWatchCommand {
                     row.attempts = jt.getLong("attempts");
                     long time = jt.getLong("lastAttempt");
                     if (time > 0) {
-                        row.lastAttempt = TimeUtils.printDuration(time);
+                        row.lastAttempt = TimeUtils.printSince(time);
                     }
                     time = jt.getLong("nextAttempt");
                     if (time > 0) {
@@ -175,7 +175,8 @@ public class RouteControllerAction extends ActionWatchCommand {
                     System.out.printf("\tBackoff Max Elapsed Time: %d%n", jo.getInteger("backoffMaxElapsedTime"));
                     System.out.printf("\tBackoff Max Attempts: %d%n", jo.getInteger("backoffMaxAttempts"));
                     System.out.printf("\tThread Pool Size: %d%n", jo.getInteger("threadPoolSize"));
-                    System.out.printf("\tUnhealthy on Exhaust: %b%n", jo.getBoolean("unhealthyOnExhausted"));
+                    System.out.printf("\tUnhealthy On Restarting: %b%n", jo.getBoolean("unhealthyOnRestarting"));
+                    System.out.printf("\tUnhealthy On Exhaust: %b%n", jo.getBoolean("unhealthyOnExhausted"));
                     System.out.println("\n");
                 }
                 dumpTable(rows, true);
@@ -204,6 +205,7 @@ public class RouteControllerAction extends ActionWatchCommand {
                 new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(this::getSupervising),
                 new Column().visible(supervised).header("ATTEMPT").headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER).with(this::getAttempts),
+                new Column().visible(supervised).header("ELAPSED").headerAlign(HorizontalAlign.CENTER).with(this::getElapsed),
                 new Column().visible(supervised).header("LAST-AGO").headerAlign(HorizontalAlign.CENTER).with(this::getLast),
                 new Column().visible(supervised).header("ERROR-MESSAGE").headerAlign(HorizontalAlign.LEFT)
                         .dataAlign(HorizontalAlign.LEFT)
@@ -291,11 +293,14 @@ public class RouteControllerAction extends ActionWatchCommand {
 
     protected String getLast(Row r) {
         if (r.lastAttempt != null && !r.lastAttempt.isEmpty()) {
-            String s = r.lastAttempt;
-            if (r.elapsed != null && !r.elapsed.isEmpty()) {
-                s += " (" + r.elapsed + ")";
-            }
-            return s;
+            return r.lastAttempt;
+        }
+        return "";
+    }
+
+    protected String getElapsed(Row r) {
+        if (r.elapsed != null && !r.elapsed.isEmpty()) {
+            return r.elapsed;
         }
         return "";
     }
