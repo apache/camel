@@ -248,7 +248,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     // *********************************
 
     @Override
-    public boolean isStartingRoutes() {
+    public boolean isUnhealthyRoutes() {
         boolean answer = startingRoutes;
 
         // if we have started the routes first time, but some failed and are scheduled for restart
@@ -262,6 +262,11 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             answer = !routeManager.exhausted.isEmpty();
         }
         return answer;
+    }
+
+    @Override
+    public boolean isStartingRoutes() {
+        return startingRoutes;
     }
 
     @Override

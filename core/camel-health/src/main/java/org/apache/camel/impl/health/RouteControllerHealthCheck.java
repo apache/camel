@@ -45,12 +45,8 @@ public class RouteControllerHealthCheck extends AbstractHealthCheck {
 
         RouteController rc = getCamelContext().getRouteController();
         if (rc != null) {
-            // should be down if starting routes as all routes must be complete before ready
-            up = ServiceHelper.isStarted(rc);
-            if (up) {
-                // is starting routes in progress then we should be DOWN
-                up = !rc.isStartingRoutes();
-            }
+            // should only be up if there are no unhealthy routes
+            up = !rc.isUnhealthyRoutes();
         }
 
         if (up) {

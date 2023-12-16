@@ -165,6 +165,8 @@ public class RouteControllerAction extends ActionWatchCommand {
             if (supervising) {
                 if (header) {
                     System.out.println("Supervising Route Controller");
+                    System.out.printf("\tInitial Starting Routes: %b%n", jo.getBoolean("startingRoutes"));
+                    System.out.printf("\tUnhealthy Routes: %b%n", jo.getBoolean("unhealthyRoutes"));
                     System.out.printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
                     System.out.printf("\tRoutes Started: %d%n", jo.getInteger("startedRoutes"));
                     System.out.printf("\tRoutes Restarting: %d%n", jo.getInteger("restartingRoutes"));
@@ -183,6 +185,7 @@ public class RouteControllerAction extends ActionWatchCommand {
             } else {
                 if (header) {
                     System.out.println("Default Route Controller");
+                    System.out.printf("\tStarting Routes: %b%n", jo.getBoolean("startingRoutes"));
                     System.out.printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
                     System.out.println("\n");
                 }

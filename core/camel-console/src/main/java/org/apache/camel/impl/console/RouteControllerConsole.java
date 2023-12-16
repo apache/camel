@@ -66,6 +66,8 @@ public class RouteControllerConsole extends AbstractDevConsole {
             long started = routes.stream().filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
                     .count();
 
+            sb.append(String.format("\nInitial Starting Routes: %b", src.isStartingRoutes()));
+            sb.append(String.format("\nUnhealthy Routes: %b", src.isUnhealthyRoutes()));
             sb.append(String.format("Total Routes: %d", routes.size()));
             sb.append(String.format("\nStarted Routes: %d", started));
             sb.append(String.format("\nRestarting Routes: %d", src.getRestartingRoutes().size()));
@@ -178,6 +180,8 @@ public class RouteControllerConsole extends AbstractDevConsole {
                     .count();
 
             root.put("controller", "SupervisingRouteController");
+            root.put("startingRoutes", src.isStartingRoutes());
+            root.put("unhealthyRoutes", src.isUnhealthyRoutes());
             root.put("totalRoutes", routes.size());
             root.put("startedRoutes", started);
             root.put("restartingRoutes", src.getRestartingRoutes().size());
