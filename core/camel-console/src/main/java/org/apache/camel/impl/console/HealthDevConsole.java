@@ -53,7 +53,8 @@ public class HealthDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
             } else {
                 if (res.getMessage().isPresent()) {
-                    sb.append(String.format("\n    %s: %s (%s)", res.getCheck().getId(), res.getState(), res.getMessage().get()));
+                    sb.append(
+                            String.format("\n    %s: %s (%s)", res.getCheck().getId(), res.getState(), res.getMessage().get()));
                 } else {
                     sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
                 }
