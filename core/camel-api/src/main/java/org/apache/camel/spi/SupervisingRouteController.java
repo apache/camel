@@ -174,8 +174,8 @@ public interface SupervisingRouteController extends RouteController {
     Throwable getRestartException(String routeId);
 
     /**
-     * Whether the route controller is currently starting routes for the first time.
-     * This only reports on the first time start phase.
+     * Whether the route controller is currently starting routes for the first time. This only reports on the first time
+     * start phase.
      */
     boolean isStartingRoutes();
 

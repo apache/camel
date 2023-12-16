@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.Ordered;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Readiness {@link org.apache.camel.health.HealthCheck} for route controller.

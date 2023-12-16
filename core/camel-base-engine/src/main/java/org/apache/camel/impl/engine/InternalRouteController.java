@@ -27,8 +27,6 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.SupervisingRouteController;
 
-import static org.apache.camel.support.service.ServiceHelper.isStarted;
-
 /**
  * Internal {@link RouteController} used internally by {@link AbstractCamelContext}.
  */

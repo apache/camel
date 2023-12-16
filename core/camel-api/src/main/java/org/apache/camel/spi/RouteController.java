@@ -100,8 +100,9 @@ public interface RouteController extends CamelContextAware, StaticService {
     boolean isStartingRoutes();
 
     /**
-     * Indicates if the route controller has routes that are unhealthy such as they have not yet been successfully started,
-     * and if being supervised then the route can either be pending restarts or failed all restart attempts and are exhausted.
+     * Indicates if the route controller has routes that are unhealthy such as they have not yet been successfully
+     * started, and if being supervised then the route can either be pending restarts or failed all restart attempts and
+     * are exhausted.
      */
     boolean isUnhealthyRoutes();
 
