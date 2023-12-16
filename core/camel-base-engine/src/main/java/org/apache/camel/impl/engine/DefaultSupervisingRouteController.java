@@ -249,7 +249,19 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     @Override
     public boolean isStartingRoutes() {
-        return startingRoutes;
+        boolean answer = startingRoutes;
+
+        // if we have started the routes first time, but some failed and are scheduled for restart
+        // then we may report as still starting routes if we should be unhealthy on restarting
+        if (!answer && isUnhealthyOnRestarting()) {
+            // mark as still starting routes if we have routes to restart
+            answer = !routeManager.routes.isEmpty();
+        }
+        if (!answer && isUnhealthyOnExhausted()) {
+            // mark as still starting routes if we have exhausted routes that should be unhealthy
+            answer = !routeManager.exhausted.isEmpty();
+        }
+        return answer;
     }
 
     @Override
@@ -621,7 +633,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
                             if (!getCamelContext().isRunAllowed()) {
                                 // Camel is shutting down so do not attempt to start route
-                                logger.info("Restarting route: {} attempt: {} is cancelled due CamelContext is shutting down", r.getId(), attempt);
+                                logger.info("Restarting route: {} attempt: {} is cancelled due CamelContext is shutting down",
+                                        r.getId(), attempt);
                                 return true;
                             }
 
