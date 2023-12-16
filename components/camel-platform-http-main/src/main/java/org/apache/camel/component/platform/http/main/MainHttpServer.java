@@ -323,27 +323,29 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             public void handle(RoutingContext ctx) {
                 ctx.response().putHeader("content-type", "application/json");
 
+                HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
+                String level = ctx.request().getParam("exposureLevel");
+                if (level == null) {
+                    level = registry.getExposureLevel();
+                }
+                String includeStackTrace = ctx.request().getParam("stackTrace");
+                String includeData = ctx.request().getParam("data");
+
                 boolean all = ctx.currentRoute() == health;
                 boolean liv = ctx.currentRoute() == live;
                 boolean rdy = ctx.currentRoute() == ready;
 
                 Collection<HealthCheck.Result> res;
                 if (all) {
-                    res = HealthCheckHelper.invoke(camelContext);
+                    res = HealthCheckHelper.invoke(camelContext, level);
                 } else if (liv) {
-                    res = HealthCheckHelper.invokeLiveness(camelContext);
+                    res = HealthCheckHelper.invokeLiveness(camelContext, level);
                 } else {
-                    res = HealthCheckHelper.invokeReadiness(camelContext);
+                    res = HealthCheckHelper.invokeReadiness(camelContext, level);
                 }
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("{\n");
-
-                HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
-                String level = ctx.request().getParam("exposureLevel");
-                if (level == null) {
-                    level = registry.getExposureLevel();
-                }
 
                 // are we UP
                 boolean up = HealthCheckHelper.isResultsUp(res, rdy);
@@ -354,12 +356,12 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 } else if ("full".equals(level)) {
                     // include all details
                     List<HealthCheck.Result> list = new ArrayList<>(res);
-                    healthCheckDetails(sb, list, up);
+                    healthCheckDetails(sb, list, up, level, includeStackTrace, includeData);
                 } else {
                     // include only DOWN details
                     List<HealthCheck.Result> downs = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN))
                             .collect(Collectors.toList());
-                    healthCheckDetails(sb, downs, up);
+                    healthCheckDetails(sb, downs, up, level, includeStackTrace, includeData);
                 }
                 sb.append("}\n");
 
@@ -391,7 +393,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         }
     }
 
-    private static void healthCheckDetails(StringBuilder sb, List<HealthCheck.Result> checks, boolean up) {
+    private static void healthCheckDetails(
+            StringBuilder sb, List<HealthCheck.Result> checks, boolean up, String level, String includeStackTrace,
+            String includeData) {
         healthCheckStatus(sb, up);
 
         if (!checks.isEmpty()) {
@@ -400,7 +404,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             for (int i = 0; i < checks.size(); i++) {
                 HealthCheck.Result d = checks.get(i);
                 sb.append("        {\n");
-                reportHealthCheck(sb, d);
+                reportHealthCheck(sb, d, level, includeStackTrace, includeData);
                 if (i < checks.size() - 1) {
                     sb.append("        },\n");
                 } else {
@@ -411,20 +415,29 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         }
     }
 
-    private static void reportHealthCheck(StringBuilder sb, HealthCheck.Result d) {
+    private static void reportHealthCheck(
+            StringBuilder sb, HealthCheck.Result d, String level, String includeStackTrace, String includeData) {
         sb.append("            \"name\": \"").append(d.getCheck().getId()).append("\",\n");
-        sb.append("            \"status\": \"").append(d.getState()).append("\",\n");
-        if (d.getError().isPresent()) {
+        sb.append("            \"status\": \"").append(d.getState()).append("\"");
+        if (("full".equals(level) || "true".equals(includeStackTrace)) && d.getError().isPresent()) {
+            // include error message in full exposure
+            sb.append(",\n");
             String msg = allCausedByErrorMessages(d.getError().get());
             sb.append("            \"error-message\": \"").append(msg)
-                    .append("\",\n");
-            sb.append("            \"error-stacktrace\": \"").append(errorStackTrace(d.getError().get()))
-                    .append("\",\n");
+                    .append("\"");
+            if ("true".equals(includeStackTrace)) {
+                sb.append(",\n");
+                sb.append("            \"error-stacktrace\": \"").append(errorStackTrace(d.getError().get()))
+                        .append("\"");
+            }
         }
         if (d.getMessage().isPresent()) {
-            sb.append("            \"message\": \"").append(d.getMessage().get()).append("\",\n");
+            sb.append(",\n");
+            sb.append("            \"message\": \"").append(d.getMessage().get()).append("\"");
         }
-        if (d.getDetails() != null && !d.getDetails().isEmpty()) {
+        // only include data if was enabled
+        if (("true".equals(includeData)) && d.getDetails() != null && !d.getDetails().isEmpty()) {
+            sb.append(",\n");
             // lets use sorted keys
             Iterator<String> it = new TreeSet<>(d.getDetails().keySet()).iterator();
             sb.append("            \"data\": {\n");
