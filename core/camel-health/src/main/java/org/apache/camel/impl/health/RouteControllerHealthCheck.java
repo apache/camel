@@ -76,7 +76,8 @@ public class RouteControllerHealthCheck extends AbstractHealthCheck {
         }
     }
 
-    private void builderDetails(HealthCheckResultBuilder builder, SupervisingRouteController src, Route route, boolean exhausted) {
+    private void builderDetails(
+            HealthCheckResultBuilder builder, SupervisingRouteController src, Route route, boolean exhausted) {
         String routeId = route.getRouteId();
         Throwable cause = src.getRestartException(routeId);
         if (cause != null) {
@@ -114,7 +115,8 @@ public class RouteControllerHealthCheck extends AbstractHealthCheck {
                     String msg;
                     if (exhausted) {
                         msg = String.format("Restarting route: %s is exhausted after %s attempts due %s."
-                                            + " No more attempts will be made and the route is no longer supervised by this route controller and remains as stopped.", routeId, attempts,
+                                            + " No more attempts will be made and the route is no longer supervised by this route controller and remains as stopped.",
+                                routeId, attempts,
                                 cause.getMessage());
                     } else {
                         msg = String.format("Failed restarting route: %s attempt: %s due: %s", routeId, attempts,
