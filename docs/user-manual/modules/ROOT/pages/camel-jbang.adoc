@@ -209,6 +209,65 @@ Camel JBang will then scan in `src/main/java` and `src/main/resources` for files
 
 NOTE: Using `camel run pom.xml` is not intended as a fully compatible way of running an existing Maven based project.
 
+=== Running Route with user interactive prompt for placeholder values
+
+You can create Camel integrations that makes it possible for the user to quickly enter placeholder values from command prompt.
+
+For example given the following route:
+
+[source,java]
+----
+import org.apache.camel.builder.RouteBuilder;
+
+public class foo extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("timer:java?period={{time:1000}}")
+            .setBody()
+                .simple("Hello Camel from {{you}}")
+            .log("${body}");
+    }
+}
+----
+
+Then if you run this with:
+
+[source,bash]
+----
+camel run foo.java
+----
+
+You will have an exception on startup about the missing value
+`Caused by: java.lang.IllegalArgumentException: Property with key [you] not found in properties from text: Hello Camel from {{you}}`
+
+However, you can then run in prompt mode as follows:
+
+[source,bash]
+----
+camel run foo.java --prompt
+----
+
+And Camel will now prompt in the terminal for you to enter values for the placeholders:
+
+[source,bash]
+----
+2023-12-15 21:46:44.218  INFO 15033 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 4.3.0-SNAPSHOT is starting
+2023-12-15 21:46:44.331  INFO 15033 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 15033. Started by davsclaus in /Users/davsclaus/workspace/deleteme/prompt
+2023-12-15 21:46:45.360  INFO 15033 --- [           main] mel.cli.connector.LocalCliConnector : Management from Camel JBang enabled
+Enter optional value for time (1000):
+Enter required value for you: Jack
+2023-12-15 21:46:55.239  INFO 15033 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.3.0-SNAPSHOT (foo) is starting
+2023-12-15 21:46:55.323  INFO 15033 --- [           main] g.apache.camel.main.BaseMainSupport : Property-placeholders summary
+2023-12-15 21:46:55.323  INFO 15033 --- [           main] g.apache.camel.main.BaseMainSupport :     [prompt]                       you=Jack
+2023-12-15 21:46:55.341  INFO 15033 --- [           main] el.impl.engine.AbstractCamelContext : Routes startup (started:1)
+----
+
+From the snippet above, Camel JBang had two prompts. First for the `{{time}}` which has a default value of `1000` so you can just press ENTER to accept the default value.
+And for `{{you}}` a value must be entered, and we entered `Jack` in this example.
+
+You may want to use this for Camel prototypes where you want the user to be able to enter custom values quickly.
+Those values can of course be pre-configured in `application.properties` as well.
 
 === Running Route from input parameter
 

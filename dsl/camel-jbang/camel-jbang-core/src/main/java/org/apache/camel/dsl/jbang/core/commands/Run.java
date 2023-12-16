@@ -268,6 +268,10 @@ public class Run extends CamelCommand {
             description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
+    @Option(names = { "--prompt" },
+            description = "Allow user to type in required parameters in prompt if not present in application")
+    boolean prompt;
+
     public Run(CamelJBangMain main) {
         super(main);
     }
@@ -472,6 +476,9 @@ public class Run extends CamelCommand {
         }
         if (ignoreLoadingError) {
             writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
+        }
+        if (prompt) {
+            writeSetting(main, profileProperties, "camel.jbang.prompt", "true");
         }
         writeSetting(main, profileProperties, "camel.jbang.compileWorkDir", WORK_DIR + File.separator + "compile");
 

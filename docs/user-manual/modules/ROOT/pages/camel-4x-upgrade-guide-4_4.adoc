@@ -13,6 +13,8 @@ use the default constructor if necessary.
 
 The method `getCreated` is now deprecated. Access to the time-related information from the exchange should be done via `getClock`.
 
+The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` now has a 2nd parameter for the default value.
+
 === camel-azure-cosmosdb
 
 The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between SHARED_ACCOUNT_KEY and AZURE_IDENTITY.
