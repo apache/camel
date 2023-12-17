@@ -309,7 +309,12 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
                         MDC.put(MDC_CAMEL_CONTEXT_ID, camelContextId);
                     }
                     if (custom != null) {
-                        custom.forEach(MDC::put);
+                        // keep existing custom value to not override
+                        custom.forEach((k, v) -> {
+                            if (MDC.get(k) == null) {
+                                MDC.put(k, v);
+                            }
+                        });
                     }
                 }
                 // need to setup the routeId finally
