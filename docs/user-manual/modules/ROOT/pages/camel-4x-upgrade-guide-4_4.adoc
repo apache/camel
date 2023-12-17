@@ -15,6 +15,12 @@ The method `getCreated` is now deprecated. Access to the time-related informatio
 
 The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` now has a 2nd parameter for the default value.
 
+=== camel-main
+
+The route controller configuration has been moved from general main to its own group.
+All keys started with `camel.main.routesController` should be renamed to `camel.routecontroller.`, for example
+`camel.main.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
+
 === camel-azure-cosmosdb
 
 The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between SHARED_ACCOUNT_KEY and AZURE_IDENTITY.
@@ -43,3 +49,12 @@ With the SHARED_ACCOUNT_KEY mode the user could explicitly set the sharedKey par
 With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
 With the AZURE_SAS mode the user could explicitly set the token parameter.
 This is part of the effort explained in CAMEL-18590.
+
+== Camel Spring Boot
+
+=== Auto Configuration
+
+The route controller configuration has been moved from general main to its own group.
+All keys started with `camel.main.routesController` should be renamed to `camel.routecontroller.`, for example
+`camel.main.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
+

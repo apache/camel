@@ -78,7 +78,6 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -345,40 +344,6 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(
                     config.getRouteFilterIncludePattern(),
                     config.getRouteFilterExcludePattern());
-        }
-
-        // supervising route controller
-        if (config.isRouteControllerSuperviseEnabled()) {
-            SupervisingRouteController src = camelContext.getRouteController().supervising();
-            if (config.getRouteControllerIncludeRoutes() != null) {
-                src.setIncludeRoutes(config.getRouteControllerIncludeRoutes());
-            }
-            if (config.getRouteControllerExcludeRoutes() != null) {
-                src.setExcludeRoutes(config.getRouteControllerExcludeRoutes());
-            }
-            if (config.getRouteControllerThreadPoolSize() > 0) {
-                src.setThreadPoolSize(config.getRouteControllerThreadPoolSize());
-            }
-            if (config.getRouteControllerBackOffDelay() > 0) {
-                src.setBackOffDelay(config.getRouteControllerBackOffDelay());
-            }
-            if (config.getRouteControllerInitialDelay() > 0) {
-                src.setInitialDelay(config.getRouteControllerInitialDelay());
-            }
-            if (config.getRouteControllerBackOffMaxAttempts() > 0) {
-                src.setBackOffMaxAttempts(config.getRouteControllerBackOffMaxAttempts());
-            }
-            if (config.getRouteControllerBackOffMaxDelay() > 0) {
-                src.setBackOffMaxDelay(config.getRouteControllerBackOffDelay());
-            }
-            if (config.getRouteControllerBackOffMaxElapsedTime() > 0) {
-                src.setBackOffMaxElapsedTime(config.getRouteControllerBackOffMaxElapsedTime());
-            }
-            if (config.getRouteControllerBackOffMultiplier() > 0) {
-                src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
-            }
-            src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
-            src.setUnhealthyOnRestarting(config.isRouteControllerUnhealthyOnRestarting());
         }
     }
 

@@ -219,6 +219,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.ssl.";
                 } else if (file.getName().contains("DebuggerConfigurationProperties")) {
                     prefix = "camel.debug.";
+                } else if (file.getName().contains("RouteControllerConfigurationProperties")) {
+                    prefix = "camel.routecontroller.";
                 } else {
                     prefix = "camel.main.";
                 }
@@ -285,6 +287,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getOptions().addAll(data);
             model.getGroups().add(new MainGroupModel(
                     "camel.main", "Camel Main configurations", "org.apache.camel.main.DefaultConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.routecontroller", "Camel Route Controller configurations",
+                            "org.apache.camel.main.RouteControllerConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.server",
                     "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
