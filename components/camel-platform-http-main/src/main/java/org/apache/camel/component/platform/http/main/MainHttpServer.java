@@ -261,8 +261,33 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
             private volatile Set<HttpEndpointModel> last;
 
+            private void logSummary() {
+                Set<HttpEndpointModel> endpoints = platformHttpComponent.getHttpEndpoints();
+                if (endpoints.isEmpty()) {
+                    return;
+                }
+
+                // log only if changed
+                if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
+                    LOG.info("HTTP endpoints summary");
+                    for (HttpEndpointModel u : endpoints) {
+                        String line = "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + u.getUri();
+                        if (u.getVerbs() != null) {
+                            line += " (" + u.getVerbs() + ")";
+                        }
+                        LOG.info("    {}", line);
+                    }
+                }
+
+                // use a defensive copy of last known endpoints
+                last = new HashSet<>(endpoints);
+            }
+
             @Override
             public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
+                if (alreadyStarted) {
+                    logSummary();
+                }
                 camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
 
                     @Override
@@ -282,25 +307,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                             }
                         }
 
-                        Set<HttpEndpointModel> endpoints = platformHttpComponent.getHttpEndpoints();
-                        if (endpoints.isEmpty()) {
-                            return;
-                        }
-
-                        // log only if changed
-                        if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
-                            LOG.info("HTTP endpoints summary");
-                            for (HttpEndpointModel u : endpoints) {
-                                String line = "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + u.getUri();
-                                if (u.getVerbs() != null) {
-                                    line += " (" + u.getVerbs() + ")";
-                                }
-                                LOG.info("    {}", line);
-                            }
-                        }
-
-                        // use a defensive copy of last known endpoints
-                        last = new HashSet<>(endpoints);
+                        logSummary();
                     }
                 });
             }
