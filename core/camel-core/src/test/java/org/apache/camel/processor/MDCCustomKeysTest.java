@@ -30,12 +30,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MDCCustomKeysTest extends ContextTestSupport {
 
+    private MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");
+    private MdcCheckerProcessor checker2 = new MdcCheckerProcessor("World");
+
     @Test
     public void testMdcPreserved() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:end");
-        mock.expectedMessageCount(1);
 
-        template.sendBody("direct:a", "A,B");
+        MockEndpoint mock = getMockEndpoint("mock:end");
+        mock.expectedBodiesReceived("A");
+
+        checker1.reset();
+        checker2.reset();
+        template.sendBody("direct:a", "A");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testMdcPreservedTwo() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:end");
+        mock.expectedBodiesReceived("A", "B");
+
+        checker1.reset();
+        checker2.reset();
+        template.sendBody("direct:a", "A");
+
+        checker1.reset();
+        checker2.reset();
+        template.sendBody("direct:a", "B");
 
         assertMockEndpointsSatisfied();
     }
@@ -49,9 +71,6 @@ public class MDCCustomKeysTest extends ContextTestSupport {
                 context.setUseMDCLogging(true);
                 context.setUseBreadcrumb(true);
                 context.setMDCLoggingKeysPattern("custom*,my*");
-
-                MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");
-                MdcCheckerProcessor checker2 = new MdcCheckerProcessor("World");
 
                 from("direct:a").process(e -> {
                     // custom is propagated
@@ -87,6 +106,15 @@ public class MDCCustomKeysTest extends ContextTestSupport {
 
         public MdcCheckerProcessor(String expected) {
             this.expected = expected;
+        }
+
+        public void reset() {
+            exchangeId = null;
+            messageId = null;
+            breadcrumbId = null;
+            contextId = null;
+            threadId = null;
+            foo = null;
         }
 
         @Override
