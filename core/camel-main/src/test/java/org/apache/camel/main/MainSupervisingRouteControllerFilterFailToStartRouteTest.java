@@ -38,12 +38,12 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().setRouteControllerSuperviseEnabled(true);
-        main.configure().setRouteControllerBackOffDelay(250);
-        main.configure().setRouteControllerBackOffMaxAttempts(3);
-        main.configure().setRouteControllerInitialDelay(1000);
-        main.configure().setRouteControllerThreadPoolSize(2);
-        main.configure().setRouteControllerExcludeRoutes("inbox");
+        main.configure().routeControllerConfig().setEnabled(true);
+        main.configure().routeControllerConfig().setBackOffDelay(250);
+        main.configure().routeControllerConfig().setBackOffMaxAttempts(3);
+        main.configure().routeControllerConfig().setInitialDelay(1000);
+        main.configure().routeControllerConfig().setThreadPoolSize(2);
+        main.configure().routeControllerConfig().setExcludeRoutes("inbox");
 
         try {
             main.start();
