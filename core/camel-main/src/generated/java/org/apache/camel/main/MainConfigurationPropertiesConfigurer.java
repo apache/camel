@@ -173,6 +173,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerThreadPoolSize": target.setRouteControllerThreadPoolSize(property(camelContext, int.class, value)); return true;
         case "routecontrollerunhealthyonexhausted":
         case "RouteControllerUnhealthyOnExhausted": target.setRouteControllerUnhealthyOnExhausted(property(camelContext, boolean.class, value)); return true;
+        case "routecontrollerunhealthyonrestarting":
+        case "RouteControllerUnhealthyOnRestarting": target.setRouteControllerUnhealthyOnRestarting(property(camelContext, boolean.class, value)); return true;
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": target.setRouteFilterExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routefilterincludepattern":
@@ -434,6 +436,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerThreadPoolSize": return int.class;
         case "routecontrollerunhealthyonexhausted":
         case "RouteControllerUnhealthyOnExhausted": return boolean.class;
+        case "routecontrollerunhealthyonrestarting":
+        case "RouteControllerUnhealthyOnRestarting": return boolean.class;
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": return java.lang.String.class;
         case "routefilterincludepattern":
@@ -696,6 +700,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerThreadPoolSize": return target.getRouteControllerThreadPoolSize();
         case "routecontrollerunhealthyonexhausted":
         case "RouteControllerUnhealthyOnExhausted": return target.isRouteControllerUnhealthyOnExhausted();
+        case "routecontrollerunhealthyonrestarting":
+        case "RouteControllerUnhealthyOnRestarting": return target.isRouteControllerUnhealthyOnRestarting();
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": return target.getRouteFilterExcludePattern();
         case "routefilterincludepattern":

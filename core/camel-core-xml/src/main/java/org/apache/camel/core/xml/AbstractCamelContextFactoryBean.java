@@ -880,11 +880,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             src.setBackOffMultiplier(backOffMultiplier);
         }
         Boolean unhealthyOnExhausted = CamelContextHelper.parseBoolean(getContext(), rc.getUnhealthyOnExhausted());
-        if (unhealthyOnExhausted != null && unhealthyOnExhausted) {
+        if (src != null && unhealthyOnExhausted != null && unhealthyOnExhausted) {
             src.setUnhealthyOnExhausted(unhealthyOnExhausted);
         }
+        Boolean unhealthyOnRestarting = CamelContextHelper.parseBoolean(getContext(), rc.getUnhealthyOnRestarting());
+        if (src != null && unhealthyOnRestarting != null && unhealthyOnRestarting) {
+            src.setUnhealthyOnRestarting(unhealthyOnRestarting);
+        }
         LoggingLevel loggingLevel = CamelContextHelper.parse(getContext(), LoggingLevel.class, rc.getLoggingLevel());
-        if (loggingLevel != null) {
+        if (src != null && loggingLevel != null) {
             src.setLoggingLevel(loggingLevel);
         }
     }

@@ -152,6 +152,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private long routeControllerBackOffMaxAttempts;
     private double routeControllerBackOffMultiplier;
     private boolean routeControllerUnhealthyOnExhausted;
+    private boolean routeControllerUnhealthyOnRestarting;
     // startup recorder
     @Metadata(enums = "false,off,java-flight-recorder,jfr,logging,backlog")
     private String startupRecorder;
@@ -1654,6 +1655,22 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routeControllerUnhealthyOnExhausted = routeControllerUnhealthyOnExhausted;
     }
 
+    public boolean isRouteControllerUnhealthyOnRestarting() {
+        return routeControllerUnhealthyOnRestarting;
+    }
+
+    /**
+     * Whether to mark the route as unhealthy (down) when the route failed to initially start, and is being controlled
+     * for restarting (backoff).
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    public void setRouteControllerUnhealthyOnRestarting(boolean routeControllerUnhealthyOnRestarting) {
+        this.routeControllerUnhealthyOnRestarting = routeControllerUnhealthyOnRestarting;
+    }
+
     public String getStartupRecorder() {
         return startupRecorder;
     }
@@ -2875,6 +2892,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRouteControllerUnhealthyOnExhausted(boolean unhealthyOnExhausted) {
         this.routeControllerUnhealthyOnExhausted = unhealthyOnExhausted;
+        return (T) this;
+    }
+
+    /**
+     * Whether to mark the route as unhealthy (down) when the route failed to initially start, and is being controlled
+     * for restarting (backoff).
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    public T withRouteControllerUnhealthyOnRestarting(boolean routeControllerUnhealthyOnRestarting) {
+        this.routeControllerUnhealthyOnRestarting = routeControllerUnhealthyOnRestarting;
         return (T) this;
     }
 

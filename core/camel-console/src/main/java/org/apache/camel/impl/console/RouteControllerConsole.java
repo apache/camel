@@ -66,6 +66,8 @@ public class RouteControllerConsole extends AbstractDevConsole {
             long started = routes.stream().filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
                     .count();
 
+            sb.append(String.format("\nInitial Starting Routes: %b", src.isStartingRoutes()));
+            sb.append(String.format("\nUnhealthy Routes: %b", src.isUnhealthyRoutes()));
             sb.append(String.format("Total Routes: %d", routes.size()));
             sb.append(String.format("\nStarted Routes: %d", started));
             sb.append(String.format("\nRestarting Routes: %d", src.getRestartingRoutes().size()));
@@ -76,6 +78,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
             sb.append(String.format("\nBackoff Max Elapsed Time: %d", src.getBackOffMaxElapsedTime()));
             sb.append(String.format("\nBackoff Max Attempts: %d", src.getBackOffMaxAttempts()));
             sb.append(String.format("\nThread Pool Size: %d", src.getThreadPoolSize()));
+            sb.append(String.format("\nUnhealthy On Restarting: %b", src.isUnhealthyOnRestarting()));
             sb.append(String.format("\nUnhealthy On Exhaust: %b", src.isUnhealthyOnExhausted()));
             sb.append("\n\nRoutes:\n");
 
@@ -177,6 +180,8 @@ public class RouteControllerConsole extends AbstractDevConsole {
                     .count();
 
             root.put("controller", "SupervisingRouteController");
+            root.put("startingRoutes", src.isStartingRoutes());
+            root.put("unhealthyRoutes", src.isUnhealthyRoutes());
             root.put("totalRoutes", routes.size());
             root.put("startedRoutes", started);
             root.put("restartingRoutes", src.getRestartingRoutes().size());
@@ -187,6 +192,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
             root.put("backoffMaxElapsedTime", src.getBackOffMaxElapsedTime());
             root.put("backoffMaxAttempts", src.getBackOffMaxAttempts());
             root.put("threadPoolSize", src.getThreadPoolSize());
+            root.put("unhealthyOnRestarting", src.isUnhealthyOnRestarting());
             root.put("unhealthyOnExhausted", src.isUnhealthyOnExhausted());
             root.put("routes", list);
 
