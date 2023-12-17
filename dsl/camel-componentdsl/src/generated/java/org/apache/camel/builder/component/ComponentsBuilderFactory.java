@@ -1234,6 +1234,21 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DynamicRouterComponentBuilderFactory.dynamicRouter();
     }
     /**
+     * Dynamic Router Control (camel-dynamic-router)
+     * The Dynamic Router control endpoint for operations that allow routing
+     * participants to subscribe or unsubscribe to participate in dynamic
+     * message routing.
+     * 
+     * Category: messaging
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.DynamicRouterControlComponentBuilderFactory.DynamicRouterControlComponentBuilder dynamicRouterControl() {
+        return org.apache.camel.builder.component.dsl.DynamicRouterControlComponentBuilderFactory.dynamicRouterControl();
+    }
+    /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
      * 

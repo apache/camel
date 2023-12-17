@@ -20,7 +20,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.dynamicrouter.DynamicRouterComponent;
+import org.apache.camel.component.dynamicrouter.routing.DynamicRouterComponent;
 
 /**
  * The Dynamic Router component routes exchanges to recipients, and the

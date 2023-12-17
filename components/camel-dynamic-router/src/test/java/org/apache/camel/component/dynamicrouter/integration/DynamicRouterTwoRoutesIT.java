@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.dynamicrouter.integration;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Predicate;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage;
-import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage.SubscribeMessageBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.apache.camel.builder.Builder.body;
-import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CONTROL_CHANNEL_URI;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_CHANNEL_URI;
 
 /**
  * Tests two routes, where each route uses a separate Dynamic Router channel. Utilizes Spring XML.
@@ -59,7 +60,7 @@ public class DynamicRouterTwoRoutesIT {
     @Produce("direct:start2")
     ProducerTemplate start2;
 
-    @Produce(CONTROL_CHANNEL_URI)
+    @Produce(CONTROL_CHANNEL_URI + ":" + CONTROL_ACTION_SUBSCRIBE)
     ProducerTemplate subscribe;
 
     /**
@@ -75,29 +76,25 @@ public class DynamicRouterTwoRoutesIT {
         mockOne.expectedBodiesReceived(0, 2, 4, 6, 8, 10);
         mockTwo.expectedBodiesReceived(1, 3, 5, 7, 9);
 
-        // Subscribe for message content on the "test1" channel
-        // The predicate specifies that the message body should contain an even number
-        // The destination endpoint URI is the "mockOne" endpoint
-        DynamicRouterControlMessage evenSubscribeMsg = new SubscribeMessageBuilder()
-                .id("evenNumberSubscription")
-                .channel("test1")
-                .priority(1)
-                .endpointUri(mockOne.getEndpointUri())
-                .predicate(body().regex("^\\d*[02468]$"))
-                .build();
-        subscribe.sendBody(evenSubscribeMsg);
+        // Create a subscription that accepts an exchange when the message body contains an even number
+        // The destination URI is for the endpoint "mockOne"
+        Predicate evenPredicate = body().regex("^\\d*[02468]$");
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", evenPredicate,
+                Map.of("controlAction", "subscribe",
+                        "subscribeChannel", "test1",
+                        "subscriptionId", "evenNumberSubscription",
+                        "destinationUri", mockOne.getEndpointUri(),
+                        "priority", 2));
 
-        // Subscribe for message content on the "test2" channel
-        // The predicate specifies that the message body should contain an odd number
-        // The destination endpoint URI is the "mockTwo" endpoint
-        DynamicRouterControlMessage oddSubscribeMsg = new SubscribeMessageBuilder()
-                .id("oddNumberSubscription")
-                .channel("test2")
-                .priority(1)
-                .endpointUri(mockTwo.getEndpointUri())
-                .predicate(body().regex("^\\d*[13579]$"))
-                .build();
-        subscribe.sendBody(oddSubscribeMsg);
+        // Create a subscription that accepts an exchange when the message body contains an odd number
+        // The destination URI is for the endpoint "mockTwo"
+        Predicate oddPredicate = body().regex("^\\d*[13579]$");
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", oddPredicate,
+                Map.of("controlAction", "subscribe",
+                        "subscribeChannel", "test2",
+                        "subscriptionId", "oddNumberSubscription",
+                        "destinationUri", mockTwo.getEndpointUri(),
+                        "priority", 2));
 
         // Send both channels the same content: numbers from 0 to 10, inclusive
         IntStream.rangeClosed(0, 10).forEach(n -> {

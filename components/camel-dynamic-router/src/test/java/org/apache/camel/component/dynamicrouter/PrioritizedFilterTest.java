@@ -16,16 +16,55 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
-import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Predicate;
+import org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-class PrioritizedFilterTest extends DynamicRouterTestSupport {
+@ExtendWith(MockitoExtension.class)
+class PrioritizedFilterTest {
+
+    @RegisterExtension
+    static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+
+    public static final String TEST_ID = "testId";
+
+    public static final int TEST_PRIORITY = 10;
+
+    public static final String TEST_PREDICATE = "testPredicate";
+
+    @Mock
+    Predicate predicate;
+
+    @Mock
+    DynamicRouterEndpoint endpoint;
+
+    @Mock
+    PrioritizedFilter prioritizedFilter;
+
+    CamelContext context;
+
+    @BeforeEach
+    void localSetup() {
+        context = contextExtension.getContext();
+    }
 
     @Test
     void testCompareToAndEqual() {
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("testUri");
+        Mockito.when(prioritizedFilter.id()).thenReturn(TEST_ID);
+        Mockito.when(prioritizedFilter.priority()).thenReturn(TEST_PRIORITY);
         PrioritizedFilter testProcessor
                 = new PrioritizedFilter(TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri());
         assertEquals(0, testProcessor.compareTo(prioritizedFilter));
@@ -46,6 +85,7 @@ class PrioritizedFilterTest extends DynamicRouterTestSupport {
 
     @Test
     void testToString() {
+        Mockito.when(predicate.toString()).thenReturn(TEST_PREDICATE);
         PrioritizedFilter testProcessor
                 = new PrioritizedFilter(TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri());
         String expected = String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s]",

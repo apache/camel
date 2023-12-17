@@ -4192,15 +4192,12 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>dynamic-router:channel</code>
      * 
-     * Path parameter: channel (required)
-     * Channel of the Dynamic Router
-     * 
-     * Path parameter: controlAction
-     * Control channel action: subscribe or unsubscribe
-     * There are 2 enums and the value can be one of: subscribe, unsubscribe
-     * 
-     * Path parameter: subscribeChannel
-     * The channel to subscribe to
+     * Path parameter: channel
+     * Channel for the Dynamic Router. For example, if the Dynamic Router URI is
+     * dynamic-router://test, then the channel is test. Channels are a way of
+     * keeping routing participants, their rules, and exchanges logically
+     * separate from the participants, rules, and exchanges on other channels.
+     * This can be seen as analogous to VLANs in networking.
      * 
      * @param path channel
      * @return the dsl builder
@@ -4220,15 +4217,12 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>dynamic-router:channel</code>
      * 
-     * Path parameter: channel (required)
-     * Channel of the Dynamic Router
-     * 
-     * Path parameter: controlAction
-     * Control channel action: subscribe or unsubscribe
-     * There are 2 enums and the value can be one of: subscribe, unsubscribe
-     * 
-     * Path parameter: subscribeChannel
-     * The channel to subscribe to
+     * Path parameter: channel
+     * Channel for the Dynamic Router. For example, if the Dynamic Router URI is
+     * dynamic-router://test, then the channel is test. Channels are a way of
+     * keeping routing participants, their rules, and exchanges logically
+     * separate from the participants, rules, and exchanges on other channels.
+     * This can be seen as analogous to VLANs in networking.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4239,6 +4233,57 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Dynamic Router Control (camel-dynamic-router)
+     * The Dynamic Router control endpoint for operations that allow routing
+     * participants to subscribe or unsubscribe to participate in dynamic
+     * message routing.
+     * 
+     * Category: messaging
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * Syntax: <code>dynamic-router-control:controlAction</code>
+     * 
+     * Path parameter: controlAction (required)
+     * Control action
+     * There are 3 enums and the value can be one of: subscribe, unsubscribe,
+     * list
+     * 
+     * @param path controlAction
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DynamicRouterControlEndpointBuilderFactory.DynamicRouterControlEndpointBuilder dynamicRouterControl(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DynamicRouterControlEndpointBuilderFactory.endpointBuilder("dynamic-router-control", path);
+    }
+    /**
+     * Dynamic Router Control (camel-dynamic-router)
+     * The Dynamic Router control endpoint for operations that allow routing
+     * participants to subscribe or unsubscribe to participate in dynamic
+     * message routing.
+     * 
+     * Category: messaging
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * Syntax: <code>dynamic-router-control:controlAction</code>
+     * 
+     * Path parameter: controlAction (required)
+     * Control action
+     * There are 3 enums and the value can be one of: subscribe, unsubscribe,
+     * list
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path controlAction
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DynamicRouterControlEndpointBuilderFactory.DynamicRouterControlEndpointBuilder dynamicRouterControl(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DynamicRouterControlEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Ehcache (camel-ehcache)

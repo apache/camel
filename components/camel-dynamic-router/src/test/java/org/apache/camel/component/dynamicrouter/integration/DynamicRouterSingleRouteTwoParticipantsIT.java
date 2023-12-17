@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.dynamicrouter.integration;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -27,8 +26,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.Builder;
-import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage;
-import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage.SubscribeMessageBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +36,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.apache.camel.builder.Builder.body;
-import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CONTROL_CHANNEL_URI;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_CHANNEL_URI;
 
 /**
  * This test utilizes Spring XML to show the usage of the Dynamic Router, and to test basic functionality.
@@ -67,59 +65,47 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
     @Produce("direct:start")
     ProducerTemplate start;
 
-    @Produce(CONTROL_CHANNEL_URI)
+    @Produce(CONTROL_CHANNEL_URI + ":" + CONTROL_ACTION_SUBSCRIBE)
     ProducerTemplate subscribe;
 
-    DynamicRouterControlMessage evenSubscribeMsg;
+    // Create a subscription that accepts an exchange when the message body contains an even number
+    Predicate evenPredicate = body().regex("^\\d*[02468]$");
+    Map<String, Object> evenSubscriberParams;
 
-    DynamicRouterControlMessage oddSubscribeMsg;
+    // Create a subscription that accepts an exchange when the message body contains an odd number
+    Predicate oddPredicate = body().regex("^\\d*[13579]$");
+    Map<String, Object> oddSubscriberParams;
 
-    DynamicRouterControlMessage allSubscribeMsg;
+    // Create a subscription that accepts an exchange when the message body contains any number
+    Predicate allPredicate = body().regex("^\\d+$");
+    Map<String, Object> allSubscriberParams;
 
-    DynamicRouterControlMessage allSubscribeMsgLowerPriority;
+    // Create a subscription that has an id that is lexically smaller than the rest, but a
+    // priority number that is higher than the rest to test that priority is working properly.
+    Map<String, Object> allSubscriberParamsLowPriority;
 
     @BeforeEach
-    void setup() {
-        // Create a subscription that accepts an exchange when the message body contains an even number
-        // The destination URI is for the endpoint "mockOne"
-        evenSubscribeMsg = new SubscribeMessageBuilder()
-                .id("evenNumberSubscription")
-                .channel("test")
-                .priority(2)
-                .endpointUri(mockOne.getEndpointUri())
-                .predicate(body().regex("^\\d*[02468]$"))
-                .build();
-
-        // Create a subscription that accepts an exchange when the message body contains an odd number
-        // The destination URI is for the endpoint "mockTwo"
-        oddSubscribeMsg = new SubscribeMessageBuilder()
-                .id("oddNumberSubscription")
-                .channel("test")
-                .priority(2)
-                .endpointUri(mockTwo.getEndpointUri())
-                .predicate(body().regex("^\\d*[13579]$"))
-                .build();
-
-        // Create a subscription that accepts an exchange when the message body contains any number
-        // The destination URI is for the endpoint "mockThree"
-        allSubscribeMsg = new SubscribeMessageBuilder()
-                .id("everyNumberSubscription")
-                .channel("test")
-                .priority(1)
-                .endpointUri(mockThree.getEndpointUri())
-                .predicate(body().regex("^\\d+$"))
-                .build();
-
-        // Create a subscription that has an id that is lexically smaller than the rest, but a
-        // priority number that is higher than the rest to test that priority is working properly.
-        // The destination URI is for the endpoint "mockFour"
-        allSubscribeMsgLowerPriority = new SubscribeMessageBuilder()
-                .id("aLowerPrioritySubscription")
-                .channel("test")
-                .priority(10)
-                .endpointUri(mockFour.getEndpointUri())
-                .predicate(body().regex("^\\d+$"))
-                .build();
+    void localSetup() {
+        evenSubscriberParams = Map.of("controlAction", "subscribe",
+                "subscribeChannel", "test",
+                "subscriptionId", "evenNumberSubscription",
+                "destinationUri", mockOne.getEndpointUri(),
+                "priority", 2);
+        oddSubscriberParams = Map.of("controlAction", "subscribe",
+                "subscribeChannel", "test",
+                "subscriptionId", "oddNumberSubscription",
+                "destinationUri", mockTwo.getEndpointUri(),
+                "priority", 2);
+        allSubscriberParams = Map.of("controlAction", "subscribe",
+                "subscribeChannel", "test",
+                "subscriptionId", "allNumberSubscription",
+                "destinationUri", mockThree.getEndpointUri(),
+                "priority", 1);
+        allSubscriberParamsLowPriority = Map.of("controlAction", "subscribe",
+                "subscribeChannel", "test",
+                "subscriptionId", "allNumberSubscriptionLowPriority",
+                "destinationUri", mockFour.getEndpointUri(),
+                "priority", 10);
     }
 
     /**
@@ -136,7 +122,9 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
 
         // Subscribe for even and odd numeric message content so that all messages
         // are received, and neither participant has conflicting rules with each other
-        subscribe(Arrays.asList(evenSubscribeMsg, oddSubscribeMsg));
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", evenPredicate, evenSubscriberParams);
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", oddPredicate, oddSubscriberParams);
+
         sendMessagesAndAssert();
     }
 
@@ -156,7 +144,9 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
         // Subscribe for all numeric message content, and odd numeric message content so that
         // the participant that wants all message content conflicts with everyone else.  Since
         // that subscription has the highest priority (lowest number), it will receive all
-        subscribe(Arrays.asList(allSubscribeMsg, evenSubscribeMsg, oddSubscribeMsg));
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", allPredicate, allSubscriberParams);
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", evenPredicate, evenSubscriberParams);
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", oddPredicate, oddSubscriberParams);
 
         sendMessagesAndAssert();
     }
@@ -175,13 +165,10 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
 
         // Subscribe with filters that perform the same evaluation, but the difference
         // is in message priority.
-        subscribe(List.of(allSubscribeMsg, allSubscribeMsgLowerPriority));
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", allPredicate, allSubscriberParams);
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", allPredicate, allSubscriberParamsLowPriority);
 
         sendMessagesAndAssert();
-    }
-
-    private void subscribe(List<DynamicRouterControlMessage> messages) {
-        messages.forEach(message -> subscribe.sendBody(message));
     }
 
     private void sendMessagesAndAssert() throws InterruptedException {

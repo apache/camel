@@ -16,20 +16,17 @@
  */
 package org.apache.camel.component.dynamicrouter.integration;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Predicate;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage;
-import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage.SubscribeMessageBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -37,7 +34,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.apache.camel.builder.Builder.body;
-import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CONTROL_CHANNEL_URI;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_CHANNEL_URI;
 
 /**
  * This test utilizes Spring XML to show the usage of the Dynamic Router, and to test basic functionality.
@@ -62,47 +60,8 @@ class DynamicRouterMultipleRecipientModeIT {
     @Produce("direct:start")
     ProducerTemplate start;
 
-    @Produce(CONTROL_CHANNEL_URI)
+    @Produce(CONTROL_CHANNEL_URI + ":" + CONTROL_ACTION_SUBSCRIBE)
     ProducerTemplate subscribe;
-
-    DynamicRouterControlMessage evenSubscribeMsg;
-
-    DynamicRouterControlMessage oddSubscribeMsg;
-
-    DynamicRouterControlMessage allSubscribeMsg;
-
-    @BeforeEach
-    void setup() {
-        // Create a subscription that accepts an exchange when the message body contains an even number
-        // The destination URI is for the endpoint "mockOne"
-        evenSubscribeMsg = new SubscribeMessageBuilder()
-                .id("evenNumberSubscription")
-                .channel("test")
-                .priority(2)
-                .endpointUri(mockOne.getEndpointUri())
-                .predicate(body().regex("^\\d*[02468]$"))
-                .build();
-
-        // Create a subscription that accepts an exchange when the message body contains an odd number
-        // The destination URI is for the endpoint "mockTwo"
-        oddSubscribeMsg = new SubscribeMessageBuilder()
-                .id("oddNumberSubscription")
-                .channel("test")
-                .priority(2)
-                .endpointUri(mockTwo.getEndpointUri())
-                .predicate(body().regex("^\\d*[13579]$"))
-                .build();
-
-        // Create a subscription that accepts an exchange when the message body contains any number
-        // The destination URI is for the endpoint "mockThree"
-        allSubscribeMsg = new SubscribeMessageBuilder()
-                .id("allNumberSubscription")
-                .channel("test")
-                .priority(1)
-                .endpointUri(mockThree.getEndpointUri())
-                .predicate(body().regex("^\\d+$"))
-                .build();
-    }
 
     /**
      * This test shows what happens when there are multiple participants that might have overlapping rules. When the
@@ -117,14 +76,37 @@ class DynamicRouterMultipleRecipientModeIT {
         mockTwo.expectedBodiesReceivedInAnyOrder(1, 3, 5, 7, 9);
         mockThree.expectedBodiesReceivedInAnyOrder(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
-        // Subscribe for all numeric message content to verify that in "allMatch" mode,
-        // every participant receives all messages that pertain to them
-        subscribe(Arrays.asList(allSubscribeMsg, evenSubscribeMsg, oddSubscribeMsg));
-        sendMessagesAndAssert();
-    }
+        // Create a subscription that accepts an exchange when the message body contains an even number
+        // The destination URI is for the endpoint "mockOne"
+        Predicate evenPredicate = body().regex("^\\d*[02468]$");
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", evenPredicate,
+                Map.of("controlAction", "subscribe",
+                        "subscribeChannel", "test",
+                        "subscriptionId", "evenNumberSubscription",
+                        "destinationUri", mockOne.getEndpointUri(),
+                        "priority", 2));
 
-    private void subscribe(List<DynamicRouterControlMessage> messages) {
-        messages.forEach(message -> subscribe.sendBody(message));
+        // Create a subscription that accepts an exchange when the message body contains an odd number
+        // The destination URI is for the endpoint "mockTwo"
+        Predicate oddPredicate = body().regex("^\\d*[13579]$");
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", oddPredicate,
+                Map.of("controlAction", "subscribe",
+                        "subscribeChannel", "test",
+                        "subscriptionId", "oddNumberSubscription",
+                        "destinationUri", mockTwo.getEndpointUri(),
+                        "priority", 2));
+
+        // Create a subscription that accepts an exchange when the message body contains any number
+        // The destination URI is for the endpoint "mockThree"
+        Predicate allPredicate = body().regex("^\\d+$");
+        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", allPredicate,
+                Map.of("controlAction", "subscribe",
+                        "subscribeChannel", "test",
+                        "subscriptionId", "allNumberSubscription",
+                        "destinationUri", mockThree.getEndpointUri(),
+                        "priority", 1));
+
+        sendMessagesAndAssert();
     }
 
     private void sendMessagesAndAssert() throws InterruptedException {
