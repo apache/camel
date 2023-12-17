@@ -52,7 +52,7 @@ public class RouteControllerHealthCheck extends AbstractHealthCheck {
         RouteController rc = getCamelContext().getRouteController();
         if (rc != null) {
             // should only be up if there are no unhealthy routes
-            up = !rc.isUnhealthyRoutes();
+            up = !rc.hasUnhealthyRoutes();
             // do we have any details about why we are not up
             if (!up && rc instanceof SupervisingRouteController src) {
                 Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));

@@ -109,8 +109,8 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     @Override
-    public boolean isUnhealthyRoutes() {
-        return getInternalRouteController().isUnhealthyRoutes();
+    public boolean hasUnhealthyRoutes() {
+        return getInternalRouteController().hasUnhealthyRoutes();
     }
 
     @Override

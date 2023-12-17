@@ -40,6 +40,16 @@ public class ManagedRouteController extends ManagedService implements ManagedRou
     }
 
     @Override
+    public boolean isStartingRoutes() {
+        return controller.isStartingRoutes();
+    }
+
+    @Override
+    public boolean isHasUnhealthyRoutes() {
+        return controller.hasUnhealthyRoutes();
+    }
+
+    @Override
     public Collection<String> getControlledRoutes() {
         if (controller != null) {
             return controller.getControlledRoutes().stream()

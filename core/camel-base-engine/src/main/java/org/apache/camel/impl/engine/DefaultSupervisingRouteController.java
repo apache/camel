@@ -248,7 +248,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     // *********************************
 
     @Override
-    public boolean isUnhealthyRoutes() {
+    public boolean hasUnhealthyRoutes() {
         boolean answer = startingRoutes;
 
         // if we have started the routes first time, but some failed and are scheduled for restart

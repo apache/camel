@@ -112,7 +112,7 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
-    public boolean isUnhealthyRoutes() {
+    public boolean hasUnhealthyRoutes() {
         return false;
     }
 
