@@ -239,8 +239,8 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
      * manages the startup using a background thread. The controller allows to be configured with various settings to
      * attempt to restart failing routes.
      */
-    public RouteControllerConfigurationProperties withEnabled(boolean superviseEnabled) {
-        this.enabled = superviseEnabled;
+    public RouteControllerConfigurationProperties withEnabled(boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
 
