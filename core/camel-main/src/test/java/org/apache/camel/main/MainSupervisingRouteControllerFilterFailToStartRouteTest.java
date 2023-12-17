@@ -38,7 +38,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().routeControllerConfig().setSuperviseEnabled(true);
+        main.configure().routeControllerConfig().setEnabled(true);
         main.configure().routeControllerConfig().setBackOffDelay(250);
         main.configure().routeControllerConfig().setBackOffMaxAttempts(3);
         main.configure().routeControllerConfig().setInitialDelay(1000);

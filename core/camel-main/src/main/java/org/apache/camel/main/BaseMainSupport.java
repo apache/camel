@@ -1652,7 +1652,7 @@ public abstract class BaseMainSupport extends BaseService {
                 failIfNotSet, true, autoConfiguredProperties);
 
         // supervising route controller
-        if (config.isSuperviseEnabled()) {
+        if (config.isEnabled()) {
             SupervisingRouteController src = camelContext.getRouteController().supervising();
             if (config.getIncludeRoutes() != null) {
                 src.setIncludeRoutes(config.getIncludeRoutes());

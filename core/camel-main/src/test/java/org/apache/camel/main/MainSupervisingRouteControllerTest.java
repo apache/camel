@@ -42,7 +42,7 @@ public class MainSupervisingRouteControllerTest {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
         main.configure().routeControllerConfig()
-                .withSuperviseEnabled(true)
+                .withEnabled(true)
                 .withBackOffDelay(25)
                 .withBackOffMaxAttempts(3)
                 .withInitialDelay(100)
@@ -87,7 +87,7 @@ public class MainSupervisingRouteControllerTest {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().routeControllerConfig().setSuperviseEnabled(true);
+        main.configure().routeControllerConfig().setEnabled(true);
         main.configure().routeControllerConfig().setBackOffDelay(25);
         main.configure().routeControllerConfig().setBackOffMaxAttempts(10);
         main.configure().routeControllerConfig().setInitialDelay(100);

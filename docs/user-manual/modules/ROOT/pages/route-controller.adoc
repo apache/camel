@@ -85,7 +85,7 @@ from `application.properties`:
 
 [source,properties]
 ----
-camel.routecontroller.superviseEnabled = true
+camel.routecontroller.enabled = true
 
 # and you can configure more options
 camel.routecontroller.backoffDelay = 5000

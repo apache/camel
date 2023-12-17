@@ -29,7 +29,7 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
     private MainConfigurationProperties parent;
 
     @Metadata
-    private boolean superviseEnabled;
+    private boolean enabled;
     @Metadata
     private String includeRoutes;
     @Metadata
@@ -66,8 +66,8 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
         parent = null;
     }
 
-    public boolean isSuperviseEnabled() {
-        return superviseEnabled;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     /**
@@ -79,8 +79,8 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
      * manages the startup using a background thread. The controller allows to be configured with various settings to
      * attempt to restart failing routes.
      */
-    public void setSuperviseEnabled(boolean superviseEnabled) {
-        this.superviseEnabled = superviseEnabled;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getIncludeRoutes() {
@@ -239,8 +239,8 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
      * manages the startup using a background thread. The controller allows to be configured with various settings to
      * attempt to restart failing routes.
      */
-    public RouteControllerConfigurationProperties withSuperviseEnabled(boolean superviseEnabled) {
-        this.superviseEnabled = superviseEnabled;
+    public RouteControllerConfigurationProperties withEnabled(boolean superviseEnabled) {
+        this.enabled = superviseEnabled;
         return this;
     }
 

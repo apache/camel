@@ -20,6 +20,7 @@ The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` 
 The route controller configuration has been moved from general main to its own group.
 All keys started with `camel.main.routesController` should be renamed to `camel.routecontroller.`, for example
 `camel.main.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
+And the option `camel.main.routeControllerSuperviseEnabled` has been renamed to `camel.routecontroller.enabled`.
 
 === camel-azure-cosmosdb
 
@@ -55,6 +56,6 @@ This is part of the effort explained in CAMEL-18590.
 === Auto Configuration
 
 The route controller configuration has been moved from general main to its own group.
-All keys started with `camel.main.routesController` should be renamed to `camel.routecontroller.`, for example
-`camel.main.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
-
+All keys started with `camel.springboot.routesController` should be renamed to `camel.routecontroller.`, for example
+`camel.springboot.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
+And the option `camel.springboot.routeControllerSuperviseEnabled` has been renamed to `camel.routecontroller.enabled`.
