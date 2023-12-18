@@ -33,6 +33,7 @@ public class DataLakeEndpointUriFactory extends org.apache.camel.support.compone
         props.add("clientSecretCredential");
         props.add("close");
         props.add("closeStreamAfterRead");
+        props.add("credentialType");
         props.add("dataCount");
         props.add("dataLakeServiceClient");
         props.add("delay");
@@ -74,7 +75,6 @@ public class DataLakeEndpointUriFactory extends org.apache.camel.support.compone
         props.add("timeUnit");
         props.add("timeout");
         props.add("umask");
-        props.add("useDefaultIdentity");
         props.add("useFixedDelay");
         props.add("userPrincipalNameReturned");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

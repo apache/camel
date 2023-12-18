@@ -105,6 +105,26 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     }
 
     @Override
+    public boolean isUnhealthyOnExhausted() {
+        return controller.isUnhealthyOnExhausted();
+    }
+
+    @Override
+    public boolean isUnhealthyOnRestarting() {
+        return controller.isUnhealthyOnRestarting();
+    }
+
+    @Override
+    public boolean isStartingRoutes() {
+        return controller.isStartingRoutes();
+    }
+
+    @Override
+    public boolean isHasUnhealthyRoutes() {
+        return controller.hasUnhealthyRoutes();
+    }
+
+    @Override
     public int getNumberOfControlledRoutes() {
         return controller.getControlledRoutes().size();
     }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cloudevents;
 
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -76,8 +74,7 @@ public interface CloudEvent {
      * Construct event time from given Camel exchange.
      */
     default String getEventTime(Exchange exchange) {
-        final ZonedDateTime created
-                = ZonedDateTime.ofInstant(Instant.ofEpochMilli(exchange.getCreated()), ZoneId.systemDefault());
+        final ZonedDateTime created = exchange.getClock().asZonedCreationDateTime();
         return DateTimeFormatter.ISO_INSTANT.format(created);
     }
 

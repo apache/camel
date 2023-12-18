@@ -254,9 +254,11 @@ public final class TimeUtils {
     /**
      * Elapsed time using milliseconds since epoch.
      *
-     * @param  start the timestamp in milliseconds since epoch
-     * @return       the elapsed time in milliseconds
+     * @param      start the timestamp in milliseconds since epoch
+     * @return           the elapsed time in milliseconds
+     * @deprecated       Use the Clock API when possible
      */
+    @Deprecated(since = "4.4.0")
     public static long elapsedMillisSince(long start) {
         return System.currentTimeMillis() - start;
     }

@@ -25,6 +25,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.datalake.DataLakeServiceClient;
 import com.azure.storage.file.datalake.DataLakeServiceClientBuilder;
+import org.apache.camel.component.azure.storage.datalake.CredentialType;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -39,18 +40,25 @@ public final class DataLakeClientFactory {
     }
 
     public static DataLakeServiceClient createDataLakeServiceClient(final DataLakeConfiguration configuration) {
-        final DataLakeServiceClient client;
-        if (configuration.getServiceClient() != null) {
+        DataLakeServiceClient client = null;
+        if (configuration.getServiceClient() != null
+                && configuration.getCredentialType().equals(CredentialType.SERVICE_CLIENT_INSTANCE)) {
             LOG.trace("Using configured service client instance");
             client = configuration.getServiceClient();
-        } else if (configuration.getUseDefaultIdentity()) {
+        } else if (configuration.getCredentialType().equals(CredentialType.AZURE_IDENTITY)) {
             client = createDataLakeServiceClientWithDefaultIdentity(configuration);
-        } else if (configuration.getAccountKey() != null || configuration.getSharedKeyCredential() != null) {
-            client = createDataLakeServiceClientWithSharedKey(configuration);
-        } else if (configuration.getSasSignature() != null || configuration.getSasCredential() != null) {
-            client = createDataLakeServiceClientWithSas(configuration);
+        } else if (configuration.getCredentialType().equals(CredentialType.SHARED_KEY_CREDENTIAL)) {
+            if (configuration.getAccountKey() != null || configuration.getSharedKeyCredential() != null) {
+                client = createDataLakeServiceClientWithSharedKey(configuration);
+            }
+        } else if (configuration.getCredentialType().equals(CredentialType.AZURE_SAS)) {
+            if (configuration.getSasSignature() != null || configuration.getSasCredential() != null) {
+                client = createDataLakeServiceClientWithSas(configuration);
+            }
         } else {
-            client = createDataLakeServiceClientWithClientSecret(configuration);
+            if (configuration.getCredentialType().equals(CredentialType.CLIENT_SECRET)) {
+                client = createDataLakeServiceClientWithClientSecret(configuration);
+            }
         }
 
         return client;

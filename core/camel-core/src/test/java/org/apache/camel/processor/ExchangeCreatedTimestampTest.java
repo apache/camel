@@ -34,7 +34,7 @@ public class ExchangeCreatedTimestampTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        long created = mock.getReceivedExchanges().get(0).getCreated();
+        long created = mock.getReceivedExchanges().get(0).getClock().getCreated();
         assertTrue(created > 0);
     }
 

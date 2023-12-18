@@ -39,4 +39,15 @@ public interface PropertiesSource {
      */
     String getProperty(String name);
 
+    /**
+     * Gets the property with the name
+     *
+     * @param  name         name of property
+     * @param  defaultValue default value to use as fallback
+     * @return              the property value, or <tt>null</tt> if no property exists
+     */
+    default String getProperty(String name, String defaultValue) {
+        return getProperty(name);
+    }
+
 }

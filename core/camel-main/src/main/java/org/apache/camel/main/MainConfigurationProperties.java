@@ -63,6 +63,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
     private SSLConfigurationProperties sslConfigurationProperties;
     private DebuggerConfigurationProperties debuggerConfigurationProperties;
+    private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
 
     @Override
     public void close() {
@@ -113,6 +114,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (debuggerConfigurationProperties != null) {
             debuggerConfigurationProperties.close();
             debuggerConfigurationProperties = null;
+        }
+        if (routeControllerConfigurationProperties != null) {
+            routeControllerConfigurationProperties.close();
+            routeControllerConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -224,6 +229,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any SSL configuration specified.
+     */
+    public boolean hasSslConfiguration() {
+        return sslConfigurationProperties != null;
+    }
+
+    /**
      * To configure Debugger.
      */
     public DebuggerConfigurationProperties debuggerConfig() {
@@ -235,17 +247,28 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether there has been any SSL configuration specified.
-     */
-    public boolean hasSslConfiguration() {
-        return sslConfigurationProperties != null;
-    }
-
-    /**
      * Whether there has been any Debugger configuration specified.
      */
     public boolean hasDebuggerConfiguration() {
         return debuggerConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Route Controller.
+     */
+    public RouteControllerConfigurationProperties routeControllerConfig() {
+        if (routeControllerConfigurationProperties == null) {
+            routeControllerConfigurationProperties = new RouteControllerConfigurationProperties(this);
+        }
+
+        return routeControllerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Route Controller configuration specified.
+     */
+    public boolean hasRouteControllerConfiguration() {
+        return routeControllerConfigurationProperties != null;
     }
 
     /**

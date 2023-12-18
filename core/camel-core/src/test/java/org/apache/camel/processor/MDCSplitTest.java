@@ -62,6 +62,7 @@ public class MDCSplitTest extends ContextTestSupport {
                 }).process(checker)
                         .to("log:foo")
                         .split(body().tokenize(","))
+                        .to("log:line")
                         .process(checker)
                         .end()
                         .to("mock:end");

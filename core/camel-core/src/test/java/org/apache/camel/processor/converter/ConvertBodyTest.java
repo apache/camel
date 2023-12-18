@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor.converter;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.Date;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;

@@ -85,29 +85,16 @@ from `application.properties`:
 
 [source,properties]
 ----
-camel.main.routeControllerSuperviseEnabled = true
+camel.routecontroller.enabled = true
 
 # and you can configure more options
-camel.main.routeControllerBackoffDelay = 5000
-camel.main.routeControllerBackoffMaxAttempts = 3
-camel.main.routeControllerInitialDelay = 1000
-camel.main.routeControllerThreadPoolSize = 2
+camel.routecontroller.backoffDelay = 5000
+camel.routecontroller.backoffMaxAttempts = 3
+camel.routecontroller.initialDelay = 1000
+camel.routecontroller.threadPoolSize = 2
 ----
 
-And in Spring Boot:
-
-[source,properties]
-----
-camel.springboot.routeControllerSuperviseEnabled = true
-
-# and you can configure more options
-camel.springboot.routeControllerBackoffDelay = 5000
-camel.springboot.routeControllerBackoffMaxAttempts = 3
-camel.springboot.routeControllerInitialDelay = 1000
-camel.springboot.routeControllerThreadPoolSize = 2
-----
-
-And for users with XML DSL you can do as follows:
+And for users with Spring <beans> or OSGi <blueprint> XML you can do as follows:
 
 [source,xml]
 ----
@@ -143,6 +130,8 @@ You can configure the `SupervisingRouteController` using the following options:
 | IncludeRoutes | | Pattern for filtering routes to be included as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to include all kafka routes, you can say kafka:. And to include routes with specific route ids myRoute,myOtherRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern.
 | ExcludeRoutes | | Pattern for filtering routes to be excluded as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to exclude all JMS routes, you can say jms:. And to exclude routes with specific route ids mySpecialRoute,myOtherSpecialRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern.
 | ThreadPoolSize | `1` | The number of threads used by the route controller scheduled thread pool that are used for restarting routes. The pool uses 1 thread by default, but you can increase this to allow the controller to concurrently attempt to restart multiple routes in case more than one route has problems starting.
+| UnhealthyOnExhausted | `false` | Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed and the route is not successfully started and the route manager is giving up. Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+| UnhealthyOnRestarting | `false` | Whether to mark the route as unhealthy (down) when the route failed to initially start, and is being controlled for restarting (backoff). Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
 |=======================================================================
 
 === Filtering routes to fail fast
@@ -175,7 +164,7 @@ by excluding by pattern `aws*` (uri or route id)
 
 [source,java]
 -----
-camel.springboot.routeControllerExcludeRoutes = aws*
+camel.routecontroller.excludeRoutes = aws*
 -----
 
 == JMX management

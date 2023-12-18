@@ -394,7 +394,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                             + "]";
                 }
 
-                long elapsed = TimeUtils.elapsedMillisSince(suspendedExchange.getCreated());
+                long elapsed = suspendedExchange.getClock().elapsed();
 
                 messageHistoryBuilder
                         .append("    <messageHistoryEntry")

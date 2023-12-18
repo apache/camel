@@ -70,7 +70,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
         assertEquals("direct://start", event.getExchange().getFromEndpoint().getEndpointUri());
 
         // grab the created timestamp
-        long created = event.getExchange().getCreated();
+        long created = event.getExchange().getClock().getCreated();
         assertTrue(created > 0);
 
         // calculate elapsed time

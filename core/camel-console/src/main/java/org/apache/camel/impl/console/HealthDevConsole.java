@@ -53,17 +53,21 @@ public class HealthDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
             } else {
                 if (res.getMessage().isPresent()) {
-                    sb.append(String.format("\n    %s: %s (%s)", res.getCheck().getId(), res.getState(), res.getMessage()));
+                    sb.append(
+                            String.format("\n    %s: %s (%s)", res.getCheck().getId(), res.getState(), res.getMessage().get()));
                 } else {
                     sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
                 }
-                Throwable cause = res.getError().orElse(null);
-                if (cause != null) {
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    cause.printStackTrace(pw);
-                    sb.append(pw);
-                    sb.append("\n\n");
+                if ("full".equals(exposureLevel)) {
+                    if (res.getError().isPresent()) {
+                        Throwable cause = res.getError().get();
+                        StringWriter sw = new StringWriter();
+                        PrintWriter pw = new PrintWriter(sw);
+                        cause.printStackTrace(pw);
+                        sb.append("\n\n");
+                        sb.append(sw);
+                        sb.append("\n\n");
+                    }
                 }
             }
         });

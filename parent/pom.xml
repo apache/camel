@@ -68,7 +68,7 @@
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.21.44</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.22.0</aws-java-sdk2-version>
         <aws-xray-version>2.15.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.19</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
@@ -119,7 +119,7 @@
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.5.2-jakarta4</datasonnet-mapper-version>
-        <debezium-version>2.4.1.Final</debezium-version>
+        <debezium-version>2.4.2.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.33</debezium-mysql-connector-version>
         <derby-version>10.16.1.1</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
@@ -271,7 +271,7 @@
         <jolokia-version>1.7.2</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
-        <jooq-version>3.18.7</jooq-version>
+        <jooq-version>3.19.0</jooq-version>
         <joor-version>0.9.15</joor-version>
         <jose4j-version>0.9.3</jose4j-version>
         <johnzon-version>2.0.0</johnzon-version>
@@ -316,7 +316,7 @@
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.2.1</maven-archetype-packaging-version>
-        <maven-owasp-plugin-version>9.0.0</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>9.0.6</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
         <maven-plugin-plugin-version>3.10.2</maven-plugin-plugin-version>
@@ -352,7 +352,7 @@
         <mybatis-version>3.5.13</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.101.Final</netty-version>
+        <netty-version>4.1.104.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.88</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.37.2</nimbus-jose-jwt>
@@ -398,7 +398,7 @@
         <reactor-version>3.6.0</reactor-version>
         <reactor-netty-version>1.1.14</reactor-netty-version>
         <redisson-version>3.25.0</redisson-version>
-        <resilience4j-version>2.1.0</resilience4j-version>
+        <resilience4j-version>2.2.0</resilience4j-version>
         <rest-assured-version>5.3.1</rest-assured-version>
         <roaster-version>2.29.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>

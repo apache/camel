@@ -238,7 +238,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        Exchange answer = new DefaultExchange(this, pattern);
+        Exchange answer = DefaultExchange.newFromEndpoint(this, pattern);
         configureExchange(answer);
         return answer;
     }

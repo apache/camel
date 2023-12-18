@@ -128,6 +128,18 @@ public interface SupervisingRouteController extends RouteController {
      */
     boolean isUnhealthyOnExhausted();
 
+    boolean isUnhealthyOnRestarting();
+
+    /**
+     * Whether to mark the route as unhealthy (down) when the route failed to initially start, and is being controlled
+     * for restarting (backoff).
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    void setUnhealthyOnRestarting(boolean unhealthyOnRestarting);
+
     /**
      * Return the list of routes that are currently under restarting by this controller.
      *
@@ -160,5 +172,11 @@ public interface SupervisingRouteController extends RouteController {
      * @return         the caused exception
      */
     Throwable getRestartException(String routeId);
+
+    /**
+     * Whether the route controller is currently starting routes for the first time. This only reports on the first time
+     * start phase.
+     */
+    boolean isStartingRoutes();
 
 }

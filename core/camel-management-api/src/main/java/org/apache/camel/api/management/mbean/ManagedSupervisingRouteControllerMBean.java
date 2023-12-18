@@ -55,6 +55,12 @@ public interface ManagedSupervisingRouteControllerMBean extends ManagedRouteCont
     @ManagedAttribute(description = "Pattern for filtering routes to be excluded as supervised")
     String getExcludeRoutes();
 
+    @ManagedAttribute(description = "Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed and the route is not successfully started and the route manager is giving up.")
+    boolean isUnhealthyOnExhausted();
+
+    @ManagedAttribute(description = "Whether to mark the route as unhealthy (down) when the route failed to initially start, and is being controlled for restarting (backoff)")
+    boolean isUnhealthyOnRestarting();
+
     @ManagedAttribute(description = "Number of routes controlled by the controller")
     int getNumberOfControlledRoutes();
 

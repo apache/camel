@@ -59,6 +59,7 @@ import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
+import org.apache.camel.main.download.PromptPropertyPlaceholderSource;
 import org.apache.camel.main.download.StubBeanRepository;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
@@ -356,6 +357,11 @@ public class KameletMain extends MainCommandLineSupport {
         DefaultCamelContext answer = new DefaultCamelContext(false);
         // setup backlog recorder from very start
         answer.getCamelContextExtension().setStartupStepRecorder(new BacklogStartupStepRecorder());
+
+        boolean prompt = "true".equals(getInitialProperties().get("camel.jbang.prompt"));
+        if (prompt) {
+            answer.getPropertiesComponent().addPropertiesSource(new PromptPropertyPlaceholderSource());
+        }
 
         ClassLoader dynamicCL = createApplicationContextClassLoader(answer);
         answer.setApplicationContextClassLoader(dynamicCL);

@@ -14,25 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.azure;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.support;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.concurrent.TimeUnit;
 
-@SuppressWarnings("static-method")
-public class FilesURIStringsTests {
+import org.apache.camel.Clock;
 
-    @Test
-    void encodeTokenValueShouldEncodeBase64PlusSlashAndPadding() throws Exception {
-        // e.g. for the sig base64 param on SAS token the encoding style must encode '+', '/', '='
-        assertEquals("%2B%2Fa%3D", FilesURIStrings.encodeTokenValue("+/a="));
+public class MonotonicClock implements Clock {
+    private final long created;
+    private final long createdNano;
+
+    MonotonicClock() {
+        this.created = System.currentTimeMillis();
+        this.createdNano = System.nanoTime();
     }
 
-    @Test
-    void encodeTokenValueShouldPreserveTimeSeparator() throws Exception {
-        // e.g. for the se param on SAS token the encoding style must preserve ':'
-        assertEquals("11:55:01", FilesURIStrings.encodeTokenValue("11:55:01"));
+    @Override
+    public long elapsed() {
+        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - createdNano);
     }
 
+    @Override
+    public long getCreated() {
+        return created;
+    }
 }
