@@ -308,7 +308,7 @@ input message and return as response; it's the aggregate method with 3 exchange 
 
 The Split EIP operates in two modes when splitting:
 
-- _default mode_ - The message is split into sub messages, which allows to know the total split size. However this causes all sub messages to be kept temporary in-memory.
+- _default mode_ - The message is split into sub messages, which allows to know the total split size. However this causes all sub messages to be kept temporarily in-memory.
 - _streaming mode_ - The message is split on-demand. This uses an iterator to keep track of the splitting index, but avoids loading all sub messages into memory. However, the total size cannot be know ahead of time.
 
 === Using streaming mode
