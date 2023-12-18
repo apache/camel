@@ -15,6 +15,16 @@ The method `getCreated` is now deprecated. Access to the time-related informatio
 
 The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` now has a 2nd parameter for the default value.
 
+==== WireTap EIP
+
+The copied exchange is no longer having exchange property CORRELATION_ID set that links to the original exchange.
+The reason is that this link should only be for EIPs with sub exchanges such as Splitter and Multicast.
+
+==== MDC logging
+
+When using custom MDC keys (need to configure `MDCLoggingKeysPattern`) then these custom keys are cleared at the end of routing.
+Also, custom keys is allowed to be changed during routing, using the `MDC.set(myKey, ...)` Java API.
+
 === camel-main
 
 The route controller configuration has been moved from general main to its own group.

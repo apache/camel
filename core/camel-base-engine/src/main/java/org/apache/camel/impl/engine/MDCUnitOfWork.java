@@ -211,9 +211,42 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
         }
     }
 
+    /**
+     * Clear custom MDC values based on the configured MDC pattern
+     */
+    protected void clearCustom(Exchange exchange) {
+        // clear custom patterns
+        if (pattern != null) {
+
+            // only clear if the UoW is the parent UoW (split, multicast and other EIPs create child exchanges with their own UoW)
+            if (exchange != null) {
+                String cid = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+                if (cid != null && !cid.equals(exchange.getExchangeId())) {
+                    return;
+                }
+            }
+
+            Map<String, String> mdc = MDC.getCopyOfContextMap();
+            if (mdc != null) {
+                if ("*".equals(pattern)) {
+                    MDC.clear();
+                } else {
+                    final String[] patterns = pattern.split(",");
+                    mdc.forEach((k, v) -> {
+                        if (PatternHelper.matchPatterns(k, patterns)) {
+                            MDC.remove(k);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     @Override
     public void done(Exchange exchange) {
         super.done(exchange);
+        // clear custom first
+        clearCustom(exchange);
         clear();
     }
 
@@ -227,6 +260,8 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
     @Override
     public void reset() {
         super.reset();
+        // clear custom first
+        clearCustom(null);
         clear();
     }
 
@@ -309,7 +344,12 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
                         MDC.put(MDC_CAMEL_CONTEXT_ID, camelContextId);
                     }
                     if (custom != null) {
-                        custom.forEach(MDC::put);
+                        // keep existing custom value to not override
+                        custom.forEach((k, v) -> {
+                            if (MDC.get(k) == null) {
+                                MDC.put(k, v);
+                            }
+                        });
                     }
                 }
                 // need to setup the routeId finally

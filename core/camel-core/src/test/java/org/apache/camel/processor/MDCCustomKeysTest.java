@@ -26,16 +26,39 @@ import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MDCSplitTest extends ContextTestSupport {
+public class MDCCustomKeysTest extends ContextTestSupport {
+
+    private MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");
+    private MdcCheckerProcessor checker2 = new MdcCheckerProcessor("World");
 
     @Test
     public void testMdcPreserved() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:end");
-        mock.expectedMessageCount(1);
 
-        template.sendBody("direct:a", "A,B");
+        MockEndpoint mock = getMockEndpoint("mock:end");
+        mock.expectedBodiesReceived("A");
+
+        checker1.reset();
+        checker2.reset();
+        template.sendBody("direct:a", "A");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testMdcPreservedTwo() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:end");
+        mock.expectedBodiesReceived("A", "B");
+
+        checker1.reset();
+        checker2.reset();
+        template.sendBody("direct:a", "A");
+
+        checker1.reset();
+        checker2.reset();
+        template.sendBody("direct:a", "B");
 
         assertMockEndpointsSatisfied();
     }
@@ -50,23 +73,25 @@ public class MDCSplitTest extends ContextTestSupport {
                 context.setUseBreadcrumb(true);
                 context.setMDCLoggingKeysPattern("custom*,my*");
 
-                MdcCheckerProcessor checker = new MdcCheckerProcessor();
+                from("direct:a").process(e -> {
 
-                from("direct:a").routeId("route-async").process(e -> {
+                    // custom should be empty
+                    String hello = MDC.get("custom.hello");
+                    assertNull(hello);
+
                     // custom is propagated
-                    MDC.put("custom.hello", "World");
+                    MDC.put("custom.hello", "N/A");
                     // foo is propagated due we use the same thread
                     MDC.put("foo", "Bar");
                     // myKey is propagated
                     MDC.put("myKey", "Baz");
-                }).process(checker)
+                }).process(checker1)
                         .to("log:foo")
-                        .split(body().tokenize(","))
-                        .to("log:line")
-                        .process(checker)
-                        .end()
+                        .process(e -> {
+                            MDC.put("custom.hello", "World");
+                        })
+                        .process(checker2)
                         .to("mock:end");
-
             }
         };
     }
@@ -76,7 +101,6 @@ public class MDCSplitTest extends ContextTestSupport {
      */
     private static class MdcCheckerProcessor implements Processor {
 
-        private String routeId = "route-async";
         private String exchangeId;
         private String messageId;
         private String breadcrumbId;
@@ -84,10 +108,25 @@ public class MDCSplitTest extends ContextTestSupport {
         private Long threadId;
         private String foo;
 
+        private final String expected;
+
+        public MdcCheckerProcessor(String expected) {
+            this.expected = expected;
+        }
+
+        public void reset() {
+            exchangeId = null;
+            messageId = null;
+            breadcrumbId = null;
+            contextId = null;
+            threadId = null;
+            foo = null;
+        }
+
         @Override
         public void process(Exchange exchange) throws Exception {
             // custom is propagated as its pattern matches
-            assertEquals("World", MDC.get("custom.hello"));
+            assertEquals(expected, MDC.get("custom.hello"));
             assertEquals("Baz", MDC.get("myKey"));
 
             if (foo != null) {
@@ -103,11 +142,6 @@ public class MDCSplitTest extends ContextTestSupport {
             } else {
                 threadId = Thread.currentThread().getId();
             }
-
-            if (routeId != null) {
-                assertEquals(routeId, MDC.get("camel.routeId"));
-            }
-
             if (exchangeId != null) {
                 assertNotEquals(exchangeId, MDC.get("camel.exchangeId"));
             } else {
