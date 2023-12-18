@@ -20,24 +20,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelGCAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelLogAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelReloadAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelResetStatsAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteDumpAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStartAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelSendAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelStartupRecorderAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelStubAction;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelTraceAction;
-import org.apache.camel.dsl.jbang.core.commands.action.LoggerAction;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteControllerAction;
-import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
+import org.apache.camel.dsl.jbang.core.commands.action.*;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
@@ -50,34 +33,18 @@ import org.apache.camel.dsl.jbang.core.commands.config.ConfigGet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigList;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigSet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigUnset;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelCount;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorTop;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteTop;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelTop;
-import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
-import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
-import org.apache.camel.dsl.jbang.core.commands.process.ListBlocked;
-import org.apache.camel.dsl.jbang.core.commands.process.ListCircuitBreaker;
-import org.apache.camel.dsl.jbang.core.commands.process.ListConsumer;
-import org.apache.camel.dsl.jbang.core.commands.process.ListEndpoint;
-import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
-import org.apache.camel.dsl.jbang.core.commands.process.ListHealth;
-import org.apache.camel.dsl.jbang.core.commands.process.ListInflight;
-import org.apache.camel.dsl.jbang.core.commands.process.ListMetric;
-import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
-import org.apache.camel.dsl.jbang.core.commands.process.ListService;
-import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
-import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
+import org.apache.camel.dsl.jbang.core.commands.k.IntegrationDelete;
+import org.apache.camel.dsl.jbang.core.commands.k.IntegrationGet;
+import org.apache.camel.dsl.jbang.core.commands.k.IntegrationLogs;
+import org.apache.camel.dsl.jbang.core.commands.k.IntegrationRun;
+import org.apache.camel.dsl.jbang.core.commands.k.KubeCommand;
+import org.apache.camel.dsl.jbang.core.commands.process.*;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionCommand;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionGet;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -85,8 +52,13 @@ import picocli.CommandLine.Command;
 public class CamelJBangMain implements Callable<Integer> {
     private static CommandLine commandLine;
 
+    private Printer out = new Printer.SystemOutPrinter();
+
     public static void run(String... args) {
-        CamelJBangMain main = new CamelJBangMain();
+        run(new CamelJBangMain(), args);
+    }
+
+    public static void run(CamelJBangMain main, String... args) {
         commandLine = new CommandLine(main)
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
@@ -157,6 +129,11 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("get", new CommandLine(new ConfigGet(main)))
                         .addSubcommand("unset", new CommandLine(new ConfigUnset(main)))
                         .addSubcommand("set", new CommandLine(new ConfigSet(main))))
+                .addSubcommand("k", new CommandLine(new KubeCommand(main))
+                        .addSubcommand("get", new CommandLine(new IntegrationGet(main)))
+                        .addSubcommand("run", new CommandLine(new IntegrationRun(main)))
+                        .addSubcommand("delete", new CommandLine(new IntegrationDelete(main)))
+                        .addSubcommand("logs", new CommandLine(new IntegrationLogs(main))))
                 .addSubcommand("version", new CommandLine(new VersionCommand(main))
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
                         .addSubcommand("set", new CommandLine(new VersionSet(main)))
@@ -170,6 +147,16 @@ public class CamelJBangMain implements Callable<Integer> {
 
         CommandLineHelper.augmentWithUserConfiguration(commandLine, args);
         int exitCode = commandLine.execute(args);
+        main.quit(exitCode);
+    }
+
+    /**
+     * Finish this main with given exit code. By default, uses system exit to terminate. Subclasses may want to
+     * overwrite this exit behavior e.g. during unit tests.
+     *
+     * @param exitCode
+     */
+    protected void quit(int exitCode) {
         System.exit(exitCode);
     }
 
@@ -177,6 +164,34 @@ public class CamelJBangMain implements Callable<Integer> {
     public Integer call() throws Exception {
         commandLine.execute("--help");
         return 0;
+    }
+
+    /**
+     * Gets the main output printer to write command output.
+     *
+     * @return the printer.
+     */
+    public Printer getOut() {
+        return out;
+    }
+
+    /**
+     * Sets the main output printer.
+     *
+     * @param out the printer to use for command output.
+     */
+    public void setOut(Printer out) {
+        this.out = out;
+    }
+
+    /**
+     * Uses this printer for writing command output.
+     *
+     * @param out to use with this main.
+     */
+    public CamelJBangMain withPrinter(Printer out) {
+        this.out = out;
+        return this;
     }
 
 }
