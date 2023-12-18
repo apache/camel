@@ -161,7 +161,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         }
 
         try {
-            Queue<Exchange> exchanges = createExchanges(result.records());
+            Queue<Exchange> exchanges = createExchanges(shard, result.records());
             processedExchangeCount.getAndSet(processBatch(CastUtils.cast(exchanges)));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -220,7 +220,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                 request.startingSequenceNumber(getEndpoint().getConfiguration().getSequenceNumber());
             }
 
-            resume(request);
+            resume(shardId, request);
 
             GetShardIteratorResponse result;
             if (getEndpoint().getConfiguration().isAsyncClient()) {
@@ -265,7 +265,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         }
     }
 
-    private void resume(GetShardIteratorRequest.Builder req) {
+    private void resume(String shardId, GetShardIteratorRequest.Builder req) {
         if (resumeStrategy == null) {
             return;
         }
@@ -277,26 +277,25 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             return;
         }
 
-        adapter.setRequestBuilder(req);
-        adapter.setStreamName(getEndpoint().getConfiguration().getStreamName());
-        adapter.resume();
+        adapter.configureGetShardIteratorRequest(req, getEndpoint().getConfiguration().getStreamName(), shardId);
     }
 
-    private Queue<Exchange> createExchanges(List<Record> records) {
+    private Queue<Exchange> createExchanges(Shard shard, List<Record> records) {
         Queue<Exchange> exchanges = new ArrayDeque<>();
         for (Record dataRecord : records) {
-            exchanges.add(createExchange(dataRecord));
+            exchanges.add(createExchange(shard, dataRecord));
         }
         return exchanges;
     }
 
-    protected Exchange createExchange(Record dataRecord) {
+    protected Exchange createExchange(Shard shard, Record dataRecord) {
         LOG.debug("Received Kinesis record with partition_key={}", dataRecord.partitionKey());
         Exchange exchange = createExchange(true);
         exchange.getIn().setBody(dataRecord.data().asInputStream());
         exchange.getIn().setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, dataRecord.approximateArrivalTimestamp());
         exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, dataRecord.partitionKey());
         exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, dataRecord.sequenceNumber());
+        exchange.getIn().setHeader(Kinesis2Constants.SHARD_ID, shard.shardId());
         if (dataRecord.approximateArrivalTimestamp() != null) {
             long ts = dataRecord.approximateArrivalTimestamp().getEpochSecond() * 1000;
             exchange.getIn().setHeader(Kinesis2Constants.MESSAGE_TIMESTAMP, ts);

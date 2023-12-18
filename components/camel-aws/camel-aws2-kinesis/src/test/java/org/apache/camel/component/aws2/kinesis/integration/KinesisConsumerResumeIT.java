@@ -86,17 +86,20 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
         }
 
         @Override
-        public void setRequestBuilder(GetShardIteratorRequest.Builder builder) {
-            this.builder = ObjectHelper.notNull(builder, "builder");
-        }
-
-        @Override
-        public void setStreamName(String streamName) {
-            ObjectHelper.notNull(streamName, "streamName");
-        }
-
-        @Override
         public void resume() {
+        }
+
+        public void setPreviousRecords(List<PutRecordsResponse> previousRecords) {
+            this.previousRecords = previousRecords;
+        }
+
+        @Override
+        public void configureGetShardIteratorRequest(
+                GetShardIteratorRequest.Builder builder, String streamName, String shardId) {
+            ObjectHelper.notNull(builder, "builder");
+            ObjectHelper.notNull(streamName, "streamName");
+            ObjectHelper.notNull(shardId, "shardId");
+
             LOG.debug("Waiting for data");
             Awaitility.await().atMost(1, TimeUnit.MINUTES).until(() -> !previousRecords.isEmpty());
 
@@ -106,10 +109,6 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
 
             builder.startingSequenceNumber(putRecordsResultEntry.sequenceNumber());
             builder.shardIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
-        }
-
-        public void setPreviousRecords(List<PutRecordsResponse> previousRecords) {
-            this.previousRecords = previousRecords;
         }
     }
 
