@@ -61,14 +61,16 @@ include::partial$component-endpoint-options.adoc[]
 
 
 === Methods of authentication
-In order to use this component, you will have to provide at least one of the below given points for authentication purposes.
 
-- Provide `accountName` and `accessKey` for your azure account.
-- Provide StorageSharedKeyCredential instance which can be provided into `sharedKeyCredential` option.
-- Provide ClientSecretCredential instance which can be provided into `clientSecretCredential` option.
-- Provide `accountName`, `clientId`, `clientSecret` and `tenantId` for authentication with Azure Active Directory.
-- Provide a DataLakeServiceClient instance which can be provided into `serviceClient` option.
+In order to use this component, you will have to provide at least one of the specific credentialType parameters:
 
+- SHARED_KEY_CREDENTIAL: Provide `accountName` and `accessKey` for your azure account or provide StorageSharedKeyCredential instance which can be provided into `sharedKeyCredential` option.
+- CLIENT_SECRET: Provide ClientSecretCredential instance which can be provided into `clientSecretCredential` option or provide `accountName`, `clientId`, `clientSecret` and `tenantId` for authentication with Azure Active Directory.
+- SERVICE_CLIENT_INSTANCE: Provide a DataLakeServiceClient instance which can be provided into `serviceClient` option.
+- AZURE_IDENTITY: Use the Default Azure Credential Provider Chain
+- AZURE_SAS: Provide `sasSignature` or `sasCredential` parameters to use SAS mechanism
+
+Default is CLIENT_SECRET
 
 == Usage
 
