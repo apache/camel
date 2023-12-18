@@ -25,6 +25,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "Binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
         case "camelcontext":
         case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "clearonreload":
+        case "ClearOnReload": target.setClearOnReload(property(camelContext, boolean.class, value)); return true;
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": target.setEnableExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "enablemessagehistory":
@@ -48,6 +50,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "Binders": return java.lang.String.class;
         case "camelcontext":
         case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "clearonreload":
+        case "ClearOnReload": return boolean.class;
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": return boolean.class;
         case "enablemessagehistory":
@@ -72,6 +76,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "Binders": return target.getBinders();
         case "camelcontext":
         case "CamelContext": return target.getCamelContext();
+        case "clearonreload":
+        case "ClearOnReload": return target.isClearOnReload();
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": return target.isEnableExchangeEventNotifier();
         case "enablemessagehistory":

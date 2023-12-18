@@ -38,6 +38,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private boolean enableExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+    @Metadata(defaultValue = "true")
+    private boolean clearOnReload = true;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
     @Metadata
@@ -122,6 +124,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnableRouteEventNotifier(boolean enableRouteEventNotifier) {
         this.enableRouteEventNotifier = enableRouteEventNotifier;
+    }
+
+    public boolean isClearOnReload() {
+        return clearOnReload;
+    }
+
+    /**
+     * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
+     */
+    public void setClearOnReload(boolean clearOnReload) {
+        this.clearOnReload = clearOnReload;
     }
 
     public String getTextFormatVersion() {
@@ -211,6 +224,14 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public MetricsConfigurationProperties witheEnableRouteEventNotifier(boolean enableRouteEventNotifier) {
         this.enableRouteEventNotifier = enableRouteEventNotifier;
+        return this;
+    }
+
+    /**
+     * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
+     */
+    public MetricsConfigurationProperties withClearOnReload(boolean clearOnReload) {
+        this.clearOnReload = clearOnReload;
         return this;
     }
 

@@ -18,11 +18,13 @@ package org.apache.camel.component.micrometer.prometheus;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.MeterBinder;
 import io.micrometer.prometheus.PrometheusConfig;
@@ -49,12 +51,14 @@ import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyNa
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -86,6 +90,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private boolean enableExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+    @Metadata(defaultValue = "true")
+    private boolean clearOnReload = true;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
     @Metadata
@@ -107,7 +113,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
     /**
      * Controls the name style to use for metrics.
-     *
+     * <p>
      * Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase)
      */
     public void setNamingStrategy(String namingStrategy) {
@@ -132,7 +138,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     /**
      * Set whether to enable the MicrometerMessageHistoryFactory for capturing metrics on individual route node
      * processing times.
-     *
+     * <p>
      * Depending on the number of configured route nodes, there is the potential to create a large volume of metrics.
      * Therefore, this option is disabled by default.
      */
@@ -163,13 +169,24 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         this.enableRouteEventNotifier = enableRouteEventNotifier;
     }
 
+    public boolean isClearOnReload() {
+        return clearOnReload;
+    }
+
+    /**
+     * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
+     */
+    public void setClearOnReload(boolean clearOnReload) {
+        this.clearOnReload = clearOnReload;
+    }
+
     public String getTextFormatVersion() {
         return textFormatVersion;
     }
 
     /**
      * The text-format version to use with Prometheus scraping.
-     *
+     * <p>
      * 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0;
      * charset=utf-8
      */
@@ -184,7 +201,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     /**
      * Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple
      * binders can be separated by comma.
-     *
+     * <p>
      * The following binders currently is available from Micrometer: class-loader, commons-object-pool2,
      * file-descriptor, hystrix-metrics-binder, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory,
      * jvm-thread, log4j2, logback, processor, uptime
@@ -256,6 +273,41 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             }
             factory.setMeterRegistry(meterRegistry);
             camelContext.setMessageHistoryFactory(factory);
+        }
+
+        if (clearOnReload) {
+            camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+
+                @Override
+                public boolean isEnabled(CamelEvent event) {
+                    return event instanceof CamelEvent.RouteReloadedEvent;
+                }
+
+                @Override
+                public void notify(CamelEvent event) throws Exception {
+                    // when reloading then there may be more routes in the same batch, so we only want
+                    // to log the summary at the end
+                    if (event instanceof CamelEvent.RouteReloadedEvent) {
+                        CamelEvent.RouteReloadedEvent re = (CamelEvent.RouteReloadedEvent) event;
+                        if (re.getIndex() >= re.getTotal()) {
+                            LOG.info("Resetting Micrometer Registry after reloading routes");
+
+                            // remove all meters that are from Camel and associated routes via routeId as tag
+                            List<Meter> toRemove = new ArrayList<>();
+                            for (Meter m : meterRegistry.getMeters()) {
+                                String n = m.getId().getName();
+                                if (n.startsWith("camel_") || n.startsWith("camel.")) {
+                                    String t = m.getId().getTag("routeId");
+                                    if (t != null) {
+                                        toRemove.add(m);
+                                    }
+                                }
+                            }
+                            toRemove.forEach(meterRegistry::remove);
+                        }
+                    }
+                }
+            });
         }
     }
 
