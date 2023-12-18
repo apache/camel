@@ -25,40 +25,16 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MDCCustomKeysTest extends ContextTestSupport {
-
-    private MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");
-    private MdcCheckerProcessor checker2 = new MdcCheckerProcessor("World");
+public class WireTapMDCTest extends ContextTestSupport {
 
     @Test
     public void testMdcPreserved() throws Exception {
-
         MockEndpoint mock = getMockEndpoint("mock:end");
-        mock.expectedBodiesReceived("A");
+        mock.expectedMessageCount(2);
 
-        checker1.reset();
-        checker2.reset();
-        template.sendBody("direct:a", "A");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testMdcPreservedTwo() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:end");
-        mock.expectedBodiesReceived("A", "B");
-
-        checker1.reset();
-        checker2.reset();
-        template.sendBody("direct:a", "A");
-
-        checker1.reset();
-        checker2.reset();
-        template.sendBody("direct:a", "B");
+        template.sendBody("seda:a", "A");
 
         assertMockEndpointsSatisfied();
     }
@@ -73,24 +49,29 @@ public class MDCCustomKeysTest extends ContextTestSupport {
                 context.setUseBreadcrumb(true);
                 context.setMDCLoggingKeysPattern("custom*,my*");
 
-                from("direct:a").process(e -> {
+                MdcCheckerProcessor checker = new MdcCheckerProcessor("route-a", "World", "MyValue");
+                MdcCheckerProcessor checker2 = new MdcCheckerProcessor("route-b", "Moon", "MyValue2");
 
-                    // custom should be empty
-                    String hello = MDC.get("custom.hello");
-                    assertNull(hello);
-
-                    // custom is propagated
-                    MDC.put("custom.hello", "N/A");
-                    // foo is propagated due we use the same thread
-                    MDC.put("foo", "Bar");
-                    // myKey is propagated
-                    MDC.put("myKey", "Baz");
-                }).process(checker1)
-                        .to("log:foo")
+                from("seda:a").routeId("route-a")
                         .process(e -> {
                             MDC.put("custom.hello", "World");
+                            MDC.put("foo", "Bar");
+                            MDC.put("myKey", "MyValue");
+                        })
+                        .process(checker)
+                        .to("log:a")
+                        .wireTap("direct:b")
+                        .process(checker)
+                        .to("mock:end");
+
+                from("direct:b").routeId("route-b")
+                        .process(e -> {
+                            MDC.put("custom.hello", "Moon");
+                            MDC.put("foo", "Bar2");
+                            MDC.put("myKey", "MyValue2");
                         })
                         .process(checker2)
+                        .to("log:b")
                         .to("mock:end");
             }
         };
@@ -108,26 +89,21 @@ public class MDCCustomKeysTest extends ContextTestSupport {
         private Long threadId;
         private String foo;
 
-        private final String expected;
+        private String expected1;
+        private String expected2;
+        private String expected3;
 
-        public MdcCheckerProcessor(String expected) {
-            this.expected = expected;
-        }
-
-        public void reset() {
-            exchangeId = null;
-            messageId = null;
-            breadcrumbId = null;
-            contextId = null;
-            threadId = null;
-            foo = null;
+        public MdcCheckerProcessor(String expected1, String expected2, String expected3) {
+            this.expected1 = expected1;
+            this.expected2 = expected2;
+            this.expected3 = expected3;
         }
 
         @Override
         public void process(Exchange exchange) throws Exception {
             // custom is propagated as its pattern matches
-            assertEquals(expected, MDC.get("custom.hello"));
-            assertEquals("Baz", MDC.get("myKey"));
+            assertEquals(expected2, MDC.get("custom.hello"));
+            assertEquals(expected3, MDC.get("myKey"));
 
             if (foo != null) {
                 // foo propagated because its the same thread
@@ -142,15 +118,20 @@ public class MDCCustomKeysTest extends ContextTestSupport {
             } else {
                 threadId = Thread.currentThread().getId();
             }
+
+            if (expected1 != null) {
+                assertEquals(expected1, MDC.get("camel.routeId"));
+            }
+
             if (exchangeId != null) {
-                assertNotEquals(exchangeId, MDC.get("camel.exchangeId"));
+                assertEquals(exchangeId, MDC.get("camel.exchangeId"));
             } else {
                 exchangeId = MDC.get("camel.exchangeId");
                 assertTrue(exchangeId != null && exchangeId.length() > 0);
             }
 
             if (messageId != null) {
-                assertNotEquals(messageId, MDC.get("camel.messageId"));
+                assertEquals(messageId, MDC.get("camel.messageId"));
             } else {
                 messageId = MDC.get("camel.messageId");
                 assertTrue(messageId != null && messageId.length() > 0);
