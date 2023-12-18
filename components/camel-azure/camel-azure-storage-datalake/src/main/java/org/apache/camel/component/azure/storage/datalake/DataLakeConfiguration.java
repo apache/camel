@@ -105,7 +105,7 @@ public class DataLakeConfiguration implements Cloneable {
               description = "operation to be performed")
     private DataLakeOperationsDefinition operation = DataLakeOperationsDefinition.listFileSystem;
 
-    @UriParam(label = "common", enums = "CLIENT_SECRET,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
+    @UriParam(label = "common", enums = "CLIENT_SECRET,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS,SERVICE_CLIENT_INSTANCE",
               defaultValue = "CLIENT_SECRET")
     private CredentialType credentialType = CLIENT_SECRET;
 
