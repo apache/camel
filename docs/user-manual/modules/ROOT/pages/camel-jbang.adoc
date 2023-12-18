@@ -239,7 +239,10 @@ camel run foo.java
 ----
 
 You will have an exception on startup about the missing value
-`Caused by: java.lang.IllegalArgumentException: Property with key [you] not found in properties from text: Hello Camel from {{you}}`
+[source,text]
+----
+Caused by: java.lang.IllegalArgumentException: Property with key [you] not found in properties from text: Hello Camel from {{you}}`
+----
 
 However, you can then run in prompt mode as follows:
 
@@ -263,8 +266,8 @@ Enter required value for you: Jack
 2023-12-15 21:46:55.341  INFO 15033 --- [           main] el.impl.engine.AbstractCamelContext : Routes startup (started:1)
 ----
 
-From the snippet above, Camel JBang had two prompts. First for the `{{time}}` which has a default value of `1000` so you can just press ENTER to accept the default value.
-And for `{{you}}` a value must be entered, and we entered `Jack` in this example.
+From the snippet above, Camel JBang had two prompts. First for the `time` which has a default value of `1000` so you can just press ENTER to accept the default value.
+And for `you` a value must be entered, and we entered `Jack` in this example.
 
 You may want to use this for Camel prototypes where you want the user to be able to enter custom values quickly.
 Those values can of course be pre-configured in `application.properties` as well.
