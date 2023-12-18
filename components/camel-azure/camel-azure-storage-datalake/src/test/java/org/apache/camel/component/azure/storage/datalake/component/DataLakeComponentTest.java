@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.storage.datalake.component;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.datalake.DataLakeServiceClientBuilder;
 import org.apache.camel.Producer;
+import org.apache.camel.component.azure.storage.datalake.CredentialType;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.component.azure.storage.datalake.DataLakeEndpoint;
 import org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition;
@@ -63,6 +64,36 @@ class DataLakeComponentTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getServiceClient());
         assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
         assertEquals("test.txt", endpoint.getConfiguration().getFileName());
+    }
+
+    @Test
+    public void testWithAzureIdentity() {
+
+        final DataLakeEndpoint endpoint = (DataLakeEndpoint) context
+                .getEndpoint(
+                        "azure-storage-datalake:cameltesting/abc?operation=upload&fileName=test.txt&credentialType=AZURE_IDENTITY");
+
+        assertEquals("cameltesting", endpoint.getConfiguration().getAccountName());
+        assertEquals("abc", endpoint.getConfiguration().getFileSystemName());
+        assertNull(endpoint.getConfiguration().getServiceClient());
+        assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
+        assertEquals("test.txt", endpoint.getConfiguration().getFileName());
+        assertEquals(endpoint.getConfiguration().getCredentialType(), CredentialType.AZURE_IDENTITY);
+    }
+
+    @Test
+    public void testWithAzureSAS() {
+
+        final DataLakeEndpoint endpoint = (DataLakeEndpoint) context
+                .getEndpoint(
+                        "azure-storage-datalake:cameltesting/abc?operation=upload&fileName=test.txt&credentialType=AZURE_SAS");
+
+        assertEquals("cameltesting", endpoint.getConfiguration().getAccountName());
+        assertEquals("abc", endpoint.getConfiguration().getFileSystemName());
+        assertNull(endpoint.getConfiguration().getServiceClient());
+        assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
+        assertEquals("test.txt", endpoint.getConfiguration().getFileName());
+        assertEquals(endpoint.getConfiguration().getCredentialType(), CredentialType.AZURE_SAS);
     }
 
     @Test
