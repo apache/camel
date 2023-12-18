@@ -930,7 +930,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 targetRouteId = ExchangeHelper.getRouteId(exchange);
             }
 
-            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis(), exchange);
+            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, exchange);
             if (history != null) {
                 List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
                 if (list == null) {

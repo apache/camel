@@ -155,6 +155,11 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
     }
 
     @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode node, Exchange exchange) {
+        return newMessageHistory(routeId, node, System.currentTimeMillis(), exchange);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         if (meterRegistry == null) {
             meterRegistry = MicrometerUtils.getOrCreateMeterRegistry(camelContext.getRegistry(), METRICS_REGISTRY_NAME);

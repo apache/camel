@@ -66,6 +66,11 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
         return new DefaultMessageHistory(routeId, node, timestamp, msg);
     }
 
+    @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode node, Exchange exchange) {
+        return newMessageHistory(routeId, node, System.currentTimeMillis(), exchange);
+    }
+
     @ManagedAttribute(description = "Whether message history is enabled")
     public boolean isEnabled() {
         return camelContext != null ? camelContext.isMessageHistory() : false;
