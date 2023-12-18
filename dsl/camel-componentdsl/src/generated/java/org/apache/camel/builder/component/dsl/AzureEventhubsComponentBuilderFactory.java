@@ -438,6 +438,23 @@ public interface AzureEventhubsComponentBuilderFactory {
             return this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CONNECTION_STRING
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default AzureEventhubsComponentBuilder credentialType(
+                org.apache.camel.component.azure.eventhubs.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * The generated value for the SharedAccessName.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -531,6 +548,7 @@ public interface AzureEventhubsComponentBuilderFactory {
             case "producerAsyncClient": getOrCreateConfiguration((EventHubsComponent) component).setProducerAsyncClient((com.azure.messaging.eventhubs.EventHubProducerAsyncClient) value); return true;
             case "autowiredEnabled": ((EventHubsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((EventHubsComponent) component).setConnectionString((java.lang.String) value); return true;
+            case "credentialType": getOrCreateConfiguration((EventHubsComponent) component).setCredentialType((org.apache.camel.component.azure.eventhubs.CredentialType) value); return true;
             case "sharedAccessKey": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessKey((java.lang.String) value); return true;
             case "sharedAccessName": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessName((java.lang.String) value); return true;
             case "tokenCredential": getOrCreateConfiguration((EventHubsComponent) component).setTokenCredential((com.azure.core.credential.TokenCredential) value); return true;
