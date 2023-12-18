@@ -30,6 +30,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.azure.storage.datalake.CredentialType.CLIENT_SECRET;
+
 @UriParams
 public class DataLakeConfiguration implements Cloneable {
 
@@ -98,12 +100,14 @@ public class DataLakeConfiguration implements Cloneable {
     private String sasSignature;
     @UriParam(label = "security", secret = true, description = "SAS token credential")
     private AzureSasCredential sasCredential;
-    @UriParam(label = "security", secret = false, description = "Use default identity")
-    private Boolean useDefaultIdentity = false;
 
     @UriParam(label = "producer", enums = "listFileSystem, listFiles", defaultValue = "listFileSystem",
               description = "operation to be performed")
     private DataLakeOperationsDefinition operation = DataLakeOperationsDefinition.listFileSystem;
+
+    @UriParam(label = "common", enums = "CLIENT_SECRET,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
+              defaultValue = "CLIENT_SECRET")
+    private CredentialType credentialType = CLIENT_SECRET;
 
     public DataLakeOperationsDefinition getOperation() {
         return operation;
@@ -369,12 +373,15 @@ public class DataLakeConfiguration implements Cloneable {
         this.sasCredential = sasCredential;
     }
 
-    public Boolean getUseDefaultIdentity() {
-        return useDefaultIdentity;
+    public CredentialType getCredentialType() {
+        return credentialType;
     }
 
-    public void setUseDefaultIdentity(Boolean useDefaultIdentity) {
-        this.useDefaultIdentity = useDefaultIdentity;
+    /**
+     * Determines the credential strategy to adopt
+     */
+    public void setCredentialType(CredentialType credentialType) {
+        this.credentialType = credentialType;
     }
 
     public DataLakeConfiguration copy() {
