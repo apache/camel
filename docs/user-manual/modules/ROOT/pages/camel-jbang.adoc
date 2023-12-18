@@ -70,7 +70,7 @@ So running a simple route will be as easy as doing the following:
 docker run apache/camel-jbang:3.20.5 run example.yaml
 ----
 
-or 
+or
 
 [source,bash]
 ----
@@ -1079,7 +1079,6 @@ camel run clipboard.xml --dev
 
 Then you can quickly make changes and copy to clipboard, and Camel JBang will update while running.
 
-
 === Sending messages via Camel
 
 *Available since Camel 4*
@@ -1475,6 +1474,13 @@ camel cmd start-route --all
 TIP: You can stop one or more route by their ids by separating using
 comma such as: camel cmd start-route --id=route1,hello. Use `camel cmd start-route --help` for more details.
 
+==== Running Camel integrations on Kubernetes
+
+After developing the Camel routes locally with JBang you may want to run these also on the Kubernetes platform at some point.
+The Camel K commands get you started with this journey and help you to run and manage Camel integrations on Kubernetes.
+
+Read about it in xref:camel-jbang-k.adoc[Camel Integration with Kubernetes].
+
 ==== Configuring logging levels
 
 You can see the current logging levels of the running Camel integrations by:
@@ -1557,7 +1563,6 @@ $ camel get metric
  11562  MyCoolCamel  gauge  system.cpu.usage                        0.15222772277227722
  11562  MyCoolCamel  gauge  system.load.average.1m                        3.58935546875
 ----
-
 
 ==== Listing state of Circuit Breakers
 
@@ -2152,7 +2157,6 @@ This will then automatic insert or update the JBang depencies (`//DEPS`) in the 
 
 You may want to use this for making it easier to load the source into an IDE editor to do coding.
 See previous section for more details.
-
 
 ==== Camel route debugging using VSCode or IDEA editors
 
@@ -2902,13 +2906,13 @@ camel sbom --sbom-format=spdx
 You can also choose the target runtime as either _quarkus_ or _spring-boot_ as shown:
 
 ----
-camel sbom --runtime=quarkus 
+camel sbom --runtime=quarkus
 ----
 
-or 
+or
 
 ----
-camel sbom --runtime=spring-boot 
+camel sbom --runtime=spring-boot
 ----
 
 by default `camel-main` will be used

@@ -85,6 +85,20 @@
             <version>${ascii-table-version}</version>
         </dependency>
 
+        <!-- kubernetes -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
+            <version>${kubernetes-client-version}</version>
+        </dependency>
+
+        <!-- camel k-->
+        <dependency>
+            <groupId>org.apache.camel.k</groupId>
+            <artifactId>camel-k-crds</artifactId>
+            <version>${camel-k-version}</version>
+        </dependency>
+
         <!-- jolokia -->
         <dependency>
             <groupId>org.jolokia</groupId>
@@ -150,6 +164,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-server-mock</artifactId>
+            <version>${kubernetes-client-version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

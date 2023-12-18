@@ -25,6 +25,7 @@ import java.util.Stack;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
@@ -127,6 +128,10 @@ public abstract class CamelCommand implements Callable<Integer> {
             camelDir = new File(System.getProperty("user.home"), ".camel");
         }
         return new File(camelDir, pid + "-debug.json");
+    }
+
+    protected Printer printer() {
+        return getMain().getOut();
     }
 
     protected void printConfigurationValues(String header) {
