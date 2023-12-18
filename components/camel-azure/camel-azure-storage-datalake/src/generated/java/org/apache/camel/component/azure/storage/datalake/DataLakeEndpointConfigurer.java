@@ -40,6 +40,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "close": target.getConfiguration().setClose(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "closestreamafterread":
         case "closeStreamAfterRead": target.getConfiguration().setCloseStreamAfterRead(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.storage.datalake.CredentialType.class, value)); return true;
         case "datacount":
         case "dataCount": target.getConfiguration().setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "datalakeserviceclient":
@@ -108,8 +110,6 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "umask": target.getConfiguration().setUmask(property(camelContext, java.lang.String.class, value)); return true;
-        case "usedefaultidentity":
-        case "useDefaultIdentity": target.getConfiguration().setUseDefaultIdentity(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "userprincipalnamereturned":
@@ -145,6 +145,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "close": return java.lang.Boolean.class;
         case "closestreamafterread":
         case "closeStreamAfterRead": return java.lang.Boolean.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.storage.datalake.CredentialType.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
         case "datalakeserviceclient":
@@ -213,8 +215,6 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "timeout": return java.time.Duration.class;
         case "umask": return java.lang.String.class;
-        case "usedefaultidentity":
-        case "useDefaultIdentity": return java.lang.Boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         case "userprincipalnamereturned":
@@ -246,6 +246,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "close": return target.getConfiguration().getClose();
         case "closestreamafterread":
         case "closeStreamAfterRead": return target.getConfiguration().getCloseStreamAfterRead();
+        case "credentialtype":
+        case "credentialType": return target.getConfiguration().getCredentialType();
         case "datacount":
         case "dataCount": return target.getConfiguration().getDataCount();
         case "datalakeserviceclient":
@@ -314,8 +316,6 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeUnit": return target.getTimeUnit();
         case "timeout": return target.getConfiguration().getTimeout();
         case "umask": return target.getConfiguration().getUmask();
-        case "usedefaultidentity":
-        case "useDefaultIdentity": return target.getConfiguration().getUseDefaultIdentity();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "userprincipalnamereturned":
