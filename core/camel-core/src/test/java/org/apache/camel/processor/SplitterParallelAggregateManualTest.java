@@ -30,15 +30,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
-public class SplitterParallelAggregateTest extends ContextTestSupport {
-
-    // run this test manually as it takes some time to process, but shows that
-    // parallel aggregate can
-    // be faster when enabled.
-    private boolean enabled;
+@EnabledIfSystemProperty(named = "core.manual.tests", matches = "true", disabledReason = "Manual test")
+public class SplitterParallelAggregateManualTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -58,21 +53,18 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
 
     @Test
     public void test1() throws Exception {
-        assumeTrue(enabled);
         int numberOfRequests = 1;
         timeSplitRoutes(numberOfRequests);
     }
 
     @Test
     public void test2() throws Exception {
-        assumeTrue(enabled);
         int numberOfRequests = 2;
         timeSplitRoutes(numberOfRequests);
     }
 
     @Test
     public void test4() throws Exception {
-        assumeTrue(enabled);
         int numberOfRequests = 4;
         timeSplitRoutes(numberOfRequests);
     }
