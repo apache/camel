@@ -100,7 +100,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.type = "counter";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
-                                    row.metricRouteId = extractRouteId(jo);
+                                    row.metricId = extractId(jo);
                                     row.tags = extractTags(jo);
                                     row.count = jo.getDouble("count");
 
@@ -123,7 +123,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.type = "timer";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
-                                    row.metricRouteId = extractRouteId(jo);
+                                    row.metricId = extractId(jo);
                                     row.tags = extractTags(jo);
                                     row.count = jo.getDouble("count");
                                     row.mean = jo.getDouble("mean");
@@ -149,7 +149,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.type = "gauge";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
-                                    row.metricRouteId = extractRouteId(jo);
+                                    row.metricId = extractId(jo);
                                     row.tags = extractTags(jo);
                                     row.count = jo.getDouble("value");
 
@@ -172,7 +172,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.type = "distribution";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
-                                    row.metricRouteId = extractRouteId(jo);
+                                    row.metricId = extractId(jo);
                                     row.tags = extractTags(jo);
                                     row.count = jo.getDouble("value");
                                     row.mean = jo.getDouble("mean");
@@ -205,8 +205,8 @@ public class ListMetric extends ProcessWatchCommand {
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
                     new Column().header("METRIC").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.metricName),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.metricRouteId),
+                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(r -> r.metricId),
                     new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> getNumber(r.count)),
                     new Column().header("MEAN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
@@ -249,7 +249,7 @@ public class ListMetric extends ProcessWatchCommand {
             // sort by metric/route
             answer = o1.metricName.compareToIgnoreCase(o2.metricName) * negate;
             if (answer == 0) {
-                answer = o1.metricRouteId.compareToIgnoreCase(o2.metricRouteId) * negate;
+                answer = o1.metricId.compareToIgnoreCase(o2.metricId) * negate;
             }
         }
         return answer;
@@ -265,15 +265,26 @@ public class ListMetric extends ProcessWatchCommand {
         return s;
     }
 
-    private String extractRouteId(JsonObject jo) {
+    private String extractId(JsonObject jo) {
         List<JsonObject> tags = jo.getCollection("tags");
+        String routeId = null;
+        String nodeId = null;
         if (tags != null) {
             for (JsonObject t : tags) {
                 String k = t.getString("key");
                 if ("routeId".equals(k)) {
-                    return t.getString("value");
+                    routeId = t.getString("value");
+                } else if ("nodeId".equals(k)) {
+                    nodeId = t.getString("value");
                 }
             }
+        }
+        if (routeId != null && nodeId != null) {
+            return routeId + "/" + nodeId;
+        } else if (routeId != null) {
+            return routeId;
+        } else if (nodeId != null) {
+            return nodeId;
         }
         return "";
     }
@@ -299,7 +310,7 @@ public class ListMetric extends ProcessWatchCommand {
         String type;
         String metricName;
         String metricDescription;
-        String metricRouteId;
+        String metricId;
         String tags;
         double count;
         double mean;
