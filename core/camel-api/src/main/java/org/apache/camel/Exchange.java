@@ -18,6 +18,7 @@ package org.apache.camel;
 
 import java.util.Map;
 
+import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.annotations.ConstantProvider;
 

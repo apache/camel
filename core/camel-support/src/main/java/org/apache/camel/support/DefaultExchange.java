@@ -20,11 +20,11 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Clock;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.clock.Clock;
 
 /**
  * The default and only implementation of {@link Exchange}.

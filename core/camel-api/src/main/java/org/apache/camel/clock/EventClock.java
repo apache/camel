@@ -14,29 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
 
-import java.util.concurrent.TimeUnit;
-
-import org.apache.camel.clock.Clock;
+package org.apache.camel.clock;
 
 /**
- * A clock that increases monotonically (i.e.: does not go back in time)
+ * A specialized clock that tracks the pass of time for one or more types of events
+ * @param <T> The event type as an Enum
  */
-public final class MonotonicClock implements Clock {
-    private final long createdNano;
+public interface EventClock<T extends Enum<T>> extends Clock {
 
-    public MonotonicClock() {
-        this.createdNano = System.nanoTime();
-    }
+    /**
+     * Add the event to be tracked
+     * @param event the event to track
+     * @param clock the clock associated with the event
+     */
+    void add(T event, Clock clock);
 
-    @Override
-    public long elapsed() {
-        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - createdNano);
-    }
-
-    @Override
-    public long getCreated() {
-        return System.currentTimeMillis() - elapsed();
-    }
+    /**
+     * Get the clock for the event
+     * @param event the event to get the clock for
+     * @return the clock instance or null if not set
+     */
+    Clock get(T event);
 }

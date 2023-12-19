@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.clock;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -22,19 +22,19 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 
 /**
- * A clock used to track the lifetime of an exchange
+ * A clock abstraction used to track pass of time
  */
 public interface Clock {
 
     /**
-     * The elapsed time since the creation of the exchange
+     * The elapsed time since the creation of the clock
      *
      * @return The elapsed time, in milliseconds, since the creation of the exchange
      */
     long elapsed();
 
     /**
-     * The point in time the exchange was created
+     * The point in time the clock was created
      *
      * @return The point in time, in milliseconds, the exchange was created.
      * @see    System#currentTimeMillis()

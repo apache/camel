@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.clock.EventClock;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
@@ -165,6 +166,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the uptime in days/hours/minutes
      */
+    @Deprecated
     String getUptime();
 
     /**
@@ -172,12 +174,20 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the uptime in millis seconds
      */
+    @Deprecated
     long getUptimeMillis();
 
     /**
      * Gets the date and time Camel was started up.
      */
+    @Deprecated
     Date getStartDate();
+
+    /**
+     * Gets a clock instance that keeps track of time for relevant CamelContext events
+     * @return A clock instance
+     */
+    EventClock<ContextEvents> getClock();
 
     // Service Methods
     //-----------------------------------------------------------------------

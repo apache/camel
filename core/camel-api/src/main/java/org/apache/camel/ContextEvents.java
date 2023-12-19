@@ -14,29 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
 
-import java.util.concurrent.TimeUnit;
-
-import org.apache.camel.clock.Clock;
+package org.apache.camel;
 
 /**
- * A clock that increases monotonically (i.e.: does not go back in time)
+ * Context events that can be traced by an {@link org.apache.camel.clock.EventClock}
  */
-public final class MonotonicClock implements Clock {
-    private final long createdNano;
-
-    public MonotonicClock() {
-        this.createdNano = System.nanoTime();
-    }
-
-    @Override
-    public long elapsed() {
-        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - createdNano);
-    }
-
-    @Override
-    public long getCreated() {
-        return System.currentTimeMillis() - elapsed();
-    }
+public enum ContextEvents {
+    /**
+     * Start event
+     */
+    START
 }
