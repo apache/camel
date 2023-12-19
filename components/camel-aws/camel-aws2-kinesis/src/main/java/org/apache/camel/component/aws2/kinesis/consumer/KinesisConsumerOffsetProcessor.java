@@ -17,17 +17,18 @@
 
 package org.apache.camel.component.aws2.kinesis.consumer;
 
-import org.apache.camel.resume.ResumeAdapter;
-import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
+import org.apache.camel.support.resume.Resumables;
 
-/**
- * The resume adapter for Kinesis
- */
-public interface KinesisResumeAdapter extends ResumeAdapter {
-    /*
-        When consuming from multiple shards the KinesisResumeAdapter is potentially accessed by multiple threads.
-        To avoid any concurrency issues the configuration of the GetShardIteratorRequest should be done in one operation
-        and not using multiple calls like in the previous version of this interface
-     */
-    void configureGetShardIteratorRequest(GetShardIteratorRequest.Builder builder, String streamName, String shardId);
+public class KinesisConsumerOffsetProcessor implements Processor {
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        exchange.getMessage().setHeader(
+                Exchange.OFFSET,
+                Resumables.of(
+                        exchange.getMessage().getHeader(Kinesis2Constants.SHARD_ID),
+                        exchange.getMessage().getHeader(Kinesis2Constants.SEQUENCE_NUMBER)));
+    }
 }
