@@ -18,9 +18,11 @@ package org.apache.camel.component.azure.storage.queue.client;
 
 import java.util.Locale;
 
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.queue.QueueServiceClient;
 import com.azure.storage.queue.QueueServiceClientBuilder;
+import org.apache.camel.component.azure.storage.queue.CredentialType;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
 import org.apache.camel.util.ObjectHelper;
 
@@ -32,10 +34,18 @@ public final class QueueClientFactory {
     }
 
     public static QueueServiceClient createQueueServiceClient(final QueueConfiguration configuration) {
-        return new QueueServiceClientBuilder()
-                .endpoint(buildAzureEndpointUri(configuration))
-                .credential(getCredentialForClient(configuration))
-                .buildClient();
+        if (configuration.getCredentialType().equals(CredentialType.SHARED_KEY_CREDENTIAL)
+                || configuration.getCredentialType().equals(CredentialType.SHARED_ACCOUNT_KEY)) {
+            return new QueueServiceClientBuilder()
+                    .endpoint(buildAzureEndpointUri(configuration))
+                    .credential(getCredentialForClient(configuration))
+                    .buildClient();
+        } else {
+            return new QueueServiceClientBuilder()
+                    .endpoint(buildAzureEndpointUri(configuration))
+                    .credential(new DefaultAzureCredentialBuilder().build())
+                    .buildClient();
+        }
     }
 
     private static String buildAzureEndpointUri(final QueueConfiguration configuration) {
