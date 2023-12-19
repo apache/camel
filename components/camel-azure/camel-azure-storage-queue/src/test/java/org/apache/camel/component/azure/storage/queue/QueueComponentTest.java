@@ -61,6 +61,16 @@ class QueueComponentTest extends CamelTestSupport {
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
 
+    @Test
+    public void testCreateEndpointWithMinConfigForAzIdentity() {
+
+        final QueueEndpoint endpoint
+                = (QueueEndpoint) context
+                        .getEndpoint("azure-storage-queue://camelazure/testqueue?credentialType=AZURE_IDENTITY");
+
+        doTestCreateEndpointWithMinConfigForAzIdentity(endpoint);
+    }
+
     private void doTestCreateEndpointWithMinConfig(final QueueEndpoint endpoint, boolean clientExpected) {
         assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
         assertEquals("testqueue", endpoint.getConfiguration().getQueueName());
@@ -76,6 +86,19 @@ class QueueComponentTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getTimeToLive());
         assertEquals(1, endpoint.getConfiguration().getMaxMessages());
+    }
+
+    private void doTestCreateEndpointWithMinConfigForAzIdentity(final QueueEndpoint endpoint) {
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("testqueue", endpoint.getConfiguration().getQueueName());
+        assertNull(endpoint.getConfiguration().getServiceClient());
+        assertNull(endpoint.getConfiguration().getCredentials());
+        assertEquals(QueueOperationDefinition.sendMessage, endpoint.getConfiguration().getOperation());
+
+        assertNull(endpoint.getConfiguration().getVisibilityTimeout());
+        assertNull(endpoint.getConfiguration().getTimeToLive());
+        assertEquals(1, endpoint.getConfiguration().getMaxMessages());
+        assertEquals(CredentialType.AZURE_IDENTITY, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
