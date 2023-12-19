@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -69,14 +70,14 @@ public class JmsConcurrentConsumersTest extends AbstractJMSTest {
             });
         }
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
 
         // wait for test completion, timeout after 30 sec to let other unit test run to not wait forever
         assertTrue(latch.await(30000L, TimeUnit.MILLISECONDS));
         assertEquals(0, latch.getCount(), "Latch should be zero");
 
-        long delta = System.currentTimeMillis() - start;
-        assertTrue(delta < 20000L, "Should be faster than 20000 millis, took " + delta + " millis");
+        long duration = watch.taken();
+        assertTrue(duration < 20000L, "Should be faster than 20000 millis, took " + duration + " millis");
         executor.shutdown();
     }
 

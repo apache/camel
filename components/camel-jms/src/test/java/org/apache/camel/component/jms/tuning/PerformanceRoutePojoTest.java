@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.tuning;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
 
     @Test
     public void testPojoPerformance() throws Exception {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
 
         int size = 200;
         getMockEndpoint("mock:audit").expectedMessageCount(size);
@@ -60,8 +61,8 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        long delta = System.currentTimeMillis() - start;
-        LOG.info("RoutePerformancePojoTest: Sent: {} Took: {} ms", size, delta);
+        long duration = watch.taken();
+        LOG.info("RoutePerformancePojoTest: Sent: {} Took: {} ms", size, duration);
     }
 
 }

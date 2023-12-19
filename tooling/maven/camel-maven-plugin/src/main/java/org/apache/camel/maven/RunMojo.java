@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -519,7 +520,7 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     private void terminateThreads(ThreadGroup threadGroup) {
-        long startTime = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         Set<Thread> uncooperativeThreads = new HashSet<>(); // these were not responsive
         // to interruption
         for (Collection<Thread> threads = getActiveThreads(threadGroup);
@@ -544,7 +545,7 @@ public class RunMojo extends AbstractExecMojo {
                     joinThread(thread, 0); // waits until not alive; no timeout
                     continue;
                 }
-                long timeout = daemonThreadJoinTimeout - (System.currentTimeMillis() - startTime);
+                long timeout = daemonThreadJoinTimeout - watch.taken();
                 if (timeout > 0) {
                     joinThread(thread, timeout);
                 }

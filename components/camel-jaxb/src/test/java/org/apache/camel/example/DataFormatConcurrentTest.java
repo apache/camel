@@ -30,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,7 +168,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
         final ByteArrayInputStream[] payloads = createPayloads(testCycleCount);
         ExecutorService pool = Executors.newFixedThreadPool(20);
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < payloads.length; i++) {
             final int finalI = i;
             pool.execute(new Runnable() {
@@ -178,10 +179,10 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         }
 
         latch.await();
-        long end = System.currentTimeMillis();
+        long duration = watch.taken();
 
         LOG.info("Sending {} messages to {} took {} ms",
-                new Object[] { payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start });
+                payloads.length, template.getDefaultEndpoint().getEndpointUri(), duration);
     }
 
     public void marshal(final CountDownLatch latch) throws Exception {
@@ -193,7 +194,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
         final Foo[] payloads = createFoo(testCycleCount);
         ExecutorService pool = Executors.newFixedThreadPool(20);
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < payloads.length; i++) {
             final int finalI = i;
             pool.execute(new Runnable() {
@@ -204,10 +205,10 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         }
 
         latch.await();
-        long end = System.currentTimeMillis();
+        long duration = watch.taken();
 
         LOG.info("Sending {} messages to {} took {} ms",
-                new Object[] { payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start });
+                payloads.length, template.getDefaultEndpoint().getEndpointUri(), duration);
     }
 
     /**
