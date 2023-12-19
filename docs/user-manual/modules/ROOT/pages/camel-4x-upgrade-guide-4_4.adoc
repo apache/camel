@@ -64,11 +64,19 @@ This is part of the effort explained in CAMEL-18590.
 === camel-azure-storage-datalake
 
 The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between AZURE_IDENTITY, CLIENT_SECRET, SHARED_KEY_CREDENTIAL, AZURE_SAS and SERVICE_CLIENT_INSTANCE
-With the SHARED_KEY_CREDENTIAL mode the user could explicitly set the sharedKey parameter or a SharedKeyCredential instace.
+With the SHARED_KEY_CREDENTIAL mode the user could explicitly set the sharedKey parameter or a SharedKeyCredential instance.
 With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
 With the AZURE_SAS mode the user could explicitly set the sasSignature or sasCredential parameter.
 With the CLIENT_SECRET mode the user could explicitly set clientId, clientSecret and tenantId or specify a ClientSecretCredential instance.
 With the SERVICE_CLIENT_INSTANCE the user could explicity set a serviceClient parameter by passing a DataLakeServiceClient instance.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-azure-storage-queue
+
+The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between AZURE_IDENTITY, SHARED_KEY_CREDENTIAL and SHARED_ACCOUNT_KEY
+With the SHARED_KEY_CREDENTIAL mode the user could explicitly set the SharedKeyCredential instance.
+With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+With the SHARED_ACCOUNT_KEY mode the user could explicitly set the accessKey parameter.
 This is part of the effort explained in CAMEL-18590.
 
 == Camel Spring Boot
