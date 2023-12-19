@@ -80,5 +80,5 @@ See related xref:context-reload.adoc[].
 
 See the following examples that comes with live reloading enabled:
 
-- https://github.com/apache/camel-examples/tree/main/examples/main-xml[camel-examples/examples/main-xml]
-- https://github.com/apache/camel-examples/tree/main/examples/main-yaml[camel-examples/examples/main-yaml]
+- https://github.com/apache/camel-examples/tree/main/main-xml[camel-examples/examples/main-xml]
+- https://github.com/apache/camel-examples/tree/main/main-yaml[camel-examples/examples/main-yaml]
