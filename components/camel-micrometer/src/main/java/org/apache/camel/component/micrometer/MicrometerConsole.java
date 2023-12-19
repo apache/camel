@@ -45,7 +45,7 @@ public class MicrometerConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         MeterRegistry mr = lookupMeterRegistry();
-        sb.append(String.format("MeterRegistry: %s\n", mr.getClass().getName()));
+        sb.append(String.format("MeterRegistry: %s\n\n", mr.getClass().getName()));
 
         int i = 0;
         for (Meter m : mr.getMeters()) {
