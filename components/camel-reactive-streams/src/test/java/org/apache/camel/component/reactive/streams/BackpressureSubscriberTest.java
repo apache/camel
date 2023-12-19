@@ -23,6 +23,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,7 +37,7 @@ public class BackpressureSubscriberTest extends BaseReactiveTest {
     @Test
     public void testBackpressure() throws Exception {
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         Observable.range(0, 10)
                 .toFlowable(BackpressureStrategy.BUFFER)
                 .subscribe(CamelReactiveStreams.get(context).streamSubscriber("slowNumbers", Integer.class));
@@ -44,17 +45,17 @@ public class BackpressureSubscriberTest extends BaseReactiveTest {
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(10);
         endpoint.assertIsSatisfied();
-        long end = System.currentTimeMillis();
+        long duration = watch.taken();
 
         // Maximum one inflight exchange, even if multiple consumer threads are present
         // Must take at least 50 * 10 = 500ms
-        assertTrue(end - start >= 500, "Exchange completed too early");
+        assertTrue(duration >= 500, "Exchange completed too early");
     }
 
     @Test
     public void testSlowerBackpressure() throws Exception {
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         Observable.range(0, 2)
                 .toFlowable(BackpressureStrategy.BUFFER)
                 .subscribe(CamelReactiveStreams.get(context).streamSubscriber("slowerNumbers", Integer.class));
@@ -62,28 +63,28 @@ public class BackpressureSubscriberTest extends BaseReactiveTest {
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(2);
         endpoint.assertIsSatisfied();
-        long end = System.currentTimeMillis();
+        long duration = watch.taken();
 
         // Maximum one inflight exchange, even if multiple consumer threads are present
         // Must take at least 300 * 2 = 600ms
-        assertTrue(end - start >= 600, "Exchange completed too early");
+        assertTrue(duration >= 600, "Exchange completed too early");
     }
 
     @Test
     public void testParallelSlowBackpressure() throws Exception {
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         Flowable.range(0, 40)
                 .subscribe(CamelReactiveStreams.get(context).streamSubscriber("parallelSlowNumbers", Integer.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(40);
         endpoint.assertIsSatisfied();
-        long end = System.currentTimeMillis();
+        long duration = watch.taken();
 
         // Maximum 5 inflight exchanges
         // Must take at least 100 * (40 / 5) = 800ms
-        assertTrue(end - start >= 800, "Exchange completed too early");
+        assertTrue(duration >= 800, "Exchange completed too early");
     }
 
     @Override

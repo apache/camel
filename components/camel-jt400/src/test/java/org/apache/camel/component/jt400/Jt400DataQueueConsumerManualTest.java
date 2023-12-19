@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -105,9 +106,9 @@ public class Jt400DataQueueConsumerManualTest {
             }
         }).start();
 
-        final long startTime = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         while (!receiveFlag) {
-            if ((System.currentTimeMillis() - startTime) > BLOCKING_THRESHOLD) {
+            if ((watch.taken()) > BLOCKING_THRESHOLD) {
                 /* Passed test. */
                 return;
             }
