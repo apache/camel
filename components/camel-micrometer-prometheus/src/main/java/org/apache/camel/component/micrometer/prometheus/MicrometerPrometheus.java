@@ -297,11 +297,9 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
                             for (Meter m : meterRegistry.getMeters()) {
                                 String n = m.getId().getName();
                                 boolean camel = n.startsWith("camel_") || n.startsWith("camel.");
-                                boolean inflight
-                                        = n.startsWith("camel.exchanges.inflight") || n.startsWith("camel_exchanges_inflight");
                                 boolean keep = n.startsWith("camel.exchanges.") || n.startsWith("camel_exchanges_");
-                                // remove camel or inflight, but keep those special camel.exchanges. counters
-                                boolean remove = camel && (inflight || !keep);
+                                // remove camel but keep those special camel.exchanges. counters
+                                boolean remove = camel && !keep;
                                 if (remove) {
                                     String t = m.getId().getTag("routeId");
                                     if (t != null) {
