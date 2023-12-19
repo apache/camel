@@ -17,8 +17,8 @@
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Clock;
 import org.apache.camel.Exchange;
+import org.apache.camel.clock.Clock;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;

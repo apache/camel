@@ -44,6 +44,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ContextEvents;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartComponentException;
@@ -71,6 +72,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.clock.Clock;
+import org.apache.camel.clock.ContextClock;
+import org.apache.camel.clock.EventClock;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -171,6 +175,7 @@ import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ResetableClock;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.BaseService;
@@ -266,7 +271,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Debugger debugger;
     private long buildTaken;
     private long initTaken;
-    private long startDate;
+    private final ContextClock clock = new ContextClock();
     private SSLContextParameters sslContextParameters;
     private StartupSummaryLevel startupSummaryLevel = StartupSummaryLevel.Default;
 
@@ -1877,23 +1882,22 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public long getUptimeMillis() {
-        if (startDate == 0) {
-            return 0;
-        }
-        return System.currentTimeMillis() - startDate;
+        return clock.elapsed(ContextEvents.START, 0);
     }
 
     @Override
     public Date getStartDate() {
-        if (startDate == 0) {
-            return null;
-        }
-        return new Date(startDate);
+        return clock.asDate(ContextEvents.START, null);
     }
 
     @Override
     public String getVersion() {
         return VersionHolder.VERSION;
+    }
+
+    @Override
+    public EventClock<ContextEvents> getClock() {
+        return clock;
     }
 
     @Override
@@ -2431,7 +2435,7 @@ public abstract class AbstractCamelContext extends BaseService
         LOG.info("Apache Camel {} ({}) is starting", getVersion(), camelContextExtension.getName());
 
         vetoed = null;
-        startDate = System.currentTimeMillis();
+        clock.add(ContextEvents.START, new ResetableClock());
         stopWatch.restart();
 
         // Start the route controller
@@ -2955,7 +2959,7 @@ public abstract class AbstractCamelContext extends BaseService
         startupStepRecorder.stop();
 
         // and clear start date
-        startDate = 0;
+        clock.add(ContextEvents.START, null);
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
