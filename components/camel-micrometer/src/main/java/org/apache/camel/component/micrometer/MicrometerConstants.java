@@ -53,6 +53,7 @@ public final class MicrometerConstants {
     public static final String DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME = "camel.exchange.event.notifier";
     public static final String DEFAULT_CAMEL_ROUTES_ADDED = "camel.routes.added";
     public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "camel.routes.running";
+    public static final String DEFAULT_CAMEL_ROUTES_RELOADED = "camel.routes.reloaded";
     public static final String DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT = "camel.exchanges.inflight";
 
     public static final String ROUTE_ID_TAG = "routeId";

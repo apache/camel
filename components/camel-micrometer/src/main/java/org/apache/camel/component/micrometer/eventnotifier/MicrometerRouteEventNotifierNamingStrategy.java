@@ -26,6 +26,7 @@ import org.apache.camel.spi.CamelEvent.RouteEvent;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_ADDED;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_RELOADED;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_RUNNING;
 import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
@@ -48,6 +49,11 @@ public interface MicrometerRouteEventNotifierNamingStrategy {
         public String getRouteRunningName() {
             return DEFAULT_CAMEL_ROUTES_RUNNING;
         }
+
+        @Override
+        public String getRouteReloadedName() {
+            return DEFAULT_CAMEL_ROUTES_RELOADED;
+        }
     };
 
     /**
@@ -65,6 +71,11 @@ public interface MicrometerRouteEventNotifierNamingStrategy {
         }
 
         @Override
+        public String getRouteReloadedName() {
+            return formatName(DEFAULT_CAMEL_ROUTES_RELOADED);
+        }
+
+        @Override
         public String formatName(String name) {
             return MicrometerUtils.legacyName(name);
         }
@@ -77,6 +88,8 @@ public interface MicrometerRouteEventNotifierNamingStrategy {
     String getRouteAddedName();
 
     String getRouteRunningName();
+
+    String getRouteReloadedName();
 
     default Tags getTags(CamelContext camelContext) {
         return Tags.of(
