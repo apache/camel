@@ -171,7 +171,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     private File[] listFiles(File directory) {
-        if (!getEndpoint().isIncludeHiddenDirs() && directory.getName().startsWith(".")) {
+        if (!getEndpoint().isIncludeHiddenDirs() && directory.isHidden()) {
             return null;
         }
         final File[] dirFiles = directory.listFiles();
