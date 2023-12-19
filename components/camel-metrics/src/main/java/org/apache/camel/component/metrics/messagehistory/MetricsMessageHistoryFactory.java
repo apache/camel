@@ -172,6 +172,11 @@ public class MetricsMessageHistoryFactory extends ServiceSupport
         return new MetricsMessageHistory(routeId, node, timer, timestamp, msg);
     }
 
+    @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode node, Exchange exchange) {
+        return newMessageHistory(routeId, node, System.currentTimeMillis(), exchange);
+    }
+
     private String createName(String type, String routeId, String id) {
         String name = camelContext.getManagementName() != null ? camelContext.getManagementName() : camelContext.getName();
 
