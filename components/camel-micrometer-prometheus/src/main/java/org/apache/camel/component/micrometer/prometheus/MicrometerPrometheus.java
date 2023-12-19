@@ -292,11 +292,17 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
                         if (re.getIndex() >= re.getTotal()) {
                             LOG.info("Resetting Micrometer Registry after reloading routes");
 
-                            // remove all meters that are from Camel and associated routes via routeId as tag
+                            // remove all meters (not counters) that are from Camel and associated routes via routeId as tag
                             List<Meter> toRemove = new ArrayList<>();
                             for (Meter m : meterRegistry.getMeters()) {
                                 String n = m.getId().getName();
-                                if (n.startsWith("camel_") || n.startsWith("camel.")) {
+                                boolean camel = n.startsWith("camel_") || n.startsWith("camel.");
+                                boolean inflight
+                                        = n.startsWith("camel.exchanges.inflight") || n.startsWith("camel_exchanges_inflight");
+                                boolean keep = n.startsWith("camel.exchanges.") || n.startsWith("camel_exchanges_");
+                                // remove camel or inflight, but keep those special camel.exchanges. counters
+                                boolean remove = camel && (inflight || !keep);
+                                if (remove) {
                                     String t = m.getId().getTag("routeId");
                                     if (t != null) {
                                         toRemove.add(m);
