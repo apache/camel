@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -47,6 +48,10 @@ public class ListMetric extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter metric by type or name")
     String filter;
+
+    @CommandLine.Option(names = { "--tags" },
+                        description = "Show metric tags", defaultValue = "false")
+    boolean tags;
 
     @CommandLine.Option(names = { "--custom" },
                         description = "Only show custom metrics", defaultValue = "false")
@@ -96,6 +101,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
                                     row.metricRouteId = extractRouteId(jo);
+                                    row.tags = extractTags(jo);
                                     row.count = jo.getDouble("count");
 
                                     if (custom && row.metricName.startsWith("Camel")) {
@@ -118,6 +124,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
                                     row.metricRouteId = extractRouteId(jo);
+                                    row.tags = extractTags(jo);
                                     row.count = jo.getDouble("count");
                                     row.mean = jo.getDouble("mean");
                                     row.max = jo.getDouble("max");
@@ -143,6 +150,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
                                     row.metricRouteId = extractRouteId(jo);
+                                    row.tags = extractTags(jo);
                                     row.count = jo.getDouble("value");
 
                                     if (custom && row.metricName.startsWith("Camel")) {
@@ -165,6 +173,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
                                     row.metricRouteId = extractRouteId(jo);
+                                    row.tags = extractTags(jo);
                                     row.count = jo.getDouble("value");
                                     row.mean = jo.getDouble("mean");
                                     row.max = jo.getDouble("max");
@@ -205,7 +214,10 @@ public class ListMetric extends ProcessWatchCommand {
                     new Column().header("MAX").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> getNumber(r.max)),
                     new Column().header("TOTAL").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.total)))));
+                            .with(r -> getNumber(r.total)),
+                    new Column().header("TAGS").visible(tags).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(60, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.tags))));
         }
 
         return 0;
@@ -266,6 +278,19 @@ public class ListMetric extends ProcessWatchCommand {
         return "";
     }
 
+    private String extractTags(JsonObject jo) {
+        StringJoiner sj = new StringJoiner(" ");
+        List<JsonObject> tags = jo.getCollection("tags");
+        if (tags != null) {
+            for (JsonObject t : tags) {
+                String k = t.getString("key");
+                String v = t.getString("value");
+                sj.add(k + "=" + v);
+            }
+        }
+        return sj.toString();
+    }
+
     private static class Row implements Cloneable {
         String pid;
         String name;
@@ -275,6 +300,7 @@ public class ListMetric extends ProcessWatchCommand {
         String metricName;
         String metricDescription;
         String metricRouteId;
+        String tags;
         double count;
         double mean;
         double max;
