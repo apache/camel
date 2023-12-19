@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
 import io.micrometer.core.instrument.Counter;
@@ -36,12 +37,19 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole("micrometer")
 public class MicrometerConsole extends AbstractDevConsole {
 
+    /**
+     * Whether to include tags
+     */
+    public static final String TAGS = "tags";
+
     public MicrometerConsole() {
         super("camel", "micrometer", "Micrometer", "Display runtime metrics");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
+        final boolean tags = "true".equals(options.getOrDefault(TAGS, "true"));
+
         StringBuilder sb = new StringBuilder();
 
         MeterRegistry mr = lookupMeterRegistry();
@@ -62,6 +70,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                     cnt = cnt.substring(0, cnt.length() - 2);
                 }
                 sb.append(String.format("    %s: %s\n", name, cnt));
+                if (tags) {
+                    addTags(sb, c.getId());
+                }
             }
         }
         i = 0;
@@ -75,6 +86,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                 String name = g.getId().getName();
                 double cnt = g.value();
                 sb.append(String.format("    %s: %s\n", name, cnt));
+                if (tags) {
+                    addTags(sb, g.getId());
+                }
             }
         }
         i = 0;
@@ -91,6 +105,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                 long max = Math.round(t.max(TimeUnit.MILLISECONDS));
                 long total = Math.round(t.totalTime(TimeUnit.MILLISECONDS));
                 sb.append(String.format("    %s: %d (total: %dms mean: %dms max: %dms)\n", name, count, total, mean, max));
+                if (tags) {
+                    addTags(sb, t.getId());
+                }
             }
         }
         i = 0;
@@ -108,6 +125,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                 long duration = Math.round(t.duration(TimeUnit.MILLISECONDS));
                 sb.append(
                         String.format("    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
+                if (tags) {
+                    addTags(sb, t.getId());
+                }
             }
         }
         i = 0;
@@ -124,14 +144,29 @@ public class MicrometerConsole extends AbstractDevConsole {
                 double max = d.max();
                 double total = d.totalAmount();
                 sb.append(String.format("    %s: %d (total: %f mean: %f max: %f)\n", name, count, total, mean, max));
+                if (tags) {
+                    addTags(sb, d.getId());
+                }
             }
         }
 
         return sb.toString();
     }
 
+    protected void addTags(StringBuilder sb, Meter.Id id) {
+        StringJoiner sj = new StringJoiner(" ");
+        for (Tag tag : id.getTags()) {
+            sj.add(tag.getKey() + "=" + tag.getValue());
+        }
+        if (sj.length() > 0) {
+            sb.append(String.format("        %s\n", sj));
+        }
+    }
+
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
+        final boolean tags = "true".equals(options.getOrDefault(TAGS, "true"));
+
         JsonObject root = new JsonObject();
 
         MeterRegistry mr = lookupMeterRegistry();
@@ -151,7 +186,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                 if (c.getId().getDescription() != null) {
                     jo.put("description", c.getId().getDescription());
                 }
-                addTags(m, jo);
+                if (tags) {
+                    addTags(m, jo);
+                }
                 // strip decimal if counter is integer based
                 String cnt = String.valueOf(c.count());
                 if (cnt.endsWith(".0") || cnt.endsWith(",0")) {
@@ -179,7 +216,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                 if (g.getId().getDescription() != null) {
                     jo.put("description", g.getId().getDescription());
                 }
-                addTags(m, jo);
+                if (tags) {
+                    addTags(m, jo);
+                }
                 jo.put("value", g.value());
                 list.add(jo);
             }
@@ -199,7 +238,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                 if (t.getId().getDescription() != null) {
                     jo.put("description", t.getId().getDescription());
                 }
-                addTags(m, jo);
+                if (tags) {
+                    addTags(m, jo);
+                }
                 jo.put("count", t.count());
                 jo.put("mean", Math.round(t.mean(TimeUnit.MILLISECONDS)));
                 jo.put("max", Math.round(t.max(TimeUnit.MILLISECONDS)));
@@ -222,7 +263,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                 if (t.getId().getDescription() != null) {
                     jo.put("description", t.getId().getDescription());
                 }
-                addTags(m, jo);
+                if (tags) {
+                    addTags(m, jo);
+                }
                 jo.put("activeTasks", t.activeTasks());
                 jo.put("mean", Math.round(t.mean(TimeUnit.MILLISECONDS)));
                 jo.put("max", Math.round(t.max(TimeUnit.MILLISECONDS)));
@@ -245,7 +288,9 @@ public class MicrometerConsole extends AbstractDevConsole {
                 if (d.getId().getDescription() != null) {
                     jo.put("description", d.getId().getDescription());
                 }
-                addTags(m, jo);
+                if (tags) {
+                    addTags(m, jo);
+                }
                 jo.put("count", d.count());
                 jo.put("mean", d.mean());
                 jo.put("max", d.max());
