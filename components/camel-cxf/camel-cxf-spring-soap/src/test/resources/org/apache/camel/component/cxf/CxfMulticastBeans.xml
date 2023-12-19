@@ -30,18 +30,18 @@
   
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${MulticastCxfTest.port}/SoapContext/SoapPort"
-                   wsdlURL="wsdl/hello_world.wsdl"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfMulticastTest.port}/SoapContext/SoapPort"
+                   wsdlURL="/wsdl/hello_world.wsdl"
                    serviceClass="org.apache.hello_world_soap_http.Greeter"
-                   endpointName="s:SoapOverHttp"
+                   endpointName="s:SoapPort"
                    serviceName="s:SOAPService"
                    xmlns:s="http://apache.org/hello_world_soap_http">
   </cxf:cxfEndpoint>
 
   <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:9003/SoapContext/SoapPort"
-                   wsdlURL="wsdl/hello_world.wsdl"
+                   wsdlURL="/wsdl/hello_world.wsdl"
                    serviceClass="org.apache.hello_world_soap_http.Greeter"
-                   endpointName="s:SoapOverHttp"
+                   endpointName="s:SoapPort"
                    serviceName="s:SOAPService"
                    xmlns:s="http://apache.org/hello_world_soap_http">
   </cxf:cxfEndpoint>

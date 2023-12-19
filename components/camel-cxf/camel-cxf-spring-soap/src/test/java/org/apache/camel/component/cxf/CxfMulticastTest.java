@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.greeter;
+package org.apache.camel.component.cxf;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -27,12 +27,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MulticastCxfTest extends CamelSpringTestSupport {
+public class CxfMulticastTest extends CamelSpringTestSupport {
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
-        System.setProperty("MulticastCxfTest.port", Integer.toString(port));
+        System.setProperty("CxfMulticastTest.port", Integer.toString(port));
     }
 
     @EndpointInject("mock:reply")
@@ -46,11 +46,11 @@ public class MulticastCxfTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/greeter/MulticastCxfTest-context.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfMulticastBeans.xml");
     }
 
     @Test
-    void testMulticastCXF() throws Exception {
+    void testCxfMulticast() throws Exception {
         replyEndpoint.expectedBodiesReceived("Hello Willem", "Hello Claus", "Hello Jonathan");
         reply2Endpoint.expectedBodiesReceived("Bye Willem", "Bye Claus", "Bye Jonathan");
         outputEndpoint.expectedBodiesReceived("Bye Willem", "Bye Claus", "Bye Jonathan");
