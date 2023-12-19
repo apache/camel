@@ -43,6 +43,7 @@ public interface Clock {
 
     /**
      * Get the creation date/time as with time-zone information
+     *
      * @return A ZonedDateTime instance from the computed creation time
      */
     default ZonedDateTime asZonedCreationDateTime() {
@@ -51,6 +52,7 @@ public interface Clock {
 
     /**
      * Get the creation date/time as regular Java Date instance
+     *
      * @return A Date instance from the computed creation time
      */
     default Date asDate() {
