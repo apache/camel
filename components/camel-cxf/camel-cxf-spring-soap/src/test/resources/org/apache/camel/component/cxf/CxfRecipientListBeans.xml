@@ -28,28 +28,19 @@
 
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
-
-  <!-- to use from client -->
-  <cxf:cxfEndpoint id="clientEndpoint"
-                   wsdlURL="wsdl/hello_world.wsdl"
+ 
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfRecipientListTest.port1}/SoapContext/SoapPort"
+                   wsdlURL="/wsdl/hello_world.wsdl"
                    serviceClass="org.apache.hello_world_soap_http.Greeter"
-                   endpointName="s:SoapOverHttp"
+                   endpointName="s:SoapPort"
                    serviceName="s:SOAPService"
                    xmlns:s="http://apache.org/hello_world_soap_http">
   </cxf:cxfEndpoint>
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${RecipientListCxf2Test.port1}/SoapContext/SoapPort"
-                   wsdlURL="wsdl/hello_world.wsdl"
+  <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:${CxfRecipientListTest.port2}/SoapContext/SoapPort"
+                   wsdlURL="/wsdl/hello_world.wsdl"
                    serviceClass="org.apache.hello_world_soap_http.Greeter"
-                   endpointName="s:SoapOverHttp"
-                   serviceName="s:SOAPService"
-                   xmlns:s="http://apache.org/hello_world_soap_http">
-  </cxf:cxfEndpoint>
-
-  <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:${RecipientListCxf2Test.port2}/SoapContext/SoapPort"
-                   wsdlURL="wsdl/hello_world.wsdl"
-                   serviceClass="org.apache.hello_world_soap_http.Greeter"
-                   endpointName="s:SoapOverHttp"
+                   endpointName="s:SoapPort"
                    serviceName="s:SOAPService"
                    xmlns:s="http://apache.org/hello_world_soap_http">
   </cxf:cxfEndpoint>
@@ -58,10 +49,9 @@
 
     <route>
       <from uri="direct:start"/>
-      <recipientList>
+      <recipientList parallelProcessing="true">
         <header>foo</header>
       </recipientList>
-      <to uri="log:output"/>
       <to uri="mock:output"/>
     </route>
 
