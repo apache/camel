@@ -83,4 +83,11 @@ public final class StopWatch {
         return answer;
     }
 
+    /**
+     * Stops the stop watch
+     */
+    public void stop() {
+        start = 0;
+    }
+
 }
