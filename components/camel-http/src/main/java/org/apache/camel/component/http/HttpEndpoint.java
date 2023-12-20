@@ -262,7 +262,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
         if (isAuthenticationPreemptive()) {
             // setup the preemptive authentication here
-            clientBuilder.addExecInterceptorFirst("preemptive-auth", new PreemptiveAuthExecChainHandler());
+            clientBuilder.addExecInterceptorFirst("preemptive-auth", new PreemptiveAuthExecChainHandler(this));
         }
         String userAgent = getUserAgent();
         if (userAgent != null) {

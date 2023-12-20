@@ -22,6 +22,8 @@ import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.auth.NTCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 
 final class HttpCredentialsHelper {
@@ -38,6 +40,17 @@ final class HttpCredentialsHelper {
                 host,
                 Objects.requireNonNullElse(port, -1)), credentials);
         return credentialsProvider;
+    }
+
+    public static Credentials getCredentials(String method, String username, String password, String host, String domain) {
+        if (username != null && password != null) {
+            if (domain != null && host != null) {
+                return new NTCredentials(username, password.toCharArray(), host, domain);
+            } else {
+                return new UsernamePasswordCredentials(username, password.toCharArray());
+            }
+        }
+        return null;
     }
 
 }
