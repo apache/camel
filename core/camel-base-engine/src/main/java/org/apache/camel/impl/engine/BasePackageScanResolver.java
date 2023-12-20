@@ -149,6 +149,12 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
             logger().trace("Decoded urlPath: {} with protocol: {}", urlPath, url.getProtocol());
         }
 
+        // With TomcatEmbeddedWebappClassLoader (Spring Boot 3.2.0), the getResources method returns 'jar:nested:...'
+        // instead of 'jar:file:...' and throws a FileNotFoundException.
+        // Therefore, it is necessary to forcefully replace it with 'file'.
+        if (urlPath.startsWith("nested:")) {
+            urlPath = urlPath.replaceAll("^nested:", "file:");
+        }
         // If it's a file in a directory, trim the stupid file: spec
         if (urlPath.startsWith("file:")) {
             // file path can be temporary folder which uses characters that the URLDecoder decodes wrong
