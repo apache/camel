@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.net.ServerSocket;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
@@ -27,9 +30,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import java.net.ServerSocket;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -78,15 +78,15 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
             public void configure() {
 
                 from("direct:with").to("ftp://localhost:" + serverSocket.getLocalPort()
-                        + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                                       + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
 
                 from("direct:without").to("ftp://localhost:" + serverSocket.getLocalPort()
-                        + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                                          + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
 
                 // using soTimeout=0 could potentially cause the ftp producer to dead-lock doing endless reconnection attempts
                 // this is a test to ensure we have fixed that; see CAMEL-8088
                 from("direct:soTimeoutZero").to("ftp://localhost:" + serverSocket.getLocalPort()
-                        + "?connectTimeout=300&soTimeout=0")
+                                                + "?connectTimeout=300&soTimeout=0")
                         .to("mock:done")
                         .errorHandler(deadLetterChannel("mock:dead"));
             }
