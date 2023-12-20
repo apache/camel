@@ -45,6 +45,40 @@ public interface FilesEndpointBuilderFactory {
             return (AdvancedFilesEndpointConsumerBuilder) this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.file.azure.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder credentialType(
+                org.apache.camel.component.file.azure.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.file.azure.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Whether or not to disconnect from remote FTP server right after use.
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
@@ -132,6 +166,20 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointConsumerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Shared key (storage account key).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sharedKey the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder sharedKey(String sharedKey) {
+            doSetProperty("sharedKey", sharedKey);
             return this;
         }
         /**
@@ -424,20 +472,6 @@ public interface FilesEndpointBuilderFactory {
         default FilesEndpointConsumerBuilder streamDownload(
                 String streamDownload) {
             doSetProperty("streamDownload", streamDownload);
-            return this;
-        }
-        /**
-         * Shared key (storage account key).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sharedKey the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder sharedKey(String sharedKey) {
-            doSetProperty("sharedKey", sharedKey);
             return this;
         }
         /**
@@ -2695,6 +2729,40 @@ public interface FilesEndpointBuilderFactory {
             return (AdvancedFilesEndpointProducerBuilder) this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.file.azure.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder credentialType(
+                org.apache.camel.component.file.azure.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.file.azure.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Whether or not to disconnect from remote FTP server right after use.
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
@@ -2782,6 +2850,20 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointProducerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Shared key (storage account key).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sharedKey the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder sharedKey(String sharedKey) {
+            doSetProperty("sharedKey", sharedKey);
             return this;
         }
         /**
@@ -2984,20 +3066,6 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointProducerBuilder tempPrefix(String tempPrefix) {
             doSetProperty("tempPrefix", tempPrefix);
-            return this;
-        }
-        /**
-         * Shared key (storage account key).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sharedKey the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointProducerBuilder sharedKey(String sharedKey) {
-            doSetProperty("sharedKey", sharedKey);
             return this;
         }
         /**
@@ -3671,6 +3739,39 @@ public interface FilesEndpointBuilderFactory {
             return (AdvancedFilesEndpointBuilder) this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.file.azure.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointBuilder credentialType(
+                org.apache.camel.component.file.azure.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.file.azure.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Whether or not to disconnect from remote FTP server right after use.
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
@@ -3765,7 +3866,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: common
          * 
          * @param sharedKey the value to set
          * @return the dsl builder

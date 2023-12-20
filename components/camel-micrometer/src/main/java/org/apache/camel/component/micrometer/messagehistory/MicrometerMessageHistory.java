@@ -46,7 +46,7 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
     }
 
     public MicrometerMessageHistory(MeterRegistry meterRegistry, Route route, NamedNode namedNode,
-            MicrometerMessageHistoryNamingStrategy namingStrategy, Message message) {
+                                    MicrometerMessageHistoryNamingStrategy namingStrategy, Message message) {
         super(route.getId(), namedNode, System.currentTimeMillis(), message);
         this.meterRegistry = meterRegistry;
         this.route = route;

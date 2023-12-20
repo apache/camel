@@ -28,7 +28,6 @@ import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 public final class HttpHelper {
 

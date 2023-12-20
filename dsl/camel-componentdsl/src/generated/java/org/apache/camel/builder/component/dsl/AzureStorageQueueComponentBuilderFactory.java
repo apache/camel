@@ -67,6 +67,23 @@ public interface AzureStorageQueueComponentBuilderFactory {
             return this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageQueueComponentBuilder credentialType(
+                org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
@@ -397,6 +414,7 @@ public interface AzureStorageQueueComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((QueueComponent) component).setConfiguration((org.apache.camel.component.azure.storage.queue.QueueConfiguration) value); return true;
+            case "credentialType": getOrCreateConfiguration((QueueComponent) component).setCredentialType((org.apache.camel.component.azure.storage.queue.CredentialType) value); return true;
             case "serviceClient": getOrCreateConfiguration((QueueComponent) component).setServiceClient((com.azure.storage.queue.QueueServiceClient) value); return true;
             case "bridgeErrorHandler": ((QueueComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "createQueue": getOrCreateConfiguration((QueueComponent) component).setCreateQueue((boolean) value); return true;
