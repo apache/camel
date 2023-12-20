@@ -79,6 +79,10 @@ With the AZURE_IDENTITY mode the user will be able to use the Default Azure Cred
 With the SHARED_ACCOUNT_KEY mode the user could explicitly set the accessKey parameter.
 This is part of the effort explained in CAMEL-18590.
 
+=== camel-hdfs
+
+The component has been removed after deprecation in 4.3.0
+
 == Camel Spring Boot
 
 === Auto Configuration

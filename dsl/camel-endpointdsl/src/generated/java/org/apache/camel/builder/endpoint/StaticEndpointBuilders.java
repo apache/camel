@@ -6484,65 +6484,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * HDFS (camel-hdfs)
-     * Read and write from/to an HDFS filesystem using Hadoop 2.x.
-     * 
-     * Category: bigdata,file
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-hdfs
-     * 
-     * Syntax: <code>hdfs:hostName:port/path</code>
-     * 
-     * Path parameter: hostName (required)
-     * HDFS host to use
-     * 
-     * Path parameter: port
-     * HDFS port to use
-     * Default value: 8020
-     * 
-     * Path parameter: path (required)
-     * The directory path to use
-     * 
-     * @param path hostName:port/path
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsEndpointBuilder hdfs(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.endpointBuilder("hdfs", path);
-    }
-    /**
-     * HDFS (camel-hdfs)
-     * Read and write from/to an HDFS filesystem using Hadoop 2.x.
-     * 
-     * Category: bigdata,file
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-hdfs
-     * 
-     * Syntax: <code>hdfs:hostName:port/path</code>
-     * 
-     * Path parameter: hostName (required)
-     * HDFS host to use
-     * 
-     * Path parameter: port
-     * HDFS port to use
-     * Default value: 8020
-     * 
-     * Path parameter: path (required)
-     * The directory path to use
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path hostName:port/path
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsEndpointBuilder hdfs(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 

@@ -3033,28 +3033,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "HdfsComponentBuilderFactory": {
-    "kind": "component",
-    "name": "hdfs",
-    "title": "HDFS",
-    "description": "Read and write from\/to an HDFS filesystem using Hadoop 2.x.",
-    "deprecated": true,
-    "firstVersion": "2.14.0",
-    "label": "bigdata,file",
-    "javaType": "org.apache.camel.component.hdfs.HdfsComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-hdfs",
-    "version": "4.4.0-SNAPSHOT",
-    "scheme": "hdfs",
-    "extendsScheme": "",
-    "syntax": "hdfs:hostName:port\/path",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "HttpComponentBuilderFactory": {
     "kind": "component",
     "name": "http",
