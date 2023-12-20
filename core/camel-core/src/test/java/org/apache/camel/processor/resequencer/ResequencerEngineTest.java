@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
@@ -101,7 +102,7 @@ class ResequencerEngineTest extends TestSupport {
         Random random = new Random(System.currentTimeMillis());
         StringBuilder sb = new StringBuilder(4000);
         sb.append("Input sequence: ");
-        long millis = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = input; i > 0; i--) {
             int r = random.nextInt(i);
             int next = list.remove(r);
@@ -117,9 +118,8 @@ class ResequencerEngineTest extends TestSupport {
         for (int i = 0; i < input; i++) {
             sb.append(buffer.take()).append(" ");
         }
-        millis = System.currentTimeMillis() - millis;
         log.info(sb.toString());
-        log.info("Duration = {} ms", millis);
+        log.info("Duration = {} ms", watch.taken());
     }
 
     @DisabledIf(value = "isIgnoreLoadTests",

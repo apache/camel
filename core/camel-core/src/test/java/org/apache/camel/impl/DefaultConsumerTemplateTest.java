@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.engine.DefaultConsumerTemplate;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -100,10 +101,10 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
     @Test
     public void testConsumeReceiveTimeout() throws Exception {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         Exchange out = consumer.receive("seda:foo", 1000);
         assertNull(out);
-        long delta = System.currentTimeMillis() - start;
+        long delta = watch.taken();
         assertTrue(delta < 1500, "Should take about 1 sec: " + delta);
 
         template.sendBody("seda:foo", "Hello");
