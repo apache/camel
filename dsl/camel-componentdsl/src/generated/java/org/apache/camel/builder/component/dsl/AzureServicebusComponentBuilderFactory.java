@@ -289,6 +289,23 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
+         * If the consumer has connection failure to Azure EventBus, then delay
+         * some time before re-connecting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder reconnectDelay(
+                int reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
          * Sets the receive mode for the receiver.
          * 
          * The option is a:
@@ -569,6 +586,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "peekNumMaxMessages": getOrCreateConfiguration((ServiceBusComponent) component).setPeekNumMaxMessages((java.lang.Integer) value); return true;
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
             case "receiverAsyncClient": getOrCreateConfiguration((ServiceBusComponent) component).setReceiverAsyncClient((com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient) value); return true;
+            case "reconnectDelay": getOrCreateConfiguration((ServiceBusComponent) component).setReconnectDelay((int) value); return true;
             case "serviceBusReceiveMode": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusReceiveMode((com.azure.messaging.servicebus.models.ServiceBusReceiveMode) value); return true;
             case "subQueue": getOrCreateConfiguration((ServiceBusComponent) component).setSubQueue((com.azure.messaging.servicebus.models.SubQueue) value); return true;
             case "subscriptionName": getOrCreateConfiguration((ServiceBusComponent) component).setSubscriptionName((java.lang.String) value); return true;

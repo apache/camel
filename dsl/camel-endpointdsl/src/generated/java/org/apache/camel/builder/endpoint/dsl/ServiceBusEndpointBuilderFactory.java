@@ -441,6 +441,40 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * If the consumer has connection failure to Azure EventBus, then delay
+         * some time before re-connecting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder reconnectDelay(
+                int reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * If the consumer has connection failure to Azure EventBus, then delay
+         * some time before re-connecting.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder reconnectDelay(
+                String reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
          * Sets the receive mode for the receiver.
          * 
          * The option is a:
