@@ -376,7 +376,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * If the consumer has connection failure to Azure EventBus, then delay (millis) some time before re-connecting.
+     * If the consumer has connection failure to Azure ServiceBus, then delay (millis) some time before re-connecting.
      */
     public void setReconnectDelay(int reconnectDelay) {
         this.reconnectDelay = reconnectDelay;

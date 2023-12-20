@@ -63,7 +63,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     protected void createAndConnectClient() {
-        LOG.debug("Creating connection to Azure EventBus");
+        LOG.debug("Creating connection to Azure ServiceBus");
 
         // create the client
         final ServiceBusReceiverAsyncClient client = getConfiguration().getReceiverAsyncClient() != null
