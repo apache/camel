@@ -694,7 +694,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: AZURE_IDENTITY
+         * Default: SHARED_ACCOUNT_KEY
          * Group: security
          * 
          * @param credentialType the value to set
@@ -711,7 +711,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: AZURE_IDENTITY
+         * Default: SHARED_ACCOUNT_KEY
          * Group: security
          * 
          * @param credentialType the value to set
@@ -1509,7 +1509,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: AZURE_IDENTITY
+         * Default: SHARED_ACCOUNT_KEY
          * Group: security
          * 
          * @param credentialType the value to set
@@ -1526,7 +1526,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: AZURE_IDENTITY
+         * Default: SHARED_ACCOUNT_KEY
          * Group: security
          * 
          * @param credentialType the value to set
@@ -2127,7 +2127,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: AZURE_IDENTITY
+         * Default: SHARED_ACCOUNT_KEY
          * Group: security
          * 
          * @param credentialType the value to set
@@ -2144,7 +2144,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: AZURE_IDENTITY
+         * Default: SHARED_ACCOUNT_KEY
          * Group: security
          * 
          * @param credentialType the value to set

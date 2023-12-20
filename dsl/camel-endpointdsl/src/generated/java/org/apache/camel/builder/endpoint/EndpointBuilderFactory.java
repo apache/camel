@@ -149,7 +149,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.HazelcastSedaEndpointBuilderFactory.HazelcastSedaBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastSetEndpointBuilderFactory.HazelcastSetBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.HazelcastTopicBuilders,
-            org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsBuilders,
             org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpBuilders,
             org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2Builders,
             org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMBuilders,
