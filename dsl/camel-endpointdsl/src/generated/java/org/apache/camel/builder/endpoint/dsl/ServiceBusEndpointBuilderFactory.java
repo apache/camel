@@ -759,6 +759,40 @@ public interface ServiceBusEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * If the consumer has connection failure to Azure ServiceBus, then
+         * delay (millis) some time before re-connecting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServiceBusEndpointConsumerBuilder reconnectDelay(
+                int reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * If the consumer has connection failure to Azure ServiceBus, then
+         * delay (millis) some time before re-connecting.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServiceBusEndpointConsumerBuilder reconnectDelay(
+                String reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
     }
 
     /**

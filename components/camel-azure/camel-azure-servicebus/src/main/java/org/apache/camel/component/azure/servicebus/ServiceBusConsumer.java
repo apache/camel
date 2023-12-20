@@ -32,9 +32,13 @@ import org.apache.camel.component.azure.servicebus.operations.ServiceBusReceiver
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.scheduler.Schedulers;
 
 public class ServiceBusConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
 
     private ServiceBusReceiverAsyncClientWrapper clientWrapper;
     private ServiceBusReceiverOperations operations;
@@ -54,6 +58,12 @@ public class ServiceBusConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        createAndConnectClient();
+    }
+
+    protected void createAndConnectClient() {
+        LOG.debug("Creating connection to Azure ServiceBus");
 
         // create the client
         final ServiceBusReceiverAsyncClient client = getConfiguration().getReceiverAsyncClient() != null
@@ -176,22 +186,25 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     private void onErrorListener(final Throwable errorContext) {
-        final Exchange exchange = createServiceBusExchange(errorContext);
-
-        // log exception if an exception occurred and was not handled
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", exchange,
-                    exchange.getException());
+        LOG.warn("Error from Azure ServiceBus due to {} - Reconnecting in {} seconds", errorContext.getMessage(),
+                getConfiguration().getReconnectDelay());
+        if (LOG.isDebugEnabled()) {
+            LOG.warn("Error from Azure ServiceBus (incl stacktrace)", errorContext);
         }
-    }
+        if (getConfiguration().getReconnectDelay() > 0) {
+            try {
+                Thread.sleep(getConfiguration().getReconnectDelay());
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
 
-    private Exchange createServiceBusExchange(final Throwable errorContext) {
-        final Exchange exchange = createExchange(true);
-
-        // set exception
-        exchange.setException(errorContext);
-
-        return exchange;
+        try {
+            clientWrapper.close();
+        } catch (Exception e) {
+            // ignore
+        }
+        createAndConnectClient();
     }
 
     private class ConsumerOnCompletion extends SynchronizationAdapter {
