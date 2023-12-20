@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -40,7 +41,7 @@ public class ThrottlerDslTest extends ContextTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(messageCount);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < messageCount; i++) {
             executor.execute(() -> template.sendBodyAndHeader("direct:start", "payload", "ThrottleCount", 1));
         }
@@ -51,7 +52,7 @@ public class ThrottlerDslTest extends ContextTestSupport {
         // now assert that they have actually been throttled
         long minimumTime = messageCount * INTERVAL;
         // add a little slack
-        long delta = System.currentTimeMillis() - start + 200;
+        long delta = watch.taken() + 200;
         assertTrue(delta >= minimumTime, "Should take at least " + minimumTime + "ms, was: " + delta);
         executor.shutdownNow();
     }
