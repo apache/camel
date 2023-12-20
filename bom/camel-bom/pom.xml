@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.4.0-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>camel-bom</artifactId>
@@ -128,6 +128,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws-config</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-secrets-manager</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -203,6 +208,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws2-redshift</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-s3</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -259,6 +269,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-key-vault</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-azure-schema-registry</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -369,11 +384,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog-maven</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-maven-grape</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -695,6 +705,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-elasticsearch</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-elasticsearch-rest-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1244,6 +1259,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-kotlin-dsl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-kubernetes</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1340,6 +1360,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-micrometer</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-micrometer-prometheus</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1724,6 +1749,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-smb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-smpp</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1895,6 +1925,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-thrift</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-thymeleaf</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

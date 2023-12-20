@@ -250,6 +250,8 @@ public class WireTapProcessor extends AsyncProcessorSupport
     private Exchange configureCopyExchange(Exchange exchange) {
         // must use a copy as we dont want it to cause side effects of the original exchange
         Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+        // should not be correlated, but we needed to copy without handover
+        copy.removeProperty(ExchangePropertyKey.CORRELATION_ID);
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
         // move OUT to IN if needed

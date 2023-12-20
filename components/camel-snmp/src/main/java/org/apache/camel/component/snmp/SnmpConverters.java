@@ -57,7 +57,7 @@ public final class SnmpConverters {
                 StringTokenizer strTok = new StringTokenizer(s, ",");
                 while (strTok.hasMoreTokens()) {
                     String tok = strTok.nextToken();
-                    if (tok != null && tok.trim().length() > 0) {
+                    if (tok != null && !tok.isBlank()) {
                         list.add(new OID(tok.trim()));
                     } else {
                         // empty token - skip

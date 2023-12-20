@@ -41,6 +41,7 @@ public final class MicrometerConstants {
     public static final String HEADER_METRIC_TAGS = HEADER_PREFIX + "Tags";
 
     public static final String DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME = "camel.message.history";
+
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME = "camel.exchanges.failed";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME = "camel.exchanges.succeeded";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME = "camel.exchanges.total";
@@ -48,15 +49,16 @@ public final class MicrometerConstants {
             = "camel.exchanges.failures.handled";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME
             = "camel.exchanges.external.redeliveries";
+    public static final String DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT = "camel.exchanges.inflight";
+
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "camel.route.policy";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_LONGMETER_NAME = "camel.route.policy.long.task";
     public static final String DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME = "camel.exchange.event.notifier";
     public static final String DEFAULT_CAMEL_ROUTES_ADDED = "camel.routes.added";
     public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "camel.routes.running";
-    public static final String DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT = "camel.exchanges.inflight";
+    public static final String DEFAULT_CAMEL_ROUTES_RELOADED = "camel.routes.reloaded";
 
     public static final String ROUTE_ID_TAG = "routeId";
-    public static final String ROUTE_DESCRIPTION_TAG = "routeDescription";
     public static final String NODE_ID_TAG = "nodeId";
     public static final String FAILED_TAG = "failed";
     public static final String CAMEL_CONTEXT_TAG = "camelContext";
@@ -67,8 +69,6 @@ public final class MicrometerConstants {
     public static final String ENDPOINT_NAME = "endpointName";
 
     public static final Predicate<Meter.Id> CAMEL_METERS = id -> id.getTag(CAMEL_CONTEXT_TAG) != null;
-    public static final Predicate<Meter.Id> TIMERS = id -> id.getType() == Meter.Type.TIMER;
-    public static final Predicate<Meter.Id> DISTRIBUTION_SUMMARIES = id -> id.getType() == Meter.Type.DISTRIBUTION_SUMMARY;
     public static final Predicate<Meter.Id> ALWAYS = id -> true;
 
     private MicrometerConstants() {

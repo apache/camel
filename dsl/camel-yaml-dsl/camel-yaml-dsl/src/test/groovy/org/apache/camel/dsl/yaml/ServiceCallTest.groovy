@@ -21,6 +21,7 @@ import org.apache.camel.model.RouteDefinition
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration
 import org.apache.camel.model.cloud.ServiceCallDefinition
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration
+import org.junit.jupiter.api.Assertions
 
 class ServiceCallTest extends YamlTestSupport {
 
@@ -30,13 +31,13 @@ class ServiceCallTest extends YamlTestSupport {
                 - from:
                    uri: "direct:start"
                    steps:
-                     - service-call:
+                     - serviceCall:
                          name: "sc"
-                         static-service-discovery:
+                         staticServiceDiscovery:
                              servers:
                                  - "service1@host1"
                                  - "service1@host2"                         
-                         blacklist-service-filter:
+                         blacklistServiceFilter:
                              servers:
                                  - "service2@host1"
             '''
@@ -55,5 +56,55 @@ class ServiceCallTest extends YamlTestSupport {
                     }
                 }
             }
+    }
+
+    def "Error: kebab-case: service-call"() {
+        when:
+        var route = '''
+                - from:
+                   uri: "direct:start"
+                   steps:
+                     - service-call:
+                         name: "sc"
+                         staticServiceDiscovery:
+                             servers:
+                                 - "service1@host1"
+                                 - "service1@host2"                         
+                         blacklistServiceFilter:
+                             servers:
+                                 - "service2@host1"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: static-service-discovery"() {
+        when:
+        var route = '''
+                - from:
+                   uri: "direct:start"
+                   steps:
+                     - serviceCall:
+                         name: "sc"
+                         static-service-discovery:
+                             servers:
+                                 - "service1@host1"
+                                 - "service1@host2"                         
+                         blacklistServiceFilter:
+                             servers:
+                                 - "service2@host1"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
     }
 }

@@ -622,7 +622,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         if (loc != null) {
             if (loc.contains(":")) {
                 // strip prefix
-                loc = loc.substring(loc.indexOf(':') + 1);
+                loc = StringHelper.after(loc, ":", loc);
+
                 // file based such as xml and yaml
                 loc = FileUtil.stripPath(loc);
             }

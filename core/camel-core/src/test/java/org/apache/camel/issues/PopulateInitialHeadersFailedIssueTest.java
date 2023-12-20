@@ -31,7 +31,7 @@ public class PopulateInitialHeadersFailedIssueTest extends ContextTestSupport {
 
     @Test
     public void testPopulateInitialHeadersFailed() throws Exception {
-        Exchange exchange = new DefaultExchange(context.getEndpoint("seda:start"));
+        Exchange exchange = DefaultExchange.newFromEndpoint(context.getEndpoint("seda:start"));
         exchange.setPattern(ExchangePattern.InOut);
         MyFaultMessage msg = new MyFaultMessage(exchange);
         exchange.setMessage(msg);

@@ -23,6 +23,8 @@ import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +86,7 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
 
         log.info(json);
 
@@ -100,8 +102,9 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
         context.stop();
     }
 
-    @Test
-    public void testReaderReadV3() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.1", "3.0" })
+    public void testReaderReadV3(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
@@ -109,14 +112,14 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
+        config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
 
         OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        String json = io.swagger.v3.core.util.Json.pretty(openApi);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
         assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));

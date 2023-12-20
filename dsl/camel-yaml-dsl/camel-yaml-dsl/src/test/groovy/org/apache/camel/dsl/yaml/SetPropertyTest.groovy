@@ -21,10 +21,11 @@ import org.apache.camel.model.SetPropertyDefinition
 import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
+import org.junit.jupiter.api.Assertions
 
 class SetPropertyTest extends YamlTestSupport {
 
-    def "set-property definition (#resource.location)"(Resource resource) {
+    def "setProperty definition (#resource.location)"(Resource resource) {
         when:
             PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
@@ -42,7 +43,7 @@ class SetPropertyTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - set-property:
+                          - setProperty:
                               name: test
                               simple: "${body}"
                           - to: "mock:result"
@@ -51,12 +52,58 @@ class SetPropertyTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - set-property:
+                          - setProperty:
                               name: test
                               expression:
                                 simple: "${body}"
                           - to: "mock:result"
                     ''')
             ]
+    }
+
+    def "Error: kebab-case: set-property"() {
+        when:
+        var route = '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - set-property:
+                              name: test
+                              expression:
+                                simple: "${body}"
+                          - to: "mock:result"
+                    '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "kebab-case: set-property no validation"() {
+        when:
+        var route = '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - set-property:
+                              name: test
+                              expression:
+                                simple: "${body}"
+                          - to: "mock:result"
+                    '''
+        loadRoutesNoValidate(route)
+
+        then:
+        with(context.routeDefinitions[0].outputs[0], SetPropertyDefinition) {
+            name == 'test'
+
+            with(expression, ExpressionDefinition) {
+                language == 'simple'
+                expression == '${body}'
+            }
+        }
     }
 }

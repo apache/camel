@@ -195,7 +195,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                         try (ZipFile zf = new ZipFile(file)) {
                             return zf.stream().filter(ze -> !ze.isDirectory())
                                     .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                    .map(ze -> file + "!" + ze.getName()).collect(Collectors.toList()).stream();
+                                    .map(ze -> file + "!" + ze.getName()).toList().stream();
                         } catch (IOException e) {
                             throw new IOException("Error reading zip file: " + file, e);
                         }

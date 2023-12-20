@@ -49,7 +49,6 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
 
     public QueueConsumer(final QueueEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
-
     }
 
     @Override
@@ -70,6 +69,9 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
             final List<QueueMessageItem> messageItems = clientWrapper.receiveMessages(getConfiguration().getMaxMessages(),
                     getConfiguration().getVisibilityTimeout(),
                     getConfiguration().getTimeout());
+
+            // okay we have some response from azure so lets mark the consumer as ready
+            forceConsumerAsReady();
 
             LOG.trace("Receiving messages [{}]...", messageItems);
 
@@ -171,8 +173,10 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
      */
     private void processCommit(final Exchange exchange) {
         try {
-            LOG.trace("Deleting message with pop receipt handle {}...",
-                    QueueExchangeHeaders.getPopReceiptFromHeaders(exchange));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Deleting message with pop receipt handle {}...",
+                        QueueExchangeHeaders.getPopReceiptFromHeaders(exchange));
+            }
             queueOperations.deleteMessage(exchange);
         } catch (QueueStorageException ex) {
             getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.",

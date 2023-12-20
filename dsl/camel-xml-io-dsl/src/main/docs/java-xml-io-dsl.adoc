@@ -116,6 +116,191 @@ A `my-route` route is referring to `greeter` bean which is defined using Spring 
 
 More examples can be found in xref:manual:ROOT:camel-jbang.adoc#_using_spring_beans_in_camel_xml_dsl[Camel JBang] page.
 
+=== Using bean with constructors
+
+When beans must be created with constructor arguments, then this is made easier in Camel 4.1 onwards.
+
+For example as shown below:
+
+[source,xml]
+----
+<camel>
+
+	<bean name="beanFromProps" type="com.acme.MyBean">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+        <!-- and you can still have properties -->
+		<properties>
+			<property key="field1" value="f1_p" />
+			<property key="field2" value="f2_p" />
+			<property key="nested.field1" value="nf1_p" />
+			<property key="nested.field2" value="nf2_p" />
+		</properties>
+	</bean>
+
+</camel>
+----
+
+If you use Camel 4.0, then constructor arguments must be defined in the `type` attribute:
+
+[source,xml]
+----
+<bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
+    <properties>
+        <property key="field1" value="f1_p" />
+        <property key="field2" value="f2_p" />
+        <property key="nested.field1" value="nf1_p" />
+        <property key="nested.field2" value="nf2_p" />
+    </properties>
+</bean>
+----
+
+=== Creating beans from factory method
+
+A bean can also be created from a factory method (public static) as shown below:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean" factoryMethod="createMyBean">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+When using `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyBean` should be as follows:
+
+[source,java]
+----
+public class MyBean {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static` and from the same class as the created class itself.
+
+=== Creating beans from builder classes
+
+A bean can also be created from another builder class as shown below:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean"
+          builderClass="com.acme.MyBeanBuilder" builderMethod="createMyBean">
+        <properties>
+          <property key="id" value="123"/>
+          <property key="name" value="Acme"/>
+        </constructors>
+	</bean>
+----
+
+NOTE: The builder class must be `public` and have a no-arg default constructor.
+
+The builder class is then used to create the actual bean by using fluent builder style configuration.
+So the properties will be set on the builder class, and the bean is created by invoking the `builderMethod`
+at the end. The invocation of this method is done via Java reflection.
+
+=== Creating beans from factory bean
+
+A bean can also be created from a factory bean as shown below:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean"
+          factoryBean="com.acme.MyHelper" factoryMethod="createMyBean">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+TIP: `factoryBean` can also refer to an existing bean by bean id instead of FQN classname.
+
+When using `factoryBean` and `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyHelper` should be as follows:
+
+[source,java]
+----
+public class MyHelper {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static`.
+
+=== Creating beans using script language
+
+For advanced use-cases then Camel allows to inline a script language, such as groovy, java, javascript, etc, to create the bean.
+This gives flexibility to use a bit of programming to create and configure the bean.
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean" scriptLanguage="groovy">
+        <script>
+      // some groovy script here to create the bean
+      bean = ...
+      ...
+      return bean
+        </script>
+	</bean>
+----
+
+NOTE: When using `script` then constructors and factory bean/method is not in use
+
+=== Using init and destroy methods on beans
+
+Sometimes beans need to do some initialization and cleanup work before a bean is ready to be used.
+For this you can use `initMethod` and `destroyMethod` that Camel triggers accordingly.
+
+Those methods must be public void and have no arguments, as shown below:
+
+[source,java]
+----
+public class MyBean {
+
+    public void initMe() {
+        // do init work here
+    }
+
+    public void destroyMe() {
+        // do cleanup work here
+    }
+
+}
+----
+
+You then have to declare those methods in XML DSL as follows:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean"
+          initMethod="initMe" destroyMethod="destroyMe">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+The init and destroy methods are optional, so a bean does not have to have both,
+for example you may only have destroy methods.
+
+
 == See Also
 
 See xref:manual:ROOT:dsl.adoc[DSL]

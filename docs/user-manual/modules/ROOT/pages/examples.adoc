@@ -4,16 +4,6 @@ Once you have read about xref:getting-started.adoc[Getting Started] and
 looked at the xref:components:eips:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns], you might want to try out some examples.
 
-
-== Walk-throughs
-
-* Walk through the code of a
-xref:walk-through-an-example.adoc[beginner's example] so you can
-understand how things fit together using the Java xref:dsl.adoc[DSL] to
-set up some routes in a simple `main(...)` method.
-* Walk through the xref:walk-through-another-example.adoc[Spring XML DSL
-example] to look at XML-based routing.
-
 [NOTE]
 ====
 The examples listed below are hosted at Apache. We also offer the
@@ -29,7 +19,7 @@ the words "Apache Camel".
 
 == Examples
 
-Browse the https://github.com/apache/camel-examples/tree/main/examples#welcome-to-the-apache-camel-examples[camel-examples]
+Browse the https://github.com/apache/camel-examples/tree/main#welcome-to-the-apache-camel-examples[camel-examples]
 from github where each example is documented with instructions how to run, and are up-to-date.
 
 

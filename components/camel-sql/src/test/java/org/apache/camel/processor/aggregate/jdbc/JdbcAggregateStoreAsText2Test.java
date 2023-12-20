@@ -29,6 +29,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests to ensure that arbitrary headers can be stored as raw text within a dataSource Tests to ensure the body can be
@@ -72,23 +73,23 @@ public class JdbcAggregateStoreAsText2Test extends CamelSpringTestSupport {
         headers.put("accountName", "Alan");
 
         template.sendBodyAndHeaders("direct:start", "A", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
+        assertNull(getAggregationRepositoryBody(123));
+        assertNull(getAggregationRepositoryCompanyName(123));
         assertEquals("Alan", getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "B", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
+        assertNull(getAggregationRepositoryBody(123));
+        assertNull(getAggregationRepositoryCompanyName(123));
         assertEquals("Alan", getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "C", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
+        assertNull(getAggregationRepositoryBody(123));
+        assertNull(getAggregationRepositoryCompanyName(123));
         assertEquals("Alan", getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "D", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
+        assertNull(getAggregationRepositoryBody(123));
+        assertNull(getAggregationRepositoryCompanyName(123));
         assertEquals("Alan", getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "E", headers);

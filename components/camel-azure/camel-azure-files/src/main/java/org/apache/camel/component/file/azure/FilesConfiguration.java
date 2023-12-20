@@ -24,13 +24,15 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.file.azure.CredentialType.SHARED_ACCOUNT_KEY;
+
 @UriParams
 public class FilesConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_HTTPS_PORT = 443;
     public static final String DEFAULT_INTERNET_DOMAIN = "file.core.windows.net";
 
-    @UriParam(label = "both", description = "Shared key (storage account key)", secret = true)
+    @UriParam(label = "common", description = "Shared key (storage account key)", secret = true)
     private String sharedKey;
 
     @UriPath(name = "account", description = "The account to use")
@@ -40,6 +42,10 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     @UriPath(name = "share", description = "The share to use")
     @Metadata(required = true)
     private String share;
+
+    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
+              defaultValue = "SHARED_ACCOUNT_KEY", description = "Determines the credential strategy to adopt")
+    private CredentialType credentialType = SHARED_ACCOUNT_KEY;
 
     public FilesConfiguration() {
         setProtocol(FilesComponent.SCHEME);
@@ -81,6 +87,10 @@ public class FilesConfiguration extends RemoteFileConfiguration {
         return share;
     }
 
+    public void setShare(String share) {
+        this.share = share;
+    }
+
     @Override
     public String remoteServerInformation() {
         return getProtocol() + "://" + getAccount();
@@ -90,14 +100,18 @@ public class FilesConfiguration extends RemoteFileConfiguration {
      * Files service account or &lt;account>.file.core.windows.net hostname.
      */
     @Override
-    public void setHost(String accountOrHostname) {
-        var dot = accountOrHostname.indexOf('.');
+    public void setHost(String host) {
+        var dot = host.indexOf('.');
         var hasDot = dot >= 0;
-        super.setHost(hasDot ? accountOrHostname : account + '.' + DEFAULT_INTERNET_DOMAIN);
+        super.setHost(hasDot ? host : account + '.' + DEFAULT_INTERNET_DOMAIN);
     }
 
     public String getAccount() {
         return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     public String getSharedKey() {
@@ -108,4 +122,11 @@ public class FilesConfiguration extends RemoteFileConfiguration {
         this.sharedKey = sharedKey;
     }
 
+    public CredentialType getCredentialType() {
+        return credentialType;
+    }
+
+    public void setCredentialType(CredentialType credentialType) {
+        this.credentialType = credentialType;
+    }
 }

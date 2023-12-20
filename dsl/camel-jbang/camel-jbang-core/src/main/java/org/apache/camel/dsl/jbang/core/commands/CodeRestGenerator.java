@@ -53,14 +53,15 @@ public class CodeRestGenerator extends CamelCommand {
     private String output;
     @CommandLine.Option(names = { "-t", "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml")
     private String type;
-    @CommandLine.Option(names = { "-r", "--routes" }, description = "Generate routes (YAML)")
+    @CommandLine.Option(names = { "-r", "--routes" }, description = "Generate routes (only in YAML)")
     private boolean generateRoutes;
-    @CommandLine.Option(names = { "-d", "--dto" }, description = "Data Objects")
+    @CommandLine.Option(names = { "-d", "--dto" }, description = "Generate Java Data Objects")
     private boolean generateDataObjects;
-    @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, spring-boot)",
+    @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, or spring-boot)",
                         defaultValue = "quarkus")
     private String runtime;
-    @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated models", defaultValue = "model")
+    @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated Java models",
+                        defaultValue = "model")
     private String packageName;
 
     public CodeRestGenerator(CamelJBangMain main) {

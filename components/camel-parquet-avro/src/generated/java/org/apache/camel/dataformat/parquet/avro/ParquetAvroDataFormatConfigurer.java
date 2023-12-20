@@ -20,6 +20,8 @@ public class ParquetAvroDataFormatConfigurer extends PropertyConfigurerSupport i
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "unmarshaltype":
         case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
+        case "lazyload":
+        case "lazyLoad": dataformat.setLazyLoad(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

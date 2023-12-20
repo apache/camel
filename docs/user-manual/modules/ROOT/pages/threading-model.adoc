@@ -241,3 +241,15 @@ you should implement and hook into the WorkManager.
 To hook in custom thread pool providers (e.g. for J2EE servers) a
 `ThreadPoolFactory` interface can be implemented. The implementation can
 be set in the `ExecutorServiceManager`.
+
+== Virtual Threads
+
+Starting from Java 21, the default `ThreadPoolFactory` can build `ExecutorService` and `ScheduledExecutorService` that
+use https://openjdk.org/jeps/425[virtual threads] instead of platform threads.
+But as it is an experimental feature, it is not enabled by default, you need to set the System property `camel.threads.virtual.enabled`
+to `true` and run Camel using Java 21 or above to enable it.
+
+Be aware that even if it is enabled, there are some use cases where platform threads are still used, for example, if the
+thread factory is configured to create non-daemon threads since virtual threads can only be daemons, or when the
+`ExecutorService` or `ScheduledExecutorService` to build cannot have more than one thread or finally when `corePoolSize`
+is set to zero and `maxQueueSize` is set to a value less or equal to `0`.

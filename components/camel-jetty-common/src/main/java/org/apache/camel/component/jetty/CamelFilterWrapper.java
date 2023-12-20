@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class CamelFilterWrapper implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelFilterWrapper.class);
-    private Filter wrapped;
+    private final Filter wrapped;
 
     public CamelFilterWrapper(Filter wrapped) {
         this.wrapped = wrapped;

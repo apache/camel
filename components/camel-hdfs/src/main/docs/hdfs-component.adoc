@@ -1,10 +1,11 @@
-= HDFS Component
+= HDFS Component (deprecated)
 :doctitle: HDFS
 :shortname: hdfs
 :artifactid: camel-hdfs
 :description: Read and write from/to an HDFS filesystem using Hadoop 2.x.
 :since: 2.14
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

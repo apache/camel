@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,7 +31,13 @@ import org.apache.camel.component.salesforce.internal.client.AnalyticsApiClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultAnalyticsApiClient;
 import org.apache.camel.support.service.ServiceHelper;
 
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.*;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.INCLUDE_DETAILS;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.INSTANCE_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.REPORT_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.REPORT_METADATA;
 
 /**
  * Exchange processor for Analytics API.

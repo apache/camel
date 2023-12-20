@@ -72,7 +72,7 @@ public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("jetty://http://localhost:%s/CxfRsProducerHttpMethodHeaderTest/?matchOnUriPrefix=true",
+                fromF("undertow://http://localhost:%s/CxfRsProducerHttpMethodHeaderTest/?matchOnUriPrefix=true",
                         CXFTestSupport.getPort7())
                         .to("mock:result");
             }

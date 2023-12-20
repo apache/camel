@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.azure.core.credential.TokenCredential;
-import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -46,7 +45,7 @@ public class ServiceBusComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        if (remaining == null || remaining.trim().length() == 0) {
+        if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("A queue or topic name must be specified.");
         }
 
@@ -73,8 +72,6 @@ public class ServiceBusComponent extends DefaultComponent {
             // Find exactly one from the registry or create one
             if (tokenCredentialFromRegistry.size() == 1) {
                 configuration.setTokenCredential(tokenCredentialFromRegistry.stream().findFirst().get());
-            } else {
-                configuration.setTokenCredential(new DefaultAzureCredentialBuilder().build());
             }
         }
     }

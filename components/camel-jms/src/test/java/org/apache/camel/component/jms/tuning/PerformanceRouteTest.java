@@ -24,6 +24,7 @@ import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
@@ -49,7 +50,7 @@ public class PerformanceRouteTest extends AbstractJMSTest {
     public void testPerformance() throws Exception {
         assumeTrue(canRunOnThisPlatform(), "Test is not intended for this platform");
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
 
         int size = 200;
         getMockEndpoint("mock:audit").expectedMessageCount(size);
@@ -72,8 +73,8 @@ public class PerformanceRouteTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        long delta = System.currentTimeMillis() - start;
-        LOG.info("RoutePerformanceTest: Sent: {} Took: {} ms", size, delta);
+        long duration = watch.taken();
+        LOG.info("RoutePerformanceTest: Sent: {} Took: {} ms", size, duration);
     }
 
     private boolean canRunOnThisPlatform() {

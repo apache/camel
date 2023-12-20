@@ -21,10 +21,15 @@ import org.apache.camel.spi.Metadata;
 
 public final class XsltConstants {
 
+    @Metadata(description = "A URI for the template resource to load and use instead of the endpoint configured.",
+              javaType = "String")
+    public static final String XSLT_RESOURCE_URI = "CamelXsltResourceUri";
+    @Metadata(description = "The template to use instead of the endpoint configured. ", javaType = "String")
+    public static final String XSLT_STYLESHEET = "CamelXsltStylesheet";
     @Metadata(description = "The XSLT file name", javaType = "String")
     public static final String XSLT_FILE_NAME = Exchange.XSLT_FILE_NAME;
 
     private XsltConstants() {
-
     }
+
 }

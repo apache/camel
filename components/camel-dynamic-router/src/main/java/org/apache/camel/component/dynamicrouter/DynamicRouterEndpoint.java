@@ -16,21 +16,31 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlChannelProcessor.DynamicRouterControlChannelProcessorFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlProducer.DynamicRouterControlProducerFactory;
-import org.apache.camel.component.dynamicrouter.DynamicRouterProcessor.DynamicRouterProcessorFactory;
+import org.apache.camel.component.dynamicrouter.DynamicRouterMulticastProcessor.DynamicRouterRecipientListProcessorFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterProducer.DynamicRouterProducerFactory;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
+import org.apache.camel.component.dynamicrouter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.processor.errorhandler.NoErrorHandler;
+import org.apache.camel.spi.ErrorHandler;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,10 +66,14 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterEndpoint.class);
 
+    private static final Processor NOOP_PROCESSOR = exchange -> {
+    };
+
     /**
-     * Creates the {@link DynamicRouterProcessor} instance.
+     * Creates the {@link DynamicRouterMulticastProcessor} instance.
      */
-    private Supplier<DynamicRouterProcessorFactory> processorFactorySupplier = DynamicRouterProcessorFactory::new;
+    private Supplier<DynamicRouterRecipientListProcessorFactory> processorFactorySupplier
+            = DynamicRouterRecipientListProcessorFactory::new;
 
     /**
      * Creates a {@link DynamicRouterProducer} instance.
@@ -67,9 +81,9 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
     private Supplier<DynamicRouterProducerFactory> producerFactorySupplier = DynamicRouterProducerFactory::new;
 
     /**
-     * Creates the {@link PrioritizedFilterProcessor} instance.
+     * Creates the {@link PrioritizedFilter} instance.
      */
-    private Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier = PrioritizedFilterProcessorFactory::new;
+    private Supplier<PrioritizedFilterFactory> filterProcessorFactorySupplier = PrioritizedFilterFactory::new;
 
     /**
      * Creates the {@link DynamicRouterControlChannelProcessor} instance.
@@ -89,23 +103,26 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
     @UriParam
     private DynamicRouterConfiguration configuration;
 
+    private ProducerCache producerCache;
+
     /**
      * Create the Dynamic Router {@link org.apache.camel.Endpoint} for the given endpoint URI. This includes the
-     * creation of a {@link DynamicRouterProcessor} that is registered with the supplied {@link DynamicRouterComponent}.
+     * creation of a {@link DynamicRouterMulticastProcessor} that is registered with the supplied
+     * {@link DynamicRouterComponent}.
      *
      * @param uri                            the endpoint URI
      * @param component                      the Dynamic Router {@link org.apache.camel.Component}
      * @param configuration                  the {@link DynamicRouterConfiguration}
-     * @param processorFactorySupplier       creates the {@link DynamicRouterProcessor}
-     * @param producerFactorySupplier        creates the {@link DynamicRouterProcessor}
-     * @param filterProcessorFactorySupplier creates the {@link PrioritizedFilterProcessor}
+     * @param processorFactorySupplier       creates the {@link DynamicRouterMulticastProcessor}
+     * @param producerFactorySupplier        creates the {@link DynamicRouterMulticastProcessor}
+     * @param filterProcessorFactorySupplier creates the {@link PrioritizedFilter}
      */
     public DynamicRouterEndpoint(
                                  final String uri, final DynamicRouterComponent component,
                                  final DynamicRouterConfiguration configuration,
-                                 final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
+                                 final Supplier<DynamicRouterRecipientListProcessorFactory> processorFactorySupplier,
                                  final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
-                                 final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
+                                 final Supplier<PrioritizedFilterFactory> filterProcessorFactorySupplier) {
         super(uri, component);
         this.configuration = configuration;
         this.processorFactorySupplier = processorFactorySupplier;
@@ -121,7 +138,7 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
      * @param component                      the Dynamic Router {@link org.apache.camel.Component}
      * @param configuration                  the {@link DynamicRouterConfiguration}
      * @param processorFactorySupplier       creates the {@link DynamicRouterControlChannelProcessor}
-     * @param controlProducerFactorySupplier creates the {@link DynamicRouterProcessor}
+     * @param controlProducerFactorySupplier creates the {@link DynamicRouterMulticastProcessor}
      */
     public DynamicRouterEndpoint(
                                  final String uri, final DynamicRouterComponent component,
@@ -140,28 +157,81 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
         super.doInit();
         DynamicRouterComponent component = getDynamicRouterComponent();
         if (CONTROL_CHANNEL_NAME.equals(configuration.getChannel())) {
-            final DynamicRouterControlChannelProcessor processor = controlChannelProcessorFactorySupplier.get()
-                    .getInstance(component);
-            processor.setConfiguration(configuration);
             try {
                 // There can be multiple control actions, but we do not want to
                 // create another consumer on the control channel, so check to
                 // see if the consumer has already been created, and skip the
                 // creation of another consumer if one already exists
                 if (component.getControlChannelProcessor() == null) {
+                    DynamicRouterControlChannelProcessor processor = controlChannelProcessorFactorySupplier.get()
+                            .getInstance(component);
+                    processor.setConfiguration(configuration);
                     component.setControlChannelProcessor(processor);
                 }
             } catch (Exception e) {
                 throw new IllegalStateException("Could not create Dynamic Router endpoint", e);
             }
         } else {
-            final DynamicRouterProcessor processor = processorFactorySupplier.get()
-                    .getInstance("dynamicRouterProcessor-" + configuration.getChannel(), getCamelContext(),
-                            configuration.getRecipientMode(), configuration.isWarnDroppedMessage(),
-                            filterProcessorFactorySupplier);
-            ServiceHelper.startService(processor);
+            CamelContext camelContext = getCamelContext();
+            long timeout = configuration.getTimeout();
+            ErrorHandler errorHandler = new NoErrorHandler(null);
+            if (producerCache == null) {
+                producerCache = new DefaultProducerCache(this, camelContext, 1000);
+            }
+            ExecutorService aggregateExecutorService = camelContext.getExecutorServiceManager()
+                    .newScheduledThreadPool(this, "DynamicRouter-AggregateTask", 0);
+            AggregationStrategy aggregationStrategy = determineAggregationStrategy(camelContext);
+            DynamicRouterMulticastProcessor processor = createProcessor(camelContext, aggregationStrategy, timeout,
+                    errorHandler, aggregateExecutorService);
+            ServiceHelper.startService(aggregationStrategy, producerCache, processor);
             component.addRoutingProcessor(configuration.getChannel(), processor);
         }
+    }
+
+    protected DynamicRouterMulticastProcessor createProcessor(
+            CamelContext camelContext, AggregationStrategy aggregationStrategy, long timeout, ErrorHandler errorHandler,
+            ExecutorService aggregateExecutorService) {
+        DynamicRouterMulticastProcessor processor = processorFactorySupplier.get()
+                .getInstance("DynamicRouterMulticastProcessor-" + configuration.getChannel(), camelContext, null,
+                        configuration.getRecipientMode(),
+                        configuration.isWarnDroppedMessage(), filterProcessorFactorySupplier, producerCache,
+                        aggregationStrategy, configuration.isParallelProcessing(),
+                        determineExecutorService(camelContext), false,
+                        configuration.isStreaming(), configuration.isStopOnException(), timeout,
+                        determineOnPrepare(camelContext), configuration.isShareUnitOfWork(),
+                        configuration.isParallelAggregate());
+        processor.setErrorHandler(errorHandler);
+        processor.setAggregateExecutorService(aggregateExecutorService);
+        processor.setIgnoreInvalidEndpoints(configuration.isIgnoreInvalidEndpoints());
+        processor.setId(getId());
+        return processor;
+    }
+
+    protected ExecutorService determineExecutorService(CamelContext camelContext) {
+        ExecutorService executorService = null;
+        if (ObjectHelper.isNotEmpty(configuration.getExecutorService())) {
+            executorService = camelContext.getExecutorServiceManager()
+                    .newThreadPool(this, "@RecipientList", configuration.getExecutorService());
+        }
+        if (configuration.isParallelProcessing() && configuration.getExecutorService() == null) {
+            // we are running in parallel, so we need a thread pool
+            executorService = camelContext.getExecutorServiceManager()
+                    .newDefaultThreadPool(this, "@RecipientList");
+        }
+        return executorService;
+    }
+
+    protected AggregationStrategy determineAggregationStrategy(CamelContext camelContext) {
+        String cfgStrategy = configuration.getAggregationStrategy();
+        return ObjectHelper.isNotEmpty(cfgStrategy)
+                ? CamelContextHelper.mandatoryLookup(camelContext, cfgStrategy, AggregationStrategy.class)
+                : new UseLatestAggregationStrategy();
+    }
+
+    protected Processor determineOnPrepare(CamelContext camelContext) {
+        String onPrepare = configuration.getOnPrepare();
+        return ObjectHelper.isNotEmpty(onPrepare)
+                ? CamelContextHelper.mandatoryLookup(camelContext, onPrepare, Processor.class) : NOOP_PROCESSOR;
     }
 
     /**
@@ -221,24 +291,24 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
 
         /**
          * Create the Dynamic Router {@link org.apache.camel.Endpoint} for the given endpoint URI. This includes the
-         * creation of a {@link DynamicRouterProcessor} that is registered with the supplied
+         * creation of a {@link DynamicRouterMulticastProcessor} that is registered with the supplied
          * {@link DynamicRouterComponent}.
          *
          * @param  uri                            the endpoint URI
          * @param  component                      the Dynamic Router {@link org.apache.camel.Component}
          * @param  configuration                  the {@link DynamicRouterConfiguration}
-         * @param  processorFactorySupplier       creates the {@link DynamicRouterProcessor}
-         * @param  producerFactorySupplier        creates the {@link DynamicRouterProcessor}
-         * @param  filterProcessorFactorySupplier creates the {@link PrioritizedFilterProcessor}
+         * @param  processorFactorySupplier       creates the {@link DynamicRouterMulticastProcessor}
+         * @param  producerFactorySupplier        creates the {@link DynamicRouterMulticastProcessor}
+         * @param  filterProcessorFactorySupplier creates the {@link PrioritizedFilter}
          * @return                                the {@link DynamicRouterEndpoint} for routing exchanges
          */
         public DynamicRouterEndpoint getInstance(
                 final String uri,
                 final DynamicRouterComponent component,
                 final DynamicRouterConfiguration configuration,
-                final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
+                final Supplier<DynamicRouterRecipientListProcessorFactory> processorFactorySupplier,
                 final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
-                final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
+                final Supplier<PrioritizedFilterFactory> filterProcessorFactorySupplier) {
             return new DynamicRouterEndpoint(
                     uri, component, configuration, processorFactorySupplier, producerFactorySupplier,
                     filterProcessorFactorySupplier);
@@ -254,7 +324,7 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
          * @param  component                the Dynamic Router {@link org.apache.camel.Component}
          * @param  configuration            the {@link DynamicRouterConfiguration}
          * @param  processorFactorySupplier creates the {@link DynamicRouterControlChannelProcessor}
-         * @param  producerFactorySupplier  creates the {@link DynamicRouterProcessor}
+         * @param  producerFactorySupplier  creates the {@link DynamicRouterMulticastProcessor}
          * @return                          the {@link DynamicRouterEndpoint} for control channel messages
          */
         public DynamicRouterEndpoint getInstance(

@@ -51,8 +51,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class ObjectHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
-
     /**
      * Utility classes should not have a public constructor.
      */
@@ -125,14 +123,14 @@ public final class ObjectHelper {
         }
         if (value instanceof byte[]) {
             String str = new String((byte[]) value);
-            if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)) {
+            if (isBoolean(str)) {
                 return Boolean.valueOf(str);
             }
         }
         if (value instanceof String) {
             // we only want to accept true or false as accepted values
             String str = (String) value;
-            if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)) {
+            if (isBoolean(str)) {
                 return Boolean.valueOf(str);
             }
         }
@@ -200,7 +198,7 @@ public final class ObjectHelper {
      * @return       true if empty
      */
     public static boolean isEmpty(String value) {
-        return value == null || value.trim().isEmpty();
+        return value == null || value.isBlank();
     }
 
     /**
@@ -358,7 +356,7 @@ public final class ObjectHelper {
         try {
             return System.getProperty(name, defaultValue);
         } catch (Exception e) {
-            LOG.debug("Caught security exception accessing system property: {}. Will use default value: {}",
+            logger().debug("Caught security exception accessing system property: {}. Will use default value: {}",
                     name, defaultValue, e);
 
             return defaultValue;
@@ -472,9 +470,9 @@ public final class ObjectHelper {
 
         if (clazz == null) {
             if (needToWarn) {
-                LOG.warn("Cannot find class: {}", name);
+                logger().warn("Cannot find class: {}", name);
             } else {
-                LOG.debug("Cannot find class: {}", name);
+                logger().debug("Cannot find class: {}", name);
             }
         }
 
@@ -551,11 +549,10 @@ public final class ObjectHelper {
         }
 
         try {
-            LOG.trace("Loading class: {} using classloader: {}", name, loader);
             return loader.loadClass(name);
         } catch (ClassNotFoundException e) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Cannot load class: {} using classloader: {}", name, loader, e);
+            if (logger().isTraceEnabled()) {
+                logger().trace("Cannot load class: {} using classloader: {}", name, loader, e);
             }
         }
 
@@ -1152,26 +1149,36 @@ public final class ObjectHelper {
         if (value instanceof Boolean) {
             return (Boolean) value;
         } else if (value instanceof String) {
-            String str = ((String) value).trim();
-            if (str.isEmpty()) {
-                return false;
-            } else if ("true".equalsIgnoreCase(str)) {
-                return true;
-            } else if ("false".equalsIgnoreCase(str)) {
-                return false;
-            }
+            return evaluateString((String) value);
         } else if (value instanceof NodeList) {
-            // is it an empty dom with empty attributes
-            if (value instanceof Node && ((Node) value).hasAttributes()) {
-                return true;
-            }
-            NodeList list = (NodeList) value;
-            return list.getLength() > 0;
+            return evaluateNodeList(value);
         } else if (value instanceof Collection) {
             // is it an empty collection
             return !((Collection<?>) value).isEmpty();
         }
         return value != null;
+    }
+
+    private static boolean evaluateString(String value) {
+        final String str = value.trim();
+        if (str.isEmpty()) {
+            return false;
+        } else if ("true".equalsIgnoreCase(str)) {
+            return true;
+        } else if ("false".equalsIgnoreCase(str)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static boolean evaluateNodeList(Object value) {
+        // is it an empty dom with empty attributes
+        if (value instanceof Node && ((Node) value).hasAttributes()) {
+            return true;
+        }
+        NodeList list = (NodeList) value;
+        return list.getLength() > 0;
     }
 
     /**
@@ -1323,6 +1330,29 @@ public final class ObjectHelper {
             }
             list.add(idx, value);
         }
+    }
+
+    /**
+     * Checks whether the given string is a valid boolean value (i.e.; either "true" or "false") ignoring its case
+     *
+     * @param  str the string to evaluate
+     * @return     true if it is a valid boolean value or false otherwise
+     */
+    public static boolean isBoolean(String str) {
+        return "true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str);
+    }
+
+    /*
+     * NOTE: see CAMEL-19724. We log like this instead of using a statically declared logger in order to
+     * reduce the risk of dropping log messages due to slf4j log substitution behavior during its own
+     * initialization.
+     */
+    private static final class Holder {
+        static final Logger LOG = LoggerFactory.getLogger(Holder.class);
+    }
+
+    private static Logger logger() {
+        return Holder.LOG;
     }
 
 }

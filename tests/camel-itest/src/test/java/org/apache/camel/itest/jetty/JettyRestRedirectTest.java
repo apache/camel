@@ -17,7 +17,6 @@
 package org.apache.camel.itest.jetty;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.test.AvailablePortFinder;
@@ -53,12 +52,9 @@ public class JettyRestRedirectTest extends CamelTestSupport {
                         .post("/tag").to("direct:tag");
 
                 from("direct:profileLookup").transform().constant("Mock profile");
-                from("direct:tag").log("${headers}").process(new Processor() {
-                    @Override
-                    public void process(Exchange ex) {
-                        ex.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 303);
-                        ex.getMessage().setHeader("Location", "/metadata/profile/1");
-                    }
+                from("direct:tag").log("${headers}").process(ex -> {
+                    ex.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 303);
+                    ex.getMessage().setHeader("Location", "/metadata/profile/1");
                 }).log("${headers}").transform().constant("Redirecting...");
             }
         };

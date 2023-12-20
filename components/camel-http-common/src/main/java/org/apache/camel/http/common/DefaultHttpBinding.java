@@ -60,6 +60,8 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
+
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
  * <p/>
@@ -84,6 +86,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean eagerCheckContentAvailable;
     private boolean transferException;
     private boolean muteException;
+    private boolean logException;
     private boolean allowJavaSerializedObject;
     private boolean mapHttpMessageBody = true;
     private boolean mapHttpMessageHeaders = true;
@@ -104,6 +107,7 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         this.transferException = endpoint.isTransferException();
         this.muteException = endpoint.isMuteException();
+        this.logException = endpoint.isLogException();
         if (endpoint.getComponent() != null) {
             this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
         }
@@ -197,6 +201,9 @@ public class DefaultHttpBinding implements HttpBinding {
     protected void readBody(HttpServletRequest request, Message message) {
         LOG.trace("readBody {}", request);
 
+        // Process attachments first as some servlet containers expect the body to not have been read at this point
+        populateAttachments(request, message);
+
         // lets parse the body
         Object body = message.getBody();
         // reset the stream cache if the body is the instance of StreamCache
@@ -224,8 +231,6 @@ public class DefaultHttpBinding implements HttpBinding {
                 message.setBody(null);
             }
         }
-
-        populateAttachments(request, message);
     }
 
     protected void populateRequestParameters(HttpServletRequest request, Message message) {
@@ -387,6 +392,9 @@ public class DefaultHttpBinding implements HttpBinding {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.setContentLength(0);
             response.setContentType("text/plain");
+            if (isLogException()) {
+                LOG.error("Server internal error response returned due to '{}'", exception.getMessage(), exception);
+            }
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
@@ -443,30 +451,6 @@ public class DefaultHttpBinding implements HttpBinding {
                 doWriteDirectResponse(message, response, exchange);
             }
         }
-    }
-
-    /*
-     * set the HTTP status code
-     * NOTE: this is similar to the Netty-Http and Undertow approach
-     * TODO: we may want to refactor this class so that
-     * the status code is determined in one place
-     */
-    private int determineResponseCode(Exchange camelExchange, Object body) {
-        boolean failed = camelExchange.isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        Message message = camelExchange.getMessage();
-        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-        int codeToUse = currentCode == null ? defaultCode : currentCode;
-
-        if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
-                // no content
-                codeToUse = currentCode == null ? 204 : currentCode;
-            }
-        }
-
-        return codeToUse;
     }
 
     protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {
@@ -696,6 +680,16 @@ public class DefaultHttpBinding implements HttpBinding {
     @Override
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
+    }
+
+    @Override
+    public boolean isLogException() {
+        return logException;
+    }
+
+    @Override
+    public void setLogException(boolean logException) {
+        this.logException = logException;
     }
 
     @Override

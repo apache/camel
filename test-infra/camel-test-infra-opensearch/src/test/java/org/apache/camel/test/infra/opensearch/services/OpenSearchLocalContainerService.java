@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.opensearch.services;
 
 import java.time.Duration;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.opensearch.common.OpenSearchProperties;
@@ -29,7 +30,6 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 
 public class OpenSearchLocalContainerService implements OpenSearchService, ContainerService<OpensearchContainer> {
-    public static final String DEFAULT_OPEN_SEARCH_CONTAINER = "opensearchproject/opensearch:2.9.0";
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerService.class);
     private static final int OPEN_SEARCH_PORT = 9200;
     private static final String USER_NAME = "admin";
@@ -37,7 +37,8 @@ public class OpenSearchLocalContainerService implements OpenSearchService, Conta
     private final OpensearchContainer container;
 
     public OpenSearchLocalContainerService() {
-        this(System.getProperty(OpenSearchProperties.OPEN_SEARCH_CONTAINER, DEFAULT_OPEN_SEARCH_CONTAINER));
+        this(LocalPropertyResolver.getProperty(OpenSearchLocalContainerService.class,
+                OpenSearchProperties.OPEN_SEARCH_CONTAINER));
     }
 
     public OpenSearchLocalContainerService(String imageName) {

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.awt.*;
+import java.awt.Image;
 
 import jakarta.xml.ws.BindingType;
 import jakarta.xml.ws.Holder;

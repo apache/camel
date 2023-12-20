@@ -34,7 +34,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 public class MyBatisComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced", autowired = true)
-    private SqlSessionFactory sqlSessionFactory;
+    private volatile SqlSessionFactory sqlSessionFactory;
     @Metadata(defaultValue = "SqlMapConfig.xml", supportFileReference = true)
     private String configurationUri = "SqlMapConfig.xml";
 
@@ -45,14 +45,17 @@ public class MyBatisComponent extends HealthCheckComponent {
         return answer;
     }
 
-    protected SqlSessionFactory createSqlSessionFactory() throws IOException {
-        ObjectHelper.notNull(configurationUri, "configurationUri", this);
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
-        try {
-            return new SqlSessionFactoryBuilder().build(is);
-        } finally {
-            IOHelper.close(is);
+    protected synchronized SqlSessionFactory createSqlSessionFactory() throws IOException {
+        if (sqlSessionFactory == null) {
+            ObjectHelper.notNull(configurationUri, "configurationUri", this);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
+            try {
+                sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
+            } finally {
+                IOHelper.close(is);
+            }
         }
+        return sqlSessionFactory;
     }
 
     public SqlSessionFactory getSqlSessionFactory() {
@@ -79,17 +82,4 @@ public class MyBatisComponent extends HealthCheckComponent {
         this.configurationUri = configurationUri;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (sqlSessionFactory == null) {
-            sqlSessionFactory = createSqlSessionFactory();
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
 }

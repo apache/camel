@@ -71,6 +71,13 @@ public final class NIOConverter {
 
     @Converter(order = 5)
     public static ByteBuffer toByteBuffer(File file) throws IOException {
+        if (file.length() > Integer.MAX_VALUE) {
+            // very big file we cannot load into memory
+            throw new IOException(
+                    "Cannot convert file: " + file.getName() + " to ByteBuffer. The file length is too large: "
+                                  + file.length());
+        }
+
         InputStream in = null;
         try {
             byte[] buf = new byte[(int) file.length()];

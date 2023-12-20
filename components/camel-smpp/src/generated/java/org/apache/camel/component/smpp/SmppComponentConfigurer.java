@@ -57,6 +57,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpProxyUsername": getOrCreateConfiguration(target).setHttpProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "initialreconnectdelay":
         case "initialReconnectDelay": getOrCreateConfiguration(target).setInitialReconnectDelay(property(camelContext, long.class, value)); return true;
+        case "interfaceversion":
+        case "interfaceVersion": getOrCreateConfiguration(target).setInterfaceVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "lazysessioncreation":
         case "lazySessionCreation": getOrCreateConfiguration(target).setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -144,6 +146,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpProxyUsername": return java.lang.String.class;
         case "initialreconnectdelay":
         case "initialReconnectDelay": return long.class;
+        case "interfaceversion":
+        case "interfaceVersion": return java.lang.String.class;
         case "lazysessioncreation":
         case "lazySessionCreation": return boolean.class;
         case "lazystartproducer":
@@ -232,6 +236,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpProxyUsername": return getOrCreateConfiguration(target).getHttpProxyUsername();
         case "initialreconnectdelay":
         case "initialReconnectDelay": return getOrCreateConfiguration(target).getInitialReconnectDelay();
+        case "interfaceversion":
+        case "interfaceVersion": return getOrCreateConfiguration(target).getInterfaceVersion();
         case "lazysessioncreation":
         case "lazySessionCreation": return getOrCreateConfiguration(target).isLazySessionCreation();
         case "lazystartproducer":

@@ -35,6 +35,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.CamelObjectInputStream;
+import org.apache.camel.support.http.HttpUtil;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -54,11 +56,11 @@ public final class HttpHelper {
     }
 
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
-        org.apache.camel.http.base.HttpHelper.setCharsetFromContentType(contentType, exchange);
+        HttpUtil.setCharsetFromContentType(contentType, exchange);
     }
 
     public static String getCharsetFromContentType(String contentType) {
-        return org.apache.camel.http.base.HttpHelper.getCharsetFromContentType(contentType);
+        return HttpUtil.getCharsetFromContentType(contentType);
     }
 
     /**
@@ -202,7 +204,7 @@ public final class HttpHelper {
             if (path.length() > 1 && path.startsWith("/")) {
                 path = path.substring(1);
             }
-            if (path.length() > 0) {
+            if (!path.isEmpty()) {
                 // inject the dynamic path before the query params, if there are any
                 int idx = uri.indexOf('?');
 
@@ -276,10 +278,8 @@ public final class HttpHelper {
      * @param key     the key
      * @param value   the value
      */
-    @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        org.apache.camel.http.base.HttpHelper.appendHeader(headers, key, value);
-
+        CollectionHelper.appendEntry(headers, key, value);
     }
 
     /**

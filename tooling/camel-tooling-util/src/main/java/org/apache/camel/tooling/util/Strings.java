@@ -29,14 +29,14 @@ public final class Strings {
     }
 
     public static boolean isEmpty(String s) {
-        return s == null || s.trim().isEmpty();
+        return s == null || s.isBlank();
     }
 
     /**
      * Returns true if the given text is null or empty string or has <tt>null</tt> as the value
      */
     public static boolean isNullOrEmpty(String text) {
-        return text == null || text.length() == 0 || "null".equals(text);
+        return text == null || text.isEmpty() || "null".equals(text);
     }
 
     public static String safeNull(String text) {
@@ -129,7 +129,7 @@ public final class Strings {
         StringBuilder sb = new StringBuilder();
         for (char c : name.toCharArray()) {
             boolean upper = Character.isUpperCase(c);
-            boolean first = sb.length() == 0;
+            boolean first = sb.isEmpty();
             if (first) {
                 sb.append(Character.toUpperCase(c));
             } else if (upper) {
@@ -180,7 +180,7 @@ public final class Strings {
                 sb.append(Character.toUpperCase(c));
             } else {
                 // upper case first
-                if (sb.length() == 0) {
+                if (sb.isEmpty()) {
                     sb.append(Character.toUpperCase(c));
                 } else {
                     sb.append(c);

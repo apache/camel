@@ -35,6 +35,10 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "certResourcePassword": target.getConfiguration().setCertResourcePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "channeltype":
         case "channelType": target.getConfiguration().setChannelType(property(camelContext, java.lang.String.class, value)); return true;
+        case "ciphers": target.getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientbuilder":
+        case "clientBuilder": target.getConfiguration().setClientBuilder(property(camelContext, org.apache.sshd.client.ClientBuilder.class, value)); return true;
+        case "compressions": target.getConfiguration().setCompressions(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -45,6 +49,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "kex": target.getConfiguration().setKex(property(camelContext, java.lang.String.class, value)); return true;
         case "keypairprovider":
         case "keyPairProvider": target.getConfiguration().setKeyPairProvider(property(camelContext, org.apache.sshd.common.keyprovider.KeyPairProvider.class, value)); return true;
         case "keytype":
@@ -53,6 +58,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "knownHostsResource": target.getConfiguration().setKnownHostsResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "macs": target.getConfiguration().setMacs(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pollcommand":
         case "pollCommand": target.getConfiguration().setPollCommand(property(camelContext, java.lang.String.class, value)); return true;
@@ -71,6 +77,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "shellprompt":
         case "shellPrompt": target.getConfiguration().setShellPrompt(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatures": target.getConfiguration().setSignatures(property(camelContext, java.lang.String.class, value)); return true;
         case "sleepforshellprompt":
         case "sleepForShellPrompt": target.getConfiguration().setSleepForShellPrompt(property(camelContext, long.class, value)); return true;
         case "startscheduler":
@@ -83,6 +90,11 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"clientBuilder"};
     }
 
     @Override
@@ -102,6 +114,10 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "certResourcePassword": return java.lang.String.class;
         case "channeltype":
         case "channelType": return java.lang.String.class;
+        case "ciphers": return java.lang.String.class;
+        case "clientbuilder":
+        case "clientBuilder": return org.apache.sshd.client.ClientBuilder.class;
+        case "compressions": return java.lang.String.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -112,6 +128,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "kex": return java.lang.String.class;
         case "keypairprovider":
         case "keyPairProvider": return org.apache.sshd.common.keyprovider.KeyPairProvider.class;
         case "keytype":
@@ -120,6 +137,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "knownHostsResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "macs": return java.lang.String.class;
         case "password": return java.lang.String.class;
         case "pollcommand":
         case "pollCommand": return java.lang.String.class;
@@ -138,6 +156,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "shellprompt":
         case "shellPrompt": return java.lang.String.class;
+        case "signatures": return java.lang.String.class;
         case "sleepforshellprompt":
         case "sleepForShellPrompt": return long.class;
         case "startscheduler":
@@ -170,6 +189,10 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "certResourcePassword": return target.getConfiguration().getCertResourcePassword();
         case "channeltype":
         case "channelType": return target.getConfiguration().getChannelType();
+        case "ciphers": return target.getConfiguration().getCiphers();
+        case "clientbuilder":
+        case "clientBuilder": return target.getConfiguration().getClientBuilder();
+        case "compressions": return target.getConfiguration().getCompressions();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
@@ -180,6 +203,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "kex": return target.getConfiguration().getKex();
         case "keypairprovider":
         case "keyPairProvider": return target.getConfiguration().getKeyPairProvider();
         case "keytype":
@@ -188,6 +212,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "knownHostsResource": return target.getConfiguration().getKnownHostsResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "macs": return target.getConfiguration().getMacs();
         case "password": return target.getConfiguration().getPassword();
         case "pollcommand":
         case "pollCommand": return target.getConfiguration().getPollCommand();
@@ -206,6 +231,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "shellprompt":
         case "shellPrompt": return target.getConfiguration().getShellPrompt();
+        case "signatures": return target.getConfiguration().getSignatures();
         case "sleepforshellprompt":
         case "sleepForShellPrompt": return target.getConfiguration().getSleepForShellPrompt();
         case "startscheduler":

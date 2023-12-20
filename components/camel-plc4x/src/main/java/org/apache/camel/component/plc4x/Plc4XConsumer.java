@@ -106,7 +106,7 @@ public class Plc4XConsumer extends DefaultConsumer {
             try {
                 Exchange exchange = plc4XEndpoint.createExchange();
                 Map<String, Object> rsp = new HashMap<>();
-                for (String field : response.getFieldNames()) {
+                for (String field : response.getTagNames()) {
                     rsp.put(field, response.getObject(field));
                 }
                 exchange.getIn().setBody(rsp);

@@ -322,7 +322,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
+        Configurer<SSLEngine> sslEngineConfigurer = new Configurer<>() {
 
             @Override
             public SSLEngine configure(SSLEngine engine) {
@@ -394,7 +394,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         final List<Configurer<SSLSocket>> sslSocketConfigurers = this.getSSLSocketFactorySSLSocketConfigurers(context);
 
-        Configurer<SSLSocketFactory> sslSocketFactoryConfigurer = new Configurer<SSLSocketFactory>() {
+        Configurer<SSLSocketFactory> sslSocketFactoryConfigurer = new Configurer<>() {
 
             @Override
             public SSLSocketFactory configure(SSLSocketFactory factory) {
@@ -429,7 +429,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         final List<Configurer<SSLServerSocket>> sslServerSocketConfigurers
                 = this.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
 
-        Configurer<SSLServerSocketFactory> sslServerSocketFactoryConfigurer = new Configurer<SSLServerSocketFactory>() {
+        Configurer<SSLServerSocketFactory> sslServerSocketFactoryConfigurer = new Configurer<>() {
 
             @Override
             public SSLServerSocketFactory configure(SSLServerSocketFactory factory) {
@@ -489,7 +489,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLSocket> sslSocketConfigurer = new Configurer<SSLSocket>() {
+        Configurer<SSLSocket> sslSocketConfigurer = new Configurer<>() {
 
             @Override
             public SSLSocket configure(SSLSocket socket) {
@@ -590,7 +590,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
+        Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<>() {
 
             @Override
             public SSLServerSocket configure(SSLServerSocket socket) {
@@ -777,7 +777,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     /**
      * Configures a {@code T} based on the related configuration options.
      */
-    interface Configurer<T> {
+    protected interface Configurer<T> {
 
         /**
          * Configures a {@code T} based on the related configuration options. The return value from this method may be

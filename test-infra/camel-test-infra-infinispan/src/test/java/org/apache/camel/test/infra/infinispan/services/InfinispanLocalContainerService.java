@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.infinispan.services;
 
 import java.util.function.Consumer;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.slf4j.Logger;
@@ -29,7 +30,6 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class InfinispanLocalContainerService implements InfinispanService, ContainerService<GenericContainer<?>> {
-    public static final String CONTAINER_IMAGE = "quay.io/infinispan/server:14.0.14.Final";
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";
     private static final String DEFAULT_PASSWORD = "password";
@@ -40,7 +40,9 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
     private final boolean isNetworkHost;
 
     public InfinispanLocalContainerService() {
-        this(System.getProperty(InfinispanProperties.INFINISPAN_CONTAINER, CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(
+                InfinispanLocalContainerService.class,
+                InfinispanProperties.INFINISPAN_CONTAINER));
     }
 
     public InfinispanLocalContainerService(String containerImage) {

@@ -27,9 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 
-import static org.apache.camel.component.azure.storage.blob.CredentialType.AZURE_IDENTITY;
-import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_ACCOUNT_KEY;
-import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_KEY_CREDENTIAL;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
 
 /**
  * Azure Blob Storage component using azure java sdk v12.x
@@ -49,7 +47,7 @@ public class BlobComponent extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        if (remaining == null || remaining.trim().length() == 0) {
+        if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("At least the account name must be specified.");
         }
 
@@ -96,6 +94,8 @@ public class BlobComponent extends HealthCheckComponent {
                 Set<StorageSharedKeyCredential> storageSharedKeyCredentials
                         = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
                 storageSharedKeyCredentials.stream().findFirst().ifPresent(configuration::setCredentials);
+            } else if (AZURE_SAS.equals(configuration.getCredentialType())) {
+                configuration.setCredentialType(AZURE_SAS);
             }
         }
     }
@@ -106,6 +106,8 @@ public class BlobComponent extends HealthCheckComponent {
                 throw new IllegalArgumentException("When using shared key credential, credentials must be provided.");
             } else if (SHARED_ACCOUNT_KEY.equals(configuration.getCredentialType()) && configuration.getAccessKey() == null) {
                 throw new IllegalArgumentException("When using shared account key, access key must be provided.");
+            } else if (AZURE_SAS.equals(configuration.getCredentialType()) && configuration.getSasToken() == null) {
+                throw new IllegalArgumentException("When using Azure SAS, SAS Token must be provided.");
             }
         }
     }

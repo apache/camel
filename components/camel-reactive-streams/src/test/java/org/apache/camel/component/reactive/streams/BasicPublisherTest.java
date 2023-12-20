@@ -41,7 +41,7 @@ public class BasicPublisherTest extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?period=5&repeatCount=30")
+                from("timer:tick?period=5&repeatCount=30&includeMetadata=true")
                         .setBody().header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:pub");
             }
@@ -71,7 +71,7 @@ public class BasicPublisherTest extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?period=50")
+                from("timer:tick?period=50&includeMetadata=true")
                         .setBody().header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:unbounded");
             }

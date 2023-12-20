@@ -153,6 +153,18 @@ public class CxfProducerRouterTest extends CamelTestSupport {
     }
 
     @Test
+    public void testIgnorePseudoHeaders() throws Exception {
+        Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
+        senderExchange.getIn().setBody(REQUEST_MESSAGE);
+        Exchange exchange = template.send("direct:EndpointB", senderExchange);
+
+        org.apache.camel.Message out = exchange.getMessage();
+        final List<String> pseudoHeaders
+                = out.getHeaders().keySet().stream().filter(key -> key.startsWith(":")).toList();
+        assertTrue(pseudoHeaders.isEmpty(), "Pseudo-headers such as :status should be filtered out; found: " + pseudoHeaders);
+    }
+
+    @Test
     public void testInvokingSimpleServerWithPayLoadDataFormat() throws Exception {
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
         senderExchange.getIn().setBody(REQUEST_PAYLOAD);

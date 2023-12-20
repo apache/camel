@@ -136,37 +136,37 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                 LOG.trace("Schedule [first={}, main={}, sync={}]: {}", first, main, sync, runnable);
             }
             if (main) {
-                if (!queue.isEmpty()) {
-                    if (back == null) {
-                        back = new ArrayDeque<>();
-                    }
-                    back.push(queue);
-                    queue = new ArrayDeque<>();
-                }
+                executeMainFlow();
             }
             if (first) {
                 queue.addFirst(runnable);
-                if (stats) {
-                    executor.pendingTasks.increment();
-                }
             } else {
                 queue.addLast(runnable);
-                if (stats) {
-                    executor.pendingTasks.increment();
-                }
             }
+
+            incrementPendingTasks();
+            tryExecuteReactiveWork(runnable, sync);
+        }
+
+        private void executeMainFlow() {
+            if (!queue.isEmpty()) {
+                if (back == null) {
+                    back = new ArrayDeque<>();
+                }
+                back.push(queue);
+                queue = new ArrayDeque<>();
+            }
+        }
+
+        private void tryExecuteReactiveWork(Runnable runnable, boolean sync) {
             if (!running || sync) {
                 running = true;
-                if (stats) {
-                    executor.runningWorkers.increment();
-                }
+                incrementRunningWorkers();
                 try {
                     executeReactiveWork();
                 } finally {
                     running = false;
-                    if (stats) {
-                        executor.runningWorkers.decrement();
-                    }
+                    decrementRunningWorkers();
                 }
             } else {
                 if (LOG.isTraceEnabled()) {
@@ -186,18 +186,44 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                         break;
                     }
                 }
-                try {
-                    if (stats) {
-                        executor.pendingTasks.decrement();
-                    }
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Worker #{} running: {}", number, polled);
-                    }
-                    polled.run();
-                } catch (Exception t) {
-                    LOG.warn("Error executing reactive work due to {}. This exception is ignored.",
-                            t.getMessage(), t);
+                doRun(polled);
+            }
+        }
+
+        private void doRun(Runnable polled) {
+            try {
+                decrementPendingTasks();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Worker #{} running: {}", number, polled);
                 }
+                polled.run();
+            } catch (Exception t) {
+                LOG.warn("Error executing reactive work due to {}. This exception is ignored.",
+                        t.getMessage(), t);
+            }
+        }
+
+        private void decrementRunningWorkers() {
+            if (stats) {
+                executor.runningWorkers.decrement();
+            }
+        }
+
+        private void incrementRunningWorkers() {
+            if (stats) {
+                executor.runningWorkers.increment();
+            }
+        }
+
+        private void incrementPendingTasks() {
+            if (stats) {
+                executor.pendingTasks.increment();
+            }
+        }
+
+        private void decrementPendingTasks() {
+            if (stats) {
+                executor.pendingTasks.decrement();
             }
         }
 
@@ -207,9 +233,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                 return false;
             }
             try {
-                if (stats) {
-                    executor.pendingTasks.decrement();
-                }
+                decrementPendingTasks();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Running: {}", polled);
                 }

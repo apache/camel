@@ -249,7 +249,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(25, config.getPort(), "getPort()");
-        assertEquals(null, config.getUsername(), "getUsername()");
+        assertNull(config.getUsername(), "getUsername()");
         assertNotNull(config.getPasswordAuthentication(), "getPasswordAuthentication()");
         assertEquals("u1", config.getPasswordAuthentication().getUserName(), "getPasswordAuthentication().getUserName()");
         assertEquals("p1", config.getPasswordAuthentication().getPassword(), "getPasswordAuthentication().getUserName()");
@@ -257,7 +257,7 @@ public class MailComponentTest extends CamelTestSupport {
                 "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertEquals("camel@localhost", config.getFrom(), "from");
-        assertEquals(null, config.getPassword(), "password");
+        assertNull(config.getPassword(), "password");
         assertFalse(config.isDelete());
         assertFalse(config.isIgnoreUriScheme());
         assertEquals(-1, config.getFetchSize(), "fetchSize");

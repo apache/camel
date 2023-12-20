@@ -79,11 +79,52 @@ public interface XsltSaxonEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
+         */
+        default XsltSaxonEndpointBuilder allowTemplateFromHeader(
+                boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
+         */
+        default XsltSaxonEndpointBuilder allowTemplateFromHeader(
+                String allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
          * Cache for the resource content (the stylesheet file) when it is
-         * loaded. If set to false Camel will reload the stylesheet file on each
-         * message processing. This is good for development. A cached stylesheet
-         * can be forced to reload at runtime via JMX using the
-         * clearCachedStylesheet operation.
+         * loaded on startup. If set to false Camel will reload the stylesheet
+         * file on each message processing. This is good for development. A
+         * cached stylesheet can be forced to reload at runtime via JMX using
+         * the clearCachedStylesheet operation.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -99,10 +140,10 @@ public interface XsltSaxonEndpointBuilderFactory {
         }
         /**
          * Cache for the resource content (the stylesheet file) when it is
-         * loaded. If set to false Camel will reload the stylesheet file on each
-         * message processing. This is good for development. A cached stylesheet
-         * can be forced to reload at runtime via JMX using the
-         * clearCachedStylesheet operation.
+         * loaded on startup. If set to false Camel will reload the stylesheet
+         * file on each message processing. This is good for development. A
+         * cached stylesheet can be forced to reload at runtime via JMX using
+         * the clearCachedStylesheet operation.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -755,6 +796,33 @@ public interface XsltSaxonEndpointBuilderFactory {
         private static final XsltSaxonHeaderNameBuilder INSTANCE = new XsltSaxonHeaderNameBuilder();
 
         /**
+         * A URI for the template resource to load and use instead of the
+         * endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code XsltResourceUri}.
+         */
+        public String xsltResourceUri() {
+            return "CamelXsltResourceUri";
+        }
+
+        /**
+         * The template to use instead of the endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code XsltStylesheet}.
+         */
+        public String xsltStylesheet() {
+            return "CamelXsltStylesheet";
+        }
+
+        /**
          * The XSLT file name.
          * 
          * The option is a: {@code String} type.
@@ -764,7 +832,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the name of the header {@code XsltFileName}.
          */
         public String xsltFileName() {
-            return "XsltFileName";
+            return "CamelXsltFileName";
         }
     }
     static XsltSaxonEndpointBuilder endpointBuilder(

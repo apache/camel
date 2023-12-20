@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,6 +46,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.InetAddressUtil;
+import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
@@ -647,7 +650,8 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testDateExchangeCreated() throws Exception {
-        Object out = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", ("" + exchange.getCreated()).getClass());
+        Object out
+                = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", ("" + exchange.getClock().getCreated()).getClass());
         assertNotNull(out);
     }
 
@@ -746,6 +750,21 @@ public class SimpleTest extends LanguageTestSupport {
         assertNotNull(out);
         assertIsInstanceOf(IllegalArgumentException.class, out);
         assertEquals("Just testing", out.getMessage());
+    }
+
+    @Test
+    public void testMessageAs() throws Exception {
+        // should be false as message is default
+        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).hasAttachments}", false);
+        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments}", false);
+
+        MyAttachmentMessage msg = new MyAttachmentMessage(exchange);
+        msg.setBody("<hello id='m123'>world!</hello>");
+        exchange.setMessage(msg);
+
+        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).hasAttachments}", true);
+        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments}", true);
+        assertExpression("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).size}", "42");
     }
 
     @Test
@@ -1976,13 +1995,13 @@ public class SimpleTest extends LanguageTestSupport {
 
         StringBuilder expectedJson = new StringBuilder();
         expectedJson.append("{");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\"firstName\": \"foo\",");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\"lastName\": \"bar\"");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("}");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
 
         exchange.getIn().setBody("{\"firstName\": \"foo\", \"lastName\": \"bar\"}");
         assertExpression("${prettyBody}", expectedJson.toString());
@@ -1991,25 +2010,25 @@ public class SimpleTest extends LanguageTestSupport {
 
         expectedJson = new StringBuilder();
         expectedJson.append("[");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t{");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\t\"firstName\": \"foo\",");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\t\"lastName\": \"bar\"");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t},");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t{");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\t\"firstName\": \"foo\",");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t\t\"lastName\": \"bar\"");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("\t}");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
         expectedJson.append("]");
-        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\n");
 
         exchange.getIn()
                 .setBody("[{\"firstName\": \"foo\", \"lastName\": \"bar\"},{\"firstName\": \"foo\", \"lastName\": \"bar\"}]");
@@ -2023,19 +2042,19 @@ public class SimpleTest extends LanguageTestSupport {
     public void testXMLPrettyPrint() throws Exception {
         StringBuilder expectedXml = new StringBuilder();
         expectedXml.append("<person>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("  <firstName>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("    foo");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("  </firstName>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("  <lastName>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("    bar");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("  </lastName>");
-        expectedXml.append(System.lineSeparator());
+        expectedXml.append("\n");
         expectedXml.append("</person>");
 
         exchange.getIn().setBody("<person><firstName>foo</firstName><lastName>bar</lastName></person>");
@@ -2136,6 +2155,49 @@ public class SimpleTest extends LanguageTestSupport {
         // custom generator
         context.getRegistry().bind("mygen", (UuidGenerator) () -> "1234");
         assertExpression("${uuid(mygen)}", "1234");
+    }
+
+    @Test
+    public void testHash() throws Exception {
+        Expression expression = context.resolveLanguage("simple").createExpression("${hash(hello)}");
+        String s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] bytes = digest.digest("hello".getBytes(StandardCharsets.UTF_8));
+        String expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        digest = MessageDigest.getInstance("SHA-256");
+        bytes = digest.digest(exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8));
+        expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${header.foo})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(hello,SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${body},SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        digest = MessageDigest.getInstance("SHA3-256");
+        bytes = digest.digest(exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8));
+        expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${header.foo},SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${hash(${header.unknown})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
     }
 
     @Test
@@ -2254,4 +2316,5 @@ public class SimpleTest extends LanguageTestSupport {
             return new Object[] { "Hallo", "World", "!" };
         }
     }
+
 }

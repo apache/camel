@@ -52,6 +52,10 @@ public class RestBindingReifier extends AbstractReifier {
         if (definition.getEnableCORS() != null) {
             cors = parseBoolean(definition.getEnableCORS(), false);
         }
+        boolean noContentResponse = config.isEnableNoContentResponse();
+        if (definition.getEnableNoContentResponse() != null) {
+            noContentResponse = parseBoolean(definition.getEnableNoContentResponse(), false);
+        }
         boolean skip = config.isSkipBindingOnErrorCode();
         if (definition.getSkipBindingOnErrorCode() != null) {
             skip = parseBoolean(definition.getSkipBindingOnErrorCode(), false);
@@ -69,7 +73,7 @@ public class RestBindingReifier extends AbstractReifier {
             return new RestBindingAdvice(
                     camelContext, null, null, null, null,
                     parseString(definition.getConsumes()), parseString(definition.getProduces()), mode, skip, validation, cors,
-                    corsHeaders,
+                    noContentResponse, corsHeaders,
                     definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                     definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
         }
@@ -141,7 +145,7 @@ public class RestBindingReifier extends AbstractReifier {
         return new RestBindingAdvice(
                 camelContext, json, jaxb, outJson, outJaxb,
                 parseString(definition.getConsumes()), parseString(definition.getProduces()),
-                mode, skip, validation, cors, corsHeaders,
+                mode, skip, validation, cors, noContentResponse, corsHeaders,
                 definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                 definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
     }
@@ -193,7 +197,7 @@ public class RestBindingReifier extends AbstractReifier {
         setAdditionalConfiguration(config, outJson, "json.out.");
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, DataFormat dataFormat, String prefix) throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, DataFormat dataFormat, String prefix) {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties

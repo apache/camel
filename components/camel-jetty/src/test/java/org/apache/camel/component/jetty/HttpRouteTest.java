@@ -41,12 +41,14 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.eclipse.jetty.ee10.servlet.HttpInput;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,7 +59,7 @@ public class HttpRouteTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRouteTest.class);
 
-    protected String expectedBody = "<hello>world!</hello>";
+    protected final String expectedBody = "<hello>world!</hello>";
 
     @RegisterExtension
     protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
@@ -83,7 +85,7 @@ public class HttpRouteTest extends BaseJettyTest {
 
         LOG.info("Headers: {}", headers);
 
-        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
+        assertFalse(headers.isEmpty(), "Should be more than one header but was: " + headers);
     }
 
     @Test
@@ -257,7 +259,7 @@ public class HttpRouteTest extends BaseJettyTest {
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 InputStream is = (InputStream) exchange.getIn().getBody();
-                                assertTrue(is instanceof org.eclipse.jetty.server.HttpInput, "It should be a raw inputstream");
+                                assertTrue(is instanceof HttpInput, "It should be a raw inputstream");
                                 String request = exchange.getIn().getBody(String.class);
                                 assertEquals("This is a test", request, "Got a wrong request");
                                 exchange.getMessage().setBody("OK");

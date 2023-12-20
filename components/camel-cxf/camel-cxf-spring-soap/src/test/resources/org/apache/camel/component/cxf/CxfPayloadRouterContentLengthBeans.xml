@@ -34,7 +34,7 @@
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-    <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.jettyPort}/TEST/SERVICE" 
+    <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.undertowPort}/TEST/SERVICE"
         endpointName="p1:generatedName">
     </cxf:cxfEndpoint>
     <cxf:cxfEndpoint id="proxyEndpoint" address="http://localhost:${CXFTestSupport.port1}/TEST/PROXY"

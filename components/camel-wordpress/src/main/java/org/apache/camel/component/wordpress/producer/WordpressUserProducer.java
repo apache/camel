@@ -21,8 +21,11 @@ import org.apache.camel.component.wordpress.WordpressEndpoint;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.component.wordpress.api.model.User;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceUsers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WordpressUserProducer extends AbstractWordpressProducer<User> {
+    private static final Logger LOG = LoggerFactory.getLogger(WordpressUserProducer.class);
 
     private WordpressServiceUsers serviceUsers;
 

@@ -61,7 +61,7 @@ public class MultiPartFormTest extends BaseJettyTest {
     }
 
     @Test
-    public void testSendMultiPartFormFromCamelHttpComponnent() throws Exception {
+    public void testSendMultiPartFormFromCamelHttpComponnent() {
         String result
                 = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
         assertEquals("A binary file of some kind", result, "Get a wrong result");
@@ -98,7 +98,7 @@ public class MultiPartFormTest extends BaseJettyTest {
                         // "text/plain", data.getContentType());
                         assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue(data.getDataSource().getInputStream().available() > 0,
+                        assertTrue(data.getDataSource().getInputStream().read() != -1,
                                 "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message

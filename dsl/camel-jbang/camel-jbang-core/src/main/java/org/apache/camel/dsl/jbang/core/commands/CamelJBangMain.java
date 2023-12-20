@@ -31,11 +31,13 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSendAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelStartupRecorderAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelStubAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelTraceAction;
 import org.apache.camel.dsl.jbang.core.commands.action.LoggerAction;
 import org.apache.camel.dsl.jbang.core.commands.action.RouteControllerAction;
+import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
@@ -61,6 +63,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
 import org.apache.camel.dsl.jbang.core.commands.process.ListBlocked;
 import org.apache.camel.dsl.jbang.core.commands.process.ListCircuitBreaker;
+import org.apache.camel.dsl.jbang.core.commands.process.ListConsumer;
 import org.apache.camel.dsl.jbang.core.commands.process.ListEndpoint;
 import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
 import org.apache.camel.dsl.jbang.core.commands.process.ListHealth;
@@ -87,17 +90,21 @@ public class CamelJBangMain implements Callable<Integer> {
         commandLine = new CommandLine(main)
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
+                .addSubcommand("debug", new CommandLine(new Debug(main)))
                 .addSubcommand("log", new CommandLine(new CamelLogAction(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
                 .addSubcommand("trace", new CommandLine(new CamelTraceAction(main)))
-                .addSubcommand("transform", new CommandLine(new Transform(main)))
+                .addSubcommand("transform", new CommandLine(new TransformCommand(main))
+                        .addSubcommand("route", new CommandLine(new TransformRoute(main)))
+                        .addSubcommand("message", new CommandLine(new TransformMessageAction(main))))
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
                         .addSubcommand("count", new CommandLine(new CamelCount(main)))
                         .addSubcommand("health", new CommandLine(new ListHealth(main)))
+                        .addSubcommand("consumer", new CommandLine(new ListConsumer(main)))
                         .addSubcommand("endpoint", new CommandLine(new ListEndpoint(main)))
                         .addSubcommand("event", new CommandLine(new ListEvent(main)))
                         .addSubcommand("inflight", new CommandLine(new ListInflight(main)))
@@ -108,6 +115,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("service", new CommandLine(new ListService(main)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(main)))
                         .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(main)))
+                        .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(main)))
                         .addSubcommand("vault", new CommandLine(new ListVault(main))))
                 .addSubcommand("top", new CommandLine(new CamelTop(main))
                         .addSubcommand("context", new CommandLine(new CamelContextTop(main)))
@@ -126,9 +134,11 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("gc", new CommandLine(new CamelGCAction(main))))
                 .addSubcommand("dependency", new CommandLine(new DependencyCommand(main))
                         .addSubcommand("list", new CommandLine(new DependencyList(main)))
-                        .addSubcommand("copy", new CommandLine(new DependencyCopy(main))))
+                        .addSubcommand("copy", new CommandLine(new DependencyCopy(main)))
+                        .addSubcommand("update", new CommandLine(new DependencyUpdate(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
+                .addSubcommand("sbom", new CommandLine(new SBOMGenerator(main)))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
                         .addSubcommand("component", new CommandLine(new CatalogComponent(main)))
                         .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(main)))
@@ -139,7 +149,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
-                .addSubcommand("pipe", new CommandLine(new Pipe(main)))
+                .addSubcommand("script", new CommandLine(new Script(main)))
                 .addSubcommand("export", new CommandLine(new Export(main)))
                 .addSubcommand("completion", new CommandLine(new Complete(main)))
                 .addSubcommand("config", new CommandLine(new ConfigCommand(main))

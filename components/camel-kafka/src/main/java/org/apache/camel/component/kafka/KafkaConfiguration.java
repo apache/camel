@@ -68,6 +68,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new KafkaHeaderFilterStrategy();
 
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean preValidateHostAndPort = true;
     @UriParam(label = "consumer")
     private boolean topicIsPattern;
     @UriParam(label = "consumer")
@@ -103,8 +105,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", defaultValue = "1048576")
     private Integer maxPartitionFetchBytes = 1048576;
     // session.timeout.ms
-    @UriParam(label = "consumer", defaultValue = "10000")
-    private Integer sessionTimeoutMs = 10000;
+    @UriParam(label = "consumer", defaultValue = "45000")
+    private Integer sessionTimeoutMs = 45000;
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer maxPollRecords;
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
@@ -118,8 +120,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", defaultValue = KafkaConstants.PARTITIONER_RANGE_ASSIGNOR)
     private String partitionAssignor = KafkaConstants.PARTITIONER_RANGE_ASSIGNOR;
     // request.timeout.ms
-    @UriParam(label = "consumer", defaultValue = "40000")
-    private Integer consumerRequestTimeoutMs = 40000;
+    @UriParam(label = "consumer", defaultValue = "30000")
+    private Integer consumerRequestTimeoutMs = 30000;
     // auto.commit.interval.ms
     @UriParam(label = "consumer", defaultValue = "5000")
     private Integer autoCommitIntervalMs = 5000;
@@ -328,10 +330,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // sasl.jaas.config
     private String saslJaasConfig;
 
-    // Confluent only options
-    @UriParam(label = "confluent")
+    // Schema registry only options
+    @UriParam(label = "schema")
     private String schemaRegistryURL;
-    @UriParam(label = "confluent,consumer")
+    @UriParam(label = "schema,consumer")
     private boolean specificAvroReader;
 
     // Additional properties
@@ -615,6 +617,21 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         }
     }
 
+    public boolean isPreValidateHostAndPort() {
+        return preValidateHostAndPort;
+    }
+
+    /**
+     * Whether to eager validate that broker host:port is valid and can be DNS resolved to known host during starting
+     * this consumer. If the validation fails then an exception is thrown which makes Camel fail fast.
+     *
+     * Disabling this will postpone the validation after the consumer is started, and Camel will keep re-connecting in
+     * case of validation or DNS resolution error.
+     */
+    public void setPreValidateHostAndPort(boolean preValidateHostAndPort) {
+        this.preValidateHostAndPort = preValidateHostAndPort;
+    }
+
     public boolean isTopicIsPattern() {
         return topicIsPattern;
     }
@@ -839,10 +856,15 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * This options controls what happens when a consumer is processing an exchange and it fails. If the option is
      * <tt>false</tt> then the consumer continues to the next message and processes it. If the option is <tt>true</tt>
-     * then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then
-     * re-attempt to process this message. However this can lead to endless processing of the same message if its bound
-     * to fail every time, eg a poison message. Therefore it is recommended to deal with that for example by using
-     * Camel's error handler.
+     * then the consumer breaks out.
+     *
+     * Using the default NoopCommitManager will cause the consumer to not commit the offset so that the message is
+     * re-attempted. The consumer should use the KafkaManualCommit to determine the best way to handle the message.
+     *
+     * Using either the SynchCommitManager or the AsynchCommitManager the consumer will seek back to the offset of the
+     * message that caused a failure, and then re-attempt to process this message. However this can lead to endless
+     * processing of the same message if its bound to fail every time, eg a poison message. Therefore its recommended to
+     * deal with that for example by using Camel's error handler.
      */
     public void setBreakOnFirstError(boolean breakOnFirstError) {
         this.breakOnFirstError = breakOnFirstError;
@@ -867,9 +889,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * URL of the Confluent Platform schema registry servers to use. The format is host1:port1,host2:port2. This is
-     * known as schema.registry.url in the Confluent Platform documentation. This option is only available in the
-     * Confluent Platform (not standard Apache Kafka)
+     * URL of the schema registry servers to use. The format is host1:port1,host2:port2. This is known as
+     * schema.registry.url in multiple Schema registries documentation. This option is only available externally (not
+     * standard Apache Kafka)
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
         this.schemaRegistryURL = schemaRegistryURL;
@@ -880,9 +902,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * This enables the use of a specific Avro reader for use with the Confluent Platform schema registry and the
-     * io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is only available in the Confluent Platform
-     * (not standard Apache Kafka)
+     * This enables the use of a specific Avro reader for use with the in multiple Schema registries documentation with
+     * Avro Deserializers implementation. This option is only available externally (not standard Apache Kafka)
      */
     public void setSpecificAvroReader(boolean specificAvroReader) {
         this.specificAvroReader = specificAvroReader;
@@ -1422,7 +1443,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * immediately regardless of this setting, however if we have fewer than this many bytes accumulated for this
      * partition we will 'linger' for the specified time waiting for more records to show up. This setting defaults to 0
      * (i.e. no delay). Setting linger.ms=5, for example, would have the effect of reducing the number of requests sent
-     * but would add up to 5ms of latency to records sent in the absense of load.
+     * but would add up to 5ms of latency to records sent in the absence of load.
      */
     public void setLingerMs(Integer lingerMs) {
         this.lingerMs = lingerMs;

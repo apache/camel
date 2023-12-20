@@ -16,33 +16,33 @@
  */
 package org.apache.camel.component.http.handler;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import org.apache.camel.util.IOHelper;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.server.Session;
+import org.eclipse.jetty.util.Callback;
 
-public class SessionReflectionHandler extends AbstractHandler {
+public class SessionReflectionHandler extends Handler.Abstract.NonBlocking {
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        HttpSession session = request.getSession();
-        OutputStream os = response.getOutputStream();
-        baseRequest.setHandled(true);
-        if (session.getAttribute("foo") == null) {
+    public boolean handle(Request request, Response response, Callback callback) throws Exception {
+        Session session = request.getSession(true);
+        OutputStream os = Response.asBufferedOutputStream(request, response);
+        if (session != null && session.getAttribute("foo") == null) {
             session.setAttribute("foo", "bar");
             os.write("New ".getBytes());
         } else {
             os.write("Old ".getBytes());
         }
-        IOHelper.copyAndCloseInput(request.getInputStream(), os);
+        IOHelper.copyAndCloseInput(Request.asInputStream(request), os);
         response.setStatus(HttpServletResponse.SC_OK);
+
+        callback.succeeded();
+        return true;
     }
 }

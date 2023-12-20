@@ -30,12 +30,10 @@ public class KameletMainInjector implements Injector {
 
     private final Injector delegate;
     private final String stubPattern;
-    private final boolean silent;
 
     public KameletMainInjector(Injector delegate, String stubPattern, boolean silent) {
         this.delegate = delegate;
         this.stubPattern = stubPattern;
-        this.silent = silent;
     }
 
     @Override
@@ -54,6 +52,15 @@ public class KameletMainInjector implements Injector {
             return (T) delegate.newInstance(StubComponent.class);
         }
         return delegate.newInstance(type, factoryMethod);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod) {
+        boolean accept = acceptComponent(type);
+        if (!accept) {
+            return (T) delegate.newInstance(StubComponent.class);
+        }
+        return delegate.newInstance(type, factoryClass, factoryMethod);
     }
 
     @Override

@@ -125,7 +125,7 @@ public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
 
     private boolean idInList(String testEmailId, ListMessagesResponse listOfMessages) {
         assertNotNull(listOfMessages, "list result");
-        assertTrue(!listOfMessages.getMessages().isEmpty());
+        assertFalse(listOfMessages.getMessages().isEmpty());
         boolean foundMessage = false;
         for (Message m : listOfMessages.getMessages()) {
             if (testEmailId.equals(m.getId())) {

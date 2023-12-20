@@ -17,7 +17,6 @@
 package org.apache.camel.spring.health;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheck;
@@ -39,7 +38,7 @@ public class HealthCheckRegistryTest {
         HealthCheckRegistry hc = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         assertNotNull(hc);
 
-        List<HealthCheck> checks = hc.stream().collect(Collectors.toList());
+        List<HealthCheck> checks = hc.stream().toList();
         assertEquals(2, checks.size());
 
         for (HealthCheck check : checks) {

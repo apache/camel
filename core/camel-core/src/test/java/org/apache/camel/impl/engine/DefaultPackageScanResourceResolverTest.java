@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.io.File;
+
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.support.PluginHelper;
@@ -31,18 +33,18 @@ public class DefaultPackageScanResourceResolverTest {
 
         assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/**/*.xml"))
                 .hasSize(4)
-                .anyMatch(r -> r.getLocation().contains("ar/camel-scan.xml"))
-                .anyMatch(r -> r.getLocation().contains("ar/camel-dummy.xml"))
-                .anyMatch(r -> r.getLocation().contains("br/camel-scan.xml"))
-                .anyMatch(r -> r.getLocation().contains("br/camel-dummy.xml"));
+                .anyMatch(r -> r.getLocation().contains("ar" + File.separator + "camel-scan.xml"))
+                .anyMatch(r -> r.getLocation().contains("ar" + File.separator + "camel-dummy.xml"))
+                .anyMatch(r -> r.getLocation().contains("br" + File.separator + "camel-scan.xml"))
+                .anyMatch(r -> r.getLocation().contains("br" + File.separator + "camel-dummy.xml"));
         assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml"))
                 .hasSize(2)
-                .anyMatch(r -> r.getLocation().contains("ar/camel-scan.xml"))
-                .anyMatch(r -> r.getLocation().contains("ar/camel-dummy.xml"));
+                .anyMatch(r -> r.getLocation().contains("ar" + File.separator + "camel-scan.xml"))
+                .anyMatch(r -> r.getLocation().contains("ar" + File.separator + "camel-dummy.xml"));
         assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml"))
                 .hasSize(2)
-                .anyMatch(r -> r.getLocation().contains("br/camel-scan.xml"))
-                .anyMatch(r -> r.getLocation().contains("br/camel-dummy.xml"));
+                .anyMatch(r -> r.getLocation().contains("br" + File.separator + "camel-scan.xml"))
+                .anyMatch(r -> r.getLocation().contains("br" + File.separator + "camel-dummy.xml"));
         assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/c?/*.xml"))
                 .isEmpty();
     }

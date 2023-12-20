@@ -29,6 +29,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public final class SpringTestHelper {
 
+    public static final String PROPERTY_TEST_DIR = "testDirectory";
+
     private SpringTestHelper() {
     }
 
@@ -44,7 +46,10 @@ public final class SpringTestHelper {
         final AbstractXmlApplicationContext applicationContext;
         try {
             DefaultCamelContext.setNoStart(true);
-            applicationContext = new ClassPathXmlApplicationContext(classpathUri);
+            applicationContext = new ClassPathXmlApplicationContext(new String[] { classpathUri }, false);
+            applicationContext.getEnvironment().getSystemProperties().put(
+                    PROPERTY_TEST_DIR, test.testDirectory().toString());
+            applicationContext.refresh();
         } finally {
             DefaultCamelContext.setNoStart(isNoStart);
         }
@@ -57,11 +62,12 @@ public final class SpringTestHelper {
                 applicationContext.stop();
             }
         });
-
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, false);
         for (Map.Entry<String, Object> entry : beans.entrySet()) {
             context.getCamelContextExtension().getRegistry().bind(entry.getKey(), entry.getValue());
         }
+        context.getCamelContextExtension().getRegistry().bind(PROPERTY_TEST_DIR, test.testDirectory());
+        context.getPropertiesComponent().addInitialProperty(PROPERTY_TEST_DIR, test.testDirectory().toString());
         if (!isNoStart) {
             context.start();
         }

@@ -31,7 +31,7 @@ public class HttpServerBootstrapFactory extends SingleTCPNettyServerBootstrapFac
     private final HttpServerConsumerChannelFactory channelFactory;
     private int port;
     private NettyServerBootstrapConfiguration bootstrapConfiguration;
-    private boolean compatibleCheck;
+    private final boolean compatibleCheck;
 
     public HttpServerBootstrapFactory(HttpServerConsumerChannelFactory channelFactory) {
         this(channelFactory, true);

@@ -38,7 +38,6 @@ import org.apache.camel.maven.htmlxlsx.model.Route;
 import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
 import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 public class CoverageResultsProcessor {
@@ -66,8 +65,6 @@ public class CoverageResultsProcessor {
     private final TestResultParser testResultParser = new TestResultParser();
 
     private final XmlToCamelRouteCoverageConverter xmlToCamelRouteCoverageConverter = new XmlToCamelRouteCoverageConverter();
-
-    private Log log;
 
     public String generateReport(MavenProject project, final File xmlPath, final File htmlPath) throws IOException {
 
@@ -225,7 +222,7 @@ public class CoverageResultsProcessor {
                     if (route.getExchangesTotal() > mappedRoute.getExchangesTotal()) {
                         routeMap.put(routeId, route);
                     }
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     // this is an edge case that needs to be identified. Log some useful debugging information.
                     System.out.println(t.getClass().toString());
                     System.out.printf("routeID: %s%n", routeId);

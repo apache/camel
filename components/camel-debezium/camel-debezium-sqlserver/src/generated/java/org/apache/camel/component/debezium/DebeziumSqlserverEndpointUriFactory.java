@@ -29,6 +29,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("columnIncludeList");
         props.add("columnPropagateSourceType");
         props.add("converters");
+        props.add("customMetricTags");
         props.add("databaseHostname");
         props.add("databaseInstance");
         props.add("databaseNames");
@@ -69,7 +70,6 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("offsetStorageTopic");
         props.add("pollIntervalMs");
         props.add("provideTransactionMetadata");
-        props.add("queryFetchSize");
         props.add("retriableRestartConnectorWaitMs");
         props.add("schemaHistoryInternal");
         props.add("schemaHistoryInternalFileFilename");

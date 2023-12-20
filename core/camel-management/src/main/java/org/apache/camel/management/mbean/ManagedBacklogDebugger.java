@@ -19,7 +19,6 @@ package org.apache.camel.management.mbean;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -33,23 +32,20 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
-import org.apache.camel.impl.debugger.BacklogDebugger;
-import org.apache.camel.spi.BacklogTracerEventMessage;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.LoggerHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed BacklogDebugger")
 public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     private final CamelContext camelContext;
-    private final BacklogDebugger backlogDebugger;
+    private final DefaultBacklogDebugger backlogDebugger;
 
-    public ManagedBacklogDebugger(CamelContext camelContext, BacklogDebugger backlogDebugger) {
+    public ManagedBacklogDebugger(CamelContext camelContext, DefaultBacklogDebugger backlogDebugger) {
         this.camelContext = camelContext;
         this.backlogDebugger = backlogDebugger;
     }
@@ -62,7 +58,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return camelContext;
     }
 
-    public BacklogDebugger getBacklogDebugger() {
+    public DefaultBacklogDebugger getBacklogDebugger() {
         return backlogDebugger;
     }
 
@@ -89,6 +85,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     @Override
     public boolean isEnabled() {
         return backlogDebugger.isEnabled();
+    }
+
+    @Override
+    public boolean isStandby() {
+        return backlogDebugger.isStandby();
     }
 
     @Override
@@ -186,6 +187,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public boolean isSuspendedMode() {
+        return backlogDebugger.isSuspendMode();
+    }
+
+    @Override
     public boolean isSingleStepMode() {
         return backlogDebugger.isSingleStepMode();
     }
@@ -221,6 +227,16 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public boolean isIncludeExchangeProperties() {
+        return backlogDebugger.isIncludeExchangeProperties();
+    }
+
+    @Override
+    public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
+        backlogDebugger.setIncludeExchangeProperties(includeExchangeProperties);
+    }
+
+    @Override
     public boolean isBodyIncludeStreams() {
         return backlogDebugger.isBodyIncludeStreams();
     }
@@ -241,14 +257,19 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public String dumpTracedMessagesAsXml(String nodeId) {
+        return backlogDebugger.dumpTracedMessagesAsXml(nodeId);
+    }
+
+    @Override
+    @Deprecated
     public String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties) {
-        String messageAsXml = backlogDebugger.dumpTracedMessagesAsXml(nodeId);
-        if (messageAsXml != null && includeExchangeProperties) {
-            String closingTag = "</" + BacklogTracerEventMessage.ROOT_TAG + ">";
-            String exchangePropertiesAsXml = dumpExchangePropertiesAsXml(nodeId);
-            messageAsXml = messageAsXml.replace(closingTag, exchangePropertiesAsXml) + "\n" + closingTag;
-        }
-        return messageAsXml;
+        return dumpTracedMessagesAsXml(nodeId);
+    }
+
+    @Override
+    public String dumpTracedMessagesAsJSon(String nodeId) {
+        return backlogDebugger.dumpTracedMessagesAsJSon(nodeId);
     }
 
     @Override
@@ -294,17 +315,10 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     @Override
     public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value) {
-        Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
-        if (suspendedExchange != null) {
-            suspendedExchange.setProperty(exchangePropertyName, value);
-        }
-    }
-
-    @Override
-    public void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName) {
-        Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
-        if (suspendedExchange != null) {
-            suspendedExchange.removeProperty(exchangePropertyName);
+        try {
+            backlogDebugger.setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value);
+        } catch (NoTypeConversionAvailableException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -312,19 +326,15 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type) {
         try {
             Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
-            if (type != null) {
-                Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
-                if (suspendedExchange != null) {
-                    value = suspendedExchange.getContext().getTypeConverter().mandatoryConvertTo(classType, suspendedExchange,
-                            value);
-                    suspendedExchange.setProperty(exchangePropertyName, value);
-                }
-            } else {
-                this.setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value);
-            }
+            backlogDebugger.setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value, classType);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+    }
+
+    @Override
+    public void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName) {
+        backlogDebugger.removeExchangePropertyOnBreakpoint(nodeId, exchangePropertyName);
     }
 
     @Override
@@ -383,7 +393,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                             + "]";
                 }
 
-                long elapsed = TimeUtils.elapsedMillisSince(suspendedExchange.getCreated());
+                long elapsed = suspendedExchange.getClock().elapsed();
 
                 messageHistoryBuilder
                         .append("    <messageHistoryEntry")
@@ -435,40 +445,6 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     @Override
     public void detach() {
         backlogDebugger.detach();
-    }
-
-    private String dumpExchangePropertiesAsXml(String id) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("  <exchangeProperties>\n");
-        Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(id);
-        if (suspendedExchange != null) {
-            Map<String, Object> properties = suspendedExchange.getAllProperties();
-            properties.forEach((propertyName, propertyValue) -> {
-                String type = ObjectHelper.classCanonicalName(propertyValue);
-                sb.append("    <exchangeProperty name=\"").append(propertyName).append("\"");
-                if (type != null) {
-                    sb.append(" type=\"").append(type).append("\"");
-                }
-                sb.append(">");
-                // dump property value as XML, use Camel type converter to convert
-                // to String
-                if (propertyValue != null) {
-                    try {
-                        String xml = suspendedExchange.getContext().getTypeConverter().tryConvertTo(String.class,
-                                suspendedExchange, propertyValue);
-                        if (xml != null) {
-                            // must always xml encode
-                            sb.append(StringHelper.xmlEncode(xml));
-                        }
-                    } catch (Exception e) {
-                        // ignore as the body is for logging purpose
-                    }
-                }
-                sb.append("</exchangeProperty>\n");
-            });
-        }
-        sb.append("  </exchangeProperties>");
-        return sb.toString();
     }
 
     private static boolean isSerializable(Object obj) {

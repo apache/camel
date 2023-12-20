@@ -133,7 +133,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     protected InputStream resourceInputStream(Resource resource) throws IOException {
         // load into memory as we need to skip a specific first-line if present
         String data = sourceLoader.loadResource(resource);
-        if (data.trim().isEmpty()) {
+        if (data.isBlank()) {
             throw new IOException("Resource is empty: " + resource.getLocation());
         }
         return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));

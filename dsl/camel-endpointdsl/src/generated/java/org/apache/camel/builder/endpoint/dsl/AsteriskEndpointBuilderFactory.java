@@ -101,12 +101,17 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -123,12 +128,17 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -513,7 +523,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the name of the header {@code AsteriskEventName}.
          */
         public String asteriskEventName() {
-            return "AsteriskEventName";
+            return "CamelAsteriskEventName";
         }
 
         /**
@@ -526,7 +536,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the name of the header {@code AsteriskExtension}.
          */
         public String asteriskExtension() {
-            return "AsteriskExtension";
+            return "CamelAsteriskExtension";
         }
 
         /**
@@ -540,7 +550,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the name of the header {@code AsteriskContext}.
          */
         public String asteriskContext() {
-            return "AsteriskContext";
+            return "CamelAsteriskContext";
         }
 
         /**
@@ -554,7 +564,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the name of the header {@code AsteriskAction}.
          */
         public String asteriskAction() {
-            return "AsteriskAction";
+            return "CamelAsteriskAction";
         }
     }
     static AsteriskEndpointBuilder endpointBuilder(

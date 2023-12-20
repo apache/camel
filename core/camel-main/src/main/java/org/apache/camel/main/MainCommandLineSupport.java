@@ -161,6 +161,14 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 setPropertyPlaceholderLocations(parameter);
             }
         });
+        addOption(new ParameterOption(
+                "cwd", "compileWorkDir",
+                "Work directory for compiler. Can be used to write compiled classes or other resources.",
+                "compileWorkDir") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                configure().withCompileWorkDir(parameter);
+            }
+        });
     }
 
     /**
@@ -275,7 +283,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         System.out.println();
     }
 
-    public abstract class Option {
+    public abstract static class Option {
         private final String abbreviation;
         private final String fullName;
         private final String description;

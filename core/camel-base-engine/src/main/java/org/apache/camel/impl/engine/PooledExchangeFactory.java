@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PooledExchange;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.support.DefaultPooledExchange;
+import org.apache.camel.support.ResetableClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +67,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         }
 
         // reset exchange for reuse
-        PooledExchange ee = (PooledExchange) exchange;
-        ee.reset(System.currentTimeMillis());
+        ((ResetableClock) exchange.getClock()).reset();
 
         return exchange;
     }
@@ -88,8 +88,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         }
 
         // reset exchange for reuse
-        PooledExchange ee = (PooledExchange) exchange;
-        ee.reset(System.currentTimeMillis());
+        ((ResetableClock) exchange.getClock()).reset();
 
         return exchange;
     }
@@ -124,7 +123,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     private PooledExchange createPooledExchange(Endpoint fromEndpoint, boolean autoRelease) {
         PooledExchange answer;
         if (fromEndpoint != null) {
-            answer = new DefaultPooledExchange(fromEndpoint);
+            answer = DefaultPooledExchange.newFromEndpoint(fromEndpoint);
         } else {
             answer = new DefaultPooledExchange(camelContext);
         }

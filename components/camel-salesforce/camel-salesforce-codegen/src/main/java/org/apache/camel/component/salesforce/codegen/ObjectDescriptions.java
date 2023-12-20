@@ -182,7 +182,7 @@ public final class ObjectDescriptions {
 
         // check whether a pattern is in effect
         Pattern incPattern;
-        if (includePattern != null && !includePattern.trim().isEmpty()) {
+        if (includePattern != null && !includePattern.isBlank()) {
             incPattern = Pattern.compile(includePattern.trim());
         } else if (includedNames.isEmpty()) {
             // include everything by default if no include names are set
@@ -194,7 +194,7 @@ public final class ObjectDescriptions {
 
         // check whether a pattern is in effect
         Pattern excPattern;
-        if (excludePattern != null && !excludePattern.trim().isEmpty()) {
+        if (excludePattern != null && !excludePattern.isBlank()) {
             excPattern = Pattern.compile(excludePattern.trim());
         } else {
             // exclude nothing by default

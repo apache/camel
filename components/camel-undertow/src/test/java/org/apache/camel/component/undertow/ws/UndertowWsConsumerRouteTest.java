@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow.ws;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +103,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         testClient.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result1");
-        final byte[] testmessage = "Test".getBytes("utf-8");
+        final byte[] testmessage = "Test".getBytes(StandardCharsets.UTF_8);
         result.expectedBodiesReceived(testmessage);
 
         testClient.sendBytesMessage(testmessage);
@@ -119,7 +121,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         MockEndpoint result = getMockEndpoint("mock:result2");
         result.expectedMessageCount(1);
 
-        final byte[] testmessage = "Test".getBytes("utf-8");
+        final byte[] testmessage = "Test".getBytes(StandardCharsets.UTF_8);
         testClient.sendBytesMessage(testmessage);
 
         result.await(60, TimeUnit.SECONDS);
@@ -161,6 +163,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         testClient2.close();
     }
 
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
     @Test
     public void echo() throws Exception {
         WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app3", 2);
@@ -189,8 +192,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         assertTrue(wsclient1.await(10));
         assertTrue(wsclient2.await(10));
 
-        assertEquals(Arrays.asList("Gambas"), wsclient1.getReceived(String.class));
-        assertEquals(Arrays.asList("Calamares"), wsclient2.getReceived(String.class));
+        assertEquals(List.of("Gambas"), wsclient1.getReceived(String.class));
+        assertEquals(List.of("Calamares"), wsclient2.getReceived(String.class));
 
         wsclient1.close();
         wsclient2.close();

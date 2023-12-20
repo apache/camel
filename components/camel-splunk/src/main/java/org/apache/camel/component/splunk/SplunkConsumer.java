@@ -75,6 +75,10 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
                 return 0;
             } else {
                 List<SplunkEvent> events = dataReader.read();
+
+                // okay we have some response from splunk so lets mark the consumer as ready
+                forceConsumerAsReady();
+
                 Queue<Exchange> exchanges = createExchanges(events);
                 return processBatch(CastUtils.cast(exchanges));
             }

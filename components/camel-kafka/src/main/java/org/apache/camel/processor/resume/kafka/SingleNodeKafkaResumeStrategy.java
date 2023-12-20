@@ -108,9 +108,10 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
      *
      */
     protected void produce(byte[] key, byte[] message, UpdateCallBack updateCallBack) {
-        ProducerRecord<byte[], byte[]> record = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
+        ProducerRecord<byte[], byte[]> producerRecord
+                = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
 
-        producer.send(record, (recordMetadata, e) -> {
+        producer.send(producerRecord, (recordMetadata, e) -> {
             if (e != null) {
                 LOG.error("Failed to send message {}", e.getMessage(), e);
             }
@@ -235,15 +236,16 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
         do {
             ConsumerRecords<byte[], byte[]> records = consume(consumer);
 
-            for (ConsumerRecord<byte[], byte[]> record : records) {
-                byte[] value = record.value();
+            for (ConsumerRecord<byte[], byte[]> consumerRecord : records) {
+                byte[] value = consumerRecord.value();
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Read from Kafka at {} ({}): {}", Instant.ofEpochMilli(record.timestamp()),
-                            record.timestampType(), value);
+                    LOG.trace("Read from Kafka at {} ({}): {}", Instant.ofEpochMilli(consumerRecord.timestamp()),
+                            consumerRecord.timestampType(), value);
                 }
 
-                if (!deserializable.deserialize(ByteBuffer.wrap(record.key()), ByteBuffer.wrap(record.value()))) {
+                if (!deserializable.deserialize(ByteBuffer.wrap(consumerRecord.key()),
+                        ByteBuffer.wrap(consumerRecord.value()))) {
                     LOG.warn("Deserializer indicates that this is the last record to deserialize");
                 }
             }

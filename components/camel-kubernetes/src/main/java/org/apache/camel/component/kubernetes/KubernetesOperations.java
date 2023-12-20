@@ -139,7 +139,15 @@ public final class KubernetesOperations {
     public static final String LIST_BUILD_CONFIGS_BY_LABELS_OPERATION = "listBuildConfigsByLabels";
     public static final String GET_BUILD_CONFIG_OPERATION = "getBuildConfig";
 
-    // Secrets
+    // Cronjob
+    public static final String LIST_CRON_JOB_OPERATION = "listCronJob";
+    public static final String LIST_CRON_JOB_BY_LABELS_OPERATION = "listCronJobByLabels";
+    public static final String GET_CRON_JOB_OPERATION = "getCronJob";
+    public static final String CREATE_CRON_JOB_OPERATION = "createCronJob";
+    public static final String UPDATE_CRON_JOB_OPERATION = "updateCronJob";
+    public static final String DELETE_CRON_JOB_OPERATION = "deleteCronJob";
+
+    // Job
     public static final String LIST_JOB = "listJob";
     public static final String LIST_JOB_BY_LABELS_OPERATION = "listJobByLabels";
     public static final String GET_JOB_OPERATION = "getJob";

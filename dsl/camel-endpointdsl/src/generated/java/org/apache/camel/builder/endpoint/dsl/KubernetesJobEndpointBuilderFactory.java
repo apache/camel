@@ -35,1043 +35,11 @@ public interface KubernetesJobEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Kubernetes Job component.
-     */
-    public interface KubernetesJobEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedKubernetesJobEndpointConsumerBuilder advanced() {
-            return (AdvancedKubernetesJobEndpointConsumerBuilder) this;
-        }
-        /**
-         * The Kubernetes API Version to use.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param apiVersion the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder apiVersion(
-                String apiVersion) {
-            doSetProperty("apiVersion", apiVersion);
-            return this;
-        }
-        /**
-         * The dns domain, used for ServiceCall EIP.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param dnsDomain the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder dnsDomain(String dnsDomain) {
-            doSetProperty("dnsDomain", dnsDomain);
-            return this;
-        }
-        /**
-         * Default KubernetesClient to use if provided.
-         * 
-         * The option is a:
-         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param kubernetesClient the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder kubernetesClient(
-                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
-            doSetProperty("kubernetesClient", kubernetesClient);
-            return this;
-        }
-        /**
-         * Default KubernetesClient to use if provided.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param kubernetesClient the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder kubernetesClient(
-                String kubernetesClient) {
-            doSetProperty("kubernetesClient", kubernetesClient);
-            return this;
-        }
-        /**
-         * The namespace.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param namespace the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder namespace(String namespace) {
-            doSetProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The port name, used for ServiceCall EIP.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param portName the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder portName(String portName) {
-            doSetProperty("portName", portName);
-            return this;
-        }
-        /**
-         * The port protocol, used for ServiceCall EIP.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: tcp
-         * Group: common
-         * 
-         * @param portProtocol the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder portProtocol(
-                String portProtocol) {
-            doSetProperty("portProtocol", portProtocol);
-            return this;
-        }
-        /**
-         * The Consumer CRD Resource Group we would like to watch.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param crdGroup the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder crdGroup(String crdGroup) {
-            doSetProperty("crdGroup", crdGroup);
-            return this;
-        }
-        /**
-         * The Consumer CRD Resource name we would like to watch.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param crdName the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder crdName(String crdName) {
-            doSetProperty("crdName", crdName);
-            return this;
-        }
-        /**
-         * The Consumer CRD Resource Plural we would like to watch.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param crdPlural the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder crdPlural(String crdPlural) {
-            doSetProperty("crdPlural", crdPlural);
-            return this;
-        }
-        /**
-         * The Consumer CRD Resource Scope we would like to watch.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param crdScope the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder crdScope(String crdScope) {
-            doSetProperty("crdScope", crdScope);
-            return this;
-        }
-        /**
-         * The Consumer CRD Resource Version we would like to watch.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param crdVersion the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder crdVersion(
-                String crdVersion) {
-            doSetProperty("crdVersion", crdVersion);
-            return this;
-        }
-        /**
-         * The Consumer Label key when watching at some resources.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param labelKey the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder labelKey(String labelKey) {
-            doSetProperty("labelKey", labelKey);
-            return this;
-        }
-        /**
-         * The Consumer Label value when watching at some resources.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param labelValue the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder labelValue(
-                String labelValue) {
-            doSetProperty("labelValue", labelValue);
-            return this;
-        }
-        /**
-         * The Consumer pool size.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param poolSize the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder poolSize(int poolSize) {
-            doSetProperty("poolSize", poolSize);
-            return this;
-        }
-        /**
-         * The Consumer pool size.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param poolSize the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder poolSize(String poolSize) {
-            doSetProperty("poolSize", poolSize);
-            return this;
-        }
-        /**
-         * The Consumer Resource Name we would like to watch.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param resourceName the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder resourceName(
-                String resourceName) {
-            doSetProperty("resourceName", resourceName);
-            return this;
-        }
-        /**
-         * The CA Cert Data.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param caCertData the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder caCertData(
-                String caCertData) {
-            doSetProperty("caCertData", caCertData);
-            return this;
-        }
-        /**
-         * The CA Cert File.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param caCertFile the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder caCertFile(
-                String caCertFile) {
-            doSetProperty("caCertFile", caCertFile);
-            return this;
-        }
-        /**
-         * The Client Cert Data.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientCertData the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder clientCertData(
-                String clientCertData) {
-            doSetProperty("clientCertData", clientCertData);
-            return this;
-        }
-        /**
-         * The Client Cert File.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientCertFile the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder clientCertFile(
-                String clientCertFile) {
-            doSetProperty("clientCertFile", clientCertFile);
-            return this;
-        }
-        /**
-         * The Key Algorithm used by the client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientKeyAlgo the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder clientKeyAlgo(
-                String clientKeyAlgo) {
-            doSetProperty("clientKeyAlgo", clientKeyAlgo);
-            return this;
-        }
-        /**
-         * The Client Key data.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientKeyData the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder clientKeyData(
-                String clientKeyData) {
-            doSetProperty("clientKeyData", clientKeyData);
-            return this;
-        }
-        /**
-         * The Client Key file.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientKeyFile the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder clientKeyFile(
-                String clientKeyFile) {
-            doSetProperty("clientKeyFile", clientKeyFile);
-            return this;
-        }
-        /**
-         * The Client Key Passphrase.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientKeyPassphrase the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder clientKeyPassphrase(
-                String clientKeyPassphrase) {
-            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
-            return this;
-        }
-        /**
-         * The Auth Token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param oauthToken the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder oauthToken(
-                String oauthToken) {
-            doSetProperty("oauthToken", oauthToken);
-            return this;
-        }
-        /**
-         * Password to connect to Kubernetes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Define if the certs we used are trusted anyway or not.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustCerts the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder trustCerts(
-                Boolean trustCerts) {
-            doSetProperty("trustCerts", trustCerts);
-            return this;
-        }
-        /**
-         * Define if the certs we used are trusted anyway or not.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustCerts the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder trustCerts(
-                String trustCerts) {
-            doSetProperty("trustCerts", trustCerts);
-            return this;
-        }
-        /**
-         * Username to connect to Kubernetes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param username the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointConsumerBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Kubernetes Job component.
-     */
-    public interface AdvancedKubernetesJobEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default KubernetesJobEndpointConsumerBuilder basic() {
-            return (KubernetesJobEndpointConsumerBuilder) this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
-                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
-                org.apache.camel.ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Connection timeout in milliseconds to use when making requests to the
-         * Kubernetes API server.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
-                Integer connectionTimeout) {
-            doSetProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
-         * Connection timeout in milliseconds to use when making requests to the
-         * Kubernetes API server.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
-                String connectionTimeout) {
-            doSetProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the Kubernetes Job component.
-     */
-    public interface KubernetesJobEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedKubernetesJobEndpointProducerBuilder advanced() {
-            return (AdvancedKubernetesJobEndpointProducerBuilder) this;
-        }
-        /**
-         * The Kubernetes API Version to use.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param apiVersion the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder apiVersion(
-                String apiVersion) {
-            doSetProperty("apiVersion", apiVersion);
-            return this;
-        }
-        /**
-         * The dns domain, used for ServiceCall EIP.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param dnsDomain the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder dnsDomain(String dnsDomain) {
-            doSetProperty("dnsDomain", dnsDomain);
-            return this;
-        }
-        /**
-         * Default KubernetesClient to use if provided.
-         * 
-         * The option is a:
-         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param kubernetesClient the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder kubernetesClient(
-                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
-            doSetProperty("kubernetesClient", kubernetesClient);
-            return this;
-        }
-        /**
-         * Default KubernetesClient to use if provided.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param kubernetesClient the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder kubernetesClient(
-                String kubernetesClient) {
-            doSetProperty("kubernetesClient", kubernetesClient);
-            return this;
-        }
-        /**
-         * The namespace.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param namespace the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder namespace(String namespace) {
-            doSetProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The port name, used for ServiceCall EIP.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param portName the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder portName(String portName) {
-            doSetProperty("portName", portName);
-            return this;
-        }
-        /**
-         * The port protocol, used for ServiceCall EIP.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: tcp
-         * Group: common
-         * 
-         * @param portProtocol the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder portProtocol(
-                String portProtocol) {
-            doSetProperty("portProtocol", portProtocol);
-            return this;
-        }
-        /**
-         * Producer operation to do on Kubernetes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param operation the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * The CA Cert Data.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param caCertData the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder caCertData(
-                String caCertData) {
-            doSetProperty("caCertData", caCertData);
-            return this;
-        }
-        /**
-         * The CA Cert File.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param caCertFile the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder caCertFile(
-                String caCertFile) {
-            doSetProperty("caCertFile", caCertFile);
-            return this;
-        }
-        /**
-         * The Client Cert Data.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientCertData the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder clientCertData(
-                String clientCertData) {
-            doSetProperty("clientCertData", clientCertData);
-            return this;
-        }
-        /**
-         * The Client Cert File.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientCertFile the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder clientCertFile(
-                String clientCertFile) {
-            doSetProperty("clientCertFile", clientCertFile);
-            return this;
-        }
-        /**
-         * The Key Algorithm used by the client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientKeyAlgo the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder clientKeyAlgo(
-                String clientKeyAlgo) {
-            doSetProperty("clientKeyAlgo", clientKeyAlgo);
-            return this;
-        }
-        /**
-         * The Client Key data.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientKeyData the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder clientKeyData(
-                String clientKeyData) {
-            doSetProperty("clientKeyData", clientKeyData);
-            return this;
-        }
-        /**
-         * The Client Key file.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientKeyFile the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder clientKeyFile(
-                String clientKeyFile) {
-            doSetProperty("clientKeyFile", clientKeyFile);
-            return this;
-        }
-        /**
-         * The Client Key Passphrase.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientKeyPassphrase the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder clientKeyPassphrase(
-                String clientKeyPassphrase) {
-            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
-            return this;
-        }
-        /**
-         * The Auth Token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param oauthToken the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder oauthToken(
-                String oauthToken) {
-            doSetProperty("oauthToken", oauthToken);
-            return this;
-        }
-        /**
-         * Password to connect to Kubernetes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Define if the certs we used are trusted anyway or not.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustCerts the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder trustCerts(
-                Boolean trustCerts) {
-            doSetProperty("trustCerts", trustCerts);
-            return this;
-        }
-        /**
-         * Define if the certs we used are trusted anyway or not.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustCerts the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder trustCerts(
-                String trustCerts) {
-            doSetProperty("trustCerts", trustCerts);
-            return this;
-        }
-        /**
-         * Username to connect to Kubernetes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param username the value to set
-         * @return the dsl builder
-         */
-        default KubernetesJobEndpointProducerBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Kubernetes Job component.
-     */
-    public interface AdvancedKubernetesJobEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default KubernetesJobEndpointProducerBuilder basic() {
-            return (KubernetesJobEndpointProducerBuilder) this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointProducerBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointProducerBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Connection timeout in milliseconds to use when making requests to the
-         * Kubernetes API server.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
-                Integer connectionTimeout) {
-            doSetProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
-         * Connection timeout in milliseconds to use when making requests to the
-         * Kubernetes API server.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
-                String connectionTimeout) {
-            doSetProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-    }
-
-    /**
      * Builder for endpoint for the Kubernetes Job component.
      */
     public interface KubernetesJobEndpointBuilder
             extends
-                KubernetesJobEndpointConsumerBuilder,
-                KubernetesJobEndpointProducerBuilder {
+                EndpointProducerBuilder {
         default AdvancedKubernetesJobEndpointBuilder advanced() {
             return (AdvancedKubernetesJobEndpointBuilder) this;
         }
@@ -1080,7 +48,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param apiVersion the value to set
          * @return the dsl builder
@@ -1094,7 +62,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param dnsDomain the value to set
          * @return the dsl builder
@@ -1109,7 +77,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param kubernetesClient the value to set
          * @return the dsl builder
@@ -1125,7 +93,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param kubernetesClient the value to set
          * @return the dsl builder
@@ -1140,7 +108,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param namespace the value to set
          * @return the dsl builder
@@ -1150,11 +118,25 @@ public interface KubernetesJobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Producer operation to do on Kubernetes.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default KubernetesJobEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * The port name, used for ServiceCall EIP.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param portName the value to set
          * @return the dsl builder
@@ -1169,7 +151,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
-         * Group: common
+         * Group: producer
          * 
          * @param portProtocol the value to set
          * @return the dsl builder
@@ -1371,10 +353,58 @@ public interface KubernetesJobEndpointBuilderFactory {
      */
     public interface AdvancedKubernetesJobEndpointBuilder
             extends
-                AdvancedKubernetesJobEndpointConsumerBuilder,
-                AdvancedKubernetesJobEndpointProducerBuilder {
+                EndpointProducerBuilder {
         default KubernetesJobEndpointBuilder basic() {
             return (KubernetesJobEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKubernetesJobEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKubernetesJobEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
         }
         /**
          * Connection timeout in milliseconds to use when making requests to the
@@ -1489,7 +519,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -1502,7 +532,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -1515,7 +545,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesJobName}.
          */
         public String kubernetesJobName() {
-            return "KubernetesJobName";
+            return "CamelKubernetesJobName";
         }
 
         /**
@@ -1529,7 +559,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesJobSpec}.
          */
         public String kubernetesJobSpec() {
-            return "KubernetesJobSpec";
+            return "CamelKubernetesJobSpec";
         }
 
         /**
@@ -1542,7 +572,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesJobLabels}.
          */
         public String kubernetesJobLabels() {
-            return "KubernetesJobLabels";
+            return "CamelKubernetesJobLabels";
         }
     }
     static KubernetesJobEndpointBuilder endpointBuilder(

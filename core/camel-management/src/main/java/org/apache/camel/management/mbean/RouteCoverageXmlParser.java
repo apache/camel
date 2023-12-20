@@ -186,7 +186,7 @@ public final class RouteCoverageXmlParser {
              * outputs text accumulated under the current node
              */
             private void addTextIfNeeded() {
-                if (textBuffer.length() > 0) {
+                if (!textBuffer.isEmpty()) {
                     final Element el = elementStack.peek();
                     final Node textNode = doc.createTextNode(textBuffer.toString());
                     el.appendChild(textNode);

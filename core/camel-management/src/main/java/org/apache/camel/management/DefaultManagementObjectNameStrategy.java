@@ -289,7 +289,12 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_PROCESSOR).append(",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
+        String id = definition.getId();
+        String prefix = definition.getNodePrefixId();
+        if (prefix != null) {
+            id = prefix + id;
+        }
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
         return createObjectName(buffer);
     }
 
@@ -300,7 +305,12 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_STEP).append(",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
+        String id = definition.getId();
+        String prefix = definition.getNodePrefixId();
+        if (prefix != null) {
+            id = prefix + id;
+        }
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
         return createObjectName(buffer);
     }
 
@@ -342,6 +352,12 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     public ObjectName getObjectNameForTracer(CamelContext context, Service tracer) throws MalformedObjectNameException {
         // use the simple name of the class as the mbean name (eg Tracer, BacklogTracer, BacklogDebugger)
         String name = tracer.getClass().getSimpleName();
+        // backwards compatible names
+        if ("DefaultBacklogDebugger".equals(name)) {
+            name = "BacklogDebugger";
+        } else if ("DefaultBacklogTracer".equals(name)) {
+            name = "BacklogTracer";
+        }
 
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");

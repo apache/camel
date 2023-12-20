@@ -21,7 +21,7 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(27);
+        Set<String> props = new HashSet<>(31);
         props.add("async");
         props.add("attachmentMultipartBinding");
         props.add("bridgeEndpoint");
@@ -36,11 +36,15 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
         props.add("httpBinding");
         props.add("httpMethodRestrict");
         props.add("lazyStartProducer");
+        props.add("logException");
         props.add("mapHttpMessageBody");
         props.add("mapHttpMessageFormUrlEncodedBody");
         props.add("mapHttpMessageHeaders");
         props.add("matchOnUriPrefix");
         props.add("muteException");
+        props.add("oauth2ClientId");
+        props.add("oauth2ClientSecret");
+        props.add("oauth2TokenEndpoint");
         props.add("optionsEnabled");
         props.add("responseBufferSize");
         props.add("sendToAll");
@@ -50,7 +54,10 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
         props.add("transferException");
         props.add("useStreaming");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("oauth2ClientId");
+        secretProps.add("oauth2ClientSecret");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 

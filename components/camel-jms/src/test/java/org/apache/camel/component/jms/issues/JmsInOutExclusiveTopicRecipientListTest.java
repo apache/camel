@@ -24,6 +24,7 @@ import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -44,14 +45,15 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
     public void testJmsInOutExclusiveTopicTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        Thread.sleep(1000); // instantiate JmsInOutExclusiveTopicRecipientListTest.reply queue
+        // instantiate JmsInOutExclusiveTopicRecipientListTest.reply queue
+        Awaitility.await().untilAsserted(() -> {
+            String out = template.requestBodyAndHeader("direct:start", "Camel", "whereTo",
+                    "activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicRecipientListTest.reply",
+                    String.class);
+            assertEquals("Bye Camel", out);
 
-        String out = template.requestBodyAndHeader("direct:start", "Camel", "whereTo",
-                "activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicRecipientListTest.reply",
-                String.class);
-        assertEquals("Bye Camel", out);
-
-        MockEndpoint.assertIsSatisfied(context);
+            MockEndpoint.assertIsSatisfied(context);
+        });
     }
 
     @Override
@@ -76,8 +78,6 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
                             log.info("ReplyTo: {}", replyTo);
                             log.info("CorrelationID: {}", cid);
                             if (replyTo != null && cid != null) {
-                                // wait a bit before sending back
-                                Thread.sleep(1000);
                                 log.info("Sending back reply message on {}", replyTo);
                                 template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(),
                                         "JMSCorrelationID", cid);

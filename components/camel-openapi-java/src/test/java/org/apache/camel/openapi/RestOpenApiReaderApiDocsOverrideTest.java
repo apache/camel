@@ -22,7 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,20 +57,20 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         };
     }
 
-    @Test
-    public void testReaderRead() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    public void testReaderRead(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
-        config.setVersion("2.0");
+        config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
-        OpenAPI openApi = null;
-        openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
 
         assertNotNull(openApi);
-        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
         assertFalse(json.contains("\"/hello/bye\""));
@@ -79,28 +80,4 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
 
         context.stop();
     }
-
-    @Test
-    public void testReaderReadV3() throws Exception {
-        BeanConfig config = new BeanConfig();
-        config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
-        config.setBasePath("/api");
-        RestOpenApiReader reader = new RestOpenApiReader();
-        OpenAPI openApi = null;
-        openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
-
-        assertNotNull(openApi);
-        String json = io.swagger.v3.core.util.Json.pretty(openApi);
-        log.info(json);
-
-        assertFalse(json.contains("\"/hello/bye\""));
-        assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
-        assertTrue(json.contains("\"/hello/bye/{name}\""));
-        assertFalse(json.contains("\"/hello/hi/{name}\""));
-
-        context.stop();
-    }
-
 }

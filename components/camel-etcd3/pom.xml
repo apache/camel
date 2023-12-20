@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-etcd3</artifactId>
@@ -36,6 +36,10 @@
         <firstVersion>3.5.0</firstVersion>
         <label>database</label>
         <supportLevel>Preview</supportLevel>
+
+        <!-- Etcd3 container is not available on these platforms -->
+        <skipTests.aarch64>true</skipTests.aarch64>
+        <skipITs.aarch64>true</skipITs.aarch64>
     </properties>
 
     <dependencies>

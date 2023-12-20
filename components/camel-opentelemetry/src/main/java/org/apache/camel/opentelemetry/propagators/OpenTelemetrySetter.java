@@ -20,6 +20,7 @@ import io.opentelemetry.context.propagation.TextMapSetter;
 import org.apache.camel.tracing.InjectAdapter;
 
 public class OpenTelemetrySetter implements TextMapSetter<InjectAdapter> {
+
     @Override
     public void set(InjectAdapter adapter, String key, String value) {
         adapter.put(key, value);

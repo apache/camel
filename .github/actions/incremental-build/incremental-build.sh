@@ -22,8 +22,14 @@ maxNumberOfTestableProjects=50
 
 function findProjectRoot () {
   local path=${1}
-  while [[ "$path" != "." && ! -e "$path/pom.xml" ]]; do
-    path=$(dirname $path)
+  while [[ "$path" != "." ]]; do
+    if [[ ! -e "$path/pom.xml" ]] ; then
+      path=$(dirname $path)
+    elif [[ $(dirname $path) == */src/it ]] ; then
+      path=$(dirname $(dirname $path))
+    else
+      break
+    fi
   done
   echo "$path"
 }
@@ -58,7 +64,7 @@ function main() {
       local projectRoot
       projectRoot=$(findProjectRoot ${project})
       if [[ ${projectRoot} = "." ]] ; then
-        echo "There root project is affected, so a complete build is triggered"
+        echo "The root project is affected, so a complete build is triggered"
         buildAll=true
       elif [[ ${projectRoot} != "${lastProjectRoot}" ]] ; then
         (( totalAffected ++ ))
@@ -138,9 +144,11 @@ function main() {
     fi
   fi
 
-  echo "Processing surefire and failsafe reports to create the summary"
-  echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |"  > "$GITHUB_STEP_SUMMARY"
-  find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+  if [[ ${ret} -ne 0 ]] ; then
+    echo "Processing surefire and failsafe reports to create the summary"
+    echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |"  > "$GITHUB_STEP_SUMMARY"
+    find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+  fi
 
   exit $ret
 }

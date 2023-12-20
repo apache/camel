@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class CustomFiltersTest extends BaseJettyTest {
              CloseableHttpResponse response = client.execute(httppost)) {
 
             assertEquals(200, response.getCode(), "Get a wrong response status");
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
             assertEquals("This is a test response", responseString, "Get a wrong result");
             assertEquals("true", response.getFirstHeader("MyTestFilter").getValue(), "Did not use custom multipart filter");

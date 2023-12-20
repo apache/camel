@@ -24,6 +24,8 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Array;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -40,7 +42,6 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
@@ -588,6 +589,14 @@ public final class MessageHelper {
             if (type != null) {
                 sb.append(" type=\"").append(type).append("\"");
             }
+            if (body instanceof Collection) {
+                long size = ((Collection<?>) body).size();
+                sb.append(" size=\"").append(size).append("\"");
+            }
+            if (body != null && body.getClass().isArray()) {
+                int size = Array.getLength(body);
+                sb.append(" size=\"").append(size).append("\"");
+            }
             if (body instanceof StreamCache) {
                 long pos = ((StreamCache) body).position();
                 if (pos != -1) {
@@ -684,7 +693,7 @@ public final class MessageHelper {
         // must not cause new exceptions so run this in a try catch block
         try {
             return doDumpMessageHistoryStacktrace(exchange, exchangeFormatter, logStackTrace);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore as the body is for logging purpose
             return "";
         }
@@ -707,7 +716,7 @@ public final class MessageHelper {
             label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(exchange.getFromEndpoint().getEndpointUri(), 100))
                     + "]";
         }
-        long elapsed = new StopWatch(exchange.getCreated()).taken();
+        final long elapsed = exchange.getClock().elapsed();
 
         List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
         boolean enabled = list != null;
@@ -759,9 +768,8 @@ public final class MessageHelper {
                 // fast
                 label = URISupport.sanitizeUri(StringHelper.limitLength(label, 100));
                 // we do not have elapsed time
-                elapsed = 0;
                 sb.append("\t...\n");
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, 0));
                 sb.append("\n");
             }
         } else {
@@ -781,9 +789,8 @@ public final class MessageHelper {
                 // characters in the sanitizeUri method and will be reasonably
                 // fast
                 label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
-                elapsed = history.getElapsed();
 
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, history.getElapsed()));
                 sb.append("\n");
             }
         }
@@ -995,6 +1002,14 @@ public final class MessageHelper {
             String type = ObjectHelper.classCanonicalName(body);
             if (type != null) {
                 jb.put("type", type);
+            }
+            if (body instanceof Collection) {
+                long size = ((Collection<?>) body).size();
+                jb.put("size", size);
+            }
+            if (body != null && body.getClass().isArray()) {
+                int size = Array.getLength(body);
+                jb.put("size", size);
             }
             if (body instanceof StreamCache) {
                 long pos = ((StreamCache) body).position();

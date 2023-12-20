@@ -27,13 +27,16 @@ import java.util.TreeMap;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.support.SourceLoader;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.main.download.AutoConfigureDownloadListener;
 import org.apache.camel.main.download.BasePackageScanDownloadListener;
+import org.apache.camel.main.download.CamelCustomClassLoader;
 import org.apache.camel.main.download.CircuitBreakerDownloader;
 import org.apache.camel.main.download.CommandLineDependencyDownloader;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -56,20 +59,27 @@ import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
+import org.apache.camel.main.download.PromptPropertyPlaceholderSource;
+import org.apache.camel.main.download.StubBeanRepository;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
+import org.apache.camel.main.util.ClipboardReloadStrategy;
+import org.apache.camel.main.util.ExtraClassesClassLoader;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
 import org.apache.camel.main.xml.blueprint.BlueprintXmlBeansHandler;
 import org.apache.camel.main.xml.spring.SpringXmlBeansHandler;
+import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RoutesLoader;
@@ -79,6 +89,7 @@ import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.tooling.maven.MavenGav;
 
 /**
@@ -325,6 +336,8 @@ public class KameletMain extends MainCommandLineSupport {
         if (getCamelContext() != null) {
             getCamelContext().stop();
         }
+        springXmlBeansHandler.stop();
+        blueprintXmlBeansHandler.stop();
     }
 
     @Override
@@ -342,40 +355,48 @@ public class KameletMain extends MainCommandLineSupport {
 
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
-        if (download) {
-            ClassLoader dynamicCL = createApplicationContextClassLoader();
-            answer.setApplicationContextClassLoader(dynamicCL);
-            PluginHelper.getPackageScanClassResolver(answer).addClassLoader(dynamicCL);
-            PluginHelper.getPackageScanResourceResolver(answer).addClassLoader(dynamicCL);
+        // setup backlog recorder from very start
+        answer.getCamelContextExtension().setStartupStepRecorder(new BacklogStartupStepRecorder());
 
-            KnownReposResolver known = new KnownReposResolver(camelContext);
-            known.loadKnownDependencies();
-            MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-            downloader.setKnownReposResolver(known);
-            downloader.setClassLoader(dynamicCL);
-            downloader.setCamelContext(answer);
-            downloader.setVerbose(verbose);
-            downloader.setRepos(repos);
-            downloader.setFresh(fresh);
-            downloader.setMavenSettings(mavenSettings);
-            downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
-            if (downloadListener != null) {
-                downloader.addDownloadListener(downloadListener);
-            }
-            downloader.addDownloadListener(new AutoConfigureDownloadListener());
-            downloader.addArtifactDownloadListener(new TypeConverterLoaderDownloadListener());
-            downloader.addArtifactDownloadListener(new BasePackageScanDownloadListener());
-
-            // register as extension
-            try {
-                answer.addService(downloader);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-
-            // in case we use circuit breakers
-            CircuitBreakerDownloader.registerDownloadReifiers();
+        boolean prompt = "true".equals(getInitialProperties().get("camel.jbang.prompt"));
+        if (prompt) {
+            answer.getPropertiesComponent().addPropertiesSource(new PromptPropertyPlaceholderSource());
         }
+
+        ClassLoader dynamicCL = createApplicationContextClassLoader(answer);
+        answer.setApplicationContextClassLoader(dynamicCL);
+        PluginHelper.getPackageScanClassResolver(answer).addClassLoader(dynamicCL);
+        PluginHelper.getPackageScanResourceResolver(answer).addClassLoader(dynamicCL);
+
+        KnownReposResolver knownRepos = new KnownReposResolver();
+        knownRepos.loadKnownDependencies();
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setDownload(download);
+        downloader.setKnownReposResolver(knownRepos);
+        downloader.setClassLoader(dynamicCL);
+        downloader.setCamelContext(answer);
+        downloader.setVerbose(verbose);
+        downloader.setRepos(repos);
+        downloader.setFresh(fresh);
+        downloader.setMavenSettings(mavenSettings);
+        downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
+        if (downloadListener != null) {
+            downloader.addDownloadListener(downloadListener);
+        }
+        downloader.addDownloadListener(new AutoConfigureDownloadListener());
+        downloader.addArtifactDownloadListener(new TypeConverterLoaderDownloadListener());
+        downloader.addArtifactDownloadListener(new BasePackageScanDownloadListener());
+
+        // register as extension
+        try {
+            answer.addService(downloader);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+
+        // in case we use circuit breakers
+        CircuitBreakerDownloader.registerDownloadReifiers();
+
         if (silent || "*".equals(stubPattern)) {
             // turn off auto-wiring when running in silent mode (or stub = *)
             mainConfigurationProperties.setAutowiredEnabled(false);
@@ -389,6 +410,10 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         answer.getCamelContextExtension().setRegistry(registry);
+        if (silent || "*".equals(stubPattern)) {
+            registry.addBeanRepository(new StubBeanRepository(stubPattern));
+        }
+
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
         // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
@@ -439,16 +464,38 @@ public class KameletMain extends MainCommandLineSupport {
         configure().withJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
         configure().withShutdownLogInflightExchangesOnTimeout(false);
         configure().withShutdownTimeout(10);
+        configure().withStartupRecorder("backlog");
 
         boolean tracing = "true".equals(getInitialProperties().get("camel.jbang.backlogTracing"));
         if (tracing) {
             configure().withBacklogTracing(true);
         }
-
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health) {
+            configure().health().withEnabled(true);
             configure().httpServer().withEnabled(true);
             configure().httpServer().withHealthCheckEnabled(true);
+        }
+        boolean metrics = "true".equals(getInitialProperties().get("camel.jbang.metrics"));
+        if (metrics) {
+            configure().metrics()
+                    .witheEnableRouteEventNotifier(true)
+                    .withEnableMessageHistory(true)
+                    .withEnableExchangeEventNotifier(true)
+                    .withEnableRoutePolicy(true).withEnabled(true);
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withMetricsEnabled(true);
+        }
+        boolean ignoreLoading = "true".equals(getInitialProperties().get("camel.jbang.ignoreLoadingError"));
+        if (ignoreLoading) {
+            configure().withRoutesCollectorIgnoreLoadingError(true);
+        }
+        // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
+        boolean transform = "true".equals(getInitialProperties().get("camel.jbang.transform"));
+        if (transform) {
+            // we just want to transform, so disable all processors
+            answer.getGlobalOptions().put(ProcessorReifier.DISABLE_ALL_PROCESSORS, "true");
+            blueprintXmlBeansHandler.setTransform(true);
         }
         if (silent) {
             // silent should not include http server
@@ -464,7 +511,7 @@ public class KameletMain extends MainCommandLineSupport {
             if (jfrProfile != null) {
                 recorder.setRecordingProfile(jfrProfile.toString());
             }
-            answer.setStartupStepRecorder(recorder);
+            answer.getCamelContextExtension().setStartupStepRecorder(recorder);
         }
 
         // special for source compilation to a specific package based on Maven GAV
@@ -486,48 +533,45 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.addService(new CommandLineDependencyDownloader(answer, dependencies.toString()));
             }
 
-            KnownDependenciesResolver known = new KnownDependenciesResolver(answer);
-            known.loadKnownDependencies();
-            if (download) {
-                DependencyDownloaderPropertyBindingListener listener
-                        = new DependencyDownloaderPropertyBindingListener(answer, known);
-                answer.getCamelContextExtension().getRegistry()
-                        .bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
-                answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
-                        new DependencyDownloaderStrategy(answer));
+            KnownDependenciesResolver knownDeps = new KnownDependenciesResolver(answer);
+            knownDeps.loadKnownDependencies();
+            DependencyDownloaderPropertyBindingListener listener
+                    = new DependencyDownloaderPropertyBindingListener(answer, knownDeps);
+            answer.getCamelContextExtension().getRegistry()
+                    .bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
+            answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
+                    new DependencyDownloaderStrategy(answer));
 
-                // download class-resolver
-                ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, known);
-                answer.setClassResolver(classResolver);
-                // re-create factory finder with download class-resolver
-                FactoryFinderResolver ffr = PluginHelper.getFactoryFinderResolver(answer);
-                FactoryFinder ff = ffr.resolveBootstrapFactoryFinder(classResolver);
-                answer.getCamelContextExtension().setBootstrapFactoryFinder(ff);
-                ff = ffr.resolveDefaultFactoryFinder(classResolver);
-                answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
+            // download class-resolver
+            ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, knownDeps);
+            answer.setClassResolver(classResolver);
+            // re-create factory finder with download class-resolver
+            FactoryFinderResolver ffr = PluginHelper.getFactoryFinderResolver(answer);
+            FactoryFinder ff = ffr.resolveBootstrapFactoryFinder(classResolver);
+            answer.getCamelContextExtension().setBootstrapFactoryFinder(ff);
+            ff = ffr.resolveDefaultFactoryFinder(classResolver);
+            answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
 
-                answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
-                        new DependencyDownloaderComponentResolver(answer, stubPattern, silent));
-                answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
-                        new DependencyDownloaderUriFactoryResolver(answer));
-                answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
-                        new DependencyDownloaderDataFormatResolver(answer));
-                answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
-                        new DependencyDownloaderLanguageResolver(answer));
-                answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
-                        new DependencyDownloaderResourceLoader(answer));
-            }
+            answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
+                    new DependencyDownloaderComponentResolver(answer, stubPattern, silent));
+            answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
+                    new DependencyDownloaderUriFactoryResolver(answer));
+            answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
+                    new DependencyDownloaderDataFormatResolver(answer));
+            answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
+                    new DependencyDownloaderLanguageResolver(answer));
+            answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
+                    new DependencyDownloaderResourceLoader(answer));
+
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stubPattern, silent));
-            if (download) {
-                Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
-                if (kameletsVersion != null) {
-                    answer.addService(new DependencyDownloaderKamelet(answer, kameletsVersion.toString()));
-                } else {
-                    answer.addService(new DependencyDownloaderKamelet(answer));
-                }
-                answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
-                        new DownloadModelineParser(answer));
+            Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
+            if (kameletsVersion != null) {
+                answer.addService(new DependencyDownloaderKamelet(answer, kameletsVersion.toString()));
+            } else {
+                answer.addService(new DependencyDownloaderKamelet(answer));
             }
+            answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
+                    new DownloadModelineParser(answer));
 
             // reloader
             String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
@@ -541,10 +585,28 @@ public class KameletMain extends MainCommandLineSupport {
                 RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
                 reloader.setPattern("*");
                 answer.addService(reloader);
+
+                // add source-dir as location for loading kamelets (if not already included)
+                String loc = this.initialProperties.getProperty("camel.component.kamelet.location");
+                String target = "file:" + sourceDir + ",";
+                if (!loc.contains(target)) {
+                    loc = target + loc;
+                    addInitialProperty("camel.component.kamelet.location", loc);
+                }
             } else {
                 answer.addService(new DefaultContextReloadStrategy());
             }
 
+            // special for reloading enabled on clipboard
+            String reloadDir = getInitialProperties().getProperty("camel.main.routesIncludePattern");
+            if (reloadDir != null && reloadDir.startsWith("file:.camel-jbang/generated-clipboard")) {
+                String name = reloadDir.substring(5);
+                File file = new File(name);
+                ClipboardReloadStrategy reloader = new ClipboardReloadStrategy(file);
+                answer.addService(reloader);
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(answer);
+                scheduler.schedulePeriodTask(reloader, 2000);
+            }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
@@ -556,18 +618,16 @@ public class KameletMain extends MainCommandLineSupport {
     protected void configurePropertiesService(CamelContext camelContext) throws Exception {
         super.configurePropertiesService(camelContext);
 
-        // properties functions, which can download
-        if (download) {
-            org.apache.camel.component.properties.PropertiesComponent pc
-                    = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
-            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(camelContext));
-        }
+        org.apache.camel.component.properties.PropertiesComponent pc
+                = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
+        pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(camelContext));
     }
 
     @Override
     protected void autoconfigure(CamelContext camelContext) throws Exception {
+        ClassLoader cl = createApplicationContextClassLoader(camelContext);
         // create classloader that may include additional JARs
-        camelContext.setApplicationContextClassLoader(createApplicationContextClassLoader());
+        camelContext.setApplicationContextClassLoader(cl);
         // auto configure camel afterwards
         super.autoconfigure(camelContext);
     }
@@ -577,10 +637,11 @@ public class KameletMain extends MainCommandLineSupport {
         return new KameletAutowiredLifecycleStrategy(camelContext, stubPattern, silent);
     }
 
-    protected ClassLoader createApplicationContextClassLoader() {
+    protected ClassLoader createApplicationContextClassLoader(CamelContext camelContext) {
         if (classLoader == null) {
             // jars need to be added to dependency downloader classloader
             List<String> jars = new ArrayList<>();
+            List<String> classes = new ArrayList<>();
             // create class loader (that are download capable) only once
             // any additional files to add to classpath
             ClassLoader parentCL = KameletMain.class.getClassLoader();
@@ -591,15 +652,22 @@ public class KameletMain extends MainCommandLineSupport {
                 for (String s : arr) {
                     if (s.endsWith(".jar")) {
                         jars.add(s);
+                    } else if (s.endsWith(".class")) {
+                        classes.add(s);
                     } else {
                         files.add(s);
                     }
+                }
+                if (!classes.isEmpty()) {
+                    parentCL = new ExtraClassesClassLoader(parentCL, classes);
+                    LOG.info("Additional classes added to classpath: {}", String.join(", ", classes));
                 }
                 if (!files.isEmpty()) {
                     parentCL = new ExtraFilesClassLoader(parentCL, files);
                     LOG.info("Additional files added to classpath: {}", String.join(", ", files));
                 }
             }
+            parentCL = new CamelCustomClassLoader(parentCL, camelContext);
             DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(parentCL);
             if (!jars.isEmpty()) {
                 for (String jar : jars) {
@@ -617,22 +685,30 @@ public class KameletMain extends MainCommandLineSupport {
 
     @Override
     protected void configureRoutesLoader(CamelContext camelContext) {
-        if (download) {
-            DependencyDownloaderRoutesLoader routesLoader;
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
 
-            Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
-            if (kameletsVersion != null) {
-                routesLoader = new DependencyDownloaderRoutesLoader(camelContext, kameletsVersion.toString());
-            } else {
-                routesLoader = new DependencyDownloaderRoutesLoader(camelContext);
+        // need to configure compile work dir as its used from routes loader when it discovered code to dynamic compile
+        String dir = getInitialProperties().getProperty("camel.jbang.compileWorkDir");
+        if (dir != null) {
+            CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+            if (cs == null) {
+                cs = new DefaultCompileStrategy();
+                ecc.addContextPlugin(CompileStrategy.class, cs);
             }
-
-            // use resolvers that can auto downloaded
-            camelContext.getCamelContextExtension()
-                    .addContextPlugin(RoutesLoader.class, routesLoader);
-        } else {
-            super.configureRoutesLoader(camelContext);
+            cs.setWorkDir(dir);
         }
+
+        DependencyDownloaderRoutesLoader routesLoader;
+        Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
+        if (kameletsVersion != null) {
+            routesLoader = new DependencyDownloaderRoutesLoader(camelContext, kameletsVersion.toString());
+        } else {
+            routesLoader = new DependencyDownloaderRoutesLoader(camelContext);
+        }
+        routesLoader.setIgnoreLoadingError(this.mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
+
+        // use resolvers that can auto downloaded
+        ecc.addContextPlugin(RoutesLoader.class, routesLoader);
     }
 
     /**
@@ -686,11 +762,6 @@ public class KameletMain extends MainCommandLineSupport {
     protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
         springXmlBeansHandler.createAndRegisterBeans(camelContext);
         blueprintXmlBeansHandler.createAndRegisterBeans(camelContext);
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        // TODO: manage BeanFactory as a field and clear the beans here
     }
 
     private static String getPid() {

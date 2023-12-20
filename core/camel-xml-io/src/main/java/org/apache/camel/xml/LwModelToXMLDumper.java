@@ -324,7 +324,48 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             if (type.startsWith("#class:")) {
                 type = type.substring(7);
             }
-            buffer.write(String.format("    <bean name=\"%s\" type=\"%s\">%n", b.getName(), type));
+            buffer.write(String.format("    <bean name=\"%s\" type=\"%s\"", b.getName(), type));
+            if (b.getFactoryBean() != null) {
+                buffer.write(String.format(" factoryBean=\"%s\"", b.getFactoryBean()));
+            }
+            if (b.getFactoryMethod() != null) {
+                buffer.write(String.format(" factoryMethod=\"%s\"", b.getFactoryMethod()));
+            }
+            if (b.getBuilderClass() != null) {
+                buffer.write(String.format(" builderClass=\"%s\"", b.getBuilderClass()));
+            }
+            if (b.getBuilderMethod() != null) {
+                buffer.write(String.format(" builderMethod=\"%s\"", b.getBuilderMethod()));
+            }
+            if (b.getInitMethod() != null) {
+                buffer.write(String.format(" initMethod=\"%s\"", b.getInitMethod()));
+            }
+            if (b.getDestroyMethod() != null) {
+                buffer.write(String.format(" destroyMethod=\"%s\"", b.getDestroyMethod()));
+            }
+            if (b.getScriptLanguage() != null) {
+                buffer.write(String.format(" scriptLanguage=\"%s\"", b.getScriptLanguage()));
+            }
+            if (b.getScript() != null) {
+                buffer.write(String.format("        <script>%n"));
+                buffer.write(b.getScript());
+                buffer.write("\n");
+                buffer.write(String.format("        </script>%n"));
+            }
+            buffer.write(">\n");
+            if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
+                buffer.write(String.format("        <constructors>%n"));
+                for (Map.Entry<Integer, Object> entry : b.getConstructors().entrySet()) {
+                    Integer idx = entry.getKey();
+                    Object value = entry.getValue();
+                    if (idx != null) {
+                        buffer.write(String.format("            <constructor index=\"%d\" value=\"%s\"/>%n", idx, value));
+                    } else {
+                        buffer.write(String.format("            <constructor value=\"%s\"/>%n", value));
+                    }
+                }
+                buffer.write(String.format("        </constructors>%n"));
+            }
             if (b.getProperties() != null && !b.getProperties().isEmpty()) {
                 buffer.write(String.format("        <properties>%n"));
                 for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {

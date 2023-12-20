@@ -197,7 +197,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         String pattern = getEndpoint().getAntInclude();
-        if (pattern == null || pattern.trim().isEmpty()) {
+        if (pattern == null || pattern.isBlank()) {
             return true;
         }
 

@@ -49,6 +49,8 @@ import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
+import org.apache.camel.tooling.maven.RemoteArtifactDownloadListener;
+import org.apache.camel.tooling.maven.RepositoryResolver;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +71,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private final Set<ArtifactDownloadListener> artifactDownloadListeners = new LinkedHashSet<>();
     private final Map<String, DownloadRecord> downloadRecords = new HashMap<>();
     private KnownReposResolver knownReposResolver;
+    private boolean download = true;
 
     // all maven-resolver work is delegated to camel-tooling-maven
     private MavenDownloader mavenDownloader;
@@ -116,6 +119,15 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
+    public RepositoryResolver getRepositoryResolver() {
+        if (mavenDownloader != null) {
+            return mavenDownloader.getRepositoryResolver();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public void addDownloadListener(DownloadListener downloadListener) {
         CamelContextAware.trySetCamelContext(downloadListener, getCamelContext());
         downloadListeners.add(downloadListener);
@@ -145,6 +157,14 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     @Override
     public void setFresh(boolean fresh) {
         this.fresh = fresh;
+    }
+
+    public boolean isDownload() {
+        return download;
+    }
+
+    public void setDownload(boolean download) {
+        this.download = download;
     }
 
     @Override
@@ -220,11 +240,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
         String gav = groupId + ":" + artifactId + ":" + version;
         threadPool.download(LOG, () -> {
-            if (verbose) {
-                LOG.info("Downloading: {}", gav);
-            } else {
-                LOG.debug("Downloading: {}", gav);
-            }
             List<String> deps = List.of(gav);
 
             // include Apache snapshot to make it easy to use upcoming releases
@@ -244,9 +259,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     transitively, useApacheSnaphots);
             List<File> files = new ArrayList<>();
             if (verbose) {
-                LOG.info("Resolved {} -> [{}]", gav, artifacts);
+                LOG.info("Resolved: {} -> [{}]", gav, artifacts);
             } else {
-                LOG.debug("Resolved {} -> [{}]", gav, artifacts);
+                LOG.debug("Resolved: {} -> [{}]", gav, artifacts);
             }
 
             for (MavenArtifact a : artifacts) {
@@ -292,21 +307,16 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     @Override
     public MavenArtifact downloadArtifact(String groupId, String artifactId, String version) {
         String gav = groupId + ":" + artifactId + ":" + version;
-        if (verbose) {
-            LOG.info("DownloadingArtifact: {}", gav);
-        } else {
-            LOG.debug("DownloadingArtifact: {}", gav);
-        }
         List<String> deps = List.of(gav);
 
         // include Apache snapshot to make it easy to use upcoming releases
-        boolean useApacheSnaphots = "org.apache.camel".equals(groupId) && version.contains("SNAPSHOT");
+        boolean useApacheSnapshots = "org.apache.camel".equals(groupId) && version.contains("SNAPSHOT");
 
-        List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, null, false, useApacheSnaphots);
+        List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, null, false, useApacheSnapshots);
         if (verbose) {
-            LOG.info("Resolved {} -> [{}]", gav, artifacts);
+            LOG.info("Resolved: {} -> [{}]", gav, artifacts);
         } else {
-            LOG.debug("Resolved {} -> [{}]", gav, artifacts);
+            LOG.debug("Resolved: {} -> [{}]", gav, artifacts);
         }
 
         if (artifacts.size() == 1) {
@@ -322,13 +332,12 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             String minimumVersion, String repo) {
         String gav = groupId + ":" + artifactId;
         if (verbose) {
-            LOG.info("DownloadAvailableVersions: {}", gav);
+            LOG.info("Downloading available versions: {}", gav);
         } else {
-            LOG.debug("DownloadAvailableVersions: {}", gav);
+            LOG.debug("Downloading available versions: {}", gav);
         }
 
         List<String[]> answer = new ArrayList<>();
-
         try {
             List<MavenGav> gavs = mavenDownloader.resolveAvailableVersions(groupId, artifactId, repo);
 
@@ -354,7 +363,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 }
             }
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
             throw new DownloadException(e.getMessage(), e);
         }
 
@@ -474,10 +482,30 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloaderImpl.setMavenSettingsSecurityLocation(mavenSettingsSecurity);
         mavenDownloaderImpl.setRepos(repos);
         mavenDownloaderImpl.setFresh(fresh);
+        mavenDownloaderImpl.setOffline(!download);
         // use listener to keep track of which JARs was downloaded from a remote Maven repo (and how long time it took)
-        mavenDownloaderImpl.setRemoteArtifactDownloadListener((groupId, artifactId, version, repoId, repoUrl, elapsed) -> {
-            String gav = groupId + ":" + artifactId + ":" + version;
-            downloadRecords.put(gav, new DownloadRecord(groupId, artifactId, version, repoId, repoUrl, elapsed));
+        mavenDownloaderImpl.setRemoteArtifactDownloadListener(new RemoteArtifactDownloadListener() {
+            @Override
+            public void artifactDownloading(String groupId, String artifactId, String version, String repoId, String repoUrl) {
+                String gav = groupId + ":" + artifactId + ":" + version;
+                if (verbose) {
+                    LOG.info("Downloading: {} from: {}@{}", gav, repoId, repoUrl);
+                } else {
+                    LOG.debug("Downloading: {} from: {}@{}", gav, repoId, repoUrl);
+                }
+            }
+
+            @Override
+            public void artifactDownloaded(
+                    String groupId, String artifactId, String version, String repoId, String repoUrl, long elapsed) {
+                String gav = groupId + ":" + artifactId + ":" + version;
+                downloadRecords.put(gav, new DownloadRecord(groupId, artifactId, version, repoId, repoUrl, elapsed));
+                if (verbose) {
+                    LOG.info("Downloaded: {} (took: {}ms) from: {}@{}", gav, elapsed, repoId, repoUrl);
+                } else {
+                    LOG.debug("Downloaded: {} (took: {}ms) from: {}@{}", gav, elapsed, repoId, repoUrl);
+                }
+            }
         });
         ServiceHelper.buildService(mavenDownloaderImpl);
 

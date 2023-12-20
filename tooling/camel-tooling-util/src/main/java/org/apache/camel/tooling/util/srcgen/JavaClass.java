@@ -624,7 +624,7 @@ public class JavaClass {
         String rem = text;
 
         if (rem != null) {
-            while (rem.length() > 0) {
+            while (!rem.isEmpty()) {
                 int idx = rem.length() >= len ? rem.substring(0, len).lastIndexOf(' ') : -1;
                 int idx2 = rem.indexOf('\n');
                 if (idx2 >= 0 && (idx < 0 || idx2 < idx || idx2 < len)) {

@@ -18,8 +18,6 @@ package org.apache.camel.itest.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,11 +60,8 @@ public class JmsConsumerShutdownTest {
         end.setResultWaitTime(1000);
 
         // direct:dir route always fails
-        exception.whenAnyExchangeReceived(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                throw new Exception("Kaboom!");
-            }
+        exception.whenAnyExchangeReceived(exchange -> {
+            throw new Exception("Kaboom!");
         });
 
         activemq.sendBody("jms:start", "Hello");
@@ -84,11 +79,8 @@ public class JmsConsumerShutdownTest {
         end.setResultWaitTime(1000);
 
         // direct:dir route always fails
-        exception.whenAnyExchangeReceived(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                throw new Exception("Kaboom!");
-            }
+        exception.whenAnyExchangeReceived(exchange -> {
+            throw new Exception("Kaboom!");
         });
 
         seda.sendBody("seda:start", "Hello");

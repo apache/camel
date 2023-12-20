@@ -139,6 +139,9 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
             ObjectListing objectListing = obsClient.listObjects(request);
 
+            // okay we have some response from huawei so lets mark the consumer as ready
+            forceConsumerAsReady();
+
             // if the list is truncated, set marker for next poll. Otherwise, set marker to null
             if (objectListing.isTruncated()) {
                 marker = objectListing.getNextMarker();
@@ -187,8 +190,6 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Create exchanges for each OBS object in obsObjects
-     *
-     * @param obsObjects
      */
     private Queue<Exchange> createExchanges(List<ObsObject> obsObjects) {
         Queue<Exchange> answer = new LinkedList<>();
@@ -196,7 +197,7 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
             ObsObject obsObject;
 
             if (objectSummary.getMetadata().getContentType() == null) {
-                // object was the from list objects. Since not all object data is included when listing objects, we must retrieve all the data by calling getObject
+                // object was from list objects. Since not all object data is included when listing objects, we must retrieve all the data by calling getObject
                 obsObject = obsClient.getObject(endpoint.getBucketName(), objectSummary.getObjectKey());
             } else {
                 // object was already retrieved using getObjects
@@ -214,8 +215,6 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Determine of obsObject should be included as an exchange based on the includeFolders user option
-     *
-     * @param obsObject
      */
     private boolean includeObsObject(ObsObject obsObject) {
         return endpoint.isIncludeFolders() || !obsObject.getObjectKey().endsWith("/");
@@ -223,8 +222,6 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Create a new exchange from obsObject
-     *
-     * @param obsObject
      */
     public Exchange createExchange(ObsObject obsObject) {
         Exchange exchange = createExchange(true);
@@ -237,8 +234,6 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * To handle the exchange after it has been processed
-     *
-     * @param exchange
      */
     private void processComplete(Exchange exchange) {
         String bucketName = exchange.getIn().getHeader(OBSHeaders.BUCKET_NAME, String.class);
@@ -257,8 +252,6 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * To handle when the exchange failed
-     *
-     * @param exchange
      */
     private void processFailure(Exchange exchange) {
         Exception exception = exchange.getException();

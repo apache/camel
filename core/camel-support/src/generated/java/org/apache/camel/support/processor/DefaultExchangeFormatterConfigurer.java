@@ -53,6 +53,10 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowHeaders": target.setShowHeaders(property(camelContext, boolean.class, value)); return true;
         case "showproperties":
         case "ShowProperties": target.setShowProperties(property(camelContext, boolean.class, value)); return true;
+        case "showroutegroup":
+        case "ShowRouteGroup": target.setShowRouteGroup(property(camelContext, boolean.class, value)); return true;
+        case "showrouteid":
+        case "ShowRouteId": target.setShowRouteId(property(camelContext, boolean.class, value)); return true;
         case "showstacktrace":
         case "ShowStackTrace": target.setShowStackTrace(property(camelContext, boolean.class, value)); return true;
         case "showstreams":
@@ -100,6 +104,10 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowHeaders": return boolean.class;
         case "showproperties":
         case "ShowProperties": return boolean.class;
+        case "showroutegroup":
+        case "ShowRouteGroup": return boolean.class;
+        case "showrouteid":
+        case "ShowRouteId": return boolean.class;
         case "showstacktrace":
         case "ShowStackTrace": return boolean.class;
         case "showstreams":
@@ -148,6 +156,10 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowHeaders": return target.isShowHeaders();
         case "showproperties":
         case "ShowProperties": return target.isShowProperties();
+        case "showroutegroup":
+        case "ShowRouteGroup": return target.isShowRouteGroup();
+        case "showrouteid":
+        case "ShowRouteId": return target.isShowRouteId();
         case "showstacktrace":
         case "ShowStackTrace": return target.isShowStackTrace();
         case "showstreams":

@@ -39,22 +39,29 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
-        if (cl instanceof DependencyDownloaderClassLoader) {
-            DependencyDownloaderClassLoader ddcl = (DependencyDownloaderClassLoader) cl;
-            sb.append("Dependencies:");
-            String cp = String.join("\n    ", ddcl.getDownloaded());
-            sb.append("\n    ").append(cp).append("\n");
-        }
-
         MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
         if (downloader != null) {
+            sb.append("Offline: " + !downloader.isDownload());
+            sb.append("\nFresh:   " + !downloader.isFresh());
+            sb.append("\nVerbose: " + !downloader.isVerbose());
+            if (downloader.getRepos() != null) {
+                sb.append("\nExtra Repositories: " + downloader.getRepos());
+            }
+            sb.append("\n");
             sb.append("\nDownloads:");
             for (DownloadRecord r : downloader.downloadRecords()) {
                 sb.append("\n    ").append(String.format("%s:%s:%s (took: %s) from: %s@%s",
                         r.groupId(), r.artifactId(), r.version(), TimeUtils.printDuration(r.elapsed(), true), r.repoId(),
                         r.repoUrl()));
             }
+        }
+
+        ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
+        if (cl instanceof DependencyDownloaderClassLoader) {
+            DependencyDownloaderClassLoader ddcl = (DependencyDownloaderClassLoader) cl;
+            sb.append("\n\nDependencies:");
+            String cp = String.join("\n    ", ddcl.getDownloaded());
+            sb.append("\n    ").append(cp).append("\n");
         }
 
         return sb.toString();
@@ -74,6 +81,10 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
         MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
         if (downloader != null) {
             JsonArray arr = new JsonArray();
+            root.put("offline", !downloader.isDownload());
+            root.put("fresh", downloader.isFresh());
+            root.put("verbose", downloader.isVerbose());
+            root.put("repos", downloader.getRepos());
             root.put("downloads", arr);
             for (DownloadRecord r : downloader.downloadRecords()) {
                 JsonObject jo = new JsonObject();

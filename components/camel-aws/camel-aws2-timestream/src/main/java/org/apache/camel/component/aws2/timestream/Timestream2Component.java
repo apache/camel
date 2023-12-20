@@ -45,7 +45,7 @@ public class Timestream2Component extends HealthCheckComponent {
         Timestream2Configuration configuration
                 = this.configuration != null ? this.configuration.copy() : new Timestream2Configuration();
 
-        if (remaining.trim().length() != 0) {
+        if (!remaining.isBlank()) {
             String[] uriPath = remaining.split(":");
             Timestream2ClientType timestream2ClientType = Timestream2ClientType.valueOf(uriPath[0]);
             if (Timestream2ClientType.write.equals(timestream2ClientType)) {

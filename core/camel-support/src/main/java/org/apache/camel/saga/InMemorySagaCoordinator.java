@@ -112,7 +112,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     @Override
-    public CompletableFuture<Void> compensate() {
+    public CompletableFuture<Void> compensate(Exchange exchange) {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
 
         if (doAction) {
@@ -130,7 +130,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     @Override
-    public CompletableFuture<Void> complete() {
+    public CompletableFuture<Void> complete(Exchange exchange) {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPLETING);
 
         if (doAction) {

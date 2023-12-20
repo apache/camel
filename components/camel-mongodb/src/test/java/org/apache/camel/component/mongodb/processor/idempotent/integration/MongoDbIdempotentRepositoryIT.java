@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
@@ -83,7 +84,7 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
         assertEquals(1, testCollection.countDocuments());
 
         boolean added = repo.add(randomUUIDString);
-        assertTrue(!added, "Duplicated entry was not added");
+        assertFalse(added, "Duplicated entry was not added");
         assertEquals(1, testCollection.countDocuments());
     }
 
@@ -92,14 +93,14 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
         String randomUUIDString = UUID.randomUUID().toString();
         assertEquals(0, testCollection.countDocuments());
         boolean removed = repo.remove(randomUUIDString);
-        assertTrue(!removed, "Non exisint uid returns false");
+        assertFalse(removed, "Non exisint uid returns false");
     }
 
     @Test
     public void containsMissingReturnsFalse() {
         String randomUUIDString = UUID.randomUUID().toString();
         boolean found = repo.contains(randomUUIDString);
-        assertTrue(!found, "Non existing item is not found");
+        assertFalse(found, "Non existing item is not found");
     }
 
     @Test

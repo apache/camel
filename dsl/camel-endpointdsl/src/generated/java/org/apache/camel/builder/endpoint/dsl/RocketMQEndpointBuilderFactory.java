@@ -131,12 +131,17 @@ public interface RocketMQEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -153,12 +158,17 @@ public interface RocketMQEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -788,7 +798,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQTopic}.
          */
         public String rockerMQTopic() {
-            return "RockerMQTopic";
+            return "CamelRockerMQTopic";
         }
 
         /**
@@ -801,7 +811,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQTag}.
          */
         public String rockerMQTag() {
-            return "RockerMQTag";
+            return "CamelRockerMQTag";
         }
 
         /**
@@ -814,7 +824,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQKey}.
          */
         public String rockerMQKey() {
-            return "RockerMQKey";
+            return "CamelRockerMQKey";
         }
 
         /**
@@ -828,7 +838,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQOverrideTopicName}.
          */
         public String rockerMQOverrideTopicName() {
-            return "RockerMQOverrideTopicName";
+            return "CamelRockerMQOverrideTopicName";
         }
 
         /**
@@ -842,7 +852,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQOverrideTag}.
          */
         public String rockerMQOverrideTag() {
-            return "RockerMQOverrideTag";
+            return "CamelRockerMQOverrideTag";
         }
 
         /**
@@ -856,7 +866,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQOverrideMessageKey}.
          */
         public String rockerMQOverrideMessageKey() {
-            return "RockerMQOverrideMessageKey";
+            return "CamelRockerMQOverrideMessageKey";
         }
 
         /**
@@ -869,7 +879,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQBrokerName}.
          */
         public String rockerMQBrokerName() {
-            return "RockerMQBrokerName";
+            return "CamelRockerMQBrokerName";
         }
 
         /**
@@ -882,7 +892,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQQueueId}.
          */
         public String rockerMQQueueId() {
-            return "RockerMQQueueId";
+            return "CamelRockerMQQueueId";
         }
 
         /**
@@ -895,7 +905,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQStoreSize}.
          */
         public String rockerMQStoreSize() {
-            return "RockerMQStoreSize";
+            return "CamelRockerMQStoreSize";
         }
 
         /**
@@ -908,7 +918,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQQueueOffset}.
          */
         public String rockerMQQueueOffset() {
-            return "RockerMQQueueOffset";
+            return "CamelRockerMQQueueOffset";
         }
 
         /**
@@ -921,7 +931,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQSysFlag}.
          */
         public String rockerMQSysFlag() {
-            return "RockerMQSysFlag";
+            return "CamelRockerMQSysFlag";
         }
 
         /**
@@ -934,7 +944,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQBornTimestamp}.
          */
         public String rockerMQBornTimestamp() {
-            return "RockerMQBornTimestamp";
+            return "CamelRockerMQBornTimestamp";
         }
 
         /**
@@ -947,7 +957,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQBornHost}.
          */
         public String rockerMQBornHost() {
-            return "RockerMQBornHost";
+            return "CamelRockerMQBornHost";
         }
 
         /**
@@ -960,7 +970,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQStoreTimestamp}.
          */
         public String rockerMQStoreTimestamp() {
-            return "RockerMQStoreTimestamp";
+            return "CamelRockerMQStoreTimestamp";
         }
 
         /**
@@ -973,7 +983,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQStoreHost}.
          */
         public String rockerMQStoreHost() {
-            return "RockerMQStoreHost";
+            return "CamelRockerMQStoreHost";
         }
 
         /**
@@ -986,7 +996,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQMsgId}.
          */
         public String rockerMQMsgId() {
-            return "RockerMQMsgId";
+            return "CamelRockerMQMsgId";
         }
 
         /**
@@ -999,7 +1009,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQCommitLogOffset}.
          */
         public String rockerMQCommitLogOffset() {
-            return "RockerMQCommitLogOffset";
+            return "CamelRockerMQCommitLogOffset";
         }
 
         /**
@@ -1012,7 +1022,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQBodyCrc}.
          */
         public String rockerMQBodyCrc() {
-            return "RockerMQBodyCrc";
+            return "CamelRockerMQBodyCrc";
         }
 
         /**
@@ -1025,7 +1035,7 @@ public interface RocketMQEndpointBuilderFactory {
          * @return the name of the header {@code RockerMQReconsumeTimes}.
          */
         public String rockerMQReconsumeTimes() {
-            return "RockerMQReconsumeTimes";
+            return "CamelRockerMQReconsumeTimes";
         }
 
         /**
@@ -1039,7 +1049,7 @@ public interface RocketMQEndpointBuilderFactory {
          * RockerMQPreparedTransactionOffset}.
          */
         public String rockerMQPreparedTransactionOffset() {
-            return "RockerMQPreparedTransactionOffset";
+            return "CamelRockerMQPreparedTransactionOffset";
         }
     }
     static RocketMQEndpointBuilder endpointBuilder(

@@ -44,6 +44,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "closestreamafterread":
         case "closeStreamAfterRead": getOrCreateConfiguration(target).setCloseStreamAfterRead(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.storage.datalake.CredentialType.class, value)); return true;
         case "datacount":
         case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "directoryname":
@@ -89,8 +91,6 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "tenantId": getOrCreateConfiguration(target).setTenantId(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "umask": getOrCreateConfiguration(target).setUmask(property(camelContext, java.lang.String.class, value)); return true;
-        case "usedefaultidentity":
-        case "useDefaultIdentity": getOrCreateConfiguration(target).setUseDefaultIdentity(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": getOrCreateConfiguration(target).setUserPrincipalNameReturned(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
@@ -121,6 +121,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "closestreamafterread":
         case "closeStreamAfterRead": return java.lang.Boolean.class;
         case "configuration": return org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.storage.datalake.CredentialType.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
         case "directoryname":
@@ -166,8 +168,6 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "tenantId": return java.lang.String.class;
         case "timeout": return java.time.Duration.class;
         case "umask": return java.lang.String.class;
-        case "usedefaultidentity":
-        case "useDefaultIdentity": return java.lang.Boolean.class;
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": return java.lang.Boolean.class;
         default: return null;
@@ -194,6 +194,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "closestreamafterread":
         case "closeStreamAfterRead": return getOrCreateConfiguration(target).getCloseStreamAfterRead();
         case "configuration": return target.getConfiguration();
+        case "credentialtype":
+        case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "datacount":
         case "dataCount": return getOrCreateConfiguration(target).getDataCount();
         case "directoryname":
@@ -239,8 +241,6 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "tenantId": return getOrCreateConfiguration(target).getTenantId();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();
         case "umask": return getOrCreateConfiguration(target).getUmask();
-        case "usedefaultidentity":
-        case "useDefaultIdentity": return getOrCreateConfiguration(target).getUseDefaultIdentity();
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": return getOrCreateConfiguration(target).getUserPrincipalNameReturned();
         default: return null;

@@ -516,7 +516,7 @@ public class KafkaProducerTest {
         Mockito.verify(producer.getKafkaProducer(), Mockito.atLeast(expectedTopics.size())).send(captor.capture());
         final List<ProducerRecord> records = captor.getAllValues();
         final List<String> actualTopics
-                = records.stream().map(ProducerRecord::topic).collect(Collectors.toList());
+                = records.stream().map(ProducerRecord::topic).toList();
 
         assertEquals(expectedTopics, actualTopics);
 

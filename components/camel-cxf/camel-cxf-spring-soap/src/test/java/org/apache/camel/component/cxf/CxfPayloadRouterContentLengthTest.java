@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import io.undertow.Undertow;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.util.HttpString;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
@@ -36,12 +35,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,45 +70,40 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
                                                   + "<ns0:payload xmlns:ns0=\"http://schema.apache.org/test\"><ns0:request>foo</ns0:request></ns0:payload>"
                                                   + "</s:Body></s:Envelope>";
 
-    // The Camel-Test with CXF will re-use jetty instances, so the ports1 to 6 are already blocked
-    private static final int JETTY_PORT = AvailablePortFinder.getNextAvailable();
+    // The Camel-Test with CXF will re-use undertow instances, so the ports1 to 6 are already blocked
+    private static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
 
-    private Server server;
+    private Undertow server;
 
     static {
-        System.setProperty("CXFTestSupport.jettyPort", Integer.toString(JETTY_PORT));
+        System.setProperty("CXFTestSupport.undertowPort", Integer.toString(UNDERTOW_PORT));
     }
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         /*
-         * We start a Jetty for the service in order to have better control over
+         * We start a undertow for the service in order to have better control over
          * the response. The response must contain only a Content-Type and a
          * Content-Length but no other header
          */
-        LOG.info("Starting jetty server at port {}", JETTY_PORT);
-        server = new Server();
-        // Do not send a Server header
-        HttpConfiguration httpconf = new HttpConfiguration();
-        httpconf.setSendServerVersion(false);
-        ServerConnector http = new ServerConnector(server, new HttpConnectionFactory(httpconf));
-        http.setPort(JETTY_PORT);
-        server.addConnector(http);
-        server.setHandler(new AbstractHandler() {
-            @Override
-            public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                    throws IOException, ServletException {
-                response.setContentType("text/xml");
-                // the Content-Length is correct for this response message
-                response.setContentLength(RESPONSE_MESSAGE.length());
-                response.setStatus(HttpServletResponse.SC_OK);
-                baseRequest.setHandled(true);
-                PrintWriter pw = response.getWriter();
-                pw.write(RESPONSE_MESSAGE);
-                pw.close();
-            }
-        });
+        LOG.info("Starting undertow server at port {}", UNDERTOW_PORT);
+        server = Undertow.builder()
+                .addHttpListener(UNDERTOW_PORT, "localhost")
+                .setHandler(new HttpHandler() {
+                    @Override
+                    public void handleRequest(HttpServerExchange httpServerExchange) throws Exception {
+                        httpServerExchange.getResponseHeaders().put(new HttpString("Content-Type"), "text/html");
+                        // the Content-Length is correct for this response message
+                        httpServerExchange.getResponseHeaders().put(new HttpString("Content-Length"),
+                                RESPONSE_MESSAGE.length());
+                        httpServerExchange.setResponseContentLength(RESPONSE_MESSAGE.length());
+                        httpServerExchange.setStatusCode(HttpServletResponse.SC_OK);
+
+                        httpServerExchange.getResponseSender().send(RESPONSE_MESSAGE);
+                    }
+                })
+                .build();
 
         server.start();
         // Load the CXF endpoints for the route
@@ -128,10 +116,9 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
     public void tearDown() throws Exception {
         // close the spring context
         IOHelper.close(applicationContext);
-        // stop the jetty server
-        if (server != null && server.isRunning()) {
+        // stop the undertow server
+        if (server != null) {
             server.stop();
-            server.join();
         }
         super.tearDown();
     }

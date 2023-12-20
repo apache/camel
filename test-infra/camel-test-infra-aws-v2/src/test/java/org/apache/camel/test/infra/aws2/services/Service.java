@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.aws2.services;
 
 public enum Service {
     CLOUD_WATCH("cloudwatch"),
+    CONFIG("config"),
     DYNAMODB("dynamodb"),
     EC2("ec2"),
     EVENT_BRIDGE("eventbridge"),

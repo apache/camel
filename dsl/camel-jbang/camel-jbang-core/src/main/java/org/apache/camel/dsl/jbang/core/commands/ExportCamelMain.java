@@ -63,7 +63,7 @@ class ExportCamelMain extends Export {
             if (!quiet && fresh) {
                 System.out.println("Generating fresh run data");
             }
-            int silent = runSilently();
+            int silent = runSilently(ignoreLoadingError);
             if (silent != 0) {
                 return silent;
             }
@@ -130,6 +130,9 @@ class ExportCamelMain extends Export {
         Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs
         copyLocalLibDependencies(deps);
+        // copy agent JARs and remove as dependency
+        copyAgentDependencies(deps);
+        deps.removeIf(d -> d.startsWith("agent:"));
         if ("maven".equals(buildTool)) {
             createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps, srcPackageName);
             if (mavenWrapper) {
@@ -220,37 +223,6 @@ class ExportCamelMain extends Export {
             sb.append("        </dependency>\n");
         }
 
-        if (secretsRefresh) {
-            if (secretsRefreshProviders != null) {
-                List<String> providers = getSecretProviders();
-                for (String provider : providers) {
-                    switch (provider) {
-                        case "aws":
-                            sb.append("        <dependency>\n");
-                            sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-aws-secrets-manager").append("</artifactId>\n");
-                            sb.append("        </dependency>\n");
-                            break;
-                        case "gcp":
-                            sb.append("        <dependency>\n");
-                            sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-google-secret-manager")
-                                    .append("</artifactId>\n");
-                            sb.append("        </dependency>\n");
-                            break;
-                        case "azure":
-                            sb.append("        <dependency>\n");
-                            sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-azure-key-vault").append("</artifactId>\n");
-                            sb.append("        </dependency>\n");
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
         // include kubernetes?
@@ -271,22 +243,51 @@ class ExportCamelMain extends Export {
         boolean jkube = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jkube."));
         if (jkube) {
             // include all jib/jkube/label properties
+            String fromImage = null;
             for (String key : prop.stringPropertyNames()) {
                 String value = prop.getProperty(key);
+                if ("jib.from.image".equals(key)) {
+                    fromImage = value;
+                }
                 boolean accept = key.startsWith("jkube.") || key.startsWith("jib.") || key.startsWith("label.");
                 if (accept) {
                     sb1.append(String.format("        <%s>%s</%s>%n", key, value, key));
                 }
             }
+            // from image is mandatory so use a default image if none provided
+            if (fromImage == null) {
+                fromImage = "eclipse-temurin:" + javaVersion + "-jre";
+                sb1.append(String.format("        <%s>%s</%s>%n", "jib.from.image", fromImage, "jib.from.image"));
+            }
 
             InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
             String context2 = IOHelper.loadText(is);
             IOHelper.close(is);
+
+            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings));
+
+            // image from/to auth
+            String auth = "";
+            if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth."))) {
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-from-auth-pom.tmpl");
+                auth = IOHelper.loadText(is);
+                IOHelper.close(is);
+            }
+            context2 = context2.replace("{{ .JibFromImageAuth }}", auth);
+            auth = "";
+            if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.to.auth."))) {
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-to-auth-pom.tmpl");
+                auth = IOHelper.loadText(is);
+                IOHelper.close(is);
+            }
+            context2 = context2.replace("{{ .JibToImageAuth }}", auth);
+            // http port setting
             int port = httpServerPort(settings);
             if (port == -1) {
                 port = 8080;
             }
-            sb2.append(context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port)));
+            context2 = context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port));
+            sb2.append(context2);
         }
 
         context = context.replace("{{ .CamelKubernetesProperties }}", sb1.toString());
@@ -345,30 +346,5 @@ class ExportCamelMain extends Export {
         // assembly for runner jar
         is = ExportCamelMain.class.getResourceAsStream("/assembly/runner.xml");
         safeCopy(is, new File(srcResourcesDir, "assembly/runner.xml"));
-    }
-
-    @Override
-    protected void prepareApplicationProperties(Properties properties) {
-        if (secretsRefresh) {
-            if (secretsRefreshProviders != null) {
-                List<String> providers = getSecretProviders();
-
-                for (String provider : providers) {
-                    switch (provider) {
-                        case "aws":
-                            exportAwsSecretsRefreshProp(properties);
-                            break;
-                        case "gcp":
-                            exportGcpSecretsRefreshProp(properties);
-                            break;
-                        case "azure":
-                            exportAzureSecretsRefreshProp(properties);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
     }
 }

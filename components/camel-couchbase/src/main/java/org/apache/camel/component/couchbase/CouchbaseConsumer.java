@@ -112,6 +112,9 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer implements R
     protected synchronized int poll() throws Exception {
         ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
 
+        // okay we have some response from CouchBase so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("ViewResponse =  {}", result);
         }

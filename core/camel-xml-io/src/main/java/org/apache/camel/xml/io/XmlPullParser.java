@@ -375,7 +375,6 @@ public interface XmlPullParser {
      * @return                             The value of the feature.
      * @exception IllegalArgumentException if string the feature name is null
      */
-
     boolean getFeature(String name);
 
     /**
@@ -646,6 +645,13 @@ public interface XmlPullParser {
      * you will need to add the prefix and a colon to localName..
      */
     String getName();
+
+    /**
+     * The stack of the element names
+     *
+     * @see #getName()
+     */
+    String[] getNames();
 
     /**
      * Returns the prefix of the current element. If the element is in the default namespace (has no prefix), null is

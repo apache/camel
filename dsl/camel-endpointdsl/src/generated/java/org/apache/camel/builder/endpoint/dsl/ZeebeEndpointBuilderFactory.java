@@ -132,12 +132,17 @@ public interface ZeebeEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -154,12 +159,17 @@ public interface ZeebeEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -489,7 +499,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeResourceName}.
          */
         public String zeebeResourceName() {
-            return "ZeebeResourceName";
+            return "CamelZeebeResourceName";
         }
 
         /**
@@ -502,7 +512,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeIsSuccess}.
          */
         public String zeebeIsSuccess() {
-            return "ZeebeIsSuccess";
+            return "CamelZeebeIsSuccess";
         }
 
         /**
@@ -515,7 +525,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeErrorMessage}.
          */
         public String zeebeErrorMessage() {
-            return "ZeebeErrorMessage";
+            return "CamelZeebeErrorMessage";
         }
 
         /**
@@ -528,7 +538,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeErrorCode}.
          */
         public String zeebeErrorCode() {
-            return "ZeebeErrorCode";
+            return "CamelZeebeErrorCode";
         }
 
         /**
@@ -541,7 +551,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeBPMNProcessId}.
          */
         public String zeebeBPMNProcessId() {
-            return "ZeebeBPMNProcessId";
+            return "CamelZeebeBPMNProcessId";
         }
 
         /**
@@ -554,7 +564,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeVersion}.
          */
         public String zeebeVersion() {
-            return "ZeebeVersion";
+            return "CamelZeebeVersion";
         }
 
         /**
@@ -567,7 +577,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeProcessDefinitionKey}.
          */
         public String zeebeProcessDefinitionKey() {
-            return "ZeebeProcessDefinitionKey";
+            return "CamelZeebeProcessDefinitionKey";
         }
 
         /**
@@ -582,7 +592,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @return the name of the header {@code ZeebeJobKey}.
          */
         public String zeebeJobKey() {
-            return "ZeebeJobKey";
+            return "CamelZeebeJobKey";
         }
     }
     static ZeebeEndpointBuilder endpointBuilder(

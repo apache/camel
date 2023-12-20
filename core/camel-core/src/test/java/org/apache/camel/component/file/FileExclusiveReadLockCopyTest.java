@@ -21,18 +21,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 public class FileExclusiveReadLockCopyTest extends ContextTestSupport {
 
-    private String fileUrl = fileUri("?readLock=fileLock&initialDelay=0&delay=10");
+    public static final String FILE_QUERY = "?readLock=fileLock&initialDelay=0&delay=10";
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     public void testCopy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists(testFile("out/hello.txt"), "Hello World");
 
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(FILE_QUERY), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
     }
@@ -41,7 +44,7 @@ public class FileExclusiveReadLockCopyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).to(fileUri("out")).to("mock:result");
+                from(fileUri(FILE_QUERY)).to(fileUri("out")).to("mock:result");
             }
         };
     }

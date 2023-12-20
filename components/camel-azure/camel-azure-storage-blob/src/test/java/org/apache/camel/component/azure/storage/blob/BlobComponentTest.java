@@ -66,6 +66,16 @@ class BlobComponentTest extends CamelTestSupport {
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
 
+    @Test
+    void testCreateEndpointWithSasToken() {
+
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob&credentialType=AZURE_SAS&sasToken=blabla");
+
+        doTestCreateEndpointWithSasConfig(endpoint);
+    }
+
     private void doTestCreateEndpointWithMinConfig(BlobEndpoint endpoint, boolean clientExpected) {
         assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
         assertEquals("container", endpoint.getConfiguration().getContainerName());
@@ -78,6 +88,22 @@ class BlobComponentTest extends CamelTestSupport {
             assertNotNull(endpoint.getConfiguration().getCredentials());
         }
 
+        assertEquals(BlobType.blockblob, endpoint.getConfiguration().getBlobType());
+        assertNull(endpoint.getConfiguration().getFileDir());
+        assertEquals(Long.valueOf(0L), endpoint.getConfiguration().getBlobOffset());
+        assertEquals(BlobOperationsDefinition.listBlobContainers, endpoint.getConfiguration().getOperation());
+        assertTrue(endpoint.getConfiguration().isCloseStreamAfterRead());
+        assertTrue(endpoint.getConfiguration().isCloseStreamAfterWrite());
+    }
+
+    private void doTestCreateEndpointWithSasConfig(BlobEndpoint endpoint) {
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("container", endpoint.getConfiguration().getContainerName());
+        assertEquals("blob", endpoint.getConfiguration().getBlobName());
+        assertEquals("blabla", endpoint.getConfiguration().getSasToken());
+        assertEquals(CredentialType.AZURE_SAS, endpoint.getConfiguration().getCredentialType());
+        assertNull(endpoint.getConfiguration().getServiceClient());
+        assertNull(endpoint.getConfiguration().getCredentials());
         assertEquals(BlobType.blockblob, endpoint.getConfiguration().getBlobType());
         assertNull(endpoint.getConfiguration().getFileDir());
         assertEquals(Long.valueOf(0L), endpoint.getConfiguration().getBlobOffset());

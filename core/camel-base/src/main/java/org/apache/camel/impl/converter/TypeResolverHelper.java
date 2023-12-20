@@ -20,7 +20,7 @@ package org.apache.camel.impl.converter;
 import java.util.Map;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.TypeConvertible;
+import org.apache.camel.spi.TypeConvertible;
 
 /**
  * Helper methods for resolving the type conversions. This is an internal API and not meant for public usages.
@@ -115,10 +115,14 @@ final class TypeResolverHelper {
          matching both the "from type" and the "to type" which are NOT Object (we usually try this later).
          */
         for (var entry : converters.entrySet()) {
-            if (entry.getKey().isAssignableMatch(typeConvertible)) {
+            final TypeConvertible<?, ?> key = entry.getKey();
+            if (key.isAssignableMatch(typeConvertible)) {
                 return entry.getValue();
+            } else {
+                if (typeConvertible.isAssignableMatch(key)) {
+                    return entry.getValue();
+                }
             }
-
         }
 
         return null;

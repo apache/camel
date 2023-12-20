@@ -21,7 +21,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RoutePolicy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("This test has a rather strict dependency on timing and threads under the hood, therefore run in isolated mode to reduce flakiness")
 public class FlipRoutePolicyTest extends ContextTestSupport {
 
     @Test

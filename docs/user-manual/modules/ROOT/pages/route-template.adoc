@@ -465,36 +465,15 @@ templatedRoute("s3template")
 ----
 <1> Note that the third parameter of the `bean` method is not directly the bean but rather a factory method that will be used to create the bean, here we use a lambda expression as factory method.
 
-And in Spring XML DSL
-
-[source,xml]
-----
-<camelContext>
-  <templatedRoute routeTemplateRef="s3template" routeId="mys3route">
-    <parameter name="region" value="US-EAST-1"/>
-    <parameter name="bucket" value="myBucket"/>
-    <bean name="myClient" type="groovy"> <!--1-->
-        <script>
-            import software.amazon.awssdk.services.s3.S3Client
-            S3Client.builder()
-                .region(rtc.getProperty("region", Region.class))
-                .build()
-        </script>
-    </bean>
-  </templatedRoute>
-</camelContext>
-----
-<1> For non-Java DSL, in case of a complex bean factory, you can still rely on a language like `groovy` to define your bean factory inside a `script` element.
-
 And in XML DSL
 
 [source,xml]
 ----
-<templatedRoutes xmlns="http://camel.apache.org/schema/spring">
   <templatedRoute routeTemplateRef="s3template" routeId="mys3route">
     <parameter name="region" value="US-EAST-1"/>
     <parameter name="bucket" value="myBucket"/>
-    <bean name="myClient" type="groovy"> <!--1-->
+    <bean name="myClient" type="software.amazon.awssdk.services.s3.S3Client"
+          scriptLanguage="groovy"> <!--1-->
         <script>
             import software.amazon.awssdk.services.s3.S3Client
             S3Client.builder()
@@ -503,7 +482,6 @@ And in XML DSL
         </script>
     </bean>
   </templatedRoute>
-</templatedRoutes>
 ----
 <1> For non-Java DSL, in case of a complex bean factory, you can still rely on a language like `groovy` to define your bean factory inside a `script` element.
 
@@ -521,7 +499,8 @@ And in YAML DSL
         value: "myBucket"
     beans:
       - name: "myClient"
-        type: "groovy"
+        type: "software.amazon.awssdk.services.s3.S3Client"
+        scriptLanguage: "groovy"
         script: | # <1>
             import software.amazon.awssdk.services.s3.S3Client
             S3Client.builder()
@@ -634,7 +613,7 @@ In XML DSL you would do:
 
 === Binding beans to route templates using scripting languages
 
-You can use scripting languages like groovy, joor, mvel to create the bean.
+You can use scripting languages like groovy, java, mvel to create the bean.
 This allows to define route templates with the scripting language built-in (such as groovy).
 
 For example creating the AWS S3 client can be done as shown in Java (with inlined groovy code):
@@ -728,7 +707,7 @@ The languages supported are:
 | Type | Description
 | bean | Calling a method on a Java class to create the bean.
 | groovy | Using groovy script to create the bean.
-| joor | Using joor (Java code which are runtime compiled) to create the bean.
+| java | Java code which are runtime compiled (using jOOR library) to create the bean.
 | mvel | To use Mvel template script to create the bean.
 | ognl | To use OGNL template script to create the bean.
 | _name_ | To use a 3rd party language by the given _name_ to create the bean.
@@ -751,10 +730,10 @@ To get access to `CamelContext` you can do:
     var cn = rtc.getCamelContext().getName()
 ----
 
-The most powerful languages to use are groovy and joor. The other languages are limited in flexibility
+The most powerful languages to use are groovy and java. The other languages are limited in flexibility
 as they are not complete programming languages, but are more suited for templating needs.
 
-It is recommended to either use groovy or joor, if creating the local bean requires coding,
+It is recommended to either use groovy or java, if creating the local bean requires coding,
 and the route templates are not defined using Java code.
 
 The bean language can be used when creating the local bean from an existing Java method (static or not-static method),
@@ -796,11 +775,7 @@ then you can create the local bean using Java lambda style as previously documen
 
 ==== Configuring the type of the created bean
 
-When using scripting languages to create the local bean, then Camel would not know what type (fully qualified class name)
-the created bean is. The type is therefore unassigned (is set as `java.lang.Object`) which is a slight limitation.
-
-If you use dependency injection by type, or have the need for looking up the local bean from the Camel `Registry` via its type,
-then you must provide this information in the route template with `beanType` as shown:
+The `type` must be set to define what FQN class the created bean.
 
 [source,xml]
 ----
@@ -808,7 +783,7 @@ then you must provide this information in the route template with `beanType` as 
   <routeTemplate id="s3template">
     <templateParameter name="region"/>
     <templateParameter name="bucket"/>
-    <templateBean name="myClient" type="bean" beanType="software.amazon.awssdk.services.s3.S3Client">
+    <templateBean name="myClient" scriptLanguage="bean" type="software.amazon.awssdk.services.s3.S3Client">
         <script>com.foo.MyAwsHelper?method=createS3Client</script>
     </templateBean>
     <route>
@@ -893,4 +868,4 @@ To let Camel discover custom sources then register the source into the Camel reg
 
 == See Also
 
-See the example https://github.com/apache/camel-examples/tree/main/examples/routetemplate[camel-examples/examples/routetemplate/].
+See the example https://github.com/apache/camel-examples/tree/main/routetemplate[camel-examples/examples/routetemplate/].

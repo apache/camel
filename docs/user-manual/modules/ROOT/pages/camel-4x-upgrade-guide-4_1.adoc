@@ -6,6 +6,80 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.0 to 4.1
 
+=== camel-api
+
+Added method `newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod)`
+to `org.apache.camel.spi.Injector`.
+
+Added `isIgnoreLoadingError` and `setIgnoreLoadingError` methods to `org.apache.camel.spi.RoutesLoader`,
+and `org.apache.camel.main.RoutesCollector`.
+
+Added `getDuration` method to `org.apache.camel.StartupStep`.
+
+=== XML and YAML DSL
+
+==== Creating beans from script
+
+In route templates (or kamelets), for advanced use cases, you are able to create beans from an inlined script.
+
+The name of the script was defined in `type`, but has been changed to a new `scriptLanguage` attribute.
+And `beanType` has been removed as you must use `type` instead.
+
+Before:
+
+[tabs]
+====
+XML::
++
+[source,xml]
+----
+    <bean name="myBean" type="groovy" beanType="com.foo.MyBean">
+        <script>
+          <!-- groovy code here to create the bean -->
+        </script>
+    </bean>
+----
+YAML::
++
+[source,yaml]
+----
+- beans:
+  - name: "myClient"
+    beanType: "com.foo.MyBean"
+    type: "groovy"
+    script: |
+      # groovy script here
+----
+====
+
+After:
+
+[tabs]
+====
+XML::
++
+[source,xml]
+----
+    <bean name="myBean" type="com.foo.MyBean"
+          scriptLanguage="groovy">
+        <script>
+          <!-- groovy code here to create the bean -->
+        </script>
+    </bean>
+----
+YAML::
++
+[source,yaml]
+----
+- beans:
+  - name: "myClient"
+    type: "com.foo.MyBean"
+    scriptLanguage: "groovy"
+    script: |
+      # groovy script here
+----
+====
+
 === camel-management
 
 Dumping routes to JMX no longer includes `customId="true"` in the XML nodes.
@@ -116,5 +190,60 @@ from("direct:start")
 
 The Camel-PDF component has been updated to Apache PDFBox 3.0.0 and the font parameter is now defined through the following enum values: COURIER,COURIER_BOLD,COURIER_OBLIQUE,COURIER_BOLD_OBLIQUE, HELVETICA,HELVETICA_BOLD,HELVETICA_OBLIQUE,HELVETICA_BOLD_OBLIQUE,TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,SYMBOL and ZAPF_DINGBATS
 
+=== camel-jbang
+
+The `pipe` command has been renamed to `script`.
+
+The `--secrets-refresh` and `--secret-refresh-providers` have been removed, since they were logically incorrect in the export command context. More information at CAMEL-19927 issue.
+
+The generated xml route, created using the command `camel init`, now uses `<camel>` as the root tag instead of `<routes>`.
+
+=== camel-jetty / camel-servlet / camel-atmosphere-websocket / camel-http-common
+
+By default stack traces will not be included in HTTP responses,
+exceptions are muted.
+Stack traces can be included in HTTP responses by disabling `muteException`.
+For example
+
+----
+from("jetty:http://localhost:{{port}}/myapp/myservice?muteException=false")
+----
+
+When exceptions are muted stack traces may be logged by enabling `logException`.
+For example
+
+----
+from("jetty:http://localhost:{{port}}/myapp/myservice?logException=true")
+----
+
 === YAML DSL
+
 The kebab-case style schema file,  `camel-yaml-dsl.json` has been removed from the distribution in favor of the camelCase style schema file, `camelYamlDsl.json`. While the Camel runtime stays supporting kebab-case style also for the moment, it is recommended to migrate to camelCase style. Any tooling should encourage users to use camelCase style.
+
+=== camel-tracing
+
+The `Tag` Enum containing constants for tagging spans has been deprecated.
+Instead,
+use constants from the `TagConstants` Class that align to Open Telemetry v1.21.0 semantic conventions.
+
+For example,
+instead of
+
+----
+span.setTag(Tag.URL_SCHEME, scheme);
+----
+
+use
+
+----
+span.setTag(TagConstants.URL_SCHEME, scheme);
+----
+
+=== camel-kafka
+
+The default value for `sessionTimeoutMs` has been updated to  `45000` ms, while the default value for `consumerRequestTimeoutMs` has been updated to `30000`. More information in CAMEL-19921 issue.
+
+=== camel-core, rest
+
+A new rest configuration option, `enableNoContentResponse`,
+allows HTTP 204 to be returned with an empty body if a Message contains an empty JSON object or empty XML root object when set to `true`.

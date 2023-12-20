@@ -107,6 +107,45 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
+         * Indicates whether the body of the message contains only documents. By
+         * default, it is set to false to be able to do the same requests as
+         * what the Document API supports (see
+         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode especially if your routes do update operations.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param enableDocumentOnlyMode the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchEndpointBuilder enableDocumentOnlyMode(
+                boolean enableDocumentOnlyMode) {
+            doSetProperty("enableDocumentOnlyMode", enableDocumentOnlyMode);
+            return this;
+        }
+        /**
+         * Indicates whether the body of the message contains only documents. By
+         * default, it is set to false to be able to do the same requests as
+         * what the Document API supports (see
+         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode especially if your routes do update operations.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param enableDocumentOnlyMode the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchEndpointBuilder enableDocumentOnlyMode(
+                String enableDocumentOnlyMode) {
+            doSetProperty("enableDocumentOnlyMode", enableDocumentOnlyMode);
+            return this;
+        }
+        /**
          * Starting index of the response.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -824,6 +863,20 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         public String from() {
             return "from";
+        }
+
+        /**
+         * Indicates whether the body of the message contains only documents.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code enableDocumentOnlyMode}.
+         */
+        public String enableDocumentOnlyMode() {
+            return "enableDocumentOnlyMode";
         }
     }
     static ElasticsearchEndpointBuilder endpointBuilder(

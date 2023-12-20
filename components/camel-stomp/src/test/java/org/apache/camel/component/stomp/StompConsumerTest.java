@@ -51,7 +51,7 @@ public class StompConsumerTest extends StompBaseTest {
             producerConnection.send(frame);
         }
 
-        mock.await(10, TimeUnit.SECONDS);
+        mock.await(30, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
     }
 

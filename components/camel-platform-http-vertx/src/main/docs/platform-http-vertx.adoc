@@ -27,7 +27,9 @@ and the platform http component should auto-detect this.
 |=======================================================================
 |Name |Type |Description
 
-|`CamelVertxPlatformHttpAuthenticatedUser` |`io.vertx.ext.auth.User` |If an authenticated user is present on the Vert.x Web `RoutingContext`, this header is populated with a `User` object continaing the `Principal`.
+|`CamelVertxPlatformHttpAuthenticatedUser` |`io.vertx.ext.auth.User` |If an authenticated user is present on the Vert.x Web `RoutingContext`, this header is populated with a `User` object containing the `Principal`.
+|`CamelVertxPlatformHttpLocalAddress` |`io.vertx.core.net.SocketAddress` |The local address for the connection if present on the Vert.x Web `RoutingContext`.
+|`CamelVertxPlatformHttpRemoteAddress` |`io.vertx.core.net.SocketAddress` |The remote address for the connection if present on the Vert.x Web `RoutingContext`.
 |=======================================================================
 
 Camel also populates *all* request.parameter and Camel also populates *all* request.parameter and request.headers. For
@@ -73,4 +75,36 @@ Here's an example of a HTTP proxy that simply redirects the Exchange to the orig
 from("platform-http:proxy")
     .toD("http://"
         + "${headers." + Exchange.HTTP_HOST + "}");
+----
+
+== Access to Request and Response
+
+The Vertx HTTP server has its own API abstraction for HTTP request/response objects which you can access via
+Camel `HttpMessage` as shown in the custom `Processor` below :
+
+[source,java]
+----
+.process(exchange -> {
+    // grab message as HttpMessage
+    HttpMessage message = exchange.getMessage(HttpMessage.class);
+    // use getRequest() / getResponse() to access Vertx directly
+    // you can add custom headers
+    message.getResponse().putHeader("beer", "Heineken");
+    // also access request details and use that in the code
+    String p = message.getRequest().path();
+    message.setBody("request path: " + p);
+});
+----
+
+== Handling large request / response payloads
+
+When large request / response payloads are expected, there is a `useStreaming` option, which can be enabled to improve performance.
+When `useStreaming` is `true`, it will take advantage of xref:manual::stream-caching.adoc[stream caching]. In conjunction with enabling disk spooling, you can avoid having to store the entire request body payload in memory.
+
+[source,java]
+----
+// Handle a large request body and stream it to a file
+from("platform-http:/upload?httpMethodRestrict=POST&useStreaming=true")
+    .log("Processing large request body...")
+    .to("file:/uploads?fileName=uploaded.txt")
 ----

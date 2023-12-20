@@ -21,7 +21,7 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(41);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -29,6 +29,9 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("certResource");
         props.add("certResourcePassword");
         props.add("channelType");
+        props.add("ciphers");
+        props.add("clientBuilder");
+        props.add("compressions");
         props.add("delay");
         props.add("exceptionHandler");
         props.add("exchangePattern");
@@ -36,10 +39,12 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("greedy");
         props.add("host");
         props.add("initialDelay");
+        props.add("kex");
         props.add("keyPairProvider");
         props.add("keyType");
         props.add("knownHostsResource");
         props.add("lazyStartProducer");
+        props.add("macs");
         props.add("password");
         props.add("pollCommand");
         props.add("pollStrategy");
@@ -51,6 +56,7 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("schedulerProperties");
         props.add("sendEmptyMessageWhenIdle");
         props.add("shellPrompt");
+        props.add("signatures");
         props.add("sleepForShellPrompt");
         props.add("startScheduler");
         props.add("timeUnit");

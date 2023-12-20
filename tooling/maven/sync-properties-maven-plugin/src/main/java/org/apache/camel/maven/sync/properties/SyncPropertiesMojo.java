@@ -155,7 +155,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
         final String properties = Stream.concat(
                 camelParentPomXmlModel.getProperties().entrySet().stream(),
                 camelPomXmlModel.getProperties().entrySet().stream()
-                        .filter(property -> property.getKey().equals("mycila-license-version")))
+                        .filter(property -> property.getKey().equals("license-maven-plugin-version")))
                 .filter(property -> includes.test((String) property.getKey()) && !excludes.test((String) property.getKey()))
                 .map(property -> "<" + property.getKey() + ">" + property.getValue() + "</" + property.getKey() + ">")
                 .sorted()
@@ -186,7 +186,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
         } else {
             final List<Pattern> patterns = regularExpressions.stream()
                     .map(Pattern::compile)
-                    .collect(Collectors.toList());
+                    .toList();
             return key -> patterns.stream().anyMatch(pattern -> pattern.matcher(key).matches());
         }
     }

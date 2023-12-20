@@ -64,7 +64,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
                 "DebeziumConsumer");
     }
 
-    public Exchange createDbzExchange(DebeziumConsumer consumer, final SourceRecord record) {
+    public Exchange createDbzExchange(DebeziumConsumer consumer, final SourceRecord sourceRecord) {
         final Exchange exchange;
         if (consumer != null) {
             exchange = consumer.createExchange(false);
@@ -74,8 +74,8 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
 
         final Message message = exchange.getIn();
 
-        final Schema valueSchema = record.valueSchema();
-        final Object value = record.value();
+        final Schema valueSchema = sourceRecord.valueSchema();
+        final Object value = sourceRecord.value();
 
         // extract values from SourceRecord
         final Map<String, Object> sourceMetadata = extractSourceMetadataValueFromValueStruct(valueSchema, value);
@@ -85,8 +85,8 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         final Object timestamp = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.TIMESTAMP);
         final Object ddl = extractValueFromValueStruct(valueSchema, value, HistoryRecord.Fields.DDL_STATEMENTS);
         // set message headers
-        message.setHeader(DebeziumConstants.HEADER_IDENTIFIER, record.topic());
-        message.setHeader(DebeziumConstants.HEADER_KEY, record.key());
+        message.setHeader(DebeziumConstants.HEADER_IDENTIFIER, sourceRecord.topic());
+        message.setHeader(DebeziumConstants.HEADER_KEY, sourceRecord.key());
         message.setHeader(DebeziumConstants.HEADER_SOURCE_METADATA, sourceMetadata);
         message.setHeader(DebeziumConstants.HEADER_OPERATION, operation);
         message.setHeader(DebeziumConstants.HEADER_BEFORE, before);

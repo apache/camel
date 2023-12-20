@@ -16,10 +16,15 @@
  */
 package org.apache.camel.spring.processor;
 
+import java.util.concurrent.Semaphore;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.processor.ThrottlingGroupingTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringThrottlerGroupingTest extends ThrottlingGroupingTest {
 
@@ -27,5 +32,25 @@ public class SpringThrottlerGroupingTest extends ThrottlingGroupingTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/ThrottlerGroupingTest.xml");
+    }
+
+    public static class IncrementProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            String key = (String) exchange.getMessage().getHeader("key");
+            assertTrue(
+                    semaphores.computeIfAbsent(key, k -> new Semaphore(
+                            exchange.getMessage().getHeader("throttleValue") == null
+                                    ? CONCURRENT_REQUESTS : (Integer) exchange.getMessage().getHeader("throttleValue")))
+                            .tryAcquire(),
+                    "too many requests for key " + key);
+        }
+    }
+
+    public static class DecrementProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            semaphores.get(exchange.getMessage().getHeader("key")).release();
+        }
     }
 }

@@ -221,7 +221,7 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
  */
 public class MavenDownloaderImpl extends ServiceSupport implements MavenDownloader {
 
-    public static final Logger LOG = LoggerFactory.getLogger(MavenDownloader.class);
+    public static final Logger LOG = LoggerFactory.getLogger(MavenDownloaderImpl.class);
 
     public static final String MAVEN_CENTRAL_REPO = "https://repo1.maven.org/maven2";
     public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
@@ -260,11 +260,24 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     // comma-separated list of additional repositories to use
     private String repos;
     private boolean fresh;
+    private boolean offline;
     private RemoteArtifactDownloadListener remoteArtifactDownloadListener;
 
     private boolean apacheSnapshotsIncluded;
 
     private AtomicInteger customRepositoryCounter = new AtomicInteger(1);
+
+    private Settings settings;
+
+    public MavenDownloaderImpl() {
+    }
+
+    public MavenDownloaderImpl(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession,
+                               Settings settings) {
+        this.repositorySystem = repositorySystem;
+        this.repositorySystemSession = repositorySystemSession;
+        this.settings = settings;
+    }
 
     @Override
     protected void doBuild() {
@@ -288,17 +301,24 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // locations of settings.xml and settings-security.xml
         validateMavenSettingsLocations();
+        if (repositorySystem == null) {
+            repositorySystem = configureRepositorySystem(registry, systemProperties, mavenSettingsSecurity, offline);
+        }
 
-        repositorySystem = configureRepositorySystem(registry, systemProperties, mavenSettingsSecurity);
+        // read the settings if not provided
+        Settings settings = this.settings == null
+                ? mavenConfiguration(registry, repositorySystem, systemProperties, mavenSettings) : this.settings;
+        if (offline) {
+            LOG.info("MavenDownloader in offline mode");
+            settings.setOffline(true);
+        }
 
-        // read the settings
-        Settings settings = mavenConfiguration(registry, repositorySystem, systemProperties, mavenSettings);
-
-        // prepare the Maven session (local repository was configured within the settings)
-        // this object is thread safe - it uses configurable download pool
-        repositorySystemSession = configureRepositorySystemSession(registry, systemProperties,
-                settings, new File(settings.getLocalRepository()));
-
+        if (repositorySystemSession == null) {
+            // prepare the Maven session (local repository was configured within the settings)
+            // this object is thread safe - it uses configurable download pool
+            repositorySystemSession = configureRepositorySystemSession(registry, systemProperties,
+                    settings, new File(settings.getLocalRepository()));
+        }
         defaultPolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
 
         // process repositories - both from settings.xml and from --repos option. All are subject to
@@ -383,6 +403,17 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 @Override
                 public void artifactDownloading(RepositoryEvent event) {
                     watch.restart();
+
+                    if (event.getArtifact() != null) {
+                        Artifact a = event.getArtifact();
+
+                        ArtifactRepository ar = event.getRepository();
+                        String url = ar instanceof RemoteRepository ? ((RemoteRepository) ar).getUrl() : null;
+                        String id = ar != null ? ar.getId() : null;
+                        String version = a.isSnapshot() ? a.getBaseVersion() : a.getVersion();
+                        remoteArtifactDownloadListener.artifactDownloading(a.getGroupId(), a.getArtifactId(), version,
+                                id, url);
+                    }
                 }
 
                 @Override
@@ -514,6 +545,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         copy.apacheSnapshotsIncluded = apacheSnapshotsIncluded;
         copy.customRepositoryCounter = customRepositoryCounter;
         copy.repositoryResolver = repositoryResolver;
+        copy.offline = offline;
 
         LocalRepositoryManagerFactory lrmFactory = registry.lookupByClass(LocalRepositoryManagerFactory.class);
 
@@ -582,7 +614,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      */
     RepositorySystem configureRepositorySystem(
             DIRegistry registry,
-            Properties systemProperties, String settingsSecurityLocation) {
+            Properties systemProperties, String settingsSecurityLocation, boolean offline) {
         basicRepositorySystemConfiguration(registry);
         transportConfiguration(registry, systemProperties);
         settingsConfiguration(registry, settingsSecurityLocation);
@@ -790,10 +822,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // 3) ${user.home}/.m2/repository (if exists)
         // 4) /tmp/.m2/repository
         String localRepository = System.getProperty("maven.repo.local");
-        if (localRepository == null || localRepository.trim().isEmpty()) {
+        if (localRepository == null || localRepository.isBlank()) {
             localRepository = settings.getLocalRepository();
         }
-        if (localRepository == null || localRepository.trim().isEmpty()) {
+        if (localRepository == null || localRepository.isBlank()) {
             Path m2Repository = Paths.get(System.getProperty("user.home"), ".m2/repository");
             if (!m2Repository.toFile().isDirectory()) {
                 m2Repository = Paths.get(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
@@ -1103,7 +1135,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // to associate authentications with remote repositories (also mirrored)
         session.setAuthenticationSelector(authenticationSelector);
         // offline mode selected using for example `camel run --download` option - should be online by default
-        session.setOffline(false);
+        session.setOffline(offline);
         // controls whether repositories declared in artifact descriptors should be ignored during transitive
         // dependency collection
         session.setIgnoreArtifactDescriptorRepositories(true);
@@ -1135,8 +1167,6 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      * This method is used during initialization of this {@link MavenDownloader}, but when invoking actual
      * download/resolve methods, we can use additional repositories.
      * </p>
-     *
-     * @param settings maven settings
      */
     List<RemoteRepository> configureDefaultRepositories(Settings settings) {
         List<RemoteRepository> repositories = new ArrayList<>();
@@ -1215,7 +1245,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         }
                     }
                 } catch (MalformedURLException e) {
-                    LOG.warn("Can't use {} URL from Maven settings: {}. Skipping.", r.getUrl(), e.getMessage(), e);
+                    LOG.warn("Cannot use {} URL from Maven settings: {}. Skipping.", r.getUrl(), e.getMessage(), e);
                 }
             }
         }
@@ -1227,9 +1257,6 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      * Helper method to translate a collection of Strings for remote repository URLs into actual instances of
      * {@link RemoteRepository} added to the passed {@code repositories}. We don't detected duplicates here and we don't
      * do mirror/proxy processing of the repositories.
-     *
-     * @param repositories
-     * @param urls
      */
     private void configureRepositories(List<RemoteRepository> repositories, Set<String> urls) {
         urls.forEach(repo -> {
@@ -1252,82 +1279,50 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                             .build());
                 }
             } catch (MalformedURLException e) {
-                LOG.warn("Can't use {} URL: {}. Skipping.", repo, e.getMessage(), e);
+                LOG.warn("Cannot use {} URL: {}. Skipping.", repo, e.getMessage(), e);
             }
         });
     }
 
-    /**
-     * Configure a location of {@code settings.xml} (when not set, defaults to {@code ~/.m2/settings.xml} unless it's
-     * explicitly set to {@code "false"}.
-     *
-     * @param mavenSettings
-     */
+    @Override
     public void setMavenSettingsLocation(String mavenSettings) {
         this.mavenSettings = mavenSettings;
     }
 
-    /**
-     * Configure a location of {@code settings-security.xml} (when not set, defaults to
-     * {@code ~/.m2/settings-security.xml} unless {@link #setMavenSettingsLocation(String)} is set explicitly set to
-     * {@code "false"}.
-     *
-     * @param mavenSettingsSecurity
-     */
+    @Override
     public void setMavenSettingsSecurityLocation(String mavenSettingsSecurity) {
         this.mavenSettingsSecurity = mavenSettingsSecurity;
     }
 
-    /**
-     * Configure comma-separated list of repositories to use (in addition to the ones discovered from Maven settings).
-     *
-     * @param repos
-     */
+    @Override
+    public RepositoryResolver getRepositoryResolver() {
+        return repositoryResolver;
+    }
+
+    @Override
+    public void setRepositoryResolver(RepositoryResolver repositoryResolver) {
+        this.repositoryResolver = repositoryResolver;
+    }
+
+    @Override
     public void setRepos(String repos) {
         this.repos = repos;
     }
 
-    /**
-     * Set a flag determining Maven update behavior. See the description of {@code -U,--update-snapshots} Maven option.
-     * When set to {@code true}, Maven metadata (to determine newest SNAPSHOT or RELEASE or LATEST version) is always
-     * fetched.
-     *
-     * @param fresh
-     */
+    @Override
     public void setFresh(boolean fresh) {
         this.fresh = fresh;
+    }
+
+    @Override
+    public void setOffline(boolean offline) {
+        this.offline = offline;
     }
 
     private static class AcceptAllDependencyFilter implements DependencyFilter {
         @Override
         public boolean accept(DependencyNode node, List<DependencyNode> parents) {
             return true;
-        }
-    }
-
-    private static class AcceptDirectDependencyFilter implements DependencyFilter {
-        private final List<ArtifactRequest> requests;
-
-        public AcceptDirectDependencyFilter(List<ArtifactRequest> requests) {
-            this.requests = requests;
-        }
-
-        @Override
-        public boolean accept(DependencyNode node, List<DependencyNode> parents) {
-            Dependency dependency = node.getDependency();
-            if (dependency == null) {
-                return false;
-            }
-            Artifact current = dependency.getArtifact();
-            for (ArtifactRequest ar : requests) {
-                if (current.getGroupId().equals(ar.getArtifact().getGroupId())
-                        && current.getArtifactId().equals(ar.getArtifact().getArtifactId())
-                        && current.getExtension().equals(ar.getArtifact().getExtension())
-                        && current.getClassifier().equals(ar.getArtifact().getClassifier())) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
         implements CamelContextAware, Callable<CuratorFramework>, ConnectionStateListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ZookeeperComponentSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZookeeperGroupSupport.class);
 
     private static final String ZOOKEEPER_URL = "zookeeper.url";
     private static final String ZOOKEEPER_PASSWORD = "zookeeper.password";

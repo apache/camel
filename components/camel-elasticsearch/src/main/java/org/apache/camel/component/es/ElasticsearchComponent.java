@@ -45,6 +45,8 @@ public class ElasticsearchComponent extends DefaultComponent {
     private int maxRetryTimeout = ElasticsearchConstants.MAX_RETRY_TIMEOUT;
     @Metadata(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
+    @Metadata(defaultValue = "false")
+    private boolean enableDocumentOnlyMode;
     @Metadata(label = "security", secret = true)
     private String user;
     @Metadata(label = "security", secret = true)
@@ -84,6 +86,7 @@ public class ElasticsearchComponent extends DefaultComponent {
         config.setSnifferInterval(this.getSnifferInterval());
         config.setSniffAfterFailureDelay(this.getSniffAfterFailureDelay());
         config.setClusterName(remaining);
+        config.setEnableDocumentOnlyMode(this.isEnableDocumentOnlyMode());
 
         Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
         setProperties(endpoint, parameters);
@@ -200,6 +203,21 @@ public class ElasticsearchComponent extends DefaultComponent {
 
     public void setCertificatePath(String certificatePath) {
         this.certificatePath = certificatePath;
+    }
+
+    /**
+     * Indicates whether the body of the message contains only documents. By default, it is set to false to be able to
+     * do the same requests as what the Document API supports (see
+     * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the
+     * migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode
+     * especially if your routes do update operations.
+     */
+    public boolean isEnableDocumentOnlyMode() {
+        return enableDocumentOnlyMode;
+    }
+
+    public void setEnableDocumentOnlyMode(boolean enableDocumentOnlyMode) {
+        this.enableDocumentOnlyMode = enableDocumentOnlyMode;
     }
 
     /**

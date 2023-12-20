@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-http</artifactId>
@@ -50,16 +50,38 @@
             <artifactId>camel-file</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util-json</artifactId>
+        </dependency>
+        <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>${jakarta-servlet-api-version}</version>
         </dependency>
 
         <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>${httpcore-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-h2</artifactId>
+            <version>${httpcore-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
             <version>${httpclient-version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- Both httpcore5 and httpcore5-h2 are present as the dependencies-->
+                    <artifactId>*</artifactId>
+                    <groupId>org.apache.httpcomponents.core5</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
 
         <!-- testing -->
         <dependency>
@@ -93,6 +115,13 @@
             <version>${httpclient-version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- Both httpcore5 and httpcore5-h2 are present as the dependencies-->
+                    <artifactId>*</artifactId>
+                    <groupId>org.apache.httpcomponents.core5</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 

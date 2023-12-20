@@ -47,7 +47,7 @@ public class CosmosDbComponent extends DefaultComponent {
         final CosmosDbConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new CosmosDbConfiguration();
 
-        if (ObjectHelper.isNotEmpty(remaining) && remaining.trim().length() > 0) {
+        if (ObjectHelper.isNotEmpty(remaining) && !remaining.isBlank()) {
             final String[] parts = remaining.split("/");
 
             // only database name is being set

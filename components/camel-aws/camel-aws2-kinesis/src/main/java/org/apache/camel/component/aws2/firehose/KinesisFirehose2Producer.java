@@ -178,12 +178,12 @@ public class KinesisFirehose2Producer extends DefaultProducer {
 
     private PutRecordRequest createRequest(Exchange exchange) {
         ByteBuffer body = exchange.getIn().getBody(ByteBuffer.class);
-        Record.Builder record = Record.builder();
-        record.data(SdkBytes.fromByteBuffer(body));
+        Record.Builder builder = Record.builder();
+        builder.data(SdkBytes.fromByteBuffer(body));
 
         PutRecordRequest.Builder putRecordRequest = PutRecordRequest.builder();
         putRecordRequest.deliveryStreamName(getEndpoint().getConfiguration().getStreamName());
-        putRecordRequest.record(record.build());
+        putRecordRequest.record(builder.build());
         return putRecordRequest.build();
     }
 

@@ -109,6 +109,11 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     @Override
+    public boolean hasUnhealthyRoutes() {
+        return getInternalRouteController().hasUnhealthyRoutes();
+    }
+
+    @Override
     public void reloadAllRoutes() throws Exception {
         getInternalRouteController().reloadAllRoutes();
     }

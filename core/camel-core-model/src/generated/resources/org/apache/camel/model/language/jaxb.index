@@ -7,6 +7,7 @@ ExpressionDefinition
 GroovyExpression
 HeaderExpression
 Hl7TerserExpression
+JavaExpression
 JavaScriptExpression
 JoorExpression
 JqExpression

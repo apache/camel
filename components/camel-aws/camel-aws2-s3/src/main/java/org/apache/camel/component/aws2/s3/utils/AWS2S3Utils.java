@@ -26,7 +26,6 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
 

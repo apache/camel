@@ -29,7 +29,6 @@ import org.cometd.bayeux.server.LocalSession;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.BayeuxServerImpl;
-import org.eclipse.jetty.util.log.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,8 +59,6 @@ public class CometdConsumerTest {
     private BayeuxServerImpl bayeuxServerImpl;
     @Mock
     private LocalSession localSession;
-    @Mock
-    private Logger logger;
     @Mock
     private ServerChannel serverChannel;
     @Mock

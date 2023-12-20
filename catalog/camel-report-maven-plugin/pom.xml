@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
         <relativePath>../../tooling/maven</relativePath>
     </parent>
 
@@ -96,11 +96,40 @@
             <artifactId>camel-catalog-lucene</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- must-use grape for downloading when running as maven-plugin -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-catalog-maven-grape</artifactId>
+            <artifactId>camel-catalog-maven</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings-builder</artifactId>
+            <version>${maven-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-builder-support</artifactId>
+            <version>${maven-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model-builder</artifactId>
+            <version>${maven-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-resolver-provider</artifactId>
+            <version>${maven-version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- disable all components -->
@@ -190,7 +219,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
@@ -199,6 +228,12 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito-version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-common</artifactId>
+            <version>4.4.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

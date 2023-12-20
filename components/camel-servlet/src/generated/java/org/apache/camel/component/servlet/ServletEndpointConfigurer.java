@@ -43,6 +43,8 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
         case "httpmethodrestrict":
         case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "logexception":
+        case "logException": target.setLogException(property(camelContext, boolean.class, value)); return true;
         case "maphttpmessagebody":
         case "mapHttpMessageBody": target.setMapHttpMessageBody(property(camelContext, boolean.class, value)); return true;
         case "maphttpmessageformurlencodedbody":
@@ -92,6 +94,8 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
         case "httpmethodrestrict":
         case "httpMethodRestrict": return java.lang.String.class;
+        case "logexception":
+        case "logException": return boolean.class;
         case "maphttpmessagebody":
         case "mapHttpMessageBody": return boolean.class;
         case "maphttpmessageformurlencodedbody":
@@ -142,6 +146,8 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "httpBinding": return target.getHttpBinding();
         case "httpmethodrestrict":
         case "httpMethodRestrict": return target.getHttpMethodRestrict();
+        case "logexception":
+        case "logException": return target.isLogException();
         case "maphttpmessagebody":
         case "mapHttpMessageBody": return target.isMapHttpMessageBody();
         case "maphttpmessageformurlencodedbody":

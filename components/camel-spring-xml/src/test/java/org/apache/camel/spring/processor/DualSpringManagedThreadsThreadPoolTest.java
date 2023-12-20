@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
@@ -64,10 +65,10 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
         // no source or route as its a shared thread pool
         String source = (String) mbeanServer.getAttribute(on, "SourceId");
-        assertEquals(null, source);
+        assertNull(source);
 
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        assertEquals(null, routeId);
+        assertNull(routeId);
 
         on = getCamelObjectName(TYPE_THREAD_POOL, "myOtherPool");
 
@@ -82,10 +83,10 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
         // no source or route as its a shared thread pool
         source = (String) mbeanServer.getAttribute(on, "SourceId");
-        assertEquals(null, source);
+        assertNull(source);
 
         routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        assertEquals(null, routeId);
+        assertNull(routeId);
     }
 
 }

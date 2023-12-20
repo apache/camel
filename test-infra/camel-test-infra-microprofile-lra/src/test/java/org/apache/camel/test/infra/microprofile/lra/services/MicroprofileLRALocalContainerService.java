@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.microprofile.lra.services;
 
 import com.github.dockerjava.api.model.Network;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.microprofile.lra.common.MicroprofileLRAProperties;
 import org.slf4j.Logger;
@@ -26,7 +27,6 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class MicroprofileLRALocalContainerService implements MicroprofileLRAService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "quay.io/jbosstm/lra-coordinator:5.13.0.Final-2.12.3.Final";
     public static final String CONTAINER_NAME = "microprofile-lra";
 
     private static final Logger LOG = LoggerFactory.getLogger(MicroprofileLRALocalContainerService.class);
@@ -34,7 +34,9 @@ public class MicroprofileLRALocalContainerService implements MicroprofileLRAServ
     private final GenericContainer container;
 
     public MicroprofileLRALocalContainerService() {
-        this(System.getProperty(MicroprofileLRAProperties.MICROPROFILE_LRA_CONTAINER, CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(
+                MicroprofileLRALocalContainerService.class,
+                MicroprofileLRAProperties.MICROPROFILE_LRA_CONTAINER));
     }
 
     public MicroprofileLRALocalContainerService(String imageName) {

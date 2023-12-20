@@ -252,12 +252,17 @@ public interface DockerEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -274,12 +279,17 @@ public interface DockerEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1630,7 +1640,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerRequestTimeout}.
          */
         public String dockerRequestTimeout() {
-            return "DockerRequestTimeout";
+            return "CamelDockerRequestTimeout";
         }
 
         /**
@@ -1643,7 +1653,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerCertPath}.
          */
         public String dockerCertPath() {
-            return "DockerCertPath";
+            return "CamelDockerCertPath";
         }
 
         /**
@@ -1656,7 +1666,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerHost}.
          */
         public String dockerHost() {
-            return "DockerHost";
+            return "CamelDockerHost";
         }
 
         /**
@@ -1669,7 +1679,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerPort}.
          */
         public String dockerPort() {
-            return "DockerPort";
+            return "CamelDockerPort";
         }
 
         /**
@@ -1682,7 +1692,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerMaxPerRouteConnections}.
          */
         public String dockerMaxPerRouteConnections() {
-            return "DockerMaxPerRouteConnections";
+            return "CamelDockerMaxPerRouteConnections";
         }
 
         /**
@@ -1695,7 +1705,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerMaxTotalConnections}.
          */
         public String dockerMaxTotalConnections() {
-            return "DockerMaxTotalConnections";
+            return "CamelDockerMaxTotalConnections";
         }
 
         /**
@@ -1709,7 +1719,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerSecure}.
          */
         public String dockerSecure() {
-            return "DockerSecure";
+            return "CamelDockerSecure";
         }
 
         /**
@@ -1723,7 +1733,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerTlsVerify}.
          */
         public String dockerTlsVerify() {
-            return "DockerTlsVerify";
+            return "CamelDockerTlsVerify";
         }
 
         /**
@@ -1737,7 +1747,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerSocketEnabled}.
          */
         public String dockerSocketEnabled() {
-            return "DockerSocketEnabled";
+            return "CamelDockerSocketEnabled";
         }
 
         /**
@@ -1751,7 +1761,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerCmdExecFactory}.
          */
         public String dockerCmdExecFactory() {
-            return "DockerCmdExecFactory";
+            return "CamelDockerCmdExecFactory";
         }
 
         /**
@@ -1764,7 +1774,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerFilter}.
          */
         public String dockerFilter() {
-            return "DockerFilter";
+            return "CamelDockerFilter";
         }
 
         /**
@@ -1777,7 +1787,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerShowAll}.
          */
         public String dockerShowAll() {
-            return "DockerShowAll";
+            return "CamelDockerShowAll";
         }
 
         /**
@@ -1790,7 +1800,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerContainerId}.
          */
         public String dockerContainerId() {
-            return "DockerContainerId";
+            return "CamelDockerContainerId";
         }
 
         /**
@@ -1803,7 +1813,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerImageId}.
          */
         public String dockerImageId() {
-            return "DockerImageId";
+            return "CamelDockerImageId";
         }
 
         /**
@@ -1816,7 +1826,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerEmail}.
          */
         public String dockerEmail() {
-            return "DockerEmail";
+            return "CamelDockerEmail";
         }
 
         /**
@@ -1829,7 +1839,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerPassword}.
          */
         public String dockerPassword() {
-            return "DockerPassword";
+            return "CamelDockerPassword";
         }
 
         /**
@@ -1842,7 +1852,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerServerAddress}.
          */
         public String dockerServerAddress() {
-            return "DockerServerAddress";
+            return "CamelDockerServerAddress";
         }
 
         /**
@@ -1855,7 +1865,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerUsername}.
          */
         public String dockerUsername() {
-            return "DockerUsername";
+            return "CamelDockerUsername";
         }
 
         /**
@@ -1868,7 +1878,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerRegistry}.
          */
         public String dockerRegistry() {
-            return "DockerRegistry";
+            return "CamelDockerRegistry";
         }
 
         /**
@@ -1881,7 +1891,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerRepository}.
          */
         public String dockerRepository() {
-            return "DockerRepository";
+            return "CamelDockerRepository";
         }
 
         /**
@@ -1894,7 +1904,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerTag}.
          */
         public String dockerTag() {
-            return "DockerTag";
+            return "CamelDockerTag";
         }
 
         /**
@@ -1907,7 +1917,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerName}.
          */
         public String dockerName() {
-            return "DockerName";
+            return "CamelDockerName";
         }
 
         /**
@@ -1920,7 +1930,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerTerm}.
          */
         public String dockerTerm() {
-            return "DockerTerm";
+            return "CamelDockerTerm";
         }
 
         /**
@@ -1933,7 +1943,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerForce}.
          */
         public String dockerForce() {
-            return "DockerForce";
+            return "CamelDockerForce";
         }
 
         /**
@@ -1946,7 +1956,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerNoPrune}.
          */
         public String dockerNoPrune() {
-            return "DockerNoPrune";
+            return "CamelDockerNoPrune";
         }
 
         /**
@@ -1959,7 +1969,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerInitialRange}.
          */
         public String dockerInitialRange() {
-            return "DockerInitialRange";
+            return "CamelDockerInitialRange";
         }
 
         /**
@@ -1972,7 +1982,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerBefore}.
          */
         public String dockerBefore() {
-            return "DockerBefore";
+            return "CamelDockerBefore";
         }
 
         /**
@@ -1985,7 +1995,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerLimit}.
          */
         public String dockerLimit() {
-            return "DockerLimit";
+            return "CamelDockerLimit";
         }
 
         /**
@@ -1998,7 +2008,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerShowSize}.
          */
         public String dockerShowSize() {
-            return "DockerShowSize";
+            return "CamelDockerShowSize";
         }
 
         /**
@@ -2011,7 +2021,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerSince}.
          */
         public String dockerSince() {
-            return "DockerSince";
+            return "CamelDockerSince";
         }
 
         /**
@@ -2024,7 +2034,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerRemoveVolumes}.
          */
         public String dockerRemoveVolumes() {
-            return "DockerRemoveVolumes";
+            return "CamelDockerRemoveVolumes";
         }
 
         /**
@@ -2037,7 +2047,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerFollowStream}.
          */
         public String dockerFollowStream() {
-            return "DockerFollowStream";
+            return "CamelDockerFollowStream";
         }
 
         /**
@@ -2050,7 +2060,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerLogs}.
          */
         public String dockerLogs() {
-            return "DockerLogs";
+            return "CamelDockerLogs";
         }
 
         /**
@@ -2063,7 +2073,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerStdErr}.
          */
         public String dockerStdErr() {
-            return "DockerStdErr";
+            return "CamelDockerStdErr";
         }
 
         /**
@@ -2076,7 +2086,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerStdOut}.
          */
         public String dockerStdOut() {
-            return "DockerStdOut";
+            return "CamelDockerStdOut";
         }
 
         /**
@@ -2089,7 +2099,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerTimestamps}.
          */
         public String dockerTimestamps() {
-            return "DockerTimestamps";
+            return "CamelDockerTimestamps";
         }
 
         /**
@@ -2102,7 +2112,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerTail}.
          */
         public String dockerTail() {
-            return "DockerTail";
+            return "CamelDockerTail";
         }
 
         /**
@@ -2115,7 +2125,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerTailAll}.
          */
         public String dockerTailAll() {
-            return "DockerTailAll";
+            return "CamelDockerTailAll";
         }
 
         /**
@@ -2128,7 +2138,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerHostPath}.
          */
         public String dockerHostPath() {
-            return "DockerHostPath";
+            return "CamelDockerHostPath";
         }
 
         /**
@@ -2141,7 +2151,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerResource}.
          */
         public String dockerResource() {
-            return "DockerResource";
+            return "CamelDockerResource";
         }
 
         /**
@@ -2154,7 +2164,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerContainerIdDiff}.
          */
         public String dockerContainerIdDiff() {
-            return "DockerContainerIdDiff";
+            return "CamelDockerContainerIdDiff";
         }
 
         /**
@@ -2167,7 +2177,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerTimeout}.
          */
         public String dockerTimeout() {
-            return "DockerTimeout";
+            return "CamelDockerTimeout";
         }
 
         /**
@@ -2180,7 +2190,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerSignal}.
          */
         public String dockerSignal() {
-            return "DockerSignal";
+            return "CamelDockerSignal";
         }
 
         /**
@@ -2193,7 +2203,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerPsArgs}.
          */
         public String dockerPsArgs() {
-            return "DockerPsArgs";
+            return "CamelDockerPsArgs";
         }
 
         /**
@@ -2206,7 +2216,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerNoCache}.
          */
         public String dockerNoCache() {
-            return "DockerNoCache";
+            return "CamelDockerNoCache";
         }
 
         /**
@@ -2219,7 +2229,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerQuiet}.
          */
         public String dockerQuiet() {
-            return "DockerQuiet";
+            return "CamelDockerQuiet";
         }
 
         /**
@@ -2232,7 +2242,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerRemove}.
          */
         public String dockerRemove() {
-            return "DockerRemove";
+            return "CamelDockerRemove";
         }
 
         /**
@@ -2245,7 +2255,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerAttachStdErr}.
          */
         public String dockerAttachStdErr() {
-            return "DockerAttachStdErr";
+            return "CamelDockerAttachStdErr";
         }
 
         /**
@@ -2258,7 +2268,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerAttachStdIn}.
          */
         public String dockerAttachStdIn() {
-            return "DockerAttachStdIn";
+            return "CamelDockerAttachStdIn";
         }
 
         /**
@@ -2271,7 +2281,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerAttachStdOut}.
          */
         public String dockerAttachStdOut() {
-            return "DockerAttachStdOut";
+            return "CamelDockerAttachStdOut";
         }
 
         /**
@@ -2284,7 +2294,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerAuthor}.
          */
         public String dockerAuthor() {
-            return "DockerAuthor";
+            return "CamelDockerAuthor";
         }
 
         /**
@@ -2297,7 +2307,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerCmd}.
          */
         public String dockerCmd() {
-            return "DockerCmd";
+            return "CamelDockerCmd";
         }
 
         /**
@@ -2310,7 +2320,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerDisableNetwork}.
          */
         public String dockerDisableNetwork() {
-            return "DockerDisableNetwork";
+            return "CamelDockerDisableNetwork";
         }
 
         /**
@@ -2323,7 +2333,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerEnv}.
          */
         public String dockerEnv() {
-            return "DockerEnv";
+            return "CamelDockerEnv";
         }
 
         /**
@@ -2336,7 +2346,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerExposedPorts}.
          */
         public String dockerExposedPorts() {
-            return "DockerExposedPorts";
+            return "CamelDockerExposedPorts";
         }
 
         /**
@@ -2349,7 +2359,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerHostname}.
          */
         public String dockerHostname() {
-            return "DockerHostname";
+            return "CamelDockerHostname";
         }
 
         /**
@@ -2362,7 +2372,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerMessage}.
          */
         public String dockerMessage() {
-            return "DockerMessage";
+            return "CamelDockerMessage";
         }
 
         /**
@@ -2375,7 +2385,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerMemory}.
          */
         public String dockerMemory() {
-            return "DockerMemory";
+            return "CamelDockerMemory";
         }
 
         /**
@@ -2388,7 +2398,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerMemorySwap}.
          */
         public String dockerMemorySwap() {
-            return "DockerMemorySwap";
+            return "CamelDockerMemorySwap";
         }
 
         /**
@@ -2401,7 +2411,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerOpenStdIn}.
          */
         public String dockerOpenStdIn() {
-            return "DockerOpenStdIn";
+            return "CamelDockerOpenStdIn";
         }
 
         /**
@@ -2414,7 +2424,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerPause}.
          */
         public String dockerPause() {
-            return "DockerPause";
+            return "CamelDockerPause";
         }
 
         /**
@@ -2427,7 +2437,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerPortSpecs}.
          */
         public String dockerPortSpecs() {
-            return "DockerPortSpecs";
+            return "CamelDockerPortSpecs";
         }
 
         /**
@@ -2440,7 +2450,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerStdInOnce}.
          */
         public String dockerStdInOnce() {
-            return "DockerStdInOnce";
+            return "CamelDockerStdInOnce";
         }
 
         /**
@@ -2453,7 +2463,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerTty}.
          */
         public String dockerTty() {
-            return "DockerTty";
+            return "CamelDockerTty";
         }
 
         /**
@@ -2466,7 +2476,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerUser}.
          */
         public String dockerUser() {
-            return "DockerUser";
+            return "CamelDockerUser";
         }
 
         /**
@@ -2479,7 +2489,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerVolumes}.
          */
         public String dockerVolumes() {
-            return "DockerVolumes";
+            return "CamelDockerVolumes";
         }
 
         /**
@@ -2492,7 +2502,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerWorkingDir}.
          */
         public String dockerWorkingDir() {
-            return "DockerWorkingDir";
+            return "CamelDockerWorkingDir";
         }
 
         /**
@@ -2505,7 +2515,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerCpuShares}.
          */
         public String dockerCpuShares() {
-            return "DockerCpuShares";
+            return "CamelDockerCpuShares";
         }
 
         /**
@@ -2518,7 +2528,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerDns}.
          */
         public String dockerDns() {
-            return "DockerDns";
+            return "CamelDockerDns";
         }
 
         /**
@@ -2531,7 +2541,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerEntryPoint}.
          */
         public String dockerEntryPoint() {
-            return "DockerEntryPoint";
+            return "CamelDockerEntryPoint";
         }
 
         /**
@@ -2545,7 +2555,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerHostConfig}.
          */
         public String dockerHostConfig() {
-            return "DockerHostConfig";
+            return "CamelDockerHostConfig";
         }
 
         /**
@@ -2558,7 +2568,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerImage}.
          */
         public String dockerImage() {
-            return "DockerImage";
+            return "CamelDockerImage";
         }
 
         /**
@@ -2571,7 +2581,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerMemoryLimit}.
          */
         public String dockerMemoryLimit() {
-            return "DockerMemoryLimit";
+            return "CamelDockerMemoryLimit";
         }
 
         /**
@@ -2584,7 +2594,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerStdInOpen}.
          */
         public String dockerStdInOpen() {
-            return "DockerStdInOpen";
+            return "CamelDockerStdInOpen";
         }
 
         /**
@@ -2597,7 +2607,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerVolumesFrom}.
          */
         public String dockerVolumesFrom() {
-            return "DockerVolumesFrom";
+            return "CamelDockerVolumesFrom";
         }
 
         /**
@@ -2610,7 +2620,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerDomainName}.
          */
         public String dockerDomainName() {
-            return "DockerDomainName";
+            return "CamelDockerDomainName";
         }
 
         /**
@@ -2623,7 +2633,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerBinds}.
          */
         public String dockerBinds() {
-            return "DockerBinds";
+            return "CamelDockerBinds";
         }
 
         /**
@@ -2636,7 +2646,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerCapAdd}.
          */
         public String dockerCapAdd() {
-            return "DockerCapAdd";
+            return "CamelDockerCapAdd";
         }
 
         /**
@@ -2649,7 +2659,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerCapDrop}.
          */
         public String dockerCapDrop() {
-            return "DockerCapDrop";
+            return "CamelDockerCapDrop";
         }
 
         /**
@@ -2662,7 +2672,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerNetwork}.
          */
         public String dockerNetwork() {
-            return "DockerNetwork";
+            return "CamelDockerNetwork";
         }
 
         /**
@@ -2675,7 +2685,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerDetach}.
          */
         public String dockerDetach() {
-            return "DockerDetach";
+            return "CamelDockerDetach";
         }
 
         /**
@@ -2688,7 +2698,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the name of the header {@code DockerExecId}.
          */
         public String dockerExecId() {
-            return "DockerExecId";
+            return "CamelDockerExecId";
         }
     }
     static DockerEndpointBuilder endpointBuilder(

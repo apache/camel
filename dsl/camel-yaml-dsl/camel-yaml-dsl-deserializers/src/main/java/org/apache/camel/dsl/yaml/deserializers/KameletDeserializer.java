@@ -36,12 +36,12 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           nodes = "kamelet",
           properties = {
-                  @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                   @YamlProperty(name = "name", type = "string", required = true),
                   @YamlProperty(name = "parameters", type = "object"),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
           })
 public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition> {
+
     public KameletDeserializer() {
         super(KameletDefinition.class);
     }
@@ -64,11 +64,12 @@ public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition>
         Map<String, Object> parameters = null;
 
         for (NodeTuple tuple : node.getValue()) {
-            final String key = asText(tuple.getKeyNode());
-            final Node val = tuple.getValueNode();
+            String key = asText(tuple.getKeyNode());
+            Node val = tuple.getValueNode();
 
             setDeserializationContext(val, dc);
 
+            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "steps":
                     setSteps(target, val);
@@ -78,10 +79,6 @@ public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition>
                     break;
                 case "name":
                     name = asText(val);
-                    break;
-                case "inheritErrorHandler":
-                case "inherit-error-handler":
-                    target.setInheritErrorHandler(asBoolean(val));
                     break;
                 case "parameters":
                     parameters = asScalarMap(tuple.getValueNode());

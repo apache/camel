@@ -31,7 +31,9 @@ import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.tracing.SpanDecorator;
 
 public class OpenTelemetryTracingStrategy implements InterceptStrategy {
+
     private static final String UNNAMED = "unnamed";
+
     private final OpenTelemetryTracer tracer;
 
     public OpenTelemetryTracingStrategy(OpenTelemetryTracer tracer) {
@@ -48,8 +50,12 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
         }
 
         return new DelegateAsyncProcessor((Exchange exchange) -> {
+            Span span = null;
             OpenTelemetrySpanAdapter spanWrapper = (OpenTelemetrySpanAdapter) ActiveSpanManager.getSpan(exchange);
-            Span span = spanWrapper.getOpenTelemetrySpan();
+            if (spanWrapper != null) {
+                span = spanWrapper.getOpenTelemetrySpan();
+            }
+
             if (span == null) {
                 target.process(exchange);
                 return;
@@ -95,10 +101,13 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
     // Adapted from org.apache.camel.impl.engine.DefaultTracer.shouldTrace
     // org.apache.camel.impl.engine.DefaultTracer.shouldTracePattern
     private boolean shouldTrace(NamedNode definition) {
-        for (String pattern : tracer.getExcludePatterns()) {
-            // use matchPattern method from endpoint helper that has a good matcher we use in Camel
-            if (PatternHelper.matchPattern(definition.getId(), pattern)) {
-                return false;
+        if (tracer.getExcludePatterns() != null) {
+            for (String pattern : tracer.getExcludePatterns().split(",")) {
+                pattern = pattern.trim();
+                // use matchPattern method from endpoint helper that has a good matcher we use in Camel
+                if (PatternHelper.matchPattern(definition.getId(), pattern)) {
+                    return false;
+                }
             }
         }
 

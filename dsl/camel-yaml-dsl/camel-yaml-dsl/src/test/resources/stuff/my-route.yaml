@@ -29,12 +29,12 @@
             when:
               - simple: "${body} == 'Hello'"
                 steps:
-                  - set-property:
+                  - setProperty:
                       name: testProp
                       simple: "${body}"
             otherwise:
               steps:
-                - set-property:
+                - setProperty:
                     name: testProp
                     constant: "NoDice"
         - log: "${header.textProp}"

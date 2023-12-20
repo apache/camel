@@ -21,8 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.TypeConvertible;
 import org.apache.camel.spi.BulkTypeConverters;
+import org.apache.camel.spi.TypeConvertible;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

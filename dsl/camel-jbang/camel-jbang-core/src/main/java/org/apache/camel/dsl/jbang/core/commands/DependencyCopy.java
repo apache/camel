@@ -16,20 +16,28 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Set;
 
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.util.CamelCaseOrderedProperties;
+import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenDownloader;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
+import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "copy",
                      description = "Copies all Camel dependencies required to run to a specific directory")
-public class DependencyCopy extends Export {
+public class DependencyCopy extends DependencyList {
+    private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
-    protected static final String EXPORT_DIR = ".camel-jbang/export";
+    private MavenDownloader downloader;
 
     @CommandLine.Option(names = { "--output-directory" }, description = "Directory where dependencies should be copied",
                         defaultValue = "lib", required = true)
@@ -39,77 +47,53 @@ public class DependencyCopy extends Export {
         super(main);
     }
 
-    @Override
-    public Integer doCall() throws Exception {
-        this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date
-        return super.doCall();
+    private void createOutputDirectory() {
+        Path outputDirectoryPath = Paths.get(outputDirectory);
+        if (Files.exists(outputDirectoryPath)) {
+            if (Files.isDirectory(outputDirectoryPath)) {
+                FileUtil.removeDir(outputDirectoryPath.toFile());
+            } else {
+                System.err.println("Error creating the output directory: " + outputDirectory
+                                   + " is not a directory");
+                return;
+            }
+        }
+        try {
+            Files.createDirectories(outputDirectoryPath);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error creating the output directory: " + outputDirectory, e);
+        }
     }
 
     @Override
-    protected Integer export() throws Exception {
-        Integer answer = doExport();
-        if (answer == 0) {
-            File buildDir = new File(EXPORT_DIR);
-            Process p = Runtime.getRuntime()
-                    .exec("mvn dependency:copy-dependencies -DincludeScope=compile -DexcludeGroupIds=org.fusesource.jansi,org.apache.logging.log4j -DoutputDirectory=../../"
-                          + outputDirectory,
-                            null,
-                            buildDir);
-            boolean done = p.waitFor(60, TimeUnit.SECONDS);
-            if (!done) {
-                answer = 1;
+    protected void outputGav(MavenGav gav, int index, int total) {
+        try {
+            List<MavenArtifact> artifacts = getDownloader().resolveArtifacts(
+                    List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));
+            for (MavenArtifact artifact : artifacts) {
+                Path target = Paths.get(outputDirectory, artifact.getFile().getName());
+                if (Files.exists(target) || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
+                    continue;
+                }
+                Files.copy(artifact.getFile().toPath(), target);
             }
-            if (p.exitValue() != 0) {
-                answer = p.exitValue();
-            }
-            // cleanup dir after complete
-            FileUtil.removeDir(buildDir);
-        }
-        return answer;
-    }
-
-    protected Integer doExport() throws Exception {
-        // read runtime and gav from profile if not configured
-        File profile = new File(getProfile() + ".properties");
-        if (profile.exists()) {
-            Properties prop = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(prop, profile);
-            if (this.runtime == null) {
-                this.runtime = prop.getProperty("camel.jbang.runtime");
-            }
-            if (this.gav == null) {
-                this.gav = prop.getProperty("camel.jbang.gav");
-            }
-            // allow configuring versions from profile
-            this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
-            this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
-            this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
-            this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
-            this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
-            this.quarkusArtifactId = prop.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
-            this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
-            this.springBootVersion = prop.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
-        }
-
-        // use temporary export dir
-        exportDir = EXPORT_DIR;
-        if (gav == null) {
-            gav = "org.apache.camel:camel-jbang-dummy:1.0";
-        }
-        if (runtime == null) {
-            runtime = "camel-main";
-        }
-
-        if ("spring-boot".equals(runtime) || "camel-spring-boot".equals(runtime)) {
-            return export(new ExportSpringBoot(getMain()));
-        } else if ("quarkus".equals(runtime) || "camel-quarkus".equals(runtime)) {
-            return export(new ExportQuarkus(getMain()));
-        } else if ("main".equals(runtime) || "camel-main".equals(runtime)) {
-            return export(new ExportCamelMain(getMain()));
-        } else {
-            System.err.println("Unknown runtime: " + runtime);
-            return 1;
+        } catch (MavenResolutionException e) {
+            System.err.println("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error copying the artifact: " + gav + " due to: " + e.getMessage());
         }
     }
 
+    private MavenDownloader getDownloader() {
+        if (downloader == null) {
+            init();
+        }
+        return downloader;
+    }
+
+    private void init() {
+        this.downloader = new MavenDownloaderImpl();
+        ((MavenDownloaderImpl) downloader).build();
+        createOutputDirectory();
+    }
 }

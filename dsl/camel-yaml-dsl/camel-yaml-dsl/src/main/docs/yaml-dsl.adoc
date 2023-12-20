@@ -180,6 +180,174 @@ The properties of the bean can be defined using either a map or properties style
 The `beans` elements can only be used as the root element
 ====
 
+=== Creating bean using constructors
+
+When beans must be created with constructor arguments, then this is made easier in Camel 4.1 onwards.
+
+For example as shown below:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    constructors:
+      0: true
+      1: "Hello World"
+----
+
+The `constructors` is index based so the keys must be numbers starting from zero.
+
+TIP: You can use both constructors and properties.
+
+=== Creating beans from factory method
+
+A bean can also be created from a factory method (public static) as shown below:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    factoryMethod: createMyBean
+    constructors:
+      0: true
+      1: "Hello World"
+----
+
+When using `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyBean` should be as follows:
+
+[source,java]
+----
+public class MyBean {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static` and from the same class as the created class itself.
+
+=== Creating beans from factory bean
+
+A bean can also be created from a factory bean as shown below:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    factoryBean: com.acme.MyHelper
+    factoryMethod: createMyBean
+    constructors:
+      0: true
+      1: "Hello World"
+----
+
+TIP: `factoryBean` can also refer to an existing bean by bean id instead of FQN classname.
+
+When using `factoryBean` and `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyHelper` should be as follows:
+
+[source,java]
+----
+public class MyHelper {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static`.
+
+=== Creating beans from builder classes
+
+A bean can also be created from another builder class as shown below:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    builderClass: com.acme.MyBeanBuilder
+    builderMethod: createMyBean
+    properties:
+      id: 123
+      name: 'Acme'
+----
+
+NOTE: The builder class must be `public` and have a no-arg default constructor.
+
+The builder class is then used to create the actual bean by using fluent builder style configuration.
+So the properties will be set on the builder class, and the bean is created by invoking the `builderMethod`
+at the end. The invocation of this method is done via Java reflection.
+
+=== Creating beans using script language
+
+For advanced use-cases then Camel allows to inline a script language, such as groovy, java, javascript, etc, to create the bean.
+This gives flexibility to use a bit of programming to create and configure the bean.
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    scriptLanguage: groovy
+    script: >
+      // some groovy script here to create the bean
+      bean = ...
+      ...
+      return bean
+----
+
+NOTE: When using `script` then constructors and factory bean/method is not in use
+
+=== Using init and destroy methods on beans
+
+Sometimes beans need to do some initialization and cleanup work before a bean is ready to be used.
+For this you can use `initMethod` and `destroyMethod` that Camel triggers accordingly.
+
+Those methods must be public void and have no arguments, as shown below:
+
+[source,java]
+----
+public class MyBean {
+
+    public void initMe() {
+        // do init work here
+    }
+
+    public void destroyMe() {
+        // do cleanup work here
+    }
+
+}
+----
+
+You then have to declare those methods in YAML DSL as follows:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    initMethod: initMe
+    destroyMethod: destroyMe
+    constructors:
+      0: true
+      1: "Hello World"
+----
+
+The init and destroy methods are optional, so a bean does not have to have both,
+for example you may only have destroy methods.
+
 == Configuring options on languages
 
 Some xref:components:languages:index.adoc[Languages] have additional configurations
@@ -238,74 +406,4 @@ which demonstrate creating Camel Routes with YAML.
 Another way to find examples of YAML DSL is to look in https://github.com/apache/camel-kamelets[Camel Kamelets]
 where each Kamelet is defined using YAML.
 
-== Supported EIPs
 
-The following set of high level EIPs are supported in the yaml DSL language. For full details on their expected configuration, please refer to the https://github.com/apache/camel/blob/main/dsl/camel-yaml-dsl/camel-yaml-dsl/src/generated/resources/schema/camelYamlDsl.json[Camel YAML DSL specification].
-
-- Aggregate
-- Bean
-- Do Catch
-- Do Try
-- Do Finally
-- Choice
-- Circuit Breaker
-- Claim Check
-- Convert Body To
-- Delay
-- Dynamic Router
-- Enrich
-- Error Handler
-- Filter
-- From
-- Idempotent Consumer
-- Intercept
-- Intercept From
-- Intercept Send To Endpoint
-- Load Balance
-- Log
-- Loop
-- Marshal
-- Multicast
-- On Completion
-- On Exception
-- On Fallback
-- Otherwise
-- Pausable
-- Pipeline
-- Policy
-- Poll Enrich
-- Process
-- Recipient List
-- Remove Header
-- Remove Headers
-- Remove Property
-- Remove Properties
-- Resequence
-- Resumable
-- REST DSL
-- Rollback
-- Routing Slip
-- Saga
-- Sample
-- Script
-- Service Call
-- Set Body
-- Set Exchange Pattern
-- Set Header
-- Set Property
-- Sort
-- Split
-- Step
-- Stop
-- Threads
-- Throttle
-- Throw Exception
-- To
-- To Dynamic
-- Transacted
-- Transform
-- Unmarshal
-- Validate
-- When
-- When Skip Send To Endpoint
-- Wire Tap

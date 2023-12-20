@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-	<bean id="jetty2" class="org.apache.camel.component.jetty11.JettyHttpComponent11">
+	<bean id="jetty2" class="org.apache.camel.component.jetty12.JettyHttpComponent12">
 		<property name="enableJmx" value="true"/>
 		<property name="minThreads" value="10"/>
 		<property name="maxThreads" value="50"/>

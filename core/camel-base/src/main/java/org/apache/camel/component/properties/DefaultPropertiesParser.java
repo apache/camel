@@ -355,13 +355,17 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 key = key.substring(OPTIONAL_TOKEN.length());
             }
 
-            String value = doGetPropertyValue(key);
+            String value = doGetPropertyValue(key, defaultValue);
             if (value == null && defaultValue != null) {
                 log.debug("Property with key [{}] not found, using default value: {}", key, defaultValue);
                 value = defaultValue;
             }
 
             if (value == null) {
+                if (!optional && propertiesComponent != null && propertiesComponent.isIgnoreMissingProperty()) {
+                    // property is missing, but we should ignore this and return the placeholder unresolved
+                    return UNRESOLVED_PREFIX_TOKEN + key + UNRESOLVED_SUFFIX_TOKEN;
+                }
                 if (!optional) {
                     StringBuilder esb = new StringBuilder();
                     esb.append("Property with key [").append(key).append("] ");
@@ -386,7 +390,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
          * @param  key Key of the property
          * @return     Value of the property or {@code null} if not found
          */
-        private String doGetPropertyValue(String key) {
+        private String doGetPropertyValue(String key, String defaultValue) {
             if (ObjectHelper.isEmpty(key)) {
                 return parseProperty(key, null, properties);
             }
@@ -398,16 +402,16 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (local != null) {
                 value = local.getProperty(key);
                 if (value != null) {
-                    String defaultValue = null;
+                    String localDefaultValue = null;
                     String loc = location(local, key, "LocalProperties");
                     if (local instanceof OrderedLocationProperties) {
                         Object val = ((OrderedLocationProperties) local).getDefaultValue(key);
                         if (val != null) {
-                            defaultValue
+                            localDefaultValue
                                     = propertiesComponent.getCamelContext().getTypeConverter().tryConvertTo(String.class, val);
                         }
                     }
-                    onLookup(key, value, defaultValue, loc);
+                    onLookup(key, value, localDefaultValue, loc);
                     log.debug("Found local property: {} with value: {} to be used.", key, value);
                 }
             }
@@ -423,41 +427,49 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
-                    onLookup(key, value, null, "ENV");
+                    onLookup(key, value, defaultValue, "ENV");
                     log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 value = System.getProperty(key);
                 if (value != null) {
-                    onLookup(key, value, null, "SYS");
+                    onLookup(key, value, defaultValue, "SYS");
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
                 }
             }
 
             if (value == null && properties != null) {
-                value = properties.lookup(key);
+                value = properties.lookup(key, defaultValue);
                 if (value != null) {
                     log.debug("Found property: {} with value: {} to be used.", key, value);
+                }
+            }
+
+            if (value == null) {
+                // custom lookup in spring boot or other runtimes
+                value = customLookup(key);
+                if (value != null) {
+                    log.debug("Found property (custom lookup): {} with value: {} to be used.", key, value);
                 }
             }
 
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
-                    onLookup(key, value, null, "ENV");
+                    onLookup(key, value, defaultValue, "ENV");
                     log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 value = System.getProperty(key);
                 if (value != null) {
-                    onLookup(key, value, null, "SYS");
+                    onLookup(key, value, defaultValue, "SYS");
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
                 }
             }
 
-            // parse property may return null (such as when using spring boot and route templates)
+            // parse property may return null (such as when using route templates)
             String answer = parseProperty(key, value, properties);
             if (answer == null) {
                 answer = value;

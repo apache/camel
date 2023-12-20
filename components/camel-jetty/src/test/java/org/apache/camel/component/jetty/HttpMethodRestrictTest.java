@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -45,7 +47,7 @@ public class HttpMethodRestrictTest extends BaseJettyTest {
              CloseableHttpResponse response = client.execute(httpPost)) {
 
             assertEquals(200, response.getCode(), "Get a wrong response status");
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             assertEquals("This is a test response", responseString, "Get a wrong result");
         }
     }

@@ -24,7 +24,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -72,7 +71,7 @@ public class AbstractInfinispanRemoteClusteredIT {
     }
 
     public void runTest(Function<RunnerEnv, RouteBuilder> routeBuilderFunction) throws Exception {
-        final List<String> clients = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
+        final List<String> clients = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
         final List<String> results = new ArrayList<>();
 
         final CountDownLatch latch = new CountDownLatch(clients.size());

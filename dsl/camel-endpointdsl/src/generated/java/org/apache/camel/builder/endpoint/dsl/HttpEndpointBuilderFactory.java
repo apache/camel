@@ -569,6 +569,49 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth2 client id.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ClientId the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2ClientId(String oauth2ClientId) {
+            doSetProperty("oauth2ClientId", oauth2ClientId);
+            return this;
+        }
+        /**
+         * OAuth2 client secret.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ClientSecret the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2ClientSecret(String oauth2ClientSecret) {
+            doSetProperty("oauth2ClientSecret", oauth2ClientSecret);
+            return this;
+        }
+        /**
+         * OAuth2 Token endpoint.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2TokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2TokenEndpoint(
+                String oauth2TokenEndpoint) {
+            doSetProperty("oauth2TokenEndpoint", oauth2TokenEndpoint);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters. Important: Only one
          * instance of org.apache.camel.util.jsse.SSLContextParameters is
          * supported per HttpComponent. If you need to use 2 or more different
@@ -1537,7 +1580,7 @@ public interface HttpEndpointBuilderFactory {
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path //httpUri
+         * @param path httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder http(String path) {
@@ -1558,7 +1601,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path //httpUri
+         * @param path httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder http(String componentName, String path) {
@@ -1577,7 +1620,7 @@ public interface HttpEndpointBuilderFactory {
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path //httpUri
+         * @param path httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder https(String path) {
@@ -1619,7 +1662,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseCode}.
          */
         public String httpResponseCode() {
-            return "HttpResponseCode";
+            return "CamelHttpResponseCode";
         }
 
         /**
@@ -1632,7 +1675,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseText}.
          */
         public String httpResponseText() {
-            return "HttpResponseText";
+            return "CamelHttpResponseText";
         }
 
         /**
@@ -1646,7 +1689,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpQuery}.
          */
         public String httpQuery() {
-            return "HttpQuery";
+            return "CamelHttpQuery";
         }
 
         /**
@@ -1659,7 +1702,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpProtocolVersion}.
          */
         public String httpProtocolVersion() {
-            return "HttpProtocolVersion";
+            return "CamelHttpProtocolVersion";
         }
 
         /**
@@ -1685,7 +1728,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpUri}.
          */
         public String restHttpUri() {
-            return "RestHttpUri";
+            return "CamelRestHttpUri";
         }
 
         /**
@@ -1702,7 +1745,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpUri}.
          */
         public String httpUri() {
-            return "HttpUri";
+            return "CamelHttpUri";
         }
 
         /**
@@ -1716,7 +1759,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpPath}.
          */
         public String httpPath() {
-            return "HttpPath";
+            return "CamelHttpPath";
         }
 
         /**
@@ -1729,7 +1772,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpQuery}.
          */
         public String restHttpQuery() {
-            return "RestHttpQuery";
+            return "CamelRestHttpQuery";
         }
 
         /**
@@ -1742,7 +1785,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpRawQuery}.
          */
         public String httpRawQuery() {
-            return "HttpRawQuery";
+            return "CamelHttpRawQuery";
         }
 
         /**
@@ -1756,7 +1799,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpMethod}.
          */
         public String httpMethod() {
-            return "HttpMethod";
+            return "CamelHttpMethod";
         }
 
         /**
@@ -1769,7 +1812,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpCharacterEncoding}.
          */
         public String httpCharacterEncoding() {
-            return "HttpCharacterEncoding";
+            return "CamelHttpCharacterEncoding";
         }
 
         /**

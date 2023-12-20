@@ -121,10 +121,10 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
             setHeaderFilterStrategy(new SpringRabbitMQHeaderFilterStrategy());
         }
         if (messageConverter == null) {
-            messageConverter = new DefaultMessageConverter(getCamelContext(), allowNullBody);
+            messageConverter = new DefaultMessageConverter(getCamelContext());
         }
         if (messagePropertiesConverter == null) {
-            messagePropertiesConverter = new DefaultMessagePropertiesConverter(getCamelContext(), getHeaderFilterStrategy());
+            messagePropertiesConverter = new DefaultMessagePropertiesConverter();
         }
     }
 
@@ -134,6 +134,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setConnectionFactory(connectionFactory);
         endpoint.setTestConnectionOnStartup(testConnectionOnStartup);
         endpoint.setMessageConverter(messageConverter);
+        messagePropertiesConverter.setHeaderFilterStrategy(getHeaderFilterStrategy());
         endpoint.setMessagePropertiesConverter(messagePropertiesConverter);
         endpoint.setAutoStartup(autoStartup);
         endpoint.setAutoDeclare(autoDeclare);
@@ -150,6 +151,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setMaximumRetryAttempts(maximumRetryAttempts);
         endpoint.setRetryDelay(retryDelay);
         endpoint.setRejectAndDontRequeue(rejectAndDontRequeue);
+        endpoint.setAllowNullBody(allowNullBody);
 
         endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
         setProperties(endpoint, parameters);

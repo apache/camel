@@ -84,7 +84,7 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
             policy = mandatoryLookup(definition.getTransactedPolicyRef(), SpringTransactionPolicy.class);
         }
         if (policy != null) {
-            answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+            answer = policy.getTransactionTemplate();
         }
 
         if (answer == null) {

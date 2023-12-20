@@ -70,16 +70,6 @@ public final class LazyStartProducer extends DefaultAsyncProducer implements Del
     }
 
     @Override
-    protected void doBuild() {
-        // noop as we dont want to start the delegate but its started on the first message processed
-    }
-
-    @Override
-    protected void doInit() {
-        // noop as we dont want to start the delegate but its started on the first message processed
-    }
-
-    @Override
     protected void doStart() {
         // noop as we dont want to start the delegate but its started on the first message processed
     }

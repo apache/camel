@@ -21,7 +21,7 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(33);
         props.add("accountKey");
         props.add("bridgeErrorHandler");
         props.add("changeFeedProcessorOptions");
@@ -36,11 +36,13 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
         props.add("createDatabaseIfNotExists");
         props.add("createLeaseContainerIfNotExists");
         props.add("createLeaseDatabaseIfNotExists");
+        props.add("credentialType");
         props.add("databaseEndpoint");
         props.add("databaseName");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("hostName");
+        props.add("indexingPolicy");
         props.add("itemId");
         props.add("itemPartitionKey");
         props.add("lazyStartProducer");
@@ -53,7 +55,6 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
         props.add("queryRequestOptions");
         props.add("readRequestsFallbackEnabled");
         props.add("throughputProperties");
-        props.add("useDefaultIdentity");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("accountKey");

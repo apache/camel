@@ -6831,7 +6831,7 @@ public interface AMQPEndpointBuilderFactory {
          * @return the name of the header {@code JmsDestination}.
          */
         public String jmsDestination() {
-            return "JmsDestination";
+            return "CamelJmsDestination";
         }
 
         /**
@@ -6844,7 +6844,7 @@ public interface AMQPEndpointBuilderFactory {
          * @return the name of the header {@code JmsDestinationName}.
          */
         public String jmsDestinationName() {
-            return "JmsDestinationName";
+            return "CamelJmsDestinationName";
         }
 
         /**
@@ -7028,7 +7028,7 @@ public interface AMQPEndpointBuilderFactory {
          * @return the name of the header {@code JmsMessageType}.
          */
         public String jmsMessageType() {
-            return "JmsMessageType";
+            return "CamelJmsMessageType";
         }
 
         /**
@@ -7043,7 +7043,7 @@ public interface AMQPEndpointBuilderFactory {
          * @return the name of the header {@code JmsRequestTimeout}.
          */
         public String jmsRequestTimeout() {
-            return "JmsRequestTimeout";
+            return "CamelJmsRequestTimeout";
         }
     }
     static AMQPEndpointBuilder endpointBuilder(String componentName, String path) {

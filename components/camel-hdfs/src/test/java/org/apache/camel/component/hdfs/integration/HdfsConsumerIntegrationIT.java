@@ -303,7 +303,7 @@ public class HdfsConsumerIntegrationIT extends CamelTestSupport {
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).body(byte.class).isEqualTo(3);
+        resultEndpoint.message(0).body(Byte.class).isEqualTo(3);
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {

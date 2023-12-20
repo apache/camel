@@ -162,12 +162,17 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -184,12 +189,17 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -650,7 +660,8 @@ public interface RestEndpointBuilderFactory {
          * delete, patch, head, trace, connect, options
          * 
          * Path parameter: path (required)
-         * The base path
+         * The base path, can use &#42; as path suffix to support wildcard HTTP
+         * route matching.
          * 
          * Path parameter: uriTemplate
          * The uri template
@@ -677,7 +688,8 @@ public interface RestEndpointBuilderFactory {
          * delete, patch, head, trace, connect, options
          * 
          * Path parameter: path (required)
-         * The base path
+         * The base path, can use &#42; as path suffix to support wildcard HTTP
+         * route matching.
          * 
          * Path parameter: uriTemplate
          * The uri template
@@ -714,7 +726,7 @@ public interface RestEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpQuery}.
          */
         public String restHttpQuery() {
-            return "RestHttpQuery";
+            return "CamelRestHttpQuery";
         }
 
         /**
@@ -727,7 +739,7 @@ public interface RestEndpointBuilderFactory {
          * @return the name of the header {@code RestHttpUri}.
          */
         public String restHttpUri() {
-            return "RestHttpUri";
+            return "CamelRestHttpUri";
         }
 
         /**
@@ -740,7 +752,7 @@ public interface RestEndpointBuilderFactory {
          * @return the name of the header {@code HttpMethod}.
          */
         public String httpMethod() {
-            return "HttpMethod";
+            return "CamelHttpMethod";
         }
 
         /**
@@ -781,7 +793,7 @@ public interface RestEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseCode}.
          */
         public String httpResponseCode() {
-            return "HttpResponseCode";
+            return "CamelHttpResponseCode";
         }
     }
     static RestEndpointBuilder endpointBuilder(String componentName, String path) {

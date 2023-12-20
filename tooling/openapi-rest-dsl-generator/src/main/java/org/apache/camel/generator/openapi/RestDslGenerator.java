@@ -210,7 +210,7 @@ public abstract class RestDslGenerator<G> {
     }
 
     private static String prepareBasePath(String basePath) {
-        if (basePath == null || basePath.length() == 0) {
+        if (basePath == null || basePath.isEmpty()) {
             return "";
         }
 

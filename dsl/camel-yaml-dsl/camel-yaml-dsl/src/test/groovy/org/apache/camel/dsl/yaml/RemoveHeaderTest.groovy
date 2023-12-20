@@ -21,10 +21,11 @@ import org.apache.camel.model.RemoveHeaderDefinition
 import org.apache.camel.model.RemoveHeadersDefinition
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
+import org.junit.jupiter.api.Assertions
 
 class RemoveHeaderTest extends YamlTestSupport {
 
-    def "remove-header definition (#resource.location)"(Resource resource) {
+    def "removeHeader definition (#resource.location)"(Resource resource) {
         when:
             PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
@@ -37,7 +38,7 @@ class RemoveHeaderTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - remove-header:
+                          - removeHeader:
                               name: test
                           - to: "mock:result"
                     '''),
@@ -45,22 +46,22 @@ class RemoveHeaderTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - remove-header:
+                          - removeHeader:
                               name: test
                           - to: "mock:result"
                     ''')
             ]
     }
 
-    def "remove-headers definition"() {
+    def "removeHeaders definition"() {
         when:
             loadRoutes'''
                 - from:
                     uri: "direct:start"
                     steps:    
-                      - remove-headers:
+                      - removeHeaders:
                           pattern: toRemove
-                          exclude-pattern: toExclude
+                          excludePattern: toExclude
                       - to: "mock:result"
             '''
         then:
@@ -68,5 +69,27 @@ class RemoveHeaderTest extends YamlTestSupport {
                 pattern == 'toRemove'
                 excludePattern == 'toExclude'
             }
+    }
+
+    def "Error: kebab-case: remove-headers definition"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - remove-headers:
+                          pattern: toRemove
+                          excludePattern: toExclude
+                      - to: "mock:result"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            with(e) {
+                message.contains("additional properties")
+            }
+        }
     }
 }

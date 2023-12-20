@@ -129,7 +129,7 @@ public final class StringQuoteHelper {
             boolean last = i == input.length() - 1;
 
             if (!doubleQuoted && ch == '\'') {
-                if (singleQuoted && prev == ch && sb.length() == 0) {
+                if (singleQuoted && prev == ch && sb.isEmpty()) {
                     // its an empty quote so add empty text
                     if (keepQuotes) {
                         answer.add("''");
@@ -139,7 +139,7 @@ public final class StringQuoteHelper {
                 }
                 // special logic needed if this quote is the end
                 if (last) {
-                    if (singleQuoted && sb.length() > 0) {
+                    if (singleQuoted && !sb.isEmpty()) {
                         String text = sb.toString();
                         // do not trim a quoted string
                         if (keepQuotes) {
@@ -157,7 +157,7 @@ public final class StringQuoteHelper {
                 }
                 continue;
             } else if (!singleQuoted && ch == '"') {
-                if (doubleQuoted && prev == ch && sb.length() == 0) {
+                if (doubleQuoted && prev == ch && sb.isEmpty()) {
                     // its an empty quote so add empty text
                     if (keepQuotes) {
                         answer.add("\""); // append ending quote
@@ -167,7 +167,7 @@ public final class StringQuoteHelper {
                 }
                 // special logic needed if this quote is the end
                 if (last) {
-                    if (doubleQuoted && sb.length() > 0) {
+                    if (doubleQuoted && !sb.isEmpty()) {
                         String text = sb.toString();
                         // do not trim a quoted string
                         if (keepQuotes) {
@@ -190,7 +190,7 @@ public final class StringQuoteHelper {
                 }
             } else if (!isQuoting && ch == separator) {
                 // add as answer if we are not in a quote
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     String text = sb.toString();
                     if (trim) {
                         text = text.trim();
@@ -207,7 +207,7 @@ public final class StringQuoteHelper {
         }
 
         // any leftover
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             String text = sb.toString();
             if (trim) {
                 text = text.trim();

@@ -23,6 +23,7 @@ import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration;
+import org.apache.camel.component.azure.cosmosdb.CredentialType;
 import org.apache.camel.util.ObjectHelper;
 
 public final class CosmosDbClientFactory {
@@ -55,9 +56,8 @@ public final class CosmosDbClientFactory {
                     .map(String::trim)
                     .toList());
         }
-        if (configuration.isUseDefaultIdentity()) {
-            final DefaultAzureCredentialBuilder defaultAzureCredentialBuilder = new DefaultAzureCredentialBuilder();
-            builder.credential(defaultAzureCredentialBuilder.build());
+        if (configuration.getCredentialType().equals(CredentialType.AZURE_IDENTITY)) {
+            builder.credential(new DefaultAzureCredentialBuilder().build());
         } else {
             builder.key(configuration.getAccountKey());
         }

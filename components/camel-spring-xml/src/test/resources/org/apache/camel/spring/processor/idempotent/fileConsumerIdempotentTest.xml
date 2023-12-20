@@ -28,7 +28,7 @@
     <!-- this is our file based idempotent store configured to use the .filestore.dat as file -->
     <bean id="fileStore" class="org.apache.camel.support.processor.idempotent.FileIdempotentRepository">
         <!-- the filename for the store -->
-        <property name="fileStore" value="target/data/FileConsumerIdempotentTest/.filestore.dat"/>
+        <property name="fileStore" value="#{systemProperties['testDirectory']}/.filestore.dat"/>
         <!-- the max filesize in bytes for the file. Camel will trunk and flush the cache
              if the file gets bigger -->
         <property name="maxFileStoreSize" value="512000"/>
@@ -39,7 +39,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>
         <route>
-            <from uri="file://target/data/FileConsumerIdempotentTest/?initialDelay=0&amp;delay=10&amp;idempotent=true&amp;idempotentRepository=#fileStore&amp;move=done/${file:name}"/>
+            <from uri="file:{{testDirectory}}?initialDelay=0&amp;delay=10&amp;idempotent=true&amp;idempotentRepository=#fileStore&amp;move=done/${file:name}"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

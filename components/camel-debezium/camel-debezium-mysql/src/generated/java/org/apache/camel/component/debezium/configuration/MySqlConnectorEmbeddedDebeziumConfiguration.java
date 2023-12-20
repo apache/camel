@@ -16,6 +16,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String snapshotLockingMode = "minimal";
     @UriParam(label = LABEL_NAME)
     private String messageKeyColumns;
+    @UriParam(label = LABEL_NAME)
+    private String customMetricTags;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private int queryFetchSize = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "source")
@@ -221,6 +223,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getMessageKeyColumns() {
         return messageKeyColumns;
+    }
+
+    /**
+     * The custom metric tags will accept key-value pairs to customize the MBean
+     * object name which should be appended the end of regular name, each key
+     * would represent a tag for the MBean object name, and the corresponding
+     * value would be the value of that tag the key is. For example: k1=v1,k2=v2
+     */
+    public void setCustomMetricTags(String customMetricTags) {
+        this.customMetricTags = customMetricTags;
+    }
+
+    public String getCustomMetricTags() {
+        return customMetricTags;
     }
 
     /**
@@ -1334,6 +1350,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         
         addPropertyIfNotNull(configBuilder, "snapshot.locking.mode", snapshotLockingMode);
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
+        addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);

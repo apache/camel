@@ -78,7 +78,7 @@ public class KameletBasicTest extends CamelTestSupport {
                         .setBody().constant("{{bodyValue}}");
 
                 routeTemplate("tick")
-                        .from("timer:{{routeId}}?repeatCount=1&delay=-1")
+                        .from("timer:{{routeId}}?repeatCount=1&delay=-1&includeMetadata=true")
                         .setBody().exchangeProperty(Exchange.TIMER_COUNTER)
                         .to("kamelet:sink");
 

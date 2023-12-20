@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CwComponentConfigurationTest extends CamelTestSupport {
 
     @BindToRegistry("now")
-    private static final Instant NOW = Instant.now();
+    public static final Instant NOW = Instant.now();
 
     @Test
     public void createEndpointWithAllOptions() throws Exception {

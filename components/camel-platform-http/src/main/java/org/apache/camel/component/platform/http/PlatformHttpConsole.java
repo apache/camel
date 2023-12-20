@@ -69,26 +69,31 @@ public class PlatformHttpConsole extends AbstractDevConsole {
             }
             root.put("server", server);
 
-            Set<HttpEndpointModel> models = http.getHttpEndpoints();
-            List<JsonObject> list = new ArrayList<>();
-            for (HttpEndpointModel model : models) {
-                JsonObject jo = new JsonObject();
-                String uri = model.getUri();
-                if (!uri.startsWith("/")) {
-                    uri = "/" + uri;
-                }
-                jo.put("url", server + uri);
-                jo.put("path", model.getUri());
-                if (model.getVerbs() != null) {
-                    jo.put("verbs", model.getVerbs());
-                }
-                list.add(jo);
-            }
+            final List<JsonObject> list = buildEndpointList(http, server);
             if (!list.isEmpty()) {
                 root.put("endpoints", list);
             }
         }
 
         return root;
+    }
+
+    private static List<JsonObject> buildEndpointList(PlatformHttpComponent http, String server) {
+        Set<HttpEndpointModel> models = http.getHttpEndpoints();
+        List<JsonObject> list = new ArrayList<>();
+        for (HttpEndpointModel model : models) {
+            JsonObject jo = new JsonObject();
+            String uri = model.getUri();
+            if (!uri.startsWith("/")) {
+                uri = "/" + uri;
+            }
+            jo.put("url", server + uri);
+            jo.put("path", model.getUri());
+            if (model.getVerbs() != null) {
+                jo.put("verbs", model.getVerbs());
+            }
+            list.add(jo);
+        }
+        return list;
     }
 }

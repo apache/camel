@@ -21,6 +21,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.slf4j.Logger;
@@ -52,11 +53,11 @@ public class SpringQuartzTwoAppsClusteredFailoverTest {
         mock.expectedBodiesReceived("clustering PINGS!");
 
         // wait a bit to make sure the route has already been properly started through the given route policy
-        Thread.sleep(500);
+        Awaitility.await().untilAsserted(() -> {
+            app.getBean("template", ProducerTemplate.class).sendBody("direct:start", "clustering");
 
-        app.getBean("template", ProducerTemplate.class).sendBody("direct:start", "clustering");
-
-        mock.assertIsSatisfied();
+            mock.assertIsSatisfied();
+        });
 
         // now let's simulate a crash of the first app (the quartz instance 'app-one')
         log.warn("The first app is going to crash NOW!");
@@ -71,7 +72,17 @@ public class SpringQuartzTwoAppsClusteredFailoverTest {
         log.warn("Crashed...");
 
         // wait long enough until the second app takes it over...
-        Thread.sleep(2000);
+        Awaitility.await().untilAsserted(() -> {
+            CamelContext camel2 = app2.getBean("camelContext2-" + getClass().getSimpleName(), CamelContext.class);
+
+            MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
+            mock2.expectedMessageCount(1);
+            mock2.expectedBodiesReceived("clustering PONGS!");
+
+            app2.getBean("template", ProducerTemplate.class).sendBody("direct:start", "clustering");
+
+            mock2.assertIsSatisfied();
+        });
         // inside the logs one can then clearly see how the route of the second app ('app-two') gets started:
         // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:65   - Crashed...
         // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:66   - Crashed...
@@ -79,16 +90,6 @@ public class SpringQuartzTwoAppsClusteredFailoverTest {
         // 2013-09-29 08:15:32,001 [_ClusterManager] INFO  LocalDataSourceJobStore       :3567 - ClusterManager: detected 1 failed or restarted instances.
         // 2013-09-29 08:15:32,001 [_ClusterManager] INFO  LocalDataSourceJobStore       :3426 - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
         // 2013-09-29 08:15:32,024 [eduler_Worker-1] INFO  SpringCamelContext            :2183 - Route: myRoute started and consuming from: Endpoint[direct://start]
-
-        CamelContext camel2 = app2.getBean("camelContext2-" + getClass().getSimpleName(), CamelContext.class);
-
-        MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
-        mock2.expectedMessageCount(1);
-        mock2.expectedBodiesReceived("clustering PONGS!");
-
-        app2.getBean("template", ProducerTemplate.class).sendBody("direct:start", "clustering");
-
-        mock2.assertIsSatisfied();
 
         // and as the last step shutdown the second app as well as the database
         IOHelper.close(app2, db);

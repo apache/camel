@@ -32,13 +32,14 @@ public class RestOpenApiGlobalHttpsV31Test extends HttpsV3Test {
 
     @BeforeAll
     public static void setupStubForSpec() throws IOException, URISyntaxException {
-        petstore.stubFor(get(urlEqualTo("/petstore-3.1.yaml")).willReturn(aResponse().withBody(
-                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/petstore-3.1.yaml").toURI())))));
+        petstore.stubFor(get(urlEqualTo("/petstore-3.1-ssl.yaml")).willReturn(aResponse().withBody(
+                Files.readAllBytes(
+                        Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/petstore-3.1-ssl.yaml").toURI())))));
     }
 
     @Override
     protected String getSpecName() {
-        return "/petstore-3.1.yaml";
+        return "/petstore-3.1-ssl.yaml";
     }
 
     @Override

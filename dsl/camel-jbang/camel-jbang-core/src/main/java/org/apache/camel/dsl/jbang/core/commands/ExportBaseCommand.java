@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +49,11 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenDownloader;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -70,6 +75,10 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+
+    private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
+
+    private MavenDownloader downloader;
 
     @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -96,6 +105,19 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
+    @CommandLine.Option(names = { "--exclude" },
+                        description = "Exclude files by name or pattern. Multiple names can be separated by comma.")
+    String exclude;
+
+    @CommandLine.Option(names = { "--maven-settings" },
+                        description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
+                                      + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    String mavenSettings;
+
+    @CommandLine.Option(names = { "--maven-settings-security" },
+                        description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
+    String mavenSettingsSecurity;
+
     @CommandLine.Option(names = { "--main-classname" },
                         description = "The class name of the Camel Main application class",
                         defaultValue = "CamelApplication")
@@ -117,7 +139,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "3.1.2")
+                        defaultValue = "3.2.0")
     protected String springBootVersion;
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
@@ -132,7 +154,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.2.5.Final")
+                        defaultValue = "3.6.3")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -171,13 +193,6 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Additional maven properties, ex. --additional-properties=prop1=foo,prop2=bar")
     protected String additionalProperties;
 
-    @CommandLine.Option(names = { "--secrets-refresh" }, defaultValue = "false", description = "Enabling secrets refresh")
-    protected boolean secretsRefresh;
-
-    @CommandLine.Option(names = { "--secrets-refresh-providers" },
-                        description = "Comma separated list of providers in the set aws,gcp and azure, to use in combination with --secrets-refresh option")
-    protected String secretsRefreshProviders;
-
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
@@ -185,6 +200,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--quiet" }, defaultValue = "false",
                         description = "Will be quiet, only print when error occurs")
     boolean quiet;
+
+    @CommandLine.Option(names = { "--ignore-loading-error" },
+                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    protected boolean ignoreLoadingError;
 
     public ExportBaseCommand(CamelJBangMain main) {
         super(main);
@@ -258,15 +277,16 @@ abstract class ExportBaseCommand extends CamelCommand {
         return null;
     }
 
-    protected Integer runSilently() throws Exception {
+    protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
         run.profile = profile;
         run.localKameletDir = localKameletDir;
         run.dependencies = dependencies;
         run.files = files;
+        run.exclude = exclude;
         run.openapi = openapi;
-        return run.runSilent();
+        return run.runSilent(ignoreLoadingError);
     }
 
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
@@ -293,7 +313,7 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
-        List<String> lines = Files.readAllLines(settings.toPath());
+        List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
         boolean kamelets = lines.stream().anyMatch(l -> l.startsWith("kamelet="));
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
@@ -633,7 +653,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // there may be additional extra repositories
-        List<String> lines = Files.readAllLines(settings.toPath());
+        List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
         for (String line : lines) {
             if (line.startsWith("repository=")) {
                 String r = StringHelper.after(line, "repository=");
@@ -650,7 +670,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static boolean hasModeline(File settings) {
         try {
-            List<String> lines = Files.readAllLines(settings.toPath());
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             return lines.stream().anyMatch(l -> l.startsWith("modeline="));
         } catch (Exception e) {
             // ignore
@@ -660,7 +680,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static int httpServerPort(File settings) {
         try {
-            List<String> lines = Files.readAllLines(settings.toPath());
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             String port = lines.stream().filter(l -> l.startsWith("camel.jbang.platform-http.port="))
                     .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
             return Integer.parseInt(port);
@@ -668,6 +688,17 @@ abstract class ExportBaseCommand extends CamelCommand {
             // ignore
         }
         return -1;
+    }
+
+    protected static String jibMavenPluginVersion(File settings) {
+        try {
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+            return lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.0");
+        } catch (Exception e) {
+            // ignore
+        }
+        return "3.4.0";
     }
 
     protected static void safeCopy(File source, File target, boolean override) throws Exception {
@@ -788,64 +819,46 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
     }
 
-    protected void exportAwsSecretsRefreshProp(Properties properties) {
-        properties.setProperty("camel.vault.aws.accessKey", "<accessKey>");
-        properties.setProperty("camel.vault.aws.secretKey", "<secretKey>");
-        properties.setProperty("camel.vault.aws.region", "<region>");
-        properties.setProperty("camel.vault.aws.useDefaultCredentialProvider", "<useDefaultCredentialProvider>");
-        properties.setProperty("camel.vault.aws.refreshEnabled", "true");
-        properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
-        properties.setProperty("camel.vault.aws.secrets", "<secrets>");
-        if (runtime.equalsIgnoreCase("spring-boot")) {
-            properties.setProperty("camel.springboot.context-reload-enabled", "true");
-        } else {
-            properties.setProperty("camel.main.context-reload-enabled", "true");
+    protected void copyAgentDependencies(Set<String> deps) throws Exception {
+        for (String d : deps) {
+            if (d.startsWith("agent:")) {
+                File libDir = new File(BUILD_DIR, "agent");
+                libDir.mkdirs();
+                String n = d.substring(6);
+                MavenGav gav = MavenGav.parseGav(n);
+                copyAgentLibDependencies(gav);
+            }
         }
     }
 
-    protected void exportGcpSecretsRefreshProp(Properties properties) {
-        properties.setProperty("camel.vault.gcp.serviceAccountKey", "<serviceAccountKey>");
-        properties.setProperty("camel.vault.gcp.projectId", "<projectId>");
-        properties.setProperty("camel.vault.gcp.useDefaultInstance", "<useDefaultInstance>");
-        properties.setProperty("camel.vault.gcp.refreshEnabled", "true");
-        properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
-        properties.setProperty("camel.vault.gcp.secrets", "<secrets>");
-        properties.setProperty("camel.vault.gcp.subscriptionName", "<subscriptionName>");
-        if (runtime.equalsIgnoreCase("spring-boot")) {
-            properties.setProperty("camel.springboot.context-reload-enabled", "true");
-        } else {
-            properties.setProperty("camel.main.context-reload-enabled", "true");
+    private void copyAgentLibDependencies(MavenGav gav) {
+        try {
+            List<MavenArtifact> artifacts = getDownloader().resolveArtifacts(
+                    List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));
+            for (MavenArtifact artifact : artifacts) {
+                Path target = Paths.get(BUILD_DIR, "agent", artifact.getFile().getName());
+                if (Files.exists(target) || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
+                    continue;
+                }
+                Files.copy(artifact.getFile().toPath(), target);
+            }
+        } catch (MavenResolutionException e) {
+            System.err.println("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error copying the artifact: " + gav + " due to: " + e.getMessage());
         }
     }
 
-    protected void exportAzureSecretsRefreshProp(Properties properties) {
-        properties.setProperty("camel.vault.azure.tenantId", "<tenantId>");
-        properties.setProperty("camel.vault.azure.clientId", "<clientId>");
-        properties.setProperty("camel.vault.azure.clientSecret", "<clientSecret>");
-        properties.setProperty("camel.vault.azure.vaultName", "<vaultName>");
-        properties.setProperty("camel.vault.azure.refreshEnabled", "true");
-        properties.setProperty("camel.vault.azure.refreshPeriod", "30000");
-        properties.setProperty("camel.vault.azure.secrets", "<secrets>");
-        properties.setProperty("camel.vault.azure.eventhubConnectionString", "<eventhubConnectionString>");
-        properties.setProperty("camel.vault.azure.blobAccountName", "<blobAccountName>");
-        properties.setProperty("camel.vault.azure.blobContainerName", "<blobContainerName>");
-        properties.setProperty("camel.vault.azure.blobAccessKey", "<blobAccessKey>");
-        if (runtime.equalsIgnoreCase("spring-boot")) {
-            properties.setProperty("camel.springboot.context-reload-enabled", "true");
-        } else {
-            properties.setProperty("camel.main.context-reload-enabled", "true");
+    private MavenDownloader getDownloader() {
+        if (downloader == null) {
+            init();
         }
+        return downloader;
     }
 
-    protected List<String> getSecretProviders() {
-        if (secretsRefreshProviders != null) {
-            List<String> providers = Pattern.compile("\\,")
-                    .splitAsStream(secretsRefreshProviders)
-                    .collect(Collectors.toList());
-            return providers;
-        } else {
-            return null;
-        }
+    private void init() {
+        this.downloader = new MavenDownloaderImpl();
+        ((MavenDownloaderImpl) downloader).build();
     }
 
     static class FilesConsumer extends ParameterConsumer<Export> {

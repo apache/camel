@@ -33,18 +33,18 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
 
         // the file name is also starting with filename-consumer
         template.sendBodyAndHeader(fileUri("filename-consumer"), "Hello World", Exchange.FILE_NAME,
-                testFile("filename-consumer-hello.txt").toString());
+                testFile("filename-consumer-hello.txt").getFileName().toString());
         template.sendBodyAndHeader(fileUri("filename-consumer"), "Bye World", Exchange.FILE_NAME,
-                testFile("filename-consumer-bye.txt").toString());
+                testFile("filename-consumer-bye.txt").getFileName().toString());
 
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
 
         // and expect name to contain filename-consumer-XXX.txt
-        assertDirectoryEquals(testFile("filename-consumer-bye.txt").toString(),
+        assertDirectoryEquals(testFile("filename-consumer-bye.txt").getFileName().toString(),
                 mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
-        assertDirectoryEquals(testFile("filename-consumer-hello.txt").toString(),
+        assertDirectoryEquals(testFile("filename-consumer-hello.txt").getFileName().toString(),
                 mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
     }
 

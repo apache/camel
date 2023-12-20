@@ -36,13 +36,13 @@ jobs:
     if: github.repository == 'apache/camel'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         persist-credentials: false
     - id: install-mvnd
       uses: ./.github/actions/install-mvnd
     - name: Set up JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: 11
@@ -50,7 +50,7 @@ jobs:
     - name: mvn checkstyle
       run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log $MVND_OPTS -e checkstyle:checkstyle
     - name: archive logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: checkstyle.log
@@ -74,7 +74,7 @@ jobs:
       matrix:
         java: [ '11' ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -83,7 +83,7 @@ jobs:
       - id: install-mvnd
         uses: ./.github/actions/install-mvnd
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -91,7 +91,7 @@ jobs:
       - name: maven build
         run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log $MVND_OPTS -Pfastinstall -DskipTests install
       - name: archive logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: build.log

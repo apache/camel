@@ -159,7 +159,7 @@ public interface LanguageCustomizer extends Ordered {
         }
 
         public LanguageCustomizer build(ThrowingConsumer<T, Exception> consumer) {
-            return build(new ThrowingBiConsumer<String, T, Exception>() {
+            return build(new ThrowingBiConsumer<>() {
                 @Override
                 public void accept(String name, T target) throws Exception {
                     consumer.accept(target);

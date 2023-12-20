@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -62,9 +63,9 @@ public class HttpsRouteTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpsRouteTest.class);
 
-    protected String expectedBody = "<hello>world!</hello>";
-    protected String pwd = "changeit";
-    protected Properties originalValues = new Properties();
+    protected final String expectedBody = "<hello>world!</hello>";
+    protected final String pwd = "changeit";
+    protected final Properties originalValues = new Properties();
 
     public String getHttpProducerScheme() {
         return "https://";
@@ -138,7 +139,7 @@ public class HttpsRouteTest extends BaseJettyTest {
 
         LOG.info("Headers: {}", headers);
 
-        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
+        assertFalse(headers.isEmpty(), "Should be more than one header but was: " + headers);
     }
 
     @Test

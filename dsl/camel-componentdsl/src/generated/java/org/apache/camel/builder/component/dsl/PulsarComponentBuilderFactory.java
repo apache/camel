@@ -185,12 +185,17 @@ public interface PulsarComponentBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -650,6 +655,23 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Hashing function to use when choosing the partition to use for a
+         * particular message.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: JavaStringHash
+         * Group: producer
+         * 
+         * @param hashingScheme the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder hashingScheme(
+                java.lang.String hashingScheme) {
+            doSetProperty("hashingScheme", hashingScheme);
+            return this;
+        }
+        /**
          * The first message published will have a sequence Id of
          * initialSequenceId 1.
          * 
@@ -903,6 +925,7 @@ public interface PulsarComponentBuilderFactory {
             case "blockIfQueueFull": getOrCreateConfiguration((PulsarComponent) component).setBlockIfQueueFull((boolean) value); return true;
             case "chunkingEnabled": getOrCreateConfiguration((PulsarComponent) component).setChunkingEnabled((boolean) value); return true;
             case "compressionType": getOrCreateConfiguration((PulsarComponent) component).setCompressionType((org.apache.pulsar.client.api.CompressionType) value); return true;
+            case "hashingScheme": getOrCreateConfiguration((PulsarComponent) component).setHashingScheme((java.lang.String) value); return true;
             case "initialSequenceId": getOrCreateConfiguration((PulsarComponent) component).setInitialSequenceId((long) value); return true;
             case "lazyStartProducer": ((PulsarComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxPendingMessages": getOrCreateConfiguration((PulsarComponent) component).setMaxPendingMessages((int) value); return true;

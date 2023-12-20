@@ -27,8 +27,6 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
 
     @BeforeEach
     void sendMessages() {
-        testDirectory(true);
-
         template.sendBodyAndHeader(fileUri(), "a", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(fileUri(), "b", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(fileUri("foo"), "a2", Exchange.FILE_NAME, "a.txt");

@@ -42,7 +42,7 @@ The up to date list is available online at the Camel website:
 Apache Camel comes with many examples.
 The up to date list is available online at GitHub:
 
-* Examples: <https://github.com/apache/camel-examples/tree/main/examples#welcome-to-the-apache-camel-examples>
+* Examples: <https://github.com/apache/camel-examples/tree/main#welcome-to-the-apache-camel-examples>
 
 ## Getting Started
 
@@ -54,11 +54,11 @@ To help you get started, try the following links:
 
 The beginner examples are another powerful alternative pathway for getting started with Apache Camel.
 
-* Examples: <https://github.com/apache/camel-examples/tree/main/examples#welcome-to-the-apache-camel-examples>
+* Examples: <https://github.com/apache/camel-examples/tree/main#welcome-to-the-apache-camel-examples>
 
 **Building**
 
-<https://camel.apache.org/building.html>
+<https://camel.apache.org/camel-core/contributing/>
 
 **Contributions**
 

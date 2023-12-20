@@ -38,6 +38,10 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "certResourcePassword": getOrCreateConfiguration(target).setCertResourcePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "channeltype":
         case "channelType": getOrCreateConfiguration(target).setChannelType(property(camelContext, java.lang.String.class, value)); return true;
+        case "ciphers": getOrCreateConfiguration(target).setCiphers(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientbuilder":
+        case "clientBuilder": getOrCreateConfiguration(target).setClientBuilder(property(camelContext, org.apache.sshd.client.ClientBuilder.class, value)); return true;
+        case "compressions": getOrCreateConfiguration(target).setCompressions(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ssh.SshConfiguration.class, value)); return true;
         case "failonunknownhost":
         case "failOnUnknownHost": getOrCreateConfiguration(target).setFailOnUnknownHost(property(camelContext, boolean.class, value)); return true;
@@ -45,6 +49,7 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "kex": getOrCreateConfiguration(target).setKex(property(camelContext, java.lang.String.class, value)); return true;
         case "keypairprovider":
         case "keyPairProvider": getOrCreateConfiguration(target).setKeyPairProvider(property(camelContext, org.apache.sshd.common.keyprovider.KeyPairProvider.class, value)); return true;
         case "keytype":
@@ -53,17 +58,24 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "knownHostsResource": getOrCreateConfiguration(target).setKnownHostsResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "macs": getOrCreateConfiguration(target).setMacs(property(camelContext, java.lang.String.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pollcommand":
         case "pollCommand": getOrCreateConfiguration(target).setPollCommand(property(camelContext, java.lang.String.class, value)); return true;
         case "shellprompt":
         case "shellPrompt": getOrCreateConfiguration(target).setShellPrompt(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatures": getOrCreateConfiguration(target).setSignatures(property(camelContext, java.lang.String.class, value)); return true;
         case "sleepforshellprompt":
         case "sleepForShellPrompt": getOrCreateConfiguration(target).setSleepForShellPrompt(property(camelContext, long.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, long.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"clientBuilder"};
     }
 
     @Override
@@ -79,6 +91,10 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "certResourcePassword": return java.lang.String.class;
         case "channeltype":
         case "channelType": return java.lang.String.class;
+        case "ciphers": return java.lang.String.class;
+        case "clientbuilder":
+        case "clientBuilder": return org.apache.sshd.client.ClientBuilder.class;
+        case "compressions": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.ssh.SshConfiguration.class;
         case "failonunknownhost":
         case "failOnUnknownHost": return boolean.class;
@@ -86,6 +102,7 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "kex": return java.lang.String.class;
         case "keypairprovider":
         case "keyPairProvider": return org.apache.sshd.common.keyprovider.KeyPairProvider.class;
         case "keytype":
@@ -94,11 +111,13 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "knownHostsResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "macs": return java.lang.String.class;
         case "password": return java.lang.String.class;
         case "pollcommand":
         case "pollCommand": return java.lang.String.class;
         case "shellprompt":
         case "shellPrompt": return java.lang.String.class;
+        case "signatures": return java.lang.String.class;
         case "sleepforshellprompt":
         case "sleepForShellPrompt": return long.class;
         case "timeout": return long.class;
@@ -121,6 +140,10 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "certResourcePassword": return getOrCreateConfiguration(target).getCertResourcePassword();
         case "channeltype":
         case "channelType": return getOrCreateConfiguration(target).getChannelType();
+        case "ciphers": return getOrCreateConfiguration(target).getCiphers();
+        case "clientbuilder":
+        case "clientBuilder": return getOrCreateConfiguration(target).getClientBuilder();
+        case "compressions": return getOrCreateConfiguration(target).getCompressions();
         case "configuration": return target.getConfiguration();
         case "failonunknownhost":
         case "failOnUnknownHost": return getOrCreateConfiguration(target).isFailOnUnknownHost();
@@ -128,6 +151,7 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "kex": return getOrCreateConfiguration(target).getKex();
         case "keypairprovider":
         case "keyPairProvider": return getOrCreateConfiguration(target).getKeyPairProvider();
         case "keytype":
@@ -136,11 +160,13 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "knownHostsResource": return getOrCreateConfiguration(target).getKnownHostsResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "macs": return getOrCreateConfiguration(target).getMacs();
         case "password": return getOrCreateConfiguration(target).getPassword();
         case "pollcommand":
         case "pollCommand": return getOrCreateConfiguration(target).getPollCommand();
         case "shellprompt":
         case "shellPrompt": return getOrCreateConfiguration(target).getShellPrompt();
+        case "signatures": return getOrCreateConfiguration(target).getSignatures();
         case "sleepforshellprompt":
         case "sleepForShellPrompt": return getOrCreateConfiguration(target).getSleepForShellPrompt();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();

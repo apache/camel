@@ -48,7 +48,7 @@
   <cxf:rsClient id="rsClientHttp" address="http://localhost:${CXFTestSupport.port1}/CxfRsAsyncProducerTest/"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <endpoint id="fromEndpoint" uri="jetty://http://localhost:${CxfRsAsyncProducerTest.jetty}/CxfRsAsyncProducerTest/testQuery"/>
+    <endpoint id="fromEndpoint" uri="undertow://http://localhost:${CxfRsAsyncProducerTest.undertow}/CxfRsAsyncProducerTest/testQuery"/>
     <route>
        <from uri="direct://proxy"/>
        <to uri="cxfrs://bean://rsClientProxy"/>
@@ -63,7 +63,7 @@
     </route>
   </camelContext>
 
-  <bean id="myProcessor" class="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncProducerTest$JettyProcessor"/>
+  <bean id="myProcessor" class="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncProducerTest$UndertowProcessor"/>
   <bean id ="testFeature" class="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncProducerTest$TestFeature" />
   
   <util:list id="myFeatures" >

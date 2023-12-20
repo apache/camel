@@ -49,9 +49,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
-    private String timePeriodMillis;
-    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String asyncDelayed;
     @XmlAttribute
@@ -64,16 +61,16 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     public ThrottleDefinition() {
     }
 
-    public ThrottleDefinition(Expression maximumRequestsPerPeriod) {
-        super(maximumRequestsPerPeriod);
+    public ThrottleDefinition(Expression maximumConcurrentRequests) {
+        super(maximumConcurrentRequests);
     }
 
-    public ThrottleDefinition(Expression maximumRequestsPerPeriod, Expression correlationExpression) {
-        this(ExpressionNodeHelper.toExpressionDefinition(maximumRequestsPerPeriod), correlationExpression);
+    public ThrottleDefinition(Expression maximumConcurrentRequests, Expression correlationExpression) {
+        this(ExpressionNodeHelper.toExpressionDefinition(maximumConcurrentRequests), correlationExpression);
     }
 
-    private ThrottleDefinition(ExpressionDefinition maximumRequestsPerPeriod, Expression correlationExpression) {
-        super(maximumRequestsPerPeriod);
+    private ThrottleDefinition(ExpressionDefinition maximumConcurrentRequests, Expression correlationExpression) {
+        super(maximumConcurrentRequests);
 
         ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
         cor.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
@@ -82,11 +79,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public String toString() {
-        return "Throttle[" + description() + "]";
-    }
-
-    protected String description() {
-        return getExpression() + " request per " + getTimePeriodMillis() + " millis";
+        return "Throttle[" + getExpression() + "]";
     }
 
     @Override
@@ -96,53 +89,32 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public String getLabel() {
-        return "throttle[" + description() + "]";
+        return "throttle[" + getExpression() + "]";
     }
 
     // Fluent API
     // -------------------------------------------------------------------------
     /**
-     * Sets the time period during which the maximum request count is valid for
+     * Sets the maximum number of concurrent requests
      *
-     * @param  timePeriodMillis period in millis
-     * @return                  the builder
+     * @param  maximumConcurrentRequests the maximum number of concurrent requests
+     * @return                           the builder
      */
-    public ThrottleDefinition timePeriodMillis(long timePeriodMillis) {
-        return timePeriodMillis(Long.toString(timePeriodMillis));
-    }
-
-    /**
-     * Sets the time period during which the maximum request count is valid for
-     *
-     * @param  timePeriodMillis period in millis
-     * @return                  the builder
-     */
-    public ThrottleDefinition timePeriodMillis(String timePeriodMillis) {
-        setTimePeriodMillis(timePeriodMillis);
+    public ThrottleDefinition maximumConcurrentRequests(long maximumConcurrentRequests) {
+        setExpression(
+                ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
         return this;
     }
 
     /**
-     * Sets the time period during which the maximum request count per period
+     * Sets the number of concurrent requests
      *
-     * @param  maximumRequestsPerPeriod the maximum request count number per time period
-     * @return                          the builder
+     * @param  maximumConcurrentRequests the maximum number of concurrent requests
+     * @return                           the builder
      */
-    public ThrottleDefinition maximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
+    public ThrottleDefinition maximumConcurrentRequests(String maximumConcurrentRequests) {
         setExpression(
-                ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
-        return this;
-    }
-
-    /**
-     * Sets the time period during which the maximum request count per period
-     *
-     * @param  maximumRequestsPerPeriod the maximum request count number per time period
-     * @return                          the builder
-     */
-    public ThrottleDefinition maximumRequestsPerPeriod(String maximumRequestsPerPeriod) {
-        setExpression(
-                ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.simpleExpression(maximumRequestsPerPeriod)));
+                ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.simpleExpression(maximumConcurrentRequests)));
         return this;
     }
 
@@ -295,14 +267,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
-    }
-
-    public String getTimePeriodMillis() {
-        return timePeriodMillis;
-    }
-
-    public void setTimePeriodMillis(String timePeriodMillis) {
-        this.timePeriodMillis = timePeriodMillis;
     }
 
     public String getAsyncDelayed() {

@@ -50,7 +50,7 @@ public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
                         .to(endpoint)
                         .to("mock:end");
 
-                from("jetty:http://localhost:8000?matchOnUriPrefix=true")
+                from("undertow:http://localhost:8000?matchOnUriPrefix=true")
                         .to("mock:result")
                         .process(exchange -> exchange.getIn().setBody(new Customer()));
             }

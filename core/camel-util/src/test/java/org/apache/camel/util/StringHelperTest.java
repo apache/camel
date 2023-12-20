@@ -31,7 +31,7 @@ public class StringHelperTest {
 
     @Test
     public void testCamelCashToDash() {
-        assertEquals(null, camelCaseToDash(null));
+        assertNull(camelCaseToDash(null));
         assertEquals("", camelCaseToDash(""));
 
         assertEquals("hello-world", camelCaseToDash("HelloWorld"));

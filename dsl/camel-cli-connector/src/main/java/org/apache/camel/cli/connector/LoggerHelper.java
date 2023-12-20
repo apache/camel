@@ -23,6 +23,8 @@ import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.util.StringHelper;
+
 /**
  * Helper for logger action.
  *
@@ -67,6 +69,41 @@ public final class LoggerHelper {
             }
         } catch (Exception e) {
             // ignore
+        }
+    }
+
+    public static String stripSourceLocationLineNumber(String location) {
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt >= 1) {
+            int pos = location.lastIndexOf(':');
+            return location.substring(0, pos);
+        } else {
+            return location;
+        }
+    }
+
+    public static Integer extractSourceLocationLineNumber(String location) {
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt >= 1) {
+            int pos = location.lastIndexOf(':');
+            String num = location.substring(pos + 1);
+            try {
+                return Integer.valueOf(num);
+            } catch (Exception var5) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static String extractSourceLocationId(String location) {
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt >= 1) {
+            int pos = location.lastIndexOf(':');
+            return location.substring(pos + 1);
+        } else {
+            return null;
         }
     }
 

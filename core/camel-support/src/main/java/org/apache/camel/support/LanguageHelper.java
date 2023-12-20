@@ -263,8 +263,7 @@ public final class LanguageHelper {
      * @return          A Date instance
      */
     public static Date dateFromExchangeCreated(Exchange exchange) {
-        long num = exchange.getCreated();
-        return new Date(num);
+        return exchange.getClock().asDate();
     }
 
     /**

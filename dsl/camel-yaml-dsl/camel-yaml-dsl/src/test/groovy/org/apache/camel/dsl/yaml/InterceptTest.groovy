@@ -30,7 +30,7 @@ class InterceptTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:
                       - to: "mock:foo"
-                      - set-body:
+                      - setBody:
                           constant: "Hello Bar"
                       - to: "mock:bar"
                       - to: "mock:result"

@@ -191,36 +191,6 @@ class RoutesTest extends YamlTestSupport {
         }
     }
 
-    def "load route inlined"() {
-        when:
-        loadRoutes '''
-                - route:
-                    id: demo-route
-                    stream-caching: true
-                    auto-startup: false
-                    startup-order: 123
-                    route-policy: "myPolicy"
-                    from:
-                      uri: "direct:info"
-                      steps:
-                        - log: "message"
-            '''
-        then:
-        context.routeDefinitions.size() == 1
-
-        with(context.routeDefinitions[0], RouteDefinition) {
-            routeId == 'demo-route'
-            streamCache == 'true'
-            autoStartup == 'false'
-            startupOrder == 123
-            routePolicyRef == 'myPolicy'
-            input.endpointUri == 'direct:info'
-
-            with (outputs[0], LogDefinition) {
-                message == 'message'
-            }
-        }
-    }
 
     def "load route inlined camelCase"() {
         when:
@@ -231,6 +201,8 @@ class RoutesTest extends YamlTestSupport {
                     autoStartup: false
                     startupOrder: 123
                     routePolicy: "myPolicy"
+                    shutdownRoute: "Defer"
+                    shutdownRunningTask: "CompleteAllTasks"
                     from:
                       uri: "direct:info"
                       steps:
@@ -245,6 +217,8 @@ class RoutesTest extends YamlTestSupport {
             autoStartup == 'false'
             startupOrder == 123
             routePolicyRef == 'myPolicy'
+            shutdownRoute == "Defer"
+            shutdownRunningTask == "CompleteAllTasks"
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {
@@ -340,7 +314,7 @@ class RoutesTest extends YamlTestSupport {
         loadRoutes '''
                 - route:
                     id: foo
-                    node-prefix-id: aaa
+                    nodePrefixId: aaa
                     from:
                       uri: "direct:foo"
                       steps:
@@ -350,7 +324,7 @@ class RoutesTest extends YamlTestSupport {
                         - to: "seda:foo"
                 - route:
                     id: bar
-                    node-prefix-id: bbb
+                    nodePrefixId: bbb
                     from:
                       uri: "direct:bar"
                       steps:
@@ -367,4 +341,26 @@ class RoutesTest extends YamlTestSupport {
         Assertions.assertEquals(2, context.getRoute("bar").filter("bbb*").size());
     }
 
+    def "Error: kebab-case: stream-cacing"() {
+        when:
+        var route = '''
+                - route:
+                    id: demo-route
+                    stream-caching: true
+                    auto-startup: false
+                    startup-order: 123
+                    route-policy: "myPolicy"
+                    from:
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
 }

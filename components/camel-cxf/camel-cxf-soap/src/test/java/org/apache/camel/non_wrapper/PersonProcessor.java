@@ -42,7 +42,7 @@ public class PersonProcessor implements Processor {
         String personId = person.getPersonId();
         GetPersonResponse response = new GetPersonResponse();
 
-        if (personId == null || personId.length() == 0) {
+        if (personId == null || personId.isEmpty()) {
             LOG.info("person id 123, so throwing exception");
             // Try to throw out the soap fault message
             org.apache.camel.non_wrapper.types.UnknownPersonFault personFault

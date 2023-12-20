@@ -47,7 +47,7 @@ public class PropertyDefinition {
     }
 
     /**
-     * Property key
+     * The name of the property
      */
     public void setKey(String key) {
         this.key = key;
@@ -58,7 +58,7 @@ public class PropertyDefinition {
     }
 
     /**
-     * Property value
+     * The property value.
      */
     public void setValue(String value) {
         this.value = value;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.postgres.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.postgres.common.PostgresProperties;
 import org.slf4j.Logger;
@@ -23,12 +24,13 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public class PostgresLocalContainerService implements PostgresService, ContainerService<PostgreSQLContainer> {
-    public static final String DEFAULT_POSTGRES_CONTAINER = "postgres:13.0";
+    public static final String DEFAULT_POSTGRES_CONTAINER
+            = LocalPropertyResolver.getProperty(PostgresLocalContainerService.class, PostgresProperties.POSTGRES_CONTAINER);
     private static final Logger LOG = LoggerFactory.getLogger(PostgresLocalContainerService.class);
     private final PostgreSQLContainer container;
 
     public PostgresLocalContainerService() {
-        this(System.getProperty(PostgresProperties.POSTGRES_CONTAINER, DEFAULT_POSTGRES_CONTAINER));
+        this(DEFAULT_POSTGRES_CONTAINER);
     }
 
     public PostgresLocalContainerService(String imageName) {

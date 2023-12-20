@@ -273,7 +273,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * @return the name of the header {@code MyBatisResult}.
          */
         public String myBatisResult() {
-            return "MyBatisResult";
+            return "CamelMyBatisResult";
         }
     }
     static MyBatisBeanEndpointBuilder endpointBuilder(

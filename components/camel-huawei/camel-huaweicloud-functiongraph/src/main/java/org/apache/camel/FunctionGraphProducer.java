@@ -43,11 +43,6 @@ public class FunctionGraphProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
     public void process(Exchange exchange) throws Exception {
         ClientConfigurations clientConfigurations = new ClientConfigurations(endpoint);
 

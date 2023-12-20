@@ -26,17 +26,12 @@ import org.apache.camel.component.zeebe.processor.MessageProcessor;
 import org.apache.camel.component.zeebe.processor.ProcessProcessor;
 import org.apache.camel.component.zeebe.processor.ZeebeProcessor;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ZeebeProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(ZeebeProducer.class);
-    private ZeebeEndpoint endpoint;
     private ZeebeProcessor processor;
 
     public ZeebeProducer(ZeebeEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
 
         final OperationName operationName = endpoint.getOperationName();
         if (isProcessOperation(operationName)) {

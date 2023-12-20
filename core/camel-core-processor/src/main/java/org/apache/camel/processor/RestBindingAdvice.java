@@ -36,6 +36,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.UnmarshalProcessor;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     private final boolean skipBindingOnErrorCode;
     private final boolean clientRequestValidation;
     private final boolean enableCORS;
+    private final boolean enableNoContentResponse;
     private final Map<String, String> corsHeaders;
     private final Map<String, String> queryDefaultValues;
     private final boolean requiredBody;
@@ -76,6 +78,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                              DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                              String consumes, String produces, String bindingMode,
                              boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
+                             boolean enableNoContentResponse,
                              Map<String, String> corsHeaders,
                              Map<String, String> queryDefaultValues,
                              boolean requiredBody, Set<String> requiredQueryParameters,
@@ -131,6 +134,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         this.requiredBody = requiredBody;
         this.requiredQueryParameters = requiredQueryParameters;
         this.requiredHeaders = requiredHeaders;
+        this.enableNoContentResponse = enableNoContentResponse;
     }
 
     @Override
@@ -163,7 +167,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         return false;
     }
 
-    private void unmarshal(Exchange exchange, Map<String, Object> state) throws Exception {
+    private void unmarshal(Exchange exchange, Map<String, Object> state) {
         boolean isXml = false;
         boolean isJson = false;
 
@@ -457,12 +461,38 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 if (contentType.contains("json")) {
                     jsonMarshal.process(exchange);
                     setOutputDataType(exchange, new DataType("json"));
+
+                    if (enableNoContentResponse) {
+                        String body = MessageHelper.extractBodyAsString(exchange.getMessage());
+                        if (ObjectHelper.isNotEmpty(body) && (body.equals("[]") || body.equals("{}"))) {
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+                            exchange.getMessage().setBody("");
+                        }
+                    }
                 }
             } else if (isXml && xmlMarshal != null) {
                 // only marshal if its xml content type
                 if (contentType.contains("xml")) {
                     xmlMarshal.process(exchange);
                     setOutputDataType(exchange, new DataType("xml"));
+
+                    if (enableNoContentResponse) {
+                        String body = MessageHelper.extractBodyAsString(exchange.getMessage()).replace("\n", "");
+                        if (ObjectHelper.isNotEmpty(body)) {
+                            int open = 0;
+                            int close = body.indexOf('>');
+                            // xml declaration
+                            if (body.startsWith("<?xml")) {
+                                open = close;
+                                close = body.indexOf('>', close + 1);
+                            }
+                            // empty root element <el/> or <el></el>
+                            if (body.length() == close + 1 || body.length() == (open + 1 + 2 * (close - open) + 1)) {
+                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+                                exchange.getMessage().setBody("");
+                            }
+                        }
+                    }
                 }
             } else {
                 // we could not bind
@@ -564,6 +594,9 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (target.contains("*/*")) {
             return true;
         }
+
+        //  content-type is before optional charset
+        target = StringHelper.before(target, ";", target);
 
         valid = valid.toLowerCase(Locale.ENGLISH);
         target = target.toLowerCase(Locale.ENGLISH);

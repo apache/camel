@@ -16,7 +16,7 @@ ApacheCon for instance).
 * https://github.com/takari/maven-wrapper[Maven Wrapper] is used and bundled with Camel 2.21 onwards and should be used
 for building the release.
 * You may want to get familiar with the release settings in the parent Apache POM.
-* Make sure you are using Java 1.8 for Apache Camel 2.18.0 and later.
+* Make sure you are using Java 11 for Apache Camel 3 and Java 21 for Apache Camel 4.
 
 [[ReleaseGuide-MavenSetup]]
 == Maven Setup
@@ -365,6 +365,11 @@ This will release the artifacts.
 
   cd ${CAMEL_ROOT_DIR}/etc/scripts
   ./release-distro.sh <Camel version>
+  
+. Copy SBOMs to Apache website:
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./release-sbom.sh <Camel version>
 
 . Remove the old distribution version from the Apache website:
 

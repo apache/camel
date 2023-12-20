@@ -662,6 +662,7 @@ public interface Exchange {
      *
      * @see Message#getMessageTimestamp()
      */
+    @Deprecated
     long getCreated();
 
     /**
@@ -671,5 +672,7 @@ public interface Exchange {
      * @return the {@link ExchangeExtension} point for this exchange.
      */
     ExchangeExtension getExchangeExtension();
+
+    Clock getClock();
 
 }

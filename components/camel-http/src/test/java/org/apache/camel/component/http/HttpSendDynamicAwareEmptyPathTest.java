@@ -55,10 +55,10 @@ public class HttpSendDynamicAwareEmptyPathTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:moes")
                         .toD("http://localhost:" + localServer.getLocalPort()
                              + "?throwExceptionOnFailure=false&drink=${header.drink}");
@@ -67,7 +67,7 @@ public class HttpSendDynamicAwareEmptyPathTest extends BaseHttpTest {
     }
 
     @Test
-    public void testEmptyPath() throws Exception {
+    public void testEmptyPath() {
         String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
     }

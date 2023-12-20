@@ -492,12 +492,17 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -514,12 +519,17 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -640,6 +650,26 @@ public interface SmppEndpointBuilderFactory {
         default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
             doSetProperty("enquireLinkTimer", enquireLinkTimer);
+            return this;
+        }
+        /**
+         * Defines the interface version to be used in the binding request with
+         * the SMSC. The following values are allowed, as defined in the SMPP
+         * protocol (and the underlying implementation using the jSMPP library,
+         * respectively): legacy (0x00), 3.3 (0x33), 3.4 (0x34), and 5.0 (0x50).
+         * The default (fallback) value is version 3.4.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: 3.4
+         * Group: advanced
+         * 
+         * @param interfaceVersion the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder interfaceVersion(
+                String interfaceVersion) {
+            doSetProperty("interfaceVersion", interfaceVersion);
             return this;
         }
         /**
@@ -1815,6 +1845,26 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Defines the interface version to be used in the binding request with
+         * the SMSC. The following values are allowed, as defined in the SMPP
+         * protocol (and the underlying implementation using the jSMPP library,
+         * respectively): legacy (0x00), 3.3 (0x33), 3.4 (0x34), and 5.0 (0x50).
+         * The default (fallback) value is version 3.4.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: 3.4
+         * Group: advanced
+         * 
+         * @param interfaceVersion the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder interfaceVersion(
+                String interfaceVersion) {
+            doSetProperty("interfaceVersion", interfaceVersion);
+            return this;
+        }
+        /**
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
@@ -2468,6 +2518,26 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Defines the interface version to be used in the binding request with
+         * the SMSC. The following values are allowed, as defined in the SMPP
+         * protocol (and the underlying implementation using the jSMPP library,
+         * respectively): legacy (0x00), 3.3 (0x33), 3.4 (0x34), and 5.0 (0x50).
+         * The default (fallback) value is version 3.4.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: 3.4
+         * Group: advanced
+         * 
+         * @param interfaceVersion the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder interfaceVersion(
+                String interfaceVersion) {
+            doSetProperty("interfaceVersion", interfaceVersion);
+            return this;
+        }
+        /**
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
@@ -2761,7 +2831,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppAlphabet}.
          */
         public String smppAlphabet() {
-            return "SmppAlphabet";
+            return "CamelSmppAlphabet";
         }
 
         /**
@@ -2774,7 +2844,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppCommand}.
          */
         public String smppCommand() {
-            return "SmppCommand";
+            return "CamelSmppCommand";
         }
 
         /**
@@ -2789,7 +2859,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppCommandId}.
          */
         public String smppCommandId() {
-            return "SmppCommandId";
+            return "CamelSmppCommandId";
         }
 
         /**
@@ -2802,7 +2872,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppCommandStatus}.
          */
         public String smppCommandStatus() {
-            return "SmppCommandStatus";
+            return "CamelSmppCommandStatus";
         }
 
         /**
@@ -2817,7 +2887,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppDataCoding}.
          */
         public String smppDataCoding() {
-            return "SmppDataCoding";
+            return "CamelSmppDataCoding";
         }
 
         /**
@@ -2831,7 +2901,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSplitter}.
          */
         public String smppSplitter() {
-            return "SmppSplitter";
+            return "CamelSmppSplitter";
         }
 
         /**
@@ -2847,7 +2917,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppDelivered}.
          */
         public String smppDelivered() {
-            return "SmppDelivered";
+            return "CamelSmppDelivered";
         }
 
         /**
@@ -2865,7 +2935,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppDestAddr}.
          */
         public String smppDestAddr() {
-            return "SmppDestAddr";
+            return "CamelSmppDestAddr";
         }
 
         /**
@@ -2883,7 +2953,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppDestAddrNpi}.
          */
         public String smppDestAddrNpi() {
-            return "SmppDestAddrNpi";
+            return "CamelSmppDestAddrNpi";
         }
 
         /**
@@ -2901,7 +2971,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppDestAddrTon}.
          */
         public String smppDestAddrTon() {
-            return "SmppDestAddrTon";
+            return "CamelSmppDestAddrTon";
         }
 
         /**
@@ -2916,7 +2986,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppDoneDate}.
          */
         public String smppDoneDate() {
-            return "SmppDoneDate";
+            return "CamelSmppDoneDate";
         }
 
         /**
@@ -2935,7 +3005,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppEncoding}.
          */
         public String smppEncoding() {
-            return "SmppEncoding";
+            return "CamelSmppEncoding";
         }
 
         /**
@@ -2954,7 +3024,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppError}.
          */
         public String smppError() {
-            return "SmppError";
+            return "CamelSmppError";
         }
 
         /**
@@ -2967,7 +3037,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppClass}.
          */
         public String smppClass() {
-            return "SmppClass";
+            return "CamelSmppClass";
         }
 
         /**
@@ -2982,7 +3052,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppEsmeAddr}.
          */
         public String smppEsmeAddr() {
-            return "SmppEsmeAddr";
+            return "CamelSmppEsmeAddr";
         }
 
         /**
@@ -2997,7 +3067,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppEsmeAddrNpi}.
          */
         public String smppEsmeAddrNpi() {
-            return "SmppEsmeAddrNpi";
+            return "CamelSmppEsmeAddrNpi";
         }
 
         /**
@@ -3012,7 +3082,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppEsmeAddrTon}.
          */
         public String smppEsmeAddrTon() {
-            return "SmppEsmeAddrTon";
+            return "CamelSmppEsmeAddrTon";
         }
 
         /**
@@ -3025,7 +3095,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppFinalDate}.
          */
         public String smppFinalDate() {
-            return "SmppFinalDate";
+            return "CamelSmppFinalDate";
         }
 
         /**
@@ -3038,7 +3108,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppStatus}.
          */
         public String smppStatus() {
-            return "SmppStatus";
+            return "CamelSmppStatus";
         }
 
         /**
@@ -3056,7 +3126,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppId}.
          */
         public String smppId() {
-            return "SmppId";
+            return "CamelSmppId";
         }
 
         /**
@@ -3069,7 +3139,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppMessageState}.
          */
         public String smppMessageState() {
-            return "SmppMessageState";
+            return "CamelSmppMessageState";
         }
 
         /**
@@ -3085,7 +3155,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppMessageType}.
          */
         public String smppMessageType() {
-            return "SmppMessageType";
+            return "CamelSmppMessageType";
         }
 
         /**
@@ -3100,7 +3170,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppPriorityFlag}.
          */
         public String smppPriorityFlag() {
-            return "SmppPriorityFlag";
+            return "CamelSmppPriorityFlag";
         }
 
         /**
@@ -3113,7 +3183,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppProtocolId}.
          */
         public String smppProtocolId() {
-            return "SmppProtocolId";
+            return "CamelSmppProtocolId";
         }
 
         /**
@@ -3131,7 +3201,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppRegisteredDelivery}.
          */
         public String smppRegisteredDelivery() {
-            return "SmppRegisteredDelivery";
+            return "CamelSmppRegisteredDelivery";
         }
 
         /**
@@ -3146,7 +3216,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSingleDLR}.
          */
         public String smppSingleDLR() {
-            return "SmppSingleDLR";
+            return "CamelSmppSingleDLR";
         }
 
         /**
@@ -3165,7 +3235,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppReplaceIfPresentFlag}.
          */
         public String smppReplaceIfPresentFlag() {
-            return "SmppReplaceIfPresentFlag";
+            return "CamelSmppReplaceIfPresentFlag";
         }
 
         /**
@@ -3191,7 +3261,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppScheduleDeliveryTime}.
          */
         public String smppScheduleDeliveryTime() {
-            return "SmppScheduleDeliveryTime";
+            return "CamelSmppScheduleDeliveryTime";
         }
 
         /**
@@ -3205,7 +3275,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSentMessageCount}.
          */
         public String smppSentMessageCount() {
-            return "SmppSentMessageCount";
+            return "CamelSmppSentMessageCount";
         }
 
         /**
@@ -3220,7 +3290,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSequenceNumber}.
          */
         public String smppSequenceNumber() {
-            return "SmppSequenceNumber";
+            return "CamelSmppSequenceNumber";
         }
 
         /**
@@ -3237,7 +3307,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppServiceType}.
          */
         public String smppServiceType() {
-            return "SmppServiceType";
+            return "CamelSmppServiceType";
         }
 
         /**
@@ -3253,7 +3323,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSourceAddr}.
          */
         public String smppSourceAddr() {
-            return "SmppSourceAddr";
+            return "CamelSmppSourceAddr";
         }
 
         /**
@@ -3271,7 +3341,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSourceAddrNpi}.
          */
         public String smppSourceAddrNpi() {
-            return "SmppSourceAddrNpi";
+            return "CamelSmppSourceAddrNpi";
         }
 
         /**
@@ -3289,7 +3359,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSourceAddrTon}.
          */
         public String smppSourceAddrTon() {
-            return "SmppSourceAddrTon";
+            return "CamelSmppSourceAddrTon";
         }
 
         /**
@@ -3305,7 +3375,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSubmitted}.
          */
         public String smppSubmitted() {
-            return "SmppSubmitted";
+            return "CamelSmppSubmitted";
         }
 
         /**
@@ -3321,7 +3391,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSubmitDate}.
          */
         public String smppSubmitDate() {
-            return "SmppSubmitDate";
+            return "CamelSmppSubmitDate";
         }
 
         /**
@@ -3334,7 +3404,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSystemId}.
          */
         public String smppSystemId() {
-            return "SmppSystemId";
+            return "CamelSmppSystemId";
         }
 
         /**
@@ -3347,7 +3417,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppPassword}.
          */
         public String smppPassword() {
-            return "SmppPassword";
+            return "CamelSmppPassword";
         }
 
         /**
@@ -3370,7 +3440,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppValidityPeriod}.
          */
         public String smppValidityPeriod() {
-            return "SmppValidityPeriod";
+            return "CamelSmppValidityPeriod";
         }
 
         /**
@@ -3384,7 +3454,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppOptionalParameters}.
          */
         public String smppOptionalParameters() {
-            return "SmppOptionalParameters";
+            return "CamelSmppOptionalParameters";
         }
 
         /**
@@ -3413,7 +3483,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppOptionalParameter}.
          */
         public String smppOptionalParameter() {
-            return "SmppOptionalParameter";
+            return "CamelSmppOptionalParameter";
         }
 
         /**
@@ -3428,7 +3498,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the name of the header {@code SmppSplittingPolicy}.
          */
         public String smppSplittingPolicy() {
-            return "SmppSplittingPolicy";
+            return "CamelSmppSplittingPolicy";
         }
     }
     static SmppEndpointBuilder endpointBuilder(String componentName, String path) {

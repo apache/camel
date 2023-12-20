@@ -61,6 +61,7 @@ import org.xnio.channels.BlockingReadableByteChannel;
 import org.xnio.channels.StreamSourceChannel;
 import org.xnio.streams.ChannelInputStream;
 
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
 import static org.apache.camel.util.BufferCaster.cast;
 
 /**
@@ -197,17 +198,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             throws Exception {
         LOG.trace("populateCamelHeaders: {}", exchange.getMessage().getHeaders());
 
-        String path = httpExchange.getRequestPath();
-        UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
-        if (endpoint.getHttpURI() != null) {
-            // need to match by lower case as we want to ignore case on context-path
-            String endpointPath = endpoint.getHttpURI().getPath();
-            String matchPath = path.toLowerCase(Locale.US);
-            String match = endpointPath.toLowerCase(Locale.US);
-            if (matchPath.startsWith(match)) {
-                path = path.substring(endpointPath.length());
-            }
-        }
+        final String path = stripPath(httpExchange, exchange);
         headersMap.put(UndertowConstants.HTTP_PATH, path);
 
         if (LOG.isTraceEnabled()) {
@@ -287,6 +278,21 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         headersMap.put(UndertowConstants.HTTP_URI, httpExchange.getRequestURI());
         headersMap.put(UndertowConstants.HTTP_QUERY, httpExchange.getQueryString());
         headersMap.put(Exchange.HTTP_RAW_QUERY, httpExchange.getQueryString());
+    }
+
+    private static String stripPath(HttpServerExchange httpExchange, Exchange exchange) {
+        String path = httpExchange.getRequestPath();
+        UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
+        if (endpoint.getHttpURI() != null) {
+            // need to match by lower case as we want to ignore case on context-path
+            String endpointPath = endpoint.getHttpURI().getPath();
+            String matchPath = path.toLowerCase(Locale.US);
+            String match = endpointPath.toLowerCase(Locale.US);
+            if (matchPath.startsWith(match)) {
+                path = path.substring(endpointPath.length());
+            }
+        }
+        return path;
     }
 
     @Override
@@ -393,27 +399,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return body;
     }
 
-    /*
-     * set the HTTP status code
-     */
-    private int determineResponseCode(Exchange camelExchange, Object body) {
-        boolean failed = camelExchange.isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        Message message = camelExchange.getMessage();
-        Integer currentCode = message.getHeader(UndertowConstants.HTTP_RESPONSE_CODE, Integer.class);
-        int codeToUse = currentCode == null ? defaultCode : currentCode;
-
-        if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
-                // no content
-                codeToUse = currentCode == null ? 204 : currentCode;
-            }
-        }
-
-        return codeToUse;
-    }
-
     @Override
     public Object toHttpRequest(ClientRequest clientRequest, Message message) {
 
@@ -472,8 +457,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     }
 
     static class FilePartDataSource extends FileDataSource {
-        private String name;
-        private String contentType;
+        private final String name;
+        private final String contentType;
 
         FilePartDataSource(FormValue value) {
             super(value.getPath().toFile());

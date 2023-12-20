@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.xmlunit.assertj3.XmlAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -430,7 +431,12 @@ public class XMLTokenExpressionIteratorGroupingTest {
 
         assertEquals(expected.length, results.size(), "token count");
         for (int i = 0; i < expected.length; i++) {
-            assertEquals(expected[i], results.get(i), "mismatch [" + i + "]");
+            String expectedToken = expected[i];
+            if (expectedToken.startsWith("<")) {
+                XmlAssert.assertThat(results.get(i)).and(expectedToken).areIdentical();
+            } else {
+                assertEquals(expectedToken, results.get(i), "mismatch [" + i + "]");
+            }
         }
     }
 }

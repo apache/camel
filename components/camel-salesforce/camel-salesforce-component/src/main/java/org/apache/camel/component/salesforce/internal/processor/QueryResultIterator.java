@@ -65,7 +65,6 @@ public class QueryResultIterator<T extends AbstractSObjectBase> implements Itera
             List<T> valueHolder = new ArrayList<>();
 
             restClient.queryMore(queryRecords.getNextRecordsUrl(), requestHeaders, (response, headers, exception) -> {
-                final AbstractQueryRecordsBase<T> qrb;
                 try {
                     queryRecords = objectMapper.readValue(response, responseClass);
                     iterator = queryRecords.getRecords().iterator();

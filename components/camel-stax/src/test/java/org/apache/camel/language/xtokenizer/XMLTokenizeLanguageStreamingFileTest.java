@@ -26,6 +26,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.xmlunit.assertj3.XmlAssert;
 
 public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
     @TempDir
@@ -33,11 +34,11 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
 
     @Test
     public void testFromFile() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived("<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>",
-                        "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child>",
-                        "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\"></c:child>",
-                        "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\"></c:child>");
+        String[] expected = new String[] {
+                "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>",
+                "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child>",
+                "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\"></c:child>",
+                "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\"></c:child>" };
 
         String body
                 = "<?xml version='1.0' encoding='UTF-8'?>" + "<c:parent xmlns:c='urn:c'>"
@@ -47,7 +48,20 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
 
         template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), body, Exchange.FILE_NAME, "myxml.xml");
 
+        verify(expected);
+    }
+
+    private void verify(String... expected) throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(expected.length);
+
         MockEndpoint.assertIsSatisfied(context);
+
+        int i = 0;
+        for (String target : expected) {
+            String body = getMockEndpoint("mock:result").getReceivedExchanges().get(i).getMessage().getBody(String.class);
+            XmlAssert.assertThat(body).and(target).areIdentical();
+            i++;
+        }
     }
 
     @Override

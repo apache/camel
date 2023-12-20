@@ -107,9 +107,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertEquals("123",
                 context.resolveLanguage("csimple").createExpression("${header.bar}").evaluate(exchange, String.class));
         // should not be possible
-        assertEquals(null, context.resolveLanguage("csimple").createExpression("${header.bar}").evaluate(exchange, Date.class));
-        assertEquals(null,
-                context.resolveLanguage("csimple").createExpression("${header.unknown}").evaluate(exchange, String.class));
+        assertNull(context.resolveLanguage("csimple").createExpression("${header.bar}").evaluate(exchange, Date.class));
+        assertNull(context.resolveLanguage("csimple").createExpression("${header.unknown}").evaluate(exchange, String.class));
     }
 
     @Test
@@ -659,7 +658,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testDateExchangeCreated() {
-        Object out = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", "" + exchange.getCreated());
+        Object out = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}",
+                String.valueOf(exchange.getClock().getCreated()));
         assertNotNull(out);
     }
 

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-yaml-dsl-deserializers</artifactId>
@@ -140,6 +140,8 @@
                                 <bannedDefinition>org.apache.camel.model.RestsDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.RouteConfigurationDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.RouteConfigurationsDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.app.BeansDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.app.ApplicationDefinition</bannedDefinition>
                             </bannedDefinitions>
                             <additionalDefinitions>
                                 <!-- saga -->

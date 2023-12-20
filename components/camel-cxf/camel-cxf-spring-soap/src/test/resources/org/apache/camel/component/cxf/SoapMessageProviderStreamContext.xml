@@ -31,7 +31,7 @@
 
     <!--
     If you want to run this example in Tomcat container which need to used servlet transoprt,
-    please repalce the cxf-extension-http-jetty.xml with cxf-servlet.xml
+    please repalce the cxf-extension-http-undertow.xml with cxf-servlet.xml
     -->
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>

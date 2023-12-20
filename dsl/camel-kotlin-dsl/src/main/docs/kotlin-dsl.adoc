@@ -5,6 +5,7 @@
 :description: Camel DSL with Kotlin
 :since: 3.9
 :supportlevel: Experimental
+:tabs-sync-option:
 //Manually maintained attributes
 :group: DSL
 

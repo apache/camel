@@ -123,7 +123,7 @@ public class DIRegistry extends SupplierRegistry {
         for (Annotation ann : type.getAnnotations()) {
             if (isNamedAnnotation(ann)) {
                 name = getNamedAnnotationValue(type);
-                if (name == null || name.trim().isEmpty()) {
+                if (name == null || name.isBlank()) {
                     name = key.getName();
                 }
             }
@@ -196,7 +196,6 @@ public class DIRegistry extends SupplierRegistry {
                                 } else if (Map.class == rawType) {
                                     if (typeArguments.length == 2) {
                                         // first type must be String (name - from @Named or FQCN)
-                                        Type kType = typeArguments[0];
                                         Type vType = typeArguments[1];
                                         t = rawType;
                                         param = new LinkedHashMap<>();

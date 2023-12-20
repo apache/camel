@@ -392,7 +392,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * @return the name of the header {@code ArangoDbMultiUpdate}.
          */
         public String arangoDbMultiUpdate() {
-            return "ArangoDbMultiUpdate";
+            return "CamelArangoDbMultiUpdate";
         }
 
         /**
@@ -407,7 +407,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * @return the name of the header {@code ArangoDbMultiInsert}.
          */
         public String arangoDbMultiInsert() {
-            return "ArangoDbMultiInsert";
+            return "CamelArangoDbMultiInsert";
         }
 
         /**
@@ -423,7 +423,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * @return the name of the header {@code ArangoDbMultiDelete}.
          */
         public String arangoDbMultiDelete() {
-            return "ArangoDbMultiDelete";
+            return "CamelArangoDbMultiDelete";
         }
 
         /**
@@ -463,7 +463,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * @return the name of the header {@code ArangoDbAqlQuery}.
          */
         public String arangoDbAqlQuery() {
-            return "ArangoDbAqlQuery";
+            return "CamelArangoDbAqlQuery";
         }
 
         /**
@@ -476,7 +476,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * @return the name of the header {@code ArangoDbAqlParameters}.
          */
         public String arangoDbAqlParameters() {
-            return "ArangoDbAqlParameters";
+            return "CamelArangoDbAqlParameters";
         }
 
         /**
@@ -489,7 +489,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * @return the name of the header {@code ArangoDbAqlOptions}.
          */
         public String arangoDbAqlOptions() {
-            return "ArangoDbAqlOptions";
+            return "CamelArangoDbAqlOptions";
         }
     }
     static ArangoDbEndpointBuilder endpointBuilder(

@@ -31,7 +31,6 @@ import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.storage.blob.models.PageRange;
@@ -87,7 +86,7 @@ class BlobOperationsIT extends Base {
     }
 
     @AfterAll
-    public void tearDown() {
+    public void deleteClient() {
         blobContainerClientWrapper.deleteContainer(null, null);
     }
 
@@ -419,6 +418,8 @@ class BlobOperationsIT extends Base {
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
+        // The string returned here is a 512 long sequence of null code points (U+000) which is considered a space for
+        // trim(), but not for isBlank.
         assertTrue(IOUtils.toString((InputStream) getBlobResponse.getBody(), StandardCharsets.UTF_8).trim().isEmpty());
 
         blobClientWrapper.delete(null, null, null);
@@ -447,7 +448,7 @@ class BlobOperationsIT extends Base {
         assertNotNull(response);
 
         final PagedIterable<?> pagedIterable = (PagedIterable<?>) response.getBody();
-        List<?> pageRangeItems = pagedIterable.stream().collect(Collectors.toList());
+        List<?> pageRangeItems = pagedIterable.stream().toList();
 
         assertEquals(1, pageRangeItems.size());
         assertInstanceOf(PageRangeItem.class, pageRangeItems.get(0));

@@ -104,7 +104,7 @@
 &lt;/route&gt;
 </template><template autoinsert="true" context="xml_all" deleted="false" description="Creates a Throttler" enabled="true" name="camel_throttler">&lt;route&gt;
   &lt;from uri="from_uri" /&gt;
-  &lt;throttle maximumRequestsPerPeriod="number_of_messages" timePeriodMillis="milliseconds"&gt;
+  &lt;throttle maximumConcurrentRequests="number_of_messages"&gt;
     &lt;to uri="to_uri" /&gt;
   &lt;/throttle&gt;
 &lt;/route&gt;

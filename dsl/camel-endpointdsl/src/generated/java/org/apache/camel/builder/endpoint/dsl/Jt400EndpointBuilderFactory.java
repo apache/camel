@@ -881,12 +881,17 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -903,12 +908,17 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1689,7 +1699,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400Message}.
          */
         public String jt400Message() {
-            return "Jt400Message";
+            return "CamelJt400Message";
         }
 
         /**
@@ -1702,7 +1712,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageID}.
          */
         public String jt400MessageID() {
-            return "Jt400MessageID";
+            return "CamelJt400MessageID";
         }
 
         /**
@@ -1715,7 +1725,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageFile}.
          */
         public String jt400MessageFile() {
-            return "Jt400MessageFile";
+            return "CamelJt400MessageFile";
         }
 
         /**
@@ -1729,7 +1739,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageType}.
          */
         public String jt400MessageType() {
-            return "Jt400MessageType";
+            return "CamelJt400MessageType";
         }
 
         /**
@@ -1743,7 +1753,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageSeverity}.
          */
         public String jt400MessageSeverity() {
-            return "Jt400MessageSeverity";
+            return "CamelJt400MessageSeverity";
         }
 
         /**
@@ -1756,7 +1766,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageDefaultReply}.
          */
         public String jt400MessageDefaultReply() {
-            return "Jt400MessageDefaultReply";
+            return "CamelJt400MessageDefaultReply";
         }
 
         /**
@@ -1775,7 +1785,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the name of the header {@code Jt400MessageReplyToKey}.
          */
         public String jt400MessageReplyToKey() {
-            return "Jt400MessageReplyToKey";
+            return "CamelJt400MessageReplyToKey";
         }
     }
     static Jt400EndpointBuilder endpointBuilder(

@@ -318,5 +318,32 @@ The same example in XML DSL would be:
 </route>
 ----
 
+== Transforming a JSon message
+
+For basic JSon transformation where you have a fixed structure you can represent with a combination of using
+Camel simple and JSonPath language as:
+
+[source]
+----
+{
+  "company": "${jsonpath($.customer.name)}",
+  "location": "${jsonpath($.customer.address.country)}",
+  "gold": ${jsonpath($.customer.orders.length() > 5)}
+}
+----
+
+Here we use the simple language to define the structure and use JSonPath as inlined functions via the `${jsonpath(exp)}` syntax.
+
+This makes it possible to use simple as a template language to define a basic structure and then JSonPath to grab the data
+from an incoming JSon message. The output of the transformation is also JSon, but with simple you could
+also make it XML or plain text based:
+
+[source,xml]
+----
+<customer gold="${jsonpath($.customer.orders.length() > 5)}">
+    <company>${jsonpath($.customer.name)}</company>
+    <location>${jsonpath($.customer.address.country)}</location>
+</customer>
+----
 
 include::spring-boot:partial$starter.adoc[]

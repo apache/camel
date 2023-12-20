@@ -880,11 +880,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             src.setBackOffMultiplier(backOffMultiplier);
         }
         Boolean unhealthyOnExhausted = CamelContextHelper.parseBoolean(getContext(), rc.getUnhealthyOnExhausted());
-        if (unhealthyOnExhausted != null && unhealthyOnExhausted) {
+        if (src != null && unhealthyOnExhausted != null && unhealthyOnExhausted) {
             src.setUnhealthyOnExhausted(unhealthyOnExhausted);
         }
+        Boolean unhealthyOnRestarting = CamelContextHelper.parseBoolean(getContext(), rc.getUnhealthyOnRestarting());
+        if (src != null && unhealthyOnRestarting != null && unhealthyOnRestarting) {
+            src.setUnhealthyOnRestarting(unhealthyOnRestarting);
+        }
         LoggingLevel loggingLevel = CamelContextHelper.parse(getContext(), LoggingLevel.class, rc.getLoggingLevel());
-        if (loggingLevel != null) {
+        if (src != null && loggingLevel != null) {
             src.setLoggingLevel(loggingLevel);
         }
     }
@@ -1358,12 +1362,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     /**
      * Creates a {@link ThreadPoolProfile} instance based on the definition.
      *
-     * @param  context   the camel context
-     * @return           the profile
-     * @throws Exception is thrown if error creating the profile
+     * @param  context the camel context
+     * @return         the profile
      */
-    private ThreadPoolProfile asThreadPoolProfile(CamelContext context, ThreadPoolProfileDefinition definition)
-            throws Exception {
+    private ThreadPoolProfile asThreadPoolProfile(CamelContext context, ThreadPoolProfileDefinition definition) {
         ThreadPoolProfile answer = new ThreadPoolProfile();
         answer.setId(definition.getId());
         answer.setDefaultProfile(CamelContextHelper.parseBoolean(context, definition.getDefaultProfile()));
@@ -1474,7 +1476,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
     }
 
-    private String[] normalizePackages(T context, List<String> unnormalized) throws Exception {
+    private String[] normalizePackages(T context, List<String> unnormalized) {
         List<String> packages = new ArrayList<>();
         for (String name : unnormalized) {
             // it may use property placeholders

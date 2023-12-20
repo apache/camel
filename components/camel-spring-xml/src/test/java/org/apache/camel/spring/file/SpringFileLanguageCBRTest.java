@@ -16,17 +16,18 @@
  */
 package org.apache.camel.spring.file;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringFileLanguageCBRTest extends SpringTestSupport {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+public class SpringFileLanguageCBRTest extends ContextTestSupport {
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/file/SpringFileLanguageCBRTest.xml");
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/file/SpringFileLanguageCBRTest.xml");
     }
 
     @Test

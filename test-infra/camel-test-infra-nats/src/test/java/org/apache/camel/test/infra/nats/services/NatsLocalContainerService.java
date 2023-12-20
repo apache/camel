@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.nats.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.nats.common.NatsProperties;
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class NatsLocalContainerService implements NatsService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "nats:2.9.19";
     public static final String CONTAINER_NAME = "nats";
     private static final int PORT = 4222;
 
@@ -32,7 +32,7 @@ public class NatsLocalContainerService implements NatsService, ContainerService<
     private final GenericContainer container;
 
     public NatsLocalContainerService() {
-        this(System.getProperty(NatsProperties.NATS_CONTAINER, CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(NatsLocalContainerService.class, NatsProperties.NATS_CONTAINER));
     }
 
     public NatsLocalContainerService(String imageName) {

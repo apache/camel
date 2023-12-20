@@ -559,7 +559,7 @@ public final class AdviceWithTasks {
     private static Iterator<ProcessorDefinition<?>> createSelectorIterator(
             final List<ProcessorDefinition<?>> list, final boolean selectFirst, final boolean selectLast,
             final int selectFrom, final int selectTo) {
-        return new Iterator<ProcessorDefinition<?>>() {
+        return new Iterator<>() {
             private int current;
             private boolean done;
 

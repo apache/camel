@@ -1344,12 +1344,17 @@ public interface DataLakeEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1366,12 +1371,17 @@ public interface DataLakeEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -3252,13 +3262,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code ListFileSystemsOptions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeListFileSystemsOptions}.
          */
         public String azureStorageDataLakeListFileSystemsOptions() {
-            return "AzureStorageDataLakeListFileSystemsOptions";
+            return "CamelAzureStorageDataLakeListFileSystemsOptions";
         }
 
         /**
@@ -3267,12 +3277,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Duration} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeTimeout}.
          */
         public String azureStorageDataLakeTimeout() {
-            return "AzureStorageDataLakeTimeout";
+            return "CamelAzureStorageDataLakeTimeout";
         }
 
         /**
@@ -3282,12 +3292,12 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeOperation}.
          */
         public String azureStorageDataLakeOperation() {
-            return "AzureStorageDataLakeOperation";
+            return "CamelAzureStorageDataLakeOperation";
         }
 
         /**
@@ -3296,13 +3306,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeFileSystemName}.
          */
         public String azureStorageDataLakeFileSystemName() {
-            return "AzureStorageDataLakeFileSystemName";
+            return "CamelAzureStorageDataLakeFileSystemName";
         }
 
         /**
@@ -3311,13 +3321,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeDirectoryName}.
          */
         public String azureStorageDataLakeDirectoryName() {
-            return "AzureStorageDataLakeDirectoryName";
+            return "CamelAzureStorageDataLakeDirectoryName";
         }
 
         /**
@@ -3326,12 +3336,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileName}.
          */
         public String azureStorageDataLakeFileName() {
-            return "AzureStorageDataLakeFileName";
+            return "CamelAzureStorageDataLakeFileName";
         }
 
         /**
@@ -3344,7 +3354,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageDataLakeMetadata}.
          */
         public String azureStorageDataLakeMetadata() {
-            return "AzureStorageDataLakeMetadata";
+            return "CamelAzureStorageDataLakeMetadata";
         }
 
         /**
@@ -3353,13 +3363,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code PublicAccessType} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakePublicAccessType}.
          */
         public String azureStorageDataLakePublicAccessType() {
-            return "AzureStorageDataLakePublicAccessType";
+            return "CamelAzureStorageDataLakePublicAccessType";
         }
 
         /**
@@ -3367,13 +3377,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code HttpHeaders} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeRawHttpHeaders}.
          */
         public String azureStorageDataLakeRawHttpHeaders() {
-            return "AzureStorageDataLakeRawHttpHeaders";
+            return "CamelAzureStorageDataLakeRawHttpHeaders";
         }
 
         /**
@@ -3383,13 +3393,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code DataLakeRequestConditions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeRequestCondition}.
          */
         public String azureStorageDataLakeRequestCondition() {
-            return "AzureStorageDataLakeRequestCondition";
+            return "CamelAzureStorageDataLakeRequestCondition";
         }
 
         /**
@@ -3399,13 +3409,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code ListPathOptions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeListPathOptions}.
          */
         public String azureStorageDataLakeListPathOptions() {
-            return "AzureStorageDataLakeListPathOptions";
+            return "CamelAzureStorageDataLakeListPathOptions";
         }
 
         /**
@@ -3413,12 +3423,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakePath}.
          */
         public String azureStorageDataLakePath() {
-            return "AzureStorageDataLakePath";
+            return "CamelAzureStorageDataLakePath";
         }
 
         /**
@@ -3427,12 +3437,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeRecursive}.
          */
         public String azureStorageDataLakeRecursive() {
-            return "AzureStorageDataLakeRecursive";
+            return "CamelAzureStorageDataLakeRecursive";
         }
 
         /**
@@ -3441,13 +3451,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeMaxResults}.
          */
         public String azureStorageDataLakeMaxResults() {
-            return "AzureStorageDataLakeMaxResults";
+            return "CamelAzureStorageDataLakeMaxResults";
         }
 
         /**
@@ -3455,13 +3465,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeUserPrincipalNameReturned}.
          */
         public String azureStorageDataLakeUserPrincipalNameReturned() {
-            return "AzureStorageDataLakeUserPrincipalNameReturned";
+            return "CamelAzureStorageDataLakeUserPrincipalNameReturned";
         }
 
         /**
@@ -3470,12 +3480,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeRegex}.
          */
         public String azureStorageDataLakeRegex() {
-            return "AzureStorageDataLakeRegex";
+            return "CamelAzureStorageDataLakeRegex";
         }
 
         /**
@@ -3483,12 +3493,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileDir}.
          */
         public String azureStorageDataLakeFileDir() {
-            return "AzureStorageDataLakeFileDir";
+            return "CamelAzureStorageDataLakeFileDir";
         }
 
         /**
@@ -3496,13 +3506,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code AccessTier} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeAccessTier}.
          */
         public String azureStorageDataLakeAccessTier() {
-            return "AzureStorageDataLakeAccessTier";
+            return "CamelAzureStorageDataLakeAccessTier";
         }
 
         /**
@@ -3511,13 +3521,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code byte[]} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentMD5}.
          */
         public String azureStorageDataLakeContentMD5() {
-            return "AzureStorageDataLakeContentMD5";
+            return "CamelAzureStorageDataLakeContentMD5";
         }
 
         /**
@@ -3527,12 +3537,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code FileRange} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileRange}.
          */
         public String azureStorageDataLakeFileRange() {
-            return "AzureStorageDataLakeFileRange";
+            return "CamelAzureStorageDataLakeFileRange";
         }
 
         /**
@@ -3540,13 +3550,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code ParallelTransferOptions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeParallelTransferOptions}.
          */
         public String azureStorageDataLakeParallelTransferOptions() {
-            return "AzureStorageDataLakeParallelTransferOptions";
+            return "CamelAzureStorageDataLakeParallelTransferOptions";
         }
 
         /**
@@ -3554,13 +3564,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Set<OpenOption>} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeOpenOptions}.
          */
         public String azureStorageDataLakeOpenOptions() {
-            return "AzureStorageDataLakeOpenOptions";
+            return "CamelAzureStorageDataLakeOpenOptions";
         }
 
         /**
@@ -3568,13 +3578,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code OffsetDateTime} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeAccessTierChangeTime}.
          */
         public String azureStorageDataLakeAccessTierChangeTime() {
-            return "AzureStorageDataLakeAccessTierChangeTime";
+            return "CamelAzureStorageDataLakeAccessTierChangeTime";
         }
 
         /**
@@ -3582,13 +3592,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code ArchiveStatus} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeArchiveStatus}.
          */
         public String azureStorageDataLakeArchiveStatus() {
-            return "AzureStorageDataLakeArchiveStatus";
+            return "CamelAzureStorageDataLakeArchiveStatus";
         }
 
         /**
@@ -3596,13 +3606,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCacheControl}.
          */
         public String azureStorageDataLakeCacheControl() {
-            return "AzureStorageDataLakeCacheControl";
+            return "CamelAzureStorageDataLakeCacheControl";
         }
 
         /**
@@ -3610,13 +3620,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentDisposition}.
          */
         public String azureStorageDataLakeContentDisposition() {
-            return "AzureStorageDataLakeContentDisposition";
+            return "CamelAzureStorageDataLakeContentDisposition";
         }
 
         /**
@@ -3624,13 +3634,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentEncoding}.
          */
         public String azureStorageDataLakeContentEncoding() {
-            return "AzureStorageDataLakeContentEncoding";
+            return "CamelAzureStorageDataLakeContentEncoding";
         }
 
         /**
@@ -3638,13 +3648,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentLanguage}.
          */
         public String azureStorageDataLakeContentLanguage() {
-            return "AzureStorageDataLakeContentLanguage";
+            return "CamelAzureStorageDataLakeContentLanguage";
         }
 
         /**
@@ -3652,13 +3662,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeContentType}.
          */
         public String azureStorageDataLakeContentType() {
-            return "AzureStorageDataLakeContentType";
+            return "CamelAzureStorageDataLakeContentType";
         }
 
         /**
@@ -3667,13 +3677,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code OffsetDateTime} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopyCompletionTime}.
          */
         public String azureStorageDataLakeCopyCompletionTime() {
-            return "AzureStorageDataLakeCopyCompletionTime";
+            return "CamelAzureStorageDataLakeCopyCompletionTime";
         }
 
         /**
@@ -3681,12 +3691,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code AzureStorageDataLakeCopyId}.
          */
         public String azureStorageDataLakeCopyId() {
-            return "AzureStorageDataLakeCopyId";
+            return "CamelAzureStorageDataLakeCopyId";
         }
 
         /**
@@ -3696,13 +3706,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopyProgress}.
          */
         public String azureStorageDataLakeCopyProgress() {
-            return "AzureStorageDataLakeCopyProgress";
+            return "CamelAzureStorageDataLakeCopyProgress";
         }
 
         /**
@@ -3712,13 +3722,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopySource}.
          */
         public String azureStorageDataLakeCopySource() {
-            return "AzureStorageDataLakeCopySource";
+            return "CamelAzureStorageDataLakeCopySource";
         }
 
         /**
@@ -3727,13 +3737,13 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * com.azure.storage.file.datalake.models.CopyStatusType} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopyStatus}.
          */
         public String azureStorageDataLakeCopyStatus() {
-            return "AzureStorageDataLakeCopyStatus";
+            return "CamelAzureStorageDataLakeCopyStatus";
         }
 
         /**
@@ -3741,13 +3751,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCopyStatusDescription}.
          */
         public String azureStorageDataLakeCopyStatusDescription() {
-            return "AzureStorageDataLakeCopyStatusDescription";
+            return "CamelAzureStorageDataLakeCopyStatusDescription";
         }
 
         /**
@@ -3755,13 +3765,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code OffsetDateTime} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeCreationTime}.
          */
         public String azureStorageDataLakeCreationTime() {
-            return "AzureStorageDataLakeCreationTime";
+            return "CamelAzureStorageDataLakeCreationTime";
         }
 
         /**
@@ -3769,13 +3779,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeEncryptionKeySha256}.
          */
         public String azureStorageDataLakeEncryptionKeySha256() {
-            return "AzureStorageDataLakeEncryptionKeySha256";
+            return "CamelAzureStorageDataLakeEncryptionKeySha256";
         }
 
         /**
@@ -3783,12 +3793,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code AzureStorageDataLakeETag}.
          */
         public String azureStorageDataLakeETag() {
-            return "AzureStorageDataLakeETag";
+            return "CamelAzureStorageDataLakeETag";
         }
 
         /**
@@ -3796,12 +3806,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileSize}.
          */
         public String azureStorageDataLakeFileSize() {
-            return "AzureStorageDataLakeFileSize";
+            return "CamelAzureStorageDataLakeFileSize";
         }
 
         /**
@@ -3809,13 +3819,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code OffsetDateTime} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeLastModified}.
          */
         public String azureStorageDataLakeLastModified() {
-            return "AzureStorageDataLakeLastModified";
+            return "CamelAzureStorageDataLakeLastModified";
         }
 
         /**
@@ -3824,13 +3834,13 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * com.azure.storage.file.datalake.models.LeaseDurationType} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeLeaseDuration}.
          */
         public String azureStorageDataLakeLeaseDuration() {
-            return "AzureStorageDataLakeLeaseDuration";
+            return "CamelAzureStorageDataLakeLeaseDuration";
         }
 
         /**
@@ -3839,13 +3849,13 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * com.azure.storage.file.datalake.models.LeaseStateType} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeLeaseState}.
          */
         public String azureStorageDataLakeLeaseState() {
-            return "AzureStorageDataLakeLeaseState";
+            return "CamelAzureStorageDataLakeLeaseState";
         }
 
         /**
@@ -3854,13 +3864,13 @@ public interface DataLakeEndpointBuilderFactory {
          * The option is a: {@code
          * com.azure.storage.file.datalake.models.LeaseStatusType} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeLeaseStatus}.
          */
         public String azureStorageDataLakeLeaseStatus() {
-            return "AzureStorageDataLakeLeaseStatus";
+            return "CamelAzureStorageDataLakeLeaseStatus";
         }
 
         /**
@@ -3868,13 +3878,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeIncrementalCopy}.
          */
         public String azureStorageDataLakeIncrementalCopy() {
-            return "AzureStorageDataLakeIncrementalCopy";
+            return "CamelAzureStorageDataLakeIncrementalCopy";
         }
 
         /**
@@ -3882,13 +3892,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeServerEncrypted}.
          */
         public String azureStorageDataLakeServerEncrypted() {
-            return "AzureStorageDataLakeServerEncrypted";
+            return "CamelAzureStorageDataLakeServerEncrypted";
         }
 
         /**
@@ -3896,13 +3906,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeDownloadLinkExpiration}.
          */
         public String azureStorageDataLakeDownloadLinkExpiration() {
-            return "AzureStorageDataLakeDownloadLinkExpiration";
+            return "CamelAzureStorageDataLakeDownloadLinkExpiration";
         }
 
         /**
@@ -3910,13 +3920,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from component
+         * Group: consumer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeDownloadLink}.
          */
         public String azureStorageDataLakeDownloadLink() {
-            return "AzureStorageDataLakeDownloadLink";
+            return "CamelAzureStorageDataLakeDownloadLink";
         }
 
         /**
@@ -3924,13 +3934,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeFileOffset}.
          */
         public String azureStorageDataLakeFileOffset() {
-            return "AzureStorageDataLakeFileOffset";
+            return "CamelAzureStorageDataLakeFileOffset";
         }
 
         /**
@@ -3939,12 +3949,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeLeaseId}.
          */
         public String azureStorageDataLakeLeaseId() {
-            return "AzureStorageDataLakeLeaseId";
+            return "CamelAzureStorageDataLakeLeaseId";
         }
 
         /**
@@ -3952,13 +3962,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code PathHttpHeaders} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakePathHttpHeaders}.
          */
         public String azureStorageDataLakePathHttpHeaders() {
-            return "AzureStorageDataLakePathHttpHeaders";
+            return "CamelAzureStorageDataLakePathHttpHeaders";
         }
 
         /**
@@ -3967,13 +3977,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeRetainCommitedData}.
          */
         public String azureStorageDataLakeRetainCommitedData() {
-            return "AzureStorageDataLakeRetainCommitedData";
+            return "CamelAzureStorageDataLakeRetainCommitedData";
         }
 
         /**
@@ -3982,12 +3992,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeClose}.
          */
         public String azureStorageDataLakeClose() {
-            return "AzureStorageDataLakeClose";
+            return "CamelAzureStorageDataLakeClose";
         }
 
         /**
@@ -3995,12 +4005,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakePosition}.
          */
         public String azureStorageDataLakePosition() {
-            return "AzureStorageDataLakePosition";
+            return "CamelAzureStorageDataLakePosition";
         }
 
         /**
@@ -4008,13 +4018,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeExpression}.
          */
         public String azureStorageDataLakeExpression() {
-            return "AzureStorageDataLakeExpression";
+            return "CamelAzureStorageDataLakeExpression";
         }
 
         /**
@@ -4023,13 +4033,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code FileQuerySerialization} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeInputSerialization}.
          */
         public String azureStorageDataLakeInputSerialization() {
-            return "AzureStorageDataLakeInputSerialization";
+            return "CamelAzureStorageDataLakeInputSerialization";
         }
 
         /**
@@ -4038,13 +4048,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code FileQuerySerialization} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeOutputSerialization}.
          */
         public String azureStorageDataLakeOutputSerialization() {
-            return "AzureStorageDataLakeOutputSerialization";
+            return "CamelAzureStorageDataLakeOutputSerialization";
         }
 
         /**
@@ -4052,13 +4062,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Consumer<FileQueryError>} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeErrorConsumer}.
          */
         public String azureStorageDataLakeErrorConsumer() {
-            return "AzureStorageDataLakeErrorConsumer";
+            return "CamelAzureStorageDataLakeErrorConsumer";
         }
 
         /**
@@ -4066,13 +4076,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Consumer<FileQueryProgress>} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeProgressConsumer}.
          */
         public String azureStorageDataLakeProgressConsumer() {
-            return "AzureStorageDataLakeProgressConsumer";
+            return "CamelAzureStorageDataLakeProgressConsumer";
         }
 
         /**
@@ -4080,13 +4090,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code FileQueryOptions} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeQueryOptions}.
          */
         public String azureStorageDataLakeQueryOptions() {
-            return "AzureStorageDataLakeQueryOptions";
+            return "CamelAzureStorageDataLakeQueryOptions";
         }
 
         /**
@@ -4094,13 +4104,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakePermission}.
          */
         public String azureStorageDataLakePermission() {
-            return "AzureStorageDataLakePermission";
+            return "CamelAzureStorageDataLakePermission";
         }
 
         /**
@@ -4108,12 +4118,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeUmask}.
          */
         public String azureStorageDataLakeUmask() {
-            return "AzureStorageDataLakeUmask";
+            return "CamelAzureStorageDataLakeUmask";
         }
 
         /**
@@ -4121,13 +4131,13 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code DataLakeFileClient} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code
          * AzureStorageDataLakeFileClient}.
          */
         public String azureStorageDataLakeFileClient() {
-            return "AzureStorageDataLakeFileClient";
+            return "CamelAzureStorageDataLakeFileClient";
         }
 
         /**
@@ -4135,12 +4145,12 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: from user
+         * Group: producer
          * 
          * @return the name of the header {@code AzureStorageDataLakeFlush}.
          */
         public String azureStorageDataLakeFlush() {
-            return "AzureStorageDataLakeFlush";
+            return "CamelAzureStorageDataLakeFlush";
         }
     }
     static DataLakeEndpointBuilder endpointBuilder(

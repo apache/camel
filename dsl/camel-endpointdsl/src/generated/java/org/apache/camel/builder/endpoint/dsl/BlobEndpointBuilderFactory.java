@@ -426,6 +426,21 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * In case of usage of Shared Access Signature we'll need to set a SAS
+         * Token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sasToken the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder sasToken(String sasToken) {
+            doSetProperty("sasToken", sasToken);
+            return this;
+        }
+        /**
          * Client to a storage account. This client does not hold any state
          * about a particular storage account but is instead a convenient way of
          * sending off appropriate requests to the resource on the service. It
@@ -1060,12 +1075,17 @@ public interface BlobEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1082,12 +1102,17 @@ public interface BlobEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1601,6 +1626,21 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointProducerBuilder regex(String regex) {
             doSetProperty("regex", regex);
+            return this;
+        }
+        /**
+         * In case of usage of Shared Access Signature we'll need to set a SAS
+         * Token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sasToken the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder sasToken(String sasToken) {
+            doSetProperty("sasToken", sasToken);
             return this;
         }
         /**
@@ -2588,6 +2628,21 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * In case of usage of Shared Access Signature we'll need to set a SAS
+         * Token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sasToken the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder sasToken(String sasToken) {
+            doSetProperty("sasToken", sasToken);
+            return this;
+        }
+        /**
          * Client to a storage account. This client does not hold any state
          * about a particular storage account but is instead a convenient way of
          * sending off appropriate requests to the resource on the service. It
@@ -2803,7 +2858,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobOperation}.
          */
         public String azureStorageBlobOperation() {
-            return "AzureStorageBlobOperation";
+            return "CamelAzureStorageBlobOperation";
         }
 
         /**
@@ -2817,7 +2872,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobHttpHeaders}.
          */
         public String azureStorageBlobHttpHeaders() {
-            return "AzureStorageBlobHttpHeaders";
+            return "CamelAzureStorageBlobHttpHeaders";
         }
 
         /**
@@ -2830,7 +2885,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobETag}.
          */
         public String azureStorageBlobETag() {
-            return "AzureStorageBlobETag";
+            return "CamelAzureStorageBlobETag";
         }
 
         /**
@@ -2843,7 +2898,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobCreationTime}.
          */
         public String azureStorageBlobCreationTime() {
-            return "AzureStorageBlobCreationTime";
+            return "CamelAzureStorageBlobCreationTime";
         }
 
         /**
@@ -2856,7 +2911,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobLastModified}.
          */
         public String azureStorageBlobLastModified() {
-            return "AzureStorageBlobLastModified";
+            return "CamelAzureStorageBlobLastModified";
         }
 
         /**
@@ -2869,7 +2924,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobContentType}.
          */
         public String azureStorageBlobContentType() {
-            return "AzureStorageBlobContentType";
+            return "CamelAzureStorageBlobContentType";
         }
 
         /**
@@ -2888,7 +2943,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobContentMD5}.
          */
         public String azureStorageBlobContentMD5() {
-            return "AzureStorageBlobContentMD5";
+            return "CamelAzureStorageBlobContentMD5";
         }
 
         /**
@@ -2902,7 +2957,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobContentEncoding}.
          */
         public String azureStorageBlobContentEncoding() {
-            return "AzureStorageBlobContentEncoding";
+            return "CamelAzureStorageBlobContentEncoding";
         }
 
         /**
@@ -2916,7 +2971,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobContentDisposition}.
          */
         public String azureStorageBlobContentDisposition() {
-            return "AzureStorageBlobContentDisposition";
+            return "CamelAzureStorageBlobContentDisposition";
         }
 
         /**
@@ -2930,7 +2985,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobContentLanguage}.
          */
         public String azureStorageBlobContentLanguage() {
-            return "AzureStorageBlobContentLanguage";
+            return "CamelAzureStorageBlobContentLanguage";
         }
 
         /**
@@ -2943,7 +2998,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobCacheControl}.
          */
         public String azureStorageBlobCacheControl() {
-            return "AzureStorageBlobCacheControl";
+            return "CamelAzureStorageBlobCacheControl";
         }
 
         /**
@@ -2956,7 +3011,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobBlobSize}.
          */
         public String azureStorageBlobBlobSize() {
-            return "AzureStorageBlobBlobSize";
+            return "CamelAzureStorageBlobBlobSize";
         }
 
         /**
@@ -2971,7 +3026,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobBlobUploadSize}.
          */
         public String azureStorageBlobBlobUploadSize() {
-            return "AzureStorageBlobBlobUploadSize";
+            return "CamelAzureStorageBlobBlobUploadSize";
         }
 
         /**
@@ -2988,7 +3043,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobSequenceNumber}.
          */
         public String azureStorageBlobSequenceNumber() {
-            return "AzureStorageBlobSequenceNumber";
+            return "CamelAzureStorageBlobSequenceNumber";
         }
 
         /**
@@ -3002,7 +3057,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobBlobType}.
          */
         public String azureStorageBlobBlobType() {
-            return "AzureStorageBlobBlobType";
+            return "CamelAzureStorageBlobBlobType";
         }
 
         /**
@@ -3016,7 +3071,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobLeaseStatus}.
          */
         public String azureStorageBlobLeaseStatus() {
-            return "AzureStorageBlobLeaseStatus";
+            return "CamelAzureStorageBlobLeaseStatus";
         }
 
         /**
@@ -3030,7 +3085,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobLeaseState}.
          */
         public String azureStorageBlobLeaseState() {
-            return "AzureStorageBlobLeaseState";
+            return "CamelAzureStorageBlobLeaseState";
         }
 
         /**
@@ -3044,7 +3099,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobLeaseDuration}.
          */
         public String azureStorageBlobLeaseDuration() {
-            return "AzureStorageBlobLeaseDuration";
+            return "CamelAzureStorageBlobLeaseDuration";
         }
 
         /**
@@ -3057,7 +3112,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobCopyId}.
          */
         public String azureStorageBlobCopyId() {
-            return "AzureStorageBlobCopyId";
+            return "CamelAzureStorageBlobCopyId";
         }
 
         /**
@@ -3071,7 +3126,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobCopyStatus}.
          */
         public String azureStorageBlobCopyStatus() {
-            return "AzureStorageBlobCopyStatus";
+            return "CamelAzureStorageBlobCopyStatus";
         }
 
         /**
@@ -3084,7 +3139,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobCopySource}.
          */
         public String azureStorageBlobCopySource() {
-            return "AzureStorageBlobCopySource";
+            return "CamelAzureStorageBlobCopySource";
         }
 
         /**
@@ -3097,7 +3152,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobCopyProgress}.
          */
         public String azureStorageBlobCopyProgress() {
-            return "AzureStorageBlobCopyProgress";
+            return "CamelAzureStorageBlobCopyProgress";
         }
 
         /**
@@ -3111,7 +3166,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobCopyCompletionTime}.
          */
         public String azureStorageBlobCopyCompletionTime() {
-            return "AzureStorageBlobCopyCompletionTime";
+            return "CamelAzureStorageBlobCopyCompletionTime";
         }
 
         /**
@@ -3125,7 +3180,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobCopyStatusDescription}.
          */
         public String azureStorageBlobCopyStatusDescription() {
-            return "AzureStorageBlobCopyStatusDescription";
+            return "CamelAzureStorageBlobCopyStatusDescription";
         }
 
         /**
@@ -3140,7 +3195,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobCopyDestinationSnapshot}.
          */
         public String azureStorageBlobCopyDestinationSnapshot() {
-            return "AzureStorageBlobCopyDestinationSnapshot";
+            return "CamelAzureStorageBlobCopyDestinationSnapshot";
         }
 
         /**
@@ -3154,7 +3209,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobIsServerEncrypted}.
          */
         public String azureStorageBlobIsServerEncrypted() {
-            return "AzureStorageBlobIsServerEncrypted";
+            return "CamelAzureStorageBlobIsServerEncrypted";
         }
 
         /**
@@ -3168,7 +3223,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobIsIncrementalCopy}.
          */
         public String azureStorageBlobIsIncrementalCopy() {
-            return "AzureStorageBlobIsIncrementalCopy";
+            return "CamelAzureStorageBlobIsIncrementalCopy";
         }
 
         /**
@@ -3182,7 +3237,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobAccessTier}.
          */
         public String azureStorageBlobAccessTier() {
-            return "AzureStorageBlobAccessTier";
+            return "CamelAzureStorageBlobAccessTier";
         }
 
         /**
@@ -3197,7 +3252,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobIsAccessTierInferred}.
          */
         public String azureStorageBlobIsAccessTierInferred() {
-            return "AzureStorageBlobIsAccessTierInferred";
+            return "CamelAzureStorageBlobIsAccessTierInferred";
         }
 
         /**
@@ -3210,7 +3265,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobArchiveStatus}.
          */
         public String azureStorageBlobArchiveStatus() {
-            return "AzureStorageBlobArchiveStatus";
+            return "CamelAzureStorageBlobArchiveStatus";
         }
 
         /**
@@ -3224,7 +3279,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobaccessTierChangeTime}.
          */
         public String azureStorageBlobaccessTierChangeTime() {
-            return "AzureStorageBlobaccessTierChangeTime";
+            return "CamelAzureStorageBlobaccessTierChangeTime";
         }
 
         /**
@@ -3240,7 +3295,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobMetadata}.
          */
         public String azureStorageBlobMetadata() {
-            return "AzureStorageBlobMetadata";
+            return "CamelAzureStorageBlobMetadata";
         }
 
         /**
@@ -3254,7 +3309,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobCommittedBlockCount}.
          */
         public String azureStorageBlobCommittedBlockCount() {
-            return "AzureStorageBlobCommittedBlockCount";
+            return "CamelAzureStorageBlobCommittedBlockCount";
         }
 
         /**
@@ -3267,7 +3322,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobAppendOffset}.
          */
         public String azureStorageBlobAppendOffset() {
-            return "AzureStorageBlobAppendOffset";
+            return "CamelAzureStorageBlobAppendOffset";
         }
 
         /**
@@ -3281,7 +3336,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobRawHttpHeaders}.
          */
         public String azureStorageBlobRawHttpHeaders() {
-            return "AzureStorageBlobRawHttpHeaders";
+            return "CamelAzureStorageBlobRawHttpHeaders";
         }
 
         /**
@@ -3294,7 +3349,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobFileName}.
          */
         public String azureStorageBlobFileName() {
-            return "AzureStorageBlobFileName";
+            return "CamelAzureStorageBlobFileName";
         }
 
         /**
@@ -3307,7 +3362,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobDownloadLink}.
          */
         public String azureStorageBlobDownloadLink() {
-            return "AzureStorageBlobDownloadLink";
+            return "CamelAzureStorageBlobDownloadLink";
         }
 
         /**
@@ -3322,7 +3377,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobListBlobOptions}.
          */
         public String azureStorageBlobListBlobOptions() {
-            return "AzureStorageBlobListBlobOptions";
+            return "CamelAzureStorageBlobListBlobOptions";
         }
 
         /**
@@ -3335,7 +3390,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobListDetails}.
          */
         public String azureStorageBlobListDetails() {
-            return "AzureStorageBlobListDetails";
+            return "CamelAzureStorageBlobListDetails";
         }
 
         /**
@@ -3350,7 +3405,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobPrefix}.
          */
         public String azureStorageBlobPrefix() {
-            return "AzureStorageBlobPrefix";
+            return "CamelAzureStorageBlobPrefix";
         }
 
         /**
@@ -3366,7 +3421,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobRegex}.
          */
         public String azureStorageBlobRegex() {
-            return "AzureStorageBlobRegex";
+            return "CamelAzureStorageBlobRegex";
         }
 
         /**
@@ -3383,7 +3438,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobMaxResultsPerPage}.
          */
         public String azureStorageBlobMaxResultsPerPage() {
-            return "AzureStorageBlobMaxResultsPerPage";
+            return "CamelAzureStorageBlobMaxResultsPerPage";
         }
 
         /**
@@ -3397,7 +3452,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobTimeout}.
          */
         public String azureStorageBlobTimeout() {
-            return "AzureStorageBlobTimeout";
+            return "CamelAzureStorageBlobTimeout";
         }
 
         /**
@@ -3412,7 +3467,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobPublicAccessType}.
          */
         public String azureStorageBlobPublicAccessType() {
-            return "AzureStorageBlobPublicAccessType";
+            return "CamelAzureStorageBlobPublicAccessType";
         }
 
         /**
@@ -3428,7 +3483,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobRequestCondition}.
          */
         public String azureStorageBlobRequestCondition() {
-            return "AzureStorageBlobRequestCondition";
+            return "CamelAzureStorageBlobRequestCondition";
         }
 
         /**
@@ -3443,7 +3498,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobBlobContainerName}.
          */
         public String azureStorageBlobBlobContainerName() {
-            return "AzureStorageBlobBlobContainerName";
+            return "CamelAzureStorageBlobBlobContainerName";
         }
 
         /**
@@ -3457,7 +3512,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobBlobName}.
          */
         public String azureStorageBlobBlobName() {
-            return "AzureStorageBlobBlobName";
+            return "CamelAzureStorageBlobBlobName";
         }
 
         /**
@@ -3471,7 +3526,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobFileDir}.
          */
         public String azureStorageBlobFileDir() {
-            return "AzureStorageBlobFileDir";
+            return "CamelAzureStorageBlobFileDir";
         }
 
         /**
@@ -3487,7 +3542,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobPageBlobRange}.
          */
         public String azureStorageBlobPageBlobRange() {
-            return "AzureStorageBlobPageBlobRange";
+            return "CamelAzureStorageBlobPageBlobRange";
         }
 
         /**
@@ -3502,7 +3557,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobPageBlobSize}.
          */
         public String azureStorageBlobPageBlobSize() {
-            return "AzureStorageBlobPageBlobSize";
+            return "CamelAzureStorageBlobPageBlobSize";
         }
 
         /**
@@ -3517,7 +3572,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobCommitBlobBlockListLater}.
          */
         public String azureStorageBlobCommitBlobBlockListLater() {
-            return "AzureStorageBlobCommitBlobBlockListLater";
+            return "CamelAzureStorageBlobCommitBlobBlockListLater";
         }
 
         /**
@@ -3531,7 +3586,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobBlockListType}.
          */
         public String azureStorageBlobBlockListType() {
-            return "AzureStorageBlobBlockListType";
+            return "CamelAzureStorageBlobBlockListType";
         }
 
         /**
@@ -3546,7 +3601,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobCreateAppendBlob}.
          */
         public String azureStorageBlobCreateAppendBlob() {
-            return "AzureStorageBlobCreateAppendBlob";
+            return "CamelAzureStorageBlobCreateAppendBlob";
         }
 
         /**
@@ -3561,7 +3616,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobCreatePageBlob}.
          */
         public String azureStorageBlobCreatePageBlob() {
-            return "AzureStorageBlobCreatePageBlob";
+            return "CamelAzureStorageBlobCreatePageBlob";
         }
 
         /**
@@ -3579,7 +3634,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobDeleteSnapshotsOptionType}.
          */
         public String azureStorageBlobDeleteSnapshotsOptionType() {
-            return "AzureStorageBlobDeleteSnapshotsOptionType";
+            return "CamelAzureStorageBlobDeleteSnapshotsOptionType";
         }
 
         /**
@@ -3594,7 +3649,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobListBlobContainersOptions}.
          */
         public String azureStorageBlobListBlobContainersOptions() {
-            return "AzureStorageBlobListBlobContainersOptions";
+            return "CamelAzureStorageBlobListBlobContainersOptions";
         }
 
         /**
@@ -3609,7 +3664,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobParallelTransferOptions}.
          */
         public String azureStorageBlobParallelTransferOptions() {
-            return "AzureStorageBlobParallelTransferOptions";
+            return "CamelAzureStorageBlobParallelTransferOptions";
         }
 
         /**
@@ -3624,7 +3679,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobDownloadLinkExpiration}.
          */
         public String azureStorageBlobDownloadLinkExpiration() {
-            return "AzureStorageBlobDownloadLinkExpiration";
+            return "CamelAzureStorageBlobDownloadLinkExpiration";
         }
 
         /**
@@ -3639,7 +3694,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobSourceBlobAccountName}.
          */
         public String azureStorageBlobSourceBlobAccountName() {
-            return "AzureStorageBlobSourceBlobAccountName";
+            return "CamelAzureStorageBlobSourceBlobAccountName";
         }
 
         /**
@@ -3654,7 +3709,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobSourceBlobContainerName}.
          */
         public String azureStorageBlobSourceBlobContainerName() {
-            return "AzureStorageBlobSourceBlobContainerName";
+            return "CamelAzureStorageBlobSourceBlobContainerName";
         }
 
         /**
@@ -3672,7 +3727,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobChangeFeedStartTime}.
          */
         public String azureStorageBlobChangeFeedStartTime() {
-            return "AzureStorageBlobChangeFeedStartTime";
+            return "CamelAzureStorageBlobChangeFeedStartTime";
         }
 
         /**
@@ -3690,7 +3745,7 @@ public interface BlobEndpointBuilderFactory {
          * AzureStorageBlobChangeFeedEndTime}.
          */
         public String azureStorageBlobChangeFeedEndTime() {
-            return "AzureStorageBlobChangeFeedEndTime";
+            return "CamelAzureStorageBlobChangeFeedEndTime";
         }
 
         /**
@@ -3704,7 +3759,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the name of the header {@code AzureStorageBlobContext}.
          */
         public String azureStorageBlobContext() {
-            return "AzureStorageBlobContext";
+            return "CamelAzureStorageBlobContext";
         }
     }
     static BlobEndpointBuilder endpointBuilder(String componentName, String path) {

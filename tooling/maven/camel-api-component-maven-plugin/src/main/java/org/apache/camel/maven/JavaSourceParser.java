@@ -64,10 +64,10 @@ public class JavaSourceParser {
     private String errorMessage;
 
     private String classDoc;
-    private List<String> methodSignatures = new ArrayList<>();
+    private final List<String> methodSignatures = new ArrayList<>();
     private final Map<String, String> methodDocs = new HashMap<>();
-    private Map<String, Map<String, String>> parameterTypes = new LinkedHashMap<>();
-    private Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
+    private final Map<String, Map<String, String>> parameterTypes = new LinkedHashMap<>();
+    private final Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
 
     public void parse(InputStream in, String innerClass) throws IOException {
         parse(new String(in.readAllBytes()), innerClass);

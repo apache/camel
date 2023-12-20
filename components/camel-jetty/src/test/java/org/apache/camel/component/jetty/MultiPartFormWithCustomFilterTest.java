@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.activation.DataHandler;
 import jakarta.servlet.FilterChain;
@@ -73,7 +74,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse response = client.execute(httppost)) {
             assertEquals(200, response.getCode(), "Get a wrong response status");
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
             assertEquals("A binary file of some kind", responseString, "Get a wrong result");
             assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
@@ -129,7 +130,8 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                         // "text/plain", data.getContentType());
                         assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue(data.getDataSource().getInputStream().available() > 0,
+                        String fileContent = new String(data.getDataSource().getInputStream().readAllBytes());
+                        assertTrue(fileContent.length() > 0,
                                 "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message

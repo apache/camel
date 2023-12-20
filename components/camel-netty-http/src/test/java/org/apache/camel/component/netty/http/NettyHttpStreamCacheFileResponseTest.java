@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
 
-    private String body = "12345678901234567890123456789012345678901234567890";
-    private String body2 = "Bye " + body;
+    private final String body = "12345678901234567890123456789012345678901234567890";
+    private final String body2 = "Bye " + body;
 
     @Override
     @BeforeEach

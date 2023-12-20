@@ -180,7 +180,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
                 propVal = resolveSystemProperty(placeholderName);
             }
             if (propVal == null) {
-                propVal = properties.lookup(placeholderName);
+                propVal = properties.lookup(placeholderName, null);
             }
             if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 propVal = resolveSystemProperty(placeholderName);

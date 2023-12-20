@@ -90,7 +90,7 @@ public class XmlConverter {
     public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";
     public static final String DOCUMENT_BUILDER_FACTORY_FEATURE
             = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
-    public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    public static final String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
     private static final String JDK_FALLBACK_TRANSFORMER_FACTORY
             = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
@@ -234,7 +234,7 @@ public class XmlConverter {
                 // check the camelContext properties first
                 Properties properties
                         = CamelContextHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
-                if (properties.size() > 0) {
+                if (!properties.isEmpty()) {
                     toResult(source, new StreamResult(buffer), properties);
                     return buffer.toString();
                 }
@@ -258,7 +258,7 @@ public class XmlConverter {
                 // check the camelContext properties first
                 Properties properties = CamelContextHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX,
                         exchange.getContext());
-                if (properties.size() > 0) {
+                if (!properties.isEmpty()) {
                     toResult(source, new StreamResult(buffer), properties);
                     return buffer.toByteArray();
                 }
@@ -942,7 +942,7 @@ public class XmlConverter {
             StringBuilder featureString = new StringBuilder();
             // just log the configured feature
             for (String feature : features) {
-                if (featureString.length() != 0) {
+                if (!featureString.isEmpty()) {
                     featureString.append(", ");
                 }
                 featureString.append(feature);

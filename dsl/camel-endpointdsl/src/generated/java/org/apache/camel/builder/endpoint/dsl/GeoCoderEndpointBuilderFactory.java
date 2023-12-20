@@ -441,7 +441,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderAddress}.
          */
         public String geoCoderAddress() {
-            return "GeoCoderAddress";
+            return "CamelGeoCoderAddress";
         }
 
         /**
@@ -454,7 +454,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderLatlng}.
          */
         public String geoCoderLatlng() {
-            return "GeoCoderLatlng";
+            return "CamelGeoCoderLatlng";
         }
 
         /**
@@ -467,7 +467,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderLat}.
          */
         public String geoCoderLat() {
-            return "GeoCoderLat";
+            return "CamelGeoCoderLat";
         }
 
         /**
@@ -480,7 +480,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderLng}.
          */
         public String geoCoderLng() {
-            return "GeoCoderLng";
+            return "CamelGeoCoderLng";
         }
 
         /**
@@ -496,7 +496,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderStatus}.
          */
         public String geoCoderStatus() {
-            return "GeoCoderStatus";
+            return "CamelGeoCoderStatus";
         }
 
         /**
@@ -509,7 +509,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderRegionCode}.
          */
         public String geoCoderRegionCode() {
-            return "GeoCoderRegionCode";
+            return "CamelGeoCoderRegionCode";
         }
 
         /**
@@ -522,7 +522,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderRegionName}.
          */
         public String geoCoderRegionName() {
-            return "GeoCoderRegionName";
+            return "CamelGeoCoderRegionName";
         }
 
         /**
@@ -535,7 +535,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderCity}.
          */
         public String geoCoderCity() {
-            return "GeoCoderCity";
+            return "CamelGeoCoderCity";
         }
 
         /**
@@ -548,7 +548,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderCountryLong}.
          */
         public String geoCoderCountryLong() {
-            return "GeoCoderCountryLong";
+            return "CamelGeoCoderCountryLong";
         }
 
         /**
@@ -561,7 +561,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderCountryShort}.
          */
         public String geoCoderCountryShort() {
-            return "GeoCoderCountryShort";
+            return "CamelGeoCoderCountryShort";
         }
 
         /**
@@ -574,7 +574,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @return the name of the header {@code GeoCoderPostalCode}.
          */
         public String geoCoderPostalCode() {
-            return "GeoCoderPostalCode";
+            return "CamelGeoCoderPostalCode";
         }
     }
     static GeoCoderEndpointBuilder endpointBuilder(

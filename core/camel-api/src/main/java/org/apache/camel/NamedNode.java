@@ -27,6 +27,11 @@ public interface NamedNode extends LineNumberAware {
     String getId();
 
     /**
+     * Gets the node prefix id.
+     */
+    String getNodePrefixId();
+
+    /**
      * Returns a short name for this node which can be useful for ID generation or referring to related resources like
      * images
      *

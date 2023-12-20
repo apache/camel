@@ -94,6 +94,9 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             loggedInWarning = false;
         }
 
+        // we are logged in so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         return true;
     }
 

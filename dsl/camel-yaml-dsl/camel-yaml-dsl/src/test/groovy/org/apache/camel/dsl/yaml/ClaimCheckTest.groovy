@@ -18,16 +18,17 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ClaimCheckDefinition
+import org.junit.jupiter.api.Assertions
 
 class ClaimCheckTest extends YamlTestSupport {
 
-    def "claim-check definition"() {
+    def "claimCheck definition"() {
         when:
             loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:    
-                      - claim-check:  
+                      - claimCheck:  
                           operation: "Push"
                           key: "foo"
                           filter: "header:(foo|bar)"
@@ -40,5 +41,25 @@ class ClaimCheckTest extends YamlTestSupport {
                 key == 'foo'
                 filter == 'header:(foo|bar)'
             }
+    }
+
+    def "Error: kebab-case: claim-check definition"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - claim-check:  
+                          operation: "Push"
+                          key: "foo"
+                          filter: "header:(foo|bar)"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("additional properties")
+        }
     }
 }

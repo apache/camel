@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.http.HttpUtil;
 
 @Converter(generateLoader = true)
 public final class NettyHttpConverter {
@@ -87,7 +88,7 @@ public final class NettyHttpConverter {
     @Converter
     public static String toString(FullHttpResponse response, Exchange exchange) {
         String contentType = response.headers().get(NettyHttpConstants.CONTENT_TYPE);
-        String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
+        String charset = HttpUtil.getCharsetFromContentType(contentType);
         if (charset == null && exchange != null) {
             charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
         }

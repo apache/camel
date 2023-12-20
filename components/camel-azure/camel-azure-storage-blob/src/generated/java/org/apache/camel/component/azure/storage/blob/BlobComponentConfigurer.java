@@ -85,6 +85,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "pageBlobSize": getOrCreateConfiguration(target).setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "regex": getOrCreateConfiguration(target).setRegex(property(camelContext, java.lang.String.class, value)); return true;
+        case "sastoken":
+        case "sasToken": getOrCreateConfiguration(target).setSasToken(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
         case "sourceblobaccesskey":
@@ -159,6 +161,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "pageBlobSize": return java.lang.Long.class;
         case "prefix": return java.lang.String.class;
         case "regex": return java.lang.String.class;
+        case "sastoken":
+        case "sasToken": return java.lang.String.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
         case "sourceblobaccesskey":
@@ -229,6 +233,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "pageBlobSize": return getOrCreateConfiguration(target).getPageBlobSize();
         case "prefix": return getOrCreateConfiguration(target).getPrefix();
         case "regex": return getOrCreateConfiguration(target).getRegex();
+        case "sastoken":
+        case "sasToken": return getOrCreateConfiguration(target).getSasToken();
         case "serviceclient":
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
         case "sourceblobaccesskey":

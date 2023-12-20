@@ -27,7 +27,7 @@
   <bean name="saxonFactory" class="net.sf.saxon.xpath.XPathFactoryImpl"/>
 
   <bean name="xpath" class="org.apache.camel.language.xpath.XPathLanguage">
-    <property name="useSaxon" value="true"/>
+    <property name="saxon" value="true"/>
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">

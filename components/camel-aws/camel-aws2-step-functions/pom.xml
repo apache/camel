@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws2-step-functions</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: AWS Step Functions</name>
-    <description>A Camel Amazon Web Services Step Functions component</description>
+    <description>Execute different operations on Amazon Step Functions service</description>
 
     <properties>
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>

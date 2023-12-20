@@ -112,6 +112,11 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
+    public boolean hasUnhealthyRoutes() {
+        return false;
+    }
+
+    @Override
     public ServiceStatus getRouteStatus(String routeId) {
         return abstractCamelContext.getRouteStatus(routeId);
     }

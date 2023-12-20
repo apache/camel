@@ -73,61 +73,9 @@ You should define a dedicated registry by providing
 a `MeterRegistry` bean. Micrometer registries primarily determine the backend monitoring system
 to be used. A `CompositeMeterRegistry` can be used to address more than one monitoring target.
 
-For example using Spring Java Configuration:
 
-[source,java]
-----
-@Configuration
-public static class MyConfig extends SingleRouteCamelConfiguration {
-
-    @Bean
-    @Override
-    public RouteBuilder route() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // define Camel routes here
-            }
-        };
-    }
-
-    @Bean(name = MicrometerConstants.METRICS_REGISTRY_NAME)
-    public MeterRegistry getMeterRegistry() {
-        CompositeMeterRegistry registry = ...;
-        registry.add(...);
-        // ...
-        return registry;
-    }
-}
-----
-
-Or using CDI:
-
-[source,java]
-----
-class MyBean extends RouteBuilder {
-
-    @Override
-    public void configure() {
-      from("...")
-          // Register the 'my-meter' meter in the MetricRegistry below
-          .to("micrometer:meter:my-meter");
-    }
-
-    @Produces
-    // If multiple MetricRegistry beans
-    // @Named(MicrometerConstants.METRICS_REGISTRY_NAME)
-    MetricRegistry registry() {
-        CompositeMeterRegistry registry = ...;
-        registry.add(...);
-        // ...
-        return registry;
-    }
-}
-----
 
 == Default Camel Metrics
-
 
 Some Camel specific metrics are available out of the box.
 
@@ -135,8 +83,9 @@ Some Camel specific metrics are available out of the box.
 |=====================================================
 |Name |Type |Description
 |camel.message.history|timer |Sample of performance of each node in the route when message history is enabled
-|camel.routes.added |gauge |Number of routes added
-|camel.routes.running |gauge |Number of routes runnning
+|camel.routes.added |gauge |Number of routes in total
+|camel.routes.reloaded |gauge |Number of routes that has been reloaded
+|camel.routes.running |gauge |Number of routes currently running
 |camel.exchanges.inflight |gauge |Route inflight messages
 |camel.exchanges.total |counter |Total number of processed exchanges
 |camel.exchanges.succeeded |counter |Number of successfully completed exchange
@@ -148,6 +97,27 @@ Some Camel specific metrics are available out of the box.
 |camel.route.policy.long.task |gauge + summary |Route long task metric
 |=====================================================
 
+=== Using legacy metrics naming
+
+In Camel 3.20 or older, then the naming of metrics are using _camelCase_ style.
+However, since Camel 3.21 onwards, the naming is using micrometer convention style (see table above).
+
+To use the legacy naming, then you can use the `LEGACY` naming from the `xxxNamingStrategy` interfaces.
+
+For example:
+
+[source,java]
+----
+MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
+factory.setNamingStrategy(MicrometerRoutePolicyNamingStrategy.LEGACY);
+----
+
+The naming style can be configured on:
+
+- `MicrometerRoutePolicyFactory`
+- `MicrometerExchangeEventNotifier`
+- `MicrometerRouteEventNotifier`
+- `MicrometerMessageHistoryFactory`
 
 
 == Usage of producers
@@ -395,7 +365,7 @@ from("direct:in")
 `MicrometerRoutePolicyFactory` allows to add a RoutePolicy for each
 route in order to exposes route utilization statistics using Micrometer.
 This factory can be used in Java and XML as the examples below
-demonstrates. 
+demonstrates.
 
 [NOTE]
 ====
@@ -457,7 +427,7 @@ with `name=MicrometerRoutePolicy`.
 `MicrometerMessageHistoryFactory` allows to use metrics to capture Message History performance
 statistics while routing messages. It works by using a Micrometer Timer for
 each node in all the routes. This factory can be used in Java and XML as
-the examples below demonstrates. 
+the examples below demonstrates.
 
 From Java you just set the factory to the `CamelContext` as shown below:
 
@@ -496,8 +466,7 @@ MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHi
 String json = service.dumpStatisticsAsJson();
 ----
 
-If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
-with `name=MicrometerMessageHistory`.
+If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree with `name=MicrometerMessageHistory`.
 
 
 == Micrometer event notification
@@ -532,14 +501,12 @@ with `name=MicrometerEventNotifier`.
 
 `InstrumentedThreadPoolFactory` allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from inside of Camel.
-See more details at Advanced configuration of CamelContext using Spring.
+See more details at xref:manual::threading-model.adoc[Threading Model].
 
 
 == Exposing Micrometer statistics in JMX
 
-Micrometer uses `MeterRegistry` implementations in order to publish statistics. While in production scenarios
-it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for
-test or local deployments to publish statistics to JMX.
+Micrometer uses `MeterRegistry` implementations in order to publish statistics. While in production scenarios it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for test or local deployments to publish statistics to JMX.
 
 In order to achieve this, add the following dependency:
 
@@ -554,9 +521,12 @@ In order to achieve this, add the following dependency:
 
 and add a `JmxMeterRegistry` instance:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-
     @Bean(name = MicrometerConstants.METRICS_REGISTRY_NAME)
     public MeterRegistry getMeterRegistry() {
         CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
@@ -567,17 +537,52 @@ and add a `JmxMeterRegistry` instance:
            HierarchicalNameMapper.DEFAULT));
         return meterRegistry;
     }
-}
 ----
 
-The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into
-an MBean name.
+CDI::
++
+[source,java]
+----
+    @Produces
+    @Named(MicrometerConstants.METRICS_REGISTRY_NAME))
+    public MeterRegistry getMeterRegistry() {
+        CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
+        meterRegistry.add(...);
+        meterRegistry.add(new JmxMeterRegistry(
+           CamelJmxConfig.DEFAULT,
+           Clock.SYSTEM,
+           HierarchicalNameMapper.DEFAULT));
+        return meterRegistry;
+    }
+----
+
+====
+
+The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into an MBean name.
+
+== Using Camel Micrometer with Camel Main
+
+When you use Camel standalone (`camel-main`), then if you need to expose metrics for Prometheus, then you can use `camel-micrometer-prometheus` JAR.
+And easily enable and configure this from `application.properties` as shown:
+
+[source,properties]
+----
+# enable HTTP server with metrics
+camel.server.enabled=true
+camel.server.metricsEnabled=true
+
+# turn on micrometer metrics
+camel.metrics.enabled=true
+# include more camel details
+camel.metrics.enableMessageHistory=true
+# include additional out-of-the-box micrometer metrics for cpu, jvm and used file descriptors
+camel.metrics.binders=processor,jvm-info,file-descriptor
+----
 
 
 == Using Camel Micrometer with Spring Boot
 
-When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot auto configuration
-will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
+When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot auto configuration will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
 
 For example to capture data with Prometheus, you can add the following dependency:
 

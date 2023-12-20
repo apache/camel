@@ -22,6 +22,7 @@ import org.apache.camel.Message;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -160,7 +161,9 @@ public class AbstractHttpSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(TEST_URI, span.tags().get(Tag.HTTP_URL.name()));
+        assertEquals(TEST_URI, span.tags().get(TagConstants.HTTP_URL));
         assertTrue(span.tags().containsKey(Tag.HTTP_METHOD.name()));
+        assertTrue(span.tags().containsKey(TagConstants.HTTP_METHOD));
     }
 
     @Test
@@ -287,6 +290,7 @@ public class AbstractHttpSpanDecoratorTest {
         decorator.post(span, exchange, null);
 
         assertEquals(200, span.tags().get(Tag.HTTP_STATUS.name()));
+        assertEquals(200, span.tags().get(TagConstants.HTTP_STATUS));
     }
 
 }

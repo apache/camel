@@ -16,10 +16,16 @@
  */
 package org.apache.camel.http.common;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,18 +34,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CamelServletTest {
 
     @Test
-    public void testDuplicatedServletPath() {
+    public void testDuplicatedServletPath() throws URISyntaxException {
         CamelServlet camelServlet = new CamelServlet();
 
         HttpCommonEndpoint httpCommonEndpoint = new HttpCommonEndpoint() {
 
             @Override
-            public Producer createProducer() throws Exception {
+            public Producer createProducer() {
                 return null;
             }
 
             @Override
-            public Consumer createConsumer(Processor processor) throws Exception {
+            public Consumer createConsumer(Processor processor) {
                 return null;
             }
         };
@@ -47,6 +53,9 @@ public class CamelServletTest {
         DefaultCamelContext dc = new DefaultCamelContext();
 
         httpCommonEndpoint.setEndpointUriIfNotSpecified("rest:post://camel.apache.org");
+        httpCommonEndpoint.setHttpUri(URISupport.createRemainingURI(
+                new URI(UnsafeUriCharactersEncoder.encodeHttpURI("servlet:/camel.apache.org?httpMethodRestrict=GET")),
+                new LinkedHashMap<>()));
         httpCommonEndpoint.setCamelContext(dc);
 
         HttpConsumer httpConsumer1 = new HttpConsumer(httpCommonEndpoint, null);

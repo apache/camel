@@ -50,6 +50,7 @@ public class RoutesConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(RoutesConfigurer.class);
 
     private RoutesCollector routesCollector;
+    private boolean ignoreLoadingError;
     private CamelBeanPostProcessor beanPostProcessor;
     private List<RoutesBuilder> routesBuilders;
     private String basePackageScan;
@@ -59,6 +60,14 @@ public class RoutesConfigurer {
     private String routesExcludePattern;
     private String routesIncludePattern;
     private String routesSourceDir;
+
+    public boolean isIgnoreLoadingError() {
+        return ignoreLoadingError;
+    }
+
+    public void setIgnoreLoadingError(boolean ignoreLoadingError) {
+        this.ignoreLoadingError = ignoreLoadingError;
+    }
 
     public List<RoutesBuilder> getRoutesBuilders() {
         return routesBuilders;
@@ -349,10 +358,28 @@ public class RoutesConfigurer {
             if (loader instanceof ExtendedRoutesBuilderLoader) {
                 // extended loader can pre-parse all resources ine one unit
                 ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
-                extLoader.preParseRoutes(entry.getValue());
+                List<Resource> files = entry.getValue();
+                try {
+                    extLoader.preParseRoutes(files);
+                } catch (Exception e) {
+                    if (ignoreLoadingError) {
+                        LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", files, e.getMessage());
+                    } else {
+                        throw e;
+                    }
+                }
             } else {
                 for (Resource resource : entry.getValue()) {
-                    loader.preParseRoute(resource);
+                    try {
+                        loader.preParseRoute(resource);
+                    } catch (Exception e) {
+                        if (ignoreLoadingError) {
+                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource,
+                                    e.getMessage());
+                        } else {
+                            throw e;
+                        }
+                    }
                 }
             }
         }

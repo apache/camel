@@ -29,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
@@ -38,9 +37,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
-import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
@@ -285,7 +284,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         // in between the:
         //   CAMEL END USER - DEBUG ME HERE +++ START +++
         //   CAMEL END USER - DEBUG ME HERE +++ END +++
-        // you can see in the code below.
+        // you can see in the code below within the processTransacted or processNonTransacted methods.
         // ----------------------------------------------------------
 
         if (processor == null || exchange.isRouteStop()) {
@@ -295,15 +294,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
 
         if (shutdownStrategy.isForceShutdown()) {
-            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
-                         + exchange;
-            LOG.debug(msg);
-            if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException(msg));
-            }
-            // force shutdown so we should not continue
-            originalCallback.done(true);
-            return true;
+            return processShutdown(exchange, originalCallback);
         }
 
         Object[] states;
@@ -328,76 +319,108 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     states[j++] = state;
                 }
             } catch (Exception e) {
-                // error in before so break out
-                exchange.setException(e);
-                try {
-                    originalCallback.done(true);
-                } finally {
-                    // task is done so reset
-                    if (taskFactory != null) {
-                        taskFactory.release(afterTask);
-                    }
-                }
-                return true;
+                return handleException(exchange, originalCallback, e, afterTask);
             }
         }
 
         if (exchange.isTransacted()) {
-            // must be synchronized for transacted exchanges
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(),
-                        exchange);
-            }
-            try {
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ START +++
-                // ----------------------------------------------------------
-                processor.process(exchange);
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ END +++
-                // ----------------------------------------------------------
-            } catch (Exception e) {
-                exchange.setException(e);
-            } finally {
-                // processing is done
-                afterTask.done(true);
-            }
-            // we are done synchronously - must return true
-            return true;
-        } else {
-            final UnitOfWork uow = exchange.getUnitOfWork();
+            return processTransacted(exchange, afterTask);
+        }
 
-            // optimize to only do before uow processing if really needed
-            AsyncCallback async = afterTask;
-            boolean beforeAndAfter = uow != null && uow.isBeforeAfterProcess();
-            if (beforeAndAfter) {
-                async = uow.beforeProcess(processor, exchange, async);
-            }
+        return processNonTransacted(exchange, afterTask);
+    }
 
+    private static boolean processShutdown(Exchange exchange, AsyncCallback originalCallback) {
+        String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
+                     + exchange;
+        LOG.debug(msg);
+        if (exchange.getException() == null) {
+            exchange.setException(new RejectedExecutionException(msg));
+        }
+        // force shutdown so we should not continue
+        originalCallback.done(true);
+        return true;
+    }
+
+    private boolean processNonTransacted(Exchange exchange, CamelInternalTask afterTask) {
+        final AsyncCallback async = beforeProcess(exchange, afterTask);
+
+        // ----------------------------------------------------------
+        // CAMEL END USER - DEBUG ME HERE +++ START +++
+        // ----------------------------------------------------------
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+        }
+        boolean sync = processor.process(exchange, async);
+        if (!sync) {
+            EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
+        }
+
+        // ----------------------------------------------------------
+        // CAMEL END USER - DEBUG ME HERE +++ END +++
+        // ----------------------------------------------------------
+
+        // CAMEL-18255: move uow.afterProcess handling to the callback
+
+        if (LOG.isTraceEnabled()) {
+            logExchangeContinuity(exchange, sync);
+        }
+        return sync;
+    }
+
+    private static void logExchangeContinuity(Exchange exchange, boolean sync) {
+        LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+                sync ? "synchronously" : "asynchronously",
+                exchange.getExchangeId(), exchange);
+    }
+
+    private AsyncCallback beforeProcess(Exchange exchange, CamelInternalTask afterTask) {
+        final UnitOfWork uow = exchange.getUnitOfWork();
+
+        // optimize to only do before uow processing if really needed
+        if (uow != null && uow.isBeforeAfterProcess()) {
+            return uow.beforeProcess(processor, exchange, afterTask);
+        }
+        return afterTask;
+    }
+
+    private boolean processTransacted(Exchange exchange, CamelInternalTask afterTask) {
+        // must be synchronized for transacted exchanges
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(),
+                    exchange);
+        }
+        try {
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
             // ----------------------------------------------------------
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
-            }
-            boolean sync = processor.process(exchange, async);
-            if (!sync) {
-                EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
-            }
-
+            processor.process(exchange);
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
-
-            // CAMEL-18255: move uow.afterProcess handling to the callback
-
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
-                        sync ? "synchronously" : "asynchronously",
-                        exchange.getExchangeId(), exchange);
-            }
-            return sync;
+        } catch (Exception e) {
+            exchange.setException(e);
+        } finally {
+            // processing is done
+            afterTask.done(true);
         }
+        // we are done synchronously - must return true
+        return true;
+    }
+
+    private boolean handleException(
+            Exchange exchange, AsyncCallback originalCallback, Exception e, CamelInternalTask afterTask) {
+        // error in before so break out
+        exchange.setException(e);
+        try {
+            originalCallback.done(true);
+        } finally {
+            // task is done so reset
+            if (taskFactory != null) {
+                taskFactory.release(afterTask);
+            }
+        }
+        return true;
     }
 
     @Override
@@ -552,7 +575,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      * Advice to execute the {@link BacklogTracer} if enabled.
      */
     public static final class BacklogTracerAdvice
-            implements CamelInternalProcessorAdvice<DefaultBacklogTracerEventMessage>, Ordered {
+            implements CamelInternalProcessorAdvice<DefaultBacklogTracerEventMessage> {
 
         private final BacklogTraceAdviceEventNotifier notifier;
         private final CamelContext camelContext;
@@ -625,37 +648,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (first) {
                     // use route as pseudo source when first
                     String source = LoggerHelper.getLineNumberLoggerName(routeDefinition);
-                    long created = exchange.getCreated();
+                    final long created = exchange.getClock().getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, exchangeId,
                             rest, template, messageAsXml, messageAsJSon);
                     backlogTracer.traceEvent(pseudoFirst);
-                    exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                        @Override
-                        public void onDone(Exchange exchange) {
-                            // create pseudo last
-                            String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
-                            String exchangeId = exchange.getExchangeId();
-                            boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
-                            long created = exchange.getCreated();
-                            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 4,
-                                    true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
-                                    backlogTracer.getBodyMaxChars());
-                            String messageAsJSon
-                                    = MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 4,
-                                            true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
-                                            backlogTracer.getBodyMaxChars(), true);
-                            DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
-                                    false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null,
-                                    exchangeId, rest, template, messageAsXml, messageAsJSon);
-                            backlogTracer.traceEvent(pseudoLast);
-                            doneProcessing(exchange, pseudoLast);
-                            doneProcessing(exchange, pseudoFirst);
-                            // to not be confused then lets store duration on first/last as (first = 0, last = total time to process)
-                            pseudoLast.setElapsed(pseudoFirst.getElapsed());
-                            pseudoFirst.setElapsed(0);
-                        }
-                    });
+                    exchange.getExchangeExtension().addOnCompletion(createOnCompletion(source, pseudoFirst));
                 }
                 String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
@@ -667,6 +665,35 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
 
             return null;
+        }
+
+        private SynchronizationAdapter createOnCompletion(String source, DefaultBacklogTracerEventMessage pseudoFirst) {
+            return new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    // create pseudo last
+                    String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
+                    String exchangeId = exchange.getExchangeId();
+                    boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
+                    long created = exchange.getClock().getCreated();
+                    String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 4,
+                            true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
+                            backlogTracer.getBodyMaxChars());
+                    String messageAsJSon
+                            = MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 4,
+                                    true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
+                                    backlogTracer.getBodyMaxChars(), true);
+                    DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
+                            false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null,
+                            exchangeId, rest, template, messageAsXml, messageAsJSon);
+                    backlogTracer.traceEvent(pseudoLast);
+                    doneProcessing(exchange, pseudoLast);
+                    doneProcessing(exchange, pseudoFirst);
+                    // to not be confused then lets store duration on first/last as (first = 0, last = total time to process)
+                    pseudoLast.setElapsed(pseudoFirst.getElapsed());
+                    pseudoFirst.setElapsed(0);
+                }
+            };
         }
 
         @Override
@@ -697,7 +724,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 data.setEndpointUri(uri);
             }
 
-            if (!data.isFirst()) {
+            if (!data.isFirst() && backlogTracer.isIncludeException()) {
                 // we want to capture if there was an exception
                 Throwable e = exchange.getException();
                 if (e != null) {
@@ -714,17 +741,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             return true;
         }
 
-        @Override
-        public int getOrder() {
-            // we want tracer just before calling the processor
-            return Ordered.LOWEST - 1;
-        }
     }
 
     /**
      * Advice to execute the {@link BacklogDebugger} if enabled.
      */
-    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
 
         private final BacklogDebugger backlogDebugger;
         private final Processor target;
@@ -747,18 +769,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
         }
-
-        @Override
-        public int getOrder() {
-            // we want debugger just before calling the processor
-            return Ordered.LOWEST;
-        }
     }
 
     /**
      * Advice to execute when using custom debugger.
      */
-    public static final class DebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+    public static final class DebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
 
         private final Debugger debugger;
         private final Processor target;
@@ -781,11 +797,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             debugger.afterProcess(exchange, target, definition, stopWatch.taken());
         }
 
-        @Override
-        public int getOrder() {
-            // we want debugger just before calling the processor
-            return Ordered.LOWEST;
-        }
     }
 
     /**
@@ -820,9 +831,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
 
             // only return UnitOfWork if we created a new as then its us that handle the lifecycle to done the created UoW
-            UnitOfWork created = null;
+
             UnitOfWork uow = exchange.getUnitOfWork();
 
+            UnitOfWork created = null;
             if (uow == null) {
                 // If there is no existing UoW, then we should start one and
                 // terminate it once processing is completed for the exchange.
@@ -918,7 +930,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 targetRouteId = ExchangeHelper.getRouteId(exchange);
             }
 
-            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis(), exchange);
+            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, exchange);
             if (history != null) {
                 List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
                 if (list == null) {

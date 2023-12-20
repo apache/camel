@@ -39,8 +39,12 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.file.azure.CredentialType.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "delete": target.setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": target.setDisconnect(property(camelContext, boolean.class, value)); return true;
@@ -211,8 +215,12 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": return java.lang.String.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.file.azure.CredentialType.class;
         case "delay": return long.class;
         case "delete": return boolean.class;
         case "disconnect": return boolean.class;
@@ -384,8 +392,12 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
+        case "credentialtype":
+        case "credentialType": return target.getConfiguration().getCredentialType();
         case "delay": return target.getDelay();
         case "delete": return target.isDelete();
         case "disconnect": return target.isDisconnect();

@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -235,22 +234,41 @@ public class SpringXmlBeansHandler {
             }
             rrd.setType(def.getBeanClassName());
             rrd.setName(name);
+            LOG.debug("Adding Spring <beans> XML bean: {} to DSL model", name);
             model.addRegistryBean(rrd);
 
+            // factory bean/method
+            if (def.getFactoryBeanName() != null) {
+                rrd.setFactoryBean(def.getFactoryBeanName());
+            }
+            if (def.getFactoryMethodName() != null) {
+                rrd.setFactoryMethod(def.getFactoryMethodName());
+            }
+            if (def.getInitMethodName() != null) {
+                rrd.setInitMethod(def.getInitMethodName());
+            }
+            if (def.getDestroyMethodName() != null) {
+                rrd.setDestroyMethod(def.getDestroyMethodName());
+            }
             // constructor arguments
-            ConstructorArgumentValues ctr = def.getConstructorArgumentValues();
-            StringJoiner sj = new StringJoiner(", ");
-            for (ConstructorArgumentValues.ValueHolder v : ctr.getIndexedArgumentValues().values()) {
-                Object val = v.getValue();
-                if (val instanceof TypedStringValue tsv) {
-                    sj.add("'" + extractValue(camelContext, tsv.getValue(), false) + "'");
-                } else if (val instanceof BeanReference br) {
-                    sj.add("'#bean:" + extractValue(camelContext, br.getBeanName(), false) + "'");
+            if (def.hasConstructorArgumentValues()) {
+                Map<Integer, Object> constructors = new LinkedHashMap<>();
+                rrd.setConstructors(constructors);
+
+                ConstructorArgumentValues ctrs = def.getConstructorArgumentValues();
+                for (int i = 0; i < ctrs.getArgumentCount(); i++) {
+                    ConstructorArgumentValues.ValueHolder vh = ctrs.getArgumentValue(i, Object.class);
+                    if (vh != null) {
+                        Object val = vh.getValue();
+                        if (val instanceof TypedStringValue tsv) {
+                            constructors.put(i, extractValue(camelContext, tsv.getValue(), false));
+                        } else if (val instanceof BeanReference br) {
+                            constructors.put(i, "#bean:" + extractValue(camelContext, br.getBeanName(), false));
+                        }
+                    }
                 }
             }
-            if (sj.length() > 0) {
-                rrd.setType("#class:" + def.getBeanClassName() + "(" + sj + ")");
-            }
+
             // property values
             if (def.hasPropertyValues()) {
                 Map<String, Object> properties = new LinkedHashMap<>();
@@ -312,6 +330,10 @@ public class SpringXmlBeansHandler {
             val = camelContext.resolvePropertyPlaceholders(val);
         }
         return val;
+    }
+
+    public void stop() {
+        // noop
     }
 
 }

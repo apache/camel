@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build {@link Route} instances in a
  * {@link CamelContext} for smart routing.
  */
-public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered, ResourceAware {
+public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, ModelRoutesBuilder, Ordered, ResourceAware {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     private Resource resource;
@@ -573,7 +573,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param  exceptions list of exceptions to catch
      * @return            the builder
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
+    @SafeVarargs
+    public final OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition last = null;
         for (Class<? extends Throwable> ex : exceptions) {
             last = last == null ? onException(ex) : last.onException(ex);
@@ -600,7 +601,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     @Override
-    public void addRoutesToCamelContext(CamelContext context) throws Exception {
+    public void prepareModel(CamelContext context) throws Exception {
         // must configure routes before rests
         configureRoutes(context);
         configureRests(context);
@@ -616,6 +617,13 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (RouteDefinition route : routeCollection.getRoutes()) {
             routeCollection.prepareRoute(route);
         }
+    }
+
+    @Override
+    public void addRoutesToCamelContext(CamelContext context) throws Exception {
+        prepareModel(context);
+
+        // this will add the routes to camel
         populateRoutes();
 
         if (this instanceof OnCamelContextEvent) {
@@ -713,14 +721,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     // Implementation methods
     // -----------------------------------------------------------------------
+
     protected void checkInitialized() throws Exception {
         if (initialized.compareAndSet(false, true)) {
-            // Set the CamelContext ErrorHandler here
             CamelContext camelContext = getContext();
-            if (camelContext.getCamelContextExtension().getErrorHandlerFactory() != null) {
-                setErrorHandlerFactory(
-                        camelContext.getCamelContextExtension().getErrorHandlerFactory());
-            }
+            initializeCamelContext(camelContext);
 
             List<RouteBuilderLifecycleStrategy> strategies = new ArrayList<>(lifecycleInterceptors);
             strategies.addAll(camelContext.getRegistry().findByType(RouteBuilderLifecycleStrategy.class));
@@ -736,6 +741,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             getRouteCollection().setResource(getResource());
             getRestCollection().setResource(getResource());
             getRouteTemplateCollection().setResource(getResource());
+            getTemplatedRouteCollection().setResource(getResource());
             for (RegistryBeanDefinition def : beans) {
                 def.setResource(getResource());
             }
@@ -749,6 +755,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 interceptor.afterConfigure(this);
             }
         }
+    }
+
+    protected void initializeCamelContext(CamelContext camelContext) {
+        // Set the CamelContext ErrorHandler here
+        if (camelContext.getCamelContextExtension().getErrorHandlerFactory() != null) {
+            setErrorHandlerFactory(
+                    camelContext.getCamelContextExtension().getErrorHandlerFactory());
+        }
+        // inject camel context on collections
+        getRouteCollection().setCamelContext(camelContext);
+        getRestCollection().setCamelContext(camelContext);
+        getRouteTemplateCollection().setCamelContext(camelContext);
+        getTemplatedRouteCollection().setCamelContext(camelContext);
     }
 
     protected void populateTemplatedRoutes() throws Exception {
@@ -873,6 +892,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
     }
 
+    @Override
+    public RoutesDefinition getRoutes() {
+        return getRouteCollection();
+    }
+
+    @Override
+    public RestsDefinition getRests() {
+        return getRestCollection();
+    }
+
     public List<RegistryBeanDefinition> getBeans() {
         return beans;
     }
@@ -891,10 +920,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public RoutesDefinition getRouteCollection() {
         return this.routeCollection;
-    }
-
-    public void setRouteCollection(RoutesDefinition routeCollection) {
-        this.routeCollection = routeCollection;
     }
 
     public RouteTemplatesDefinition getRouteTemplateCollection() {

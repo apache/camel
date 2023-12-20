@@ -112,7 +112,6 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             String fullEndpointKey = getEndpoint().getEndpointKey();
             String endpointKey = StringHelper.before(fullEndpointKey, "?", fullEndpointKey);
 
-
             idleTimeoutExecutor = Executors.newSingleThreadScheduledExecutor(new IdleTimeoutThreadFactory(endpointKey));
         }
 

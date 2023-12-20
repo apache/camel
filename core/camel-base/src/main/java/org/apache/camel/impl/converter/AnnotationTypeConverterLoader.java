@@ -67,9 +67,9 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
     private static final Charset UTF8 = StandardCharsets.UTF_8;
-    protected PackageScanClassResolver resolver;
-    protected Set<Class<?>> visitedClasses = new HashSet<>();
-    protected Set<String> visitedURIs = new HashSet<>();
+    protected final PackageScanClassResolver resolver;
+    protected final Set<Class<?>> visitedClasses = new HashSet<>();
+    protected final Set<String> visitedURIs = new HashSet<>();
     private final String basePackage;
 
     public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
@@ -240,7 +240,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                             break;
                         }
                         line = line.trim();
-                        if (line.startsWith("#") || line.length() == 0) {
+                        if (line.startsWith("#") || line.isEmpty()) {
                             continue;
                         }
                         tokenize(packages, line);
@@ -259,7 +259,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         StringTokenizer iter = new StringTokenizer(line, ",");
         while (iter.hasMoreTokens()) {
             String name = iter.nextToken().trim();
-            if (name.length() > 0) {
+            if (!name.isEmpty()) {
                 packages.add(name);
             }
         }

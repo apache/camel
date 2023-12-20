@@ -32,6 +32,10 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
+        case "requestvalidationcustomizer":
+        case "requestValidationCustomizer": target.setRequestValidationCustomizer(property(camelContext, org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class, value)); return true;
+        case "requestvalidationenabled":
+        case "requestValidationEnabled": target.setRequestValidationEnabled(property(camelContext, boolean.class, value)); return true;
         case "specificationuri":
         case "specificationUri": target.setSpecificationUri(property(camelContext, java.net.URI.class, value)); return true;
         case "sslcontextparameters":
@@ -56,6 +60,10 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "produces": return java.lang.String.class;
+        case "requestvalidationcustomizer":
+        case "requestValidationCustomizer": return org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class;
+        case "requestvalidationenabled":
+        case "requestValidationEnabled": return boolean.class;
         case "specificationuri":
         case "specificationUri": return java.net.URI.class;
         case "sslcontextparameters":
@@ -81,6 +89,10 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "produces": return target.getProduces();
+        case "requestvalidationcustomizer":
+        case "requestValidationCustomizer": return target.getRequestValidationCustomizer();
+        case "requestvalidationenabled":
+        case "requestValidationEnabled": return target.isRequestValidationEnabled();
         case "specificationuri":
         case "specificationUri": return target.getSpecificationUri();
         case "sslcontextparameters":

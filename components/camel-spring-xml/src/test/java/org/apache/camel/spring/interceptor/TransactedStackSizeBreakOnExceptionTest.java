@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import java.util.StringJoiner;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -25,7 +27,7 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
 
     private static final boolean PRINT_STACK_TRACE = false;
     private int total = 100;
-    private int failAt = 75;
+    private int failAt = 85;
 
     @Test
     public void testStackSize() throws Exception {
@@ -33,13 +35,12 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
         getMockEndpoint("mock:line").assertNoDuplicates(body());
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sb = new StringJoiner(",");
         for (int i = 0; i < total; i++) {
-            sb.append(i);
-            sb.append(",");
+            sb.add(Integer.toString(i));
         }
 
-        template.sendBody("seda:start", "" + sb.toString());
+        template.sendBody("seda:start", sb.toString());
 
         assertMockEndpointsSatisfied();
 

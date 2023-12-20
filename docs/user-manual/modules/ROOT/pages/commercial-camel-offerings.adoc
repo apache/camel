@@ -50,16 +50,16 @@ We provide 24/7 support for troubleshooting issues and outages, consulting on ar
 https://www.openlogic.com/solutions/support-activemq-apache-camel-kafka#apache-camel[Learn more about OpenLogic's Camel support].
 
 
-== https://www.redhat.com/en/technologies/jboss-middleware/fuse[Red Hat]
+== https://www.redhat.com[Red Hat]
 
-https://www.redhat.com/en/technologies/jboss-middleware/fuse[Red Hat] offers
-http://www.redhat.com/en/technologies/jboss-middleware/fuse[Fuse],
-an enterprise integration platform based on Apache Camel and other
+https://www.redhat.com[Red Hat] offers a https://developers.redhat.com/products/redhat-build-of-camel/overview[supported build of Camel] as part of 
+https://www.redhat.com/en/products/integration[Red Hat Integration] and https://www.redhat.com/en/products/application-foundations[Red Hat Application Foundations].
+It contains an enterprise integration platform based on Apache Camel and other
 open source integration projects, with developer and production support.
 In addition to enterprise support, Red Hat provides
-https://www.redhat.com/en/services/training/courses-by-curriculum#Red-Hat-JBoss-Fuse-BRMS-and-more[training],
+https://www.redhat.com/en/training/skills-path-finder/red-hat-certified-specialist-camel-development[training],
 https://www.redhat.com/en/services/consulting[consulting], and
-https://developers.redhat.com/products/fuse/overview/[a developer community].
+https://developers.redhat.com/products/redhat-build-of-camel/overview[a developer community].
 
 == https://www.randoli.io[Randoli]
 We provide consulting and implementation of Microservices as well as modernization support for legacy applications using Springboot + Camel or Quarkus + Camel.

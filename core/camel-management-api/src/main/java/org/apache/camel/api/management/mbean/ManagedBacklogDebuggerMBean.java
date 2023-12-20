@@ -38,6 +38,9 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Is debugger enabled")
     boolean isEnabled();
 
+    @ManagedAttribute(description = "Is debugger standby")
+    boolean isStandby();
+
     @ManagedOperation(description = "Enable the debugger")
     void enableDebugger();
 
@@ -83,6 +86,9 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Starts single step debugging from the suspended breakpoint at the given node id")
     void stepBreakpoint(String nodeId);
 
+    @ManagedAttribute(description = "Suspended mode will suspend all exchanges until a remote debugger is attached")
+    boolean isSuspendedMode();
+
     @ManagedAttribute(description = "Whether currently in step mode")
     boolean isSingleStepMode();
 
@@ -125,8 +131,21 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
-    @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node, optionally including the exchange properties")
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    boolean isIncludeExchangeProperties();
+
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    void setIncludeExchangeProperties(boolean includeExchangeProperties);
+
+    @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node.")
+    String dumpTracedMessagesAsXml(String nodeId);
+
+    @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node.")
+    @Deprecated
     String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties);
+
+    @ManagedOperation(description = "Dumps the messages in JSon format from the suspended breakpoint at the given node.")
+    String dumpTracedMessagesAsJSon(String nodeId);
 
     @ManagedAttribute(description = "Number of total debugged messages")
     long getDebugCounter();

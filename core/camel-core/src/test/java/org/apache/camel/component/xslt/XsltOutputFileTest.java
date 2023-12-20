@@ -36,8 +36,6 @@ public class XsltOutputFileTest extends ContextTestSupport {
 
     @Test
     public void testXsltOutput() throws Exception {
-        testDirectory(true);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
         mock.expectedFileExists(testFile("xsltme.xml"));

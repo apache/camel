@@ -1,0 +1,28 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "bean",
+    "title": "Bean",
+    "description": "Define custom beans that can be used in your Camel routes and in general.",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.app.RegistryBeanDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the bean (bean id)" },
+    "type": { "index": 1, "kind": "attribute", "displayName": "Type", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The class name (fully qualified) of the bean" },
+    "initMethod": { "index": 2, "kind": "attribute", "displayName": "Init Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the custom initialization method to invoke after setting bean properties. The method must have no arguments, but may throw any exception." },
+    "destroyMethod": { "index": 3, "kind": "attribute", "displayName": "Destroy Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method must have no arguments, but may throw any exception." },
+    "factoryMethod": { "index": 4, "kind": "attribute", "displayName": "Factory Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of method to invoke when creating the bean via a factory bean." },
+    "factoryBean": { "index": 5, "kind": "attribute", "displayName": "Factory Bean", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of factory bean (bean id) to use for creating the bean." },
+    "builderClass": { "index": 6, "kind": "attribute", "displayName": "Builder Class", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use the properties values to configure the bean." },
+    "builderMethod": { "index": 7, "kind": "attribute", "displayName": "Builder Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "build", "description": "Name of method when using builder class. This method is invoked after configuring to create the actual bean. This method is often named build (used by default)." },
+    "scriptLanguage": { "index": 8, "kind": "attribute", "displayName": "Script Language", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc." },
+    "constructors": { "index": 9, "kind": "element", "displayName": "Constructors", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.Integer, java.lang.Object>", "deprecated": false, "autowired": false, "secret": false, "description": "Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor argument list, starting from zero." },
+    "properties": { "index": 10, "kind": "element", "displayName": "Properties", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.Object>", "deprecated": false, "autowired": false, "secret": false, "description": "Optional properties to set on the created bean." },
+    "script": { "index": 11, "kind": "element", "displayName": "Script", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The script to execute that creates the bean when using scripting languages. If the script use the prefix resource: such as resource:classpath:com\/foo\/myscript.groovy, resource:file:\/var\/myscript.groovy, then its loaded from the external resource." }
+  }
+}

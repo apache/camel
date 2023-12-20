@@ -186,7 +186,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("import org.apache.camel.TypeConversionException;\n");
         writer.append("import org.apache.camel.TypeConverterLoaderException;\n");
         writer.append("import org.apache.camel.TypeConverter;\n");
-        writer.append("import org.apache.camel.converter.TypeConvertible;\n");
+        writer.append("import org.apache.camel.spi.TypeConvertible;\n");
         writer.append("import org.apache.camel.spi.BulkTypeConverters;\n");
         writer.append("import org.apache.camel.spi.TypeConverterLoader;\n");
         writer.append("import org.apache.camel.spi.TypeConverterRegistry;\n");

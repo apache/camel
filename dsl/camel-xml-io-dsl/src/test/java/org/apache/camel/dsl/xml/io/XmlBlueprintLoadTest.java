@@ -36,6 +36,7 @@ public class XmlBlueprintLoadTest {
                 PluginHelper.getRoutesLoader(context).loadRoutes(resource);
             });
 
+            Assertions.assertEquals(1, context.getRouteDefinitions().size());
         }
     }
 

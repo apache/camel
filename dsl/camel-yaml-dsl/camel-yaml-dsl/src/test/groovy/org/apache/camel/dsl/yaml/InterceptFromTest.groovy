@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.junit.jupiter.api.Assertions
 
 class InterceptFromTest extends YamlTestSupport {
     def "interceptFrom"() {
@@ -30,7 +31,7 @@ class InterceptFromTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:
                       - to: "mock:foo"
-                      - set-body:
+                      - setBody:
                           constant: "Hello Bar"
                       - to: "mock:bar"
                       - to: "mock:result"
@@ -48,5 +49,29 @@ class InterceptFromTest extends YamlTestSupport {
             }
         then:
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "Error: kebab-case: intercept-from"() {
+        when:
+        var route = """
+                - intercept-from:
+                    steps:
+                      - to: "mock:intercepted"  
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "mock:foo"
+                      - setBody:
+                          constant: "Hello Bar"
+                      - to: "mock:bar"
+                      - to: "mock:result"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("additional properties")
+        }
     }
 }

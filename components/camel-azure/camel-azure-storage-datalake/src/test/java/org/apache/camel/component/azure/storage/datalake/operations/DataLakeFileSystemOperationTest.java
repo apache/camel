@@ -93,12 +93,12 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
 
         @SuppressWarnings("unchecked")
         final List<PathItem> body = (List<PathItem>) response.getBody();
-        final List<String> pathNames = body.stream().map(PathItem::getName).collect(Collectors.toList());
+        final List<String> pathNames = body.stream().map(PathItem::getName).toList();
         assertTrue(pathNames.contains("item1"));
         assertTrue(pathNames.contains("item2"));
 
-        final List<PathItem> directories = body.stream().filter(PathItem::isDirectory).collect(Collectors.toList());
-        final List<PathItem> files = body.stream().filter(pathItem -> !pathItem.isDirectory()).collect(Collectors.toList());
+        final List<PathItem> directories = body.stream().filter(PathItem::isDirectory).toList();
+        final List<PathItem> files = body.stream().filter(pathItem -> !pathItem.isDirectory()).toList();
         assertEquals(1, directories.size());
         assertEquals(1, files.size());
     }

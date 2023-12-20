@@ -16,19 +16,20 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.net.ServerSocket;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+
+import java.net.ServerSocket;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -75,11 +76,19 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+
                 from("direct:with").to("ftp://localhost:" + serverSocket.getLocalPort()
-                                       + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                        + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
 
                 from("direct:without").to("ftp://localhost:" + serverSocket.getLocalPort()
-                                          + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                        + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
+
+                // using soTimeout=0 could potentially cause the ftp producer to dead-lock doing endless reconnection attempts
+                // this is a test to ensure we have fixed that; see CAMEL-8088
+                from("direct:soTimeoutZero").to("ftp://localhost:" + serverSocket.getLocalPort()
+                        + "?connectTimeout=300&soTimeout=0")
+                        .to("mock:done")
+                        .errorHandler(deadLetterChannel("mock:dead"));
             }
         };
     }
@@ -113,5 +122,16 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
             // the soTimeout never triggers and test fails after its own timeout
             template.sendBody("direct:without", "");
         });
+    }
+
+    @Test
+    void testReConnectDeadlock() throws Exception {
+        // we should fail, but we are testing that we are not in a deadlock which could potentially happen
+        getMockEndpoint("mock:done").expectedMessageCount(0);
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+
+        template.sendBody("direct:soTimeoutZero", "test");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

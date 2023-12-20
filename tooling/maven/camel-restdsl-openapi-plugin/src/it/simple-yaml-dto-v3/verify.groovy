@@ -21,7 +21,7 @@ assert restdsl.exists()
 
 def String data = restdsl.text
 
-assert data.contains('rest-configuration:')
+assert data.contains('restConfiguration:')
 assert data.contains('component: "jetty"')
 
 def File restdto = new File(basedir, "target/generated-sources/openapi/src/main/java/io/swagger/client/model/Order.java")

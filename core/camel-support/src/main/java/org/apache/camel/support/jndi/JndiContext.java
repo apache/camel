@@ -173,7 +173,7 @@ public class JndiContext implements Context, Serializable {
 
     @Override
     public Object lookup(String name) throws NamingException {
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             return this;
         }
         Object result = treeBindings.get(name);
@@ -224,7 +224,7 @@ public class JndiContext implements Context, Serializable {
         }
         if (result instanceof JndiContext) {
             String prefix = getNameInNamespace();
-            if (prefix.length() > 0) {
+            if (!prefix.isEmpty()) {
                 prefix = prefix + SEPARATOR;
             }
             result = new JndiContext((JndiContext) result, environment, prefix + name);
@@ -381,7 +381,7 @@ public class JndiContext implements Context, Serializable {
     }
 
     private abstract class LocalNamingEnumeration implements NamingEnumeration<Object> {
-        private Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
+        private final Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
 
         @Override
         public boolean hasMore() throws NamingException {

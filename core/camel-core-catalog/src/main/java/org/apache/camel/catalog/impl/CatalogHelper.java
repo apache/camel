@@ -21,10 +21,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 public final class CatalogHelper {
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private CatalogHelper() {
     }
@@ -67,16 +80,7 @@ public final class CatalogHelper {
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        try (final InputStreamReader isr = new InputStreamReader(in);
-             final BufferedReader reader = new LineNumberReader(isr)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-                builder.append("\n");
-            }
-            return builder.toString();
-        }
+        return IOHelper.loadText(in);
     }
 
     /**
@@ -92,50 +96,6 @@ public final class CatalogHelper {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Returns the string after the given token
-     *
-     * @param  text  the text
-     * @param  after the token
-     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
-     */
-    public static String after(String text, String after) {
-        if (!text.contains(after)) {
-            return null;
-        }
-        return text.substring(text.indexOf(after) + after.length());
-    }
-
-    /**
-     * Returns the string before the given token
-     *
-     * @param  text   the text
-     * @param  before the token
-     * @return        the text before the token, or <tt>null</tt> if text does not contain the token
-     */
-    public static String before(String text, String before) {
-        if (!text.contains(before)) {
-            return null;
-        }
-        return text.substring(0, text.indexOf(before));
-    }
-
-    /**
-     * Returns the string between the given tokens
-     *
-     * @param  text   the text
-     * @param  after  the before token
-     * @param  before the after token
-     * @return        the text between the tokens, or <tt>null</tt> if text does not contain the tokens
-     */
-    public static String between(String text, String after, String before) {
-        text = after(text, after);
-        if (text == null) {
-            return null;
-        }
-        return before(text, before);
     }
 
     /**
@@ -159,33 +119,182 @@ public final class CatalogHelper {
             return false;
         } else if (value instanceof String) {
             String text = (String) value;
-            return text.trim().length() > 0;
+            return !text.isBlank();
         } else {
             return true;
         }
     }
 
     /**
-     * Removes all leading and ending quotes (single and double) from the string
+     * Parses the query parameters of the uri (eg the query part) manually.
+     * <p>
+     * Note: we cannot use {@link URISupport#parseParameters(URI)} because it uses the URIScanner and that scanner does
+     * not support "{{" and "}}".
      *
-     * @param  s the string
-     * @return   the string without leading and ending quotes (single and double)
+     * @param  uri                the uri
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    public static String removeLeadingAndEndingQuotes(String s) {
-        if (isEmpty(s)) {
-            return s;
+    static Map<String, Object> parseParameters(URI uri) throws URISyntaxException {
+        String query = uri.getQuery();
+        if (query == null) {
+            String schemeSpecificPart = uri.getSchemeSpecificPart();
+            query = StringHelper.after(schemeSpecificPart, "?");
+            if (query == null) {
+                return new LinkedHashMap<>(0);
+            }
+        } else {
+            query = URISupport.stripPrefix(query, "?");
+        }
+        return parseQueryManually(query);
+    }
+
+    /**
+     * Parses the query part of the uri (eg the parameters) manually. This method is mostly used by the CamelCatalog in
+     * order to be able to handle certain special characters markers (i.e.: "{{" and "}}"). It should not be used
+     * anywhere else.
+     * <p/>
+     * The URI parameters will by default be URI encoded. However, you can define a parameter values with the syntax:
+     * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
+     * value has <b>not</b> been encoded.
+     *
+     * @param  uri                the uri
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     */
+    static Map<String, Object> parseQueryManually(String uri) throws URISyntaxException {
+        if (uri == null || uri.isEmpty()) {
+            // return an empty map
+            return Collections.emptyMap();
         }
 
-        String copy = s.trim();
-        if (copy.startsWith("'") && copy.endsWith("'")) {
-            return copy.substring(1, copy.length() - 1);
-        }
-        if (copy.startsWith("\"") && copy.endsWith("\"")) {
-            return copy.substring(1, copy.length() - 1);
+        // must check for trailing & as the uri.split("&") will ignore those
+        if (uri.endsWith("&")) {
+            throw new URISyntaxException(
+                    uri, "Invalid uri syntax: Trailing & marker found. "
+                         + "Check the uri and remove the trailing & marker.");
         }
 
-        // no quotes, so return as-is
-        return s;
+        // need to parse the uri query parameters manually as we cannot rely on splitting by &,
+        // as & can be used in a parameter value as well.
+
+        // use a linked map so the parameters is in the same order
+        Map<String, Object> rc = new LinkedHashMap<>();
+
+        boolean isKey = true;
+        boolean isValue = false;
+        boolean isRaw = false;
+        StringBuilder key = new StringBuilder();
+        StringBuilder value = new StringBuilder();
+
+        // parse the uri parameters char by char
+        for (int i = 0; i < uri.length(); i++) {
+            // current char
+            char ch = uri.charAt(i);
+
+            isRaw = isRaw(isRaw, value);
+
+            // if its a key and there is a = sign then the key ends and we are in value mode
+            if (isKey && ch == '=') {
+                isKey = false;
+                isValue = true;
+                isRaw = false;
+                continue;
+            }
+
+            // the & denote parameter is ended
+            if (ch == '&') {
+                // parameter is ended, as we hit & separator
+                String aKey = key.toString();
+                // the key may be a placeholder of options which we then do not know what is
+                addKeyIfPresent(aKey, value, rc, isRaw);
+                key.setLength(0);
+                value.setLength(0);
+                isKey = true;
+                isValue = false;
+                isRaw = false;
+                continue;
+            }
+
+            // regular char so add it to the key or value
+            if (isKey) {
+                key.append(ch);
+            } else if (isValue) {
+                value.append(ch);
+            }
+        }
+
+        // any left over parameters, then add that
+        if (!key.isEmpty()) {
+            String aKey = key.toString();
+            // the key may be a placeholder of options which we then do not know what is
+            addKeyIfPresent(aKey, value, rc, isRaw);
+        }
+
+        return rc;
+
+    }
+
+    private static boolean isRaw(boolean isRaw, StringBuilder value) {
+        // are we a raw value
+        for (int j = 0; j < URISupport.RAW_TOKEN_START.length; j++) {
+            String rawTokenStart = URISupport.RAW_TOKEN_PREFIX + URISupport.RAW_TOKEN_START[j];
+            isRaw = value.toString().startsWith(rawTokenStart);
+            if (isRaw) {
+                break;
+            }
+        }
+        return isRaw;
+    }
+
+    private static void addKeyIfPresent(String aKey, StringBuilder value, Map<String, Object> rc, boolean isRaw) {
+        boolean validKey = !aKey.startsWith("{{") && !aKey.endsWith("}}");
+        if (validKey) {
+            String valueStr = optionallyDecode(value.toString(), isRaw);
+
+            addParameter(aKey, valueStr, rc, isRaw);
+        }
+    }
+
+    private static void addParameter(String name, final String value, Map<String, Object> map, boolean isRaw) {
+        name = URLDecoder.decode(name, CHARSET);
+
+        // does the key already exist?
+        if (map.containsKey(name)) {
+            // yes it does, so make sure we can support multiple values, but using a list
+            // to hold the multiple values
+            map.computeIfPresent(name, (k, v) -> replaceWithList(v, value));
+        } else {
+            map.put(name, value);
+        }
+    }
+
+    private static String optionallyDecode(String value, boolean isRaw) {
+        if (!isRaw) {
+            // need to replace % with %25
+            return URLDecoder.decode(value.replace("%", "%25"), CHARSET);
+        }
+
+        return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object replaceWithList(Object oldValue, String newValue) {
+        List<String> list;
+        if (oldValue instanceof List) {
+            list = (List<String>) oldValue;
+            list.add(newValue);
+
+        } else {
+            // create a new list to hold the multiple values
+            list = new ArrayList<>();
+            String s = oldValue != null ? oldValue.toString() : null;
+            if (s != null) {
+                list.add(s);
+            }
+
+        }
+        return list;
     }
 
 }

@@ -69,9 +69,9 @@ final class IntrospectionSupport {
     private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     // use a cache to speedup introspecting for known classes during startup
-    // use a weak cache as we don't want the cache to keep around as it reference classes
+    // use a soft cache as we don't want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
-    private static final Map<Class<?>, BeanIntrospection.ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
+    private static final Map<Class<?>, BeanIntrospection.ClassInfo> CACHE = LRUCacheFactory.newLRUSoftCache(1000);
     private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
     static {
@@ -598,6 +598,7 @@ final class IntrospectionSupport {
                 }
             }
 
+            boolean myself = false;
             try {
                 try {
                     // If the type is null or it matches the needed type, just use the value directly
@@ -620,6 +621,8 @@ final class IntrospectionSupport {
                         if ((parameterType == Boolean.class || parameterType == boolean.class) && ref instanceof String) {
                             String val = (String) ref;
                             if (!val.equalsIgnoreCase("true") && !val.equalsIgnoreCase("false")) {
+                                // this is our self
+                                myself = true;
                                 throw new IllegalArgumentException(
                                         "Cannot convert the String value: " + ref + " to type: " + parameterType
                                                                    + " as the value is not true or false");
@@ -650,7 +653,14 @@ final class IntrospectionSupport {
                     }
                 }
                 // ignore exceptions as there could be another setter method where we could type convert successfully
-            } catch (SecurityException | NoTypeConversionAvailableException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
+                // this can be either our own or while trying to set the property on the bean that fails in the 3rd party component
+                if (myself) {
+                    typeConversionFailed = e;
+                } else {
+                    throw e;
+                }
+            } catch (SecurityException | NoTypeConversionAvailableException e) {
                 typeConversionFailed = e;
             }
 

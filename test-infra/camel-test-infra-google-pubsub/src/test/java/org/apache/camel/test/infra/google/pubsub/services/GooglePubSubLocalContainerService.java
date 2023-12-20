@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.google.pubsub.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.google.pubsub.common.GooglePubSubProperties;
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ import org.testcontainers.containers.PubSubEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class GooglePubSubLocalContainerService implements GooglePubSubService, ContainerService<PubSubEmulatorContainer> {
-    public static final String IMAGE_NAME = "gcr.io/google.com/cloudsdktool/cloud-sdk:emulators";
 
     public static final String PROJECT_ID;
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubSubLocalContainerService.class);
@@ -37,7 +37,9 @@ public class GooglePubSubLocalContainerService implements GooglePubSubService, C
     private final PubSubEmulatorContainer container;
 
     public GooglePubSubLocalContainerService() {
-        this(System.getProperty(GooglePubSubProperties.PUBSUB_CONTAINER, IMAGE_NAME));
+        this(LocalPropertyResolver.getProperty(
+                GooglePubSubLocalContainerService.class,
+                GooglePubSubProperties.PUBSUB_CONTAINER));
     }
 
     public GooglePubSubLocalContainerService(String imageName) {

@@ -998,12 +998,17 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1020,12 +1025,17 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -5618,7 +5628,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpAuthentication}.
          */
         public String httpAuthentication() {
-            return "HttpAuthentication";
+            return "CamelHttpAuthentication";
         }
 
         /**
@@ -5658,7 +5668,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettyCloseChannelWhenComplete}.
          */
         public String nettyCloseChannelWhenComplete() {
-            return "NettyCloseChannelWhenComplete";
+            return "CamelNettyCloseChannelWhenComplete";
         }
 
         /**
@@ -5672,7 +5682,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseCode}.
          */
         public String httpResponseCode() {
-            return "HttpResponseCode";
+            return "CamelHttpResponseCode";
         }
 
         /**
@@ -5686,7 +5696,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpProtocolVersion}.
          */
         public String httpProtocolVersion() {
-            return "HttpProtocolVersion";
+            return "CamelHttpProtocolVersion";
         }
 
         /**
@@ -5700,7 +5710,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpMethod}.
          */
         public String httpMethod() {
-            return "HttpMethod";
+            return "CamelHttpMethod";
         }
 
         /**
@@ -5713,7 +5723,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpQuery}.
          */
         public String httpQuery() {
-            return "HttpQuery";
+            return "CamelHttpQuery";
         }
 
         /**
@@ -5729,7 +5739,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpPath}.
          */
         public String httpPath() {
-            return "HttpPath";
+            return "CamelHttpPath";
         }
 
         /**
@@ -5743,7 +5753,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpRawQuery}.
          */
         public String httpRawQuery() {
-            return "HttpRawQuery";
+            return "CamelHttpRawQuery";
         }
 
         /**
@@ -5757,7 +5767,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpUrl}.
          */
         public String httpUrl() {
-            return "HttpUrl";
+            return "CamelHttpUrl";
         }
 
         /**
@@ -5770,7 +5780,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpCharacterEncoding}.
          */
         public String httpCharacterEncoding() {
-            return "HttpCharacterEncoding";
+            return "CamelHttpCharacterEncoding";
         }
 
         /**
@@ -5783,7 +5793,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code HttpUri}.
          */
         public String httpUri() {
-            return "HttpUri";
+            return "CamelHttpUri";
         }
 
         /**
@@ -5796,7 +5806,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettyChannelHandlerContext}.
          */
         public String nettyChannelHandlerContext() {
-            return "NettyChannelHandlerContext";
+            return "CamelNettyChannelHandlerContext";
         }
 
         /**
@@ -5809,7 +5819,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettyRemoteAddress}.
          */
         public String nettyRemoteAddress() {
-            return "NettyRemoteAddress";
+            return "CamelNettyRemoteAddress";
         }
 
         /**
@@ -5822,7 +5832,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettyLocalAddress}.
          */
         public String nettyLocalAddress() {
-            return "NettyLocalAddress";
+            return "CamelNettyLocalAddress";
         }
 
         /**
@@ -5835,7 +5845,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLSession}.
          */
         public String nettySSLSession() {
-            return "NettySSLSession";
+            return "CamelNettySSLSession";
         }
 
         /**
@@ -5848,7 +5858,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLClientCertSubjectName}.
          */
         public String nettySSLClientCertSubjectName() {
-            return "NettySSLClientCertSubjectName";
+            return "CamelNettySSLClientCertSubjectName";
         }
 
         /**
@@ -5861,7 +5871,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLClientCertIssuerName}.
          */
         public String nettySSLClientCertIssuerName() {
-            return "NettySSLClientCertIssuerName";
+            return "CamelNettySSLClientCertIssuerName";
         }
 
         /**
@@ -5875,7 +5885,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * NettySSLClientCertSerialNumber}.
          */
         public String nettySSLClientCertSerialNumber() {
-            return "NettySSLClientCertSerialNumber";
+            return "CamelNettySSLClientCertSerialNumber";
         }
 
         /**
@@ -5888,7 +5898,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLClientCertNotBefore}.
          */
         public String nettySSLClientCertNotBefore() {
-            return "NettySSLClientCertNotBefore";
+            return "CamelNettySSLClientCertNotBefore";
         }
 
         /**
@@ -5901,7 +5911,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettySSLClientCertNotAfter}.
          */
         public String nettySSLClientCertNotAfter() {
-            return "NettySSLClientCertNotAfter";
+            return "CamelNettySSLClientCertNotAfter";
         }
 
         /**
@@ -5914,7 +5924,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the name of the header {@code NettyRequestTimeout}.
          */
         public String nettyRequestTimeout() {
-            return "NettyRequestTimeout";
+            return "CamelNettyRequestTimeout";
         }
     }
     static NettyHttpEndpointBuilder endpointBuilder(

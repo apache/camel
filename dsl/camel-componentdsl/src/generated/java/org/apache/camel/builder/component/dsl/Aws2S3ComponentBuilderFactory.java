@@ -257,12 +257,17 @@ public interface Aws2S3ComponentBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -573,8 +578,11 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * If it is true, camel will upload the file with multi part format, the
-         * part size is decided by the option of partSize.
+         * If it is true, camel will upload the file with multi-part format, the
+         * part size is decided by the partSize option. Camel will only do
+         * multi-part uploads for files that are larger than the part-size
+         * thresholds. Files that are smaller will be uploaded in a single
+         * operation.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -622,8 +630,10 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Setup the partSize which is used in multi part upload, the default
-         * size is 25M.
+         * Setup the partSize which is used in multi-part upload, the default
+         * size is 25M. Camel will only do multi-part uploads for files that are
+         * larger than the part-size thresholds. Files that are smaller will be
+         * uploaded in a single operation.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 

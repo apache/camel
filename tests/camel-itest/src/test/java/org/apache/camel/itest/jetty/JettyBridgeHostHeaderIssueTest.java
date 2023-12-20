@@ -17,7 +17,6 @@
 package org.apache.camel.itest.jetty;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -46,12 +45,8 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
         //The first call to our service will hit the first destination in the round robin load balancer
         //this destination has the preserveProxyHeader parameter set to true, so we verify the Host header
         //received by our downstream instance matches the address and port of the proxied service
-        Exchange reply = template.request("http:localhost:" + port + "/myapp", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        Exchange reply = template.request("http:localhost:" + port + "/myapp",
+                exchange -> exchange.getIn().setBody("Hello World"));
         assertNotNull(reply);
         assertEquals("foo", reply.getMessage().getBody(String.class));
         //assert the received Host header is localhost:port (where port matches the /myapp port)
@@ -60,12 +55,8 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
         //The second call to our service will hit the second destination in the round robin load balancer
         //this destination does not have the preserveProxyHeader, so we expect the Host header received by the destination
         //to match the url of the destination service itself
-        Exchange reply2 = template.request("http:localhost:" + port + "/myapp", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("Bye World");
-            }
-        });
+        Exchange reply2 = template.request("http:localhost:" + port + "/myapp",
+                exchange -> exchange.getIn().setBody("Bye World"));
         assertNotNull(reply2);
         assertEquals("bar", reply2.getMessage().getBody(String.class));
         //assert the received Host header is localhost:port3 (where port3 matches the /bar destination server)
@@ -74,24 +65,16 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
         //The next two calls will use/test the jetty producers in the round robin load balancer
 
         //The first has the preserveHostHeader option set to true, so we would expect to receive a Host header matching the /myapp proxied service
-        Exchange reply3 = template.request("http:localhost:" + port + "/myapp", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("Bye JWorld");
-            }
-        });
+        Exchange reply3 = template.request("http:localhost:" + port + "/myapp",
+                exchange -> exchange.getIn().setBody("Bye JWorld"));
         assertNotNull(reply3);
         assertEquals("jbar", reply3.getMessage().getBody(String.class));
         //assert the received Host header is localhost:port (where port matches the /myapp destination server)
         assertEquals("localhost:" + port, receivedHostHeaderEndpoint3);
 
         //The second does not have a preserveHostHeader (preserveHostHeader=false), we would expect to see a Host header matching the destination service
-        Exchange reply4 = template.request("http:localhost:" + port + "/myapp", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("JAVA!!!!");
-            }
-        });
+        Exchange reply4 = template.request("http:localhost:" + port + "/myapp",
+                exchange -> exchange.getIn().setBody("JAVA!!!!"));
         assertNotNull(reply4);
         assertEquals("java???", reply4.getMessage().getBody(String.class));
         //assert the received Host header is localhost:port5 (where port3 matches the /jbarf destination server)
@@ -119,39 +102,19 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
                         .to("http://localhost:" + port5 + "/jbarf?bridgeEndpoint=true&throwExceptionOnFailure=false");
 
                 from("jetty:http://localhost:" + port2 + "/foo")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                receivedHostHeaderEndpoint1 = exchange.getIn().getHeader("Host", String.class);
-                            }
-                        })
+                        .process(exchange -> receivedHostHeaderEndpoint1 = exchange.getIn().getHeader("Host", String.class))
                         .transform().constant("foo");
 
                 from("jetty:http://localhost:" + port3 + "/bar")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                receivedHostHeaderEndpoint2 = exchange.getIn().getHeader("Host", String.class);
-                            }
-                        })
+                        .process(exchange -> receivedHostHeaderEndpoint2 = exchange.getIn().getHeader("Host", String.class))
                         .transform().constant("bar");
 
                 from("jetty:http://localhost:" + port4 + "/jbar")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                receivedHostHeaderEndpoint3 = exchange.getIn().getHeader("Host", String.class);
-                            }
-                        })
+                        .process(exchange -> receivedHostHeaderEndpoint3 = exchange.getIn().getHeader("Host", String.class))
                         .transform().constant("jbar");
 
                 from("jetty:http://localhost:" + port5 + "/jbarf")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                receivedHostHeaderEndpoint4 = exchange.getIn().getHeader("Host", String.class);
-                            }
-                        })
+                        .process(exchange -> receivedHostHeaderEndpoint4 = exchange.getIn().getHeader("Host", String.class))
                         .transform().constant("java???");
             }
         };

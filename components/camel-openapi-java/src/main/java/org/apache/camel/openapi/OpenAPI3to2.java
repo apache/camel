@@ -19,11 +19,14 @@ package org.apache.camel.openapi;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -466,7 +469,17 @@ public class OpenAPI3to2 {
             }
             if (param.getSchema().getEnum() != null) {
                 // Convert enums (ATTENTION, maybe not strings?)
-                swaggerParam.setEnum(param.getSchema().getEnum());
+                List<String> enums
+                        = ((List<?>) param.getSchema().getEnum()).stream().map(v -> {
+                            if (v instanceof byte[]) {
+                                return new String(Base64.getEncoder().encode((byte[]) v));
+                            } else if (v instanceof Date) {
+                                return RestOpenApiSupport.DEFAULT_DATE_FORMAT.format(v);
+                            } else {
+                                return v.toString();
+                            }
+                        }).collect(Collectors.toList());
+                swaggerParam.setEnum(enums);
             }
         }
         if (param.getExample() != null) {

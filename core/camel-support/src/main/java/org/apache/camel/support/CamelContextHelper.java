@@ -28,6 +28,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
@@ -211,6 +212,14 @@ public final class CamelContextHelper {
      */
     public static <T> T findSingleByType(CamelContext camelContext, Class<T> type) {
         return camelContext.getRegistry().findSingleByType(type);
+    }
+
+    /**
+     * Look up a bean of the give type in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext} or
+     * throws {@link org.apache.camel.NoSuchBeanTypeException} if not a single bean was found.
+     */
+    public static <T> T mandatoryFindSingleByType(CamelContext camelContext, Class<T> type) {
+        return camelContext.getRegistry().mandatoryFindSingleByType(type);
     }
 
     /**
@@ -535,6 +544,23 @@ public final class CamelContextHelper {
             parent = parent.getParent();
         }
         return parent != null ? parent.getId() : null;
+    }
+
+    /**
+     * Gets the route the given node belongs to.
+     *
+     * @param  node the node
+     * @return      the route, or <tt>null</tt> if not possible to find
+     */
+    public static NamedRoute getRoute(NamedNode node) {
+        NamedNode parent = node;
+        while (parent != null && parent.getParent() != null) {
+            parent = parent.getParent();
+        }
+        if (parent instanceof NamedRoute) {
+            return (NamedRoute) parent;
+        }
+        return null;
     }
 
     /**

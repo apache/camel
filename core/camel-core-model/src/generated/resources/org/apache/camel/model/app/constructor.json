@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "constructor",
+    "title": "Constructor",
+    "description": "Bean constructor argument",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.app.BeanConstructorDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "index": { "index": 0, "kind": "attribute", "displayName": "Index", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Constructor argument index. The first argument must use index 0." },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The argument value for the constructor." }
+  }
+}

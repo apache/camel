@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws2-translate</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 Translate</name>
-    <description>A Camel Amazon Translate Web Service Component Version 2</description>
+    <description>Translate texts through AWS Translate Service</description>
 
     <properties>
     </properties>

@@ -18,6 +18,7 @@ package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.xml.io.beans.GreeterMessage;
+import org.apache.camel.dsl.xml.io.beans.MyDestroyBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesLoader;
@@ -25,7 +26,9 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlLoadAppTest {
 
@@ -118,6 +121,159 @@ public class XmlLoadAppTest {
             y4.expectedBodiesReceived("Hello World");
             context.createProducerTemplate().sendBody("direct:x4", "I'm World");
             y4.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanCtr() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app5.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r5"), "Loaded r5 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y5 = context.getEndpoint("mock:y5", MockEndpoint.class);
+            y5.expectedBodiesReceived("Hello World. I am Camel and 42 years old!");
+            context.createProducerTemplate().sendBody("direct:x5", "World");
+            y5.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanFactoryMethod() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app6.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r6"), "Loaded r6 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y6 = context.getEndpoint("mock:y6", MockEndpoint.class);
+            y6.expectedBodiesReceived("Hello Moon. I am Camel and 43 years old!");
+            context.createProducerTemplate().sendBody("direct:x6", "Moon");
+            y6.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanFactoryBeanAndMethod() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app7.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r7"), "Loaded r7 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y7 = context.getEndpoint("mock:y7", MockEndpoint.class);
+            y7.expectedBodiesReceived("Hello Pluto. I am Camel and 44 years old!");
+            context.createProducerTemplate().sendBody("direct:x7", "Pluto");
+            y7.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanInitDestroy() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            assertFalse(MyDestroyBean.initCalled.get());
+            assertFalse(MyDestroyBean.destroyCalled.get());
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app8.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r8"), "Loaded r8 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y8 = context.getEndpoint("mock:y8", MockEndpoint.class);
+            y8.expectedBodiesReceived("Hello Neptun. I am Camel and 45 years old!");
+            context.createProducerTemplate().sendBody("direct:x8", "Neptun");
+            y8.assertIsSatisfied();
+
+            assertTrue(MyDestroyBean.initCalled.get());
+            assertFalse(MyDestroyBean.destroyCalled.get());
+
+            context.stop();
+
+            assertTrue(MyDestroyBean.initCalled.get());
+            assertTrue(MyDestroyBean.destroyCalled.get());
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanScript() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app9.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r9"), "Loaded r9 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y9 = context.getEndpoint("mock:y9", MockEndpoint.class);
+            y9.expectedBodiesReceived("Hi World from groovy Uranus");
+            context.createProducerTemplate().sendBody("direct:x9", "I'm Uranus");
+            y9.assertIsSatisfied();
+
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanBuilderClass() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app10.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r10"), "Loaded r10 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y10 = context.getEndpoint("mock:y10", MockEndpoint.class);
+            y10.expectedBodiesReceived("Hi World. I am Camel and 44 years old!");
+            context.createProducerTemplate().sendBody("direct:x10", "Hi");
+            y10.assertIsSatisfied();
+
+            context.stop();
         }
     }
 

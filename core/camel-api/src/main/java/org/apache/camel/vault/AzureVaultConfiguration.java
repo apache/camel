@@ -32,6 +32,8 @@ public class AzureVaultConfiguration extends VaultConfiguration {
     @Metadata(secret = true)
     private String tenantId;
     @Metadata
+    private boolean azureIdentityEnabled;
+    @Metadata
     private boolean refreshEnabled;
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
@@ -88,6 +90,17 @@ public class AzureVaultConfiguration extends VaultConfiguration {
      */
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public boolean isAzureIdentityEnabled() {
+        return azureIdentityEnabled;
+    }
+
+    /**
+     * Whether the Azure Identity Authentication should be used or not.
+     */
+    public void setAzureIdentityEnabled(boolean azureIdentityEnabled) {
+        this.azureIdentityEnabled = azureIdentityEnabled;
     }
 
     public boolean isRefreshEnabled() {

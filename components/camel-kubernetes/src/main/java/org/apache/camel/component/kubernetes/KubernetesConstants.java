@@ -26,6 +26,7 @@ public final class KubernetesConstants {
     public static final String SCHEME_EVENTS = "kubernetes-events";
     public static final String SCHEME_HPA = "kubernetes-hpa";
     public static final String SCHEME_JOB = "kubernetes-job";
+    public static final String SCHEME_CRON_JOB = "kubernetes-cronjob";
     public static final String SCHEME_NAMESPACES = "kubernetes-namespaces";
     public static final String SCHEME_NODES = "kubernetes-nodes";
     public static final String SCHEME_PERSISTENT_VOLUMES = "kubernetes-persistent-volumes";
@@ -255,6 +256,16 @@ public final class KubernetesConstants {
                       SCHEME_CONFIG_MAPS, SCHEME_DEPLOYMENTS, SCHEME_HPA, SCHEME_NAMESPACES, SCHEME_NODES, SCHEME_PODS,
                       SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES, SCHEME_DEPLOYMENT_CONFIGS, SCHEME_EVENTS })
     public static final String KUBERNETES_EVENT_TIMESTAMP = "CamelKubernetesEventTimestamp";
+
+    @Metadata(label = "producer", description = "The Cronjob labels.", javaType = "Map<String, String>",
+              applicableFor = SCHEME_CRON_JOB)
+    public static final String KUBERNETES_CRON_JOB_LABELS = "CamelKubernetesCronJobLabels";
+
+    @Metadata(label = "producer", description = "The Cronjob name.", javaType = "String", applicableFor = SCHEME_CRON_JOB)
+    public static final String KUBERNETES_CRON_JOB_NAME = "CamelKubernetesCronJobName";
+    @Metadata(label = "producer", description = "The spec for a Job.",
+              javaType = "io.fabric8.kubernetes.api.model.batch.v1.CronJobSpec", applicableFor = SCHEME_CRON_JOB)
+    public static final String KUBERNETES_CRON_JOB_SPEC = "CamelKubernetesCronJobSpec";
 
     private KubernetesConstants() {
 

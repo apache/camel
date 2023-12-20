@@ -406,7 +406,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 sb.append(token, 0, stag.length() - (empty ? 2 : 1));
                 for (Entry<String, String> e : getCurrentNamespaceBindings().entrySet()) {
                     if (!skip.contains(e.getKey())) {
-                        boolean defaultNS = e.getKey() == null || e.getKey().length() == 0;
+                        boolean defaultNS = e.getKey() == null || e.getKey().isEmpty();
                         if (defaultNS) {
                             sb.append(" xmlns").append("=").append(quote).append(e.getValue()).append(quote);
                         } else {
@@ -582,7 +582,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private static String makeName(QName qname) {
             String pfx = qname.getPrefix();
-            return pfx.length() == 0 ? qname.getLocalPart() : qname.getPrefix() + ":" + qname.getLocalPart();
+            return pfx.isEmpty() ? qname.getLocalPart() : qname.getPrefix() + ":" + qname.getLocalPart();
         }
 
         @Override

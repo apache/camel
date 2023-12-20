@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty11.JettyHttpComponent11;
+import org.apache.camel.component.jetty12.JettyHttpComponent12;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -37,7 +39,7 @@ public class JettyComponentMuteExceptionTest extends BaseJettyTest {
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse response = client.execute(get)) {
 
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             assertEquals("", responseString);
             assertEquals(500, response.getCode());
         }
@@ -48,7 +50,7 @@ public class JettyComponentMuteExceptionTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                JettyHttpComponent11 jc = context.getComponent("jetty", JettyHttpComponent11.class);
+                JettyHttpComponent12 jc = context.getComponent("jetty", JettyHttpComponent12.class);
                 jc.setMuteException(true);
 
                 from("jetty:http://localhost:{{port}}/foo").to("mock:destination")

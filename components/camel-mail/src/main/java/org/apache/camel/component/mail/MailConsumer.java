@@ -158,6 +158,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             return 0; // return since we cannot poll mail messages, but will re-connect on next poll.
         }
 
+        // okay consumer is connected to the mail server
+        forceConsumerAsReady();
+
         try {
             int count = folder.getMessageCount();
             if (count > 0) {

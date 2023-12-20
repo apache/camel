@@ -1,0 +1,148 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+openapi: 3.0.3
+info:
+  title: Fruits API
+  version: 1.0.0
+paths:
+  /api/v1/fruit:
+    post:
+      tags:
+      - Api Spec
+      operationId: addFruit
+      parameters:
+      - name: id
+        in: query
+        schema:
+          format: int32
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fruit'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fruit'
+    patch:
+      tags:
+      - Api Spec
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fruit'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fruit'
+    delete:
+      tags:
+        - Api Spec
+      operationId: deleteFruits
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        "200":
+          description: OK
+  /api/v1/fruit/form:
+    post:
+      tags:
+      - Api Spec
+      operationId: addFruitFromForm
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                color:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fruit'
+  /api/v1/fruit/{id}:
+    delete:
+      tags:
+      - Api Spec
+      operationId: deleteFruit
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - name: deletedBy
+        in: header
+        schema:
+          type: string
+      - name: deletionReason
+        in: header
+        required: true
+        schema:
+          type: array
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fruit'
+components:
+  schemas:
+    Fruit:
+      type: object
+      required:
+        - name
+        - color
+      properties:
+        id:
+          format: int32
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+        deletionReason:
+          type: string
+        deletedBy:
+          type: string
+  securitySchemes:
+    SecurityScheme:
+      type: http
+      description: Authentication
+      scheme: basic

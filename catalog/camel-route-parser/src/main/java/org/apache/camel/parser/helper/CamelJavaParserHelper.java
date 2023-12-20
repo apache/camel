@@ -23,34 +23,28 @@ import java.util.List;
 import org.apache.camel.parser.ParserResult;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.roaster.AnonymousMethodSource;
-import org.apache.camel.parser.roaster.StatementFieldSource;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.util.URISupport;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Block;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ExpressionStatement;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.InfixExpression;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MemberValuePair;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MethodInvocation;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.NumberLiteral;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.QualifiedName;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ReturnStatement;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SimpleName;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SimpleType;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Statement;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.StringLiteral;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Type;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.TextBlock;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
@@ -248,42 +242,17 @@ public final class CamelJavaParserHelper {
             if ("from".equals(name)) {
                 List<?> args = mi.arguments();
                 if (args != null) {
-                    for (Object arg : args) {
-                        if (isValidArgument(arg)) {
-                            extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
-                        }
-                    }
+                    iterateOverArguments(clazz, block, uris, strings, fields, args, name);
                 }
             }
             if ("fromF".equals(name)) {
-                List<?> args = mi.arguments();
-                // the first argument is where the uri is
-                if (args != null && !args.isEmpty()) {
-                    Object arg = args.get(0);
-                    if (isValidArgument(arg)) {
-                        extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
-                    }
-                }
+                parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
             }
             if ("interceptFrom".equals(name)) {
-                List<?> args = mi.arguments();
-                // the first argument is where the uri is
-                if (args != null && !args.isEmpty()) {
-                    Object arg = args.get(0);
-                    if (isValidArgument(arg)) {
-                        extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
-                    }
-                }
+                parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
             }
             if ("pollEnrich".equals(name)) {
-                List<?> args = mi.arguments();
-                // the first argument is where the uri is
-                if (args != null && !args.isEmpty()) {
-                    Object arg = args.get(0);
-                    if (isValidArgument(arg)) {
-                        extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
-                    }
-                }
+                parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
             }
         }
 
@@ -291,33 +260,43 @@ public final class CamelJavaParserHelper {
             if ("to".equals(name) || "toD".equals(name)) {
                 List<?> args = mi.arguments();
                 if (args != null) {
-                    for (Object arg : args) {
-                        // skip if the arg is a boolean, ExchangePattern or Iterateable, type
-                        if (isValidArgument(arg)) {
-                            extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
-                        }
-                    }
+                    iterateOverArguments(clazz, block, uris, strings, fields, args, name);
                 }
             }
             if ("toF".equals(name)) {
-                List<?> args = mi.arguments();
-                // the first argument is where the uri is
-                if (args != null && !args.isEmpty()) {
-                    Object arg = args.get(0);
-                    if (isValidArgument(arg)) {
-                        extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
-                    }
-                }
+                parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
             }
             if ("enrich".equals(name) || "wireTap".equals(name)) {
-                List<?> args = mi.arguments();
-                // the first argument is where the uri is
-                if (args != null && !args.isEmpty()) {
-                    Object arg = args.get(0);
-                    if (isValidArgument(arg)) {
-                        extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
-                    }
-                }
+                parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
+            }
+        }
+    }
+
+    private static void parseFirstArgument(
+            JavaClassSource clazz, Block block, MethodInvocation mi, List<ParserResult> uris, boolean strings, boolean fields,
+            String name) {
+        List<?> args = mi.arguments();
+        // the first argument is where the uri is
+        if (args != null && !args.isEmpty()) {
+            parseFirstArgument(clazz, block, uris, strings, fields, args, name);
+        }
+    }
+
+    private static void parseFirstArgument(
+            JavaClassSource clazz, Block block, List<ParserResult> uris, boolean strings, boolean fields, List<?> args,
+            String name) {
+        Object arg = args.get(0);
+        if (isValidArgument(arg)) {
+            extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
+        }
+    }
+
+    private static void iterateOverArguments(
+            JavaClassSource clazz, Block block, List<ParserResult> uris, boolean strings, boolean fields, List<?> args,
+            String name) {
+        for (Object arg : args) {
+            if (isValidArgument(arg)) {
+                extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
             }
         }
     }
@@ -342,6 +321,8 @@ public final class CamelJavaParserHelper {
             boolean fields) {
         if (strings) {
             String uri = getLiteralValue(clazz, block, (Expression) arg);
+            // java 17 text block
+            uri = URISupport.textBlockToSingleLine(uri);
             if (!Strings.isNullOrEmpty(uri)) {
                 int position = ((Expression) arg).getStartPosition();
                 int len = ((Expression) arg).getLength();
@@ -358,7 +339,7 @@ public final class CamelJavaParserHelper {
             }
         }
         if (fields && arg instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) arg);
+            FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, (SimpleName) arg);
             if (field != null) {
                 // find the endpoint uri from the annotation
                 AnnotationSource<JavaClassSource> annotation = field.getAnnotation("org.apache.camel.cdi.Uri");
@@ -396,19 +377,7 @@ public final class CamelJavaParserHelper {
 
     private static Expression extractExpression(Object annotation) {
         Expression exp = (Expression) annotation;
-        if (exp instanceof SingleMemberAnnotation singleMemberAnnotation) {
-            exp = singleMemberAnnotation.getValue();
-        } else if (exp instanceof NormalAnnotation normalAnnotation) {
-            List<?> values = normalAnnotation.values();
-            for (Object value : values) {
-                MemberValuePair pair = (MemberValuePair) value;
-                if ("uri".equals(pair.getName().toString())) {
-                    exp = pair.getValue();
-                    break;
-                }
-            }
-        }
-        return exp;
+        return ParserCommon.evalExpression(exp);
     }
 
     public static List<ParserResult> parseCamelLanguageExpressions(MethodSource<JavaClassSource> method, String language) {
@@ -513,70 +482,7 @@ public final class CamelJavaParserHelper {
         if (name == null) {
             return false;
         }
-        if (name.equals("completionPredicate") || name.equals("completion")) {
-            return true;
-        }
-        if (name.equals("onWhen") || name.equals("when") || name.equals("handled") || name.equals("continued")) {
-            return true;
-        }
-        if (name.equals("retryWhile") || name.equals("filter") || name.equals("validate") || name.equals("loopDoWhile")) {
-            return true;
-        }
-        return false;
-    }
-
-    private static FieldSource<JavaClassSource> getField(JavaClassSource clazz, Block block, SimpleName ref) {
-        String fieldName = ref.getIdentifier();
-        if (fieldName != null) {
-            // find field in class
-            FieldSource<JavaClassSource> field = clazz != null ? clazz.getField(fieldName) : null;
-            if (field == null) {
-                field = findFieldInBlock(clazz, block, fieldName);
-            }
-            return field;
-        }
-        return null;
-    }
-
-    private static FieldSource<JavaClassSource> findFieldInBlock(JavaClassSource clazz, Block block, String fieldName) {
-        for (Object statement : block.statements()) {
-            // try local statements first in the block
-            if (statement instanceof VariableDeclarationStatement variableDeclarationStatement) {
-                final Type type = variableDeclarationStatement.getType();
-                for (Object obj : variableDeclarationStatement.fragments()) {
-                    if (obj instanceof VariableDeclarationFragment fragment) {
-                        SimpleName name = fragment.getName();
-                        if (name != null && fieldName.equals(name.getIdentifier())) {
-                            return new StatementFieldSource<>(clazz, fragment, type);
-                        }
-                    }
-                }
-            }
-
-            // okay the field may be buried inside an anonymous inner class as a field declaration
-            // outside the configure method, so lets go back to the parent and see what we can find
-            ASTNode node = block.getParent();
-            if (node instanceof MethodDeclaration) {
-                node = node.getParent();
-            }
-            if (node instanceof AnonymousClassDeclaration) {
-                List<?> declarations = ((AnonymousClassDeclaration) node).bodyDeclarations();
-                for (Object dec : declarations) {
-                    if (dec instanceof FieldDeclaration fd) {
-                        final Type type = fd.getType();
-                        for (Object obj : fd.fragments()) {
-                            if (obj instanceof VariableDeclarationFragment fragment) {
-                                SimpleName name = fragment.getName();
-                                if (name != null && fieldName.equals(name.getIdentifier())) {
-                                    return new StatementFieldSource(clazz, fragment, type);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return null;
+        return ParserCommon.isCommonPredicate(name);
     }
 
     public static String getLiteralValue(JavaClassSource clazz, Block block, Expression expression) {
@@ -591,6 +497,8 @@ public final class CamelJavaParserHelper {
             return String.valueOf(booleanLiteral.booleanValue());
         } else if (expression instanceof NumberLiteral numberLiteral) {
             return numberLiteral.getToken();
+        } else if (expression instanceof TextBlock textBlock) {
+            return textBlock.getLiteralValue();
         }
 
         // if it's a method invocation then add a dummy value assuming the method invocation will return a valid response
@@ -608,7 +516,7 @@ public final class CamelJavaParserHelper {
         }
 
         if (expression instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
+            FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, (SimpleName) expression);
             if (field != null) {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
@@ -624,89 +532,85 @@ public final class CamelJavaParserHelper {
                     }
                 }
                 // is the field an org.apache.camel.Endpoint type?
-                if ("Endpoint".equals(field.getType().getSimpleName())) {
-                    // then grab the uri from the first argument
-                    VariableDeclarationFragment vdf = (VariableDeclarationFragment) field.getInternal();
-                    expression = vdf.getInitializer();
-                    if (expression instanceof MethodInvocation mi) {
-                        List<?> args = mi.arguments();
-                        if (args != null && !args.isEmpty()) {
-                            // the first argument has the endpoint uri
-                            expression = (Expression) args.get(0);
-                            return getLiteralValue(clazz, block, expression);
-                        }
-                    }
-                } else {
-                    // no annotations so try its initializer
-                    VariableDeclarationFragment vdf = (VariableDeclarationFragment) field.getInternal();
-                    expression = vdf.getInitializer();
-                    if (expression == null) {
-                        // it's a field which has no initializer, then add a dummy value assuming the field will be initialized at runtime
-                        return "{{" + field.getName() + "}}";
-                    } else {
-                        return getLiteralValue(clazz, block, expression);
-                    }
-                }
+                return endpointTypeCheck(clazz, block, field);
             } else {
                 // we could not find the field in this class/method, so its maybe from some other super class, so insert a dummy value
                 final String fieldName = ((SimpleName) expression).getIdentifier();
                 return "{{" + fieldName + "}}";
             }
         } else if (expression instanceof InfixExpression ie) {
-            String answer = null;
-            // is it a string that is concat together?
-            if (InfixExpression.Operator.PLUS.equals(ie.getOperator())) {
-
-                String val1 = getLiteralValue(clazz, block, ie.getLeftOperand());
-                String val2 = getLiteralValue(clazz, block, ie.getRightOperand());
-
-                // if numeric then we plus the values, otherwise we string concat
-                boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand())
-                        && isNumericOperator(clazz, block, ie.getRightOperand());
-                if (numeric) {
-                    long num1 = val1 != null ? Long.parseLong(val1) : 0;
-                    long num2 = val2 != null ? Long.parseLong(val2) : 0;
-                    answer = Long.toString(num1 + num2);
-                } else {
-                    answer = (val1 != null ? val1 : "") + (val2 != null ? val2 : "");
-                }
-
-                if (!answer.isEmpty()) {
-                    // include extended when we concat on 2 or more lines
-                    List<?> extended = ie.extendedOperands();
-                    if (extended != null) {
-                        StringBuilder answerBuilder = new StringBuilder(answer);
-                        for (Object ext : extended) {
-                            String val3 = getLiteralValue(clazz, block, (Expression) ext);
-                            if (numeric) {
-                                long num3 = val3 != null ? Long.parseLong(val3) : 0;
-                                long num = Long.parseLong(answerBuilder.toString());
-                                answerBuilder = new StringBuilder(Long.toString(num + num3));
-                            } else {
-                                answerBuilder.append(val3 != null ? val3 : "");
-                            }
-                        }
-                        answer = answerBuilder.toString();
-                    }
-                }
-            }
-            return answer;
+            return getValueFromExpression(clazz, block, ie);
         }
-
         return null;
     }
 
-    private static boolean isNumericOperator(JavaClassSource clazz, Block block, Expression expression) {
-        if (expression instanceof NumberLiteral) {
-            return true;
-        } else if (expression instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
-            if (field != null) {
-                return field.getType().isType("int") || field.getType().isType("long")
-                        || field.getType().isType("Integer") || field.getType().isType("Long");
+    private static String getValueFromExpression(JavaClassSource clazz, Block block, InfixExpression ie) {
+        String answer = null;
+        // is it a string that is concat together?
+        if (InfixExpression.Operator.PLUS.equals(ie.getOperator())) {
+
+            String val1 = getLiteralValue(clazz, block, ie.getLeftOperand());
+            String val2 = getLiteralValue(clazz, block, ie.getRightOperand());
+
+            // if numeric then we plus the values, otherwise we string concat
+            boolean numeric = ParserCommon.isNumericOperator(clazz, block, ie.getLeftOperand())
+                    && ParserCommon.isNumericOperator(clazz, block, ie.getRightOperand());
+            if (numeric) {
+                long num1 = val1 != null ? Long.parseLong(val1) : 0;
+                long num2 = val2 != null ? Long.parseLong(val2) : 0;
+                answer = Long.toString(num1 + num2);
+            } else {
+                answer = (val1 != null ? val1 : "") + (val2 != null ? val2 : "");
+            }
+
+            if (!answer.isEmpty()) {
+                // include extended when we concat on 2 or more lines
+                List<?> extended = ie.extendedOperands();
+                if (extended != null) {
+                    StringBuilder answerBuilder = new StringBuilder(answer);
+                    for (Object ext : extended) {
+                        String val3 = getLiteralValue(clazz, block, (Expression) ext);
+                        if (numeric) {
+                            long num3 = val3 != null ? Long.parseLong(val3) : 0;
+                            long num = Long.parseLong(answerBuilder.toString());
+                            answerBuilder = new StringBuilder(Long.toString(num + num3));
+                        } else {
+                            answerBuilder.append(val3 != null ? val3 : "");
+                        }
+                    }
+                    answer = answerBuilder.toString();
+                }
             }
         }
-        return false;
+        return answer;
+    }
+
+    static String endpointTypeCheck(JavaClassSource clazz, Block block, FieldSource<JavaClassSource> field) {
+        Expression expression;
+        if ("Endpoint".equals(field.getType().getSimpleName())) {
+            // then grab the uri from the first argument
+            VariableDeclarationFragment vdf = (VariableDeclarationFragment) field.getInternal();
+            expression = vdf.getInitializer();
+            if (expression instanceof MethodInvocation mi) {
+                List<?> args = mi.arguments();
+                if (args != null && !args.isEmpty()) {
+                    // the first argument has the endpoint uri
+                    expression = (Expression) args.get(0);
+                    return getLiteralValue(clazz, block, expression);
+                }
+            }
+        } else {
+            // no annotations so try its initializer
+            VariableDeclarationFragment vdf = (VariableDeclarationFragment) field.getInternal();
+            expression = vdf.getInitializer();
+            if (expression == null) {
+                // it's a field which has no initializer, then add a dummy value assuming the field will be initialized at runtime
+                return "{{" + field.getName() + "}}";
+            } else {
+                return getLiteralValue(clazz, block, expression);
+            }
+        }
+        return null;
     }
 
 }

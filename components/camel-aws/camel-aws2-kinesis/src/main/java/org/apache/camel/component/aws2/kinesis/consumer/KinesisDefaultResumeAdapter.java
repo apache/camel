@@ -17,10 +17,7 @@
 
 package org.apache.camel.component.aws2.kinesis.consumer;
 
-import java.nio.ByteBuffer;
-
 import org.apache.camel.resume.Cacheable;
-import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.ResumeAdapter;
@@ -32,35 +29,14 @@ import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 @JdkService(ResumeAdapter.RESUME_ADAPTER_FACTORY)
-public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cacheable, Deserializable {
+public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cacheable {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisDefaultResumeAdapter.class);
 
     private ResumeCache<String> cache;
 
-    private GetShardIteratorRequest.Builder resumable;
-    private String streamName;
-
-    public void setRequestBuilder(GetShardIteratorRequest.Builder resumable) {
-        this.resumable = resumable;
-    }
-
     @Override
     public void resume() {
-        assert streamName != null;
-        assert resumable != null;
-
-        KinesisOffset offset = cache.get(streamName, KinesisOffset.class);
-
-        if (offset == null) {
-            LOG.info("There is no offset for the stream {}", streamName);
-            return;
-        }
-
-        final String sequenceNumber = offset.getValue();
-        LOG.info("Resuming from offset {} for key {}", sequenceNumber, streamName);
-
-        resumable.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
-        resumable.startingSequenceNumber(sequenceNumber);
+        throw new UnsupportedOperationException();
     }
 
     private void add(Object key, Object offset) {
@@ -87,17 +63,19 @@ public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cachea
     }
 
     @Override
-    public boolean deserialize(ByteBuffer keyBuffer, ByteBuffer valueBuffer) {
-        Object keyObj = deserializeKey(keyBuffer);
-        Object valueObj = deserializeValue(valueBuffer);
+    public void configureGetShardIteratorRequest(GetShardIteratorRequest.Builder builder, String streamName, String shardId) {
+        KinesisOffset offset = cache.get(shardId, KinesisOffset.class);
 
-        add(keyObj, valueObj);
+        if (offset == null) {
+            LOG.info("There is no offset for the stream {}", streamName);
+            return;
+        }
 
-        return true;
-    }
+        final String sequenceNumber = offset.getValue();
+        LOG.info("Resuming from offset {} for key {}", sequenceNumber, streamName);
 
-    @Override
-    public void setStreamName(String streamName) {
-        this.streamName = streamName;
+        builder.shardId(shardId);
+        builder.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
+        builder.startingSequenceNumber(sequenceNumber);
     }
 }

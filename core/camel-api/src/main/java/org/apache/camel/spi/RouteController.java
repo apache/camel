@@ -91,13 +91,16 @@ public interface RouteController extends CamelContextAware, StaticService {
     void removeAllRoutes() throws Exception;
 
     /**
-     * Indicates whether current thread is starting route(s).
-     * <p/>
-     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
-     *
-     * @return <tt>true</tt> if current thread is starting route(s), or <tt>false</tt> if not.
+     * Indicates whether the route controller is doing initial starting of the routes.
      */
     boolean isStartingRoutes();
+
+    /**
+     * Indicates if the route controller has routes that are currently unhealthy such as they have not yet been
+     * successfully started, and if being supervised then the route can either be pending restarts or failed all restart
+     * attempts and are exhausted.
+     */
+    boolean hasUnhealthyRoutes();
 
     /**
      * Reloads all the routes

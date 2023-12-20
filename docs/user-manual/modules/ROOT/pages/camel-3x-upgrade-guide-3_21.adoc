@@ -4,6 +4,22 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
+== Upgrading Camel 3.21 to 3.21.3
+
+=== camel-kafka
+
+The behavior for `breakOnFirstError` was altered as numerous issues were fixed. The behavior related to committing 
+the offset is now determined by the `CommitManager` that is configured. 
+
+When the default `CommitManager` is used (`NoopCommitManager`) then no commit is performed. The route implementation will
+be responsible for managing the offset using `KafkaManualCommit` to manage the retrying of the payload.
+
+When using the `SyncCommitManager` then the offset will be committed so that the payload is continually retried. This was
+the behavior described in the documentation.
+
+When using the `AsyncCommitManager` then the offset will be committed so that the payload is continually retried. This was
+the behavior described in the documentation.
+
 == Upgrading Camel 3.20 to 3.21
 
 === camel-core
@@ -48,6 +64,25 @@ one of each out of the box.
 === camel-main
 
 The option `camel.main.routesReloadRestartDuration` has changed its default value from `true` to `false`.
+
+=== camel-micrometer
+
+The metrics has been renamed to follow Micrometer naming convention https://micrometer.io/docs/concepts#_naming_meters[Naming Meters].
+
+|===
+| Old Name | New Name
+| CamelExchangeEventNotifier | camel.exchange.event.notifier
+| CamelExchangesFailed | camel.exchanges.failed
+| CamelExchangesFailuresHandled | camel.exchanges.failures.handled
+| CamelExchangesInflight | camel.exchanges.external.redeliveries
+| CamelExchangesSucceeded | camel.exchanges.succeeded
+| CamelExchangesTotal | camel.exchanges.total
+| CamelMessageHistory | camel.message.history
+| CamelRoutePolicy | camel.route.policy
+| CamelRoutePolicyLongTask | camel.route.policy.long.task
+| CamelRoutesAdded | camel.routes.added
+| CamelRoutesRunning | camel.routes.running
+|===
 
 === camel-http-common
 

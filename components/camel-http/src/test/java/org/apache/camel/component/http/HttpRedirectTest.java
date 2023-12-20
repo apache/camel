@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.http.base.HttpOperationFailedException;
@@ -71,7 +69,7 @@ public class HttpRedirectTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpRedirectFalse() throws Exception {
+    public void httpRedirectFalse() {
 
         String uri = "http://localhost:" + localServer.getLocalPort()
                      + "/test?httpClient.redirectsEnabled=false&httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
@@ -90,7 +88,7 @@ public class HttpRedirectTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpHandleRedirect() throws Exception {
+    public void httpHandleRedirect() {
 
         String uri = "http://localhost:" + localServer.getLocalPort()
                      + "/test?httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
@@ -106,7 +104,7 @@ public class HttpRedirectTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpHandleFollowRedirect() throws Exception {
+    public void httpHandleFollowRedirect() {
 
         String uri = "http://localhost:" + localServer.getLocalPort()
                      + "/testPost?httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
@@ -153,7 +151,7 @@ public class HttpRedirectTest extends BaseHttpTest {
 
         @Override
         public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
-                throws HttpException, IOException {
+                throws HttpException {
             response.setHeader("location", "http://localhost:"
                                            + localServer.getLocalPort() + "/someplaceelse");
             response.setCode(code);
@@ -170,7 +168,7 @@ public class HttpRedirectTest extends BaseHttpTest {
 
         @Override
         public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
-                throws HttpException, IOException {
+                throws HttpException {
             response.setHeader("location", "http://localhost:"
                                            + localServer.getLocalPort() + "/redirectplace");
             response.setCode(code);

@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.minio.services;
 
 import java.time.Duration;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.minio.common.MinioProperties;
 import org.slf4j.Logger;
@@ -26,7 +27,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
 public class MinioLocalContainerService implements MinioService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "minio/minio:latest";
     public static final String CONTAINER_NAME = "minio";
     private static final String ACCESS_KEY;
     private static final String SECRET_KEY;
@@ -42,7 +42,7 @@ public class MinioLocalContainerService implements MinioService, ContainerServic
     private final GenericContainer container;
 
     public MinioLocalContainerService() {
-        this(System.getProperty(MinioProperties.MINIO_CONTAINER, CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(MinioLocalContainerService.class, MinioProperties.MINIO_CONTAINER));
     }
 
     public MinioLocalContainerService(String containerName) {

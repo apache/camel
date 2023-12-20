@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpHeaderCaseTest extends BaseJettyTest {
 
@@ -43,7 +45,7 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
 
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse response = client.execute(method)) {
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
             assertEquals("Bye World", responseString);
             assertEquals("aBc123", response.getFirstHeader("MyCaseHeader").getValue());
@@ -62,9 +64,9 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
                         Map<String, Object> map = new LinkedHashMap<>(exchange.getIn().getHeaders());
 
                         assertEquals("123", map.get("OTHER"));
-                        assertEquals(null, map.get("other"));
+                        assertNull(map.get("other"));
                         assertEquals("Carlsberg", map.get("beer"));
-                        assertEquals(null, map.get("Beer"));
+                        assertNull(map.get("Beer"));
 
                         exchange.getMessage().setBody("Bye World");
                         exchange.getMessage().setHeader("MyCaseHeader", "aBc123");

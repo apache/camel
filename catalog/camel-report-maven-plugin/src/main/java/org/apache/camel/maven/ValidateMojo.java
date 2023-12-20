@@ -46,21 +46,23 @@ import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.mojo.exec.AbstractExecMojo;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
-import static org.apache.camel.maven.ReportPluginCommon.asRelativeFile;
-import static org.apache.camel.maven.ReportPluginCommon.findJavaFiles;
-import static org.apache.camel.maven.ReportPluginCommon.findJavaRouteBuilderClasses;
-import static org.apache.camel.maven.ReportPluginCommon.findXmlRouters;
-import static org.apache.camel.maven.ReportPluginCommon.matchRouteFile;
-import static org.apache.camel.maven.ReportPluginCommon.stripRootPath;
+import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
+import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
+import static org.apache.camel.catalog.common.CatalogHelper.findXmlRouters;
+import static org.apache.camel.catalog.common.CatalogHelper.matchRouteFile;
+import static org.apache.camel.catalog.common.CatalogHelper.stripRootPath;
+import static org.apache.camel.catalog.common.FileUtil.findJavaFiles;
 
 /**
  * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions, and validates
@@ -178,15 +180,22 @@ public class ValidateMojo extends AbstractExecMojo {
     @Parameter(property = "camel.configurationFiles")
     private String configurationFiles = "application.properties";
 
+    @Component
+    private RepositorySystem repositorySystem;
+
+    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+    private RepositorySystemSession repositorySystemSession;
+
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         CamelCatalog catalog = new DefaultCamelCatalog();
         // add activemq as known component
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
         // enable did you mean
         catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
         // enable loading other catalog versions dynamically
-        catalog.setVersionManager(new MavenVersionManager());
+        catalog.setVersionManager(
+                new MavenVersionManager(repositorySystem, repositorySystemSession, getSession().getSettings()));
         // use custom class loading
         catalog.getJSonSchemaResolver().setClassLoader(ValidateMojo.class.getClassLoader());
         // enable caching
@@ -234,36 +243,13 @@ public class ValidateMojo extends AbstractExecMojo {
         List<ConfigurationPropertiesValidationResult> results = new ArrayList<>();
 
         for (File file : propertiesFiles) {
-            if (matchPropertiesFile(file)) {
-                try (InputStream is = new FileInputStream(file)) {
-                    Properties prop = new OrderedProperties();
-                    prop.load(is);
-
-                    // validate each line
-                    for (String name : prop.stringPropertyNames()) {
-                        String value = prop.getProperty(name);
-                        if (value != null) {
-                            String text = name + "=" + value;
-                            ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
-                            // only include lines that camel can accept (as there may be non camel properties too)
-                            if (result.isAccepted()) {
-                                // try to find line number
-                                int lineNumber = findLineNumberInPropertiesFile(file, name);
-                                if (lineNumber != -1) {
-                                    result.setLineNumber(lineNumber);
-                                }
-                                results.add(result);
-                                result.setText(text);
-                                result.setFileName(file.getName());
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
-                }
-            }
+            parseProperties(catalog, file, results);
         }
 
+        validateResults(results);
+    }
+
+    private void validateResults(List<ConfigurationPropertiesValidationResult> results) throws MojoExecutionException {
         int configurationErrors = 0;
         int unknownComponents = 0;
         int incapableErrors = 0;
@@ -346,6 +332,37 @@ public class ValidateMojo extends AbstractExecMojo {
         }
     }
 
+    private void parseProperties(CamelCatalog catalog, File file, List<ConfigurationPropertiesValidationResult> results) {
+        if (matchPropertiesFile(file)) {
+            try (InputStream is = new FileInputStream(file)) {
+                Properties prop = new OrderedProperties();
+                prop.load(is);
+
+                // validate each line
+                for (String name : prop.stringPropertyNames()) {
+                    String value = prop.getProperty(name);
+                    if (value != null) {
+                        String text = name + "=" + value;
+                        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+                        // only include lines that camel can accept (as there may be non camel properties too)
+                        if (result.isAccepted()) {
+                            // try to find line number
+                            int lineNumber = findLineNumberInPropertiesFile(file, name);
+                            if (lineNumber != -1) {
+                                result.setLineNumber(lineNumber);
+                            }
+                            results.add(result);
+                            result.setText(text);
+                            result.setFileName(file.getName());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
+            }
+        }
+    }
+
     private int findLineNumberInPropertiesFile(File file, String name) {
         name = name.trim();
         // try to find the line number
@@ -393,6 +410,13 @@ public class ValidateMojo extends AbstractExecMojo {
         }
 
         // endpoint uris
+        validateResults(catalog, endpoints, simpleExpressions, routeIds);
+    }
+
+    private void validateResults(
+            CamelCatalog catalog, List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions,
+            List<CamelRouteDetails> routeIds)
+            throws MojoExecutionException {
         int endpointErrors = 0;
         int unknownComponents = 0;
         int incapableErrors = 0;
@@ -479,23 +503,33 @@ public class ValidateMojo extends AbstractExecMojo {
         int duplicateRouteIdErrors = validateDuplicateRouteId(routeIds);
         String routeIdSummary = "";
         if (duplicateRouteId) {
-            if (duplicateRouteIdErrors == 0) {
-                routeIdSummary = String.format("Duplicate route id validation success: (%s = ids)", routeIds.size());
-            } else {
-                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)",
-                        routeIds.size(), duplicateRouteIdErrors);
-            }
-            if (duplicateRouteIdErrors > 0) {
-                getLog().warn(routeIdSummary);
-            } else {
-                getLog().info(routeIdSummary);
-            }
+            routeIdSummary = handleDuplicateRouteId(duplicateRouteIdErrors, routeIds);
         }
 
-        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0) || sedaDirectErrors > 0) {
+        if (failOnError && hasErrors(endpointErrors, simpleErrors, duplicateRouteIdErrors) || sedaDirectErrors > 0) {
             throw new MojoExecutionException(
                     endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
         }
+    }
+
+    private static boolean hasErrors(int endpointErrors, int simpleErrors, int duplicateRouteIdErrors) {
+        return endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0;
+    }
+
+    private String handleDuplicateRouteId(int duplicateRouteIdErrors, List<CamelRouteDetails> routeIds) {
+        String routeIdSummary;
+        if (duplicateRouteIdErrors == 0) {
+            routeIdSummary = String.format("Duplicate route id validation success: (%s = ids)", routeIds.size());
+        } else {
+            routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)",
+                    routeIds.size(), duplicateRouteIdErrors);
+        }
+        if (duplicateRouteIdErrors > 0) {
+            getLog().warn(routeIdSummary);
+        } else {
+            getLog().info(routeIdSummary);
+        }
+        return routeIdSummary;
     }
 
     private String buildSimpleSummaryMessage(List<CamelSimpleExpressionDetails> simpleExpressions, int simpleErrors) {

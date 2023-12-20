@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.elasticsearch.common.ElasticSearchProperties;
@@ -35,7 +36,6 @@ import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
 public class ElasticSearchLocalContainerService implements ElasticSearchService, ContainerService<ElasticsearchContainer> {
-    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch:8.8.2";
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerService.class);
     private static final int ELASTIC_SEARCH_PORT = 9200;
     private static final String USER_NAME = "elastic";
@@ -45,7 +45,9 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
     private final ElasticsearchContainer container;
 
     public ElasticSearchLocalContainerService() {
-        this(System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER, DEFAULT_ELASTIC_SEARCH_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                ElasticSearchLocalContainerService.class,
+                ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER));
     }
 
     public ElasticSearchLocalContainerService(String imageName) {
@@ -95,8 +97,8 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            sslContext = getContainer().createSslContextFromCa();
         });
-        sslContext = getContainer().createSslContextFromCa();
     }
 
     @Override

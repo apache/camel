@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,15 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest {
         app2.start();
 
         // wait long enough until the second app takes it over...
-        Thread.sleep(2000);
+        Awaitility.await().untilAsserted(() -> {
+            CamelContext camel2 = app2.getBean("camelContext2-" + getClass().getSimpleName(), CamelContext.class);
+
+            MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
+            mock2.expectedMinimumMessageCount(2);
+            mock2.expectedMessagesMatches(new ClusteringPredicate(false));
+
+            mock2.assertIsSatisfied();
+        });
         // inside the logs one can then clearly see how the route of the second app ('app-two') starts consuming:
         // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
         // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
@@ -70,14 +79,6 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest {
         // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: detected 1 failed or restarted instances.
         // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
         // 2013-09-30 11:22:35,369 [eduler_Worker-1] INFO  triggered                      - Exchange[ExchangePattern: InOnly, BodyType: String, Body: clustering PONGS!]
-
-        CamelContext camel2 = app2.getBean("camelContext2-" + getClass().getSimpleName(), CamelContext.class);
-
-        MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
-        mock2.expectedMinimumMessageCount(2);
-        mock2.expectedMessagesMatches(new ClusteringPredicate(false));
-
-        mock2.assertIsSatisfied();
 
         // and as the last step shutdown the second app as well as the database
         IOHelper.close(app2, db);

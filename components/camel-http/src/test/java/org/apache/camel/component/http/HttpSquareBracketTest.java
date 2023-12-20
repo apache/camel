@@ -61,7 +61,7 @@ public class HttpSquareBracketTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpSquare() throws Exception {
+    public void httpSquare() {
         Exchange exchange = template.request(baseUrl + "/?country=dk&filter[start-date]=2022-01-01&filter[end-date]=2022-12-31",
                 exchange1 -> {
                 });

@@ -134,9 +134,9 @@ final class Helper {
 }
 
 class StreamWriter extends Thread {
-    private PipedOutputStream pos;
-    private long limit;
-    private byte[] content = "hello world stream".getBytes();
+    private final PipedOutputStream pos;
+    private final long limit;
+    private final byte[] content = "hello world stream".getBytes();
 
     public StreamWriter(PipedOutputStream pos, long limit) {
         this.pos = pos;

@@ -63,8 +63,8 @@ public class VersionList extends CamelCommand {
     String runtime;
 
     @CommandLine.Option(names = { "--from-version" },
-                        description = "Filter by Camel version (inclusive)", defaultValue = "3.14.0")
-    String fromVersion = "3.14.0";
+                        description = "Filter by Camel version (inclusive)", defaultValue = "4.0.0")
+    String fromVersion = "4.0.0";
 
     @CommandLine.Option(names = { "--to-version" },
                         description = "Filter by Camel version (exclusive)")
@@ -110,7 +110,7 @@ public class VersionList extends CamelCommand {
                 a = "camel-quarkus-catalog";
             }
 
-            RepositoryResolver rr = main.getCamelContext().hasService(RepositoryResolver.class);
+            RepositoryResolver rr = downloader.getRepositoryResolver();
             if (rr != null) {
                 repo = rr.resolveRepository(repo);
             }

@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
@@ -38,10 +32,19 @@ import org.cometd.client.BayeuxClient;
 import org.cometd.client.BayeuxClient.State;
 import org.cometd.client.http.jetty.JettyHttpClientTransport;
 import org.cometd.client.transport.ClientTransport;
-import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -89,7 +92,6 @@ public class SubscriptionHelper extends ServiceSupport {
     private volatile boolean reconnecting;
     private final AtomicLong handshakeBackoff;
     private final AtomicBoolean handshaking = new AtomicBoolean();
-    private final AtomicBoolean loggingIn = new AtomicBoolean();
 
     public SubscriptionHelper(final SalesforceComponent component) {
         this.component = component;
@@ -402,7 +404,8 @@ public class SubscriptionHelper extends ServiceSupport {
                         throw new RuntimeException(e);
                     }
                 }
-                request.header(HttpHeader.AUTHORIZATION, "OAuth " + accessToken);
+                String finalAccessToken = new String(accessToken);
+                request.headers(h -> h.add(HttpHeader.AUTHORIZATION, "OAuth " + finalAccessToken));
             }
         };
 

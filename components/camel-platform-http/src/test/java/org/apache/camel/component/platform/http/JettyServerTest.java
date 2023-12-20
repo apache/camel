@@ -20,17 +20,17 @@ import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
 import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
 import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
 public class JettyServerTest {
     public static final String JETTY_SERVER_NAME = "JettyServerTest";
 
     private final int port;
-    private final HandlerCollection contextHandlerCollection;
+    private final ContextHandlerCollection contextHandlerCollection;
     private final JettyEmbeddedService service;
 
     public JettyServerTest(int port) {
-        contextHandlerCollection = new HandlerCollection(true);
+        contextHandlerCollection = new ContextHandlerCollection(true);
 
         final JettyConfiguration configuration = JettyConfigurationBuilder.bareTemplate()
                 .withPort(port)
@@ -41,7 +41,7 @@ public class JettyServerTest {
 
     }
 
-    public void start() throws Exception {
+    public void start() {
         service.initialize();
 
     }

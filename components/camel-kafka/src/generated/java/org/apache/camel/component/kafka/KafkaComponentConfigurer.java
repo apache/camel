@@ -158,6 +158,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "pollOnError": getOrCreateConfiguration(target).setPollOnError(property(camelContext, org.apache.camel.component.kafka.PollOnError.class, value)); return true;
         case "polltimeoutms":
         case "pollTimeoutMs": getOrCreateConfiguration(target).setPollTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
+        case "prevalidatehostandport":
+        case "preValidateHostAndPort": getOrCreateConfiguration(target).setPreValidateHostAndPort(property(camelContext, boolean.class, value)); return true;
         case "producerbatchsize":
         case "producerBatchSize": getOrCreateConfiguration(target).setProducerBatchSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "queuebufferingmaxmessages":
@@ -388,6 +390,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "pollOnError": return org.apache.camel.component.kafka.PollOnError.class;
         case "polltimeoutms":
         case "pollTimeoutMs": return java.lang.Long.class;
+        case "prevalidatehostandport":
+        case "preValidateHostAndPort": return boolean.class;
         case "producerbatchsize":
         case "producerBatchSize": return java.lang.Integer.class;
         case "queuebufferingmaxmessages":
@@ -614,6 +618,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "pollOnError": return getOrCreateConfiguration(target).getPollOnError();
         case "polltimeoutms":
         case "pollTimeoutMs": return getOrCreateConfiguration(target).getPollTimeoutMs();
+        case "prevalidatehostandport":
+        case "preValidateHostAndPort": return getOrCreateConfiguration(target).isPreValidateHostAndPort();
         case "producerbatchsize":
         case "producerBatchSize": return getOrCreateConfiguration(target).getProducerBatchSize();
         case "queuebufferingmaxmessages":

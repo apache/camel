@@ -204,7 +204,7 @@ public interface ComponentCustomizer extends Ordered {
             if (type.equals(Component.class)) {
                 return this.condition != null
                         ? this.condition
-                        : new BiPredicate<String, Component>() {
+                        : new BiPredicate<>() {
                             @Override
                             public boolean test(String s, Component language) {
                                 return true;
@@ -213,7 +213,7 @@ public interface ComponentCustomizer extends Ordered {
             }
 
             if (condition == null) {
-                return new BiPredicate<String, Component>() {
+                return new BiPredicate<>() {
                     @Override
                     public boolean test(String name, Component target) {
                         return type.isAssignableFrom(target.getClass());
@@ -221,7 +221,7 @@ public interface ComponentCustomizer extends Ordered {
                 };
             }
 
-            return new BiPredicate<String, Component>() {
+            return new BiPredicate<>() {
                 @Override
                 public boolean test(String name, Component target) {
                     return type.isAssignableFrom(target.getClass()) && condition.test(name, target);

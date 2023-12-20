@@ -35,7 +35,7 @@
         <!-- use $simple{ start token in the fileName parameter
              to avoid clash with spring property placeholder. However we can still use
              spring property placeholders for the output folder -->
-        <endpoint id="myFile" uri="file://${outputFolder}?fileName=$simple{header.foo}"/>
+        <endpoint id="myFile" uri="file:{{testDirectory}}/${outputFolder}?fileName=$simple{header.foo}"/>
 
         <route>
             <from uri="direct:start"/>

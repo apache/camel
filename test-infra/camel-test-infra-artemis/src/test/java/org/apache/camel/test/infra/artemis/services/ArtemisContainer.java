@@ -27,7 +27,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
     private static final int DEFAULT_AMQP_PORT = 5672;
     private static final int DEFAULT_ADMIN_PORT = 8161;
     private static final int DEFAULT_ACCEPTOR_PORT = 61616;
-    private static final String FROM_IMAGE_NAME = "fedora:37";
+    private static final String FROM_IMAGE_NAME = "fedora:38";
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public ArtemisContainer() {

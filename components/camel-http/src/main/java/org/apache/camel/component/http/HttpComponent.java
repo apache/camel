@@ -28,7 +28,6 @@ import javax.net.ssl.HostnameVerifier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.base.HttpHelper;
@@ -46,6 +45,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -225,7 +225,22 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HttpCredentialsHelper credentialsProvider = new HttpCredentialsHelper();
         configurer = configureBasicAuthentication(parameters, configurer, credentialsProvider);
         configurer = configureHttpProxy(parameters, configurer, secure, credentialsProvider);
+        configurer = configureOAuth2Authentication(parameters, configurer);
 
+        return configurer;
+    }
+
+    private HttpClientConfigurer configureOAuth2Authentication(
+            Map<String, Object> parameters, HttpClientConfigurer configurer) {
+
+        String clientId = getParameter(parameters, "oauth2ClientId", String.class);
+        String clientSecret = getParameter(parameters, "oauth2ClientSecret", String.class);
+        String tokenEndpoint = getParameter(parameters, "oauth2TokenEndpoint", String.class);
+
+        if (clientId != null && clientSecret != null && tokenEndpoint != null) {
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new OAuth2ClientConfigurer(clientId, clientSecret, tokenEndpoint));
+        }
         return configurer;
     }
 
@@ -343,7 +358,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HeaderFilterStrategy headerFilterStrategy
                 = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
-        boolean secure = HttpHelper.isSecureConnection(uri) || sslContextParameters != null;
+        // the actual protocol if present in the remainder part should take precedence
+        String secureProtocol = uri;
+        if (remaining.startsWith("http:") || remaining.startsWith("https:")) {
+            secureProtocol = remaining;
+        }
+        boolean secure = HttpHelper.isSecureConnection(secureProtocol) || sslContextParameters != null;
+
+        // remaining part should be without protocol as that was how this component was originally created
+        remaining = org.apache.camel.component.http.HttpUtil.removeHttpOrHttpsProtocol(remaining);
 
         // need to set scheme on address uri depending on if its secure or not
         String addressUri = (secure ? "https://" : "http://") + remaining;
@@ -351,23 +374,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI uriHttpUriAddress = new URI(addressUri);
 
-        // validate http uri that end-user did not duplicate the http part that can be a common error
-        int pos = uri.indexOf("//");
-        if (pos != -1) {
-            String part = uri.substring(pos + 2);
-            if (part.startsWith("http:") || part.startsWith("https:")) {
-                throw new ResolveEndpointFailedException(
-                        uri,
-                        "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
-            }
-        }
+        // the endpoint uri should use the component name as scheme, so we need to re-create it once more
+        String scheme = StringHelper.before(uri, "://");
+
+        // uri part should be without protocol as that was how this component was originally created
+        uri = org.apache.camel.component.http.HttpUtil.removeHttpOrHttpsProtocol(uri);
 
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure);
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, httpClientParameters);
 
-        // the endpoint uri should use the component name as scheme, so we need to re-create it once more
-        String scheme = StringHelper.before(uri, "://");
         endpointUri = URISupport.createRemainingURI(
                 new URI(
                         scheme,
@@ -608,11 +624,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             }
         }
 
-        // get the endpoint
-        String query = URISupport.createQueryString(map);
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
+        url = HttpUtil.recreateUrl(map, url);
 
         parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();
 
@@ -624,8 +636,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HttpEndpoint endpoint = (HttpEndpoint) camelContext.getEndpoint(url, parameters);
 
         String path = uriTemplate != null ? uriTemplate : basePath;
-        endpoint.setHeaderFilterStrategy(new HttpRestHeaderFilterStrategy(path, queryParameters));
 
+        HeaderFilterStrategy headerFilterStrategy
+                = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        } else {
+            endpoint.setHeaderFilterStrategy(new HttpRestHeaderFilterStrategy(path, queryParameters));
+        }
         // the endpoint must be started before creating the producer
         ServiceHelper.startService(endpoint);
 

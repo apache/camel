@@ -69,7 +69,6 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
             final Object body = exchange.getIn().getMandatoryBody();
             // using Solver Manager :: Optaplanner creates the Solver under the hood
             final SolverManager solverManager = getSolverManager(exchange);
-            final String solverId = getSolverId(exchange);
 
             Long problemId = endpoint.getConfiguration().getProblemId();
             LOGGER.debug("Asynchronously solving problem: [{}] with id [{}]", body, problemId);
@@ -115,15 +114,6 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
             throws InterruptedException, ExecutionException {
         exchange.getIn().setBody(solverJob.getFinalBestSolution());
         exchange.getIn().setHeader(OptaPlannerConstants.IS_SOLVING, false);
-    }
-
-    private String getSolverId(Exchange exchange) {
-        String solverId = exchange.getIn().getHeader(OptaPlannerConstants.SOLVER_ID, String.class);
-        if (solverId == null) {
-            solverId = configuration.getSolverId();
-        }
-        LOGGER.debug("SolverId: [{}]", solverId);
-        return solverId;
     }
 
     private boolean isAsync(Exchange exchange) {

@@ -57,10 +57,14 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "createLeaseContainerIfNotExists": getOrCreateConfiguration(target).setCreateLeaseContainerIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "createleasedatabaseifnotexists":
         case "createLeaseDatabaseIfNotExists": getOrCreateConfiguration(target).setCreateLeaseDatabaseIfNotExists(property(camelContext, boolean.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.cosmosdb.CredentialType.class, value)); return true;
         case "databaseendpoint":
         case "databaseEndpoint": getOrCreateConfiguration(target).setDatabaseEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "hostname":
         case "hostName": getOrCreateConfiguration(target).setHostName(property(camelContext, java.lang.String.class, value)); return true;
+        case "indexingpolicy":
+        case "indexingPolicy": getOrCreateConfiguration(target).setIndexingPolicy(property(camelContext, com.azure.cosmos.models.IndexingPolicy.class, value)); return true;
         case "itemid":
         case "itemId": getOrCreateConfiguration(target).setItemId(property(camelContext, java.lang.String.class, value)); return true;
         case "itempartitionkey":
@@ -83,8 +87,6 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "readRequestsFallbackEnabled": getOrCreateConfiguration(target).setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         case "throughputproperties":
         case "throughputProperties": getOrCreateConfiguration(target).setThroughputProperties(property(camelContext, com.azure.cosmos.models.ThroughputProperties.class, value)); return true;
-        case "usedefaultidentity":
-        case "useDefaultIdentity": getOrCreateConfiguration(target).setUseDefaultIdentity(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -126,10 +128,14 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "createLeaseContainerIfNotExists": return boolean.class;
         case "createleasedatabaseifnotexists":
         case "createLeaseDatabaseIfNotExists": return boolean.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.cosmosdb.CredentialType.class;
         case "databaseendpoint":
         case "databaseEndpoint": return java.lang.String.class;
         case "hostname":
         case "hostName": return java.lang.String.class;
+        case "indexingpolicy":
+        case "indexingPolicy": return com.azure.cosmos.models.IndexingPolicy.class;
         case "itemid":
         case "itemId": return java.lang.String.class;
         case "itempartitionkey":
@@ -152,8 +158,6 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "readRequestsFallbackEnabled": return boolean.class;
         case "throughputproperties":
         case "throughputProperties": return com.azure.cosmos.models.ThroughputProperties.class;
-        case "usedefaultidentity":
-        case "useDefaultIdentity": return boolean.class;
         default: return null;
         }
     }
@@ -191,10 +195,14 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "createLeaseContainerIfNotExists": return getOrCreateConfiguration(target).isCreateLeaseContainerIfNotExists();
         case "createleasedatabaseifnotexists":
         case "createLeaseDatabaseIfNotExists": return getOrCreateConfiguration(target).isCreateLeaseDatabaseIfNotExists();
+        case "credentialtype":
+        case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "databaseendpoint":
         case "databaseEndpoint": return getOrCreateConfiguration(target).getDatabaseEndpoint();
         case "hostname":
         case "hostName": return getOrCreateConfiguration(target).getHostName();
+        case "indexingpolicy":
+        case "indexingPolicy": return getOrCreateConfiguration(target).getIndexingPolicy();
         case "itemid":
         case "itemId": return getOrCreateConfiguration(target).getItemId();
         case "itempartitionkey":
@@ -217,8 +225,6 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "readRequestsFallbackEnabled": return getOrCreateConfiguration(target).isReadRequestsFallbackEnabled();
         case "throughputproperties":
         case "throughputProperties": return getOrCreateConfiguration(target).getThroughputProperties();
-        case "usedefaultidentity":
-        case "useDefaultIdentity": return getOrCreateConfiguration(target).isUseDefaultIdentity();
         default: return null;
         }
     }

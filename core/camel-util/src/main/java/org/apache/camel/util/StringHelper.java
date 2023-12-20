@@ -390,7 +390,7 @@ public final class StringHelper {
         final int size = count;
         final String text = value;
 
-        return new Iterator<String>() {
+        return new Iterator<>() {
             int i;
             int pos;
 
@@ -1212,6 +1212,18 @@ public final class StringHelper {
             }
         }
         return true;
+    }
+
+    public static String bytesToHex(byte[] hash) {
+        StringBuilder sb = new StringBuilder(2 * hash.length);
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
     }
 
 }

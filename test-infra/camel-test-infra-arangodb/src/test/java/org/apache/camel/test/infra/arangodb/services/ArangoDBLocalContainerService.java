@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.arangodb.services;
 
 import org.apache.camel.test.infra.arangodb.common.ArangoDBProperties;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class ArangoDBLocalContainerService implements ArangoDBService, Container
     private final ArangoDbContainer container;
 
     public ArangoDBLocalContainerService() {
-        this(System.getProperty(ArangoDBProperties.ARANGODB_CONTAINER, ArangoDbContainer.ARANGO_IMAGE));
+        this(LocalPropertyResolver.getProperty(ArangoDBLocalContainerService.class, ArangoDBProperties.ARANGODB_CONTAINER));
     }
 
     public ArangoDBLocalContainerService(String imageName) {

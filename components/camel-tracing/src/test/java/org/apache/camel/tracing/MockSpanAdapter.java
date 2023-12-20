@@ -44,21 +44,25 @@ public class MockSpanAdapter implements SpanAdapter {
     @Override
     public void setComponent(String component) {
         this.tags.put(Tag.COMPONENT.name(), component);
+        this.tags.put(TagConstants.COMPONENT, component);
     }
 
     @Override
     public void setError(boolean error) {
         this.tags.put(Tag.ERROR.name(), error);
+        this.tags.put(TagConstants.ERROR, error);
     }
 
     @Override
     public void setTag(Tag key, String value) {
         this.tags.put(key.name(), value);
+        this.tags.put(key.getAttribute(), value);
     }
 
     @Override
     public void setTag(Tag key, Number value) {
         this.tags.put(key.name(), value);
+        this.tags.put(key.getAttribute(), value);
     }
 
     @Override

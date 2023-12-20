@@ -476,6 +476,34 @@ public final class IOHelper {
     }
 
     /**
+     * Loads the entire stream into memory as a String and returns the given line number.
+     * <p/>
+     * Warning, don't use for crazy big streams :)
+     */
+    public static String loadTextLine(InputStream in, int lineNumber) throws IOException {
+        int i = 0;
+        InputStreamReader isr = new InputStreamReader(in);
+        try {
+            BufferedReader reader = buffered(isr);
+            while (true) {
+                String line = reader.readLine();
+                if (line != null) {
+                    i++;
+                    if (i >= lineNumber) {
+                        return line;
+                    }
+                } else {
+                    break;
+                }
+            }
+        } finally {
+            close(isr, in);
+        }
+
+        return null;
+    }
+
+    /**
      * Appends the text to the file.
      */
     public static void appendText(String text, File file) throws IOException {
@@ -749,7 +777,7 @@ public final class IOHelper {
      *
      * @param  path            the path of the file to read
      * @param  commentPrefix   the leading character sequence of comment lines.
-     * @param  stripEmptylines if true {@code true} the lines matching {@link String#isBlank()} will not appear in the
+     * @param  stripBlankLines if true {@code true} the lines matching {@link String#isBlank()} will not appear in the
      *                         result
      * @return                 the filtered content of the file
      */
@@ -757,11 +785,11 @@ public final class IOHelper {
         StringBuilder result = new StringBuilder();
         try (Stream<String> lines = Files.lines(path)) {
             lines
-                    .filter(l -> !l.isBlank())
+                    .filter(l -> stripBlankLines ? !l.isBlank() : true)
                     .filter(line -> !line.startsWith(commentPrefix))
                     .forEach(line -> result.append(line).append('\n'));
         } catch (IOException e) {
-            throw new RuntimeException("Could not read " + path, e);
+            throw new RuntimeException("Cannot read file: " + path, e);
         }
         return result.toString();
     }

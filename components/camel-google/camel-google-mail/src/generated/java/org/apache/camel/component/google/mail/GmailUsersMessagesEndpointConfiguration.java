@@ -32,7 +32,7 @@ public final class GmailUsersMessagesEndpointConfiguration extends GoogleMailCon
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the message to delete"), @ApiMethod(methodName = "get", description="The ID of the message to retrieve. This ID is usually retrieved using messages.list. The ID is also contained in the result when a message is inserted (messages.insert) or imported (messages.import)."), @ApiMethod(methodName = "modify", description="The ID of the message to modify"), @ApiMethod(methodName = "trash", description="The ID of the message to Trash"), @ApiMethod(methodName = "untrash", description="The ID of the message to remove from Trash")})
     private String id;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "gmailImport", description="The media HTTP content or null if none"), @ApiMethod(methodName = "insert", description="The media HTTP content or null if none"), @ApiMethod(methodName = "send", description="The media HTTP content or null if none")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "gmailImport", description="The media HTTP content"), @ApiMethod(methodName = "insert", description="The media HTTP content"), @ApiMethod(methodName = "send", description="The media HTTP content")})
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "modify", description="The com.google.api.services.gmail.model.ModifyMessageRequest")})

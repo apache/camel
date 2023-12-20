@@ -18,21 +18,8 @@ package org.apache.camel.openapi;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,10 +32,12 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BinarySchema;
+import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ByteArraySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.DateSchema;
@@ -93,6 +82,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +134,10 @@ public class RestOpenApiReader {
             String camelContextId, ClassResolver classResolver)
             throws ClassNotFoundException {
 
-        OpenAPI openApi = new OpenAPI();
+        OpenAPI openApi = config.isOpenApi31() ? new OpenAPI(SpecVersion.V31) : new OpenAPI();
+        if (config.getVersion() != null) {
+            openApi.setOpenapi(config.getVersion());
+        }
 
         for (RestDefinition rest : rests) {
             Boolean disabled = CamelContextHelper.parseBoolean(camelContext, rest.getDisabled());
@@ -170,7 +163,11 @@ public class RestOpenApiReader {
             openApi.setTags(new ArrayList<>(
                     openApi.getTags()
                             .stream()
-                            .collect(Collectors.toMap(Tag::getName, Function.identity(), (prev, current) -> prev))
+                            .collect(Collectors.toMap(
+                                    Tag::getName,
+                                    Function.identity(),
+                                    (prev, current) -> prev,
+                                    LinkedHashMap::new))
                             .values()));
         }
 
@@ -181,7 +178,7 @@ public class RestOpenApiReader {
     }
 
     private void checkCompatOpenApi2(OpenAPI openApi, BeanConfig config) {
-        if (!config.isOpenApi3()) {
+        if (config.isOpenApi2()) {
             // Verify that the OpenAPI 3 model can be downgraded to OpenApi 2
             OpenAPI3to2 converter = new OpenAPI3to2();
             converter.convertOpenAPI3to2(openApi);
@@ -262,7 +259,7 @@ public class RestOpenApiReader {
         // use annotation scanner to find models (annotated classes)
         for (String type : types) {
             Class<?> clazz = classResolver.resolveMandatoryClass(type);
-            appendModels(clazz, openApi);
+            appendModels(clazz, openApi, config.isOpenApi31());
         }
 
         doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTags, config);
@@ -272,7 +269,7 @@ public class RestOpenApiReader {
         securityRequirements.forEach(requirement -> {
             SecurityRequirement oasRequirement = new SecurityRequirement();
             List<String> scopes;
-            if (requirement.getScopes() == null || requirement.getScopes().trim().isEmpty()) {
+            if (requirement.getScopes() == null || requirement.getScopes().isBlank()) {
                 scopes = Collections.emptyList();
             } else {
                 scopes = Arrays.asList(requirement.getScopes().trim().split("\\s*,\\s*"));
@@ -501,7 +498,11 @@ public class RestOpenApiReader {
                     final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
                     if (param.getDataType() != null) {
                         parameter.setSchema(schema);
-                        schema.setType(getValue(camelContext, param.getDataType()));
+                        String type = getValue(camelContext, param.getDataType());
+                        schema.setType(type);
+                        if (openApi.getSpecVersion().equals(SpecVersion.V31)) {
+                            schema.addType(type);
+                        }
                         if (param.getDataFormat() != null) {
                             schema.setFormat(getValue(camelContext, param.getDataFormat()));
                         }
@@ -678,7 +679,8 @@ public class RestOpenApiReader {
             } else {
                 convertAndSetItemsEnum(parameterSchema, allowableValues, type);
             }
-        } else if (Objects.equals(parameterSchema.getType(), "array")) {
+        }
+        if (Objects.equals(parameterSchema.getType(), "array")) {
 
             Schema<?> itemsSchema;
 
@@ -690,11 +692,13 @@ public class RestOpenApiReader {
                 itemsSchema = new NumberSchema().format("float");
             } else if (Double.class.equals(type)) {
                 itemsSchema = new NumberSchema().format("double");
+            } else if (Boolean.class.equals(type)) {
+                itemsSchema = new BooleanSchema();
             } else if (ByteArraySchema.class.equals(type)) {
                 itemsSchema = new ByteArraySchema();
             } else if (BinarySchema.class.equals(type)) {
                 itemsSchema = new BinarySchema();
-            } else if (Date.class.equals(type)) {
+            } else if (DateSchema.class.equals(type)) {
                 itemsSchema = new DateSchema();
             } else if (DateTimeSchema.class.equals(type)) {
                 itemsSchema = new DateTimeSchema();
@@ -712,13 +716,26 @@ public class RestOpenApiReader {
             final Schema items, final List<String> allowableValues,
             final Class<?> type) {
         try {
-            final MethodHandle valueOf = publicLookup().findStatic(type, "valueOf",
-                    MethodType.methodType(type, String.class));
+            final MethodHandle valueOf = ClassUtils.isPrimitiveWrapper(type)
+                    ? publicLookup().findStatic(type, "valueOf", MethodType.methodType(type, String.class)) : null;
             final MethodHandle setEnum = publicLookup().bind(items, "setEnum",
                     MethodType.methodType(void.class, List.class));
+            final Method castSchema
+                    = type.getSuperclass().equals(Schema.class) ? type.getDeclaredMethod("cast", Object.class) : null;
+            if (castSchema != null) {
+                castSchema.setAccessible(true);
+            }
+            final Object schema = castSchema != null ? type.getDeclaredConstructor().newInstance() : null;
+
             final List<?> values = allowableValues.stream().map(v -> {
                 try {
-                    return valueOf.invoke(v);
+                    if (valueOf != null) {
+                        return valueOf.invoke(v);
+                    } else if (castSchema != null) {
+                        return castSchema.invoke(schema, v);
+                    } else {
+                        throw new RuntimeException("Can not convert allowable value " + v);
+                    }
                 } catch (RuntimeException e) {
                     throw e;
                 } catch (Throwable e) {
@@ -744,7 +761,7 @@ public class RestOpenApiReader {
 
         // must include an empty noop response if none exists
         if (op.getResponses().isEmpty()) {
-            op.getResponses().setDefault(new ApiResponse());
+            op.getResponses().addApiResponse(ApiResponses.DEFAULT, new ApiResponse());
         }
     }
 
@@ -947,8 +964,8 @@ public class RestOpenApiReader {
      * @param clazz   the class such as pojo with openApi annotation
      * @param openApi the openApi model
      */
-    private void appendModels(Class<?> clazz, OpenAPI openApi) {
-        RestModelConverters converters = new RestModelConverters();
+    private void appendModels(Class<?> clazz, OpenAPI openApi, boolean openapi31) {
+        RestModelConverters converters = new RestModelConverters(openapi31);
         List<? extends Schema<?>> models = converters.readClass(openApi, clazz);
         if (models == null) {
             return;
@@ -1066,7 +1083,7 @@ public class RestOpenApiReader {
                 Parameter parameter, Operation operation, ApiDescription api,
                 Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
             if (parameter.getContent() != null) {
-                processRefsInContent(parameter.getContent());
+                processRefsInContent(parameter.getContent(), params, cookies, headers);
             }
             return Optional.of(parameter);
         }
@@ -1076,7 +1093,7 @@ public class RestOpenApiReader {
                 RequestBody requestBody, Operation operation, ApiDescription api,
                 Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
             if (requestBody.getContent() != null) {
-                processRefsInContent(requestBody.getContent());
+                processRefsInContent(requestBody.getContent(), params, cookies, headers);
             }
             return Optional.of(requestBody);
         }
@@ -1086,7 +1103,7 @@ public class RestOpenApiReader {
                 ApiResponse response, Operation operation, ApiDescription api,
                 Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
             if (response.getContent() != null) {
-                processRefsInContent(response.getContent());
+                processRefsInContent(response.getContent(), params, cookies, headers);
             }
             return Optional.of(response);
         }
@@ -1135,10 +1152,12 @@ public class RestOpenApiReader {
             return Optional.of(schema);
         }
 
-        private void processRefsInContent(Content content) {
+        private void processRefsInContent(
+                Content content, Map<String, List<String>> params,
+                Map<String, String> cookies, Map<String, List<String>> headers) {
             for (MediaType media : content.values()) {
-                if (media.getSchema() != null && media.getSchema().get$ref() != null) {
-                    media.getSchema().set$ref(fixSchemaReference(media.getSchema().get$ref(), OAS30_SCHEMA_DEFINITION_PREFIX));
+                if (media.getSchema() != null) {
+                    filterSchema(media.getSchema(), params, cookies, headers);
                 }
             }
         }

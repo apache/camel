@@ -25,7 +25,8 @@ import org.apache.camel.openapi.model.AllOfFormWrapper;
 import org.apache.camel.openapi.model.AnyOfFormWrapper;
 import org.apache.camel.openapi.model.OneOfFormWrapper;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,8 +96,9 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         };
     }
 
-    @Test
-    public void testReaderReadOneOf() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.0", "3.1" })
+    public void testReaderReadOneOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
@@ -104,17 +106,15 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("https://www.apache.org/licenses/LICENSE-2.0.html");
+        config.setVersion(version);
 
         RestOpenApiReader reader = new RestOpenApiReader();
         OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
-        assertNotNull(openApi);
 
-        String json = io.swagger.v3.core.util.Json.pretty(openApi);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         LOG.info(json);
-
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
         assertTrue(json.contains(
@@ -122,8 +122,13 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         assertTrue(json.contains(
                 "\"XOfFormB\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"x\" : { \"type\" : \"integer\", \"format\" : \"int32\" }, \"y\" : { \"type\" : \"string\" } },"));
 
-        assertTrue(json.contains(
-                "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"$ref\" : \"#/components/schemas/OneOfForm\" } },"));
+        if (config.isOpenApi30()) {
+            assertTrue(json.contains(
+                    "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"$ref\" : \"#/components/schemas/OneOfForm\" } },"));
+        } else if (config.isOpenApi31()) {
+            assertTrue(json.contains(
+                    "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : { \"a-123\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormA\", \"b-456\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormB\" } }, \"oneOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ], \"x-className\" : { \"format\" : \"org.apache.camel.openapi.model.OneOfForm\", \"type\" : \"string\" } } }, \"x-className\" : { \"format\" : \"org.apache.camel.openapi.model.OneOfFormWrapper\", \"type\" : \"string\" } }"));
+        }
         assertTrue(json.contains(
                 "\"OneOfForm\" : { \"type\" : \"object\", " +
                                  "\"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : " +
@@ -134,8 +139,9 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         context.stop();
     }
 
-    @Test
-    public void testReaderReadAllOf() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.0", "3.1" })
+    public void testReaderReadAllOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
@@ -143,15 +149,14 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("https://www.apache.org/licenses/LICENSE-2.0.html");
+        config.setVersion(version);
 
         RestOpenApiReader reader = new RestOpenApiReader();
         OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
-        assertNotNull(openApi);
 
-        String json = io.swagger.v3.core.util.Json.pretty(openApi);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         LOG.info(json);
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
@@ -163,8 +168,9 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         context.stop();
     }
 
-    @Test
-    public void testReaderReadAnyOf() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.0", "3.1" })
+    public void testReaderReadAnyOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
@@ -172,6 +178,7 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("https://www.apache.org/licenses/LICENSE-2.0.html");
+        config.setVersion(version);
 
         RestOpenApiReader reader = new RestOpenApiReader();
         OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
@@ -179,8 +186,7 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         assertNotNull(openApi);
         assertNotNull(openApi);
 
-        String json = io.swagger.v3.core.util.Json.pretty(openApi);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         LOG.info(json);
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 

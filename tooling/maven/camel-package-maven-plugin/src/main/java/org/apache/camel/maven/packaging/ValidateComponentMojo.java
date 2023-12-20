@@ -19,7 +19,6 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.tooling.util.PackageHelper;
@@ -74,7 +73,7 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
         } else {
             List<Path> jsonFiles;
             try (Stream<Path> stream = PackageHelper.findJsonFiles(outDir.toPath())) {
-                jsonFiles = stream.collect(Collectors.toList());
+                jsonFiles = stream.toList();
             }
             boolean failed = false;
 

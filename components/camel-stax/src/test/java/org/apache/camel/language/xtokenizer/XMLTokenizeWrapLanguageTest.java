@@ -21,143 +21,149 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.xmlunit.assertj3.XmlAssert;
 
 public class XMLTokenizeWrapLanguageTest extends CamelTestSupport {
 
     @Test
     public void testSendClosedTagMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'></c:child></c:parent>",
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='b' anotherAttr='b'></c:child></c:parent>");
+        String[] expected = new String[] {
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'></c:child></c:parent>",
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='b' anotherAttr='b'></c:child></c:parent>" };
 
         template
                 .sendBody("direct:start",
                         "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'></c:child></c:parent>");
 
-        MockEndpoint.assertIsSatisfied(context);
+        verify(expected);
     }
 
     @Test
     public void testSendClosedTagWithLineBreaksMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<?xml version='1.0' encoding='UTF-8'?>\n<c:parent xmlns:c='urn:c'>\n<c:child some_attr='a' anotherAttr='a'>\n</c:child></c:parent>",
-                        "<?xml version='1.0' encoding='UTF-8'?>\n<c:parent xmlns:c='urn:c'>\n<c:child some_attr='b' anotherAttr='b'>\n</c:child></c:parent>");
+        String[] expected = new String[] {
+                "<?xml version='1.0' encoding='UTF-8'?>\n<c:parent xmlns:c='urn:c'>\n<c:child some_attr='a' anotherAttr='a'>\n</c:child></c:parent>",
+                "<?xml version='1.0' encoding='UTF-8'?>\n<c:parent xmlns:c='urn:c'>\n<c:child some_attr='b' anotherAttr='b'>\n</c:child></c:parent>" };
 
         template.sendBody("direct:start",
                 "<?xml version='1.0' encoding='UTF-8'?>\n" + "<c:parent xmlns:c='urn:c'>\n"
                                           + "<c:child some_attr='a' anotherAttr='a'>\n" + "</c:child>\n"
                                           + "<c:child some_attr='b' anotherAttr='b'>\n" + "</c:child>\n" + "</c:parent>");
 
-        MockEndpoint.assertIsSatisfied(context);
+        verify(expected);
     }
 
     @Test
     public void testSendSelfClosingTagMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a' /></c:parent>",
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='b' anotherAttr='b' /></c:parent>");
+        String[] expected = new String[] {
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a' /></c:parent>",
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='b' anotherAttr='b' /></c:parent>" };
 
         template
                 .sendBody("direct:start",
                         "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a' /><c:child some_attr='b' anotherAttr='b' /></c:parent>");
 
-        MockEndpoint.assertIsSatisfied(context);
+        verify(expected);
     }
 
     @Test
     public void testSendMixedClosingTagMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child></c:parent>",
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='b' anotherAttr='b' /></c:parent>",
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='c'></c:child></c:parent>");
+        String[] expected = new String[] {
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child></c:parent>",
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='b' anotherAttr='b' /></c:parent>",
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='c'></c:child></c:parent>" };
 
         template.sendBody(
                 "direct:start",
                 "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child>"
                                 + "<c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
 
-        MockEndpoint.assertIsSatisfied(context);
+        verify(expected);
     }
 
     @Test
     public void testSendMixedClosingTagInsideMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<c:parent xmlns:c='urn:c'><c:child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child></c:parent>",
-                        "<c:parent xmlns:c='urn:c'><c:child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></c:parent>");
+        String[] expected = new String[] {
+                "<c:parent xmlns:c='urn:c'><c:child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child></c:parent>",
+                "<c:parent xmlns:c='urn:c'><c:child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></c:parent>" };
 
         template.sendBody(
                 "direct:start",
                 "<c:parent xmlns:c='urn:c'><c:child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child>"
                                 + "<c:child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></c:parent>");
 
-        MockEndpoint.assertIsSatisfied(context);
+        verify(expected);
     }
 
     @Test
     public void testSendNamespacedChildMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child></c:parent>",
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
+        String[] expected = new String[] {
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child></c:parent>",
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>" };
 
         template.sendBody("direct:start",
                 "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child>"
                                           + "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
 
-        MockEndpoint.assertIsSatisfied(context);
+        verify(expected);
     }
 
     @Test
     public void testSendNamespacedParentMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child></c:parent>",
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='b' anotherAttr='b'/></c:parent>");
+        String[] expected = new String[] {
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child></c:parent>",
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='b' anotherAttr='b'/></c:parent>" };
 
         template
                 .sendBody("direct:start",
                         "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent>");
 
-        MockEndpoint.assertIsSatisfied(context);
+        verify(expected);
     }
 
     @Test
     public void testSendMoreParentsMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                        + "<c:child some_attr='a' anotherAttr='a'></c:child></c:parent></grandparent></g:greatgrandparent>",
-                        "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                                             + "<c:child some_attr='b' anotherAttr='b'/></c:parent></grandparent></g:greatgrandparent>");
+        String[] expected = new String[] {
+                "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                           + "<c:child some_attr='a' anotherAttr='a'></c:child></c:parent></grandparent></g:greatgrandparent>",
+                "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                                                                                                                                + "<c:child some_attr='b' anotherAttr='b'/></c:parent></grandparent></g:greatgrandparent>" };
 
         template
                 .sendBody("direct:start",
                         "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
                                           + "<c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent></grandparent></g:greatgrandparent>");
 
-        MockEndpoint.assertIsSatisfied(context);
+        verify(expected);
     }
 
     @Test
     public void testSendParentMessagesWithDifferentAttributesToTokenize() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(
-                        "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='e' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                        + "<c:child some_attr='a' anotherAttr='a'></c:child></c:parent></g:grandparent>",
-                        "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='f' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                          + "<c:child some_attr='b' anotherAttr='b'/></c:parent></g:grandparent>");
+        String[] expected = new String[] {
+                "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='e' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                           + "<c:child some_attr='a' anotherAttr='a'></c:child></c:parent></g:grandparent>",
+                "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='f' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                                                                                                             + "<c:child some_attr='b' anotherAttr='b'/></c:parent></g:grandparent>" };
 
         template
                 .sendBody("direct:start",
                         "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='e' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
                                           + "<c:child some_attr='a' anotherAttr='a'></c:child></c:parent><c:parent name='f' xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='b' anotherAttr='b'/>"
                                           + "</c:parent></g:grandparent>");
+
+        verify(expected);
+    }
+
+    private void verify(String... expected) throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(expected.length);
+
         MockEndpoint.assertIsSatisfied(context);
+
+        int i = 0;
+        for (String target : expected) {
+            String body = getMockEndpoint("mock:result").getReceivedExchanges().get(i).getMessage().getBody(String.class);
+            XmlAssert.assertThat(body).and(target).areIdentical();
+            i++;
+        }
     }
 
     @Override

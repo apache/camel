@@ -402,6 +402,6 @@ And in YAML DSL:
 
 See these examples:
 
-- https://github.com/apache/camel-examples/tree/main/examples/routes-configuration[camel-examples/examples/routes-configuration]
+- https://github.com/apache/camel-examples/tree/main/routes-configuration[camel-examples/examples/routes-configuration]
 - https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[camel-spring-boot-examples/routes-configuration/]
 

@@ -33,15 +33,33 @@ import org.slf4j.LoggerFactory;
  * maximum number of messages has been processed.
  */
 public class MainDurationEventNotifier extends EventNotifierSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(MainDurationEventNotifier.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainLifecycleStrategy.class);
+    private enum Action {
+        SHUTDOWN,
+        STOP;
+
+        static Action toAction(String action) {
+            if ("shutdown".equals(action)) {
+                return SHUTDOWN;
+            }
+
+            if ("stop".equals(action)) {
+                return STOP;
+            }
+
+            LOG.warn("Invalid action: {}. Main execution will be aborted during initialization", action);
+            return null;
+        }
+    }
+
     private final CamelContext camelContext;
     private final int maxMessages;
     private final long maxIdleSeconds;
     private final MainShutdownStrategy shutdownStrategy;
     private final boolean stopCamelContext;
     private final boolean restartDuration;
-    private final String action;
+    private final Action action;
     private final LongAdder doneMessages;
     private volatile StopWatch watch;
     private volatile ScheduledExecutorService idleExecutorService;
@@ -55,7 +73,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         this.shutdownStrategy = shutdownStrategy;
         this.stopCamelContext = stopCamelContext;
         this.restartDuration = restartDuration;
-        this.action = action.toLowerCase();
+        this.action = Action.toAction(action);
         this.doneMessages = new LongAdder();
 
         if (maxMessages == 0 && maxIdleSeconds == 0) {
@@ -79,17 +97,8 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             return;
         }
 
-        final boolean reloaded = event.getType() == CamelEvent.Type.RouteReloaded;
-
-        if (reloaded) {
-            if (restartDuration) {
-                LOG.debug("Routes reloaded. Resetting maxMessages/maxIdleSeconds/maxSeconds");
-                shutdownStrategy.restartAwait();
-                doneMessages.reset();
-                if (watch != null) {
-                    watch.restart();
-                }
-            }
+        if (event.getType() == CamelEvent.Type.RouteReloaded) {
+            resetOnReload();
             return;
         }
 
@@ -108,30 +117,49 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
                 }
 
                 if (result && shutdownStrategy.isRunAllowed()) {
-                    if ("shutdown".equalsIgnoreCase(action)) {
-                        LOG.info("Duration max messages triggering shutdown of the JVM");
-                        // use thread to shut down Camel as otherwise we would block current thread
-                        camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask)
-                                .start();
-                    } else if ("stop".equalsIgnoreCase(action)) {
-                        LOG.info("Duration max messages triggering stopping all routes");
-                        // use thread to stop routes as otherwise we would block current thread
-                        camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::stopTask)
-                                .start();
-                    }
+                    triggerDoneEvent();
                 }
             }
         }
 
         // idle reacts on both incoming and complete messages
         if (maxIdleSeconds > 0) {
-            final boolean begin = event.getType() == CamelEvent.Type.ExchangeCreated;
+            resetOnActivity(event, complete);
+        }
+    }
 
-            if (begin || complete) {
-                if (watch != null) {
-                    LOG.trace("Message activity so restarting stop watch");
-                    watch.restart();
-                }
+    private void triggerDoneEvent() {
+        if (action == Action.SHUTDOWN) {
+            LOG.info("Duration max messages triggering shutdown of the JVM");
+            // use thread to shut down Camel as otherwise we would block current thread
+            camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask)
+                    .start();
+        } else if (action == Action.STOP) {
+            LOG.info("Duration max messages triggering stopping all routes");
+            // use thread to stop routes as otherwise we would block current thread
+            camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::stopTask)
+                    .start();
+        }
+    }
+
+    private void resetOnActivity(CamelEvent event, boolean complete) {
+        final boolean created = event.getType() == CamelEvent.Type.ExchangeCreated;
+
+        if (created || complete) {
+            if (watch != null) {
+                LOG.trace("Message activity so restarting stop watch");
+                watch.restart();
+            }
+        }
+    }
+
+    private void resetOnReload() {
+        if (restartDuration) {
+            LOG.debug("Routes reloaded. Resetting maxMessages/maxIdleSeconds/maxSeconds");
+            shutdownStrategy.restartAwait();
+            doneMessages.reset();
+            if (watch != null) {
+                watch.restart();
             }
         }
     }
@@ -151,7 +179,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (!action.equals("shutdown") && !action.equals("stop")) {
+        if (action == null) {
             throw new IllegalArgumentException("Unknown action: " + action);
         }
     }
@@ -228,15 +256,19 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         LOG.trace("Duration max idle check {} >= {} -> {}", seconds, maxIdleSeconds, result);
 
         if (result && shutdownStrategy.isRunAllowed()) {
-            if ("shutdown".equals(action)) {
-                LOG.info("Duration max idle triggering shutdown of the JVM");
-                // use thread to stop Camel as otherwise we would block current thread
-                camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask).start();
-            } else if ("stop".equals(action)) {
-                LOG.info("Duration max idle triggering stopping all routes");
-                // use thread to stop Camel as otherwise we would block current thread
-                camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::stopTask).start();
-            }
+            triggerIdleEvent();
+        }
+    }
+
+    private void triggerIdleEvent() {
+        if (action == Action.SHUTDOWN) {
+            LOG.info("Duration max idle triggering shutdown of the JVM");
+            // use thread to stop Camel as otherwise we would block current thread
+            camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask).start();
+        } else if (action == Action.STOP) {
+            LOG.info("Duration max idle triggering stopping all routes");
+            // use thread to stop Camel as otherwise we would block current thread
+            camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::stopTask).start();
         }
     }
 }

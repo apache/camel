@@ -394,7 +394,7 @@ public interface StitchEndpointBuilderFactory {
          * @return the name of the header {@code StitchTableName}.
          */
         public String stitchTableName() {
-            return "StitchTableName";
+            return "CamelStitchTableName";
         }
 
         /**
@@ -407,7 +407,7 @@ public interface StitchEndpointBuilderFactory {
          * @return the name of the header {@code StitchSchema}.
          */
         public String stitchSchema() {
-            return "StitchSchema";
+            return "CamelStitchSchema";
         }
 
         /**
@@ -423,7 +423,7 @@ public interface StitchEndpointBuilderFactory {
          * @return the name of the header {@code StitchKeyNames}.
          */
         public String stitchKeyNames() {
-            return "StitchKeyNames";
+            return "CamelStitchKeyNames";
         }
 
         /**
@@ -436,7 +436,7 @@ public interface StitchEndpointBuilderFactory {
          * @return the name of the header {@code StitchCode}.
          */
         public String stitchCode() {
-            return "StitchCode";
+            return "CamelStitchCode";
         }
 
         /**
@@ -449,7 +449,7 @@ public interface StitchEndpointBuilderFactory {
          * @return the name of the header {@code StitchHeaders}.
          */
         public String stitchHeaders() {
-            return "StitchHeaders";
+            return "CamelStitchHeaders";
         }
 
         /**
@@ -463,7 +463,7 @@ public interface StitchEndpointBuilderFactory {
          * @return the name of the header {@code StitchStatus}.
          */
         public String stitchStatus() {
-            return "StitchStatus";
+            return "CamelStitchStatus";
         }
     }
     static StitchEndpointBuilder endpointBuilder(

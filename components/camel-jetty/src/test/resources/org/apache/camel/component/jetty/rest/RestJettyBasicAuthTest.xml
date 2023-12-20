@@ -23,20 +23,21 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <bean id="constraint" class="org.eclipse.jetty.util.security.Constraint">
-    <property name="name" value="BASIC"/>
-    <property name="roles" value="admin"/>
-    <property name="authenticate" value="true"/>
+  <bean id="constraintBuilder" class="org.apache.camel.component.jetty.rest.ConstraintBuilder">
+    <constructor-arg value="BASIC"/>
+    <constructor-arg value="admin"/>
   </bean>
 
-  <bean id="constraintMapping" class="org.eclipse.jetty.security.ConstraintMapping">
+  <bean id="constraint" factory-bean="constraintBuilder" factory-method="build"/>
+
+  <bean id="constraintMapping" class="org.eclipse.jetty.ee10.servlet.security.ConstraintMapping">
     <property name="constraint" ref="constraint"/>
     <property name="pathSpec" value="/*"/>
   </bean>
 
   <bean id="myLoginService" class="org.apache.camel.component.jetty.rest.MyLoginService"/>
 
-  <bean id="securityHandler" class="org.eclipse.jetty.security.ConstraintSecurityHandler">
+  <bean id="securityHandler" class="org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler">
     <property name="constraintMappings">
       <list>
         <ref bean="constraintMapping"/>

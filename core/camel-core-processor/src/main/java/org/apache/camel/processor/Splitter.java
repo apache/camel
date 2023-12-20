@@ -193,13 +193,13 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                 this.iterator = ObjectHelper.createIterator(value, delimiter);
             }
 
-            this.copy = copyAndPrepareSubExchange(exchange, true);
+            this.copy = copyAndPrepareSubExchange(exchange);
             this.route = ExchangeHelper.getRoute(exchange);
         }
 
         @Override
         public Iterator<ProcessorExchangePair> iterator() {
-            return new Iterator<ProcessorExchangePair>() {
+            return new Iterator<>() {
                 private final Processor processor = getProcessors().iterator().next();
                 private int index;
                 private boolean closed;
@@ -328,12 +328,10 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         return expression;
     }
 
-    private Exchange copyAndPrepareSubExchange(Exchange exchange, boolean preserveExchangeId) {
+    private Exchange copyAndPrepareSubExchange(Exchange exchange) {
         Exchange answer = processorExchangeFactory.createCopy(exchange);
-        if (preserveExchangeId) {
-            // must preserve exchange id
-            answer.setExchangeId(exchange.getExchangeId());
-        }
+        // must preserve exchange id
+        answer.setExchangeId(exchange.getExchangeId());
         if (exchange.getContext().isMessageHistory()) {
             // we do not want to copy the message history for split sub-messages
             answer.removeProperty(ExchangePropertyKey.MESSAGE_HISTORY);

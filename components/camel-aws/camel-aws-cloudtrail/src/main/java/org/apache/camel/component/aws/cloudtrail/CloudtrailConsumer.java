@@ -44,11 +44,6 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
     protected int poll() throws Exception {
         LookupEventsRequest.Builder eventsRequestBuilder
                 = LookupEventsRequest.builder().maxResults(getEndpoint().getConfiguration().getMaxResults());
@@ -67,6 +62,9 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
         }
 
         LookupEventsResponse response = getClient().lookupEvents(eventsRequestBuilder.build());
+
+        // okay we have some response from aws so lets mark the consumer as ready
+        forceConsumerAsReady();
 
         if (!response.events().isEmpty()) {
             lastTime = response.events().get(0).eventTime();
@@ -88,11 +86,6 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
             processedExchanges++;
         }
         return processedExchanges;
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
     }
 
     private CloudTrailClient getClient() {

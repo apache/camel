@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -98,6 +99,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                             }
                             row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
+                            row.nodePrefixId = o.getString("nodePrefixId");
                             row.processor = o.getString("from");
                             row.source = o.getString("source");
                             row.state = o.getString("state");
@@ -120,17 +122,20 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                                 if (last != null) {
                                     row.delta = last.toString();
                                 }
-                                last = stats.get("sinceLastCreatedExchange");
+                                last = stats.get("lastCreatedExchangeTimestamp");
                                 if (last != null) {
-                                    row.sinceLastStarted = last.toString();
+                                    long time = Long.parseLong(last.toString());
+                                    row.sinceLastStarted = TimeUtils.printSince(time);
                                 }
-                                last = stats.get("sinceLastCompletedExchange");
+                                last = stats.get("lastCompletedExchangeTimestamp");
                                 if (last != null) {
-                                    row.sinceLastCompleted = last.toString();
+                                    long time = Long.parseLong(last.toString());
+                                    row.sinceLastCompleted = TimeUtils.printSince(time);
                                 }
-                                last = stats.get("sinceLastFailedExchange");
+                                last = stats.get("lastFailedExchangeTimestamp");
                                 if (last != null) {
-                                    row.sinceLastFailed = last.toString();
+                                    long time = Long.parseLong(last.toString());
+                                    row.sinceLastFailed = TimeUtils.printSince(time);
                                 }
                             }
 
@@ -170,6 +175,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             row.routeId = route.routeId;
             rows.add(row);
             row.processorId = o.getString("id");
+            row.nodePrefixId = o.getString("nodePrefixId");
             row.processor = o.getString("processor");
             row.level = o.getIntegerOrDefault("level", 0);
             row.source = o.getString("source");
@@ -192,13 +198,15 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 if (last != null) {
                     row.delta = last.toString();
                 }
-                last = stats.get("sinceLastCompletedExchange");
+                last = stats.get("lastCompletedExchangeTimestamp");
                 if (last != null) {
-                    row.sinceLastCompleted = last.toString();
+                    long time = Long.parseLong(last.toString());
+                    row.sinceLastCompleted = TimeUtils.printSince(time);
                 }
-                last = stats.get("sinceLastFailedExchange");
+                last = stats.get("lastFailedExchangeTimestamp");
                 if (last != null) {
-                    row.sinceLastFailed = last.toString();
+                    long time = Long.parseLong(last.toString());
+                    row.sinceLastFailed = TimeUtils.printSince(time);
                 }
             }
             if (source) {
@@ -285,7 +293,14 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         if (source && r.source != null) {
             answer = sourceLocLine(r.source);
         } else {
-            answer = r.processorId != null ? r.processorId : r.routeId;
+            if (r.processorId == null) {
+                answer = r.routeId;
+            } else {
+                answer = r.processorId;
+                if (r.nodePrefixId != null && answer.startsWith(r.nodePrefixId)) {
+                    answer = answer.substring(r.nodePrefixId.length());
+                }
+            }
         }
         return answer;
     }
@@ -316,6 +331,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         String name;
         long uptime;
         String routeId;
+        String nodePrefixId;
         String processorId;
         String processor;
         int level;

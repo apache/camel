@@ -309,7 +309,7 @@ public interface WorkdayEndpointBuilderFactory {
          * @return the name of the header {@code WorkdayURL}.
          */
         public String workdayURL() {
-            return "WorkdayURL";
+            return "CamelWorkdayURL";
         }
     }
     static WorkdayEndpointBuilder endpointBuilder(

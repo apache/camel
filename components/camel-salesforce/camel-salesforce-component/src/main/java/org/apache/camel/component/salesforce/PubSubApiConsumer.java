@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
 import java.util.Map;
 
 import com.salesforce.eventbus.protobuf.ReplayPreset;
@@ -28,17 +27,14 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_REPLAY_ID;
 
 public class PubSubApiConsumer extends DefaultConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PubSubApiConsumer.class);
     private final String topic;
     private final ReplayPreset initialReplayPreset;
-    private final String initialReplayId;
+    private String initialReplayId;
     private final SalesforceEndpoint endpoint;
 
     private final int batchSize;
@@ -46,6 +42,8 @@ public class PubSubApiConsumer extends DefaultConsumer {
     private Class<?> pojoClass;
     private PubSubApiClient pubSubClient;
     private Map<String, Class<?>> eventClassMap;
+
+    private boolean usePlainTextConnection = false;
 
     public PubSubApiConsumer(SalesforceEndpoint endpoint, Processor processor) throws ClassNotFoundException {
         super(endpoint, processor);
@@ -60,14 +58,14 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.deserializeType = endpoint.getConfiguration().getPubSubDeserializeType();
         String pojoClassName = endpoint.getConfiguration().getPubSubPojoClass();
         if (pojoClassName != null) {
-            this.pojoClass = this.getClass().getClassLoader().loadClass(pojoClassName);
+            this.pojoClass = endpoint.getCamelContext().getClassResolver().resolveMandatoryClass(pojoClassName);
         }
     }
 
-    public void processEvent(Object record, String replayId) throws IOException {
+    public void processEvent(Object recordObj, String replayId) {
         final Exchange exchange = createExchange(true);
         final Message in = exchange.getIn();
-        in.setBody(record);
+        in.setBody(recordObj);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);
@@ -86,6 +84,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
                 endpoint.getComponent().getSession(), endpoint.getComponent().getLoginConfig(),
                 endpoint.getComponent().getPubSubHost(), endpoint.getComponent().getPubSubPort(),
                 endpoint.getConfiguration().getBackoffIncrement(), endpoint.getConfiguration().getMaxBackoff());
+        this.pubSubClient.setUsePlainTextConnection(this.usePlainTextConnection);
 
         ServiceHelper.startService(pubSubClient);
         pubSubClient.subscribe(this, initialReplayPreset, initialReplayId);
@@ -115,5 +114,21 @@ public class PubSubApiConsumer extends DefaultConsumer {
 
     public Class<?> getPojoClass() {
         return pojoClass;
+    }
+
+    // ability to use Plain Text (http) for test contexts
+    public void setUsePlainTextConnection(boolean usePlainTextConnection) {
+        this.usePlainTextConnection = usePlainTextConnection;
+    }
+
+
+    /**
+     * This updates the initial replay id. This will only take effect after the route is restarted, and should
+     * generally only be done while the route is stopped.
+     *
+     * @param initialReplayId
+     */
+    public void updateInitialReplayId(String initialReplayId) {
+        this.initialReplayId = initialReplayId;
     }
 }

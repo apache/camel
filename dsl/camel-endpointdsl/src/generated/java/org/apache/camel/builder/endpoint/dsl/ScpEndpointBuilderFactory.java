@@ -94,6 +94,25 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
+         * If provided, then Camel will write a checksum file when the original
+         * file has been written. The checksum file will contain the checksum
+         * created with the provided algorithm for the original file. The
+         * checksum file will always be written in the same folder as the
+         * original file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param checksumFileAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder checksumFileAlgorithm(
+                String checksumFileAlgorithm) {
+            doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
+            return this;
+        }
+        /**
          * Use Expression such as File Language to dynamically set the filename.
          * For consumers, it's used as a filename filter. For producers, it's
          * used to evaluate the filename to write. If an expression is set, it

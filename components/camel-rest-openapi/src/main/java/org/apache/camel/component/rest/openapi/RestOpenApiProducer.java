@@ -16,24 +16,27 @@
  */
 package org.apache.camel.component.rest.openapi;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 public class RestOpenApiProducer extends DelegateAsyncProcessor implements AsyncProducer {
 
     private final Producer delegate;
     private final boolean removeHostHeader;
+    private final RequestValidator requestValidator;
 
-    public RestOpenApiProducer(Producer delegate, boolean removeHostHeader) {
+    public RestOpenApiProducer(Producer delegate, boolean removeHostHeader, RequestValidator requestValidator) {
         super(delegate);
         this.delegate = delegate;
         this.removeHostHeader = removeHostHeader;
+        this.requestValidator = requestValidator;
     }
 
     @Override
@@ -41,15 +44,18 @@ public class RestOpenApiProducer extends DelegateAsyncProcessor implements Async
         if (removeHostHeader) {
             exchange.getMessage().removeHeader("Host");
         }
-        return super.process(exchange, callback);
-    }
 
-    @Override
-    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        if (removeHostHeader) {
-            exchange.getMessage().removeHeader("Host");
+        if (requestValidator != null) {
+            Set<String> validationErrors = requestValidator.validate(exchange);
+            if (!validationErrors.isEmpty()) {
+                RestOpenApiValidationException exception = new RestOpenApiValidationException(validationErrors);
+                exchange.setException(exception);
+                callback.done(true);
+                return true;
+            }
         }
-        return super.processAsync(exchange);
+
+        return super.process(exchange, callback);
     }
 
     @Override

@@ -17,15 +17,16 @@
 package org.apache.camel.component.jetty.rest;
 
 import java.security.Principal;
-
-import jakarta.servlet.ServletRequest;
+import java.util.function.Function;
 
 import javax.security.auth.Subject;
 
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;
 import org.eclipse.jetty.security.LoginService;
-import org.eclipse.jetty.server.UserIdentity;
+import org.eclipse.jetty.security.UserIdentity;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Session;
 
 public class MyLoginService implements LoginService {
 
@@ -37,7 +38,8 @@ public class MyLoginService implements LoginService {
     }
 
     @Override
-    public UserIdentity login(String username, Object password, ServletRequest servletRequest) {
+    public UserIdentity login(
+            String username, Object credentials, Request request, Function<Boolean, Session> getOrCreateSession) {
         if ("donald".equals(username)) {
             Subject subject = new Subject();
             Principal principal = new Principal() {

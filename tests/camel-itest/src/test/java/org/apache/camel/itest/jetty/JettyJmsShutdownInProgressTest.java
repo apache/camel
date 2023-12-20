@@ -60,14 +60,12 @@ public class JettyJmsShutdownInProgressTest {
         Future<String> reply2 = template.asyncRequestBody(URL, "Camel", String.class);
 
         // shutdown camel while in progress, wait 2 sec so the first req has been received in Camel route
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                    JettyJmsShutdownInProgressTest.this.camelContext.stop();
-                } catch (Exception e) {
-                    // ignore
-                }
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                Thread.sleep(2000);
+                JettyJmsShutdownInProgressTest.this.camelContext.stop();
+            } catch (Exception e) {
+                // ignore
             }
         });
 

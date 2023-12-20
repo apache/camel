@@ -39,7 +39,7 @@ import software.amazon.awssdk.utils.AttributeMap;
  * credential set.
  */
 public class Sqs2ClientIAMProfileOptimizedImpl implements Sqs2InternalClient {
-    private static final Logger LOG = LoggerFactory.getLogger(Sqs2ClientStandardImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Sqs2ClientIAMProfileOptimizedImpl.class);
     private Sqs2Configuration configuration;
 
     /**

@@ -20,13 +20,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Tracer;
@@ -93,8 +90,8 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         return context;
     }
 
-    protected Set<String> getExcludePatterns() {
-        return new HashSet<>();
+    protected String getExcludePatterns() {
+        return null;
     }
 
     protected void verify() {
@@ -120,7 +117,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         if (async) {
             final List<SpanData> unsortedSpans = spans;
             spans = Arrays.stream(expected)
-                    .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
+                    .map(td -> findSpan(td, unsortedSpans)).distinct().toList();
             assertEquals(expected.length, spans.size(), "Incorrect number of spans after sorting");
         }
 

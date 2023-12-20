@@ -40,7 +40,7 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:gen?period=20&repeatCount=20")
+                from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
@@ -75,7 +75,7 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:gen?period=20&repeatCount=20")
+                from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
@@ -122,7 +122,7 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:gen?period=20&repeatCount=20")
+                from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");

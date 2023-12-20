@@ -83,6 +83,11 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteConvertBodyDefinition("convertBodyTo", def);
     }
+    public void writeConvertHeaderDefinition(
+            ConvertHeaderDefinition def)
+            throws IOException {
+        doWriteConvertHeaderDefinition("convertHeaderTo", def);
+    }
     public void writeDelayDefinition(DelayDefinition def) throws IOException {
         doWriteDelayDefinition("delay", def);
     }
@@ -381,6 +386,11 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteSetHeaderDefinition("setHeader", def);
     }
+    public void writeSetHeadersDefinition(
+            SetHeadersDefinition def)
+            throws IOException {
+        doWriteSetHeadersDefinition("setHeaders", def);
+    }
     public void writeSetPropertyDefinition(
             SetPropertyDefinition def)
             throws IOException {
@@ -587,12 +597,12 @@ public class ModelWriter extends BaseWriter {
     public void writeBatchResequencerConfig(
             BatchResequencerConfig def)
             throws IOException {
-        doWriteBatchResequencerConfig("batch-config", def);
+        doWriteBatchResequencerConfig("batchConfig", def);
     }
     public void writeStreamResequencerConfig(
             StreamResequencerConfig def)
             throws IOException {
-        doWriteStreamResequencerConfig("stream-config", def);
+        doWriteStreamResequencerConfig("streamConfig", def);
     }
     public void writeASN1DataFormat(ASN1DataFormat def) throws IOException {
         doWriteASN1DataFormat("asn1", def);
@@ -816,6 +826,9 @@ public class ModelWriter extends BaseWriter {
             Hl7TerserExpression def)
             throws IOException {
         doWriteHl7TerserExpression("hl7terser", def);
+    }
+    public void writeJavaExpression(JavaExpression def) throws IOException {
+        doWriteJavaExpression("java", def);
     }
     public void writeJavaScriptExpression(
             JavaScriptExpression def)
@@ -1064,9 +1077,9 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBeanFactoryDefinitionAttributes(
             BeanFactoryDefinition<?, ?> def)
             throws IOException {
+        doWriteAttribute("scriptLanguage", def.getScriptLanguage());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
-        doWriteAttribute("beanType", def.getBeanType());
     }
     protected void doWriteBeanFactoryDefinitionElements(
             BeanFactoryDefinition<?, ?> def)
@@ -1153,6 +1166,18 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("mandatory", def.getMandatory());
         endElement(name);
     }
+    protected void doWriteConvertHeaderDefinition(
+            String name,
+            ConvertHeaderDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("charset", def.getCharset());
+        doWriteAttribute("name", def.getName());
+        doWriteAttribute("type", def.getType());
+        doWriteAttribute("mandatory", def.getMandatory());
+        endElement(name);
+    }
     protected void doWriteDataFormatDefinitionAttributes(
             DataFormatDefinition def)
             throws IOException {
@@ -1199,6 +1224,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());
+        doWriteAttribute("autoStartComponents", def.getAutoStartComponents());
         doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents());
         doWriteAttribute("aggregateOnException", def.getAggregateOnException());
         doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName());
@@ -1709,6 +1735,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());
+        doWriteAttribute("autoStartComponents", def.getAutoStartComponents());
         doWriteAttribute("aggregateOnException", def.getAggregateOnException());
         doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName());
         doWriteAttribute("timeout", def.getTimeout());
@@ -1869,8 +1896,8 @@ public class ModelWriter extends BaseWriter {
         doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
         doWriteElement(null, def.getResequencerConfig(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
-                case "BatchResequencerConfig" -> doWriteBatchResequencerConfig("batch-config", (BatchResequencerConfig) def.getResequencerConfig());
-                case "StreamResequencerConfig" -> doWriteStreamResequencerConfig("stream-config", (StreamResequencerConfig) def.getResequencerConfig());
+                case "BatchResequencerConfig" -> doWriteBatchResequencerConfig("batchConfig", (BatchResequencerConfig) def.getResequencerConfig());
+                case "StreamResequencerConfig" -> doWriteStreamResequencerConfig("streamConfig", (StreamResequencerConfig) def.getResequencerConfig());
             }
         });
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
@@ -2180,6 +2207,15 @@ public class ModelWriter extends BaseWriter {
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
+    protected void doWriteSetHeadersDefinition(
+            String name,
+            SetHeadersDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteList(null, null, def.getHeaders(), this::doWriteSetHeaderDefinitionRef);
+        endElement(name);
+    }
     protected void doWriteSetPropertyDefinition(
             String name,
             SetPropertyDefinition def)
@@ -2318,7 +2354,6 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("timePeriodMillis", def.getTimePeriodMillis());
         doWriteAttribute("rejectExecution", def.getRejectExecution());
         doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected());
         doWriteAttribute("executorService", def.getExecutorService());
@@ -2496,6 +2531,23 @@ public class ModelWriter extends BaseWriter {
         doWriteBeansDefinitionElements(def);
         endElement(name);
     }
+    protected void doWriteBeanConstructorDefinition(
+            String name,
+            BeanConstructorDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteAttribute("index", toString(def.getIndex()));
+        doWriteAttribute("value", def.getValue());
+        endElement(name);
+    }
+    protected void doWriteBeanConstructorsDefinition(
+            String name,
+            BeanConstructorsDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteList(null, "constructor", def.getConstructors(), this::doWriteBeanConstructorDefinition);
+        endElement(name);
+    }
     protected void doWriteBeanPropertiesDefinition(
             String name,
             BeanPropertiesDefinition def)
@@ -2549,8 +2601,17 @@ public class ModelWriter extends BaseWriter {
             RegistryBeanDefinition def)
             throws IOException {
         startElement(name);
+        doWriteAttribute("factoryMethod", def.getFactoryMethod());
+        doWriteAttribute("initMethod", def.getInitMethod());
+        doWriteAttribute("scriptLanguage", def.getScriptLanguage());
+        doWriteAttribute("builderClass", def.getBuilderClass());
         doWriteAttribute("name", def.getName());
+        doWriteAttribute("builderMethod", def.getBuilderMethod());
+        doWriteAttribute("destroyMethod", def.getDestroyMethod());
         doWriteAttribute("type", def.getType());
+        doWriteAttribute("factoryBean", def.getFactoryBean());
+        doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
+        doWriteElement("script", def.getScript(), this::doWriteString);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
         endElement(name);
     }
@@ -3406,6 +3467,7 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("compressionCodecName", def.getCompressionCodecName());
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName());
+        doWriteAttribute("lazyLoad", def.getLazyLoad());
         endElement(name);
     }
     protected void doWriteProtobufDataFormat(
@@ -3844,6 +3906,17 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteJavaExpression(
+            String name,
+            JavaExpression def)
+            throws IOException {
+        startElement(name);
+        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("preCompile", def.getPreCompile());
+        doWriteAttribute("singleQuotes", def.getSingleQuotes());
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
     protected void doWriteJavaScriptExpression(
             String name,
             JavaScriptExpression def)
@@ -3908,6 +3981,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("method", def.getMethod());
         doWriteAttribute("scope", def.getScope());
         doWriteAttribute("beanType", def.getBeanTypeName());
+        doWriteAttribute("validate", def.getValidate());
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -4327,6 +4401,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("outType", def.getOutType());
         doWriteAttribute("component", def.getComponent());
         doWriteAttribute("bindingMode", def.getBindingMode());
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse());
         doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode());
         doWriteAttribute("clientRequestValidation", def.getClientRequestValidation());
         doWriteAttribute("produces", def.getProduces());
@@ -4355,6 +4430,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("component", def.getComponent());
         doWriteAttribute("bindingMode", toString(def.getBindingMode()));
         doWriteAttribute("port", def.getPort());
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse());
         doWriteAttribute("xmlDataFormat", def.getXmlDataFormat());
         doWriteAttribute("apiVendorExtension", def.getApiVendorExtension());
         doWriteAttribute("apiComponent", def.getApiComponent());
@@ -4377,6 +4453,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("path", def.getPath());
         doWriteAttribute("bindingMode", def.getBindingMode());
         doWriteAttribute("apiDocs", def.getApiDocs());
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse());
         doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode());
         doWriteAttribute("clientRequestValidation", def.getClientRequestValidation());
         doWriteAttribute("produces", def.getProduces());
@@ -4458,6 +4535,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("routeId", def.getRouteId());
         doWriteAttribute("bindingMode", def.getBindingMode());
         doWriteAttribute("apiDocs", def.getApiDocs());
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse());
         doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode());
         doWriteAttribute("clientRequestValidation", def.getClientRequestValidation());
         doWriteAttribute("produces", def.getProduces());
@@ -4683,6 +4761,7 @@ public class ModelWriter extends BaseWriter {
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
                 case "ClaimCheckDefinition" -> doWriteClaimCheckDefinition("claimCheck", (ClaimCheckDefinition) v);
                 case "ConvertBodyDefinition" -> doWriteConvertBodyDefinition("convertBodyTo", (ConvertBodyDefinition) v);
+                case "ConvertHeaderDefinition" -> doWriteConvertHeaderDefinition("convertHeaderTo", (ConvertHeaderDefinition) v);
                 case "DelayDefinition" -> doWriteDelayDefinition("delay", (DelayDefinition) v);
                 case "DynamicRouterDefinition" -> doWriteDynamicRouterDefinition("dynamicRouter", (DynamicRouterDefinition) v);
                 case "EnrichDefinition" -> doWriteEnrichDefinition("enrich", (EnrichDefinition) v);
@@ -4731,6 +4810,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetBodyDefinition" -> doWriteSetBodyDefinition("setBody", (SetBodyDefinition) v);
                 case "SetExchangePatternDefinition" -> doWriteSetExchangePatternDefinition("setExchangePattern", (SetExchangePatternDefinition) v);
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
+                case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
@@ -4786,6 +4866,7 @@ public class ModelWriter extends BaseWriter {
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
                 case "ClaimCheckDefinition" -> doWriteClaimCheckDefinition("claimCheck", (ClaimCheckDefinition) v);
                 case "ConvertBodyDefinition" -> doWriteConvertBodyDefinition("convertBodyTo", (ConvertBodyDefinition) v);
+                case "ConvertHeaderDefinition" -> doWriteConvertHeaderDefinition("convertHeaderTo", (ConvertHeaderDefinition) v);
                 case "DelayDefinition" -> doWriteDelayDefinition("delay", (DelayDefinition) v);
                 case "DynamicRouterDefinition" -> doWriteDynamicRouterDefinition("dynamicRouter", (DynamicRouterDefinition) v);
                 case "EnrichDefinition" -> doWriteEnrichDefinition("enrich", (EnrichDefinition) v);
@@ -4826,6 +4907,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetBodyDefinition" -> doWriteSetBodyDefinition("setBody", (SetBodyDefinition) v);
                 case "SetExchangePatternDefinition" -> doWriteSetExchangePatternDefinition("setExchangePattern", (SetExchangePatternDefinition) v);
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
+                case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
@@ -4877,6 +4959,16 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
+    protected void doWriteSetHeaderDefinitionRef(
+            String n,
+            SetHeaderDefinition v)
+            throws IOException {
+        if (v != null) {
+            switch (v.getClass().getSimpleName()) {
+                case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
+            }
+        }
+    }
     protected void doWriteTemplatedRouteDefinitionRef(
             String n,
             TemplatedRouteDefinition v)
@@ -4921,6 +5013,7 @@ public class ModelWriter extends BaseWriter {
                 case "GroovyExpression" -> doWriteGroovyExpression("groovy", (GroovyExpression) v);
                 case "HeaderExpression" -> doWriteHeaderExpression("header", (HeaderExpression) v);
                 case "Hl7TerserExpression" -> doWriteHl7TerserExpression("hl7terser", (Hl7TerserExpression) v);
+                case "JavaExpression" -> doWriteJavaExpression("java", (JavaExpression) v);
                 case "JavaScriptExpression" -> doWriteJavaScriptExpression("js", (JavaScriptExpression) v);
                 case "JoorExpression" -> doWriteJoorExpression("joor", (JoorExpression) v);
                 case "JqExpression" -> doWriteJqExpression("jq", (JqExpression) v);

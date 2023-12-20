@@ -19,7 +19,6 @@ package org.apache.camel.component.azure.cosmosdb.integration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosDatabaseProperties;
@@ -87,7 +86,7 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
         final List<String> returnedDatabasesAsString = returnedDatabases
                 .stream().map(CosmosDatabaseProperties::getId)
-                .collect(Collectors.toList());
+                .toList();
 
         assertEquals(5, returnedDatabasesAsString.size());
 

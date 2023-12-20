@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import java.util.function.IntConsumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -485,8 +487,9 @@ public final class TestSupport {
                 recursivelyDeleteDirectory(child);
             }
         }
-        boolean success = file.delete();
-        if (!success) {
+        try {
+            Files.delete(file.toPath());
+        } catch (IOException e) {
             LOG.warn("Deletion of file: {} failed", file.getAbsolutePath());
         }
     }
@@ -579,5 +582,12 @@ public final class TestSupport {
 
     public static String fileUri(Path testDirectory, String query) {
         return "file:" + testDirectory + (query.startsWith("?") ? "" : "/") + query;
+    }
+
+    public static void executeSlowly(int count, long interval, TimeUnit timeUnit, IntConsumer task) throws Exception {
+        for (int i = 0; i < count; i++) {
+            task.accept(i);
+            Thread.sleep(timeUnit.toMillis(interval));
+        }
     }
 }

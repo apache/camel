@@ -178,7 +178,7 @@ public final class OgnlHelper {
      */
     public static List<String> splitOgnl(String ognl) {
         // return an empty list if ognl is empty
-        if (ognl == null || ognl.isEmpty() || ognl.trim().isEmpty()) {
+        if (ognl == null || ognl.isBlank()) {
             return Collections.emptyList();
         }
 
@@ -272,7 +272,7 @@ public final class OgnlHelper {
         }
 
         // add remainder in buffer when reached end of data
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             methods.add(sb.toString());
         }
 

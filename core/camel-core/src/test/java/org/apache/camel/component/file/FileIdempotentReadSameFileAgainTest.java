@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 
 public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
 
-    private String uri = fileUri("?idempotent=false&move=../done&moveFailed=../error"
-                                 + "&preMove=working/${date:now:yyyyMMddHHmmssSSS}-${file:name}&readLock=none&initialDelay=0&delay=10");
+    public static final String FILE_QUERY = "?idempotent=false&move=../done&moveFailed=../error"
+                                            + "&preMove=working/${date:now:yyyyMMddHHmmssSSS}-${file:name}&readLock=none&initialDelay=0&delay=10";
 
     @Test
     public void testConsumeSameFileAgain() throws Exception {
@@ -51,7 +51,7 @@ public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(uri).convertBodyTo(String.class).to("mock:result");
+                from(fileUri(FILE_QUERY)).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

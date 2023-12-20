@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.google.api.gax.paging.Page;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Bucket;
@@ -97,9 +98,13 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         } else {
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
 
-            List<Blob> bloblist = new LinkedList<>();
-            for (Blob blob : getStorageClient().list(bucketName).iterateAll()) {
+            Page<Blob> page = getStorageClient().list(bucketName);
 
+            // okay we have some response from Google so lets mark the consumer as ready
+            forceConsumerAsReady();
+
+            List<Blob> bloblist = new LinkedList<>();
+            for (Blob blob : page.iterateAll()) {
                 if (filter != null && !filter.isEmpty()) {
                     if (blob.getBlobId().getName().matches(filter)) {
                         bloblist.add(blob);
@@ -107,7 +112,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                 } else {
                     bloblist.add(blob);
                 }
-
             }
 
             if (LOG.isTraceEnabled()) {

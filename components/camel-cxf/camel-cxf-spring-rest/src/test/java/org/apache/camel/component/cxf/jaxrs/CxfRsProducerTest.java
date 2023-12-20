@@ -52,9 +52,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfRsProducerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
-    private static int port2 = CXFTestSupport.getPort("CxfRsProducerTest.jetty");
+    private static int port2 = CXFTestSupport.getPort("CxfRsProducerTest.undertow");
 
-    public static class JettyProcessor implements Processor {
+    public static class UndertowProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             // check the query

@@ -22,10 +22,11 @@ import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.model.language.SimpleExpression
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
+import org.junit.jupiter.api.Assertions
 
 class SetHeaderTest extends YamlTestSupport {
 
-    def "set-header definition (#resource.location)"(Resource resource) {
+    def "setHeader definition (#resource.location)"(Resource resource) {
         when:
             PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
@@ -43,7 +44,7 @@ class SetHeaderTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - set-header:
+                          - setHeader:
                               name: test
                               simple: "${body}"
                           - to: "mock:result"
@@ -52,7 +53,7 @@ class SetHeaderTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - set-header:
+                          - setHeader:
                               name: test
                               expression:
                                 simple: "${body}"
@@ -61,17 +62,17 @@ class SetHeaderTest extends YamlTestSupport {
         ]
     }
 
-    def "setHeader result-type"() {
+    def "setHeader resultType"() {
         when:
         loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:    
-                      - set-header:
+                      - setHeader:
                           name: test
                           simple:
                             expression: "${body}"
-                            result-type: "long" 
+                            resultType: "long" 
                       - to: "mock:result"
             '''
         then:
@@ -86,4 +87,45 @@ class SetHeaderTest extends YamlTestSupport {
         }
     }
 
+    def "Error: kebab-case: set-header"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - set-header:
+                          name: test
+                          simple: "${body}"
+                      - to: "mock:result"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: result-type"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - setHeader:
+                          name: test
+                          simple:
+                            expression: "${body}"
+                            result-type: "long" 
+                      - to: "mock:result"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
 }

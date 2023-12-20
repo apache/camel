@@ -81,7 +81,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     testUser.deleteEmailAlias(result.getID());
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -112,7 +112,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete(false, true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -124,7 +124,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         assumeFalse(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
-        if (enterpriseUser1Login != null && enterpriseUser1Login.trim().isEmpty()) {
+        if (enterpriseUser1Login != null && enterpriseUser1Login.isBlank()) {
             enterpriseUser1Login = null;
         }
 
@@ -153,7 +153,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete(false, true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -277,10 +277,10 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
         String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
         String enterpriseUser2Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER2_LOGIN_KEY);
-        if (enterpriseUser1Login != null && enterpriseUser1Login.trim().isEmpty()) {
+        if (enterpriseUser1Login != null && enterpriseUser1Login.isBlank()) {
             enterpriseUser1Login = null;
         }
-        if (enterpriseUser2Login != null && enterpriseUser2Login.trim().isEmpty()) {
+        if (enterpriseUser2Login != null && enterpriseUser2Login.isBlank()) {
             enterpriseUser2Login = null;
         }
 
@@ -308,13 +308,13 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             if (user1 != null) {
                 try {
                     user1.getResource().delete(false, true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
             if (user2 != null) {
                 try {
                     user2.getResource().delete(false, true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }

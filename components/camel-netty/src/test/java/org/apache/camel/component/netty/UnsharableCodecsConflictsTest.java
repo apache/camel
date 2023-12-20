@@ -73,7 +73,7 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
             sendSopBuffer(bodyPort1, server1);
             sendSopBuffer(new String("9").getBytes(), server2);
         } catch (Exception e) {
-            LOG.error("", e);
+            LOG.error("{}", e.getMessage(), e);
         } finally {
             server1.close();
             server2.close();

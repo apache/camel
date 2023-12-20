@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
@@ -199,8 +200,13 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
 
         VertxHttpEndpoint endpoint = (VertxHttpEndpoint) camelContext.getEndpoint(url, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
-        endpoint.getConfiguration().setHeaderFilterStrategy(new VertxHttpRestHeaderFilterStrategy(path, queryParameters));
-
+        HeaderFilterStrategy headerFilterStrategy
+                = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        if (headerFilterStrategy != null) {
+            endpoint.getConfiguration().setHeaderFilterStrategy(headerFilterStrategy);
+        } else {
+            endpoint.getConfiguration().setHeaderFilterStrategy(new VertxHttpRestHeaderFilterStrategy(path, queryParameters));
+        }
         // the endpoint must be started before creating the producer
         ServiceHelper.startService(endpoint);
 

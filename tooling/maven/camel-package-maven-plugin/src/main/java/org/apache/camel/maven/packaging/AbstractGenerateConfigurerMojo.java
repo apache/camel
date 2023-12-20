@@ -92,7 +92,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
     public static class ConfigurerOption extends BaseOptionModel {
 
-        private boolean builderMethod;
+        private final boolean builderMethod;
 
         public ConfigurerOption(String name, Class<?> type, String getter, boolean builderMethod) {
             // we just use name, type

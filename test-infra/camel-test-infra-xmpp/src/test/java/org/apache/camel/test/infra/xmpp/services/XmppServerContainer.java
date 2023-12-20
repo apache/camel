@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +29,13 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class XmppServerContainer extends GenericContainer {
-    public static final String VYSPER_IMAGE = "5mattho/vysper-wrapper:0.3";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmppServerContainer.class);
     private static final String CONTAINER_NAME = "vysper-wrapper";
     private static final Integer PORT_REST = 8080;
 
     public XmppServerContainer() {
-        super(VYSPER_IMAGE);
+        super(LocalPropertyResolver.getProperty(XmppServerContainer.class, XmppProperties.XMPP_CONTAINER));
         setWaitStrategy(Wait.forListeningPort());
         withExposedPorts(XmppProperties.PORT_DEFAULT, PORT_REST);
         withNetworkAliases(CONTAINER_NAME);

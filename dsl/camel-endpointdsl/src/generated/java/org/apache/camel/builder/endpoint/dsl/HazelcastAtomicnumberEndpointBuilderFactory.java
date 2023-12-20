@@ -290,7 +290,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * @return the name of the header {@code HazelcastOperationType}.
          */
         public String hazelcastOperationType() {
-            return "HazelcastOperationType";
+            return "CamelHazelcastOperationType";
         }
     }
     static HazelcastAtomicnumberEndpointBuilder endpointBuilder(

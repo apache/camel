@@ -24,14 +24,14 @@ import org.apache.camel.test.AvailablePortFinder;
  */
 public final class CXFTestSupport {
 
-    static final int PORT1 = AvailablePortFinder.getNextAvailable();
-    static final int PORT2 = AvailablePortFinder.getNextAvailable();
-    static final int PORT3 = AvailablePortFinder.getNextAvailable();
-    static final int PORT4 = AvailablePortFinder.getNextAvailable();
-    static final int PORT5 = AvailablePortFinder.getNextAvailable();
-    static final int PORT6 = AvailablePortFinder.getNextAvailable();
-    static final int PORT7 = AvailablePortFinder.getNextAvailable();
-    static final int SSL_PORT = AvailablePortFinder.getNextAvailable();
+    static final int PORT1 = AvailablePortFinder.getNextRandomAvailable();
+    static final int PORT2 = AvailablePortFinder.getNextRandomAvailable();
+    static final int PORT3 = AvailablePortFinder.getNextRandomAvailable();
+    static final int PORT4 = AvailablePortFinder.getNextRandomAvailable();
+    static final int PORT5 = AvailablePortFinder.getNextRandomAvailable();
+    static final int PORT6 = AvailablePortFinder.getNextRandomAvailable();
+    static final int PORT7 = AvailablePortFinder.getNextRandomAvailable();
+    static final int SSL_PORT = AvailablePortFinder.getNextRandomAvailable();
 
     static {
         //set them as system properties so Spring can use the property placeholder
@@ -44,14 +44,14 @@ public final class CXFTestSupport {
         System.setProperty("CXFTestSupport.port6", Integer.toString(PORT6));
         System.setProperty("CXFTestSupport.port7", Integer.toString(PORT7));
         System.setProperty("CXFTestSupport.sslPort", Integer.toString(SSL_PORT));
-        System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "true");
+        System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", "true");
     }
 
     private CXFTestSupport() {
     }
 
     public static int getPort(String name) {
-        int port = AvailablePortFinder.getNextAvailable();
+        int port = AvailablePortFinder.getNextRandomAvailable();
         System.setProperty(name, Integer.toString(port));
         return port;
     }

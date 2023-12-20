@@ -25,10 +25,12 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.Route;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -48,6 +50,10 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
         Fixed
     }
 
+    @UriParam(label = "formatting", description = "Show route ID.")
+    private boolean showRouteId;
+    @UriParam(label = "formatting", description = "Show route Group.")
+    private boolean showRouteGroup;
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
     @UriParam(label = "formatting",
@@ -134,13 +140,34 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
             style(sb, "Id").append(exchange.getExchangeId());
         }
+        if (showAll || showRouteGroup) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
+            Route route = ExchangeHelper.getRoute(exchange);
+            String group = "";
+            if (route != null) {
+                group = route.getGroup();
+            }
+            style(sb, "RouteGroup").append(group);
+        }
+        if (showAll || showRouteId) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
+            Route route = ExchangeHelper.getRoute(exchange);
+            String id = "";
+            if (route != null) {
+                id = route.getRouteId();
+            }
+            style(sb, "RouteId").append(id);
+        }
         if (showAll || showExchangePattern) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
             style(sb, "ExchangePattern").append(exchange.getPattern());
         }
-
         if (showAll || showAllProperties) {
             if (multiline) {
                 sb.append(SEPARATOR);
@@ -243,6 +270,28 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
      */
     protected Map<String, Object> filterHeaderAndProperties(Map<String, Object> map) {
         return map;
+    }
+
+    public boolean isShowRouteId() {
+        return showRouteId;
+    }
+
+    /**
+     * Shows the route id (if exchange is being processed in routes)
+     */
+    public void setShowRouteId(boolean showRouteId) {
+        this.showRouteId = showRouteId;
+    }
+
+    /**
+     * Shows the route group (if exchange is being processed in routes)
+     */
+    public boolean isShowRouteGroup() {
+        return showRouteGroup;
+    }
+
+    public void setShowRouteGroup(boolean showRouteGroup) {
+        this.showRouteGroup = showRouteGroup;
     }
 
     public boolean isShowExchangeId() {

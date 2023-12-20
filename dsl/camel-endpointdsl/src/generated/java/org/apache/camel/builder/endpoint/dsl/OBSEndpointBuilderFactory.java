@@ -982,12 +982,17 @@ public interface OBSEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1004,12 +1009,17 @@ public interface OBSEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1774,7 +1784,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsBucketName}.
          */
         public String hwCloudObsBucketName() {
-            return "HwCloudObsBucketName";
+            return "CamelHwCloudObsBucketName";
         }
 
         /**
@@ -1787,7 +1797,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsObjectKey}.
          */
         public String hwCloudObsObjectKey() {
-            return "HwCloudObsObjectKey";
+            return "CamelHwCloudObsObjectKey";
         }
 
         /**
@@ -1800,7 +1810,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsLastModified}.
          */
         public String hwCloudObsLastModified() {
-            return "HwCloudObsLastModified";
+            return "CamelHwCloudObsLastModified";
         }
 
         /**
@@ -1814,7 +1824,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsETag}.
          */
         public String hwCloudObsETag() {
-            return "HwCloudObsETag";
+            return "CamelHwCloudObsETag";
         }
 
         /**
@@ -1827,7 +1837,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsContentMD5}.
          */
         public String hwCloudObsContentMD5() {
-            return "HwCloudObsContentMD5";
+            return "CamelHwCloudObsContentMD5";
         }
 
         /**
@@ -1840,7 +1850,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code HwCloudObsObjectType}.
          */
         public String hwCloudObsObjectType() {
-            return "HwCloudObsObjectType";
+            return "CamelHwCloudObsObjectType";
         }
 
         /**
@@ -1879,7 +1889,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
     }
     static OBSEndpointBuilder endpointBuilder(String componentName, String path) {

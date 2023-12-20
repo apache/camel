@@ -21,6 +21,7 @@ import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
@@ -171,6 +172,7 @@ public final class Builder {
     /**
      * Returns a JOOR expression value builder
      */
+    @Deprecated
     public static ValueBuilder joor(String value) {
         JoorExpression exp = new JoorExpression(value);
         return new ValueBuilder(exp);
@@ -179,8 +181,26 @@ public final class Builder {
     /**
      * Returns a JOOR expression value builder
      */
+    @Deprecated
     public static ValueBuilder joor(String value, Class<?> resultType) {
         JoorExpression exp = new JoorExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a Java expression value builder
+     */
+    public static ValueBuilder java(String value) {
+        JavaExpression exp = new JavaExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a Java expression value builder
+     */
+    public static ValueBuilder java(String value, Class<?> resultType) {
+        JavaExpression exp = new JavaExpression(value);
         exp.setResultType(resultType);
         return new ValueBuilder(exp);
     }

@@ -42,16 +42,22 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           nodes = { "route-configuration", "routeConfiguration" },
           properties = {
                   @YamlProperty(name = "id", type = "string"),
+                  @YamlProperty(name = "description", type = "string"),
                   @YamlProperty(name = "precondition", type = "string"),
-                  @YamlProperty(name = "error-handler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
-                  @YamlProperty(name = "intercept", type = "array:org.apache.camel.model.InterceptDefinition"),
-                  @YamlProperty(name = "intercept-from", type = "array:org.apache.camel.model.InterceptFromDefinition"),
-                  @YamlProperty(name = "intercept-send-to-endpoint",
+                  @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
+                  @YamlProperty(name = "intercept", wrapItem = true,
+                                type = "array:org.apache.camel.model.InterceptDefinition"),
+                  @YamlProperty(name = "interceptFrom", wrapItem = true,
+                                type = "array:org.apache.camel.model.InterceptFromDefinition"),
+                  @YamlProperty(name = "interceptSendToEndpoint", wrapItem = true,
                                 type = "array:org.apache.camel.model.InterceptSendToEndpointDefinition"),
-                  @YamlProperty(name = "on-completion", type = "array:org.apache.camel.model.OnCompletionDefinition"),
-                  @YamlProperty(name = "on-exception", type = "array:org.apache.camel.model.OnExceptionDefinition")
+                  @YamlProperty(name = "onCompletion", wrapItem = true,
+                                type = "array:org.apache.camel.model.OnCompletionDefinition"),
+                  @YamlProperty(name = "onException", wrapItem = true,
+                                type = "array:org.apache.camel.model.OnExceptionDefinition")
           })
 public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBase<RouteConfigurationDefinition> {
+
     public RouteConfigurationDefinitionDeserializer() {
         super(RouteConfigurationDefinition.class);
     }
@@ -70,29 +76,30 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
         setDeserializationContext(node, dc);
 
         for (NodeTuple tuple : bn.getValue()) {
-            final String key = asText(tuple.getKeyNode());
-            final Node val = tuple.getValueNode();
+            String key = asText(tuple.getKeyNode());
+            Node val = tuple.getValueNode();
+
+            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
-                case "id": {
+                case "id":
                     target.setId(asText(val));
                     break;
-                }
+                case "description":
+                    target.setDescription(asText(val));
+                    break;
                 case "precondition":
                     target.setPrecondition(asText(val));
                     break;
                 case "errorHandler":
-                case "error-handler":
                     setDeserializationContext(val, dc);
                     ErrorHandlerDefinition ehd = asType(val, ErrorHandlerDefinition.class);
                     target.setErrorHandler(ehd);
                     break;
                 case "onException":
-                case "on-exception":
                     setDeserializationContext(val, dc);
                     target.setOnExceptions(asList(val, OnExceptionDefinition.class));
                     break;
                 case "onCompletion":
-                case "on-completion":
                     setDeserializationContext(val, dc);
                     target.setOnCompletions(asList(val, OnCompletionDefinition.class));
                     break;
@@ -101,12 +108,10 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
                     target.setIntercepts(asList(val, InterceptDefinition.class));
                     break;
                 case "interceptFrom":
-                case "intercept-from":
                     setDeserializationContext(val, dc);
                     target.setInterceptFroms(asList(val, InterceptFromDefinition.class));
                     break;
                 case "interceptSendToEndpoint":
-                case "intercept-send-to-endpoint":
                     setDeserializationContext(val, dc);
                     target.setInterceptSendTos(asList(val, InterceptSendToEndpointDefinition.class));
                     break;

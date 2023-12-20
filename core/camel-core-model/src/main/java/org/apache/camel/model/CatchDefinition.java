@@ -98,10 +98,46 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     /**
      * The exception(s) to catch.
      *
+     * @param  exception one or more exceptions
+     * @return           the builder
+     */
+    public CatchDefinition exception(Class<? extends Throwable> exception) {
+        return exception(List.of(exception));
+    }
+
+    /**
+     * The exception(s) to catch.
+     *
+     * @param  exception1 fist exception
+     * @param  exception2 second exception
+     * @return            the builder
+     */
+    public CatchDefinition exception(Class<? extends Throwable> exception1, Class<? extends Throwable> exception2) {
+        return exception(List.of(exception1, exception2));
+    }
+
+    /**
+     * The exception(s) to catch.
+     *
+     * @param  exception1 fist exception
+     * @param  exception2 second exception
+     * @param  exception3 third exception
+     * @return            the builder
+     */
+    public CatchDefinition exception(
+            Class<? extends Throwable> exception1, Class<? extends Throwable> exception2,
+            Class<? extends Throwable> exception3) {
+        return exception(List.of(exception1, exception2, exception3));
+    }
+
+    /**
+     * The exception(s) to catch.
+     *
      * @param  exceptions one or more exceptions
      * @return            the builder
      */
-    public CatchDefinition exception(Class<? extends Throwable>... exceptions) {
+    @SafeVarargs
+    public final CatchDefinition exception(Class<? extends Throwable>... exceptions) {
         return exception(List.of(exceptions));
     }
 

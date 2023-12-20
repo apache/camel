@@ -42,7 +42,7 @@ import static org.hamcrest.Matchers.containsString;
 public class VertxPlatformHttpsProxyTest {
 
     private final int port = AvailablePortFinder.getNextAvailable();
-    private WireMockServer wireMockServer = new WireMockServer(
+    private final WireMockServer wireMockServer = new WireMockServer(
             options().httpsPort(port)
                     .httpDisabled(true)
                     .keystorePath("proxy/keystore.p12")

@@ -37,6 +37,8 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "period": target.setPeriod(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "time": target.setTime(property(camelContext, java.util.Date.class, value)); return true;
         case "timer": target.setTimer(property(camelContext, java.util.Timer.class, value)); return true;
@@ -63,6 +65,8 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "period": return long.class;
         case "repeatcount":
         case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "synchronous": return boolean.class;
         case "time": return java.util.Date.class;
         case "timer": return java.util.Timer.class;
@@ -90,6 +94,8 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "period": return target.getPeriod();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
+        case "runlogginglevel":
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "synchronous": return target.isSynchronous();
         case "time": return target.getTime();
         case "timer": return target.getTimer();

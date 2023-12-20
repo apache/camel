@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.rocketmq.services;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.rocketmq.common.RocketMQProperties;
 import org.awaitility.Awaitility;
@@ -29,10 +30,12 @@ import org.testcontainers.containers.Network;
 
 public class RocketMQContainer implements RocketMQService, ContainerService<RocketMQNameserverContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RocketMQContainer.class);
-    public static final String ROCKETMQ_VERSION = System.getProperty(RocketMQProperties.ROCKETMQ_VERSION_PROPERTY,
-            "5.1.3");
-    public static final String ROCKETMQ_IMAGE = System.getProperty(RocketMQProperties.ROCKETMQ_IMAGE_PROPERTY,
-            "apache/rocketmq:" + ROCKETMQ_VERSION);
+    public static final String ROCKETMQ_VERSION = LocalPropertyResolver.getProperty(
+            RocketMQContainer.class,
+            RocketMQProperties.ROCKETMQ_VERSION_PROPERTY);
+    public static final String ROCKETMQ_IMAGE = LocalPropertyResolver.getProperty(
+            RocketMQContainer.class,
+            RocketMQProperties.ROCKETMQ_IMAGE_PROPERTY) + ":" + ROCKETMQ_VERSION;
 
     private final RocketMQNameserverContainer nameserverContainer;
     private final RocketMQBrokerContainer brokerContainer1;

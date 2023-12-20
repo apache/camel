@@ -311,6 +311,6 @@ Camel will then use these custom component health checks when it performs *route
 
 There are examples for Camel at:
 
-- Camel Standalone: https://github.com/apache/camel-examples/tree/main/examples/main-health[main-health]
+- Camel Standalone: https://github.com/apache/camel-examples/tree/main/main-health[main-health]
 - Camel Spring Boot: https://github.com/apache/camel-spring-boot-examples/tree/main/health-checks[health-checks]
 - Camel Quarkus: https://github.com/apache/camel-quarkus-examples/tree/main/health[health]

@@ -101,12 +101,17 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -123,12 +128,17 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -593,7 +603,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitOperation}.
          */
         public String gitOperation() {
-            return "GitOperation";
+            return "CamelGitOperation";
         }
 
         /**
@@ -606,7 +616,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitFilename}.
          */
         public String gitFilename() {
-            return "GitFilename";
+            return "CamelGitFilename";
         }
 
         /**
@@ -619,7 +629,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitMessage}.
          */
         public String gitCommitMessage() {
-            return "GitCommitMessage";
+            return "CamelGitCommitMessage";
         }
 
         /**
@@ -632,7 +642,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitUsername}.
          */
         public String gitCommitUsername() {
-            return "GitCommitUsername";
+            return "CamelGitCommitUsername";
         }
 
         /**
@@ -645,7 +655,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitEmail}.
          */
         public String gitCommitEmail() {
-            return "GitCommitEmail";
+            return "CamelGitCommitEmail";
         }
 
         /**
@@ -658,7 +668,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitId}.
          */
         public String gitCommitId() {
-            return "GitCommitId";
+            return "CamelGitCommitId";
         }
 
         /**
@@ -671,7 +681,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitAllowEmpty}.
          */
         public String gitAllowEmpty() {
-            return "GitAllowEmpty";
+            return "CamelGitAllowEmpty";
         }
 
         /**
@@ -684,7 +694,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitAuthorName}.
          */
         public String gitAuthorName() {
-            return "GitAuthorName";
+            return "CamelGitAuthorName";
         }
 
         /**
@@ -697,7 +707,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommiterName}.
          */
         public String gitCommiterName() {
-            return "GitCommiterName";
+            return "CamelGitCommiterName";
         }
 
         /**
@@ -710,7 +720,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitCommitTime}.
          */
         public String gitCommitTime() {
-            return "GitCommitTime";
+            return "CamelGitCommitTime";
         }
 
         /**
@@ -723,7 +733,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitBranchLeaf}.
          */
         public String gitBranchLeaf() {
-            return "GitBranchLeaf";
+            return "CamelGitBranchLeaf";
         }
 
         /**
@@ -736,7 +746,7 @@ public interface GitEndpointBuilderFactory {
          * @return the name of the header {@code GitBranchObjectId}.
          */
         public String gitBranchObjectId() {
-            return "GitBranchObjectId";
+            return "CamelGitBranchObjectId";
         }
     }
     static GitEndpointBuilder endpointBuilder(String componentName, String path) {

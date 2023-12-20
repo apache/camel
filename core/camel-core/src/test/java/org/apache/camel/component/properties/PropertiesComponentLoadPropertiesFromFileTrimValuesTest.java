@@ -32,7 +32,6 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
         CamelContext context = super.createCamelContext();
 
         // create space.properties file
-        testDirectory(true);
         try (Writer w = Files.newBufferedWriter(testFile("space.properties"))) {
             String cool = "cool.leading= Leading space" + LS + "cool.trailing=Trailing space " + LS
                           + "cool.both= Both leading and trailing space " + LS;

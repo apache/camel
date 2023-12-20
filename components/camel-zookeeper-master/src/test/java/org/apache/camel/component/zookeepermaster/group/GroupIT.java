@@ -221,7 +221,7 @@ public class GroupIT {
 
             try {
                 deleteDirectory(dataDir.toFile());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }

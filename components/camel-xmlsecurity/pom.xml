@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xmlsecurity</artifactId>
@@ -96,8 +96,7 @@
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <version>${xmlunit-version}</version>
+            <artifactId>xmlunit-assertj3</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

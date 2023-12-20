@@ -27,7 +27,8 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.openapi.producer.DummyRestProducerFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,13 +78,14 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
         };
     }
 
-    @Test
-    public void testReaderRead() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    public void testReaderRead(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
-        config.setVersion("2.0");
+        config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
 
         RestOpenApiSupport support = new RestOpenApiSupport();
@@ -92,12 +94,15 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
         OpenAPI openApi = reader.read(context, rests, config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
-        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
-        assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-        assertTrue(json.contains("\"basePath\" : \"/api\""));
+        if (config.isOpenApi2()) {
+            assertTrue(json.contains("\"host\" : \"localhost:8080\""));
+            assertTrue(json.contains("\"basePath\" : \"/api\""));
+        } else {
+            assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
+        }
         assertTrue(json.contains("\"/hello/bye\""));
         assertTrue(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));

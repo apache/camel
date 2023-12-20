@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
-    AvailablePortFinder.Port port1 = port;
+    final AvailablePortFinder.Port port1 = port;
     @RegisterExtension
     AvailablePortFinder.Port port2 = AvailablePortFinder.find();
     @RegisterExtension
@@ -52,7 +53,8 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
     @Test
     public void testEncodedPath() throws Exception {
-        String path = URLEncoder.encode(" :/?#[]@!$", "UTF-8") + "/" + URLEncoder.encode("&'()+,;=", "UTF-8");
+        String path = URLEncoder.encode(" :/?#[]@!$", StandardCharsets.UTF_8) + "/" + URLEncoder.encode("&'()+,;=",
+                StandardCharsets.UTF_8);
         MockEndpoint mock = getMockEndpoint("mock:encodedPath");
         mock.message(0).header(Exchange.HTTP_PATH).isEqualTo("/" + path);
         mock.message(0).header(Exchange.HTTP_QUERY).isNull();

@@ -22,6 +22,8 @@ import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosContainerResponse;
+import com.azure.cosmos.models.IndexingMode;
+import com.azure.cosmos.models.IndexingPolicy;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
@@ -80,7 +82,7 @@ class CosmosDbDatabaseOperationsIT {
 
         // test create container
         final CosmosContainerResponse createdContainer = operations
-                .createContainer(containerId, "/test", null)
+                .createContainer(containerId, "/test", null, null)
                 .block();
 
         assertNotNull(createdContainer);
@@ -116,7 +118,8 @@ class CosmosDbDatabaseOperationsIT {
 
         // second we test if we want to create a container when we get container operations
         operations
-                .createContainerIfNotExistAndGetContainerOperations(containerId, "/path", null)
+                .createContainerIfNotExistAndGetContainerOperations(containerId, "/path", null,
+                        new IndexingPolicy().setIndexingMode(IndexingMode.CONSISTENT))
                 .getContainerId()
                 .block();
 

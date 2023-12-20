@@ -197,11 +197,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doStop() throws Exception {
         cleanUp();
 

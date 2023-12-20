@@ -68,6 +68,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @UriParam(label = "consumer,advanced")
     private boolean includeHiddenFiles;
     @UriParam(label = "consumer,advanced")
+    private boolean includeHiddenDirs;
+    @UriParam(label = "consumer,advanced")
     private boolean startingDirectoryMustExist;
     @UriParam(label = "consumer,advanced")
     private boolean startingDirectoryMustHaveAccess;
@@ -305,6 +307,18 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         this.includeHiddenFiles = includeHiddenFiles;
     }
 
+    public boolean isIncludeHiddenDirs() {
+        return includeHiddenDirs;
+    }
+
+    /**
+     * Whether to accept hidden directories. Directories which names starts with dot is regarded as a hidden directory,
+     * and by default not included. Set this option to true to include hidden directories in the file consumer.
+     */
+    public void setIncludeHiddenDirs(boolean includeHiddenDirs) {
+        this.includeHiddenDirs = includeHiddenDirs;
+    }
+
     public boolean isStartingDirectoryMustExist() {
         return startingDirectoryMustExist;
     }
@@ -312,7 +326,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     /**
      * Whether the starting directory must exist. Mind that the autoCreate option is default enabled, which means the
      * starting directory is normally auto created if it doesn't exist. You can disable autoCreate and enable this to
-     * ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
+     * ensure the starting directory must exist. Will throw an exception if the directory doesn't exist.
      */
     public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
         this.startingDirectoryMustExist = startingDirectoryMustExist;

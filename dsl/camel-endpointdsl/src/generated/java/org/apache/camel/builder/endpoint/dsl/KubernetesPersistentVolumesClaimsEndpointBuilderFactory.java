@@ -543,7 +543,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesOperation}.
          */
         public String kubernetesOperation() {
-            return "KubernetesOperation";
+            return "CamelKubernetesOperation";
         }
 
         /**
@@ -556,7 +556,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * @return the name of the header {@code KubernetesNamespaceName}.
          */
         public String kubernetesNamespaceName() {
-            return "KubernetesNamespaceName";
+            return "CamelKubernetesNamespaceName";
         }
 
         /**
@@ -570,7 +570,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * KubernetesPersistentVolumesClaimsLabels}.
          */
         public String kubernetesPersistentVolumesClaimsLabels() {
-            return "KubernetesPersistentVolumesClaimsLabels";
+            return "CamelKubernetesPersistentVolumesClaimsLabels";
         }
 
         /**
@@ -584,7 +584,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * KubernetesPersistentVolumeClaimName}.
          */
         public String kubernetesPersistentVolumeClaimName() {
-            return "KubernetesPersistentVolumeClaimName";
+            return "CamelKubernetesPersistentVolumeClaimName";
         }
 
         /**
@@ -599,7 +599,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * KubernetesPersistentVolumeClaimSpec}.
          */
         public String kubernetesPersistentVolumeClaimSpec() {
-            return "KubernetesPersistentVolumeClaimSpec";
+            return "CamelKubernetesPersistentVolumeClaimSpec";
         }
     }
     static KubernetesPersistentVolumesClaimsEndpointBuilder endpointBuilder(

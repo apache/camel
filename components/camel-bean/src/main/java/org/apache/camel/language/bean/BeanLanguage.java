@@ -69,6 +69,7 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
     private String ref;
     private String method;
     private BeanScope scope = BeanScope.Singleton;
+    private boolean validate = true;
 
     public BeanLanguage() {
     }
@@ -113,6 +114,14 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
         this.scope = scope;
     }
 
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public void setValidate(boolean validate) {
+        this.validate = validate;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         if (target != this) {
@@ -134,6 +143,9 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
                 return true;
             case "scope":
                 setScope(PropertyConfigurerSupport.property(camelContext, BeanScope.class, value));
+                return true;
+            case "validate":
+                setValidate(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
                 return true;
             case "resultType":
             case "resulttype":
@@ -186,7 +198,15 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
                 answer.setScope(BeanScope.valueOf(scope.toString()));
             }
         }
-        answer.setResultType(property(Class.class, properties, 5, getResultType()));
+        if (properties.length >= 6) {
+            Object validate = properties[5];
+            if (validate != null) {
+                answer.setValidate(Boolean.parseBoolean(validate.toString()));
+            } else {
+                answer.setValidate(this.isValidate());
+            }
+        }
+        answer.setResultType(property(Class.class, properties, 6, getResultType()));
         answer.setBeanComponent(beanComponent);
         answer.setParameterMappingStrategy(parameterMappingStrategy);
         answer.setSimple(simple);

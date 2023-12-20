@@ -25,8 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpFilterCamelHeadersTest extends BaseJettyTest {
 
@@ -52,7 +52,7 @@ public class HttpFilterCamelHeadersTest extends BaseJettyTest {
             boolean valid
                     = key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) || key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT);
             if (!valid) {
-                assertTrue(!key.toLowerCase().startsWith("camel"), "Should not contain any Camel internal headers");
+                assertFalse(key.toLowerCase().startsWith("camel"), "Should not contain any Camel internal headers");
             } else {
                 assertEquals(200, headers.get(Exchange.HTTP_RESPONSE_CODE));
             }

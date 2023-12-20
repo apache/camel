@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
+
 import javax.lang.model.element.Modifier;
 
 import com.squareup.javapoet.AnnotationSpec;

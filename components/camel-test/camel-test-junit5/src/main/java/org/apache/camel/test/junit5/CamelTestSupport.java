@@ -17,6 +17,7 @@
 package org.apache.camel.test.junit5;
 
 import java.lang.annotation.Annotation;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -869,7 +870,7 @@ public abstract class CamelTestSupport
         String n;
         try {
             n = URISupport.normalizeUri(uri);
-        } catch (Exception e) {
+        } catch (URISyntaxException e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
         // strip query

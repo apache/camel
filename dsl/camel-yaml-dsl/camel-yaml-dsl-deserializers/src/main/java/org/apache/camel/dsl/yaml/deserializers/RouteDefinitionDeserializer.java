@@ -40,18 +40,24 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
                   @YamlProperty(name = "group", type = "string"),
-                  @YamlProperty(name = "node-prefix-id", type = "string"),
+                  @YamlProperty(name = "nodePrefixId", type = "string"),
                   @YamlProperty(name = "precondition", type = "string"),
-                  @YamlProperty(name = "route-configuration-id", type = "string"),
-                  @YamlProperty(name = "auto-startup", type = "boolean"),
-                  @YamlProperty(name = "route-policy", type = "string"),
-                  @YamlProperty(name = "startup-order", type = "number"),
-                  @YamlProperty(name = "stream-caching", type = "boolean"),
-                  @YamlProperty(name = "message-history", type = "boolean"),
-                  @YamlProperty(name = "log-mask", type = "boolean"),
+                  @YamlProperty(name = "routeConfigurationId", type = "string"),
+                  @YamlProperty(name = "autoStartup", type = "boolean"),
+                  @YamlProperty(name = "routePolicy", type = "string"),
+                  @YamlProperty(name = "startupOrder", type = "number"),
+                  @YamlProperty(name = "streamCaching", type = "boolean"),
+                  @YamlProperty(name = "messageHistory", type = "boolean"),
+                  @YamlProperty(name = "logMask", type = "boolean"),
                   @YamlProperty(name = "trace", type = "boolean"),
-                  @YamlProperty(name = "input-type", type = "object:org.apache.camel.model.InputTypeDefinition"),
-                  @YamlProperty(name = "output-type", type = "object:org.apache.camel.model.OutputTypeDefinition"),
+                  @YamlProperty(name = "shutdownRoute", type = "enum:Default,Defer",
+                                defaultValue = "Default",
+                                description = "To control how to shut down the route."),
+                  @YamlProperty(name = "shutdownRunningTask", type = "enum:CompleteCurrentTaskOnly,CompleteAllTasks",
+                                defaultValue = "CompleteCurrentTaskOnly",
+                                description = "To control how to shut down the route."),
+                  @YamlProperty(name = "inputType", type = "object:org.apache.camel.model.InputTypeDefinition"),
+                  @YamlProperty(name = "outputType", type = "object:org.apache.camel.model.OutputTypeDefinition"),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
           })
 public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefinition> {
@@ -70,11 +76,12 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
         final YamlDeserializationContext dc = getDeserializationContext(node);
 
         for (NodeTuple tuple : node.getValue()) {
-            final String key = asText(tuple.getKeyNode());
-            final Node val = tuple.getValueNode();
+            String key = asText(tuple.getKeyNode());
+            Node val = tuple.getValueNode();
 
             setDeserializationContext(val, dc);
 
+            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "id":
                     target.setId(asText(val));
@@ -89,46 +96,42 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     target.setGroup(asText(val));
                     break;
                 case "nodePrefixId":
-                case "node-prefix-id":
                     target.setNodePrefixId(asText(val));
                     break;
                 case "routeConfigurationId":
-                case "route-configuration-id":
                     target.setRouteConfigurationId(asText(val));
                     break;
                 case "autoStartup":
-                case "auto-startup":
                     target.setAutoStartup(asText(val));
                     break;
                 case "routePolicy":
-                case "route-policy":
                     target.setRoutePolicyRef(asText(val));
                     break;
                 case "startupOrder":
-                case "startup-order":
                     target.setStartupOrder(asInt(val));
                     break;
                 case "streamCaching":
-                case "stream-caching":
                     target.setStreamCache(asText(val));
                     break;
                 case "logMask":
-                case "log-mask":
                     target.setLogMask(asText(val));
                     break;
                 case "messageHistory":
-                case "message-history":
                     target.setMessageHistory(asText(val));
+                    break;
+                case "shutdownRoute":
+                    target.setShutdownRoute(asText(val));
+                    break;
+                case "shutdownRunningTask":
+                    target.setShutdownRunningTask(asText(val));
                     break;
                 case "trace":
                     target.setTrace(asText(val));
                     break;
                 case "inputType":
-                case "input-type":
                     target.setInputType(asType(val, InputTypeDefinition.class));
                     break;
                 case "outputType":
-                case "output-type":
                     target.setOutputType(asType(val, OutputTypeDefinition.class));
                     break;
                 case "from":

@@ -689,38 +689,37 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointConsumerBuilder useDefaultIdentity(
-                boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointConsumerBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointConsumerBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointConsumerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
     }
@@ -736,12 +735,17 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -758,12 +762,17 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -847,6 +856,42 @@ public interface CosmosDbEndpointBuilderFactory {
         default AdvancedCosmosDbEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCosmosDbEndpointConsumerBuilder indexingPolicy(
+                com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCosmosDbEndpointConsumerBuilder indexingPolicy(
+                String indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
             return this;
         }
     }
@@ -1459,38 +1504,37 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointProducerBuilder useDefaultIdentity(
-                boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointProducerBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointProducerBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointProducerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
     }
@@ -1551,6 +1595,42 @@ public interface CosmosDbEndpointBuilderFactory {
         default AdvancedCosmosDbEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCosmosDbEndpointProducerBuilder indexingPolicy(
+                com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCosmosDbEndpointProducerBuilder indexingPolicy(
+                String indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
             return this;
         }
     }
@@ -2042,38 +2122,36 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointBuilder useDefaultIdentity(
-                boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: AZURE_IDENTITY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default CosmosDbEndpointBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
     }
@@ -2087,6 +2165,42 @@ public interface CosmosDbEndpointBuilderFactory {
                 AdvancedCosmosDbEndpointProducerBuilder {
         default CosmosDbEndpointBuilder basic() {
             return (CosmosDbEndpointBuilder) this;
+        }
+        /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCosmosDbEndpointBuilder indexingPolicy(
+                com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCosmosDbEndpointBuilder indexingPolicy(
+                String indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
         }
     }
 

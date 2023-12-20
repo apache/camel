@@ -98,7 +98,7 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
     private TypeConverter mockByteBufferTypeConverter() {
         return new MockTypeConverter() {
             @Override
-            public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
                 byte[] out = ("ByteBuffer:" + ((Map) value).get("bb")).getBytes(StandardCharsets.UTF_8);
                 return type.cast(ByteBuffer.wrap(out));
             }
@@ -116,7 +116,7 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
         };
     }
 
-    abstract class MockTypeConverter implements TypeConverter {
+    abstract static class MockTypeConverter implements TypeConverter {
         @Override
         public boolean allowNull() {
             return false;

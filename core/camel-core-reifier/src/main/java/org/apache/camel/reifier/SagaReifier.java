@@ -102,13 +102,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
             return sagaService;
         }
 
-        sagaService = findSingleByType(CamelSagaService.class);
-        if (sagaService != null) {
-            return sagaService;
-        }
-
-        throw new IllegalArgumentException(
-                "Cannot find CamelSagaService in Registry");
+        return mandatoryFindSingleByType(CamelSagaService.class);
     }
 
 }

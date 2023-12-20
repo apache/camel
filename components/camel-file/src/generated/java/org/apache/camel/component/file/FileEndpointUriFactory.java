@@ -21,7 +21,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(95);
+        Set<String> props = new HashSet<>(97);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -34,6 +34,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("bridgeErrorHandler");
         props.add("bufferSize");
         props.add("charset");
+        props.add("checksumFileAlgorithm");
         props.add("chmod");
         props.add("chmodDirectory");
         props.add("copyAndDeleteOnRenameFail");
@@ -64,6 +65,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("inProgressRepository");
         props.add("include");
         props.add("includeExt");
+        props.add("includeHiddenDirs");
         props.add("includeHiddenFiles");
         props.add("initialDelay");
         props.add("jailStartingDirectory");

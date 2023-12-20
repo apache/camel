@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class XmppPubSubProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppPrivateChatProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppPubSubProducer.class);
     private final XmppEndpoint endpoint;
     private XMPPTCPConnection connection;
 

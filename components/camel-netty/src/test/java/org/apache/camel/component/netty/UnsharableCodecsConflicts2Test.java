@@ -67,7 +67,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
             sendBuffer(body1, client1);
             sendBuffer(new String("9").getBytes(), client2);
         } catch (Exception e) {
-            LOG.error("", e);
+            LOG.error("{}", e.getMessage(), e);
         } finally {
             client1.close();
             client2.close();

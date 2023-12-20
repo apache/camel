@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.redis.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.redis.common.RedisProperties;
 import org.slf4j.Logger;
@@ -25,7 +26,6 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class RedisLocalContainerService implements RedisService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "redis:6.0.9";
     public static final String CONTAINER_NAME = "redis";
 
     private static final Logger LOG = LoggerFactory.getLogger(RedisLocalContainerService.class);
@@ -33,7 +33,7 @@ public class RedisLocalContainerService implements RedisService, ContainerServic
     private final GenericContainer container;
 
     public RedisLocalContainerService() {
-        this(System.getProperty(RedisProperties.REDIS_CONTAINER, CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(RedisLocalContainerService.class, RedisProperties.REDIS_CONTAINER));
     }
 
     public RedisLocalContainerService(String imageName) {

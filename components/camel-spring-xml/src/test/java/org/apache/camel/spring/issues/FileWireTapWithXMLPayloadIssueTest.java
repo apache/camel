@@ -16,17 +16,17 @@
  */
 package org.apache.camel.spring.issues;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
+public class FileWireTapWithXMLPayloadIssueTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
@@ -55,7 +55,7 @@ public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
     }
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/FileWireTapWithXMLPayloadIssueTest.xml");
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/issues/FileWireTapWithXMLPayloadIssueTest.xml");
     }
 }

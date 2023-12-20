@@ -28,6 +28,7 @@ import java.util.EmptyStackException;
 import java.util.Stack;
 
 import com.azure.core.util.Context;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.share.ShareDirectoryClient;
 import com.azure.storage.file.share.ShareFileClient;
@@ -174,15 +175,17 @@ public class FilesOperations extends NormalizedOperations {
         log.trace("renameFile({}, {})", from, to);
 
         try {
-            return renameRemote(getFileClient(FilesPath.ensureRelative(from)), FilesPath.ensureRelative(to));
+            return renameRemote(getFileClient(from), FilesPath.ensureRelative(to));
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException("Cannot rename: " + from + " to: " + to, e);
         }
     }
 
     private boolean renameRemote(ShareFileClient fileClient, String shareRelativeTo) {
-        // TODO replace existing?
         var options = new ShareFileRenameOptions(shareRelativeTo);
+        // known strategies try to remove an existing target file before calling rename
+        // but it is neither atomic nor sure so instruct Azure Files to overwrite the file
+        options.setReplaceIfExists(Boolean.TRUE);
         var renamed = fileClient.renameWithResponse(options, endpoint.getMetadataTimeout(), Context.NONE).getValue();
         return existsRemote(renamed);
     }
@@ -667,8 +670,9 @@ public class FilesOperations extends NormalizedOperations {
 
     private ShareFileClient getFileClient(String path) {
 
-        assert FilesPath.isAbsolute(path);
-        assert !FilesPath.isRoot(path);
+        assert FilesPath.isAbsolute(path) : "Expecting /a_path from share root, got: " + path;
+        assert !FilesPath.isRoot(path) : "Expecting /a_path from share root, got: " + path;
+        // if we got a relative path we need to figure out its base
 
         return root.getFileClient(FilesPath.ensureRelative(path));
     }
@@ -707,18 +711,15 @@ public class FilesOperations extends NormalizedOperations {
 
         var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + configuration.getHost());
         var sharedKey = configuration.getSharedKey();
-        if (token.isInvalid()) {
+        if (configuration.getCredentialType().equals(CredentialType.SHARED_ACCOUNT_KEY)) {
             if (sharedKey != null) {
-                log.warn("The configured SAS token is not valid, using the shared key fallback.");
                 var keyB64 = FilesURIStrings.reconstructBase64EncodedValue(sharedKey);
                 builder.credential(new StorageSharedKeyCredential(configuration.getAccount(), keyB64));
-            } else {
-                log.error("A valid SAS token or shared key must be configured.");
+            } else if (configuration.getCredentialType().equals(CredentialType.AZURE_SAS)) {
+                builder = builder.sasToken(token.toURIQuery());
+            } else if (configuration.getCredentialType().equals(CredentialType.AZURE_IDENTITY)) {
+                builder = builder.credential(new DefaultAzureCredentialBuilder().build());
             }
-            // TODO Azure AD
-            // https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-requests-to-azure-storage
-        } else {
-            builder = builder.sasToken(token.toURIQuery());
         }
         return builder.buildClient();
     }

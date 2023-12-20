@@ -232,7 +232,7 @@ public final class XmlLineNumberParser {
 
             // Outputs text accumulated under the current node
             private void addTextIfNeeded() {
-                if (textBuffer.length() > 0) {
+                if (!textBuffer.isEmpty()) {
                     final Element el = elementStack.isEmpty() ? null : elementStack.peek();
                     if (el != null) {
                         final Node textNode = doc.createTextNode(textBuffer.toString());

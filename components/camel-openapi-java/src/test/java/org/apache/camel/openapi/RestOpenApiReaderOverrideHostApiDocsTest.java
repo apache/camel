@@ -16,77 +16,13 @@
  */
 package org.apache.camel.openapi;
 
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.oas.models.OpenAPI;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderApiDocsTest {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
-
     @Override
-    @Test
-    public void testReaderRead() throws Exception {
-        BeanConfig config = new BeanConfig();
-        config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
-        config.setBasePath("/api");
-        config.setVersion("2.0");
+    protected BeanConfig getBeanConfig() {
+        BeanConfig config = super.getBeanConfig();
         config.setHost("http:mycoolserver:8888/myapi");
-        RestOpenApiReader reader = new RestOpenApiReader();
 
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
-        assertNotNull(openApi);
-
-        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
-
-        log.info(json);
-
-        assertTrue(json.contains("\"host\" : \"http:mycoolserver:8888/myapi\""));
-        assertTrue(json.contains("\"basePath\" : \"/api\""));
-
-        assertFalse(json.contains("\"/hello/bye\""));
-        assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
-        assertFalse(json.contains("\"/hello/bye/{name}\""));
-        assertTrue(json.contains("\"/hello/hi/{name}\""));
-
-        context.stop();
+        return config;
     }
-
-    @Override
-    @Test
-    public void testReaderReadV3() throws Exception {
-        BeanConfig config = new BeanConfig();
-        config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
-        config.setBasePath("/api");
-        config.setHost("http:mycoolserver:8888/myapi");
-        RestOpenApiReader reader = new RestOpenApiReader();
-
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
-        assertNotNull(openApi);
-
-        String json = io.swagger.v3.core.util.Json.pretty(openApi);
-
-        log.info(json);
-
-        assertTrue(json.contains("\"url\" : \"http://http:mycoolserver:8888/myapi/api\""));
-
-        assertFalse(json.contains("\"/hello/bye\""));
-        assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
-        assertFalse(json.contains("\"/hello/bye/{name}\""));
-        assertTrue(json.contains("\"/hello/hi/{name}\""));
-
-        context.stop();
-    }
-
 }

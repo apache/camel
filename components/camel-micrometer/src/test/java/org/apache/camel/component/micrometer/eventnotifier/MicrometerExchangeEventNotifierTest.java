@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
 import org.assertj.core.api.Assertions;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
@@ -54,13 +55,16 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
             @Override
             public Object evaluate(Exchange exchange) {
                 try {
-                    Assertions.assertThat(currentInflightExchanges()).isEqualTo(1.0D, withPrecision(0.1D));
-                    Thread.sleep(SLEEP);
+                    Awaitility.await().pollDelay(SLEEP, TimeUnit.MILLISECONDS).catchUncaughtExceptions().untilAsserted(
+                            () -> Assertions.assertThat(currentInflightExchanges()).isEqualTo(1.0D, withPrecision(0.1D)));
                     return exchange.getIn().getBody();
-                } catch (InterruptedException e) {
-                    throw new CamelExecutionException(e.getMessage(), exchange, e);
+                } catch (Exception e) {
+                    if (e.getCause() instanceof InterruptedException) {
+                        throw new CamelExecutionException(e.getMessage(), exchange, e);
+                    } else {
+                        throw new RuntimeException("Unexpected Exception");
+                    }
                 }
-
             }
         });
         mock.expectedMessageCount(count);

@@ -35,6 +35,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
+
 @Command(name = "context",
          description = "Get status of Camel integrations",
          sortOptions = false)
@@ -98,17 +100,20 @@ public class CamelContextStatus extends ProcessWatchCommand {
                             if (last != null) {
                                 row.delta = last.toString();
                             }
-                            last = stats.get("sinceLastCreatedExchange");
+                            last = stats.get("lastCreatedExchangeTimestamp");
                             if (last != null) {
-                                row.sinceLastStarted = last.toString();
+                                long time = Long.parseLong(last.toString());
+                                row.sinceLastStarted = TimeUtils.printSince(time);
                             }
-                            last = stats.get("sinceLastCompletedExchange");
+                            last = stats.get("lastCompletedExchangeTimestamp");
                             if (last != null) {
-                                row.sinceLastCompleted = last.toString();
+                                long time = Long.parseLong(last.toString());
+                                row.sinceLastCompleted = TimeUtils.printSince(time);
                             }
-                            last = stats.get("sinceLastFailedExchange");
+                            last = stats.get("lastFailedExchangeTimestamp");
                             if (last != null) {
-                                row.sinceLastFailed = last.toString();
+                                long time = Long.parseLong(last.toString());
+                                row.sinceLastFailed = TimeUtils.printSince(time);
                             }
                         }
                         JsonArray array = (JsonArray) root.get("routes");

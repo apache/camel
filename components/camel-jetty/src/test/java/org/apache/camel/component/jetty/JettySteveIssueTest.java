@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
  */
 public class JettySteveIssueTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:" + getPort() + "/myservice";
+    private final String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
     public void testSendX() throws Exception {

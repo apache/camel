@@ -305,6 +305,43 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * exception's stack trace will be logged when the exception stack trace
+         * is not sent in the response's body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param logException the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketEndpointConsumerBuilder logException(
+                boolean logException) {
+            doSetProperty("logException", logException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * exception's stack trace will be logged when the exception stack trace
+         * is not sent in the response's body.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param logException the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketEndpointConsumerBuilder logException(
+                String logException) {
+            doSetProperty("logException", logException);
+            return this;
+        }
+        /**
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
@@ -550,12 +587,17 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -572,12 +614,17 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1159,6 +1206,51 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
         default AtmosphereWebsocketEndpointProducerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
+            return this;
+        }
+        /**
+         * OAuth2 client id.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ClientId the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketEndpointProducerBuilder oauth2ClientId(
+                String oauth2ClientId) {
+            doSetProperty("oauth2ClientId", oauth2ClientId);
+            return this;
+        }
+        /**
+         * OAuth2 client secret.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ClientSecret the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketEndpointProducerBuilder oauth2ClientSecret(
+                String oauth2ClientSecret) {
+            doSetProperty("oauth2ClientSecret", oauth2ClientSecret);
+            return this;
+        }
+        /**
+         * OAuth2 Token endpoint.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2TokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketEndpointProducerBuilder oauth2TokenEndpoint(
+                String oauth2TokenEndpoint) {
+            doSetProperty("oauth2TokenEndpoint", oauth2TokenEndpoint);
             return this;
         }
     }

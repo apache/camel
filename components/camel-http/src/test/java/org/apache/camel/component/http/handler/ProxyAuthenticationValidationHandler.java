@@ -26,8 +26,8 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class ProxyAuthenticationValidationHandler extends BasicValidationHandler {
 
-    protected String user;
-    protected String password;
+    protected final String user;
+    protected final String password;
 
     public ProxyAuthenticationValidationHandler(String expectedMethod,
                                                 String expectedQuery, Object expectedContent,

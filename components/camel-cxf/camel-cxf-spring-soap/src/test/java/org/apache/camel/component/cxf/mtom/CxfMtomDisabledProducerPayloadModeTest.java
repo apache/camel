@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

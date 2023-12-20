@@ -45,7 +45,7 @@ public class QueueComponent extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        if (remaining == null || remaining.trim().length() == 0) {
+        if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("At least the account name must be specified.");
         }
 
@@ -66,7 +66,6 @@ public class QueueComponent extends HealthCheckComponent {
         setProperties(endpoint, parameters);
 
         checkCredentials(configuration);
-        validateConfigurations(configuration);
 
         return endpoint;
     }
@@ -92,13 +91,6 @@ public class QueueComponent extends HealthCheckComponent {
             if (storageSharedKeyCredentials.size() == 1) {
                 configuration.setCredentials(storageSharedKeyCredentials.stream().findFirst().get());
             }
-        }
-    }
-
-    private void validateConfigurations(final QueueConfiguration configuration) {
-        if (configuration.getServiceClient() == null && configuration.getAccessKey() == null
-                && configuration.getCredentials() == null) {
-            throw new IllegalArgumentException("Azure Storage accessKey or QueueServiceClient must be specified.");
         }
     }
 }

@@ -216,7 +216,8 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      * @param  exceptions list of exceptions to catch
      * @return            the exception builder to configure
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
+    @SafeVarargs
+    public final OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
         answer.setRouteConfiguration(this);
         onExceptions.add(answer);

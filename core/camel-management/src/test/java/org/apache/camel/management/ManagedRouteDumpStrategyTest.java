@@ -39,7 +39,6 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        testDirectory(true);
         String dir = testDirectory().toString();
 
         CamelContext context = super.createCamelContext();

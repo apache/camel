@@ -18,7 +18,7 @@ package org.apache.camel.spi;
 
 /**
  * A pluggable strategy for creating and possibly dependency injecting objects which could be implemented using straight
- * forward reflection or using Spring or CDI to perform dependency injection.
+ * forward reflection or using Spring or Quarkus to perform dependency injection.
  */
 public interface Injector {
 
@@ -41,6 +41,18 @@ public interface Injector {
      * @return               a newly created instance
      */
     <T> T newInstance(Class<T> type, String factoryMethod);
+
+    /**
+     * Instantiates a new instance of the given type by using the factory class (this will not perform bean post
+     * processing)
+     *
+     * @param  type          the type of object to create
+     * @param  factoryClass  to create the new instance via factory class
+     * @param  factoryMethod to create the new instance via factory method which must be public static and return the
+     *                       type
+     * @return               a newly created instance
+     */
+    <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod);
 
     /**
      * Instantiates a new instance of the given type; possibly injecting values into the object in the process (bean

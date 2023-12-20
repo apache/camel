@@ -22,7 +22,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -51,6 +50,9 @@ import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.xml.io.XmlPullParserLocationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -61,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ModelParserTest {
 
@@ -69,8 +72,6 @@ public class ModelParserTest {
             = List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
-    private static final List<String> BEANS_XMLS
-            = List.of("beansEmpty.xml", "beansWithProperties.xml", "beansWithSpringNS.xml");
     private static final List<String> ROUTE_CONFIGURATION_XMLS
             = List.of("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
@@ -105,13 +106,14 @@ public class ModelParserTest {
     public void testFiles() throws Exception {
         Path dir = getResourceFolder();
         try (Stream<Path> list = Files.list(dir)) {
-            List<Path> files = list.sorted().filter(Files::isRegularFile).filter(f -> f.endsWith("xml")).toList();
+            List<Path> files = list.sorted().filter(Files::isRegularFile)
+                    .filter(f -> f.getFileName().toString().endsWith("xml")).toList();
             for (Path path : files) {
                 ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
                 boolean isRest = REST_XMLS.contains(path.getFileName().toString());
                 boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
                 boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
-                boolean isBeans = BEANS_XMLS.contains(path.getFileName().toString());
+                boolean isBeans = path.getFileName().toString().startsWith("beans");
                 boolean isConfiguration = ROUTE_CONFIGURATION_XMLS.contains(path.getFileName().toString());
                 if (isRest) {
                     RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
@@ -259,12 +261,68 @@ public class ModelParserTest {
         assertEquals("v2a", ((Map<String, Object>) b1.getProperties().get("nested")).get("p2"));
 
         assertEquals("b2", b2.getName());
-        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b1.getType());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b2.getType());
         assertEquals("v1", b2.getProperties().get("p1"));
         assertEquals("v2", b2.getProperties().get("p2"));
         assertNull(b2.getProperties().get("nested"));
         assertEquals("v1a", b2.getProperties().get("nested.p1"));
         assertEquals("v2a", b2.getProperties().get("nested.p2"));
+    }
+
+    @Test
+    public void testBeansWithConstructors() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "beansWithConstructors.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
+        assertNotNull(beans);
+        assertEquals(2, beans.getBeans().size());
+        assertTrue(beans.getSpringBeans().isEmpty());
+
+        RegistryBeanDefinition b1 = beans.getBeans().get(0);
+        RegistryBeanDefinition b2 = beans.getBeans().get(1);
+
+        assertEquals("b1", b1.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b1.getType());
+        assertEquals(2, b1.getConstructors().size());
+        assertEquals("c1", b1.getConstructors().get(0));
+        assertEquals("c2", b1.getConstructors().get(1));
+
+        assertEquals("b2", b2.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b2.getType());
+        assertEquals(1, b2.getConstructors().size());
+        assertEquals("c1", b2.getConstructors().get(0));
+        assertEquals("v1", b2.getProperties().get("p1"));
+        assertEquals("v2", b2.getProperties().get("p2"));
+    }
+
+    @Test
+    public void testBeansWithFactoryMethod() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "beansWithFactoryMethod.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
+        assertNotNull(beans);
+        assertEquals(2, beans.getBeans().size());
+        assertTrue(beans.getSpringBeans().isEmpty());
+
+        RegistryBeanDefinition b1 = beans.getBeans().get(0);
+        RegistryBeanDefinition b2 = beans.getBeans().get(1);
+
+        assertEquals("b1", b1.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b1.getType());
+        assertEquals("createMyBean", b1.getFactoryMethod());
+        assertEquals(2, b1.getConstructors().size());
+        assertEquals("c1", b1.getConstructors().get(0));
+        assertEquals("c2", b1.getConstructors().get(1));
+
+        assertEquals("b2", b2.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b2.getType());
+        assertEquals("createMyBean", b2.getFactoryMethod());
+        assertEquals(1, b2.getConstructors().size());
+        assertEquals("c1", b2.getConstructors().get(0));
+        assertEquals("v1", b2.getProperties().get("p1"));
+        assertEquals("v2", b2.getProperties().get("p2"));
     }
 
     @Test
@@ -365,13 +423,26 @@ public class ModelParserTest {
         assertEquals("myPolicy", dlc.getRedeliveryPolicyRef());
     }
 
-    private Path getResourceFolder() {
-        String url = getClass().getClassLoader().getResource("barInterceptorRoute.xml").toString();
-        if (url.startsWith("file:")) {
-            url = url.substring("file:".length(), url.indexOf("barInterceptorRoute.xml"));
-        } else if (url.startsWith("jar:file:")) {
-            url = url.substring("jar:file:".length(), url.indexOf('!'));
+    @Test
+    public void testParseError() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile() + "/invalid", "convertBodyParseError.xml").toPath();
+        Resource resource = ResourceHelper.fromString("file:convertBodyParseError.xml", Files.readString(path));
+        try {
+            ModelParser parser = new ModelParser(resource, NAMESPACE);
+            parser.parseRoutesDefinition();
+            fail("Should throw exception");
+        } catch (XmlPullParserLocationException e) {
+            assertEquals(22, e.getLineNumber());
+            assertEquals(25, e.getColumnNumber());
+            assertEquals("file:convertBodyParseError.xml", e.getResource().getLocation());
+            assertTrue(e.getMessage().startsWith("Unexpected attribute '{}ref'"));
         }
-        return Paths.get(url);
+    }
+
+    private Path getResourceFolder() {
+        String childFileString = getClass().getClassLoader().getResource("barInterceptorRoute.xml").getFile();
+        File parentFile = new File(childFileString).getParentFile();
+        return parentFile.toPath();
     }
 }

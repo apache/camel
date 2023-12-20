@@ -50,4 +50,40 @@ public class XmlPrettyPrinterTest {
         Assertions.assertEquals(expected, pretty);
     }
 
+    @Test
+    public void testPrettyPrintColor() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><tag><nested>hello</nested></tag></root>";
+        String expected = "*<?xml version=\"1.0\" encoding=\"UTF-8\"?>*\n"
+                          + "*<root>*\n"
+                          + "  *<tag>*\n"
+                          + "    *<nested>*\n"
+                          + "      *hello*\n"
+                          + "    *</nested>*\n"
+                          + "  *</tag>*\n"
+                          + "*</root>*";
+        String pretty = XmlPrettyPrinter.colorPrint(xml, 2, true, new XmlPrettyPrinter.ColorPrintElement() {
+            @Override
+            public String color(int type, String value) {
+                return "*" + value + "*";
+            }
+        });
+        Assertions.assertEquals(expected, pretty);
+    }
+
+    @Test
+    public void testPrettyPrintBeer() throws Exception {
+        String xml = "<beer alc=\"4.4%\"> <kind>Fosters</kind> <name>Bell Expedition</name> </beer>";
+        String expected = """
+                <beer alc="4.4%">
+                  <kind>
+                    Fosters
+                  </kind>
+                  <name>
+                    Bell Expedition
+                  </name>
+                </beer>""";
+        String pretty = XmlPrettyPrinter.pettyPrint(xml, 2, false);
+        Assertions.assertEquals(expected, pretty);
+    }
+
 }

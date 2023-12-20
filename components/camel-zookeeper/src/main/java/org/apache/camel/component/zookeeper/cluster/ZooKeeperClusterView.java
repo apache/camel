@@ -195,7 +195,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
             try {
                 return leaderSelector.getLeader().equals(this.participant);
             } catch (Exception e) {
-                LOGGER.debug("", e);
+                LOGGER.debug("{}", e.getMessage(), e);
                 return false;
             }
         }

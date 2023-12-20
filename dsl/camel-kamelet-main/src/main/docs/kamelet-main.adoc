@@ -48,4 +48,4 @@ For example a Camel route can be _coded_ in YAML which uses the Earthquake Kamel
 In this use-case the earthquake kamelet will be downloaded from github, and as well its required dependencies.
 
 You can find an example with this at
-https://github.com/apache/camel-examples/tree/main/examples/kamelet-main[kamelet-main].
+https://github.com/apache/camel-examples/tree/main/kamelet-main[kamelet-main].

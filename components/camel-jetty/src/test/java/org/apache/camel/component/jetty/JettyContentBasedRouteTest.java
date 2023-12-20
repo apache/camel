@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
  */
 public class JettyContentBasedRouteTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:" + getPort() + "/myservice";
+    private final String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
     public void testSendOne() throws Exception {

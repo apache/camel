@@ -171,12 +171,17 @@ public interface AzureEventhubsComponentBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -433,6 +438,23 @@ public interface AzureEventhubsComponentBuilderFactory {
             return this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CONNECTION_STRING
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default AzureEventhubsComponentBuilder credentialType(
+                org.apache.camel.component.azure.eventhubs.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * The generated value for the SharedAccessName.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -526,6 +548,7 @@ public interface AzureEventhubsComponentBuilderFactory {
             case "producerAsyncClient": getOrCreateConfiguration((EventHubsComponent) component).setProducerAsyncClient((com.azure.messaging.eventhubs.EventHubProducerAsyncClient) value); return true;
             case "autowiredEnabled": ((EventHubsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((EventHubsComponent) component).setConnectionString((java.lang.String) value); return true;
+            case "credentialType": getOrCreateConfiguration((EventHubsComponent) component).setCredentialType((org.apache.camel.component.azure.eventhubs.CredentialType) value); return true;
             case "sharedAccessKey": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessKey((java.lang.String) value); return true;
             case "sharedAccessName": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessName((java.lang.String) value); return true;
             case "tokenCredential": getOrCreateConfiguration((EventHubsComponent) component).setTokenCredential((com.azure.core.credential.TokenCredential) value); return true;

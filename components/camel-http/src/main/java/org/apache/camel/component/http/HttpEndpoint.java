@@ -18,7 +18,6 @@ package org.apache.camel.component.http;
 
 import java.io.Closeable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
@@ -167,7 +166,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public HttpEndpoint() {
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) throws URISyntaxException {
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) {
         this(endPointURI, component, httpURI, null);
     }
 
@@ -269,11 +268,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientBuilder.setUserAgent(userAgent);
         }
 
-        HttpClientConfigurer configurer = getHttpClientConfigurer();
-        if (configurer != null) {
-            configurer.configureHttpClient(clientBuilder);
-        }
-
         if (isBridgeEndpoint()) {
             // need to use noop cookiestore as we do not want to keep cookies in memory
             clientBuilder.setDefaultCookieStore(new NoopCookieStore());
@@ -283,7 +277,13 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientBuilder.setRedirectStrategy(DefaultRedirectStrategy.INSTANCE);
         }
 
+        HttpClientConfigurer configurer = getHttpClientConfigurer();
+        if (configurer != null) {
+            configurer.configureHttpClient(clientBuilder);
+        }
+
         LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
+
         return clientBuilder.build();
     }
 

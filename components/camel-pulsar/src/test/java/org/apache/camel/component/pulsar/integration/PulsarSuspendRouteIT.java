@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -212,7 +211,7 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
 
         List<MessageId> receivedMessageIds = to.getReceivedExchanges().stream()
                 .map(e -> e.getIn().getHeader(PulsarMessageHeaders.MESSAGE_ID, MessageId.class))
-                .collect(Collectors.toList());
+                .toList();
         assertEquals(sentMessageIds, receivedMessageIds);
     }
 

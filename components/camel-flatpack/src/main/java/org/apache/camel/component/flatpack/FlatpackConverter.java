@@ -40,16 +40,14 @@ public final class FlatpackConverter {
     }
 
     @Converter
-    public static Map<String, Object> toMap(DataSet dataSet) {
+    public static Map<String, Object> toMap(Record recordObj) {
         Map<String, Object> map = new HashMap<>();
-        putValues(map, dataSet);
-        return map;
-    }
+        if (recordObj instanceof DataSet dataSet) {
+            putValues(map, dataSet);
+        } else {
+            putValues(map, recordObj);
+        }
 
-    @Converter
-    public static Map<String, Object> toMap(Record record) {
-        Map<String, Object> map = new HashMap<>();
-        putValues(map, record);
         return map;
     }
 
@@ -112,23 +110,23 @@ public final class FlatpackConverter {
     /**
      * Puts the values of the record into the map
      */
-    private static void putValues(Map<String, Object> map, Record record) {
-        String[] columns = record.getColumns();
+    private static void putValues(Map<String, Object> map, Record recordObj) {
+        String[] columns = recordObj.getColumns();
 
         for (String column : columns) {
-            String value = record.getString(column);
+            String value = recordObj.getString(column);
             map.put(column, value);
         }
     }
 
     private static Element createDatasetRecord(DataSet dataSet, Document doc) {
-        Element record;
+        Element element;
         if (dataSet.isRecordID(FlatpackComponent.HEADER_ID)) {
-            record = doc.createElement("DatasetHeader");
+            element = doc.createElement("DatasetHeader");
         } else if (dataSet.isRecordID(FlatpackComponent.TRAILER_ID)) {
-            record = doc.createElement("DatasetTrailer");
+            element = doc.createElement("DatasetTrailer");
         } else {
-            record = doc.createElement("DatasetRecord");
+            element = doc.createElement("DatasetRecord");
         }
 
         String[] columns = getColumns(dataSet);
@@ -140,10 +138,10 @@ public final class FlatpackConverter {
             columnElement.setAttribute("name", column);
             columnElement.setTextContent(value);
 
-            record.appendChild(columnElement);
+            element.appendChild(columnElement);
         }
 
-        return record;
+        return element;
     }
 
     private static String[] getColumns(DataSet dataSet) {

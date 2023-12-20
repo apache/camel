@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -25,6 +27,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyMuteExceptionTest extends BaseJettyTest {
 
@@ -35,8 +38,21 @@ public class JettyMuteExceptionTest extends BaseJettyTest {
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse response = client.execute(get)) {
 
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-            assertEquals("", responseString);
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            assertTrue(responseString.isEmpty());
+            assertEquals(500, response.getCode());
+        }
+    }
+
+    @Test
+    public void testDefaultMuteException() throws Exception {
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/fooDefault");
+        get.addHeader("Accept", "application/text");
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(get)) {
+
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            assertTrue(responseString.isEmpty());
             assertEquals(500, response.getCode());
         }
     }
@@ -47,6 +63,9 @@ public class JettyMuteExceptionTest extends BaseJettyTest {
             @Override
             public void configure() {
                 from("jetty:http://localhost:{{port}}/foo?muteException=true").to("mock:destination")
+                        .throwException(new IllegalArgumentException("Camel cannot do this"));
+
+                from("jetty:http://localhost:{{port}}/fooDefault").to("mock:destination")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };

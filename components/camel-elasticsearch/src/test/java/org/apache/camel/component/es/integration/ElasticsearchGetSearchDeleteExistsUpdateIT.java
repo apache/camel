@@ -277,12 +277,11 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Bulk);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        template.requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
-                String.class);
+        template.requestBodyAndHeaders("direct:start", List.of(map1, map2), headers, String.class);
 
         // No match
         Map<String, Object> actualQuery = new HashMap<>();
-        actualQuery.put("doc.testSearchWithMapQuery1", "bar");
+        actualQuery.put("testSearchWithMapQuery1", "bar");
         Map<String, Object> match = new HashMap<>();
         match.put("match", actualQuery);
         Map<String, Object> query = new HashMap<>();
@@ -293,7 +292,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         assertEquals(0, response.total().value(), "response hits should be == 0");
 
         // Match
-        actualQuery.put("doc.testSearchWithMapQuery1", "foo");
+        actualQuery.put("testSearchWithMapQuery1", "foo");
         // the result may see stale data so use Awaitility
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             HitsMetadata<?> resp = template.requestBody("direct:search", query, HitsMetadata.class);
@@ -303,8 +302,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
             assertEquals(1, resp.hits().size(), "response hits should be == 1");
             Object result = resp.hits().get(0).source();
             assertInstanceOf(ObjectNode.class, result);
-            assertTrue(((ObjectNode) result).has("doc"));
-            JsonNode node = ((ObjectNode) result).get("doc");
+            JsonNode node = (ObjectNode) result;
             assertTrue(node.has("testSearchWithMapQuery1"));
             assertEquals("foo", node.get("testSearchWithMapQuery1").asText());
         });
@@ -318,12 +316,11 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Bulk);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        template.requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
-                String.class);
+        template.requestBodyAndHeaders("direct:start", List.of(map1, map2), headers, String.class);
 
         // No match
         String query = "{\n"
-                       + "    \"query\" : { \"match\" : { \"doc.testSearchWithStringQuery1\" : \"bar\" }}\n"
+                       + "    \"query\" : { \"match\" : { \"testSearchWithStringQuery1\" : \"bar\" }}\n"
                        + "}\n";
 
         HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMetadata.class);
@@ -333,7 +330,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
         // Match
         String q = "{\n"
-                   + "    \"query\" : { \"match\" : { \"doc.testSearchWithStringQuery1\" : \"foo\" }}\n"
+                   + "    \"query\" : { \"match\" : { \"testSearchWithStringQuery1\" : \"foo\" }}\n"
                    + "}\n";
         // the result may see stale data so use Awaitility
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -344,8 +341,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
             assertEquals(1, resp.hits().size(), "response hits should be == 1");
             Object result = resp.hits().get(0).source();
             assertInstanceOf(ObjectNode.class, result);
-            assertTrue(((ObjectNode) result).has("doc"));
-            JsonNode node = ((ObjectNode) result).get("doc");
+            JsonNode node = (ObjectNode) result;
             assertTrue(node.has("testSearchWithStringQuery1"));
             assertEquals("foo", node.get("testSearchWithStringQuery1").asText());
         });
@@ -359,13 +355,13 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Bulk);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        template.requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
+        template.requestBodyAndHeaders("direct:start", List.of(map1, map2), headers,
                 String.class);
 
         // No match
         SearchRequest.Builder builder = new SearchRequest.Builder()
                 .query(new Query.Builder()
-                        .match(new MatchQuery.Builder().field("doc.testSearchWithBuilder1").query("bar").build()).build());
+                        .match(new MatchQuery.Builder().field("testSearchWithBuilder1").query("bar").build()).build());
         HitsMetadata<?> response = template.requestBody("direct:search", builder, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
@@ -376,7 +372,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             SearchRequest.Builder b = new SearchRequest.Builder()
                     .query(new Query.Builder()
-                            .match(new MatchQuery.Builder().field("doc.testSearchWithBuilder1").query("foo").build()).build());
+                            .match(new MatchQuery.Builder().field("testSearchWithBuilder1").query("foo").build()).build());
 
             HitsMetadata<?> resp = template.requestBody("direct:search", b, HitsMetadata.class);
             assertNotNull(resp, "response should not be null");
@@ -385,8 +381,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
             assertEquals(1, resp.hits().size(), "response hits should be == 1");
             Object result = resp.hits().get(0).source();
             assertInstanceOf(ObjectNode.class, result);
-            assertTrue(((ObjectNode) result).has("doc"));
-            JsonNode node = ((ObjectNode) result).get("doc");
+            JsonNode node = (ObjectNode) result;
             assertTrue(node.has("testSearchWithBuilder1"));
             assertEquals("foo", node.get("testSearchWithBuilder1").asText());
         });
@@ -415,7 +410,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
         // No match
         SearchRequest.Builder builder = new SearchRequest.Builder()
-                .query(new Query.Builder().match(new MatchQuery.Builder().field("doc.id").query("bar").build()).build());
+                .query(new Query.Builder().match(new MatchQuery.Builder().field("id").query("bar").build()).build());
         HitsMetadata<?> response = template.requestBodyAndHeader(
                 "direct:search", builder, ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Product.class, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
@@ -535,6 +530,29 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
     }
 
     @Test
+    void testUpdateWithMapInDocumentOnlyMode() {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull(indexId, "indexId should be set");
+
+        Map<String, String> newMap = new HashMap<>();
+        newMap.put(createPrefix() + "key2", createPrefix() + "value2");
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        headers.put(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.TRUE);
+        indexId = template.requestBodyAndHeaders("direct:update", newMap, headers, String.class);
+        assertNotNull(indexId, "indexId should be set");
+
+        //now, verify GET succeeded
+        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertNotNull(response, "response should not be null");
+        assertNotNull(response.source(), "response source should not be null");
+        assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
+        assertTrue(((ObjectNode) response.source()).has(createPrefix() + "key2"));
+        assertEquals(createPrefix() + "value2", ((ObjectNode) response.source()).get(createPrefix() + "key2").asText());
+    }
+
+    @Test
     void testGetWithHeaders() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
@@ -628,6 +646,26 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
     }
 
     @Test
+    void testUpdateWithIDInHeaderInDocumentOnlyMode() {
+        Map<String, String> map = createIndexedData();
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
+
+        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        assertNotNull(indexId, "indexId should be set");
+        assertEquals("123", indexId, "indexId should be equals to the provided id");
+
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Update);
+        headers.put(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.TRUE);
+
+        indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        assertNotNull(indexId, "indexId should be set");
+        assertEquals("123", indexId, "indexId should be equals to the provided id");
+    }
+
+    @Test
     void testGetRequestBody() {
         String prefix = createPrefix();
 
@@ -704,6 +742,27 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
     }
 
     @Test
+    void testUpdateWithStringInDocumentOnlyMode() {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull(indexId, "indexId should be set");
+        String key = map.keySet().iterator().next();
+        Object body = String.format("{\"%s\" : \"testUpdateWithString-updated\"}", key);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        headers.put(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.TRUE);
+        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        assertNotNull(indexId, "indexId should be set");
+
+        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertThat(response.source(), notNullValue());
+        ObjectNode node = (ObjectNode) response.source();
+        assertThat(node.has(key), equalTo(true));
+        assertThat(node.get(key).asText(), equalTo("testUpdateWithString-updated"));
+    }
+
+    @Test
     void testUpdateWithReader() {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
@@ -713,6 +772,27 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        assertNotNull(indexId, "indexId should be set");
+
+        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertThat(response.source(), notNullValue());
+        ObjectNode node = (ObjectNode) response.source();
+        assertThat(node.has(key), equalTo(true));
+        assertThat(node.get(key).asText(), equalTo("testUpdateWithReader-updated"));
+    }
+
+    @Test
+    void testUpdateWithReaderInDocumentOnlyMode() {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull(indexId, "indexId should be set");
+        String key = map.keySet().iterator().next();
+        Object body = new StringReader(String.format("{\"%s\" : \"testUpdateWithReader-updated\"}", key));
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        headers.put(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.TRUE);
         indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
@@ -745,6 +825,28 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
     }
 
     @Test
+    void testUpdateWithBytesInDocumentOnlyMode() {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull(indexId, "indexId should be set");
+        String key = map.keySet().iterator().next();
+        Object body
+                = String.format("{\"%s\" : \"testUpdateWithBytes-updated\"}", key).getBytes(StandardCharsets.UTF_8);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        headers.put(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.TRUE);
+        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        assertNotNull(indexId, "indexId should be set");
+
+        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertThat(response.source(), notNullValue());
+        ObjectNode node = (ObjectNode) response.source();
+        assertThat(node.has(key), equalTo(true));
+        assertThat(node.get(key).asText(), equalTo("testUpdateWithBytes-updated"));
+    }
+
+    @Test
     void testUpdateWithInputStream() {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
@@ -756,6 +858,29 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        assertNotNull(indexId, "indexId should be set");
+
+        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertThat(response.source(), notNullValue());
+        ObjectNode node = (ObjectNode) response.source();
+        assertThat(node.has(key), equalTo(true));
+        assertThat(node.get(key).asText(), equalTo("testUpdateWithInputStream-updated"));
+    }
+
+    @Test
+    void testUpdateWithInputStreamInDocumentOnlyMode() {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull(indexId, "indexId should be set");
+        String key = map.keySet().iterator().next();
+        Object body = new ByteArrayInputStream(
+                String.format("{\"%s\" : \"testUpdateWithInputStream-updated\"}", key)
+                        .getBytes(StandardCharsets.UTF_8));
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
+        headers.put(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.TRUE);
         indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 

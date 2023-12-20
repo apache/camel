@@ -29,8 +29,8 @@ class DefaultTransformerRegistryTest {
     private final DefaultTransformerRegistry dataTypeRegistry = new DefaultTransformerRegistry(new DefaultCamelContext());
 
     @Test
-    public void shouldLookupDefaultDataTypeConverters() throws Exception {
-        Transformer transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("plain-text"));
+    public void shouldLookupDefaultDataTypeTransformers() throws Exception {
+        Transformer transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("text-plain"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(StringDataTypeTransformer.class, transformer.getClass());
         transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("application-octet-stream"));

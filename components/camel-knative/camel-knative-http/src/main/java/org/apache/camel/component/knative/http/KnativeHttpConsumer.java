@@ -49,6 +49,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.CollectionHelper.appendEntry;
+
 public class KnativeHttpConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(KnativeHttpConsumer.class);
 
@@ -191,25 +193,13 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         // from("knative:event/my.event")
         //        .to("http://{{env:PROJECT}}.{{env:NAMESPACE}}.svc.cluster.local/service");
         //
-        routingContext.vertx().executeBlocking(
-                promise -> {
-                    try {
-                        createUoW(exchange);
-                    } catch (Exception e) {
-                        promise.fail(e);
-                        return;
-                    }
-
-                    getAsyncProcessor().process(exchange, c -> {
-                        if (!exchange.isFailed()) {
-                            promise.complete();
-                        } else {
-                            promise.fail(exchange.getException());
-                        }
-                    });
-                },
-                false,
-                result -> {
+        routingContext.vertx().executeBlocking(() -> {
+            createUoW(exchange);
+            getAsyncProcessor().process(exchange);
+            return null;
+        },
+                false)
+                .onComplete(result -> {
                     try {
                         Throwable failure = null;
 
@@ -266,12 +256,12 @@ public class KnativeHttpConsumer extends DefaultConsumer {
 
         for (Map.Entry<String, String> entry : request.headers().entries()) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                KnativeHttpSupport.appendHeader(message.getHeaders(), entry.getKey(), entry.getValue());
+                appendEntry(message.getHeaders(), entry.getKey(), entry.getValue());
             }
         }
         for (Map.Entry<String, String> entry : request.params().entries()) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                KnativeHttpSupport.appendHeader(message.getHeaders(), entry.getKey(), entry.getValue());
+                appendEntry(message.getHeaders(), entry.getKey(), entry.getValue());
             }
         }
 

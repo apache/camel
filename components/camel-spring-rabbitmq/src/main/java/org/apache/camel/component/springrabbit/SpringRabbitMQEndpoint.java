@@ -161,6 +161,9 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     @UriParam(label = "producer", defaultValue = "false",
               description = "Use a separate connection for publishers and consumers")
     private boolean usePublisherConnection;
+    @UriParam(label = "producer", defaultValue = "false",
+              description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown.")
+    private boolean allowNullBody;
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
@@ -195,6 +198,14 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     @Override
     public SpringRabbitMQComponent getComponent() {
         return (SpringRabbitMQComponent) super.getComponent();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (allowNullBody) {
+            // need to wrap message converter in allow null
+            messageConverter = new AllowNullBodyMessageConverter(messageConverter);
+        }
     }
 
     public String getExchangeName() {
@@ -383,6 +394,14 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
     public void setUsePublisherConnection(boolean usePublisherConnection) {
         this.usePublisherConnection = usePublisherConnection;
+    }
+
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public void setAllowNullBody(boolean allowNullBody) {
+        this.allowNullBody = allowNullBody;
     }
 
     public boolean isSynchronous() {

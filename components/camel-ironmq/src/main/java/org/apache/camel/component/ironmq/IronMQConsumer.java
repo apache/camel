@@ -79,6 +79,9 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
                     getEndpoint().getConfiguration().getWait());
             LOG.trace("Received {} messages", messages.getSize());
 
+            // okay we have some response from ironmq so lets mark the consumer as ready
+            forceConsumerAsReady();
+
             Queue<Exchange> exchanges = createExchanges(messages.getMessages());
             int noProcessed = processBatch(CastUtils.cast(exchanges));
             // delete all processed messages in one batch;

@@ -26,7 +26,7 @@ import org.apache.camel.component.jetty.JettyRestHttpBinding;
 
 public class MyCustomHttpBinding extends JettyRestHttpBinding {
 
-    private String greeting;
+    private final String greeting;
 
     public MyCustomHttpBinding(String greeting) {
         this.greeting = greeting;

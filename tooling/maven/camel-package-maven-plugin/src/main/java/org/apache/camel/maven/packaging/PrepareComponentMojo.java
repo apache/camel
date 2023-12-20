@@ -151,6 +151,12 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                     getLog(), project, projectHelper, otherOutDir,
                     schemaOutDir, buildContext).prepareOthers();
             count = 1;
+        } else if (count == 0 && new File(project.getBasedir(), "src/main/kotlin").isDirectory()) {
+            // camel-kotlin-dsl is not java based so check for kotlin source
+            new PackageOtherMojo(
+                    getLog(), project, projectHelper, otherOutDir,
+                    schemaOutDir, buildContext).prepareOthers();
+            count = 1;
         }
 
         // whether to sync pom in allcomponents/parent

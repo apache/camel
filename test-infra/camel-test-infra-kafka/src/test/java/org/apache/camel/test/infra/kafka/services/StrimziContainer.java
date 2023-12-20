@@ -18,14 +18,16 @@
 package org.apache.camel.test.infra.kafka.services;
 
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class StrimziContainer extends GenericContainer<StrimziContainer> {
-    public static final String DEFAULT_STRIMZI_CONTAINER = "quay.io/strimzi/kafka:latest-kafka-3.5.1";
-    static final String STRIMZI_CONTAINER
-            = System.getProperty("itest.strimzi.container.image", DEFAULT_STRIMZI_CONTAINER);
+    static final String STRIMZI_CONTAINER = LocalPropertyResolver.getProperty(
+            StrimziContainer.class,
+            KafkaProperties.STRIMZI_CONTAINER);
     private static final int KAFKA_PORT = 9092;
 
     public StrimziContainer(Network network, String name, String zookeeperInstanceName) {

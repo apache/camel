@@ -20,7 +20,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.TestSupport;
@@ -47,7 +46,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
     @Test
     public void testTrunkStoreNotMaxHit() throws Exception {
         // given
-        File fileStore = testDirectory(true).resolve("data.dat").toFile();
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(10);
         fileIdempotentRepository.start();
@@ -58,7 +57,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
 
         // then
         try (Stream<String> fileContent = Files.lines(fileStore.toPath())) {
-            List<String> fileEntries = fileContent.collect(Collectors.toList());
+            List<String> fileEntries = fileContent.toList();
             // expected order
             MatcherAssert.assertThat(fileEntries,
                     IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
@@ -71,7 +70,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
     @Test
     public void testTrunkStoreFirstLevelMaxHit() throws Exception {
         // given
-        File fileStore = testDirectory(true).resolve("data.dat").toFile();
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.start();
@@ -82,7 +81,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
 
         // then
         try (Stream<String> fileContent = Files.lines(fileStore.toPath())) {
-            List<String> fileEntries = fileContent.collect(Collectors.toList());
+            List<String> fileEntries = fileContent.toList();
             // expected order
             MatcherAssert.assertThat(fileEntries,
                     IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
@@ -95,7 +94,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
     @Test
     public void testTrunkStoreFileMaxHit() throws Exception {
         // given
-        File fileStore = testDirectory(true).resolve("data.dat").toFile();
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.setMaxFileStoreSize(128);

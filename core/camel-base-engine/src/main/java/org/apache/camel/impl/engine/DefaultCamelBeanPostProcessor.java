@@ -221,19 +221,43 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             injectBindToRegistryFields(bean, beanName, filter);
             injectBindToRegistryMethods(bean, beanName, filter);
         }
+
+        // camel endpoint specific fields last
+        injectEndpointFields(bean, beanName, filter);
     }
 
     protected void injectSecondPass(Object bean, String beanName, Function<Class<?>, Boolean> filter) {
-        // on second pass do bind to registry beforehand as they may be used by field/method injections below
+        // on second pass do bind to fields first
+        injectFields(bean, beanName, filter);
+
         if (bindToRegistrySupported()) {
             injectClass(bean, beanName);
             injectNestedClasses(bean, beanName);
             injectBindToRegistryFields(bean, beanName, filter);
             injectBindToRegistryMethods(bean, beanName, filter);
         }
-
-        injectFields(bean, beanName, filter);
         injectMethods(bean, beanName, filter);
+
+        // camel endpoint specific fields last
+        injectEndpointFields(bean, beanName, filter);
+    }
+
+    protected void injectEndpointFields(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
+        ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            if (accept != null && !accept.apply(field.getType())) {
+                return;
+            }
+
+            EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+            if (endpointInject != null) {
+                injectField(field, endpointInject.value(), endpointInject.property(), bean, beanName);
+            }
+
+            Produce produce = field.getAnnotation(Produce.class);
+            if (produce != null) {
+                injectField(field, produce.value(), produce.property(), bean, beanName, produce.binding());
+            }
+        });
     }
 
     protected void injectFields(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
@@ -255,16 +279,6 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             BeanConfigInject beanConfigInject = field.getAnnotation(BeanConfigInject.class);
             if (beanConfigInject != null) {
                 injectFieldBeanConfig(field, beanConfigInject.value(), bean, beanName);
-            }
-
-            EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-            if (endpointInject != null) {
-                injectField(field, endpointInject.value(), endpointInject.property(), bean, beanName);
-            }
-
-            Produce produce = field.getAnnotation(Produce.class);
-            if (produce != null) {
-                injectField(field, produce.value(), produce.property(), bean, beanName, produce.binding());
             }
 
             // custom bean injector on the field
@@ -399,7 +413,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
     protected void injectNestedClasses(final Object bean, final String beanName) {
         ReflectionHelper.doWithClasses(bean.getClass(), clazz -> {
-            BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
+            BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
             if (ann != null) {
                 // it is a nested class so we don't have a bean instance for it
                 bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess());

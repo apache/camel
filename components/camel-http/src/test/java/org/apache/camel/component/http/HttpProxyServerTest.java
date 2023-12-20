@@ -100,7 +100,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWithProxyAndWithoutUser() throws Exception {
+    public void httpGetWithProxyAndWithoutUser() {
 
         Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort() + "?proxyAuthHost="
                                              + getProxyHost() + "&proxyAuthPort=" + getProxyPort(),
@@ -111,7 +111,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWithProxyAndWithoutUserTwo() throws Exception {
+    public void httpGetWithProxyAndWithoutUserTwo() {
 
         Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort() + "?proxyHost=" + getProxyHost()
                                              + "&proxyPort=" + getProxyPort(),
@@ -122,7 +122,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWithProxyOnComponent() throws Exception {
+    public void httpGetWithProxyOnComponent() {
         HttpComponent http = context.getComponent("http", HttpComponent.class);
         http.setProxyAuthHost(getProxyHost());
         http.setProxyAuthPort(Integer.parseInt(getProxyPort()));

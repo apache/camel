@@ -778,6 +778,68 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
+         * Show route Group.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: formatting
+         * 
+         * @param showRouteGroup the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showRouteGroup(boolean showRouteGroup) {
+            doSetProperty("showRouteGroup", showRouteGroup);
+            return this;
+        }
+        /**
+         * Show route Group.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: formatting
+         * 
+         * @param showRouteGroup the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showRouteGroup(String showRouteGroup) {
+            doSetProperty("showRouteGroup", showRouteGroup);
+            return this;
+        }
+        /**
+         * Show route ID.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: formatting
+         * 
+         * @param showRouteId the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showRouteId(boolean showRouteId) {
+            doSetProperty("showRouteId", showRouteId);
+            return this;
+        }
+        /**
+         * Show route ID.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: formatting
+         * 
+         * @param showRouteId the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showRouteId(String showRouteId) {
+            doSetProperty("showRouteId", showRouteId);
+            return this;
+        }
+        /**
          * Show the stack trace, if an exchange has an exception. Only effective
          * if one of showAll, showException or showCaughtException are enabled.
          * 

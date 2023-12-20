@@ -16,34 +16,51 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.netty.handler.codec.http.HttpHeaderValues;
+import io.vertx.core.Context;
+import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
+import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.net.SocketAddress;
+import io.vertx.core.streams.Pump;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
+import static org.apache.camel.util.CollectionHelper.appendEntry;
+
+/*
+ * Supporting class for the platform-http-vertx component.
+ *
+ * Please note that many of the methods in this class are part of the component's hot-path, therefore, please be mindful
+ * about the performance implications of the code (i.e.: keep methods small, avoid costly operations, etc).
+ */
 public final class VertxPlatformHttpSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpSupport.class);
+    public static final String DEFAULT_CONTENT_TYPE_ON_EXCEPTION = "text/plain; charset=utf-8";
 
     private VertxPlatformHttpSupport() {
     }
@@ -52,68 +69,16 @@ public final class VertxPlatformHttpSupport {
             HttpServerResponse response, Message message, HeaderFilterStrategy headerFilterStrategy,
             boolean muteExceptions) {
         final Exchange exchange = message.getExchange();
-        final TypeConverter tc = exchange.getContext().getTypeConverter();
 
         final int code = determineResponseCode(exchange, message.getBody());
         response.setStatusCode(code);
 
         // copy headers from Message to Response
         if (headerFilterStrategy != null) {
-            for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
-                final String key = entry.getKey();
-                final Object value = entry.getValue();
-                // use an iterator as there can be multiple values. (must not use a delimiter)
-                final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
-
-                String firstValue = null;
-                List<String> values = null;
-
-                while (it.hasNext()) {
-                    final String headerValue = tc.convertTo(String.class, it.next());
-                    if (headerValue != null && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
-                        if (firstValue == null) {
-                            firstValue = headerValue;
-                        } else {
-                            if (values == null) {
-                                values = new ArrayList<>();
-                                values.add(firstValue);
-                            }
-                            values.add(headerValue);
-                        }
-                    }
-                }
-
-                if (values != null) {
-                    response.putHeader(key, values);
-                } else if (firstValue != null) {
-                    response.putHeader(key, firstValue);
-                }
-            }
+            copyMessageHeadersToResponse(response, message, headerFilterStrategy, exchange);
         }
 
-        Object body = message.getBody();
-        final Exception exception = exchange.getException();
-
-        if (exception != null) {
-            if (muteExceptions) {
-                body = ""; // do not include stacktrace in body
-                // force content type to be text/plain as that is what the stacktrace is
-                message.setHeader(Exchange.CONTENT_TYPE, "text/plain; charset=utf-8");
-            } else {
-                // we failed due an exception so print it as plain text
-                final StringWriter sw = new StringWriter();
-                final PrintWriter pw = new PrintWriter(sw);
-                exception.printStackTrace(pw);
-
-                // the body should then be the stacktrace
-                body = ByteBuffer.wrap(sw.toString().getBytes(StandardCharsets.UTF_8));
-                // force content type to be text/plain as that is what the stacktrace is
-                message.setHeader(Exchange.CONTENT_TYPE, "text/plain; charset=utf-8");
-            }
-
-            // and mark the exception as failure handled, as we handled it by returning it as the response
-            ExchangeHelper.setFailureHandled(exchange);
-        }
+        final Object body = getBody(message, muteExceptions, exchange);
 
         // set the content-length if it can be determined, or chunked encoding
         final Integer length = determineContentLength(body);
@@ -132,6 +97,68 @@ public final class VertxPlatformHttpSupport {
         return body;
     }
 
+    private static Object getBody(Message message, boolean muteExceptions, Exchange exchange) {
+        final Exception exception = exchange.getException();
+
+        if (exception != null) {
+            return handleExceptions(message, muteExceptions, exception, exchange);
+        }
+        return message.getBody();
+    }
+
+    private static Object handleExceptions(Message message, boolean muteExceptions, Exception exception, Exchange exchange) {
+        Object body;
+        if (muteExceptions) {
+            body = ""; // do not include stacktrace in body
+            // force content type to be text/plain as that is what the stacktrace is
+            message.setHeader(Exchange.CONTENT_TYPE, DEFAULT_CONTENT_TYPE_ON_EXCEPTION);
+        } else {
+            // we failed due an exception so print it as plain text
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
+            exception.printStackTrace(pw);
+
+            // the body should then be the stacktrace
+            body = ByteBuffer.wrap(sw.toString().getBytes(StandardCharsets.UTF_8));
+            // force content type to be text/plain as that is what the stacktrace is
+            message.setHeader(Exchange.CONTENT_TYPE, DEFAULT_CONTENT_TYPE_ON_EXCEPTION);
+        }
+
+        // and mark the exception as failure handled, as we handled it by returning it as the response
+        ExchangeHelper.setFailureHandled(exchange);
+        return body;
+    }
+
+    private static void copyMessageHeadersToResponse(
+            HttpServerResponse response, Message message, HeaderFilterStrategy headerFilterStrategy, Exchange exchange) {
+        final TypeConverter tc = exchange.getContext().getTypeConverter();
+
+        for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
+            final String key = entry.getKey();
+            final Object value = entry.getValue();
+            // use an iterator as there can be multiple values. (must not use a delimiter)
+            final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
+
+            putHeader(response, headerFilterStrategy, exchange, it, tc, key);
+        }
+    }
+
+    private static void putHeader(
+            HttpServerResponse response, HeaderFilterStrategy headerFilterStrategy, Exchange exchange, Iterator<?> it,
+            TypeConverter tc, String key) {
+
+        HttpUtil.applyHeader(headerFilterStrategy, exchange, it, tc, key,
+                (values, firstValue) -> applyHeader(response, key, values, firstValue));
+    }
+
+    private static void applyHeader(HttpServerResponse response, String key, List<String> values, String firstValue) {
+        if (values != null) {
+            response.putHeader(key, values);
+        } else if (firstValue != null) {
+            response.putHeader(key, firstValue);
+        }
+    }
+
     static Integer determineContentLength(Object body) {
         if (body instanceof byte[]) {
             return ((byte[]) body).length;
@@ -141,71 +168,76 @@ public final class VertxPlatformHttpSupport {
         return null;
     }
 
-    /*
-     * Copied from org.apache.camel.http.common.DefaultHttpBinding.determineResponseCode(Exchange, Object)
-     * If DefaultHttpBinding.determineResponseCode(Exchange, Object) is moved to a module without the servlet-api
-     * dependency we could eventually consume it from there.
-     */
-    static int determineResponseCode(Exchange camelExchange, Object body) {
-        boolean failed = camelExchange.isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        Message message = camelExchange.getMessage();
-        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-        int codeToUse = currentCode == null ? defaultCode : currentCode;
-
-        if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
-                // no content
-                codeToUse = currentCode == null ? 204 : currentCode;
-            }
-        }
-
-        return codeToUse;
-    }
-
-    static void writeResponse(
-            RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions)
-            throws Exception {
+    static Future<Void> writeResponse(
+            RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
         final Object body = toHttpResponse(ctx.response(), camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
-        final HttpServerResponse response = ctx.response();
+        final Promise<Void> promise = Promise.promise();
 
         if (body == null) {
             LOGGER.trace("No payload to send as reply for exchange: {}", camelExchange);
-            response.end();
+            ctx.end();
+            promise.complete();
         } else if (body instanceof String) {
-            response.end((String) body);
+            ctx.end((String) body);
+            promise.complete();
         } else if (body instanceof InputStream) {
-            writeResponseAs(response, (InputStream) body);
+            writeResponseAs(promise, ctx, (InputStream) body);
         } else if (body instanceof Buffer) {
-            response.end((Buffer) body);
+            ctx.end((Buffer) body);
+            promise.complete();
         } else {
-            final TypeConverter tc = camelExchange.getContext().getTypeConverter();
-            // Try to convert to ByteBuffer for performance reason
-            final ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
-            if (bb != null) {
-                final Buffer b = Buffer.buffer(bb.capacity());
-                b.setBytes(0, bb);
-                response.end(b);
-            } else {
-                // Otherwise fallback to most generic InputStream conversion
-                final InputStream is = tc.mandatoryConvertTo(InputStream.class, camelExchange, body);
-                writeResponseAs(response, is);
+            try {
+                writeResponseAsFallback(promise, camelExchange, body, ctx);
+            } catch (NoTypeConversionAvailableException e) {
+                promise.fail(e);
             }
+        }
+
+        return promise.future();
+    }
+
+    private static void writeResponseAsFallback(Promise<Void> promise, Exchange camelExchange, Object body, RoutingContext ctx)
+            throws NoTypeConversionAvailableException {
+        final TypeConverter tc = camelExchange.getContext().getTypeConverter();
+        // Try to convert to ByteBuffer for performance reason
+        final ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
+        if (bb != null) {
+            writeResponseAs(promise, ctx, bb);
+        } else {
+            // Otherwise fallback to most generic InputStream conversion
+            final InputStream is = tc.mandatoryConvertTo(InputStream.class, camelExchange, body);
+            writeResponseAs(promise, ctx, is);
         }
     }
 
-    private static void writeResponseAs(HttpServerResponse response, InputStream is) throws IOException {
-        final byte[] bytes = new byte[4096];
-        try (InputStream in = is) {
-            int len;
-            while ((len = in.read(bytes)) >= 0) {
-                final Buffer b = Buffer.buffer(len);
-                b.appendBytes(bytes, 0, len);
-                response.write(b);
-            }
-        }
-        response.end();
+    private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, ByteBuffer bb) {
+        final Buffer b = Buffer.buffer(bb.capacity());
+        b.setBytes(0, bb);
+        ctx.end(b);
+        promise.complete();
+    }
+
+    private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, InputStream is) {
+        HttpServerResponse response = ctx.response();
+        Vertx vertx = ctx.vertx();
+        Context context = vertx.getOrCreateContext();
+
+        // Process the InputStream async to avoid blocking the Vert.x event loop on large responses
+        AsyncInputStream asyncInputStream = new AsyncInputStream(vertx, context, is);
+        asyncInputStream.exceptionHandler(promise::fail);
+        asyncInputStream.endHandler(event -> endHandler(promise, response, asyncInputStream));
+
+        // Pump the InputStream content into the HTTP response WriteStream
+        Pump pump = Pump.pump(asyncInputStream, response);
+        context.runOnContext(event -> pump.start());
+    }
+
+    private static void endHandler(Promise<Void> promise, HttpServerResponse response, AsyncInputStream asyncInputStream) {
+        response.end().onComplete(result -> onComplete(promise, asyncInputStream));
+    }
+
+    private static void onComplete(Promise<Void> promise, AsyncInputStream asyncInputStream) {
+        asyncInputStream.close(closeResult -> promise.complete());
     }
 
     static void populateCamelHeaders(
@@ -215,43 +247,25 @@ public final class VertxPlatformHttpSupport {
             HeaderFilterStrategy headerFilterStrategy) {
 
         final HttpServerRequest request = ctx.request();
-        headersMap.put(Exchange.HTTP_PATH, request.path());
+        headersMap.put(Exchange.HTTP_PATH, ctx.normalizedPath());
 
         if (headerFilterStrategy != null) {
-            final MultiMap requestHeaders = request.headers();
-            final String authz = requestHeaders.get("authorization");
-            // store a special header that this request was authenticated using HTTP Basic
-            if (authz != null && authz.trim().startsWith("Basic")) {
-                if (!headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
-                    appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
-                }
-            }
-            for (String name : requestHeaders.names()) {
-                // add the headers one by one, and use the header filter strategy
-                for (String value : requestHeaders.getAll(name)) {
-                    if (!headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
-                        appendHeader(headersMap, name.toString(), value);
-                    }
-                }
-            }
-
-            // process uri parameters as headers
-            final MultiMap pathParameters = ctx.queryParams();
-            // continue if the map is not empty, otherwise there are no params
-            if (!pathParameters.isEmpty()) {
-                for (String name : pathParameters.names()) {
-                    for (String value : pathParameters.getAll(name)) {
-                        if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                            appendHeader(headersMap, name, value);
-                        }
-                    }
-                }
-            }
+            applyHeaderFilterStrategy(ctx, headersMap, exchange, headerFilterStrategy, request);
         }
 
         // Path parameters
         for (Map.Entry<String, String> en : ctx.pathParams().entrySet()) {
-            appendHeader(headersMap, en.getKey(), en.getValue());
+            appendEntry(headersMap, en.getKey(), en.getValue());
+        }
+
+        SocketAddress localAddress = request.localAddress();
+        if (localAddress != null) {
+            headersMap.put(VertxPlatformHttpConstants.LOCAL_ADDRESS, localAddress);
+        }
+
+        SocketAddress remoteAddress = request.remoteAddress();
+        if (remoteAddress != null) {
+            headersMap.put(VertxPlatformHttpConstants.REMOTE_ADDRESS, remoteAddress);
         }
 
         // NOTE: these headers is applied using the same logic as camel-http/camel-jetty to be consistent
@@ -264,21 +278,65 @@ public final class VertxPlatformHttpSupport {
         headersMap.put(Exchange.HTTP_RAW_QUERY, request.query());
     }
 
-    @SuppressWarnings("unchecked")
-    static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            Object existing = headers.get(key);
-            List<Object> list;
-            if (existing instanceof List) {
-                list = (List<Object>) existing;
-            } else {
-                list = new ArrayList<>();
-                list.add(existing);
-            }
-            list.add(value);
-            value = list;
-        }
+    // Note: this is in the hot path of the platform http, so be mindful with performance here
+    private static void applyHeaderFilterStrategy(
+            RoutingContext ctx, Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
+            HttpServerRequest request) {
+        final MultiMap requestHeaders = request.headers();
+        applyAuthHeaders(headersMap, exchange, headerFilterStrategy, requestHeaders);
+        applyHeaders(headersMap, exchange, headerFilterStrategy, requestHeaders);
 
-        headers.put(key, value);
+        // process uri parameters as headers
+        final MultiMap pathParameters = ctx.queryParams();
+        // continue if the map is not empty, otherwise there are no params
+        if (!pathParameters.isEmpty()) {
+            applyHeaders(headersMap, exchange, headerFilterStrategy, pathParameters);
+        }
+    }
+
+    private static void applyHeaders(
+            Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
+            MultiMap requestHeaders) {
+
+        final List<Map.Entry<String, String>> entries = requestHeaders.entries();
+        for (var entry : entries) {
+            final String name = entry.getKey();
+            final String value = entry.getValue();
+
+            // add the headers one by one, and use the header filter strategy
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                appendEntry(headersMap, name, value);
+            }
+        }
+    }
+
+    private static void applyAuthHeaders(
+            Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
+            MultiMap requestHeaders) {
+        final String authorization = requestHeaders.get("authorization");
+        // store a special header that this request was authenticated using HTTP Basic
+        if (authorization != null && authorization.trim().startsWith("Basic")) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
+                appendEntry(headersMap, Exchange.AUTHENTICATION, "Basic");
+            }
+        }
+    }
+
+    static boolean isMultiPartFormData(RoutingContext ctx) {
+        return isContentTypeMatching(ctx, HttpHeaderValues.MULTIPART_FORM_DATA.toString());
+    }
+
+    static boolean isFormUrlEncoded(RoutingContext ctx) {
+        return isContentTypeMatching(ctx, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString());
+    }
+
+    private static boolean isContentTypeMatching(RoutingContext ctx, String expectedContentType) {
+        String contentType = ctx.parsedHeaders().contentType().value();
+        boolean match = false;
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(contentType)) {
+            String lowerCaseContentType = contentType.toLowerCase();
+            match = lowerCaseContentType.startsWith(expectedContentType);
+        }
+        return match;
     }
 }

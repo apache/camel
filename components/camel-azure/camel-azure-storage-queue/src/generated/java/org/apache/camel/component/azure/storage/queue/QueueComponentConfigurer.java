@@ -37,6 +37,8 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.queue.QueueConfiguration.class, value)); return true;
         case "createqueue":
         case "createQueue": getOrCreateConfiguration(target).setCreateQueue(property(camelContext, boolean.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.storage.queue.CredentialType.class, value)); return true;
         case "credentials": getOrCreateConfiguration(target).setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
@@ -79,6 +81,8 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "configuration": return org.apache.camel.component.azure.storage.queue.QueueConfiguration.class;
         case "createqueue":
         case "createQueue": return boolean.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.storage.queue.CredentialType.class;
         case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
@@ -117,6 +121,8 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "configuration": return target.getConfiguration();
         case "createqueue":
         case "createQueue": return getOrCreateConfiguration(target).isCreateQueue();
+        case "credentialtype":
+        case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "credentials": return getOrCreateConfiguration(target).getCredentials();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();

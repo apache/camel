@@ -42,7 +42,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <endpoint id="to1" uri="cxfrs://http://localhost:${CXFTestSupport.port2}/CxfRsProducerHeaderTest/"/>
     <endpoint id="to2" uri="cxfrs://http://localhost:${CxfRsProducerHeaderTest.1}/CxfRsProducerHeaderTest"/>
-    <endpoint id="from1" uri="jetty://http://localhost:${CxfRsProducerHeaderTest.1}/CxfRsProducerHeaderTest?matchOnUriPrefix=true"/>
+    <endpoint id="from1" uri="undertow://http://localhost:${CxfRsProducerHeaderTest.1}/CxfRsProducerHeaderTest?matchOnUriPrefix=true"/>
     <route>
        <from uri="direct://http"/>
        <to uri="ref:to1"/>

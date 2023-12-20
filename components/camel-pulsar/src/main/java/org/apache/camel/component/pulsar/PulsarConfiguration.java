@@ -136,6 +136,10 @@ public class PulsarConfiguration implements Cloneable {
     private MessageRoutingMode messageRoutingMode = MessageRoutingMode.RoundRobinPartition;
     @UriParam(label = "producer", description = "Custom Message Router to use")
     private MessageRouter messageRouter;
+    @UriParam(label = "producer",
+              description = "Hashing function to use when choosing the partition to use for a particular message",
+              enums = "JavaStringHash,Murmur3_32Hash", defaultValue = "JavaStringHash")
+    private String hashingScheme = "JavaStringHash";
 
     /**
      * Returns a copy of this configuration
@@ -598,5 +602,16 @@ public class PulsarConfiguration implements Cloneable {
      */
     public void setAuthenticationParams(String authenticationParams) {
         this.authenticationParams = authenticationParams;
+    }
+
+    public String getHashingScheme() {
+        return hashingScheme;
+    }
+
+    /**
+     * Hashing function to use when choosing the partition to use for a particular message
+     */
+    public void setHashingScheme(String hashingScheme) {
+        this.hashingScheme = hashingScheme;
     }
 }

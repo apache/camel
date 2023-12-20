@@ -29,6 +29,16 @@ import org.apache.camel.spi.Resource;
 public interface RoutesCollector {
 
     /**
+     * Whether to ignore route loading and compilation errors (use this with care!)
+     */
+    boolean isIgnoreLoadingError();
+
+    /**
+     * Whether to ignore route loading and compilation errors (use this with care!)
+     */
+    void setIgnoreLoadingError(boolean ignoreLoadingError);
+
+    /**
      * Collects the {@link RoutesBuilder} instances which was discovered from the {@link org.apache.camel.spi.Registry}
      * such as Spring or CDI bean containers.
      *

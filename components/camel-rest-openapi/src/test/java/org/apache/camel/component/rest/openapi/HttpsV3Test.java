@@ -107,8 +107,8 @@ public abstract class HttpsV3Test extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
                 equalTo("application/xml, application/json")));

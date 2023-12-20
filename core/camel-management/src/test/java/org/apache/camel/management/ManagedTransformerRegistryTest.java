@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -93,11 +94,11 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
             boolean isDynamic = (boolean) composite.get("dynamic");
             LOG.info("[{}][{}][{}][{}][{}][{}]", name, from, to, isStatic, isDynamic, description);
             if (description.startsWith("ProcessorTransformer")) {
-                assertEquals(null, name);
+                assertNull(name);
                 assertEquals("xml:foo", from);
                 assertEquals("json:bar", to);
             } else if (description.startsWith("DataFormatTransformer")) {
-                assertEquals(null, name);
+                assertNull(name);
                 assertEquals("java:" + ManagedTransformerRegistryTest.class.getName(), from);
                 assertEquals("xml:test", to);
             } else if (description.startsWith("MyTransformer")) {

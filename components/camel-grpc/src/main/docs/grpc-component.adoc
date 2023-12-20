@@ -34,7 +34,7 @@ for this component:
 == URI format
 
 -------------------------------------
-grpc://service[?options]
+grpc:host:port/service[?options]
 -------------------------------------
 
 

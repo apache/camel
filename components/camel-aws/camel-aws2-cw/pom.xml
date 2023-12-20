@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws2-cw</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: AWS2 CW</name>
-    <description>A Camel Amazon CW Web Service Component Version 2</description>
+    <description>Send metrics to Amazon Cloud Watch service</description>
 
     <properties>
     </properties>

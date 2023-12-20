@@ -178,7 +178,7 @@ public class SecretsManagerProducer extends DefaultProducer {
             if (getConfiguration().isBinaryPayload()) {
                 builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
             } else {
-                builder.secretString((String) payload);
+                builder.secretString(payload);
             }
             request = builder.build();
         }
@@ -330,7 +330,7 @@ public class SecretsManagerProducer extends DefaultProducer {
             if (getConfiguration().isBinaryPayload()) {
                 builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
             } else {
-                builder.secretString((String) payload);
+                builder.secretString(payload);
             }
             request = builder.build();
         }

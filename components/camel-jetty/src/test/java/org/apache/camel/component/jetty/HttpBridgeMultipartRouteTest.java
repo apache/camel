@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -60,7 +61,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse response = client.execute(method)) {
 
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             assertEquals(body, responseString);
 
             String numAttachments = response.getFirstHeader("numAttachments").getValue();

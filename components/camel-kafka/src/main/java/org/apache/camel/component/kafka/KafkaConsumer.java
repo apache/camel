@@ -30,7 +30,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.WritableHealthCheckRepository;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.resume.ConsumerListenerAware;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
@@ -40,6 +40,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.kafka.clients.ClientDnsLookup;
+import org.apache.kafka.clients.ClientUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +55,7 @@ public class KafkaConsumer extends DefaultConsumer
     protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
     private KafkaConsumerHealthCheck consumerHealthCheck;
-    private WritableHealthCheckRepository healthCheckRepository;
+    private HealthCheckRepository healthCheckRepository;
     // This list helps to work around the infinite loop of KAFKA-1894
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
@@ -83,11 +85,6 @@ public class KafkaConsumer extends DefaultConsumer
     @Override
     public void setConsumerListener(KafkaConsumerListener consumerListener) {
         this.consumerListener = consumerListener;
-    }
-
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
     }
 
     @Override
@@ -126,13 +123,13 @@ public class KafkaConsumer extends DefaultConsumer
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
                 endpoint.getCamelContext(),
-                "components",
-                WritableHealthCheckRepository.class);
+                "consumers",
+                HealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
             consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckConsumerEnabled());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
+            setHealthCheck(consumerHealthCheck);
         }
 
         // is the offset repository already started?
@@ -155,6 +152,15 @@ public class KafkaConsumer extends DefaultConsumer
             pattern = Pattern.compile(topic);
         }
 
+        // validate configuration eager in case bad configuration
+        if (endpoint.getConfiguration().isPreValidateHostAndPort()) {
+            String brokers = getEndpoint().getConfiguration().getBrokers();
+            if (ObjectHelper.isEmpty(brokers)) {
+                throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option.");
+            }
+            ClientUtils.parseAndValidateAddresses(List.of(brokers.split(",")), ClientDnsLookup.USE_ALL_DNS_IPS.toString());
+        }
+
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(
@@ -175,7 +181,6 @@ public class KafkaConsumer extends DefaultConsumer
         }
 
         if (healthCheckRepository != null && consumerHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(consumerHealthCheck);
             consumerHealthCheck = null;
         }
 

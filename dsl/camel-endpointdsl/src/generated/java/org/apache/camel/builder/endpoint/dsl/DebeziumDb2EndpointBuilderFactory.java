@@ -393,6 +393,25 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The custom metric tags will accept key-value pairs to customize the
+         * MBean object name which should be appended the end of regular name,
+         * each key would represent a tag for the MBean object name, and the
+         * corresponding value would be the value of that tag the key is. For
+         * example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: db2
+         * 
+         * @param customMetricTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder customMetricTags(
+                String customMetricTags) {
+            doSetProperty("customMetricTags", customMetricTags);
+            return this;
+        }
+        /**
          * The name of the database from which the connector should capture
          * changes.
          * 
@@ -1641,12 +1660,17 @@ public interface DebeziumDb2EndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1663,12 +1687,17 @@ public interface DebeziumDb2EndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1838,7 +1867,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * @return the name of the header {@code DebeziumSourceMetadata}.
          */
         public String debeziumSourceMetadata() {
-            return "DebeziumSourceMetadata";
+            return "CamelDebeziumSourceMetadata";
         }
 
         /**
@@ -1852,7 +1881,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * @return the name of the header {@code DebeziumIdentifier}.
          */
         public String debeziumIdentifier() {
-            return "DebeziumIdentifier";
+            return "CamelDebeziumIdentifier";
         }
 
         /**
@@ -1865,7 +1894,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * @return the name of the header {@code DebeziumKey}.
          */
         public String debeziumKey() {
-            return "DebeziumKey";
+            return "CamelDebeziumKey";
         }
 
         /**
@@ -1880,7 +1909,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * @return the name of the header {@code DebeziumOperation}.
          */
         public String debeziumOperation() {
-            return "DebeziumOperation";
+            return "CamelDebeziumOperation";
         }
 
         /**
@@ -1894,7 +1923,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * @return the name of the header {@code DebeziumTimestamp}.
          */
         public String debeziumTimestamp() {
-            return "DebeziumTimestamp";
+            return "CamelDebeziumTimestamp";
         }
 
         /**
@@ -1907,7 +1936,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * @return the name of the header {@code DebeziumBefore}.
          */
         public String debeziumBefore() {
-            return "DebeziumBefore";
+            return "CamelDebeziumBefore";
         }
 
         /**
@@ -1920,7 +1949,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * @return the name of the header {@code DebeziumDdlSQL}.
          */
         public String debeziumDdlSQL() {
-            return "DebeziumDdlSQL";
+            return "CamelDebeziumDdlSQL";
         }
     }
     static DebeziumDb2EndpointBuilder endpointBuilder(

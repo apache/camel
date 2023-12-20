@@ -51,9 +51,10 @@ public class OgnlExpression extends ExpressionSupport {
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         ClassResolver cr = new CamelClassResolver(exchange.getContext().getClassResolver());
-        OgnlContext oglContext = Ognl.createDefaultContext(null, cr);
+        RootObject root = new RootObject(exchange);
+        OgnlContext oglContext = Ognl.createDefaultContext(root, cr);
         try {
-            Object value = Ognl.getValue(expression, oglContext, new RootObject(exchange));
+            Object value = Ognl.getValue(expression, oglContext, root);
             return exchange.getContext().getTypeConverter().convertTo(tClass, value);
         } catch (OgnlException e) {
             throw new ExpressionEvaluationException(this, exchange, e);

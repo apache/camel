@@ -106,8 +106,7 @@ public class SpringWebserviceConfiguration {
     }
 
     /**
-     * Option to provide a custom WebServiceMessageFactory. For example when you want Apache Axiom to handle web service
-     * messages instead of SAAJ.
+     * Option to provide a custom WebServiceMessageFactory.
      */
     public void setMessageFactory(WebServiceMessageFactory messageFactory) {
         this.messageFactory = messageFactory;

@@ -81,7 +81,7 @@ public class DefaultModelineFactory extends ServiceSupport
     }
 
     protected ModelineParser createModelineParser() {
-        return new DefaultModelineParser(camelContext);
+        return new DefaultModelineParser();
     }
 
     @Override

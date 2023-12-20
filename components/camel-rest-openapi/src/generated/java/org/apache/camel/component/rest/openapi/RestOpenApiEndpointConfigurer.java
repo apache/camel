@@ -30,6 +30,12 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
+        case "requestvalidationcustomizer":
+        case "requestValidationCustomizer": target.setRequestValidationCustomizer(property(camelContext, org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class, value)); return true;
+        case "requestvalidationenabled":
+        case "requestValidationEnabled": target.setRequestValidationEnabled(property(camelContext, boolean.class, value)); return true;
+        case "requestvalidationlevels":
+        case "requestValidationLevels": target.setRequestValidationLevels(property(camelContext, java.util.Map.class, value)); return true;
         default: return false;
         }
     }
@@ -46,6 +52,12 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "produces": return java.lang.String.class;
+        case "requestvalidationcustomizer":
+        case "requestValidationCustomizer": return org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class;
+        case "requestvalidationenabled":
+        case "requestValidationEnabled": return boolean.class;
+        case "requestvalidationlevels":
+        case "requestValidationLevels": return java.util.Map.class;
         default: return null;
         }
     }
@@ -63,6 +75,21 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "produces": return target.getProduces();
+        case "requestvalidationcustomizer":
+        case "requestValidationCustomizer": return target.getRequestValidationCustomizer();
+        case "requestvalidationenabled":
+        case "requestValidationEnabled": return target.isRequestValidationEnabled();
+        case "requestvalidationlevels":
+        case "requestValidationLevels": return target.getRequestValidationLevels();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "requestvalidationlevels":
+        case "requestValidationLevels": return java.lang.Object.class;
         default: return null;
         }
     }

@@ -41,6 +41,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
+    private boolean metricsEnabled;
     private boolean uploadEnabled;
     private String uploadSourceDir;
 
@@ -149,6 +150,17 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.healthCheckEnabled = healthCheckEnabled;
     }
 
+    public boolean isMetricsEnabled() {
+        return metricsEnabled;
+    }
+
+    /**
+     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics
+     */
+    public void setMetricsEnabled(boolean metricsEnabled) {
+        this.metricsEnabled = metricsEnabled;
+    }
+
     public boolean isUploadEnabled() {
         return uploadEnabled;
     }
@@ -239,6 +251,14 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
+        return this;
+    }
+
+    /**
+     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics
+     */
+    public HttpServerConfigurationProperties withMetricsEnabled(boolean metricsEnabled) {
+        this.metricsEnabled = metricsEnabled;
         return this;
     }
 

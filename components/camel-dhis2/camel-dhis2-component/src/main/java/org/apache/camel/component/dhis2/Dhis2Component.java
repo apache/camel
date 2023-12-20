@@ -33,11 +33,11 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
     private Dhis2Client dhis2Client;
 
     public Dhis2Component() {
-        super(Dhis2Endpoint.class, Dhis2ApiName.class, Dhis2ApiCollection.getCollection());
+        super(Dhis2ApiName.class, Dhis2ApiCollection.getCollection());
     }
 
     public Dhis2Component(CamelContext context) {
-        super(context, Dhis2Endpoint.class, Dhis2ApiName.class, Dhis2ApiCollection.getCollection());
+        super(context, Dhis2ApiName.class, Dhis2ApiCollection.getCollection());
     }
 
     @Override

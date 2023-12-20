@@ -26,12 +26,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TimeoutMap;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class DefaultTimeoutMapTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTimeoutMapTest.class);

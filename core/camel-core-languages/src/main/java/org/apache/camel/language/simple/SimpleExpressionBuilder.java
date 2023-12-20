@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -187,6 +188,41 @@ public final class SimpleExpressionBuilder {
                 } else {
                     return "join(" + expression + "," + separator + ")";
                 }
+            }
+        };
+    }
+
+    /**
+     * Hashes the value using the given algorithm
+     */
+    public static Expression hashExpression(final String expression, final String algorithm) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                byte[] data = exp.evaluate(exchange, byte[].class);
+                if (data != null && data.length > 0) {
+                    try {
+                        MessageDigest digest = MessageDigest.getInstance(algorithm);
+                        byte[] bytes = digest.digest(data);
+                        return StringHelper.bytesToHex(bytes);
+                    } catch (Exception e) {
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "hash(" + expression + "," + algorithm + ")";
             }
         };
     }
@@ -693,6 +729,52 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "mandatoryBodyAs[" + name + "]";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the message converted to the given type and invoking methods on the converted message
+     * defined in a simple OGNL notation
+     */
+    public static Expression messageOgnlExpression(final String name, final String ognl) {
+        return new ExpressionAdapter() {
+            private ClassResolver classResolver;
+            private Expression exp;
+            private Language bean;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String text = exp.evaluate(exchange, String.class);
+                Class<?> type;
+                try {
+                    type = classResolver.resolveMandatoryClass(text);
+                } catch (ClassNotFoundException e) {
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                }
+                Object msg = exchange.getMessage(type);
+                if (msg != null) {
+                    // ognl is able to evaluate method name if it contains nested functions
+                    // so we should not eager evaluate ognl as a string
+                    Expression ognlExp = bean.createExpression(null, new Object[] { msg, ognl });
+                    ognlExp.init(exchange.getContext());
+                    return ognlExp.evaluate(exchange, Object.class);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                classResolver = context.getClassResolver();
+                exp = ExpressionBuilder.simpleExpression(name);
+                exp.init(context);
+                bean = context.resolveLanguage("bean");
+            }
+
+            @Override
+            public String toString() {
+                return "messageOgnlAs[" + name + "](" + ognl + ")";
             }
         };
     }

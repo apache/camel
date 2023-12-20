@@ -571,7 +571,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQOperation}.
          */
         public String awsMQOperation() {
-            return "AwsMQOperation";
+            return "CamelAwsMQOperation";
         }
 
         /**
@@ -585,7 +585,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQMaxResults}.
          */
         public String awsMQMaxResults() {
-            return "AwsMQMaxResults";
+            return "CamelAwsMQMaxResults";
         }
 
         /**
@@ -598,7 +598,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQBrokerName}.
          */
         public String awsMQBrokerName() {
-            return "AwsMQBrokerName";
+            return "CamelAwsMQBrokerName";
         }
 
         /**
@@ -611,7 +611,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQBrokerEngine}.
          */
         public String awsMQBrokerEngine() {
-            return "AwsMQBrokerEngine";
+            return "CamelAwsMQBrokerEngine";
         }
 
         /**
@@ -625,7 +625,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQBrokerEngineVersion}.
          */
         public String awsMQBrokerEngineVersion() {
-            return "AwsMQBrokerEngineVersion";
+            return "CamelAwsMQBrokerEngineVersion";
         }
 
         /**
@@ -638,7 +638,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQBrokerID}.
          */
         public String awsMQBrokerID() {
-            return "AwsMQBrokerID";
+            return "CamelAwsMQBrokerID";
         }
 
         /**
@@ -652,7 +652,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQConfigurationID}.
          */
         public String awsMQConfigurationID() {
-            return "AwsMQConfigurationID";
+            return "CamelAwsMQConfigurationID";
         }
 
         /**
@@ -665,7 +665,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQBrokerDeploymentMode}.
          */
         public String awsMQBrokerDeploymentMode() {
-            return "AwsMQBrokerDeploymentMode";
+            return "CamelAwsMQBrokerDeploymentMode";
         }
 
         /**
@@ -678,7 +678,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQBrokerInstanceType}.
          */
         public String awsMQBrokerInstanceType() {
-            return "AwsMQBrokerInstanceType";
+            return "CamelAwsMQBrokerInstanceType";
         }
 
         /**
@@ -691,7 +691,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQBrokerUsers}.
          */
         public String awsMQBrokerUsers() {
-            return "AwsMQBrokerUsers";
+            return "CamelAwsMQBrokerUsers";
         }
 
         /**
@@ -705,7 +705,7 @@ public interface MQ2EndpointBuilderFactory {
          * @return the name of the header {@code AwsMQBrokerPubliclyAccessible}.
          */
         public String awsMQBrokerPubliclyAccessible() {
-            return "AwsMQBrokerPubliclyAccessible";
+            return "CamelAwsMQBrokerPubliclyAccessible";
         }
     }
     static MQ2EndpointBuilder endpointBuilder(String componentName, String path) {

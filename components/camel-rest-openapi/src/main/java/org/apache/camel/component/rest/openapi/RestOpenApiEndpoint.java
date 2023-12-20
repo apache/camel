@@ -35,6 +35,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.atlassian.oai.validator.OpenApiInteractionValidator;
+import com.atlassian.oai.validator.report.LevelResolver;
+import com.atlassian.oai.validator.report.ValidationReport;
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -56,6 +59,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer;
+import org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer;
+import org.apache.camel.component.rest.openapi.validator.RequestValidator;
+import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
@@ -88,11 +95,6 @@ import static org.apache.camel.util.StringHelper.notEmpty;
              syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API },
              producerOnly = true)
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
-
-    /**
-     * Regex pattern used to extract path parts from OpenApi specification paths
-     */
-    private static final Pattern PATH_EXTRACTOR = Pattern.compile("/([^{}/]+)");
 
     /**
      * Remaining parameters specified in the Endpoint URI.
@@ -151,6 +153,21 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
              defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI_STR,
              defaultValueNote = "By default loads `openapi.json` file", label = "producer")
     private URI specificationUri = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI;
+
+    @UriParam(description = "Enable validation of requests against the configured OpenAPI specification",
+              defaultValue = "false")
+    private boolean requestValidationEnabled;
+
+    @UriParam(description = "If request validation is enabled, this option provides the capability to customize"
+                            + " the creation of OpenApiInteractionValidator used to validate requests.",
+              defaultValue = "org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer")
+    private RequestValidationCustomizer requestValidationCustomizer;
+
+    @UriParam(description = "Levels for specific OpenAPI request validation options. Multiple options can be"
+                            + " specified as URI options prefixed by 'validation.'. For example, validation.request.body=ERROR"
+                            + "&validation.request.body.unexpected=IGNORED. Supported values are INFO, ERROR, WARN & IGNORE.",
+              prefix = "validation.", multiValue = true)
+    private Map<String, Object> requestValidationLevels = new HashMap<>();
 
     public RestOpenApiEndpoint() {
         // help tooling instantiate endpoint
@@ -280,6 +297,31 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         this.specificationUri = notNull(specificationUri, "specificationUri");
     }
 
+    public void setRequestValidationCustomizer(
+            RequestValidationCustomizer requestValidationCustomizer) {
+        this.requestValidationCustomizer = requestValidationCustomizer;
+    }
+
+    public RequestValidationCustomizer getRequestValidationCustomizer() {
+        return requestValidationCustomizer;
+    }
+
+    public void setRequestValidationEnabled(boolean requestValidationEnabled) {
+        this.requestValidationEnabled = requestValidationEnabled;
+    }
+
+    public boolean isRequestValidationEnabled() {
+        return requestValidationEnabled;
+    }
+
+    public void setRequestValidationLevels(Map<String, Object> requestValidationLevels) {
+        this.requestValidationLevels = requestValidationLevels;
+    }
+
+    public Map<String, Object> getRequestValidationLevels() {
+        return requestValidationLevels;
+    }
+
     RestOpenApiComponent component() {
         return (RestOpenApiComponent) getComponent();
     }
@@ -304,9 +346,15 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         // let the rest endpoint configure itself
         endpoint.configureProperties(params);
 
+        RestOpenApiComponent component = component();
+        RequestValidator requestValidator = null;
+        if (component.isRequestValidationEnabled() || requestValidationEnabled) {
+            requestValidator = configureRequestValidator(openapi, operation, method, uriTemplate);
+        }
+
         // if there is a host then we should use this hardcoded host instead of any Header that may have an existing
         // Host header from some other HTTP input, and if so then lets remove it
-        return new RestOpenApiProducer(endpoint.createProducer(), hasHost);
+        return new RestOpenApiProducer(endpoint.createProducer(), hasHost, requestValidator);
     }
 
     String determineBasePath(final OpenAPI openapi) {
@@ -368,10 +416,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         Matcher m = p.matcher(url);
         while (m.find()) {
 
-            String var = m.group(1);
-            if (server != null && server.getVariables() != null && server.getVariables().get(var) != null) {
-                String varValue = server.getVariables().get(var).getDefault();
-                url = url.replace("{" + var + "}", varValue);
+            String variable = m.group(1);
+            if (server != null && server.getVariables() != null && server.getVariables().get(variable) != null) {
+                String varValue = server.getVariables().get(variable).getDefault();
+                url = url.replace("{" + variable + "}", varValue);
             }
         }
         return url;
@@ -636,6 +684,39 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return resolved.toString();
     }
 
+    RequestValidator configureRequestValidator(OpenAPI openapi, Operation operation, String method, String uriTemplate) {
+        RestOpenApiComponent component = component();
+        RequestValidationCustomizer validationCustomizer = requestValidationCustomizer;
+        if (validationCustomizer == null) {
+            validationCustomizer = component.getRequestValidationCustomizer();
+        }
+
+        if (validationCustomizer == null) {
+            validationCustomizer = new DefaultRequestValidationCustomizer();
+        }
+
+        RestOpenApiOperation restOpenApiOperation = new RestOpenApiOperation(operation, method, uriTemplate);
+        OpenApiInteractionValidator.Builder builder = OpenApiInteractionValidator.createFor(openapi);
+
+        LevelResolver.Builder levelResolverBuilder = LevelResolver.create();
+        levelResolverBuilder.withDefaultLevel(ValidationReport.Level.IGNORE)
+                .withLevel("validation.request.body", ValidationReport.Level.ERROR)
+                .withLevel("validation.request.contentType.notAllowed", ValidationReport.Level.ERROR)
+                .withLevel("validation.request.path.missing", ValidationReport.Level.ERROR)
+                .withLevel("validation.request.parameter.header.missing", ValidationReport.Level.ERROR)
+                .withLevel("validation.request.parameter.query.missing", ValidationReport.Level.ERROR);
+
+        requestValidationLevels.forEach((key, level) -> {
+            levelResolverBuilder.withLevel("validation." + key,
+                    ValidationReport.Level.valueOf(level.toString().toUpperCase()));
+        });
+        builder.withLevelResolver(levelResolverBuilder.build());
+
+        validationCustomizer.customizeOpenApiInteractionValidator(builder);
+
+        return new RequestValidator(builder.build(), restOpenApiOperation, validationCustomizer);
+    }
+
     static String determineOption(
             final List<String> specificationLevel, final Set<String> operationLevel,
             final String componentLevel, final String endpointLevel) {
@@ -793,5 +874,4 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         return expression.toString();
     }
-
 }

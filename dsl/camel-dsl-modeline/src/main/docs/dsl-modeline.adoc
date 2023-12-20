@@ -11,6 +11,8 @@
 
 *Since Camel {since}*
 
+== Camel K
+
 Support for Camel K style modeline when running Camel standalone such as with Camel JBang.
 
 The following traits is supported:
@@ -19,3 +21,7 @@ The following traits is supported:
 - env
 - name
 - property
+
+== Camel JBang
+
+There is also support for https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang dependencies] using the `//DEPS` comments style.

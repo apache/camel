@@ -81,6 +81,15 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     public static final DotName XML_ROOT_ELEMENT = DotName.createSimple(XmlRootElement.class.getName());
     public static final DotName XML_TYPE = DotName.createSimple(XmlType.class.getName());
 
+    // special for app package
+    private static final DotName APP_PACKAGE = DotName.createSimple("org.apache.camel.model.app");
+    private static final Map<String, String> APP_NAME_MAPPINGS = Map.of(
+            "BeanConstructorDefinition", "constructor",
+            "BeanConstructorsDefinition", "constructors",
+            "BeanPropertiesDefinition", "properties",
+            "BeanPropertyDefinition", "property",
+            "RegistryBeanDefinition", "bean");
+
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
     private static final String[] ONE_OF_LANGUAGES = new String[] {
@@ -150,12 +159,27 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 .filter(cpa -> cpa.target().asClass().name().toString().startsWith("org.apache.camel.model."))
                 .map(cpa -> cpa.target().asClass())
                 .collect(Collectors.toSet());
+
         if (!coreElements.isEmpty()) {
             getLog().info(String.format("Found %d core elements", coreElements.size()));
         }
 
+        // add special for bean DSL in app package
+        Set<ClassInfo> appElements = index.getClassesInPackage(APP_PACKAGE).stream()
+                .filter(cpa -> cpa.hasAnnotation(XML_TYPE))
+                .filter(cpa -> cpa.kind() == Kind.CLASS)
+                .collect(Collectors.toSet());
+
+        if (!coreElements.isEmpty()) {
+            getLog().info(String.format("Found %d app elements", appElements.size()));
+        }
+
+        Set<ClassInfo> classes = new TreeSet<>(Comparator.comparing(ClassInfo::name));
+        classes.addAll(coreElements);
+        classes.addAll(appElements);
+
         // we want them to be sorted
-        for (ClassInfo element : coreElements) {
+        for (ClassInfo element : classes) {
             processModelClass(element);
         }
 
@@ -189,10 +213,26 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
 
-        AnnotationValue annotationValue = element.classAnnotation(XML_ROOT_ELEMENT).value("name");
-        String aName = annotationValue != null ? annotationValue.asString() : null;
+        String aName = null;
+        if (element.hasAnnotation(XML_ROOT_ELEMENT)) {
+            AnnotationValue av = element.declaredAnnotation(XML_ROOT_ELEMENT).value("name");
+            aName = av != null ? av.asString() : null;
+        }
         if (Strings.isNullOrEmpty(aName) || "##default".equals(aName)) {
-            aName = element.classAnnotation(XML_TYPE).value("name").asString();
+            if (element.hasAnnotation(XML_TYPE)) {
+                AnnotationValue av = element.declaredAnnotation(XML_TYPE).value("name");
+                aName = av != null ? av.asString() : null;
+            }
+        }
+        if (aName == null) {
+            // special for app package
+            String sn = element.name().withoutPackagePrefix();
+            aName = APP_NAME_MAPPINGS.get(sn);
+        }
+        if (aName == null) {
+            getLog().warn(
+                    "Class is not annotated with @XmlRootElement or @XmlType. Skipping class: " + element.name().toString());
+            return;
         }
         final String name = aName;
 
@@ -230,6 +270,10 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             // filter out outputs if we do not support it
             eipModel.getOptions().removeIf(o -> "outputs".equals(o.getName()));
         }
+        if ("route".equals(eipModel.getName())) {
+            // route should not have disabled
+            eipModel.getOptions().removeIf(o -> "disabled".equals(o.getName()));
+        }
 
         // write json schema file
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf('.'));
@@ -238,7 +282,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 resourcesOutputDir.toPath(),
                 packageName.replace('.', '/') + "/" + fileName,
                 json);
-
     }
 
     private IndexView getIndex() {
@@ -672,10 +715,18 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 false, null, null, false, false);
         eipOptions.add(ep);
 
-        // precondition
-        docComment = findJavaDoc(null, "precondition", null, classElement, true);
-        ep = createOption("precondition", "Precondition", "attribute", "java.lang.String", false, "", "", docComment, false,
+        // autoStartup
+        docComment = findJavaDoc(null, "autoStartup", null, classElement, true);
+        ep = createOption("autoStartup", "Auto Startup", "attribute", "java.lang.String", false, "true", "", docComment, false,
                 null, false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // startupOrder
+        docComment = findJavaDoc(null, "startupOrder", null, classElement, true);
+        ep = createOption("startupOrder", "Startup Order", "attribute", "java.lang.Integer", false, "", "advanced", docComment,
+                false,
+                null,
+                false, null, null, false, false);
         eipOptions.add(ep);
 
         // stream cache
@@ -706,21 +757,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // delayer
         docComment = findJavaDoc(null, "delayer", null, classElement, true);
-        ep = createOption("delayer", "Delayer", "attribute", "java.lang.String", false, "", "", docComment, false, null, false,
+        ep = createOption("delayer", "Delayer", "attribute", "java.lang.String", false, "advanced", "", docComment, false, null,
+                false,
                 null, null, false, true);
-        eipOptions.add(ep);
-
-        // autoStartup
-        docComment = findJavaDoc(null, "autoStartup", null, classElement, true);
-        ep = createOption("autoStartup", "Auto Startup", "attribute", "java.lang.String", false, "true", "", docComment, false,
-                null, false, null, null, false, false);
-        eipOptions.add(ep);
-
-        // startupOrder
-        docComment = findJavaDoc(null, "startupOrder", null, classElement, true);
-        ep = createOption("startupOrder", "Startup Order", "attribute", "java.lang.Integer", false, "", "", docComment, false,
-                null,
-                false, null, null, false, false);
         eipOptions.add(ep);
 
         // errorHandlerRef
@@ -742,7 +781,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         enums.add("Default");
         enums.add("Defer");
         docComment = findJavaDoc(null, "shutdownRoute", "Default", classElement, true);
-        ep = createOption("shutdownRoute", "Shutdown Route", "attribute", "org.apache.camel.ShutdownRoute", false, "", "",
+        ep = createOption("shutdownRoute", "Shutdown Route", "attribute", "org.apache.camel.ShutdownRoute", false, "",
+                "advanced",
                 docComment, false, null, true, enums, null, false, false);
         eipOptions.add(ep);
 
@@ -752,8 +792,29 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         enums.add("CompleteAllTasks");
         docComment = findJavaDoc(null, "shutdownRunningTask", "CompleteCurrentTaskOnly", classElement, true);
         ep = createOption("shutdownRunningTask", "Shutdown Running Task", "attribute", "org.apache.camel.ShutdownRunningTask",
-                false, "", "", docComment, false, null, true, enums,
+                false, "", "advanced", docComment, false, null, true, enums,
                 null, false, false);
+        eipOptions.add(ep);
+
+        // precondition
+        docComment = findJavaDoc(null, "precondition", null, classElement, true);
+        ep = createOption("precondition", "Precondition", "attribute", "java.lang.String", false, "", "advanced", docComment,
+                false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // input type
+        docComment = findJavaDoc(null, "inputType", null, classElement, true);
+        ep = createOption("inputType", "Input Type", "element", "org.apache.camel.model.InputTypeDefinition", false, "",
+                "advanced", docComment, false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // output type
+        docComment = findJavaDoc(null, "outputType", null, classElement, true);
+        ep = createOption("outputType", "Output Type", "element", "org.apache.camel.model.OutputTypeDefinition", false, "",
+                "advanced", docComment, false,
+                null, false, null, null, false, false);
         eipOptions.add(ep);
 
         // input
@@ -803,7 +864,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // description
         docComment = findJavaDoc(null, "description", null, classElement, true);
-        ep = createOption("description", "Description", "element", "org.apache.camel.model.DescriptionDefinition", false, "",
+        ep = createOption("description", "Description", "element", "java.lang.String", false, "",
                 "",
                 docComment, false, null, false, null, null,
                 false, false);
@@ -1440,19 +1501,21 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 return 20;
             }
 
-            // these should be first
+            // these should be in top
             if ("expression".equals(name)) {
                 return 10;
             }
 
-            // these should be last
-            if ("description".equals(name)) {
-                return -10;
+            // these should be first
+            if ("disabled".equals(name)) {
+                return 98;
+            } else if ("description".equals(name)) {
+                return 99;
             } else if ("id".equals(name)) {
-                return -9;
+                return 100;
             } else if ("pattern".equals(name) && "to".equals(model.getName())) {
                 // and pattern only for the to model
-                return -8;
+                return -10;
             }
             return 0;
         }

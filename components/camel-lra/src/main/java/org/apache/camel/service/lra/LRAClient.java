@@ -64,8 +64,8 @@ public class LRAClient implements Closeable {
                 .build();
     }
 
-    public CompletableFuture<URL> newLRA() {
-        HttpRequest request = prepareRequest(URI.create(lraUrl + COORDINATOR_PATH_START))
+    public CompletableFuture<URL> newLRA(Exchange exchange) {
+        HttpRequest request = prepareRequest(URI.create(lraUrl + COORDINATOR_PATH_START), exchange)
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
@@ -94,7 +94,7 @@ public class LRAClient implements Closeable {
         });
     }
 
-    public CompletableFuture<Void> join(final URL lra, LRASagaStep step) {
+    public CompletableFuture<Void> join(final URL lra, LRASagaStep step, Exchange exchange) {
         return CompletableFuture.supplyAsync(() -> {
             LRAUrlBuilder participantBaseUrl = new LRAUrlBuilder()
                     .host(sagaService.getLocalParticipantUrl())
@@ -115,7 +115,7 @@ public class LRAClient implements Closeable {
             if (step.getTimeoutInMilliseconds().isPresent()) {
                 lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
             }
-            HttpRequest request = prepareRequest(URI.create(lraEndpoint))
+            HttpRequest request = prepareRequest(URI.create(lraEndpoint), exchange)
                     .setHeader(HEADER_LINK, link.toString())
                     .setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, lra.toString())
                     .setHeader("Content-Type", "text/plain")
@@ -134,8 +134,8 @@ public class LRAClient implements Closeable {
                 });
     }
 
-    public CompletableFuture<Void> complete(URL lra) {
-        HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CLOSE))
+    public CompletableFuture<Void> complete(URL lra, Exchange exchange) {
+        HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CLOSE), exchange)
                 .setHeader("Content-Type", "text/plain")
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
@@ -151,8 +151,8 @@ public class LRAClient implements Closeable {
         });
     }
 
-    public CompletableFuture<Void> compensate(URL lra) {
-        HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CANCEL))
+    public CompletableFuture<Void> compensate(URL lra, Exchange exchange) {
+        HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CANCEL), exchange)
                 .setHeader("Content-Type", "text/plain")
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
@@ -168,7 +168,7 @@ public class LRAClient implements Closeable {
         });
     }
 
-    protected HttpRequest.Builder prepareRequest(URI uri) {
+    protected HttpRequest.Builder prepareRequest(URI uri, Exchange exchange) {
         return HttpRequest.newBuilder().uri(uri);
     }
 

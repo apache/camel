@@ -20,7 +20,6 @@ package org.apache.camel.support;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -331,18 +330,9 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         setStreamCacheDisabled(false);
     }
 
-    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
-        if (properties == null) {
-            return null;
-        }
-        return new ConcurrentHashMap<>(properties);
-    }
-
     @Override
     public Exchange createCopyWithProperties(CamelContext context) {
-        final Map<String, Object> properties = safeCopyProperties(exchange.properties);
-
-        DefaultExchange answer = new DefaultExchange(context, exchange.internalProperties, properties);
+        DefaultExchange answer = new DefaultExchange(context, exchange.internalProperties, exchange.properties);
 
         answer.setPattern(exchange.pattern);
 

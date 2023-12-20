@@ -99,7 +99,7 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
             }
 
             Map<String, Object> rsp = new HashMap<>();
-            for (String field : response.getFieldNames()) {
+            for (String field : response.getTagNames()) {
                 rsp.put(field, response.getObject(field));
             }
             exchange.getIn().setBody(rsp);

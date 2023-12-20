@@ -16,8 +16,14 @@
  */
 package org.apache.camel.tooling.maven;
 
-@FunctionalInterface
 public interface RemoteArtifactDownloadListener {
+
+    /**
+     * Event when an artifact downloading is started from a remote maven repository (not local).
+     */
+    void artifactDownloading(
+            String groupId, String artifactId, String version,
+            String repoId, String repoUrl);
 
     /**
      * Event when an artifact was downloaded from a remote maven repository (not local).

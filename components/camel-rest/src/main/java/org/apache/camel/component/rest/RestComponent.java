@@ -21,12 +21,9 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.spi.EndpointUriFactory;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.UriFactoryResolver;
+import org.apache.camel.spi.*;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -37,7 +34,7 @@ import org.apache.camel.util.URISupport;
  */
 @org.apache.camel.spi.annotations.Component("rest")
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class RestComponent extends DefaultComponent {
+public class RestComponent extends HeaderFilterStrategyComponent {
 
     public static final String DEFAULT_REST_CONFIGURATION_ID = "rest-configuration";
 
@@ -81,6 +78,11 @@ public class RestComponent extends DefaultComponent {
             h = "http://" + h;
         }
         answer.setHost(h);
+
+        // custom header filter strategy
+        if (getHeaderFilterStrategy() != null) {
+            parameters.put("headerFilterStrategy", getHeaderFilterStrategy());
+        }
 
         setProperties(answer, parameters);
         if (!parameters.isEmpty()) {

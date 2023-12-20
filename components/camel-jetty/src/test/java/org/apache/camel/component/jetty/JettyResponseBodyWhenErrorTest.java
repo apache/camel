@@ -56,12 +56,12 @@ public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice?muteException=false").process(new MyBookService());
             }
         };
     }
 
-    public class MyBookService implements Processor {
+    public static class MyBookService implements Processor {
         @Override
         public void process(Exchange exchange) {
             throw new IllegalArgumentException("Damm");

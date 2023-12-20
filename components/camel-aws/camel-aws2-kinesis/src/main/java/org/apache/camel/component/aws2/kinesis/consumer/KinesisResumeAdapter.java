@@ -24,17 +24,10 @@ import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
  * The resume adapter for Kinesis
  */
 public interface KinesisResumeAdapter extends ResumeAdapter {
-    /**
-     * Sets the shard iterator request builder that can be used to customize the call and set the exact resume point
-     *
-     * @param builder the builder instance
+    /*
+        When consuming from multiple shards the KinesisResumeAdapter is potentially accessed by multiple threads.
+        To avoid any concurrency issues the configuration of the GetShardIteratorRequest should be done in one operation
+        and not using multiple calls like in the previous version of this interface
      */
-    void setRequestBuilder(GetShardIteratorRequest.Builder builder);
-
-    /**
-     * Sets the stream name being worked on
-     *
-     * @param streamName the stream name
-     */
-    void setStreamName(String streamName);
+    void configureGetShardIteratorRequest(GetShardIteratorRequest.Builder builder, String streamName, String shardId);
 }

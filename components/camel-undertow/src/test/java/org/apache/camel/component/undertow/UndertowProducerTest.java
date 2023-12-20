@@ -99,7 +99,7 @@ public class UndertowProducerTest extends BaseUndertowTest {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            private InputStream is = new ByteArrayInputStream("This is the InputStream".getBytes());
+            private final InputStream is = new ByteArrayInputStream("This is the InputStream".getBytes());
 
             @Override
             public void configure() {

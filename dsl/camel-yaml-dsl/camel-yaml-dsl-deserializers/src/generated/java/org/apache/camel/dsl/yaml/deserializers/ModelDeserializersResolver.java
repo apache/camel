@@ -22,8 +22,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "api-key": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "apiKey": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "org.apache.camel.model.rest.ApiKeyDefinition": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
-            case "camel": return new ModelDeserializers.ApplicationDefinitionDeserializer();
-            case "org.apache.camel.model.app.ApplicationDefinition": return new ModelDeserializers.ApplicationDefinitionDeserializer();
             case "avro": return new ModelDeserializers.AvroDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.AvroDataFormat": return new ModelDeserializers.AvroDataFormatDeserializer();
             case "barcode": return new ModelDeserializers.BarcodeDataFormatDeserializer();
@@ -34,13 +32,14 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "basicAuth": return new ModelDeserializers.BasicAuthDefinitionDeserializer();
             case "org.apache.camel.model.rest.BasicAuthDefinition": return new ModelDeserializers.BasicAuthDefinitionDeserializer();
             case "batch-config": return new ModelDeserializers.BatchResequencerConfigDeserializer();
+            case "batchConfig": return new ModelDeserializers.BatchResequencerConfigDeserializer();
             case "org.apache.camel.model.config.BatchResequencerConfig": return new ModelDeserializers.BatchResequencerConfigDeserializer();
+            case "org.apache.camel.model.app.BeanConstructorDefinition": return new ModelDeserializers.BeanConstructorDefinitionDeserializer();
+            case "org.apache.camel.model.app.BeanConstructorsDefinition": return new ModelDeserializers.BeanConstructorsDefinitionDeserializer();
             case "bean": return new ModelDeserializers.BeanDefinitionDeserializer();
             case "org.apache.camel.model.BeanDefinition": return new ModelDeserializers.BeanDefinitionDeserializer();
             case "org.apache.camel.model.app.BeanPropertiesDefinition": return new ModelDeserializers.BeanPropertiesDefinitionDeserializer();
             case "org.apache.camel.model.app.BeanPropertyDefinition": return new ModelDeserializers.BeanPropertyDefinitionDeserializer();
-            case "beans": return new ModelDeserializers.BeansDefinitionDeserializer();
-            case "org.apache.camel.model.app.BeansDefinition": return new ModelDeserializers.BeansDefinitionDeserializer();
             case "bearer-token": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "bearerToken": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "org.apache.camel.model.rest.BearerTokenDefinition": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
@@ -85,6 +84,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "convert-body-to": return new ModelDeserializers.ConvertBodyDefinitionDeserializer();
             case "convertBodyTo": return new ModelDeserializers.ConvertBodyDefinitionDeserializer();
             case "org.apache.camel.model.ConvertBodyDefinition": return new ModelDeserializers.ConvertBodyDefinitionDeserializer();
+            case "convert-header-to": return new ModelDeserializers.ConvertHeaderDefinitionDeserializer();
+            case "convertHeaderTo": return new ModelDeserializers.ConvertHeaderDefinitionDeserializer();
+            case "org.apache.camel.model.ConvertHeaderDefinition": return new ModelDeserializers.ConvertHeaderDefinitionDeserializer();
             case "crypto": return new ModelDeserializers.CryptoDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.CryptoDataFormat": return new ModelDeserializers.CryptoDataFormatDeserializer();
             case "csv": return new ModelDeserializers.CsvDataFormatDeserializer();
@@ -198,6 +200,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "jackson-xml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "jacksonXml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JacksonXMLDataFormat": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
+            case "java": return new ModelDeserializers.JavaExpressionDeserializer();
+            case "org.apache.camel.model.language.JavaExpression": return new ModelDeserializers.JavaExpressionDeserializer();
             case "js": return new ModelDeserializers.JavaScriptExpressionDeserializer();
             case "org.apache.camel.model.language.JavaScriptExpression": return new ModelDeserializers.JavaScriptExpressionDeserializer();
             case "jaxb": return new ModelDeserializers.JaxbDataFormatDeserializer();
@@ -434,6 +438,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "set-header": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
             case "setHeader": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
             case "org.apache.camel.model.SetHeaderDefinition": return new ModelDeserializers.SetHeaderDefinitionDeserializer();
+            case "set-headers": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
+            case "setHeaders": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
+            case "org.apache.camel.model.SetHeadersDefinition": return new ModelDeserializers.SetHeadersDefinitionDeserializer();
             case "set-property": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "setProperty": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "org.apache.camel.model.SetPropertyDefinition": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
@@ -460,6 +467,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "stop": return new ModelDeserializers.StopDefinitionDeserializer();
             case "org.apache.camel.model.StopDefinition": return new ModelDeserializers.StopDefinitionDeserializer();
             case "stream-config": return new ModelDeserializers.StreamResequencerConfigDeserializer();
+            case "streamConfig": return new ModelDeserializers.StreamResequencerConfigDeserializer();
             case "org.apache.camel.model.config.StreamResequencerConfig": return new ModelDeserializers.StreamResequencerConfigDeserializer();
             case "swift-mt": return new ModelDeserializers.SwiftMtDataFormatDeserializer();
             case "swiftMt": return new ModelDeserializers.SwiftMtDataFormatDeserializer();

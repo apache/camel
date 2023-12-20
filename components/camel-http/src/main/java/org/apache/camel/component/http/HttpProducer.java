@@ -54,8 +54,8 @@ import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -111,16 +111,7 @@ public class HttpProducer extends DefaultProducer {
         super.doInit();
 
         String range = getEndpoint().getOkStatusCodeRange();
-        if (!range.contains(",")) {
-            // default is 200-299 so lets optimize for this
-            if (range.contains("-")) {
-                minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
-                maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
-            } else {
-                minOkRange = Integer.parseInt(range);
-                maxOkRange = minOkRange;
-            }
-        }
+        parseStatusRange(range);
 
         // optimize and build default url when there are no override headers
         String url = getEndpoint().getHttpUri().toASCIIString();
@@ -137,6 +128,20 @@ public class HttpProducer extends DefaultProducer {
         defaultUri = uri;
         defaultUrl = uri.toASCIIString();
         defaultHttpHost = URIUtils.extractHost(uri);
+    }
+
+    private void parseStatusRange(String range) {
+        if (!range.contains(",")) {
+            if (!HttpUtil.parseStatusRange(range, this::setRanges)) {
+                minOkRange = Integer.parseInt(range);
+                maxOkRange = minOkRange;
+            }
+        }
+    }
+
+    private void setRanges(int minOkRange, int maxOkRange) {
+        this.minOkRange = minOkRange;
+        this.maxOkRange = maxOkRange;
     }
 
     @Override
@@ -199,37 +204,8 @@ public class HttpProducer extends DefaultProducer {
                         // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
                         final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
-                        // the value to add as request header
-                        List<String> multiValues = null;
-                        String prev = null;
-
-                        // if its a multi value then check each value if we can add it and for multi values they
-                        // should be combined into a single value
-                        while (it.hasNext()) {
-                            String value = tc.convertTo(String.class, it.next());
-                            if (value != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                                if (prev == null) {
-                                    prev = value;
-                                } else {
-                                    // only create array for multi values when really needed
-                                    if (multiValues == null) {
-                                        multiValues = new ArrayList<>();
-                                        multiValues.add(prev);
-                                    }
-                                    multiValues.add(value);
-                                }
-                            }
-                        }
-
-                        // add the value(s) as a http request header
-                        if (multiValues != null) {
-                            // use the default toString of a ArrayList to create in the form [xxx, yyy]
-                            // if multi valued, for a single value, then just output the value as is
-                            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
-                            httpRequest.addHeader(key, s);
-                        } else if (prev != null) {
-                            httpRequest.addHeader(key, prev);
-                        }
+                        HttpUtil.applyHeader(strategy, exchange, it, tc, key,
+                                (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
                     }
                 }
             }
@@ -345,6 +321,18 @@ public class HttpProducer extends DefaultProducer {
                 throw ex;
             }
             throw e;
+        }
+    }
+
+    private static void applyHeader(HttpUriRequest httpRequest, String key, List<String> multiValues, String prev) {
+        // add the value(s) as a http request header
+        if (multiValues != null) {
+            // use the default toString of a ArrayList to create in the form [xxx, yyy]
+            // if multi valued, for a single value, then just output the value as is
+            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
+            httpRequest.addHeader(key, s);
+        } else if (prev != null) {
+            httpRequest.addHeader(key, prev);
         }
     }
 
@@ -778,7 +766,7 @@ public class HttpProducer extends DefaultProducer {
                             contentType = ContentType.parse(contentType + ";charset=" + charset);
                         }
 
-                        answer = new StringEntity(content, contentType, charset, false);
+                        answer = new StringEntity(content, contentType, false);
                     }
 
                     // fallback as input stream

@@ -43,7 +43,7 @@ public class VertxHttpSessionTest extends VertxHttpTestSupport {
     private CookieStore cookieStore = CookieStore.build();
 
     @BindToRegistry("customCookieStore")
-    private CookieStore customCookieStore = new CustomCookieStore();
+    private final CookieStore customCookieStore = new CustomCookieStore();
 
     @Test
     public void testSessionSupport() {

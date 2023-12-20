@@ -16,24 +16,25 @@
  */
 package org.apache.camel.spring.issues;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringPropertyPlaceholderFileEndpointIssueTest extends SpringTestSupport {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+public class SpringPropertyPlaceholderFileEndpointIssueTest extends ContextTestSupport {
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringPropertyPlaceholderIssueTest.xml");
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringPropertyPlaceholderIssueTest.xml");
     }
 
     @Test
     public void testSpring() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists(testFile("foo.txt"));
+        mock.expectedFileExists(testFile("target/foo.txt"));
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "foo.txt");
 

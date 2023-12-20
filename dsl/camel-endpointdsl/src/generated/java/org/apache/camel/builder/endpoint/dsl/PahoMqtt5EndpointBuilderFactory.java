@@ -940,12 +940,17 @@ public interface PahoMqtt5EndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -962,12 +967,17 @@ public interface PahoMqtt5EndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -3296,7 +3306,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code MqttTopic}.
          */
         public String mqttTopic() {
-            return "MqttTopic";
+            return "CamelMqttTopic";
         }
 
         /**
@@ -3309,7 +3319,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code MqttQoS}.
          */
         public String mqttQoS() {
-            return "MqttQoS";
+            return "CamelMqttQoS";
         }
 
         /**
@@ -3322,7 +3332,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code PahoMqtt5Qos}.
          */
         public String pahoMqtt5Qos() {
-            return "PahoMqtt5Qos";
+            return "CamelPahoMqtt5Qos";
         }
 
         /**
@@ -3335,7 +3345,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code PahoMqtt5Retained}.
          */
         public String pahoMqtt5Retained() {
-            return "PahoMqtt5Retained";
+            return "CamelPahoMqtt5Retained";
         }
 
         /**
@@ -3349,7 +3359,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the name of the header {@code PahoMqtt5OverrideTopic}.
          */
         public String pahoMqtt5OverrideTopic() {
-            return "PahoMqtt5OverrideTopic";
+            return "CamelPahoMqtt5OverrideTopic";
         }
     }
     static PahoMqtt5EndpointBuilder endpointBuilder(

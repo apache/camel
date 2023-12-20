@@ -108,21 +108,12 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     }
 
     protected void processExchange(Exchange exchange, RoutingContext routingContext) {
-        routingContext.vertx().executeBlocking(
-                promise -> {
-                    try {
-                        createUoW(exchange);
-                    } catch (Exception e) {
-                        promise.fail(e);
-                        return;
-                    }
-
-                    getAsyncProcessor().process(exchange, c -> {
-                        promise.complete();
-                    });
-                },
-                false,
-                result -> {
+        routingContext.vertx().executeBlocking(() -> {
+            createUoW(exchange);
+            getProcessor().process(exchange);
+            return null;
+        }, false)
+                .onComplete(result -> {
                     try {
                         if (result.failed()) {
                             Throwable cause = result.cause();

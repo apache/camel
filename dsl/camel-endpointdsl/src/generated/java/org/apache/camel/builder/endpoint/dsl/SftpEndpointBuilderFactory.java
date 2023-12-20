@@ -2615,12 +2615,17 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2637,12 +2642,17 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -3816,6 +3826,25 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder separator(String separator) {
             doSetProperty("separator", separator);
+            return this;
+        }
+        /**
+         * If provided, then Camel will write a checksum file when the original
+         * file has been written. The checksum file will contain the checksum
+         * created with the provided algorithm for the original file. The
+         * checksum file will always be written in the same folder as the
+         * original file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param checksumFileAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder checksumFileAlgorithm(
+                String checksumFileAlgorithm) {
+            doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
             return this;
         }
         /**
@@ -6557,7 +6586,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileLength}.
          */
         public String fileLength() {
-            return "FileLength";
+            return "CamelFileLength";
         }
 
         /**
@@ -6570,7 +6599,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileLastModified}.
          */
         public String fileLastModified() {
-            return "FileLastModified";
+            return "CamelFileLastModified";
         }
 
         /**
@@ -6586,7 +6615,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileName}.
          */
         public String fileName() {
-            return "FileName";
+            return "CamelFileName";
         }
 
         /**
@@ -6599,7 +6628,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileNameOnly}.
          */
         public String fileNameOnly() {
-            return "FileNameOnly";
+            return "CamelFileNameOnly";
         }
 
         /**
@@ -6612,7 +6641,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileParent}.
          */
         public String fileParent() {
-            return "FileParent";
+            return "CamelFileParent";
         }
 
         /**
@@ -6625,7 +6654,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code RemoteFileInputStream}.
          */
         public String remoteFileInputStream() {
-            return "RemoteFileInputStream";
+            return "CamelRemoteFileInputStream";
         }
 
         /**
@@ -6638,7 +6667,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileLocalWorkPath}.
          */
         public String fileLocalWorkPath() {
-            return "FileLocalWorkPath";
+            return "CamelFileLocalWorkPath";
         }
 
         /**
@@ -6651,7 +6680,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FtpReplyCode}.
          */
         public String ftpReplyCode() {
-            return "FtpReplyCode";
+            return "CamelFtpReplyCode";
         }
 
         /**
@@ -6664,7 +6693,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FtpReplyString}.
          */
         public String ftpReplyString() {
-            return "FtpReplyString";
+            return "CamelFtpReplyString";
         }
 
         /**
@@ -6677,7 +6706,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the name of the header {@code FileHost}.
          */
         public String fileHost() {
-            return "FileHost";
+            return "CamelFileHost";
         }
     }
     static SftpEndpointBuilder endpointBuilder(String componentName, String path) {

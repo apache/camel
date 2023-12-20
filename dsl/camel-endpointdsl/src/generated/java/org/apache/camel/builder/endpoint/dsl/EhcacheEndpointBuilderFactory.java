@@ -252,12 +252,17 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -274,12 +279,17 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1091,7 +1101,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheAction}.
          */
         public String ehcacheAction() {
-            return "EhcacheAction";
+            return "CamelEhcacheAction";
         }
 
         /**
@@ -1104,7 +1114,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheActionHasResult}.
          */
         public String ehcacheActionHasResult() {
-            return "EhcacheActionHasResult";
+            return "CamelEhcacheActionHasResult";
         }
 
         /**
@@ -1117,7 +1127,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheActionSucceeded}.
          */
         public String ehcacheActionSucceeded() {
-            return "EhcacheActionSucceeded";
+            return "CamelEhcacheActionSucceeded";
         }
 
         /**
@@ -1130,7 +1140,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheKey}.
          */
         public String ehcacheKey() {
-            return "EhcacheKey";
+            return "CamelEhcacheKey";
         }
 
         /**
@@ -1143,7 +1153,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheKeys}.
          */
         public String ehcacheKeys() {
-            return "EhcacheKeys";
+            return "CamelEhcacheKeys";
         }
 
         /**
@@ -1156,7 +1166,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheValue}.
          */
         public String ehcacheValue() {
-            return "EhcacheValue";
+            return "CamelEhcacheValue";
         }
 
         /**
@@ -1170,7 +1180,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheOldValue}.
          */
         public String ehcacheOldValue() {
-            return "EhcacheOldValue";
+            return "CamelEhcacheOldValue";
         }
 
         /**
@@ -1183,7 +1193,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the name of the header {@code EhcacheEventType}.
          */
         public String ehcacheEventType() {
-            return "EhcacheEventType";
+            return "CamelEhcacheEventType";
         }
     }
     static EhcacheEndpointBuilder endpointBuilder(

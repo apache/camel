@@ -43,7 +43,7 @@ public class EventbridgeComponent extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (remaining == null || remaining.trim().length() == 0) {
+        if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Event bus name must be specified.");
         }
         EventbridgeConfiguration configuration

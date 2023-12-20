@@ -460,7 +460,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         if (manifest == null) {
             return;
         }
-        for (Reference manifestRef : (List<Reference>) manifest.getReferences()) {
+        for (Reference manifestRef : manifest.getReferences()) {
             String manifestRefUri = getSameDocumentReferenceUri(manifestRef);
             if (manifestRefUri == null) {
                 continue;

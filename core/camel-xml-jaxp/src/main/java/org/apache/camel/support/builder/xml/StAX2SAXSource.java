@@ -170,7 +170,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     }
 
     private String getPrefixedName(String prefix, String localName) {
-        if (prefix == null || prefix.length() == 0) {
+        if (prefix == null || prefix.isEmpty()) {
             return localName;
         }
         return prefix + ":" + localName;

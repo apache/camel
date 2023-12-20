@@ -941,12 +941,17 @@ public interface TwitterSearchEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -963,12 +968,17 @@ public interface TwitterSearchEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1729,7 +1739,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterKeywords}.
          */
         public String twitterKeywords() {
-            return "TwitterKeywords";
+            return "CamelTwitterKeywords";
         }
 
         /**
@@ -1742,7 +1752,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterSearchLanguage}.
          */
         public String twitterSearchLanguage() {
-            return "TwitterSearchLanguage";
+            return "CamelTwitterSearchLanguage";
         }
 
         /**
@@ -1755,7 +1765,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterCount}.
          */
         public String twitterCount() {
-            return "TwitterCount";
+            return "CamelTwitterCount";
         }
 
         /**
@@ -1768,7 +1778,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterNumberOfPages}.
          */
         public String twitterNumberOfPages() {
-            return "TwitterNumberOfPages";
+            return "CamelTwitterNumberOfPages";
         }
 
         /**
@@ -1782,7 +1792,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterSinceId}.
          */
         public String twitterSinceId() {
-            return "TwitterSinceId";
+            return "CamelTwitterSinceId";
         }
 
         /**
@@ -1795,7 +1805,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterMaxId}.
          */
         public String twitterMaxId() {
-            return "TwitterMaxId";
+            return "CamelTwitterMaxId";
         }
 
         /**
@@ -1809,7 +1819,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @return the name of the header {@code TwitterEventType}.
          */
         public String twitterEventType() {
-            return "TwitterEventType";
+            return "CamelTwitterEventType";
         }
     }
     static TwitterSearchEndpointBuilder endpointBuilder(

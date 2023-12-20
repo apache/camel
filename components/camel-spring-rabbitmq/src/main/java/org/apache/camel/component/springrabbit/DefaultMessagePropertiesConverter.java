@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -30,12 +29,9 @@ import org.springframework.amqp.core.MessageProperties;
 
 public class DefaultMessagePropertiesConverter implements MessagePropertiesConverter {
 
-    private final CamelContext camelContext;
-    private final HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy;
 
-    public DefaultMessagePropertiesConverter(CamelContext camelContext, HeaderFilterStrategy headerFilterStrategy) {
-        this.camelContext = camelContext;
-        this.headerFilterStrategy = headerFilterStrategy;
+    public DefaultMessagePropertiesConverter() {
     }
 
     @Override
@@ -179,6 +175,11 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
         }
 
         return answer;
+    }
+
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     private void appendOutputHeader(MessageProperties answer, String headerName, Object headerValue, Exchange ex) {

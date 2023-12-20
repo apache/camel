@@ -41,7 +41,7 @@ public class Ddb2Component extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        if (remaining == null || remaining.trim().length() == 0) {
+        if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Table name must be specified.");
         }
         Ddb2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Ddb2Configuration();

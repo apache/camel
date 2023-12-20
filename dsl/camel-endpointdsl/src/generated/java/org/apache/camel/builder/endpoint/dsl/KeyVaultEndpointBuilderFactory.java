@@ -42,6 +42,39 @@ public interface KeyVaultEndpointBuilderFactory {
             return (AdvancedKeyVaultEndpointBuilder) this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.key.vault.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default KeyVaultEndpointBuilder credentialType(
+                org.apache.camel.component.azure.key.vault.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.key.vault.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default KeyVaultEndpointBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Operation to be performed.
          * 
          * The option is a:
@@ -287,7 +320,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * AzureKeyVaultProducerOperation}.
          */
         public String azureKeyVaultProducerOperation() {
-            return "AzureKeyVaultProducerOperation";
+            return "CamelAzureKeyVaultProducerOperation";
         }
 
         /**
@@ -300,7 +333,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * @return the name of the header {@code AzureKeyVaultSecretName}.
          */
         public String azureKeyVaultSecretName() {
-            return "AzureKeyVaultSecretName";
+            return "CamelAzureKeyVaultSecretName";
         }
     }
     static KeyVaultEndpointBuilder endpointBuilder(

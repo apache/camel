@@ -314,6 +314,42 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             }
             buffer.write(String.format("    - name: %s%n", b.getName()));
             buffer.write(String.format("      type: \"%s\"%n", type));
+            if (b.getFactoryBean() != null) {
+                buffer.write(String.format("      factoryBean: \"%s\"%n", b.getFactoryBean()));
+            }
+            if (b.getFactoryMethod() != null) {
+                buffer.write(String.format("      factoryMethod: \"%s\"%n", b.getFactoryMethod()));
+            }
+            if (b.getBuilderClass() != null) {
+                buffer.write(String.format("      builderClass: \"%s\"%n", b.getBuilderClass()));
+            }
+            if (b.getBuilderMethod() != null) {
+                buffer.write(String.format("      builderMethod: \"%s\"%n", b.getBuilderMethod()));
+            }
+            if (b.getInitMethod() != null) {
+                buffer.write(String.format("      initMethod: \"%s\"%n", b.getInitMethod()));
+            }
+            if (b.getDestroyMethod() != null) {
+                buffer.write(String.format("      destroyMethod: \"%s\"%n", b.getDestroyMethod()));
+            }
+            if (b.getScriptLanguage() != null) {
+                buffer.write(String.format("      scriptLanguage: \"%s\"%n", b.getScriptLanguage()));
+            }
+            if (b.getScript() != null) {
+                buffer.write(String.format("      script: \"%s\"%n", b.getScript()));
+            }
+            if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
+                buffer.write(String.format("      constructors:%n"));
+                int counter = 0;
+                for (Map.Entry<Integer, Object> entry : b.getConstructors().entrySet()) {
+                    Integer key = entry.getKey();
+                    Object value = entry.getValue();
+                    if (key == null) {
+                        key = counter++;
+                    }
+                    buffer.write(String.format("        %d: \"%s\"%n", key, value));
+                }
+            }
             if (b.getProperties() != null && !b.getProperties().isEmpty()) {
                 buffer.write(String.format("      properties:%n"));
                 for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {

@@ -163,6 +163,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsCloudtrailComponentBuilderFactory.awsCloudtrail();
     }
     /**
+     * AWS Config Service (camel-aws-config)
+     * Manage AWS Config service.
+     * 
+     * Category: cloud,management
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-aws-config
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsConfigComponentBuilderFactory.AwsConfigComponentBuilder awsConfig() {
+        return org.apache.camel.builder.component.dsl.AwsConfigComponentBuilderFactory.awsConfig();
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 
@@ -371,6 +384,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2MskComponentBuilderFactory.aws2Msk();
     }
     /**
+     * AWS RedshiftData (camel-aws2-redshift)
+     * Perform operations on AWS Redshift using Redshift Data API.
+     * 
+     * Category: cloud,serverless,database,bigdata
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-aws2-redshift
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.Aws2RedshiftDataComponentBuilderFactory.Aws2RedshiftDataComponentBuilder aws2RedshiftData() {
+        return org.apache.camel.builder.component.dsl.Aws2RedshiftDataComponentBuilderFactory.aws2RedshiftData();
+    }
+    /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
@@ -450,7 +476,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Timestream (camel-aws2-timestream)
-     * A Camel Amazon Web Services TimeStream component
+     * Write records and execute queries on AWS time-series database
      * 
      * Category: cloud,database
      * Since: 4.1
@@ -529,7 +555,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure ServiceBus (camel-azure-servicebus)
-     * Send and receive messages to/from Azure Event Bus.
+     * Send and receive messages to/from Azure Service Bus.
      * 
      * Category: cloud,messaging
      * Since: 3.12
@@ -1234,6 +1260,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ElasticsearchComponentBuilderFactory.elasticsearch();
     }
     /**
+     * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
+     * Perform queries and other operations on Elasticsearch or OpenSearch (uses
+     * low-level client).
+     * 
+     * Category: search
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest-client
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.ElasticsearchRestClientComponentBuilderFactory.ElasticsearchRestClientComponentBuilder elasticsearchRestClient() {
+        return org.apache.camel.builder.component.dsl.ElasticsearchRestClientComponentBuilderFactory.elasticsearchRestClient();
+    }
+    /**
      * Etcd v3 (camel-etcd3)
      * Get, set, delete or watch keys in etcd key-value store.
      * 
@@ -1614,6 +1654,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.GrapeComponentBuilderFactory.GrapeComponentBuilder grape() {
         return org.apache.camel.builder.component.dsl.GrapeComponentBuilderFactory.grape();
     }
@@ -1824,6 +1865,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.HdfsComponentBuilderFactory.HdfsComponentBuilder hdfs() {
         return org.apache.camel.builder.component.dsl.HdfsComponentBuilderFactory.hdfs();
     }
@@ -2217,7 +2259,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Jetty (camel-jetty)
-     * Expose HTTP endpoints using Jetty 11.
+     * Expose HTTP endpoints using Jetty 12.
      * 
      * Category: http
      * Since: 1.2
@@ -2452,6 +2494,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.KubernetesConfigMapsComponentBuilderFactory.KubernetesConfigMapsComponentBuilder kubernetesConfigMaps() {
         return org.apache.camel.builder.component.dsl.KubernetesConfigMapsComponentBuilderFactory.kubernetesConfigMaps();
+    }
+    /**
+     * Kubernetes Cronjob (camel-kubernetes)
+     * Perform operations on Kubernetes CronJob.
+     * 
+     * Category: container,cloud
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesCronjobComponentBuilderFactory.KubernetesCronjobComponentBuilder kubernetesCronjob() {
+        return org.apache.camel.builder.component.dsl.KubernetesCronjobComponentBuilderFactory.kubernetesCronjob();
     }
     /**
      * Kubernetes Custom Resources (camel-kubernetes)
@@ -3654,6 +3709,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SlackComponentBuilderFactory.slack();
     }
     /**
+     * SMB (camel-smb)
+     * Receive files from SMB (Server Message Block) shares.
+     * 
+     * Category: file
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SmbComponentBuilderFactory.SmbComponentBuilder smb() {
+        return org.apache.camel.builder.component.dsl.SmbComponentBuilderFactory.smb();
+    }
+    /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).
@@ -3984,6 +4052,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.ThriftComponentBuilderFactory.ThriftComponentBuilder thrift() {
         return org.apache.camel.builder.component.dsl.ThriftComponentBuilderFactory.thrift();
+    }
+    /**
+     * Thymeleaf (camel-thymeleaf)
+     * Transform messages using a Thymeleaf template.
+     * 
+     * Category: transformation
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-thymeleaf
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.ThymeleafComponentBuilderFactory.ThymeleafComponentBuilder thymeleaf() {
+        return org.apache.camel.builder.component.dsl.ThymeleafComponentBuilderFactory.thymeleaf();
     }
     /**
      * Tika (camel-tika)

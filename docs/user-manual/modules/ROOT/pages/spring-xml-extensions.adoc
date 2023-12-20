@@ -39,6 +39,16 @@ The following is an example of what it looks like:
 
 == Using Spring XML
 
+The following dependency needs to be added to your pom.xml so that Spring XML files can be scanned by Camel:
+
+[source,xml]
+--------------------------------------------------------------------------------------------------------------
+ <dependency>
+     <groupId>org.apache.camel.springboot</groupId>
+     <artifactId>camel-spring-boot-xml-starter</artifactId>
+ </dependency>
+--------------------------------------------------------------------------------------------------------------
+
 You can use Spring XML files to specify Camel routes using XML DSL as shown:
 
 [source,xml]

@@ -55,7 +55,7 @@ public class SmppConfigurationTest {
         assertEquals("", configuration.getAddressRange());
         assertEquals(Integer.valueOf(60000), configuration.getEnquireLinkTimer());
         assertEquals("localhost", configuration.getHost());
-        assertEquals(null, configuration.getPassword());
+        assertNull(configuration.getPassword());
         assertEquals(Integer.valueOf(2775), configuration.getPort());
         assertEquals(0x01, configuration.getPriorityFlag());
         assertEquals(0x00, configuration.getProtocolId());
@@ -74,14 +74,15 @@ public class SmppConfigurationTest {
         assertEquals(false, configuration.isUsingSSL());
         assertEquals(5000, configuration.getInitialReconnectDelay());
         assertEquals(5000, configuration.getReconnectDelay());
-        assertEquals(null, configuration.getHttpProxyHost());
+        assertNull(configuration.getHttpProxyHost());
         assertEquals(Integer.valueOf(3128), configuration.getHttpProxyPort());
-        assertEquals(null, configuration.getHttpProxyUsername());
-        assertEquals(null, configuration.getHttpProxyPassword());
-        assertEquals(null, configuration.getSessionStateListener());
+        assertNull(configuration.getHttpProxyUsername());
+        assertNull(configuration.getHttpProxyPassword());
+        assertNull(configuration.getSessionStateListener());
         assertEquals(3, configuration.getPduProcessorDegree());
         assertEquals(100, configuration.getPduProcessorQueueCapacity());
         assertEquals(false, configuration.isSingleDLR());
+        assertEquals("3.4", configuration.getInterfaceVersion());
         assertNull(configuration.getMessageReceiverRouteId());
     }
 
@@ -122,6 +123,7 @@ public class SmppConfigurationTest {
         assertEquals(80, configuration.getPduProcessorQueueCapacity());
         assertEquals(1, configuration.getPduProcessorDegree());
         assertEquals(true, configuration.isSingleDLR());
+        assertEquals("5.0", configuration.getInterfaceVersion());
         assertEquals("testMessageReceiverRouteId", configuration.getMessageReceiverRouteId());
     }
 
@@ -183,6 +185,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
         assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
         assertEquals(config.isSingleDLR(), configuration.isSingleDLR());
+        assertEquals(config.getInterfaceVersion(), configuration.getInterfaceVersion());
         assertEquals(config.getMessageReceiverRouteId(), configuration.getMessageReceiverRouteId());
     }
 
@@ -227,7 +230,8 @@ public class SmppConfigurationTest {
                           + "httpProxyUsername=null, "
                           + "httpProxyPassword=null, "
                           + "splittingPolicy=ALLOW, "
-                          + "proxyHeaders=null]";
+                          + "proxyHeaders=null, "
+                          + "interfaceVersion=3.4]";
 
         assertEquals(expected, configuration.toString());
     }
@@ -271,6 +275,7 @@ public class SmppConfigurationTest {
         config.setPduProcessorQueueCapacity(80);
         config.setPduProcessorDegree(1);
         config.setSingleDLR(true);
+        config.setInterfaceVersion("5.0");
         config.setMessageReceiverRouteId("testMessageReceiverRouteId");
     }
 }

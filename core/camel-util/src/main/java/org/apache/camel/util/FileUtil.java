@@ -379,13 +379,17 @@ public final class FileUtil {
     }
 
     private static void delete(File f) {
-        if (!f.delete()) {
+        try {
+            Files.delete(f.toPath());
+        } catch (IOException e) {
             try {
                 Thread.sleep(RETRY_SLEEP_MILLIS);
             } catch (InterruptedException ex) {
                 // Ignore Exception
             }
-            if (!f.delete()) {
+            try {
+                Files.delete(f.toPath());
+            } catch (IOException ex) {
                 f.deleteOnExit();
             }
         }
@@ -499,12 +503,16 @@ public final class FileUtil {
         while (!deleted && count < 3) {
             LOG.debug("Retrying attempt {} to delete file: {}", count, file);
 
-            deleted = file.delete();
-            if (!deleted && count > 0) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // ignore
+            try {
+                Files.delete(file.toPath());
+                deleted = true;
+            } catch (IOException e) {
+                if (count > 0) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ie) {
+                        // ignore
+                    }
                 }
             }
             count++;

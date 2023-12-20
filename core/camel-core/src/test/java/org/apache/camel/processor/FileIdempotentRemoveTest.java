@@ -30,12 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileIdempotentRemoveTest extends ContextTestSupport {
 
-    private File store = testFile("idempotentfilestore.dat").toFile();
     private IdempotentRepository repo;
+    private File store;
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
+        store = testFile("idempotentfilestore.dat").toFile();
         // delete file store before testing
         if (store.exists()) {
             store.delete();

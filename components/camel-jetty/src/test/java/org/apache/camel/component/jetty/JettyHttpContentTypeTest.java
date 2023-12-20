@@ -50,9 +50,9 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE,
                 "text/plain; charset=" + CHARSET + "; action=\"http://somewhere.com/foo\"");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "iso-8859-1");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "ISO-8859-1");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://127.0.0.1:" + getPort() + "/foo");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "ISO-8859-1");
 
         byte[] data = "Hello World".getBytes(StandardCharsets.ISO_8859_1);
         String out = template.requestBodyAndHeader("http://127.0.0.1:{{port}}/foo", data, "content-type",

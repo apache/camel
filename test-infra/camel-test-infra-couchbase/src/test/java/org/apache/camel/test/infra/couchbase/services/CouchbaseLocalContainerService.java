@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchbase.common.CouchbaseProperties;
 import org.slf4j.Logger;
@@ -25,7 +26,6 @@ import org.testcontainers.couchbase.CouchbaseContainer;
 
 public class CouchbaseLocalContainerService implements CouchbaseService, ContainerService<CouchbaseContainer> {
     // Please check CAMEL-19228 before upgrading
-    public static final String IMAGE_NAME = "couchbase/server:6.6.6";
 
     /*
      * Couchbase container uses a dynamic port for the KV service. The configuration
@@ -58,7 +58,9 @@ public class CouchbaseLocalContainerService implements CouchbaseService, Contain
     private final CouchbaseContainer container;
 
     public CouchbaseLocalContainerService() {
-        this(System.getProperty(CouchbaseProperties.COUCHBASE_CONTAINER, IMAGE_NAME));
+        this(LocalPropertyResolver.getProperty(
+                CouchbaseLocalContainerService.class,
+                CouchbaseProperties.COUCHBASE_CONTAINER));
     }
 
     public CouchbaseLocalContainerService(String imageName) {

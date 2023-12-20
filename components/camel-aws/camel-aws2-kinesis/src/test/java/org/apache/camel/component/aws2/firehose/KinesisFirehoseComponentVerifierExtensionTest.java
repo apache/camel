@@ -46,7 +46,7 @@ public class KinesisFirehoseComponentVerifierExtensionTest extends CamelTestSupp
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
-        parameters.put("region", "l");
+        parameters.put("region", "eu-west-1");
         parameters.put("streamName", "test");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);

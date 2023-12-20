@@ -70,8 +70,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                             + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
     private boolean lazyStartProducer;
     @UriParam(label = "consumer,advanced",
-              description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
-                            + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+              description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while"
+                            + " the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+                            + " Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only,"
+                            + " and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component"
+                            + " and make this possible for future releases."
                             + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private boolean bridgeErrorHandler;
     @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.",
@@ -235,7 +238,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        Exchange answer = new DefaultExchange(this, pattern);
+        Exchange answer = DefaultExchange.newFromEndpoint(this, pattern);
         configureExchange(answer);
         return answer;
     }
@@ -295,9 +298,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the
-     * consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by
-     * the routing Error Handler.
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible)
+     * occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a
+     * message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component
+     * allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore
+     * bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd
+     * party component and make this possible for future releases.
      * <p/>
      * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
      * logged at WARN/ERROR level and ignored.
@@ -501,10 +507,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                         if (value == null) {
                             Class<?> type = getter.getOptionType(name, true);
                             if (type != null) {
-                                Set<?> set = camelContext.getRegistry().findByType(type);
-                                if (set.size() == 1) {
-                                    value = set.iterator().next();
-                                }
+                                value = camelContext.getRegistry().findSingleByType(type);
                             }
                             if (value != null) {
                                 boolean hit = configurer.configure(camelContext, this, name, value, true);

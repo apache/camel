@@ -21,7 +21,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(107);
+        Set<String> props = new HashSet<>(112);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -29,6 +29,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("columnIncludeList");
         props.add("columnPropagateSourceType");
         props.add("converters");
+        props.add("customMetricTags");
         props.add("databaseConnectionAdapter");
         props.add("databaseDbname");
         props.add("databaseHostname");
@@ -62,6 +63,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("logMiningBatchSizeMin");
         props.add("logMiningBufferDropOnStop");
         props.add("logMiningBufferInfinispanCacheEvents");
+        props.add("logMiningBufferInfinispanCacheGlobal");
         props.add("logMiningBufferInfinispanCacheProcessedTransactions");
         props.add("logMiningBufferInfinispanCacheSchemaChanges");
         props.add("logMiningBufferInfinispanCacheTransactions");
@@ -96,6 +98,9 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("offsetStoragePartitions");
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
+        props.add("openlogreplicatorHost");
+        props.add("openlogreplicatorPort");
+        props.add("openlogreplicatorSource");
         props.add("pollIntervalMs");
         props.add("provideTransactionMetadata");
         props.add("queryFetchSize");

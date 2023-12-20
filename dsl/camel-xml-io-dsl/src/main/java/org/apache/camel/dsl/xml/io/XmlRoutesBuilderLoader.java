@@ -18,16 +18,24 @@ package org.apache.camel.dsl.xml.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.w3c.dom.Document;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
@@ -45,11 +53,18 @@ import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.scan.PackageScanHelper;
+import org.apache.camel.util.KeyValueHolder;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import org.slf4j.Logger;
@@ -68,6 +83,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     private final Map<String, XmlStreamInfo> xmlInfoCache = new ConcurrentHashMap<>();
     private final Map<String, BeansDefinition> camelAppCache = new ConcurrentHashMap<>();
     private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
+    private final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -134,14 +150,12 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseTemplatedRoutesDefinition()
                                 .ifPresent(this::setTemplatedRouteCollection);
-                    case "rests", "rest" ->
-                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                                .parseRestsDefinition()
-                                .ifPresent(this::setRestCollection);
-                    case "routes", "route" ->
-                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                                .parseRoutesDefinition()
-                                .ifPresent(this::addRoutes);
+                    case "rests", "rest" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                            .parseRestsDefinition()
+                            .ifPresent(this::setRestCollection);
+                    case "routes", "route" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                            .parseRoutesDefinition()
+                            .ifPresent(this::addRoutes);
                     default -> {
                     }
                 }
@@ -316,34 +330,151 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
      * {@link #doLoadRouteBuilder}), a failure may lead to delayed registration.
      */
     private void registerBeanDefinition(RegistryBeanDefinition def, boolean delayIfFailed) {
-        String type = def.getType();
         String name = def.getName();
-        if (name == null || name.trim().isEmpty()) {
-            name = type;
-        }
-        if (type != null && !type.startsWith("#")) {
-            type = "#class:" + type;
-            try {
-                final Object target = PropertyBindingSupport.resolveBean(getCamelContext(), type);
-
-                if (def.getProperties() != null && !def.getProperties().isEmpty()) {
-                    PropertyBindingSupport.setPropertiesOnTarget(getCamelContext(), target, def.getProperties());
-                }
-                getCamelContext().getRegistry().unbind(name);
-                getCamelContext().getRegistry().bind(name, target);
-
-                // register bean in model
-                Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
-                model.addRegistryBean(def);
-
-            } catch (Exception e) {
-                if (delayIfFailed) {
-                    delayedRegistrations.add(def);
-                } else {
-                    LOG.warn("Error creating bean: {} due to: {}. This exception is ignored.", type, e.getMessage(), e);
-                }
+        String type = def.getType();
+        try {
+            Object target = newInstance(def, getCamelContext());
+            bindBean(def, name, target);
+        } catch (Exception e) {
+            if (delayIfFailed) {
+                delayedRegistrations.add(def);
+            } else {
+                String msg
+                        = name != null ? "Error creating bean: " + name + " of type: " + type : "Error creating bean: " + type;
+                throw new RuntimeException(msg, e);
             }
         }
+    }
+
+    public Object newInstance(RegistryBeanDefinition def, CamelContext context) throws Exception {
+        Object target;
+
+        String type = def.getType();
+        if (!type.startsWith("#")) {
+            type = "#class:" + type;
+        }
+
+        if (def.getScriptLanguage() != null && def.getScript() != null) {
+            // create bean via the script
+            final Language lan = context.resolveLanguage(def.getScriptLanguage());
+            final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
+            String fqn = def.getType();
+            if (fqn.startsWith("#class:")) {
+                fqn = fqn.substring(7);
+            }
+            final Class<?> clazz = context.getClassResolver().resolveMandatoryClass(fqn);
+            if (slan != null) {
+                // scripting language should be evaluated with context as binding
+                Map<String, Object> bindings = new HashMap<>();
+                bindings.put("context", context);
+                target = slan.evaluate(def.getScript(), bindings, clazz);
+            } else {
+                // exchange based languages needs a dummy exchange to be evaluated
+                ExchangeFactory ef = context.getCamelContextExtension().getExchangeFactory();
+                Exchange dummy = ef.create(false);
+                try {
+                    String text = ScriptHelper.resolveOptionalExternalScript(context, dummy, def.getScript());
+                    Expression exp = lan.createExpression(text);
+                    target = exp.evaluate(dummy, clazz);
+                } finally {
+                    ef.release(dummy);
+                }
+            }
+
+            // a bean must be created
+            if (target == null) {
+                throw new NoSuchBeanException(def.getName(), "Creating bean using script returned null");
+            }
+        } else if (def.getBuilderClass() != null) {
+            // builder class and method
+            Class<?> clazz = context.getClassResolver().resolveMandatoryClass(def.getBuilderClass());
+            Object builder = context.getInjector().newInstance(clazz);
+            String bm = def.getBuilderMethod() != null ? def.getBuilderMethod() : "build";
+
+            // create bean via builder and assign as target output
+            target = PropertyBindingSupport.build()
+                    .withCamelContext(context)
+                    .withTarget(builder)
+                    .withRemoveParameters(true)
+                    .withProperties(def.getProperties())
+                    .build(Object.class, bm);
+        } else {
+            // factory bean/method
+            if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
+                type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
+            } else if (def.getFactoryMethod() != null) {
+                type = type + "#" + def.getFactoryMethod();
+            }
+            // property binding support has constructor arguments as part of the type
+            StringJoiner ctr = new StringJoiner(", ");
+            if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
+                // need to sort constructor args based on index position
+                Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
+                for (Object val : sorted.values()) {
+                    String text = val.toString();
+                    if (!StringHelper.isQuoted(text)) {
+                        text = "\"" + text + "\"";
+                    }
+                    ctr.add(text);
+                }
+                type = type + "(" + ctr + ")";
+            }
+
+            target = PropertyBindingSupport.resolveBean(context, type);
+        }
+
+        if (def.getProperties() != null && !def.getProperties().isEmpty()) {
+            PropertyBindingSupport.setPropertiesOnTarget(context, target, def.getProperties());
+        }
+
+        return target;
+    }
+
+    protected void bindBean(RegistryBeanDefinition def, String name, Object target) throws Exception {
+        // destroy and unbind any existing bean
+        destroyBean(name, true);
+        getCamelContext().getRegistry().unbind(name);
+
+        // invoke init method and register bean
+        String initMethod = def.getInitMethod();
+        if (initMethod != null) {
+            ObjectHelper.invokeMethodSafe(initMethod, target);
+        }
+        getCamelContext().getRegistry().bind(name, target);
+
+        // remember to destroy bean on shutdown
+        if (def.getDestroyMethod() != null) {
+            beansToDestroy.put(name, new KeyValueHolder<>(target, def.getDestroyMethod()));
+        }
+
+        // register bean in model
+        Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
+        model.addRegistryBean(def);
+    }
+
+    protected void destroyBean(String name, boolean remove) {
+        var holder = remove ? beansToDestroy.remove(name) : beansToDestroy.get(name);
+        if (holder != null) {
+            String destroyMethod = holder.getValue();
+            Object target = holder.getKey();
+            try {
+                ObjectHelper.invokeMethodSafe(destroyMethod, target);
+            } catch (Exception e) {
+                LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
+                        destroyMethod, target, e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        // beans should trigger destroy methods on shutdown
+        for (String name : beansToDestroy.keySet()) {
+            destroyBean(name, false);
+        }
+        beansToDestroy.clear();
     }
 
 }

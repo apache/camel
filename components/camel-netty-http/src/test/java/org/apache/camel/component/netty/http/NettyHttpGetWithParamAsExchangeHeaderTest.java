@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
 
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/myservice?urlDecodeHeaders=true";
+    private final String serverUri = "netty-http:http://localhost:" + getPort() + "/myservice?urlDecodeHeaders=true";
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {

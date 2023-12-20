@@ -55,7 +55,8 @@ public final class MojoHelper {
                 return Arrays.asList(dir.resolve("camel-azure-eventhubs"), dir.resolve("camel-azure-storage-blob"),
                         dir.resolve("camel-azure-storage-datalake"), dir.resolve("camel-azure-cosmosdb"),
                         dir.resolve("camel-azure-storage-queue"), dir.resolve("camel-azure-servicebus"),
-                        dir.resolve("camel-azure-key-vault"), dir.resolve("camel-azure-files"));
+                        dir.resolve("camel-azure-key-vault"), dir.resolve("camel-azure-files"),
+                        dir.resolve("camel-azure-schema-registry"));
             case "camel-google":
                 return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
                         dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
@@ -81,13 +82,14 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-iam"),
                         dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"),
                         dir.resolve("camel-aws2-mq"),
-                        dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
+                        dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-redshift"),
+                        dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
                         dir.resolve("camel-aws2-sns"),
                         dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-step-functions"),
                         dir.resolve("camel-aws2-sts"),
                         dir.resolve("camel-aws2-timestream"), dir.resolve("camel-aws2-translate"),
                         dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"),
-                        dir.resolve("camel-aws-cloudtrail"));
+                        dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"));
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),

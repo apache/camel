@@ -1,14 +1,22 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>3.3.2</version>
+                <version>{{ .JibMavenPluginVersion }}</version>
                 <configuration>
+                    <from>
+                        <image>${jib.from.image}</image>
+{{ .JibFromImageAuth }}
+                    </from>
+                    <to>
+                        <image>${jib.to.image}</image>
+{{ .JibToImageAuth }}
+                    </to>
+                    <containerizingMode>packaged</containerizingMode>
                     <container>
                         <ports>
                             <port>{{ .Port }}</port>
                         </ports>
                     </container>
-                    <containerizingMode>packaged</containerizingMode>
                 </configuration>
             </plugin>
             <plugin>

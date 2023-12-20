@@ -171,6 +171,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         return exceptionAsXml;
     }
 
+    @Override
     public void setExceptionAsXml(String exceptionAsXml) {
         this.exceptionAsXml = exceptionAsXml;
     }
@@ -180,6 +181,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         return exceptionAsJSon;
     }
 
+    @Override
     public void setExceptionAsJSon(String exceptionAsJSon) {
         this.exceptionAsJSon = exceptionAsJSon;
     }

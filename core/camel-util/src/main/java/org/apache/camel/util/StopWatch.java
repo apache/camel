@@ -35,13 +35,6 @@ public final class StopWatch {
     }
 
     /**
-     * Starts the stop watch from the given timestamp
-     */
-    public StopWatch(long timeMillis) {
-        start = timeMillis;
-    }
-
-    /**
      * Creates the stop watch
      *
      * @param start whether it should start immediately

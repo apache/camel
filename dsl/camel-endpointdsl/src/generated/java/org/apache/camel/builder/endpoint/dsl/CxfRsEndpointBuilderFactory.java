@@ -367,12 +367,17 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -389,12 +394,17 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2276,7 +2286,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code Authentication}.
          */
         public String authentication() {
-            return "Authentication";
+            return "CamelAuthentication";
         }
 
         /**
@@ -2289,7 +2299,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code HttpMethod}.
          */
         public String httpMethod() {
-            return "HttpMethod";
+            return "CamelHttpMethod";
         }
 
         /**
@@ -2302,7 +2312,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code HttpPath}.
          */
         public String httpPath() {
-            return "HttpPath";
+            return "CamelHttpPath";
         }
 
         /**
@@ -2328,7 +2338,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code HttpQuery}.
          */
         public String httpQuery() {
-            return "HttpQuery";
+            return "CamelHttpQuery";
         }
 
         /**
@@ -2341,7 +2351,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code HttpResponseCode}.
          */
         public String httpResponseCode() {
-            return "HttpResponseCode";
+            return "CamelHttpResponseCode";
         }
 
         /**
@@ -2381,7 +2391,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfMessage}.
          */
         public String cxfMessage() {
-            return "CxfMessage";
+            return "CamelCxfMessage";
         }
 
         /**
@@ -2396,7 +2406,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsUsingHttpAPI}.
          */
         public String cxfRsUsingHttpAPI() {
-            return "CxfRsUsingHttpAPI";
+            return "CamelCxfRsUsingHttpAPI";
         }
 
         /**
@@ -2409,7 +2419,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsVarValues}.
          */
         public String cxfRsVarValues() {
-            return "CxfRsVarValues";
+            return "CamelCxfRsVarValues";
         }
 
         /**
@@ -2422,7 +2432,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsResponseClass}.
          */
         public String cxfRsResponseClass() {
-            return "CxfRsResponseClass";
+            return "CamelCxfRsResponseClass";
         }
 
         /**
@@ -2435,7 +2445,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsResponseGenericType}.
          */
         public String cxfRsResponseGenericType() {
-            return "CxfRsResponseGenericType";
+            return "CamelCxfRsResponseGenericType";
         }
 
         /**
@@ -2448,7 +2458,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the name of the header {@code CxfRsQueryMap}.
          */
         public String cxfRsQueryMap() {
-            return "CxfRsQueryMap";
+            return "CamelCxfRsQueryMap";
         }
 
         /**
@@ -2464,7 +2474,7 @@ public interface CxfRsEndpointBuilderFactory {
          * CxfRsOperationResourceInfoStack}.
          */
         public String cxfRsOperationResourceInfoStack() {
-            return "CxfRsOperationResourceInfoStack";
+            return "CamelCxfRsOperationResourceInfoStack";
         }
     }
     static CxfRsEndpointBuilder endpointBuilder(

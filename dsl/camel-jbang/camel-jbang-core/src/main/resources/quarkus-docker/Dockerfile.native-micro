@@ -23,7 +23,7 @@
 #
 # Before building the container image run:
 #
-# ./mvnw package -Pnative
+# ./mvnw package -Dnative
 #
 # Then, build the image with:
 #
@@ -44,4 +44,4 @@ COPY --chown=1001:root target/*-runner /work/application
 EXPOSE 8080
 USER 1001
 
-CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
+ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]

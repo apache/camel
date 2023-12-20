@@ -53,11 +53,11 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
     private Olingo4AppWrapper apiProxy;
 
     public Olingo4Component() {
-        super(Olingo4Endpoint.class, Olingo4ApiName.class, Olingo4ApiCollection.getCollection());
+        super(Olingo4ApiName.class, Olingo4ApiCollection.getCollection());
     }
 
     public Olingo4Component(CamelContext context) {
-        super(context, Olingo4Endpoint.class, Olingo4ApiName.class, Olingo4ApiCollection.getCollection());
+        super(context, Olingo4ApiName.class, Olingo4ApiCollection.getCollection());
     }
 
     @Override

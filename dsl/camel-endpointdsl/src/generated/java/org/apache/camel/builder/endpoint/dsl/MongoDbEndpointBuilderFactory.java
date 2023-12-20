@@ -487,12 +487,17 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -509,12 +514,17 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -4196,7 +4206,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbOperation}.
          */
         public String mongoDbOperation() {
-            return "MongoDbOperation";
+            return "CamelMongoDbOperation";
         }
 
         /**
@@ -4210,7 +4220,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbResultTotalSize}.
          */
         public String mongoDbResultTotalSize() {
-            return "MongoDbResultTotalSize";
+            return "CamelMongoDbResultTotalSize";
         }
 
         /**
@@ -4224,7 +4234,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbResultPageSize}.
          */
         public String mongoDbResultPageSize() {
-            return "MongoDbResultPageSize";
+            return "CamelMongoDbResultPageSize";
         }
 
         /**
@@ -4237,7 +4247,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbCriteria}.
          */
         public String mongoDbCriteria() {
-            return "MongoDbCriteria";
+            return "CamelMongoDbCriteria";
         }
 
         /**
@@ -4250,7 +4260,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbFieldsProjection}.
          */
         public String mongoDbFieldsProjection() {
-            return "MongoDbFieldsProjection";
+            return "CamelMongoDbFieldsProjection";
         }
 
         /**
@@ -4263,7 +4273,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbBatchSize}.
          */
         public String mongoDbBatchSize() {
-            return "MongoDbBatchSize";
+            return "CamelMongoDbBatchSize";
         }
 
         /**
@@ -4276,7 +4286,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbNumToSkip}.
          */
         public String mongoDbNumToSkip() {
-            return "MongoDbNumToSkip";
+            return "CamelMongoDbNumToSkip";
         }
 
         /**
@@ -4291,7 +4301,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbMultiUpdate}.
          */
         public String mongoDbMultiUpdate() {
-            return "MongoDbMultiUpdate";
+            return "CamelMongoDbMultiUpdate";
         }
 
         /**
@@ -4304,7 +4314,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbUpsert}.
          */
         public String mongoDbUpsert() {
-            return "MongoDbUpsert";
+            return "CamelMongoDbUpsert";
         }
 
         /**
@@ -4317,7 +4327,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbRecordsAffected}.
          */
         public String mongoDbRecordsAffected() {
-            return "MongoDbRecordsAffected";
+            return "CamelMongoDbRecordsAffected";
         }
 
         /**
@@ -4330,7 +4340,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbRecordsMatched}.
          */
         public String mongoDbRecordsMatched() {
-            return "MongoDbRecordsMatched";
+            return "CamelMongoDbRecordsMatched";
         }
 
         /**
@@ -4343,7 +4353,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbSortBy}.
          */
         public String mongoDbSortBy() {
-            return "MongoDbSortBy";
+            return "CamelMongoDbSortBy";
         }
 
         /**
@@ -4356,7 +4366,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbDatabase}.
          */
         public String mongoDbDatabase() {
-            return "MongoDbDatabase";
+            return "CamelMongoDbDatabase";
         }
 
         /**
@@ -4369,7 +4379,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbCollection}.
          */
         public String mongoDbCollection() {
-            return "MongoDbCollection";
+            return "CamelMongoDbCollection";
         }
 
         /**
@@ -4382,7 +4392,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbCollectionIndex}.
          */
         public String mongoDbCollectionIndex() {
-            return "MongoDbCollectionIndex";
+            return "CamelMongoDbCollectionIndex";
         }
 
         /**
@@ -4395,7 +4405,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbLimit}.
          */
         public String mongoDbLimit() {
-            return "MongoDbLimit";
+            return "CamelMongoDbLimit";
         }
 
         /**
@@ -4408,7 +4418,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbTailable}.
          */
         public String mongoDbTailable() {
-            return "MongoDbTailable";
+            return "CamelMongoDbTailable";
         }
 
         /**
@@ -4421,7 +4431,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoWriteResult}.
          */
         public String mongoWriteResult() {
-            return "MongoWriteResult";
+            return "CamelMongoWriteResult";
         }
 
         /**
@@ -4434,7 +4444,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoOid}.
          */
         public String mongoOid() {
-            return "MongoOid";
+            return "CamelMongoOid";
         }
 
         /**
@@ -4448,7 +4458,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbDistinctQueryField}.
          */
         public String mongoDbDistinctQueryField() {
-            return "MongoDbDistinctQueryField";
+            return "CamelMongoDbDistinctQueryField";
         }
 
         /**
@@ -4463,7 +4473,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbAllowDiskUse}.
          */
         public String mongoDbAllowDiskUse() {
-            return "MongoDbAllowDiskUse";
+            return "CamelMongoDbAllowDiskUse";
         }
 
         /**
@@ -4477,7 +4487,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbBulkOrdered}.
          */
         public String mongoDbBulkOrdered() {
-            return "MongoDbBulkOrdered";
+            return "CamelMongoDbBulkOrdered";
         }
 
         /**
@@ -4509,7 +4519,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the name of the header {@code MongoDbStreamOperationType}.
          */
         public String mongoDbStreamOperationType() {
-            return "MongoDbStreamOperationType";
+            return "CamelMongoDbStreamOperationType";
         }
     }
     static MongoDbEndpointBuilder endpointBuilder(

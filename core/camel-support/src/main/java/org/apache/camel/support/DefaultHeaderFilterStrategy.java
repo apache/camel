@@ -309,47 +309,68 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         }
 
         if (startsWith != null) {
-            for (String s : startsWith) {
-                boolean match = headerName.startsWith(s);
-                if (match) {
-                    return filterOnMatch;
-                }
+            if (tryHeaderMatch(headerName, startsWith)) {
+                return filterOnMatch;
             }
         }
 
         if (pattern != null) {
-            // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
-            if (pattern == CAMEL_FILTER_PATTERN) {
-                boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel")
-                        || headerName.startsWith("org.apache.camel.");
-                if (match) {
-                    return filterOnMatch;
-                }
-            } else if (pattern.matcher(headerName).matches()) {
+            if (tryPattern(headerName, pattern)) {
                 return filterOnMatch;
             }
         }
 
         if (filter != null) {
-            if (isCaseInsensitive()) {
-                for (String filterString : filter) {
-                    if (filterString.equalsIgnoreCase(headerName)) {
-                        return filterOnMatch;
-                    }
-                }
-            } else if (isLowerCase()) {
-                String lower = headerName.toLowerCase(Locale.ENGLISH);
-                if (filter.contains(lower)) {
-                    return filterOnMatch;
-                }
-            } else {
-                if (filter.contains(headerName)) {
-                    return filterOnMatch;
-                }
+            if (evalFilterMatch(headerName, filter)) {
+                return filterOnMatch;
             }
         }
 
         return extendedFilter(direction, headerName, headerValue, exchange);
+    }
+
+    private boolean tryPattern(String headerName, Pattern pattern) {
+        // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
+        if (pattern == CAMEL_FILTER_PATTERN) {
+            boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel")
+                    || headerName.startsWith("org.apache.camel.");
+            if (match) {
+                return true;
+            }
+        } else if (pattern.matcher(headerName).matches()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean tryHeaderMatch(String headerName, String[] startsWith) {
+        for (String s : startsWith) {
+            boolean match = headerName.startsWith(s);
+            if (match) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean evalFilterMatch(String headerName, Set<String> filter) {
+        if (isCaseInsensitive()) {
+            for (String filterString : filter) {
+                if (filterString.equalsIgnoreCase(headerName)) {
+                    return true;
+                }
+            }
+        } else if (isLowerCase()) {
+            String lower = headerName.toLowerCase(Locale.ENGLISH);
+            if (filter.contains(lower)) {
+                return true;
+            }
+        } else {
+            if (filter.contains(headerName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

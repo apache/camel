@@ -64,7 +64,7 @@ public class PrepareExampleMojo extends AbstractMojo {
     protected String filter = "camel-example";
 
     @Parameter(property = "filterMiddleFolder", required = false, readonly = true)
-    protected String filterMiddleFolder = "aws,azure,vault";
+    protected String filterMiddleFolder = "aws,azure,google,resume-api,vault";
 
     /**
      * Maven ProjectHelper.
@@ -191,9 +191,10 @@ public class PrepareExampleMojo extends AbstractMojo {
                 .list((folder, fileName) -> fileName.regionMatches(true, 0, "readme", 0, "readme".length()));
         if (readmes != null && readmes.length == 1) {
             model.setReadmeFileName(readmes[0]);
+            models.add(model);
         }
 
-        models.add(model);
+        // Don't add if no readme found
     }
 
     private String templateExamples(List<ExampleModel> models, long deprecated) throws MojoExecutionException {

@@ -54,7 +54,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
 
         Query query;
 
-        if (keywords != null && keywords.trim().length() > 0) {
+        if (keywords != null && !keywords.isBlank()) {
             query = Query.of(keywords);
             LOG.debug("Searching twitter with keywords: {}", keywords);
         } else {
@@ -72,7 +72,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
     @Override
     public List<Exchange> directConsume() throws TwitterException {
         String keywords = this.keywords;
-        if (keywords == null || keywords.trim().length() == 0) {
+        if (keywords == null || !keywords.isBlank()) {
             return Collections.emptyList();
         }
         Query query = Query.of(keywords);

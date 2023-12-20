@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.mosquitto.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mosquitto.common.MosquittoProperties;
 import org.slf4j.Logger;
@@ -26,7 +27,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class MosquittoLocalContainerService implements MosquittoService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "eclipse-mosquitto:2.0.10";
     public static final String CONTAINER_NAME = "mosquitto";
     public static final int CONTAINER_PORT = 1883;
 
@@ -35,11 +35,13 @@ public class MosquittoLocalContainerService implements MosquittoService, Contain
     private final GenericContainer container;
 
     public MosquittoLocalContainerService() {
-        this(CONTAINER_IMAGE);
+        this(LocalPropertyResolver.getProperty(MosquittoLocalContainerService.class, MosquittoProperties.MOSQUITTO_CONTAINER));
     }
 
     public MosquittoLocalContainerService(int port) {
-        String imageName = System.getProperty(MosquittoProperties.MOSQUITTO_CONTAINER, CONTAINER_IMAGE);
+        String imageName = LocalPropertyResolver.getProperty(
+                MosquittoLocalContainerService.class,
+                MosquittoProperties.MOSQUITTO_CONTAINER);
 
         container = initContainer(imageName, port);
     }

@@ -20,13 +20,14 @@ import java.util.List;
 import java.util.UUID;
 
 import io.etcd.jetcd.launcher.EtcdContainer;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.etcd3.common.Etcd3Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 public class Etcd3LocalContainerService implements Etcd3Service, ContainerService<EtcdContainer> {
-    public static final String CONTAINER_IMAGE = "gcr.io/etcd-development/etcd:v3.5.5";
     public static final String CONTAINER_NAME = "etcd";
     public static final int ETCD_CLIENT_PORT = 2379;
     public static final int ETCD_PEER_PORT = 2380;
@@ -36,7 +37,9 @@ public class Etcd3LocalContainerService implements Etcd3Service, ContainerServic
     private final EtcdContainer container;
 
     public Etcd3LocalContainerService() {
-        this(System.getProperty("etcd.container", CONTAINER_IMAGE));
+        this(LocalPropertyResolver.getProperty(
+                Etcd3LocalContainerService.class,
+                Etcd3Properties.ETCD_CONTAINER));
     }
 
     public Etcd3LocalContainerService(String imageName) {
@@ -51,7 +54,9 @@ public class Etcd3LocalContainerService implements Etcd3Service, ContainerServic
         return new EtcdContainer(imageName, CONTAINER_NAME, List.of(CONTAINER_NAME))
                 .withNetworkAliases(containerName)
                 .withClusterToken(UUID.randomUUID().toString())
-                .withExposedPorts(ETCD_CLIENT_PORT, ETCD_PEER_PORT);
+                .withExposedPorts(ETCD_CLIENT_PORT, ETCD_PEER_PORT)
+                .waitingFor(Wait.forListeningPort())
+                .waitingFor(Wait.forLogMessage(".*ready to serve client requests.*", 1));
     }
 
     @Override

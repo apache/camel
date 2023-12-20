@@ -50,7 +50,7 @@ public class JdbcAggregationRepositoryRecoverExistingTest extends AbstractJdbcAg
         Exchange exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("counter:1");
         Exchange actual = repo.add(context, "foo", exchange1);
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // Get and remove it, which makes it in the pre confirm stage
         exchange1 = repo.get(context, "foo");

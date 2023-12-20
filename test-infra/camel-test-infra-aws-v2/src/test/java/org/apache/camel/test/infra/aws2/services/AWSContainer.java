@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -37,13 +38,13 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
  */
 public class AWSContainer extends GenericContainer<AWSContainer> {
 
-    public static final String LOCALSTACK_CONTAINER = "localstack/localstack:2.2.0";
-
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private static final int SERVICE_PORT = 4566;
 
     public AWSContainer() {
-        this(System.getProperty(AWSProperties.AWS_CONTAINER, LOCALSTACK_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                AWSContainer.class,
+                AWSProperties.AWS_CONTAINER));
     }
 
     public AWSContainer(String imageName) {

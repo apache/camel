@@ -22,7 +22,7 @@ package $packageName;
 
 import java.util.Optional;
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
 
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )

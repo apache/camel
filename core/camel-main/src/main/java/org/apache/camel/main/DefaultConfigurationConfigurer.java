@@ -35,6 +35,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.impl.engine.PrototypeExchangeFactory;
@@ -43,9 +44,11 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DumpRoutesStrategy;
@@ -75,7 +78,6 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -89,6 +91,7 @@ import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
+import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
@@ -126,6 +129,10 @@ public final class DefaultConfigurationConfigurer {
             } else if ("logging".equals(config.getStartupRecorder())) {
                 if (!(ecc.getStartupStepRecorder() instanceof LoggingStartupStepRecorder)) {
                     ecc.setStartupStepRecorder(new LoggingStartupStepRecorder());
+                }
+            } else if ("backlog".equals(config.getStartupRecorder())) {
+                if (!(ecc.getStartupStepRecorder() instanceof BacklogStartupStepRecorder)) {
+                    ecc.setStartupStepRecorder(new BacklogStartupStepRecorder());
                 }
             } else if ("java-flight-recorder".equals(config.getStartupRecorder())) {
                 if (!ecc.getStartupStepRecorder().getClass().getName().startsWith("org.apache.camel.startup.jfr")) {
@@ -304,11 +311,6 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 
-        // debug may be enabled via camel-debug JAR on classpath so if config is false (default)
-        // then do not change setting on camel-context
-        if (config.isDebugging()) {
-            camelContext.setDebugging(true);
-        }
         if (config.isMessageHistory()) {
             camelContext.setMessageHistory(true);
         }
@@ -329,43 +331,19 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
         }
 
+        if (config.getCompileWorkDir() != null) {
+            CompileStrategy cs = ecc.getContextPlugin(CompileStrategy.class);
+            if (cs == null) {
+                cs = new DefaultCompileStrategy();
+                ecc.addContextPlugin(CompileStrategy.class, cs);
+            }
+            cs.setWorkDir(config.getCompileWorkDir());
+        }
+
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
             camelContext.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(
                     config.getRouteFilterIncludePattern(),
                     config.getRouteFilterExcludePattern());
-        }
-
-        // supervising route controller
-        if (config.isRouteControllerSuperviseEnabled()) {
-            SupervisingRouteController src = camelContext.getRouteController().supervising();
-            if (config.getRouteControllerIncludeRoutes() != null) {
-                src.setIncludeRoutes(config.getRouteControllerIncludeRoutes());
-            }
-            if (config.getRouteControllerExcludeRoutes() != null) {
-                src.setExcludeRoutes(config.getRouteControllerExcludeRoutes());
-            }
-            if (config.getRouteControllerThreadPoolSize() > 0) {
-                src.setThreadPoolSize(config.getRouteControllerThreadPoolSize());
-            }
-            if (config.getRouteControllerBackOffDelay() > 0) {
-                src.setBackOffDelay(config.getRouteControllerBackOffDelay());
-            }
-            if (config.getRouteControllerInitialDelay() > 0) {
-                src.setInitialDelay(config.getRouteControllerInitialDelay());
-            }
-            if (config.getRouteControllerBackOffMaxAttempts() > 0) {
-                src.setBackOffMaxAttempts(config.getRouteControllerBackOffMaxAttempts());
-            }
-            if (config.getRouteControllerBackOffMaxDelay() > 0) {
-                src.setBackOffMaxDelay(config.getRouteControllerBackOffDelay());
-            }
-            if (config.getRouteControllerBackOffMaxElapsedTime() > 0) {
-                src.setBackOffMaxElapsedTime(config.getRouteControllerBackOffMaxElapsedTime());
-            }
-            if (config.getRouteControllerBackOffMultiplier() > 0) {
-                src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
-            }
-            src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
         }
     }
 
@@ -394,6 +372,10 @@ public final class DefaultConfigurationConfigurer {
         BacklogTracer bt = getSingleBeanOfType(registry, BacklogTracer.class);
         if (bt != null) {
             camelContext.getCamelContextExtension().addContextPlugin(BacklogTracer.class, bt);
+        }
+        BacklogDebugger bd = getSingleBeanOfType(registry, BacklogDebugger.class);
+        if (bd != null) {
+            camelContext.getCamelContextExtension().addContextPlugin(BacklogDebugger.class, bd);
         }
         InflightRepository ir = getSingleBeanOfType(registry, InflightRepository.class);
         if (ir != null) {
@@ -548,7 +530,6 @@ public final class DefaultConfigurationConfigurer {
         if (sslContextParametersSupplier != null) {
             camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
         }
-
         // health check
         HealthCheckRegistry healthCheckRegistry = getSingleBeanOfType(registry, HealthCheckRegistry.class);
         if (healthCheckRegistry != null) {

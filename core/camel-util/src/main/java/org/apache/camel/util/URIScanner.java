@@ -117,7 +117,7 @@ class URIScanner {
         }
 
         // any left over parameters, then add that
-        if (key.length() > 0) {
+        if (!key.isEmpty()) {
             addParameter(answer, useRaw || isRaw);
         }
 

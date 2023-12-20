@@ -26,8 +26,8 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class AuthenticationValidationHandler extends BasicValidationHandler {
 
-    protected String user;
-    protected String password;
+    protected final String user;
+    protected final String password;
 
     public AuthenticationValidationHandler(String expectedMethod,
                                            String expectedQuery, Object expectedContent,

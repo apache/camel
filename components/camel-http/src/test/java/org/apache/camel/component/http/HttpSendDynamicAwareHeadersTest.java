@@ -57,10 +57,10 @@ public class HttpSendDynamicAwareHeadersTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:dynamicAwareWithoutPathHeader")
                         .setHeader(Exchange.HTTP_QUERY, constant("par1=val1&par2=val2"))
                         .toD("http://localhost:" + localServer.getLocalPort() + "/dynamicAware");
@@ -69,7 +69,7 @@ public class HttpSendDynamicAwareHeadersTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAwareHeadersQuery() throws Exception {
+    public void testDynamicAwareHeadersQuery() {
         Exchange e = fluentTemplate.to("direct:dynamicAwareWithoutPathHeader").send();
         assertEquals("/dynamicAware", e.getIn().getHeader(Exchange.HTTP_PATH));
         assertEquals("par1=val1&par2=val2", e.getIn().getHeader(Exchange.HTTP_QUERY));

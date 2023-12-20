@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
 
-    AvailablePortFinder.Port port1 = port;
+    final AvailablePortFinder.Port port1 = port;
     @RegisterExtension
     AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 

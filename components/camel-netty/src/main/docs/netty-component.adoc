@@ -237,7 +237,7 @@ SSLContextParameters scp = new SSLContextParameters();
 scp.setKeyManagers(kmp);
 
 NettyComponent nettyComponent = getContext().getComponent("netty", NettyComponent.class);
-nettyComponent.setSslContextParameters(scp);
+nettyComponent.getConfiguration().setSslContextParameters(scp);
 ----
 
 [[Netty-SpringDSLbasedconfigurationofendpoint]]
@@ -473,7 +473,7 @@ must be created and registered with the context via the context registry
 A custom pipeline factory must be constructed as follows
 
 * A Producer linked channel pipeline factory must extend the abstract
-class `ClientPipelineFactory`.
+class `ClientInitializerFactory`.
 * A Consumer linked channel pipeline factory must extend the abstract
 class `ServerInitializerFactory`.
 * The classes should override the initChannel() method in order to

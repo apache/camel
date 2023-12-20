@@ -488,6 +488,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
+        // if we are debugging then ids is needed for the debugger
+        if (context.isDebugging()) {
+            generatedIds = true;
+        }
         return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, generatedIds);
     }
 
@@ -517,6 +521,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use routes definition to dump the routes
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
+
+        // if we are debugging then ids is needed for the debugger
+        if (context.isDebugging()) {
+            generatedIds = true;
+        }
 
         return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders, uriAsParameters,
                 generatedIds);
@@ -689,7 +698,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                         getExchangesTotal(), getTotalProcessingTime()))
                 .append(">\n");
 
-        String xml = dumpRoutesAsXml();
+        String xml = dumpRoutesAsXml(false, false);
         if (xml != null) {
             // use the coverage xml parser to dump the routes and enrich with coverage stats
             Document dom = RouteCoverageXmlParser.parseXml(context, new ByteArrayInputStream(xml.getBytes()));

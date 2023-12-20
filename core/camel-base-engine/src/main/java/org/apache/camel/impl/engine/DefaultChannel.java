@@ -30,8 +30,9 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
 import org.apache.camel.spi.InterceptStrategy;
@@ -40,8 +41,10 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.WrapAwareProcessor;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,17 +172,9 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        if (route.isMessageHistory()) {
-            // add message history advice
-            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
-            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
-        }
-        // add advice that keeps track of which node is processing
-        addAdvice(new NodeHistoryAdvice(targetOutputDef));
-
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
-        if (route.isDebugging()) {
+        if (camelContext.isDebugStandby() || route.isDebugging()) {
             final Debugger customDebugger = camelContext.getDebugger();
             if (customDebugger != null) {
                 // use custom debugger
@@ -188,8 +183,23 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             BacklogDebugger debugger = getBacklogDebugger(camelContext, customDebugger == null);
             if (debugger != null) {
                 // use backlog debugger
-                camelContext.addService(debugger);
-                addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+                if (!camelContext.hasService(debugger)) {
+                    camelContext.addService(debugger);
+                }
+                // skip debugging inside rest-dsl (just a tiny facade) or kamelets / route-templates
+                boolean skip = routeDefinition != null
+                        && (routeDefinition.isCreatedFromRest() || routeDefinition.isCreatedFromTemplate());
+                if (!skip && routeDefinition != null) {
+                    backlogDebuggerSetupInitialBreakpoints(definition, routeDefinition, first, debugger, targetOutputDef);
+                    if (first && debugger.isSingleStepIncludeStartEnd()) {
+                        // add breakpoint on route input instead of first node
+                        addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
+                        // debugger captures message history, and we need to capture history of incoming
+                        addAdvice(
+                                new MessageHistoryAdvice(camelContext.getMessageHistoryFactory(), routeDefinition.getInput()));
+                    }
+                    addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+                }
             }
         }
 
@@ -203,6 +213,14 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             Tracer tracer = camelContext.getTracer();
             addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));
         }
+
+        if (route.isMessageHistory()) {
+            // add message history advice
+            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
+            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
+        }
+        // add advice that keeps track of which node is processing
+        addAdvice(new NodeHistoryAdvice(targetOutputDef));
 
         // sort interceptors according to ordered
         interceptors.sort(OrderedComparator.get());
@@ -310,10 +328,71 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             debugger = camelContext.hasService(BacklogDebugger.class);
         }
         if (debugger == null && createIfAbsent) {
-            // fallback to use the default debugger
-            debugger = BacklogDebugger.createDebugger(camelContext);
+            // fallback to use the default backlog debugger
+            debugger = DefaultBacklogDebugger.createDebugger(camelContext);
         }
         return debugger;
+    }
+
+    private void backlogDebuggerSetupInitialBreakpoints(
+            NamedNode definition, NamedRoute routeDefinition, boolean first,
+            BacklogDebugger debugger, NamedNode targetOutputDef) {
+        // setup initial breakpoints
+        if (debugger.getInitialBreakpoints() != null) {
+            boolean match = false;
+            String id = definition.getId();
+            for (String pattern : debugger.getInitialBreakpoints().split(",")) {
+                pattern = pattern.trim();
+                match |= BacklogDebugger.BREAKPOINT_ALL_ROUTES.equals(pattern) && first;
+                if (!match) {
+                    match = PatternHelper.matchPattern(id, pattern);
+                }
+                // eip kind so you can match with (setBody*)
+                if (!match) {
+                    match = PatternHelper.matchPattern(definition.getShortName(), pattern);
+                }
+                // location and line number
+                if (!match && pattern.contains(":")) {
+                    // try with line number and location
+                    String pnum = StringHelper.afterLast(pattern, ":");
+                    if (pnum != null) {
+                        String ploc = StringHelper.beforeLast(pattern, ":");
+                        String loc = definition.getLocation();
+                        // strip schema
+                        if (loc != null && loc.contains(":")) {
+                            loc = StringHelper.after(loc, ":");
+                        }
+                        String num = "" + definition.getLineNumber();
+                        if (PatternHelper.matchPattern(loc, ploc) && pnum.equals(num)) {
+                            match = true;
+                        }
+                    }
+                }
+                // line number only
+                if (!match) {
+                    Integer pnum = camelContext.getTypeConverter().tryConvertTo(Integer.class, pattern);
+                    if (pnum != null) {
+                        int num = definition.getLineNumber();
+                        if (num == pnum) {
+                            match = true;
+                        }
+                    }
+                }
+            }
+            if (match) {
+                if (first && debugger.isSingleStepIncludeStartEnd()) {
+                    // we want route to be breakpoint (use input)
+                    id = routeDefinition.getInput().getId();
+                    debugger.addBreakpoint(id);
+                    LOG.debug("BacklogDebugger added breakpoint: {}", id);
+                } else {
+                    // first output should also be breakpoint
+                    id = targetOutputDef.getId();
+                    debugger.addBreakpoint(id);
+                    LOG.debug("BacklogDebugger added breakpoint: {}", id);
+                }
+            }
+        }
     }
 
     @Override

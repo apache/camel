@@ -43,17 +43,21 @@ class CosmosDbDatabaseOperationsTest {
         final CosmosDbDatabaseOperations databaseOperations = new CosmosDbDatabaseOperations(Mono.just(database));
 
         // assert params
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer(null, null, null));
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer("", null, null));
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer("", "", null));
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer("test", "", null));
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer("", "test", null));
+        CosmosDbTestUtils
+                .assertIllegalArgumentException(() -> databaseOperations.createContainer(null, null, null, null));
+        CosmosDbTestUtils
+                .assertIllegalArgumentException(() -> databaseOperations.createContainer("", null, null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer("", "", null, null));
+        CosmosDbTestUtils
+                .assertIllegalArgumentException(() -> databaseOperations.createContainer("test", "", null, null));
+        CosmosDbTestUtils
+                .assertIllegalArgumentException(() -> databaseOperations.createContainer("", "test", null, null));
 
         // assert key path
         final CosmosContainerResponse returnedContainerResponseFirstCase
-                = databaseOperations.createContainer("test-container", "path", null).block();
+                = databaseOperations.createContainer("test-container", "path", null, null).block();
         final CosmosContainerResponse returnedContainerResponseSecondCase
-                = databaseOperations.createContainer("test-container", "/path", null).block();
+                = databaseOperations.createContainer("test-container", "/path", null, null).block();
 
         assertNotNull(returnedContainerResponseFirstCase);
         assertNotNull(returnedContainerResponseSecondCase);
@@ -81,20 +85,21 @@ class CosmosDbDatabaseOperationsTest {
 
         // assert params
         CosmosDbTestUtils.assertIllegalArgumentException(
-                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations(null, null, null));
+                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations(null, null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(
-                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("", null, null));
+                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("", null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(
-                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("", "", null));
+                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("", "", null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(
-                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("test", "", null));
+                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("test", "", null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(
-                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("", "test", null));
+                () -> databaseOperations.createContainerIfNotExistAndGetContainerOperations("", "test", null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.getContainerOperations(null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.getContainerOperations(""));
 
         assertEquals("container-new", databaseOperations
-                .createContainerIfNotExistAndGetContainerOperations("container-new", "/path", null).getContainerId().block());
+                .createContainerIfNotExistAndGetContainerOperations("container-new", "/path", null, null).getContainerId()
+                .block());
         assertEquals("container-existing",
                 databaseOperations.getContainerOperations("container-existing").getContainerId().block());
     }

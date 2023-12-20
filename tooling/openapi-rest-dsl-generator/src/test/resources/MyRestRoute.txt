@@ -1,6 +1,6 @@
 package com.example;
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;

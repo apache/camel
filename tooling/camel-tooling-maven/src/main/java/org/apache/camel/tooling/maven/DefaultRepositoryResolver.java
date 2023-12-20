@@ -28,6 +28,9 @@ public class DefaultRepositoryResolver extends ServiceSupport implements Reposit
 
     @Override
     public String resolveRepository(String idOrUrl) {
+        if (idOrUrl == null || idOrUrl.isBlank()) {
+            return null;
+        }
         String answer = idOrUrl;
         if (repos != null) {
             answer = repos.getProperty(idOrUrl, idOrUrl);

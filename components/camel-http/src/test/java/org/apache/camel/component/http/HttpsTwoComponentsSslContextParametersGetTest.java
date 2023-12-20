@@ -83,7 +83,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
     private void runTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 port2 = AvailablePortFinder.getNextAvailable();
 
                 from("direct:foo")

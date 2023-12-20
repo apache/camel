@@ -26,21 +26,14 @@ public class ExchangeCompletedEvent extends AbstractExchangeEvent implements Cam
 
     public ExchangeCompletedEvent(Exchange source) {
         super(source);
-        long created = getExchange().getCreated();
-        if (created > 0) {
-            this.timeTaken = System.currentTimeMillis() - created;
-        } else {
-            this.timeTaken = -1;
-        }
+
+        this.timeTaken = getExchange().getClock().elapsed();
     }
 
     @Override
     public String toString() {
-        if (timeTaken > -1) {
-            return getExchange().getExchangeId() + " exchange completed"
-                   + " took: " + TimeUtils.printDuration(timeTaken, true);
-        } else {
-            return getExchange().getExchangeId() + " exchange completed";
-        }
+        return getExchange().getExchangeId() + " exchange completed"
+               + " took: " + TimeUtils.printDuration(timeTaken, true);
+
     }
 }

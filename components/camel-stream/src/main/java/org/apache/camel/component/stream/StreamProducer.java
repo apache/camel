@@ -60,11 +60,6 @@ public class StreamProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
     protected void doStop() throws Exception {
         super.doStop();
         closeStream(null, true);

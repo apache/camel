@@ -23,6 +23,7 @@ import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 
 public final class EndpointDeserializers {
+
     private EndpointDeserializers() {
     }
 

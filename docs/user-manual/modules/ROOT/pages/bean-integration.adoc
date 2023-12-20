@@ -43,7 +43,7 @@ See more details at:
 
 *Example*
 
-See the https://github.com/apache/camel-examples/tree/main/examples/pojo-messaging[POJO Messaging Example]
+See the https://github.com/apache/camel-examples/tree/main/pojo-messaging[POJO Messaging Example]
 for how to use the annotations for routing and messaging.
 
 == Using @PropertyInject

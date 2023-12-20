@@ -8,6 +8,7 @@ ClaimCheckDefinition
 ClaimCheckOperation
 ContextScanDefinition
 ConvertBodyDefinition
+ConvertHeaderDefinition
 DataFormatDefinition
 DelayDefinition
 DynamicRouterDefinition
@@ -82,6 +83,7 @@ ScriptDefinition
 SetBodyDefinition
 SetExchangePatternDefinition
 SetHeaderDefinition
+SetHeadersDefinition
 SetPropertyDefinition
 SortDefinition
 SplitDefinition

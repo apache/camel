@@ -51,14 +51,14 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         // Make a copy to avoid clashing with parent validation
         final HashMap<String, Object> verifyParams = new HashMap<>(parameters);
         // Check if validation is rest-related
-        final boolean isRest = verifyParams.entrySet().stream().anyMatch(e -> e.getKey().startsWith("rest."));
+        final boolean isRest = verifyParams.entrySet().stream().anyMatch(HttpComponentVerifierExtension::isRest);
 
         if (isRest) {
             // Build the httpUri from rest configuration
             verifyParams.put("httpUri", buildHttpUriFromRestParameters(parameters));
 
             // Cleanup parameters map from rest related stuffs
-            verifyParams.entrySet().removeIf(e -> e.getKey().startsWith("rest."));
+            verifyParams.entrySet().removeIf(HttpComponentVerifierExtension::isRest);
         }
 
         // Validate using the catalog
@@ -79,14 +79,14 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         // Make a copy to avoid clashing with parent validation
         final HashMap<String, Object> verifyParams = new HashMap<>(parameters);
         // Check if validation is rest-related
-        final boolean isRest = verifyParams.entrySet().stream().anyMatch(e -> e.getKey().startsWith("rest."));
+        final boolean isRest = verifyParams.entrySet().stream().anyMatch(HttpComponentVerifierExtension::isRest);
 
         if (isRest) {
             // Build the httpUri from rest configuration
             verifyParams.put("httpUri", buildHttpUriFromRestParameters(parameters));
 
             // Cleanup parameters from rest related stuffs
-            verifyParams.entrySet().removeIf(e -> e.getKey().startsWith("rest."));
+            verifyParams.entrySet().removeIf(HttpComponentVerifierExtension::isRest);
         }
 
         String httpUri = getOption(verifyParams, "httpUri", String.class).orElse(null);
@@ -144,6 +144,10 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         }
 
         return builder.build();
+    }
+
+    private static boolean isRest(Map.Entry<String, Object> e) {
+        return e.getKey().startsWith("rest.");
     }
 
     // *********************************

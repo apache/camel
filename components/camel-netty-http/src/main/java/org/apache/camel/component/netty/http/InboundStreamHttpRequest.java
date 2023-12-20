@@ -22,8 +22,8 @@ import java.io.InputStream;
 import io.netty.handler.codec.http.HttpRequest;
 
 public class InboundStreamHttpRequest {
-    private HttpRequest request;
-    private InputStream in;
+    private final HttpRequest request;
+    private final InputStream in;
 
     public InboundStreamHttpRequest(HttpRequest request, InputStream in) {
         this.request = request;

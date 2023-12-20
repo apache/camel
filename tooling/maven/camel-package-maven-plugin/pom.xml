@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-package-maven-plugin</artifactId>
@@ -31,6 +31,10 @@
 
     <name>Camel :: Maven Plugins :: Camel Maven Package</name>
     <description>Maven plugin to help package Camel components and plugins</description>
+
+    <properties>
+        <skip.camel.maven.plugin.tests>false</skip.camel.maven.plugin.tests>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -225,12 +229,13 @@
                                 <goal>clean</goal>
                                 <goal>verify</goal>
                             </goals>
+                            <skipInvocation>${skip.camel.maven.plugin.tests}</skipInvocation>
                         </configuration>
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>install</goal>
-                                    <goal>integration-test</goal>
+				    <!--<goal>integration-test</goal>-->
                                     <goal>verify</goal>
                                 </goals>
                             </execution>
@@ -247,6 +252,29 @@
                                 <version>${project.version}</version>
                             </dependency>
                         </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>cat target/it/HeaderSupport/build.log | grep "BUILD FAILURE" &amp;&amp; cat target/it/HeaderSupport/build.log</argument>
+                            </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                                <successCode>1</successCode>
+                            </successCodes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

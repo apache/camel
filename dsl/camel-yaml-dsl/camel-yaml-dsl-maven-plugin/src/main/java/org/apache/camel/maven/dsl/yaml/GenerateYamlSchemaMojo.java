@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -67,8 +68,8 @@ import org.jboss.jandex.DotName;
 public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     @Parameter(required = true)
     private File outputFile;
-    @Parameter(defaultValue = "true")
-    private boolean kebabCase = true;
+    @Parameter(defaultValue = "false")
+    private boolean kebabCase;
     @Parameter(defaultValue = "true")
     private boolean additionalProperties = true;
 
@@ -90,6 +91,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         items = root.putObject("items");
         items.put("maxProperties", 1);
+        if (!additionalProperties) {
+            items.put("additionalProperties", false);
+        }
 
         definitions = items.putObject("definitions");
         step = definitions.withObject("/org.apache.camel.model.ProcessorDefinition")
@@ -235,6 +239,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             final String propertyOneOf = annotationValue(property, "oneOf")
                     .map(AnnotationValue::asString)
                     .orElse("");
+            final boolean propertyWrapItem = annotationValue(property, "wrapItem")
+                    .map(AnnotationValue::asBoolean)
+                    .orElse(false);
 
             boolean isInOneOf = !StringUtils.isEmpty(propertyOneOf);
             if (isInOneOf) {
@@ -275,6 +282,24 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 // this is an internal name
                 continue;
             }
+            // we want to skip inheritErrorHandler which is only applicable for the load-balancer
+            boolean skip = false;
+            if (propertyName.equals("inheritErrorHandler")) {
+                skip = true;
+                Optional<AnnotationValue> av = annotationValue(info, YAML_TYPE_ANNOTATION, "nodes");
+                if (av.isPresent()) {
+                    String[] sn = av.get().asStringArray();
+                    for (String n : sn) {
+                        if ("load-balance".equals(n) || "loadBalance".equals(n)) {
+                            skip = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (skip) {
+                continue;
+            }
 
             var finalObjectDefinition = objectDefinition;
             if (isInOneOf) {
@@ -297,7 +322,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     propertyDisplayName,
                     propertyDefaultValue,
                     propertyFormat,
-                    propertyDeprecated);
+                    propertyDeprecated,
+                    propertyWrapItem,
+                    additionalProperties);
 
             if (propertyRequired) {
                 String name = kebabCase ? propertyName : StringHelper.dashToCamelCase(propertyName);
@@ -307,27 +334,56 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     }
 
     private void kebabToCamelCase(JsonNode node) {
-        if (node instanceof ObjectNode) {
-            ObjectNode on = (ObjectNode) node;
-            JsonNode jn = on.get("properties");
-            if (jn == null || jn.isEmpty()) {
-                jn = on.findPath("properties");
-            }
-            if (jn != null && !jn.isEmpty() && jn instanceof ObjectNode) {
-                ObjectNode p = (ObjectNode) jn;
-                Map<String, JsonNode> rebuild = new LinkedHashMap<>();
-                // the properties are in mixed kebab-case and camelCase
-                for (Iterator<String> it = p.fieldNames(); it.hasNext();) {
-                    String n = it.next();
-                    String t = StringHelper.dashToCamelCase(n);
-                    JsonNode prop = p.get(n);
-                    rebuild.put(t, prop);
-                }
-                if (!rebuild.isEmpty()) {
-                    p.removeAll();
-                    rebuild.forEach(p::set);
+        if (node.has("not")) {
+            node = node.withObject("/not");
+        }
+        var composition = extractComposition(node);
+        if (composition != null) {
+            composition.forEach(this::kebabToCamelCase);
+        }
+        if (node.has("required")) {
+            ArrayNode required = node.withArray("required");
+            if (required != null) {
+                for (int i = 0; i < required.size(); i++) {
+                    String name = required.get(i).asText();
+                    required.set(i, StringHelper.dashToCamelCase(name));
                 }
             }
+        }
+        if (node.has("properties")) {
+            ObjectNode props = node.withObject("/properties");
+            ArrayNode required = null;
+            if (node.has("required")) {
+                required = node.withArray("required");
+            }
+            kebabToCamelCaseProperties(props, required);
+        }
+    }
+
+    private void kebabToCamelCaseProperties(ObjectNode props, ArrayNode required) {
+        Map<String, JsonNode> rebuild = new LinkedHashMap<>();
+        // the properties are in mixed kebab-case and camelCase
+        for (Iterator<String> it = props.fieldNames(); it.hasNext();) {
+            String n = it.next();
+            String t = StringHelper.dashToCamelCase(n);
+            JsonNode prop = props.get(n);
+            JsonNode subProps = prop.findPath("properties");
+            if (!subProps.isMissingNode()) {
+                kebabToCamelCaseProperties((ObjectNode) subProps, null);
+            }
+            rebuild.put(t, prop);
+            if (required != null) {
+                for (int i = 0; i < required.size(); i++) {
+                    String r = required.get(i).asText();
+                    if (r.equals(n)) {
+                        required.set(i, t);
+                    }
+                }
+            }
+        }
+        if (!rebuild.isEmpty()) {
+            props.removeAll();
+            rebuild.forEach(props::set);
         }
     }
 
@@ -339,7 +395,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             String propertyDisplayName,
             String propertyDefaultValue,
             String propertyFormat,
-            boolean deprecated) {
+            boolean deprecated,
+            boolean wrapItem,
+            boolean additionalProperties) {
 
         final ObjectNode current = objectDefinition.withObject("/properties/" + propertyName);
         current.put("type", propertyType);
@@ -373,9 +431,29 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
             String arrayType = StringHelper.after(propertyType, ":");
             if (arrayType.contains(".")) {
-                current.withObject("/items").put("$ref", "#/items/definitions/" + arrayType);
+                if (wrapItem) {
+                    ObjectNode itemSchema = current.withObject("/items");
+                    if (!additionalProperties) {
+                        itemSchema.put("additionalProperties", false);
+                    }
+                    itemSchema.put("type", "object")
+                            .withObject("/properties/" + propertyName)
+                            .put("$ref", "#/items/definitions/" + arrayType);
+                } else {
+                    current.withObject("/items").put("$ref", "#/items/definitions/" + arrayType);
+                }
             } else {
-                current.withObject("/items").put("type", arrayType);
+                if (wrapItem) {
+                    ObjectNode itemSchema = current.withObject("/items");
+                    if (!additionalProperties) {
+                        itemSchema.put("additionalProperties", false);
+                    }
+                    itemSchema.put("type", "object")
+                            .withObject("/properties/" + propertyName)
+                            .put("type", arrayType);
+                } else {
+                    current.withObject("/items").put("type", arrayType);
+                }
             }
         } else if (propertyType.startsWith("enum:")) {
 
@@ -410,6 +488,17 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     if (propertyType.startsWith("object:")) {
                         final DotName dn = DotName.createSimple(propertyType.substring(7));
                         if (isBanned(view.getClassByName(dn))) {
+                            return;
+                        }
+                    }
+
+                    if (!kebabCase) {
+                        final String camelCased = StringHelper.dashToCamelCase(propertyName);
+                        if (annotations.stream().anyMatch(existing -> {
+                            String existingName = annotationValue(existing, "name").map(AnnotationValue::asString).orElse("");
+                            String existingCamelCased = StringHelper.dashToCamelCase(existingName);
+                            return existingCamelCased.equals(camelCased);
+                        })) {
                             return;
                         }
                     }
@@ -480,7 +569,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                             .withArray("anyOf")
                             .addObject()
                             .withArray("required")
-                            .addAll((ArrayNode) referredObject.withArray("required"));
+                            .addAll(referredObject.withArray("required"));
                 }
                 return;
             }

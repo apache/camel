@@ -32,8 +32,8 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
     @TempDir
     File testDirectory;
 
-    private String body = "12345678901234567890123456789012345678901234567890";
-    private String body2 = "Bye " + body;
+    private final String body = "12345678901234567890123456789012345678901234567890";
+    private final String body2 = "Bye " + body;
 
     @Test
     public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() {

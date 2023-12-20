@@ -55,7 +55,7 @@ public class DisputeGateway {
      */
     public Result<Dispute> accept(String id) {
         try {
-            if (id == null || id.trim().equals("")) {
+            if (id == null || id.isBlank()) {
                 throw new NotFoundException();
             }
 
@@ -95,11 +95,11 @@ public class DisputeGateway {
      * @throws NotFoundException if the Dispute ID or Document ID cannot be found.
      */
     public Result<DisputeEvidence> addFileEvidence(String disputeId, FileEvidenceRequest fileEvidenceRequest) {
-        if (disputeId == null || disputeId.trim().equals("")) {
+        if (disputeId == null || disputeId.isBlank()) {
             throw new NotFoundException("dispute with id \"" + disputeId + "\" not found");
         }
 
-        if (fileEvidenceRequest.getDocumentId() == null || fileEvidenceRequest.getDocumentId().trim().equals("")) {
+        if (fileEvidenceRequest.getDocumentId() == null || fileEvidenceRequest.getDocumentId().isBlank()) {
             throw new NotFoundException("document with id \"" + fileEvidenceRequest.getDocumentId() + "\" not found");
         }
 
@@ -147,9 +147,9 @@ public class DisputeGateway {
 
     private Result<DisputeEvidence> addTextEvidenceRequest(String id, TextEvidenceRequest textEvidenceRequest) {
         String content = textEvidenceRequest.getContent();
-        if (id == null || id.trim().equals("")) {
+        if (id == null || id.isBlank()) {
             throw new NotFoundException("Dispute ID is required");
-        } else if (content == null || content.trim().equals("")) {
+        } else if (content == null || content.isBlank()) {
             throw new IllegalArgumentException("Content cannot be empty");
         }
 
@@ -172,7 +172,7 @@ public class DisputeGateway {
      */
     public Result<Dispute> finalize(String id) {
         try {
-            if (id == null || id.trim().equals("")) {
+            if (id == null || id.isBlank()) {
                 throw new NotFoundException();
             }
 
@@ -199,7 +199,7 @@ public class DisputeGateway {
      */
     public Dispute find(String id) {
         try {
-            if (id == null || id.trim().equals("")) {
+            if (id == null || id.isBlank()) {
                 throw new NotFoundException();
             }
 
@@ -221,7 +221,7 @@ public class DisputeGateway {
      */
     public Result<Dispute> removeEvidence(String disputeId, String evidenceId) {
         try {
-            if (disputeId == null || disputeId.trim().equals("") || evidenceId == null || evidenceId.trim().equals("")) {
+            if (disputeId == null || disputeId.isBlank() || evidenceId == null || evidenceId.isBlank()) {
                 throw new NotFoundException();
             }
 

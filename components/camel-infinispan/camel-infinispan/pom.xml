@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-infinispan</artifactId>
@@ -126,15 +126,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.infinispan.protostream</groupId>
-            <artifactId>sample-domain-definition</artifactId>
-            <version>${protostream-version}</version>
+            <groupId>org.infinispan</groupId>
+            <artifactId>proto-sample-domain-definition</artifactId>
+            <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.infinispan.protostream</groupId>
-            <artifactId>sample-domain-implementation</artifactId>
-            <version>${protostream-version}</version>
+            <groupId>org.infinispan</groupId>
+            <artifactId>proto-sample-domain-implementation</artifactId>
+            <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
 

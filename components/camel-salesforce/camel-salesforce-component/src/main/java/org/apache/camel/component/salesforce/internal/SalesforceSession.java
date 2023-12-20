@@ -50,10 +50,10 @@ import org.apache.camel.component.salesforce.internal.dto.LoginToken;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.eclipse.jetty.client.HttpConversation;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.util.FormContentProvider;
+import org.eclipse.jetty.client.ContentResponse;
+import org.eclipse.jetty.client.FormRequestContent;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.transport.HttpConversation;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.Fields;
@@ -236,7 +236,7 @@ public class SalesforceSession extends ServiceSupport {
             post = httpClient.newHttpRequest(conversation, URI.create(loginUrl)).method(HttpMethod.POST);
         }
 
-        return post.content(new FormContentProvider(fields)).timeout(timeout, TimeUnit.MILLISECONDS);
+        return post.body(new FormRequestContent(fields)).timeout(timeout, TimeUnit.MILLISECONDS);
     }
 
     String generateJwtAssertion() {
@@ -363,7 +363,6 @@ public class SalesforceSession extends ServiceSupport {
             final ContentResponse logoutResponse = logoutGet.send();
 
             final int statusCode = logoutResponse.getStatus();
-            final String reason = logoutResponse.getReason();
 
             if (statusCode == HttpStatus.OK_200) {
                 LOG.debug("Logout successful");

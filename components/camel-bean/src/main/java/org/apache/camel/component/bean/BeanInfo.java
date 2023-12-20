@@ -73,7 +73,6 @@ public class BeanInfo {
     private final CamelContext camelContext;
     private final BeanComponent component;
     private final Class<?> type;
-    private final Object instance;
     private final ParameterMappingStrategy strategy;
     private final MethodInfo defaultMethod;
     // shared state with details of operations introspected from the bean, created during the constructor
@@ -106,14 +105,17 @@ public class BeanInfo {
 
         this.camelContext = camelContext;
         this.type = type;
-        this.instance = instance;
         this.strategy = strategy;
         this.component = beanComponent;
 
         final BeanInfoCacheKey key = new BeanInfoCacheKey(type, instance, explicitMethod);
+        final BeanInfoCacheKey key2 = instance != null ? new BeanInfoCacheKey(type, null, explicitMethod) : null;
 
         // lookup if we have a bean info cache
         BeanInfo beanInfo = component.getBeanInfoFromCache(key);
+        if (key2 != null && beanInfo == null) {
+            beanInfo = component.getBeanInfoFromCache(key2);
+        }
         if (beanInfo != null) {
             // copy the values from the cache we need
             defaultMethod = beanInfo.defaultMethod;
@@ -158,8 +160,16 @@ public class BeanInfo {
         operationsWithHandlerAnnotation = Collections.unmodifiableList(operationsWithHandlerAnnotation);
         methodMap = Collections.unmodifiableMap(methodMap);
 
-        // add new bean info to cache
-        component.addBeanInfoToCache(key, this);
+        // key must be instance based for custom/handler annotations
+        boolean instanceBased = !operationsWithCustomAnnotation.isEmpty() || !operationsWithHandlerAnnotation.isEmpty();
+        if (instanceBased) {
+            // add new bean info to cache (instance based)
+            component.addBeanInfoToCache(key, this);
+        } else {
+            // add new bean info to cache (not instance based, favour key2 if possible)
+            BeanInfoCacheKey k = key2 != null ? key2 : key;
+            component.addBeanInfoToCache(k, this);
+        }
     }
 
     public Class<?> getType() {

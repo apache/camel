@@ -21,19 +21,16 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -43,29 +40,6 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 public final class NettyHttpHelper {
 
     private NettyHttpHelper() {
-    }
-
-    public static void setCharsetFromContentType(String contentType, Exchange exchange) {
-        String charset = getCharsetFromContentType(contentType);
-        if (charset != null) {
-            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.normalizeCharset(charset));
-        }
-    }
-
-    public static String getCharsetFromContentType(String contentType) {
-        if (contentType != null) {
-            // find the charset and set it to the Exchange
-            int index = contentType.indexOf("charset=");
-            if (index > 0) {
-                String charset = contentType.substring(index + 8);
-                // there may be another parameter after a semi colon, so skip that
-                if (charset.contains(";")) {
-                    charset = StringHelper.before(charset, ";");
-                }
-                return IOHelper.normalizeCharset(charset);
-            }
-        }
-        return null;
     }
 
     /**
@@ -78,22 +52,8 @@ public final class NettyHttpHelper {
      * @param key     the key
      * @param value   the value
      */
-    @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            Object existing = headers.get(key);
-            List<Object> list;
-            if (existing instanceof List) {
-                list = (List<Object>) existing;
-            } else {
-                list = new ArrayList<>();
-                list.add(existing);
-            }
-            list.add(value);
-            value = list;
-        }
-
-        headers.put(key, value);
+        CollectionHelper.appendEntry(headers, key, value);
     }
 
     /**
@@ -266,31 +226,4 @@ public final class NettyHttpHelper {
         }
         return uri;
     }
-
-    /**
-     * Checks whether the given http status code is within the ok range
-     *
-     * @param  statusCode        the status code
-     * @param  okStatusCodeRange the ok range (inclusive)
-     * @return                   <tt>true</tt> if ok, <tt>false</tt> otherwise
-     */
-    public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
-        String[] ranges = okStatusCodeRange.split(",");
-        for (String range : ranges) {
-            boolean ok;
-            if (range.contains("-")) {
-                int from = Integer.parseInt(StringHelper.before(range, "-"));
-                int to = Integer.parseInt(StringHelper.after(range, "-"));
-                ok = statusCode >= from && statusCode <= to;
-            } else {
-                int exact = Integer.parseInt(range);
-                ok = exact == statusCode;
-            }
-            if (ok) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

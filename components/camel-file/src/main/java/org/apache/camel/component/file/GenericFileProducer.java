@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -27,10 +28,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,6 +215,11 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 }
             }
 
+            // any checksum file to write?
+            if (endpoint.getChecksumFileAlgorithm() != null) {
+                writeChecksumFile(exchange, target);
+            }
+
             // any done file to write?
             if (endpoint.getDoneFileName() != null) {
                 String doneFileName = endpoint.createDoneFileName(target);
@@ -240,6 +248,27 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         postWriteCheck(exchange);
+    }
+
+    protected void writeChecksumFile(Exchange exchange, String target) throws Exception {
+        String algorithm = endpoint.getChecksumFileAlgorithm();
+        String checksumFileName = target + "." + algorithm;
+
+        // create exchange with checksum as body to write as the checksum file
+        MessageHelper.resetStreamCache(exchange.getIn());
+        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+        Exchange checksumExchange = new DefaultExchange(exchange);
+        checksumExchange.getIn().setBody(new DigestUtils(algorithm).digestAsHex(is));
+
+        LOG.trace("Writing checksum file: [{}]", checksumFileName);
+        // delete any existing done file
+        if (operations.existsFile(checksumFileName)) {
+            if (!operations.deleteFile(checksumFileName)) {
+                throw new GenericFileOperationFailedException(
+                        "Cannot delete existing checksum file: " + checksumFileName);
+            }
+        }
+        writeFile(checksumExchange, checksumFileName);
     }
 
     /**

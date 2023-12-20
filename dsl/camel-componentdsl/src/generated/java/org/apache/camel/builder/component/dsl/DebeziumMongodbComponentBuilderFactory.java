@@ -73,12 +73,17 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -320,8 +325,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * A comma-separated list of regular expressions that match the
-         * collection names for which changes are to be excluded.
+         * A comma-separated list of regular expressions or literals that match
+         * the collection names for which changes are to be excluded.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -336,8 +341,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * A comma-separated list of regular expressions that match the
-         * collection names for which changes are to be captured.
+         * A comma-separated list of regular expressions or literals that match
+         * the collection names for which changes are to be captured.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -385,8 +390,27 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * A comma-separated list of regular expressions that match the database
-         * names for which changes are to be excluded.
+         * The custom metric tags will accept key-value pairs to customize the
+         * MBean object name which should be appended the end of regular name,
+         * each key would represent a tag for the MBean object name, and the
+         * corresponding value would be the value of that tag the key is. For
+         * example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param customMetricTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder customMetricTags(
+                java.lang.String customMetricTags) {
+            doSetProperty("customMetricTags", customMetricTags);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions or literals that match
+         * the database names for which changes are to be excluded.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -401,8 +425,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * A comma-separated list of regular expressions that match the database
-         * names for which changes are to be captured.
+         * A comma-separated list of regular expressions or literals that match
+         * the database names for which changes are to be captured.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1200,6 +1224,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "collectionIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionIncludeList((java.lang.String) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConverters((java.lang.String) value); return true;
             case "cursorMaxAwaitTimeMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCursorMaxAwaitTimeMs((int) value); return true;
+            case "customMetricTags": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCustomMetricTags((java.lang.String) value); return true;
             case "databaseExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumMongodbComponent) component).setErrorsMaxRetries((int) value); return true;

@@ -57,8 +57,7 @@ public class PgEventConsumerTest {
         when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
-        when(endpoint.getDatasource()).thenReturn(dataSource);
-        when(dataSource.getConnection()).thenReturn(connection);
+        when(endpoint.initJdbc()).thenReturn(connection);
         when(connection.prepareStatement("LISTEN camel")).thenReturn(statement);
         when(endpoint.getChannel()).thenReturn("camel");
 
@@ -84,8 +83,8 @@ public class PgEventConsumerTest {
         when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
-        when(endpoint.getDatasource()).thenReturn(dataSource);
-        when(dataSource.getConnection()).thenReturn(connection);
+        when(endpoint.initJdbc()).thenReturn(connection);
+        when(connection.prepareStatement("LISTEN camel")).thenReturn(statement);
         when(connection.prepareStatement("LISTEN camel")).thenReturn(statement);
         when(endpoint.getChannel()).thenReturn("camel");
         when(connection.prepareStatement("UNLISTEN camel")).thenReturn(statement);

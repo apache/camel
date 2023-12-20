@@ -1801,17 +1801,16 @@ public class KnativeHttpTest {
     @EnumSource(CloudEvents.class)
     void testSlowConsumer(CloudEvent ce) throws Exception {
         final KnativeHttpServer server = new KnativeHttpServer(context, event -> {
-            event.vertx().executeBlocking(
-                    promise -> {
-                        try {
-                            Thread.sleep(5000);
-                            promise.complete();
-                        } catch (InterruptedException e) {
-                            promise.fail(e);
-                        }
-                    },
-                    false,
-                    result -> {
+            event.vertx().executeBlocking(() -> {
+                try {
+                    Thread.sleep(5000);
+                    return null;
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw e;
+                }
+            }, false)
+                    .onComplete(result -> {
                         event.response().setStatusCode(200);
                         event.response().end("");
                     });

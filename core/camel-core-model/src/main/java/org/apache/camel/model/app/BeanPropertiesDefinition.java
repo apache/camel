@@ -23,6 +23,12 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.spi.Metadata;
+
+/**
+ * Bean properties
+ */
+@Metadata(label = "configuration")
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanPropertiesDefinition {
@@ -34,6 +40,9 @@ public class BeanPropertiesDefinition {
         return properties;
     }
 
+    /**
+     * Bean properties
+     */
     public void setProperties(List<BeanPropertyDefinition> properties) {
         this.properties = properties;
     }

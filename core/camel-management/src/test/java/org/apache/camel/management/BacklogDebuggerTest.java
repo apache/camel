@@ -24,7 +24,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -52,6 +52,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
         assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
+
+        Boolean standby = (Boolean) mbeanServer.getAttribute(on, "Standby");
+        assertEquals(Boolean.FALSE, standby, "Should not be standby");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
@@ -166,7 +169,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
         assertTrue(xml.contains("<header key=\"beer\" type=\"java.lang.String\">Carlsberg</header>"),
                 "Should contain our added header");
-        assertTrue(xml.contains("<exchangeProperty name=\"food\" type=\"java.lang.String\">Bratwurst</exchangeProperty>"),
+        assertTrue(xml.contains("<exchangeProperty key=\"food\" type=\"java.lang.String\">Bratwurst</exchangeProperty>"),
                 "Should contain our added exchange property");
 
         resetMocks();
@@ -248,7 +251,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
         assertTrue(xml.contains("<header key=\"beer\" type=\"java.lang.Integer\">123</header>"),
                 "Should contain our added header");
-        assertTrue(xml.contains("<exchangeProperty name=\"food\" type=\"java.lang.Integer\">987</exchangeProperty>"),
+        assertTrue(xml.contains("<exchangeProperty key=\"food\" type=\"java.lang.Integer\">987</exchangeProperty>"),
                 "Should contain our added exchange property");
 
         // update body and header
@@ -269,7 +272,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
         assertTrue(xml.contains("<header key=\"wine\" type=\"java.lang.Integer\">456</header>"),
                 "Should contain our added header");
-        assertTrue(xml.contains("<exchangeProperty name=\"drink\" type=\"java.lang.Integer\">798</exchangeProperty>"),
+        assertTrue(xml.contains("<exchangeProperty key=\"drink\" type=\"java.lang.Integer\">798</exchangeProperty>"),
                 "Should contain our added exchange property");
 
         resetMocks();
@@ -349,7 +352,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(xml.contains("<body>[Body is null]</body>"), "Should not contain our body");
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
         assertFalse(xml.contains("<header"), "Should not contain any headers");
-        assertFalse(xml.contains("<exchangeProperty name=\"food\""), "Should not contain exchange property 'food'");
+        assertFalse(xml.contains("<exchangeProperty key=\"food\""), "Should not contain exchange property 'food'");
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -748,7 +751,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<exchangeProperty name=\"myProperty\" type=\"java.lang.String\">myValue</exchangeProperty>"),
+        assertTrue(xml.contains("<exchangeProperty key=\"myProperty\" type=\"java.lang.String\">myValue</exchangeProperty>"),
                 "Should contain myProperty");
 
         resetMocks();
@@ -894,7 +897,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(response.getClass().isAssignableFrom(String.class));
         String history = (String) response;
         int count = (history.split("messageHistoryEntry", -1).length) - 1;
-        assertEquals(4, count);
+        assertEquals(3, count);
         assertTrue(history.contains("processor=\"from[seda://start?concurrentConsumers=2]\""));
         assertTrue(history.contains("routeId=\"route1\""));
         assertTrue(history.contains("processorId=\"route1\""));
@@ -919,7 +922,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
      * Ensure that the suspend mode works as expected when it is set using an environment variable.
      */
     @Test
-    @SetEnvironmentVariable(key = BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
+    @SetEnvironmentVariable(key = DefaultBacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
     public void testSuspendModeConfiguredWithEnvVariable() throws Exception {
         testSuspendMode();
     }
@@ -928,7 +931,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
      * Ensure that the suspend mode works as expected when it is set using a system property.
      */
     @Test
-    @SetSystemProperty(key = BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME, value = "true")
+    @SetSystemProperty(key = DefaultBacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME, value = "true")
     public void testSuspendModeConfiguredWithSystemProperty() throws Exception {
         testSuspendMode();
     }
@@ -938,8 +941,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
      * variable over the system property.
      */
     @Test
-    @SetEnvironmentVariable(key = BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
-    @SetSystemProperty(key = BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME, value = "false")
+    @SetEnvironmentVariable(key = DefaultBacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
+    @SetSystemProperty(key = DefaultBacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME, value = "false")
     public void testSuspendModeConfiguredWithBoth() throws Exception {
         testSuspendMode();
     }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -114,7 +113,7 @@ public final class RouteDefinitionHelper {
     private static String normalizeUri(String uri) {
         try {
             return URISupport.normalizeUri(uri);
-        } catch (UnsupportedEncodingException | URISyntaxException e) {
+        } catch (URISyntaxException e) {
             // ignore
         }
         return null;
@@ -290,6 +289,13 @@ public final class RouteDefinitionHelper {
     }
 
     public static void initParent(ProcessorDefinition parent) {
+        if (parent instanceof RouteDefinition rd) {
+            FromDefinition from = rd.getInput();
+            if (from != null) {
+                from.setParent(rd);
+            }
+        }
+
         List<ProcessorDefinition<?>> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
             child.setParent(parent);
@@ -736,7 +742,7 @@ public final class RouteDefinitionHelper {
      * Force assigning ids to the give node and all its children (recursively).
      * <p/>
      * This is needed when doing tracing or the likes, where each node should have its id assigned so the tracing can
-     * pin point exactly.
+     * pinpoint exactly.
      *
      * @param context   the camel context
      * @param processor the node
@@ -766,6 +772,13 @@ public final class RouteDefinitionHelper {
             for (ProcessorDefinition child : children) {
                 forceAssignIds(context, child);
             }
+        }
+    }
+
+    public static void forceAssignIds(CamelContext context, final FromDefinition input) {
+        // force id on input
+        if (input != null) {
+            input.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         }
     }
 

@@ -18,11 +18,11 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.client.HTTP2Client;
-import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
+import org.eclipse.jetty.http2.client.transport.HttpClientTransportOverHTTP2;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class UndertowHttp2Test extends BaseUndertowTest {
             assertEquals(200, resp.getStatus());
             assertEquals(HttpVersion.HTTP_2, resp.getVersion());
             assertEquals(RESPONSE, new String(resp.getContent()));
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
             fail("HTTP2 endpoint not exposed!, maybe it's not supported?");
         }

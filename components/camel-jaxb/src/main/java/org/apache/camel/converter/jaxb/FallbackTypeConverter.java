@@ -148,7 +148,11 @@ public class FallbackTypeConverter {
     }
 
     private <T> boolean hasXmlRootElement(Class<T> type) {
-        return type.getAnnotation(XmlRootElement.class) != null;
+        boolean answer = type.getAnnotation(XmlRootElement.class) != null;
+        if (!answer && LOG.isTraceEnabled()) {
+            LOG.trace("Class {} is not annotated with @{}", type.getName(), XmlRootElement.class.getName());
+        }
+        return answer;
     }
 
     protected <T> boolean isJaxbType(Class<T> type, Exchange exchange, boolean objectFactory) {
@@ -175,6 +179,14 @@ public class FallbackTypeConverter {
 
         if (value == null) {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
+        }
+
+        // Check if the object is a JAXBElement of the correct type
+        if (value instanceof JAXBElement) {
+            JAXBElement<?> jaxbElement = (JAXBElement<?>) value;
+            if (type.isAssignableFrom(jaxbElement.getDeclaredType())) {
+                return castJaxbType(jaxbElement, type);
+            }
         }
 
         Unmarshaller unmarshaller = getUnmarshaller(type);

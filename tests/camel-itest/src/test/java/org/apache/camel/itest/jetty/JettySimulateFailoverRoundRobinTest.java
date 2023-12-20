@@ -82,37 +82,25 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
 
                 from(bad)
                         .to("mock:bad")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                                exchange.getIn().setBody("Something bad happened");
-                            }
+                        .process(exchange -> {
+                            exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                            exchange.getIn().setBody("Something bad happened");
                         });
 
                 from(bad2)
                         .to("mock:bad2")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                                exchange.getIn().setBody("Not found");
-                            }
+                        .process(exchange -> {
+                            exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                            exchange.getIn().setBody("Not found");
                         });
 
                 from(good)
                         .to("mock:good")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                exchange.getIn().setBody("Good");
-                            }
-                        });
+                        .process(exchange -> exchange.getIn().setBody("Good"));
 
                 from(good2)
                         .to("mock:good2")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                exchange.getIn().setBody("Also good");
-                            }
-                        });
+                        .process(exchange -> exchange.getIn().setBody("Also good"));
             }
         };
     }

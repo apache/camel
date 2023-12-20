@@ -22,11 +22,11 @@ import java.util.function.Consumer;
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.util.KeyValueHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
  * This builder can be used to build and configure a configuration holder for embedded Jetty instances
@@ -184,7 +184,7 @@ public final class JettyConfigurationBuilder {
             return this;
         }
 
-        public HandlerContextConfigurationBuilder withCustomizer(Consumer<HandlerCollection> contextHandlerCustomizer) {
+        public HandlerContextConfigurationBuilder withCustomizer(Consumer<ContextHandlerCollection> contextHandlerCustomizer) {
             handlerCollectionConfiguration.customize(contextHandlerCustomizer);
             return this;
         }

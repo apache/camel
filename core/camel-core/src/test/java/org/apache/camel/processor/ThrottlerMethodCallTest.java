@@ -23,12 +23,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.WINDOWS)
 public class ThrottlerMethodCallTest extends ContextTestSupport {
@@ -42,7 +39,7 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
         return jndi;
     }
 
-    public long getMessagesPerInterval() {
+    public long getConcurrentMessages() {
         return 3;
     }
 
@@ -53,20 +50,12 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(messageCount);
 
-        StopWatch watch = new StopWatch();
         for (int i = 0; i < messageCount; i++) {
-            executor.execute(new Runnable() {
-                public void run() {
-                    template.sendBody("direct:expressionMethod", "<message>payload</message>");
-                }
-            });
+            executor.execute(() -> template.sendBody("direct:expressionMethod", "<message>payload</message>"));
         }
 
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
-
-        // should take a little time
-        assertTrue(watch.taken() > 100);
 
         executor.shutdownNow();
     }
@@ -75,7 +64,7 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:expressionMethod").throttle(method("myBean", "getMessagesPerInterval")).timePeriodMillis(INTERVAL)
+                from("direct:expressionMethod").throttle(method("myBean", "getConcurrentMessages")).delay(INTERVAL)
                         .to("log:result", "mock:result");
             }
         };

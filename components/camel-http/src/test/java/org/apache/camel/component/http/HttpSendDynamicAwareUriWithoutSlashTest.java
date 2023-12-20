@@ -59,10 +59,10 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:usersDrink")
                         .toD("http://localhost:" + localServer.getLocalPort()
                              + "/users/${exchangeProperty.user}");
@@ -75,7 +75,7 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAware() throws Exception {
+    public void testDynamicAware() {
         Exchange out = fluentTemplate.to("direct:usersDrink")
                 .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes").build()).send();
         assertEquals("a user", out.getMessage().getBody(String.class));
@@ -93,7 +93,7 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAwareWithoutSlash() throws Exception {
+    public void testDynamicAwareWithoutSlash() {
         Exchange out = fluentTemplate.to("direct:usersDrinkWithoutSlash")
                 .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes").build()).send();
         assertEquals("a user", out.getMessage().getBody(String.class));

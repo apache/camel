@@ -105,37 +105,6 @@ public interface ServletEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configure the consumer to work in async mode.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param async the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder async(boolean async) {
-            doSetProperty("async", async);
-            return this;
-        }
-        /**
-         * Configure the consumer to work in async mode.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param async the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder async(String async) {
-            doSetProperty("async", async);
-            return this;
-        }
-        /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
@@ -218,6 +187,37 @@ public interface ServletEndpointBuilderFactory {
             return this;
         }
         /**
+         * Configure the consumer to work in async mode.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder async(boolean async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * Configure the consumer to work in async mode.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder async(String async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
          * Used to only allow consuming if the HttpMethod matches, such as
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.
@@ -232,6 +232,41 @@ public interface ServletEndpointBuilderFactory {
         default ServletEndpointBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
             doSetProperty("httpMethodRestrict", httpMethodRestrict);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * exception's stack trace will be logged when the exception stack trace
+         * is not sent in the response's body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param logException the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder logException(boolean logException) {
+            doSetProperty("logException", logException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * exception's stack trace will be logged when the exception stack trace
+         * is not sent in the response's body.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param logException the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder logException(String logException) {
+            doSetProperty("logException", logException);
             return this;
         }
         /**
@@ -473,12 +508,17 @@ public interface ServletEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -495,12 +535,17 @@ public interface ServletEndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

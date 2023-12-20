@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -581,9 +582,9 @@ public class URISupportTest {
 
     @Test
     public void testExtractQuery() throws Exception {
-        assertEquals(null, URISupport.extractQuery(null));
-        assertEquals(null, URISupport.extractQuery(""));
-        assertEquals(null, URISupport.extractQuery("file:foo"));
+        assertNull(URISupport.extractQuery(null));
+        assertNull(URISupport.extractQuery(""));
+        assertNull(URISupport.extractQuery("file:foo"));
         assertEquals("recursive=true", URISupport.extractQuery("file:foo?recursive=true"));
         assertEquals("recursive=true&delete=true", URISupport.extractQuery("file:foo?recursive=true&delete=true"));
     }

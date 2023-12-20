@@ -48,8 +48,6 @@ public class SalesforceProducer extends DefaultAsyncProducer {
     public SalesforceProducer(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        final SalesforceEndpointConfig endpointConfig = endpoint.getConfiguration();
-
         // check if its a Bulk Operation
         final OperationName operationName = endpoint.getOperationName();
         if (isBulkOperation(operationName)) {

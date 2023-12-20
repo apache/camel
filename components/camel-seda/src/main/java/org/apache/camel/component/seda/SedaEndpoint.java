@@ -101,6 +101,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private boolean discardIfNoConsumers;
 
     private BlockingQueueFactory<Exchange> queueFactory;
+    private volatile QueueReference ref;
 
     public SedaEndpoint() {
         queueFactory = new LinkedBlockingQueueFactory<>();
@@ -214,13 +215,22 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      * @return the reference, or <tt>null</tt> if no queue reference exists.
      */
     public QueueReference getQueueReference() {
-        String key = getComponent().getQueueKey(getEndpointUri());
-
-        synchronized (this) {
-            return getComponent().getQueueReference(key);
+        if (ref == null || ref.getCount() == 0) {
+            ref = tryQueueRefInit();
         }
+
+        return ref;
     }
 
+    private QueueReference tryQueueRefInit() {
+        final SedaComponent component = getComponent();
+        if (component != null) {
+            final String key = component.getQueueKey(getEndpointUri());
+            return component.getQueueReference(key);
+        }
+
+        return null;
+    }
 
     protected synchronized AsyncProcessor getConsumerMulticastProcessor() {
         if (!multicastStarted && consumerMulticastProcessor != null) {
@@ -547,6 +557,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (queue == null) {
             queue = getQueue();
         }
+
+        ref = tryQueueRefInit();
     }
 
     @Override
@@ -556,6 +568,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         } else {
             LOG.debug("There is still active consumers.");
         }
+
+        ref = null;
     }
 
     @Override
@@ -587,8 +601,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
         // clear queue, as we are shutdown, so if re-created then the queue must be updated
         queue = null;
+        ref = null;
     }
-
-
 
 }

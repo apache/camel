@@ -128,14 +128,14 @@ public class CSimpleCodeGenerator {
         if (predicate) {
             CSimplePredicateParser parser = new CSimplePredicateParser();
             script = parser.parsePredicate(script);
-            if (script.trim().isEmpty()) {
+            if (script.isBlank()) {
                 // a predicate that is whitespace is regarded as false
                 script = "false";
             }
         } else {
             CSimpleExpressionParser parser = new CSimpleExpressionParser();
             script = parser.parseExpression(script);
-            if (script.trim().isEmpty()) {
+            if (script.isBlank()) {
                 // an expression can be whitespace but then we need to wrap this in quotes
                 script = "\"" + script + "\"";
             }

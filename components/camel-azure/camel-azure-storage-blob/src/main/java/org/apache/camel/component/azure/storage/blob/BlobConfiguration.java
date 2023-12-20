@@ -43,6 +43,8 @@ public class BlobConfiguration implements Cloneable {
     @UriParam
     private StorageSharedKeyCredential credentials;
     @UriParam
+    private String sasToken;
+    @UriParam
     @Metadata(autowired = true)
     private BlobServiceClient serviceClient;
     @UriParam(label = "security", secret = true)
@@ -99,7 +101,7 @@ public class BlobConfiguration implements Cloneable {
     private String regex;
     @UriParam(label = "security", secret = true)
     private String sourceBlobAccessKey;
-    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY",
+    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
               defaultValue = "AZURE_IDENTITY")
     private CredentialType credentialType = AZURE_IDENTITY;
 
@@ -451,6 +453,17 @@ public class BlobConfiguration implements Cloneable {
      */
     public void setSourceBlobAccessKey(String sourceBlobAccessKey) {
         this.sourceBlobAccessKey = sourceBlobAccessKey;
+    }
+
+    public String getSasToken() {
+        return sasToken;
+    }
+
+    /**
+     * In case of usage of Shared Access Signature we'll need to set a SAS Token
+     */
+    public void setSasToken(String sasToken) {
+        this.sasToken = sasToken;
     }
 
     // *************************************************

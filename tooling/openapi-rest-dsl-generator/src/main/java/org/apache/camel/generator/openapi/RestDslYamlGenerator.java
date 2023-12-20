@@ -181,7 +181,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
             // if rest configuration is present then put it in the top
             JsonNode rc = node.get("restConfiguration");
             if (rc != null) {
-                arr.add(xmlMapper.createObjectNode().set("rest-configuration", rc));
+                arr.add(xmlMapper.createObjectNode().set("restConfiguration", rc));
             }
             arr.add(xmlMapper.createObjectNode().set("rest", r));
             node = arr;

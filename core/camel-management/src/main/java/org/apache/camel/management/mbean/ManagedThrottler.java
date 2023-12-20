@@ -38,23 +38,13 @@ public class ManagedThrottler extends ManagedProcessor implements ManagedThrottl
     }
 
     @Override
-    public long getMaximumRequestsPerPeriod() {
-        return throttler.getCurrentMaximumRequestsPerPeriod();
+    public long getMaximumConcurrentRequests() {
+        return throttler.getCurrentMaximumConcurrentRequests();
     }
 
     @Override
-    public void setMaximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
-        throttler.setMaximumRequestsPerPeriodExpression(constant(maximumRequestsPerPeriod));
-    }
-
-    @Override
-    public long getTimePeriodMillis() {
-        return throttler.getTimePeriodMillis();
-    }
-
-    @Override
-    public void setTimePeriodMillis(long timePeriodMillis) {
-        throttler.setTimePeriodMillis(timePeriodMillis);
+    public void setMaximumConcurrentRequests(long maximumConcurrentRequests) {
+        throttler.setMaximumConcurrentRequestsExpression(constant(maximumConcurrentRequests));
     }
 
     @Override

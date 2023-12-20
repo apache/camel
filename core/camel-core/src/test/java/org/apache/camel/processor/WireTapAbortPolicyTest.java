@@ -30,7 +30,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -38,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Wire tap unit test
  */
+@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                          disabledReason = "Tasks are not rejected when using Virtual Threads")
 @Isolated
 public class WireTapAbortPolicyTest extends ContextTestSupport {
 
@@ -57,7 +59,6 @@ public class WireTapAbortPolicyTest extends ContextTestSupport {
         }
     }
 
-    @Test
     @RepeatedTest(value = 1000)
     public void testSend() throws Exception {
         // hello must come first, as we have delay on the tapped route

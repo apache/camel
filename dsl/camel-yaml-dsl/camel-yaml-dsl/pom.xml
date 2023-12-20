@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-yaml-dsl</artifactId>
@@ -241,7 +241,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.6.0</version>
+            <version>42.7.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -277,7 +277,7 @@
                             <goal>generate-yaml-schema</goal>
                         </goals>
                         <configuration>
-                            <kebabCase>false</kebabCase>
+                            <additionalProperties>false</additionalProperties>
                             <outputFile>src/generated/resources/schema/camelYamlDsl.json</outputFile>
                         </configuration>
                     </execution>

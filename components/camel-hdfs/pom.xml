@@ -23,12 +23,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hdfs</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: HDFS</name>
+    <name>Camel :: HDFS (deprecated)</name>
     <description>Camel HDFS support with Hadoop 3.x libraries</description>
 
     <properties>

@@ -25,9 +25,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
 import org.apache.camel.Suspendable;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The timer consumer.
  */
+@ManagedResource(description = "Managed TimerConsumer")
 public class TimerConsumer extends DefaultConsumer implements StartupListener, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
@@ -42,6 +46,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     private volatile TimerTask task;
     private volatile boolean configured;
     private ExecutorService executorService;
+    private final AtomicLong counter = new AtomicLong();
+    private volatile boolean polling;
 
     public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -53,13 +59,56 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         return (TimerEndpoint) super.getEndpoint();
     }
 
+    /**
+     * Total number of polls run
+     */
+    @ManagedAttribute(description = "Total number of polls run")
+    public long getCounter() {
+        return counter.get();
+    }
+
+    /**
+     * Whether polling is currently in progress
+     */
+    @ManagedAttribute(description = "Whether polling is currently in progress")
+    public boolean isPolling() {
+        return polling;
+    }
+
+    @ManagedAttribute(description = "Timer Name")
+    public String getTimerName() {
+        return getEndpoint().getTimerName();
+    }
+
+    @ManagedAttribute(description = "Timer FixedRate")
+    public boolean isFixedRate() {
+        return getEndpoint().isFixedRate();
+    }
+
+    @ManagedAttribute(description = "Timer Delay")
+    public long getDelay() {
+        return getEndpoint().getDelay();
+    }
+
+    @ManagedAttribute(description = "Timer Period")
+    public long getPeriod() {
+        return getEndpoint().getPeriod();
+    }
+
+    @ManagedAttribute(description = "Repeat Count")
+    public long getRepeatCount() {
+        return getEndpoint().getRepeatCount();
+    }
+
+    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    public String getRunLoggingLevel() {
+        return getEndpoint().getRunLoggingLevel().name();
+    }
+
     @Override
     public void doInit() throws Exception {
         if (endpoint.getDelay() >= 0) {
             task = new TimerTask() {
-                // counter
-                private final AtomicLong counter = new AtomicLong();
-
                 @Override
                 public void run() {
                     if (!isTaskRunAllowed()) {
@@ -68,25 +117,57 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         return;
                     }
 
-                    try {
-                        long count = counter.incrementAndGet();
+                    // log starting
+                    LoggingLevel runLoggingLevel = getEndpoint().getRunLoggingLevel();
+                    if (LoggingLevel.ERROR == runLoggingLevel) {
+                        LOG.error("Timer task started on:   {}", getEndpoint());
+                    } else if (LoggingLevel.WARN == runLoggingLevel) {
+                        LOG.warn("Timer task started on:   {}", getEndpoint());
+                    } else if (LoggingLevel.INFO == runLoggingLevel) {
+                        LOG.info("Timer task started on:   {}", getEndpoint());
+                    } else if (LoggingLevel.DEBUG == runLoggingLevel) {
+                        LOG.debug("Timer task started on:   {}", getEndpoint());
+                    } else {
+                        LOG.trace("Timer task started on:   {}", getEndpoint());
+                    }
 
-                        boolean fire = endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount();
-                        if (fire) {
-                            sendTimerExchange(count);
-                        } else {
-                            // no need to fire anymore as we exceeded repeat
-                            // count
-                            LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.",
-                                    endpoint.getTimerName(), endpoint.getRepeatCount());
-                            cancel();
-                        }
+                    try {
+                        polling = true;
+                        doRun();
                     } catch (Exception e) {
-                        // catch all to avoid the JVM closing the thread and not
-                        // firing again
                         LOG.warn(
                                 "Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.",
                                 e);
+                    } finally {
+                        polling = false;
+                    }
+
+                    // log completed
+                    if (LoggingLevel.ERROR == runLoggingLevel) {
+                        LOG.error("Timer task completed on: {}", getEndpoint());
+                    } else if (LoggingLevel.WARN == runLoggingLevel) {
+                        LOG.warn("Timer task completed on: {}", getEndpoint());
+                    } else if (LoggingLevel.INFO == runLoggingLevel) {
+                        LOG.info("Timer task completed on: {}", getEndpoint());
+                    } else if (LoggingLevel.DEBUG == runLoggingLevel) {
+                        LOG.debug("Timer task completed on: {}", getEndpoint());
+                    } else {
+                        LOG.trace("Timer task completed on: {}", getEndpoint());
+                    }
+                }
+
+                protected void doRun() {
+                    long count = counter.incrementAndGet();
+
+                    boolean fire = endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount();
+                    if (fire) {
+                        sendTimerExchange(count);
+                    } else {
+                        // no need to fire anymore as we exceeded repeat
+                        // count
+                        LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.",
+                                endpoint.getTimerName(), endpoint.getRepeatCount());
+                        cancel();
                     }
                 }
             };
@@ -99,8 +180,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
 
         if (endpoint.getDelay() >= 0) {
             // only configure task if CamelContext already started, otherwise
-            // the StartupListener
-            // is configuring the task later
+            // the StartupListener is configuring the task later
             if (task != null && !configured && endpoint.getCamelContext().getStatus().isStarted()) {
                 Timer timer = endpoint.getTimer(this);
                 configureTask(task, timer);
@@ -111,11 +191,15 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                     endpoint.getEndpointUri());
 
             executorService.execute(() -> {
-                final AtomicLong counter = new AtomicLong();
-                long count = counter.incrementAndGet();
-                while ((endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount()) && isRunAllowed()) {
-                    sendTimerExchange(count);
-                    count = counter.incrementAndGet();
+                polling = true;
+                try {
+                    long count = counter.incrementAndGet();
+                    while ((endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount()) && isRunAllowed()) {
+                        sendTimerExchange(count);
+                        count = counter.incrementAndGet();
+                    }
+                } finally {
+                    polling = false;
                 }
             });
         }

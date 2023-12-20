@@ -67,6 +67,10 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showHeaders": target.setShowHeaders(property(camelContext, boolean.class, value)); return true;
         case "showproperties":
         case "showProperties": target.setShowProperties(property(camelContext, boolean.class, value)); return true;
+        case "showroutegroup":
+        case "showRouteGroup": target.setShowRouteGroup(property(camelContext, boolean.class, value)); return true;
+        case "showrouteid":
+        case "showRouteId": target.setShowRouteId(property(camelContext, boolean.class, value)); return true;
         case "showstacktrace":
         case "showStackTrace": target.setShowStackTrace(property(camelContext, boolean.class, value)); return true;
         case "showstreams":
@@ -129,6 +133,10 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showHeaders": return boolean.class;
         case "showproperties":
         case "showProperties": return boolean.class;
+        case "showroutegroup":
+        case "showRouteGroup": return boolean.class;
+        case "showrouteid":
+        case "showRouteId": return boolean.class;
         case "showstacktrace":
         case "showStackTrace": return boolean.class;
         case "showstreams":
@@ -192,6 +200,10 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showHeaders": return target.isShowHeaders();
         case "showproperties":
         case "showProperties": return target.isShowProperties();
+        case "showroutegroup":
+        case "showRouteGroup": return target.isShowRouteGroup();
+        case "showrouteid":
+        case "showRouteId": return target.isShowRouteId();
         case "showstacktrace":
         case "showStackTrace": return target.isShowStackTrace();
         case "showstreams":

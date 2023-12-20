@@ -61,4 +61,44 @@ public interface MavenDownloader {
      */
     void setRemoteArtifactDownloadListener(RemoteArtifactDownloadListener listener);
 
+    /**
+     * Set a flag determining Maven update behavior. See the description of {@code -U,--update-snapshots} Maven option.
+     * When set to {@code true}, Maven metadata (to determine newest SNAPSHOT or RELEASE or LATEST version) is always
+     * fetched.
+     */
+    void setFresh(boolean fresh);
+
+    /**
+     * Sets maven downloader in offline mode
+     */
+    void setOffline(boolean offline);
+
+    /**
+     * Configure comma-separated list of repositories to use (in addition to the ones discovered from Maven settings).
+     */
+    void setRepos(String repos);
+
+    /**
+     * Configure a location of {@code settings-security.xml} (when not set, defaults to
+     * {@code ~/.m2/settings-security.xml} unless {@link #setMavenSettingsLocation(String)} is set explicitly set to
+     * {@code "false"}.
+     */
+    void setMavenSettingsSecurityLocation(String mavenSettingsSecurity);
+
+    /**
+     * Configure a location of {@code settings.xml} (when not set, defaults to {@code ~/.m2/settings.xml} unless it's
+     * explicitly set to {@code "false"}.
+     */
+    void setMavenSettingsLocation(String mavenSettings);
+
+    /**
+     * Gets the repository resolver.
+     */
+    RepositoryResolver getRepositoryResolver();
+
+    /**
+     * Sets a custom repository resolver.
+     */
+    void setRepositoryResolver(RepositoryResolver repositoryResolver);
+
 }

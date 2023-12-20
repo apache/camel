@@ -1524,12 +1524,17 @@ public interface Sqs2EndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1546,12 +1551,17 @@ public interface Sqs2EndpointBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -3300,7 +3310,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsAttributes}.
          */
         public String awsSqsAttributes() {
-            return "AwsSqsAttributes";
+            return "CamelAwsSqsAttributes";
         }
 
         /**
@@ -3313,7 +3323,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsMessageAttributes}.
          */
         public String awsSqsMessageAttributes() {
-            return "AwsSqsMessageAttributes";
+            return "CamelAwsSqsMessageAttributes";
         }
 
         /**
@@ -3326,7 +3336,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsMD5OfBody}.
          */
         public String awsSqsMD5OfBody() {
-            return "AwsSqsMD5OfBody";
+            return "CamelAwsSqsMD5OfBody";
         }
 
         /**
@@ -3339,7 +3349,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsMessageId}.
          */
         public String awsSqsMessageId() {
-            return "AwsSqsMessageId";
+            return "CamelAwsSqsMessageId";
         }
 
         /**
@@ -3352,7 +3362,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsReceiptHandle}.
          */
         public String awsSqsReceiptHandle() {
-            return "AwsSqsReceiptHandle";
+            return "CamelAwsSqsReceiptHandle";
         }
 
         /**
@@ -3365,7 +3375,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsDelaySeconds}.
          */
         public String awsSqsDelaySeconds() {
-            return "AwsSqsDelaySeconds";
+            return "CamelAwsSqsDelaySeconds";
         }
 
         /**
@@ -3378,7 +3388,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsPrefix}.
          */
         public String awsSqsPrefix() {
-            return "AwsSqsPrefix";
+            return "CamelAwsSqsPrefix";
         }
 
         /**
@@ -3391,7 +3401,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the name of the header {@code AwsSqsOperation}.
          */
         public String awsSqsOperation() {
-            return "AwsSqsOperation";
+            return "CamelAwsSqsOperation";
         }
     }
     static Sqs2EndpointBuilder endpointBuilder(String componentName, String path) {

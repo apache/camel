@@ -65,10 +65,13 @@ public class RouteDevConsole extends AbstractDevConsole {
         final boolean processors = "true".equals(options.getOrDefault(PROCESSORS, "false"));
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append("\n");
             }
             sb.append(String.format("    Id: %s", mrb.getRouteId()));
+            if (mrb.getNodePrefixId() != null) {
+                sb.append(String.format("    Node Prefix Id: %s", mrb.getNodePrefixId()));
+            }
             sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
             if (mrb.getSourceLocation() != null) {
                 sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
@@ -92,6 +95,12 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
             sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
             sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
+            long idle = mrb.getIdleSince();
+            if (idle > 0) {
+                sb.append(String.format("\n    Idle Since: %s", TimeUtils.printDuration(idle)));
+            } else {
+                sb.append(String.format("\n    Idle Since: %s", ""));
+            }
             sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
             sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
             sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
@@ -148,6 +157,9 @@ public class RouteDevConsole extends AbstractDevConsole {
         for (ManagedProcessorMBean mp : mps) {
             sb.append("\n");
             sb.append(String.format("\n        Id: %s", mp.getProcessorId()));
+            if (mp.getNodePrefixId() != null) {
+                sb.append(String.format("\n        Node Prefix Id: %s", mp.getNodePrefixId()));
+            }
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
             sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
@@ -160,12 +172,19 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n        Total: %s", mp.getExchangesTotal()));
             sb.append(String.format("\n        Failed: %s", mp.getExchangesFailed()));
             sb.append(String.format("\n        Inflight: %s", mp.getExchangesInflight()));
+            long idle = mp.getIdleSince();
+            if (idle > 0) {
+                sb.append(String.format("\n        Idle Since: %s", TimeUtils.printDuration(idle)));
+            } else {
+                sb.append(String.format("\n        Idle Since: %s", ""));
+            }
             sb.append(String.format("\n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
             sb.append(String.format("\n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
             sb.append(String.format("\n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
             if (mp.getExchangesTotal() > 0) {
-                sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
-                sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
+                sb.append(String.format("\n        Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
+                sb.append(
+                        String.format("\n        Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
             }
             Date last = mp.getLastExchangeCompletedTimestamp();
             if (last != null) {
@@ -189,6 +208,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             JsonObject jo = new JsonObject();
             list.add(jo);
             jo.put("routeId", mrb.getRouteId());
+            if (mrb.getNodePrefixId() != null) {
+                jo.put("nodePrefixId", mrb.getNodePrefixId());
+            }
             jo.put("from", mrb.getEndpointUri());
             if (mrb.getSourceLocation() != null) {
                 jo.put("source", mrb.getSourceLocation());
@@ -212,6 +234,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (!thp.isEmpty()) {
                 stats.put("exchangesThroughput", thp);
             }
+            stats.put("idleSince", mrb.getIdleSince());
             stats.put("exchangesTotal", mrb.getExchangesTotal());
             stats.put("exchangesFailed", mrb.getExchangesFailed());
             stats.put("exchangesInflight", mrb.getExchangesInflight());
@@ -224,18 +247,15 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             Date last = mrb.getLastExchangeCreatedTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastCreatedExchange", ago);
+                stats.put("lastCreatedExchangeTimestamp", last.getTime());
             }
             last = mrb.getLastExchangeCompletedTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastCompletedExchange", ago);
+                stats.put("lastCompletedExchangeTimestamp", last.getTime());
             }
             last = mrb.getLastExchangeFailureTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastFailedExchange", ago);
+                stats.put("lastFailedExchangeTimestamp", last.getTime());
             }
             jo.put("statistics", stats);
             if (processors) {
@@ -276,6 +296,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             arr.add(jo);
 
             jo.put("id", mp.getProcessorId());
+            jo.put("nodePrefixId", mp.getNodePrefixId());
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {
@@ -298,6 +319,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             jo.put("processor", mp.getProcessorName());
             jo.put("level", mp.getLevel());
             JsonObject stats = new JsonObject();
+            stats.put("idleSince", mp.getIdleSince());
             stats.put("exchangesTotal", mp.getExchangesTotal());
             stats.put("exchangesFailed", mp.getExchangesFailed());
             stats.put("exchangesInflight", mp.getExchangesInflight());
@@ -308,15 +330,17 @@ public class RouteDevConsole extends AbstractDevConsole {
                 stats.put("lastProcessingTime", mp.getLastProcessingTime());
                 stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
             }
-            Date last = mp.getLastExchangeCompletedTimestamp();
+            Date last = mp.getLastExchangeCreatedTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastCompletedExchange", ago);
+                stats.put("lastCreatedExchangeTimestamp", last.getTime());
+            }
+            last = mp.getLastExchangeCompletedTimestamp();
+            if (last != null) {
+                stats.put("lastCompletedExchangeTimestamp", last.getTime());
             }
             last = mp.getLastExchangeFailureTimestamp();
             if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastFailedExchange", ago);
+                stats.put("lastFailedExchangeTimestamp", last.getTime());
             }
             jo.put("statistics", stats);
         }

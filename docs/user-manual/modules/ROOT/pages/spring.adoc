@@ -34,7 +34,7 @@ See xref:using-propertyplaceholder.adoc[Using Property Placeholder] documentatio
 
 == Using Camel with Spring transactions
 
-See xref:components:eips:transactional-client.adoc[Transactional Client]} EIP.
+See xref:components:eips:transactional-client.adoc[Transactional Client] EIP.
 
 == Using Camel with Spring testing
 

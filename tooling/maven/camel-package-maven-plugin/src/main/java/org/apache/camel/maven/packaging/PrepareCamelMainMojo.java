@@ -204,6 +204,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("Lra")) {
                     prefix = "camel.lra.";
+                } else if (file.getName().contains("Otel")) {
+                    prefix = "camel.opentelemetry.";
+                } else if (file.getName().contains("Metrics")) {
+                    prefix = "camel.metrics.";
                 } else if (file.getName().contains("HttpServer")) {
                     prefix = "camel.server.";
                 } else if (file.getName().contains("ThreadPoolProfileConfigurationProperties")) {
@@ -211,6 +215,12 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     continue;
                 } else if (file.getName().contains("ThreadPoolConfigurationProperties")) {
                     prefix = "camel.threadpool.";
+                } else if (file.getName().contains("SSLConfigurationProperties")) {
+                    prefix = "camel.ssl.";
+                } else if (file.getName().contains("DebuggerConfigurationProperties")) {
+                    prefix = "camel.debug.";
+                } else if (file.getName().contains("RouteControllerConfigurationProperties")) {
+                    prefix = "camel.routecontroller.";
                 } else {
                     prefix = "camel.main.";
                 }
@@ -277,10 +287,22 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getOptions().addAll(data);
             model.getGroups().add(new MainGroupModel(
                     "camel.main", "Camel Main configurations", "org.apache.camel.main.DefaultConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.routecontroller", "Camel Route Controller configurations",
+                            "org.apache.camel.main.RouteControllerConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.server",
                     "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
                     "org.apache.camel.main.HttpServerConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.debug", "Camel Debugger configurations",
+                            "org.apache.camel.main.DebuggerConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.ssl", "Camel SSL configurations",
+                            "org.apache.camel.main.SSLConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
                             "camel.threadpool", "Camel Thread Pool configurations",
@@ -304,6 +326,12 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                             "camel.vault.azure", "Camel Azure Key Vault configurations",
                             "org.apache.camel.vault.AzureVaultConfiguration"));
             // TODO: add more vault providers here
+            model.getGroups().add(new MainGroupModel(
+                    "camel.opentelemetry", "Camel OpenTelemtry configurations",
+                    "org.apache.camel.main.OtelConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.metrics", "Camel Micrometer Metrics configurations",
+                    "org.apache.camel.main.MetricsConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
                             "camel.faulttolerance", "Fault Tolerance EIP Circuit Breaker configurations",

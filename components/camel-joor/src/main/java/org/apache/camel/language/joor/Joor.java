@@ -31,6 +31,7 @@ import org.apache.camel.support.language.LanguageAnnotation;
 @Documented
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @LanguageAnnotation(language = "joor", factory = JoorAnnotationExpressionFactory.class)
+@Deprecated
 public @interface Joor {
 
     String value();

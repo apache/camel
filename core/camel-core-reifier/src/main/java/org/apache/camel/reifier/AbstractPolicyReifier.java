@@ -17,10 +17,8 @@
 package org.apache.camel.reifier;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ProcessorDefinition;
@@ -33,7 +31,7 @@ import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> extends ProcessorReifier<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TransactedReifier.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractPolicyReifier.class);
 
     public AbstractPolicyReifier(Route route, T definition) {
         super(route, definition);
@@ -58,15 +56,10 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
         // try to lookup by scoped type
         Policy answer = null;
         if (type != null) {
-            // try find by type, note that this method is not supported by all
-            // registry
-            Map<String, ?> types = findByTypeWithName(type);
-            if (types.size() == 1) {
-                // only one policy defined so use it
-                Object found = types.values().iterator().next();
-                if (type.isInstance(found)) {
-                    return type.cast(found);
-                }
+            // try find by type, note that this method is not supported by all registry
+            Policy found = findSingleByType(type);
+            if (found != null) {
+                return found;
             }
         }
 
@@ -85,51 +78,40 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
             if (tmClazz != null) {
                 // see if we can find the platform transaction manager in the
                 // registry
-                Map<String, ?> maps = findByTypeWithName(tmClazz);
-                if (maps.size() == 1) {
-                    // only one platform manager then use it as default and
-                    // create a transacted
-                    // policy with it and default to required
+                Object transactionManager = mandatoryFindSingleByType(tmClazz);
+                // only one platform manager then use it as default and
+                // create a transacted
+                // policy with it and default to required
 
-                    // as we do not want dependency on spring jars in the
-                    // camel-core we use
-                    // reflection to lookup classes and create new objects and
-                    // call methods
-                    // as this is only done during route building it does not
-                    // matter that we
-                    // use reflection as performance is no a concern during
-                    // route building
-                    Object transactionManager = maps.values().iterator().next();
-                    LOG.debug("One instance of PlatformTransactionManager found in registry: {}", transactionManager);
-                    Class<?> txClazz = camelContext.getClassResolver()
-                            .resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
-                    if (txClazz != null) {
-                        LOG.debug("Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: {}",
-                                transactionManager);
-                        TransactedPolicy txPolicy
-                                = org.apache.camel.support.ObjectHelper.newInstance(txClazz, TransactedPolicy.class);
-                        Method method;
-                        try {
-                            method = txClazz.getMethod("setTransactionManager", tmClazz);
-                        } catch (NoSuchMethodException e) {
-                            throw new RuntimeCamelException(
-                                    "Cannot get method setTransactionManager(PlatformTransactionManager) on class: " + txClazz);
-                        }
-                        org.apache.camel.support.ObjectHelper.invokeMethod(method, txPolicy, transactionManager);
-                        return txPolicy;
-                    } else {
-                        // camel-spring is missing on the classpath
+                // as we do not want dependency on spring jars in the
+                // camel-core we use
+                // reflection to lookup classes and create new objects and
+                // call methods
+                // as this is only done during route building it does not
+                // matter that we
+                // use reflection as performance is no a concern during
+                // route building
+                LOG.debug("One instance of PlatformTransactionManager found in registry: {}", transactionManager);
+                Class<?> txClazz = camelContext.getClassResolver()
+                        .resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
+                if (txClazz != null) {
+                    LOG.debug("Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: {}",
+                            transactionManager);
+                    TransactedPolicy txPolicy
+                            = org.apache.camel.support.ObjectHelper.newInstance(txClazz, TransactedPolicy.class);
+                    Method method;
+                    try {
+                        method = txClazz.getMethod("setTransactionManager", tmClazz);
+                    } catch (NoSuchMethodException e) {
                         throw new RuntimeCamelException(
-                                "Cannot create a transacted policy as camel-spring.jar is not on the classpath!");
+                                "Cannot get method setTransactionManager(PlatformTransactionManager) on class: " + txClazz);
                     }
+                    org.apache.camel.support.ObjectHelper.invokeMethod(method, txPolicy, transactionManager);
+                    return txPolicy;
                 } else {
-                    if (maps.isEmpty()) {
-                        throw new NoSuchBeanException(null, "PlatformTransactionManager");
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Found " + maps.size() + " PlatformTransactionManager in registry. "
-                                                           + "Cannot determine which one to use. Please configure a TransactionTemplate on the transacted policy.");
-                    }
+                    // camel-spring is missing on the classpath
+                    throw new RuntimeCamelException(
+                            "Cannot create a transacted policy as camel-spring.jar is not on the classpath!");
                 }
             }
         }

@@ -19,9 +19,14 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.util.OrderedProperties;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 
@@ -33,15 +38,15 @@ public final class RuntimeUtil {
     }
 
     public static void configureLog(
-            String level, boolean color, boolean json, boolean pipe, boolean export) {
+            String level, boolean color, boolean json, boolean script, boolean export) {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", Long.toString(pid));
 
             if (export) {
                 Configurator.initialize("CamelJBang", "log4j2-export.properties");
-            } else if (pipe) {
-                Configurator.initialize("CamelJBang", "log4j2-pipe.properties");
+            } else if (script) {
+                Configurator.initialize("CamelJBang", "log4j2-script.properties");
             } else if (json) {
                 Configurator.initialize("CamelJBang", "log4j2-json.properties");
             } else if (color) {
@@ -88,9 +93,32 @@ public final class RuntimeUtil {
     }
 
     public static void loadProperties(Properties properties, File file) throws IOException {
-        try (final FileInputStream fileInputStream = new FileInputStream(file)) {
-            properties.load(fileInputStream);
+        if (file.exists()) {
+            try (final FileInputStream fileInputStream = new FileInputStream(file)) {
+                properties.load(fileInputStream);
+            }
         }
+    }
+
+    public static List<String> loadPropertiesLines(File file) throws IOException {
+        if (!file.exists()) {
+            return new ArrayList<>();
+        }
+
+        List<String> lines = new ArrayList<>();
+        for (String line : Files.readAllLines(file.toPath())) {
+            // need to use java.util.Properties to read raw value and un-escape
+            Properties prop = new OrderedProperties();
+            prop.load(new StringReader(line));
+
+            for (String key : prop.stringPropertyNames()) {
+                String value = prop.getProperty(key);
+                if (value != null) {
+                    lines.add(key + "=" + value);
+                }
+            }
+        }
+        return lines;
     }
 
     public static String getDependencies(Properties properties) {

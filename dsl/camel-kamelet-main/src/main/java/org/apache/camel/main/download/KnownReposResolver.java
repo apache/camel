@@ -21,15 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.camel.CamelContext;
-
 public final class KnownReposResolver {
 
     private final Map<String, String> repos = new HashMap<>();
-    private final CamelContext camelContext;
 
-    public KnownReposResolver(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    public KnownReposResolver() {
     }
 
     public void loadKnownDependencies() {
@@ -49,7 +45,7 @@ public final class KnownReposResolver {
                 }
                 addRepos(map);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
     }

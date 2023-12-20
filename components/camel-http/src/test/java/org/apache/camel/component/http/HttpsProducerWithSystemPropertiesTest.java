@@ -68,7 +68,7 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
     }
 
     @AfterAll
-    public static void resetHttpAgentSystemProperty() throws Exception {
+    public static void resetHttpAgentSystemProperty() {
         if (defaultSystemHttpAgent != null) {
             System.setProperty("http.agent", String.valueOf(defaultSystemHttpAgent));
         } else {
@@ -118,7 +118,7 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWithProxyFromSystemProperties() throws Exception {
+    public void httpGetWithProxyFromSystemProperties() {
 
         String endpointUri = "https://localhost:" + localServer.getLocalPort()
                              + "/header/?x509HostnameVerifier=x509HostnameVerifier&useSystemProperties=true";
@@ -129,7 +129,7 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
     }
 
     @Test
-    public void testTwoWaySuccessfull() throws Exception {
+    public void testTwoWaySuccessfull() {
         Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "/mail/?x509HostnameVerifier=x509HostnameVerifier&useSystemProperties=true",
                 exchange1 -> {
@@ -139,7 +139,7 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
     }
 
     @Test
-    public void testTwoWayFailure() throws Exception {
+    public void testTwoWayFailure() {
         Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "/mail/?x509HostnameVerifier=x509HostnameVerifier",
                 exchange1 -> {

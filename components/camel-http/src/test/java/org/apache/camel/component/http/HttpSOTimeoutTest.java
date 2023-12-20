@@ -56,7 +56,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGet() throws Exception {
+    public void httpGet() {
         Exchange exchange = template.request("http://localhost:"
                                              + localServer.getLocalPort() + "?httpClient.responseTimeout=5000",
                 exchange1 -> {
@@ -66,7 +66,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetShouldThrowASocketTimeoutException() throws Exception {
+    public void httpGetShouldThrowASocketTimeoutException() {
         Exchange reply = template.request("http://localhost:"
                                           + localServer.getLocalPort() + "?httpClient.responseTimeout=1000",
                 exchange -> {
@@ -76,7 +76,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetUriOption() throws Exception {
+    public void httpGetUriOption() {
         HttpEndpoint endpoint = context.getEndpoint("http://localhost:"
                                                     + localServer.getLocalPort() + "?responseTimeout=5000",
                 HttpEndpoint.class);
@@ -90,7 +90,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetUriOptionShouldThrowASocketTimeoutException() throws Exception {
+    public void httpGetUriOptionShouldThrowASocketTimeoutException() {
         Exchange reply = template.request("http://localhost:"
                                           + localServer.getLocalPort() + "?responseTimeout=1000",
                 exchange -> {

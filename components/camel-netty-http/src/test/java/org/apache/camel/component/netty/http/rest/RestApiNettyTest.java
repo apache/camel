@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Disabled("Does not run well on CI due test uses JMX mbeans")
 public class RestApiNettyTest extends BaseNettyTest {
 
-    protected Logger log = LoggerFactory.getLogger(RestApiNettyTest.class);
+    protected final Logger log = LoggerFactory.getLogger(RestApiNettyTest.class);
 
     @Override
     protected boolean useJmx() {

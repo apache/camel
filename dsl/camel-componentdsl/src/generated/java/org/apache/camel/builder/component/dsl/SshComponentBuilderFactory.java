@@ -97,12 +97,17 @@ public interface SshComponentBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -191,6 +196,37 @@ public interface SshComponentBuilderFactory {
          */
         default SshComponentBuilder channelType(java.lang.String channelType) {
             doSetProperty("channelType", channelType);
+            return this;
+        }
+        /**
+         * Instance of ClientBuilder used by the producer or consumer to create
+         * a new SshClient.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder clientBuilder(
+                org.apache.sshd.client.ClientBuilder clientBuilder) {
+            doSetProperty("clientBuilder", clientBuilder);
+            return this;
+        }
+        /**
+         * Whether to use compression, and if so which.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param compressions the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder compressions(java.lang.String compressions) {
+            doSetProperty("compressions", compressions);
             return this;
         }
         /**
@@ -309,6 +345,36 @@ public interface SshComponentBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of allowed/supported ciphers in their order of
+         * preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param ciphers the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder ciphers(java.lang.String ciphers) {
+            doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Comma-separated list of allowed/supported key exchange algorithms in
+         * their order of preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kex the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder kex(java.lang.String kex) {
+            doSetProperty("kex", kex);
+            return this;
+        }
+        /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
          * 
@@ -344,6 +410,22 @@ public interface SshComponentBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of allowed/supported message authentication code
+         * algorithms in their order of preference. The MAC algorithm is used
+         * for data integrity protection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param macs the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder macs(java.lang.String macs) {
+            doSetProperty("macs", macs);
+            return this;
+        }
+        /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
@@ -356,6 +438,21 @@ public interface SshComponentBuilderFactory {
          */
         default SshComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Comma-separated list of allowed/supported signature algorithms in
+         * their order of preference.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signatures the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder signatures(java.lang.String signatures) {
+            doSetProperty("signatures", signatures);
             return this;
         }
         /**
@@ -404,6 +501,8 @@ public interface SshComponentBuilderFactory {
             case "lazyStartProducer": ((SshComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SshComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "channelType": getOrCreateConfiguration((SshComponent) component).setChannelType((java.lang.String) value); return true;
+            case "clientBuilder": getOrCreateConfiguration((SshComponent) component).setClientBuilder((org.apache.sshd.client.ClientBuilder) value); return true;
+            case "compressions": getOrCreateConfiguration((SshComponent) component).setCompressions((java.lang.String) value); return true;
             case "configuration": ((SshComponent) component).setConfiguration((org.apache.camel.component.ssh.SshConfiguration) value); return true;
             case "shellPrompt": getOrCreateConfiguration((SshComponent) component).setShellPrompt((java.lang.String) value); return true;
             case "sleepForShellPrompt": getOrCreateConfiguration((SshComponent) component).setSleepForShellPrompt((long) value); return true;
@@ -411,9 +510,13 @@ public interface SshComponentBuilderFactory {
             case "healthCheckProducerEnabled": ((SshComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "certResource": getOrCreateConfiguration((SshComponent) component).setCertResource((java.lang.String) value); return true;
             case "certResourcePassword": getOrCreateConfiguration((SshComponent) component).setCertResourcePassword((java.lang.String) value); return true;
+            case "ciphers": getOrCreateConfiguration((SshComponent) component).setCiphers((java.lang.String) value); return true;
+            case "kex": getOrCreateConfiguration((SshComponent) component).setKex((java.lang.String) value); return true;
             case "keyPairProvider": getOrCreateConfiguration((SshComponent) component).setKeyPairProvider((org.apache.sshd.common.keyprovider.KeyPairProvider) value); return true;
             case "keyType": getOrCreateConfiguration((SshComponent) component).setKeyType((java.lang.String) value); return true;
+            case "macs": getOrCreateConfiguration((SshComponent) component).setMacs((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((SshComponent) component).setPassword((java.lang.String) value); return true;
+            case "signatures": getOrCreateConfiguration((SshComponent) component).setSignatures((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((SshComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }

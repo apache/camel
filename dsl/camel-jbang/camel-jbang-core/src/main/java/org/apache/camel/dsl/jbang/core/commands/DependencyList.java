@@ -41,7 +41,7 @@ public class DependencyList extends Export {
 
     protected static final String EXPORT_DIR = ".camel-jbang/export";
 
-    @CommandLine.Option(names = { "--output" }, description = "Output format (gav or maven)", defaultValue = "gav")
+    @CommandLine.Option(names = { "--output" }, description = "Output format (gav, maven, jbang)", defaultValue = "gav")
     protected String output;
 
     public DependencyList(CamelJBangMain main) {
@@ -56,7 +56,7 @@ public class DependencyList extends Export {
 
     @Override
     protected Integer export() throws Exception {
-        if (!"gav".equals(output) && !"maven".equals(output)) {
+        if (!"gav".equals(output) && !"maven".equals(output) && !"jbang".equals(output)) {
             System.err.println("--output must be either gav or maven, was: " + output);
             return 1;
         }
@@ -143,8 +143,11 @@ public class DependencyList extends Export {
                 }
                 // sort GAVs
                 gavs.sort(mavenGavComparator());
+                int i = 0;
+                int total = gavs.size();
                 for (MavenGav gav : gavs) {
-                    outputGav(gav);
+                    outputGav(gav, i, total);
+                    i++;
                 }
             }
             // cleanup dir after complete
@@ -154,15 +157,24 @@ public class DependencyList extends Export {
         return answer;
     }
 
-    protected void outputGav(MavenGav gav) {
+    protected void outputGav(MavenGav gav, int index, int total) {
         if ("gav".equals(output)) {
-            System.out.println(gav.toString());
+            System.out.println(gav);
         } else if ("maven".equals(output)) {
             System.out.println("<dependency>");
             System.out.printf("    <groupId>%s</groupId>%n", gav.getGroupId());
             System.out.printf("    <artifactId>%s</artifactId>%n", gav.getArtifactId());
             System.out.printf("    <version>%s</version>%n", gav.getVersion());
             System.out.println("</dependency>");
+        } else if ("jbang".equals(output)) {
+            if (index == 0) {
+                System.out.println("//DEPS org.apache.camel:camel-bom:" + gav.getVersion() + "@pom");
+            }
+            if (gav.getGroupId().equals("org.apache.camel")) {
+                // jbang has version in @pom so we should remove this
+                gav.setVersion(null);
+            }
+            System.out.println("//DEPS " + gav);
         }
     }
 

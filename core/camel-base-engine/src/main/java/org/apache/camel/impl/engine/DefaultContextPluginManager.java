@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.engine;
 
 import java.util.Map;
@@ -25,11 +24,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PluginManager;
 
 public class DefaultContextPluginManager implements PluginManager {
+
     private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
-
-    public DefaultContextPluginManager() {
-
-    }
 
     @Override
     public <T> T getContextPlugin(Class<T> type) {

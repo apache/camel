@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class ConsulClusterView extends AbstractCamelClusterView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusterService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusterView.class);
 
     private final ConsulClusterConfiguration configuration;
     private final ConsulLocalMember localMember;
@@ -261,7 +261,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
         @Override
         public void onFailure(Throwable throwable) {
-            LOGGER.debug("", throwable);
+            LOGGER.debug("{}", throwable.getMessage(), throwable);
 
             if (sessionId.get() != null) {
                 keyValueClient.releaseLock(configuration.getRootPath(), sessionId.get());

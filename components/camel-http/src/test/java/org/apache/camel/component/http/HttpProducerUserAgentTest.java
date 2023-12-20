@@ -70,7 +70,7 @@ public class HttpProducerUserAgentTest extends BaseHttpTest {
     }
 
     @Test
-    public void testUserAgent() throws Exception {
+    public void testUserAgent() {
         Exchange out = template.request(endpointUrl + "/agent", exchange -> {
             exchange.getIn().setBody("Hello World");
         });

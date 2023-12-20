@@ -37,7 +37,7 @@ public class NettyHttpLoopErrorTest extends BaseNettyTest {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(NettyHttpOperationFailedException.class)
                         .maximumRedeliveries(2)
                         .retryAttemptedLogLevel(LoggingLevel.WARN)

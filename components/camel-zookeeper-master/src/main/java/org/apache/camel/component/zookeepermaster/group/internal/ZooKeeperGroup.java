@@ -482,9 +482,9 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      */
     protected void handleException(Throwable e) {
         if (e instanceof IllegalStateException && "Client is not started".equals(e.getMessage())) {
-            LOG.debug("", e);
+            LOG.debug("{}", e.getMessage(), e);
         } else {
-            LOG.error("", e);
+            LOG.error("{}", e.getMessage(), e);
         }
     }
 

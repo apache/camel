@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.tracing.propagation.CamelMessagingHeadersInjectAdapter.JMS_DASH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CamelMessagingHeadersInjectAdapterTest {
 
@@ -55,6 +56,6 @@ public class CamelMessagingHeadersInjectAdapterTest {
     public void propertyWithoutDashEncoding() {
         CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map, false);
         adapter.put("-key-1-", "value1");
-        assertEquals(null, map.get(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH));
+        assertNull(map.get(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH));
     }
 }

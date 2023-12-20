@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-xml</artifactId>
@@ -323,7 +323,7 @@
                                     <classifier>sources</classifier>
                                     <overWrite>true</overWrite>
                                     <includes>**/*</includes>
-                                    <excludes>**/*Configurer.java</excludes>
+                                    <excludes>**/app/*,**/*Configurer.java</excludes>
                                     <outputDirectory>target/sources/camel-core-model</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>

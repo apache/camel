@@ -4,7 +4,7 @@
 :artifactid: camel-parquet-avro
 :description: Parquet Avro serialization and de-serialization.
 :since: 4.0
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: parquet-avro

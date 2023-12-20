@@ -80,6 +80,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile Map<String, Object> lastErrorDetails;
     private final AtomicLong counter = new AtomicLong();
     private volatile boolean firstPollDone;
+    private volatile boolean forceReady;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -214,6 +215,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                                 done = false;
                                 retryCounter = -1;
                                 LOG.trace("Greedy polling after processing {} messages", polledMessages);
+
+                                // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
+                                // consumer to be unhealthy
+                                errorCounter = 0;
+                                lastError = null;
+                                lastErrorDetails = null;
 
                                 // setting firstPollDone to true if greedy polling is enabled
                                 firstPollDone = true;
@@ -446,16 +453,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-
     /**
      * Gets the error counter. If the counter is > 0 that means the consumer failed polling for the last N number of
      * times. When the consumer is successfully again, then the error counter resets to zero.
      *
      * @see #getSuccessCounter()
      */
-    protected long getErrorCounter() {
+    public long getErrorCounter() {
         return errorCounter;
     }
 
@@ -465,22 +469,50 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      *
      * @see #getErrorCounter()
      */
-    protected long getSuccessCounter() {
+    public long getSuccessCounter() {
         return successCounter;
     }
 
     /**
      * Gets the total number of polls run.
      */
-    protected long getCounter() {
+    public long getCounter() {
         return counter.get();
     }
 
     /**
-     * Whether a first pool attempt has been done (also if the consumer has been restarted)
+     * Whether a first pool attempt has been done (also if the consumer has been restarted).
      */
-    protected boolean isFirstPollDone() {
+    public boolean isFirstPollDone() {
         return firstPollDone;
+    }
+
+    /**
+     * Whether the consumer is ready and has established connection to its target system, or first poll has been
+     * completed successfully.
+     *
+     * The health-check is using this information to know when the consumer is ready for readiness checks.
+     */
+    public boolean isConsumerReady() {
+        // we regard the consumer as ready if it was explicit forced to be ready (component specific)
+        // or that it has completed its first poll without an exception was thrown
+        // during connecting to target system and accepting data
+        return forceReady || firstPollDone;
+    }
+
+    // Implementation methods
+    // -------------------------------------------------------------------------
+
+    /**
+     * Forces the consumer to be marked as ready. This can be used by components that need to mark this sooner than
+     * usual (default marked as ready after first poll is done). This allows health-checks to be ready before an entire
+     * poll is completed.
+     *
+     * This is for example needed by the FTP component as polling a large file can take long time, causing a
+     * health-check to not be ready within reasonable time.
+     */
+    protected void forceConsumerAsReady() {
+        forceReady = true;
     }
 
     /**
@@ -611,7 +643,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, "triggerParameters",
                     triggerParameters);
             PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, "jobParameters", jobParameters);
-            if (copy.size() > 0) {
+            if (!copy.isEmpty()) {
                 throw new FailedToCreateConsumerException(
                         getEndpoint(), "There are " + copy.size()
                                        + " scheduler parameters that couldn't be set on the endpoint."
@@ -666,7 +698,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         errorCounter = 0;
         successCounter = 0;
         counter.set(0);
+        // clear ready state
         firstPollDone = false;
+        forceReady = false;
 
         super.doStop();
     }

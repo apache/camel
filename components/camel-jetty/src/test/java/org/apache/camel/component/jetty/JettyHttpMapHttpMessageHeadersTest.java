@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 
 public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
-    private String serverUriFiltered = "http://localhost:" + getPort() + "/myservice";
-    private String serverUriNotFiltered = "http://localhost:" + getPort() + "/myservice1";
+    private final String serverUriFiltered = "http://localhost:" + getPort() + "/myservice";
+    private final String serverUriNotFiltered = "http://localhost:" + getPort() + "/myservice1";
 
     @Test
     public void testHttpGetWithParamsViaURIFiltered() throws Exception {

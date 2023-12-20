@@ -280,7 +280,7 @@ Camel usually exposes these patterns via a Java Domain-Specific Language (Java D
 // ...
 ----
 
-The code above implements the Content Based Router by evaluating (`when()`) a predicate that tests if the body of the matches an https://en.wikipedia.org/wiki/XPath[xpath] expression (`xpath("/person/city = 'London'")`). If `true`, then the destination endpoint for the message should be `file:target/messages/uk`. Otherwise, the destination endpoint should be `file:target/messages/others`.
+The code above implements the Content Based Router by evaluating (`when()`) a predicate that tests if the body of the message matches an https://en.wikipedia.org/wiki/XPath[xpath] expression (`xpath("/person/city = 'London'")`). If `true`, then the destination endpoint for the message should be `file:target/messages/uk`. Otherwise, the destination endpoint should be `file:target/messages/others`.
 
 Camel supports most of the xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] from the excellent book by Gregor Hohpe and Bobby Woolf.
 

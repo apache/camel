@@ -42,6 +42,15 @@ public class TwilioEndpointTest extends AbstractTwilioTestSupport {
         AccountEndpointConfiguration aec = (AccountEndpointConfiguration) te.getConfiguration();
         Assertions.assertEquals("123", aec.getPathSid());
 
+        te = context.getEndpoint(
+                "twilio://call/create?from=RAW(+15005550006)&to=RAW(+14108675310)&url=http://demo.twilio.com/docs/voice.xml",
+                TwilioEndpoint.class);
+
+        Assertions.assertTrue(te.getConfiguration() instanceof CallEndpointConfiguration);
+        CallEndpointConfiguration cee = (CallEndpointConfiguration) te.getConfiguration();
+        Assertions.assertEquals("+15005550006", cee.getFrom().getEndpoint());
+        Assertions.assertEquals("+14108675310", cee.getTo().getEndpoint());
+
         long after = beanIntrospection.getInvokedCounter();
         Assertions.assertEquals(before, after);
     }

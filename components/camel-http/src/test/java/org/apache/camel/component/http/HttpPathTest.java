@@ -61,7 +61,7 @@ public class HttpPathTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPath() throws Exception {
+    public void httpPath() {
         Exchange exchange = template.request(endpointUrl + "/search", exchange1 -> {
         });
 
@@ -69,7 +69,7 @@ public class HttpPathTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPathHeader() throws Exception {
+    public void httpPathHeader() {
         Exchange exchange
                 = template.request(endpointUrl + "/", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "search"));
 
@@ -77,7 +77,7 @@ public class HttpPathTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPathHeaderWithStaticQueryParams() throws Exception {
+    public void httpPathHeaderWithStaticQueryParams() {
         Exchange exchange = template.request(endpointUrl + "?abc=123",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "testWithQueryParams"));
 
@@ -85,7 +85,7 @@ public class HttpPathTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPathHeaderWithBaseSlashesAndWithStaticQueryParams() throws Exception {
+    public void httpPathHeaderWithBaseSlashesAndWithStaticQueryParams() {
         Exchange exchange = template.request(endpointUrl + "/" + "?abc=123",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/testWithQueryParams"));
 
@@ -93,7 +93,7 @@ public class HttpPathTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpEscapedCharacters() throws Exception {
+    public void httpEscapedCharacters() {
         Exchange exchange = template.request(endpointUrl + "/test%20/path", exchange1 -> {
         });
 

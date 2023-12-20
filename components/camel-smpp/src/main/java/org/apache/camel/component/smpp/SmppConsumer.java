@@ -109,7 +109,8 @@ public class SmppConsumer extends DefaultConsumer {
                         BindType.BIND_RX, this.configuration.getSystemId(),
                         this.configuration.getPassword(), this.configuration.getSystemType(),
                         TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN,
-                        configuration.getAddressRange()));
+                        configuration.getAddressRange(),
+                        configuration.getInterfaceVersionByte()));
 
         return newSession;
     }

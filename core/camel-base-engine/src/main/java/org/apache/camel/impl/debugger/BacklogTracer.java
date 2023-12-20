@@ -401,10 +401,6 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     }
 
     @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
     protected void doStop() throws Exception {
         queue.clear();
     }

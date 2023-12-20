@@ -60,10 +60,10 @@ public class HttpSetHeaderIdsTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:myids")
                         .setHeader(Exchange.HTTP_QUERY, simple("ids=${join(&,id=,${header.ids})}"))
                         .removeHeader("ids")
@@ -73,7 +73,7 @@ public class HttpSetHeaderIdsTest extends BaseHttpTest {
     }
 
     @Test
-    public void testIds() throws Exception {
+    public void testIds() {
         String o = fluentTemplate.to("direct:myids").withHeader("ids", List.of(1, 2, 3)).request(String.class);
         Assertions.assertEquals("/myids?ids=id=1&id=2&id=3", o);
     }

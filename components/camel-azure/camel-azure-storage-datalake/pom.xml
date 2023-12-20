@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-azure-storage-datalake</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Azure :: Datalake Gen2</name>
-    <description>Camel Azure Datalake Gen2 Component</description>
+    <name>Camel :: Azure :: Storage Datalake</name>
+    <description>Camel Azure Datalake Component</description>
 
     <dependencies>
         <dependency>

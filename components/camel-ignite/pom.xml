@@ -17,13 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ignite</artifactId>
@@ -32,7 +33,14 @@
     <description>Camel Ignite component</description>
 
     <properties>
-        <camel.surefire.fork.vmargs>--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-exports=java.management/com.sun.jmx.mbeanserver=ALL-UNNAMED --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED --add-exports=java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED</camel.surefire.fork.vmargs>
+        <camel.surefire.fork.vmargs>--add-opens java.base/java.nio=ALL-UNNAMED --add-opens
+            java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED
+            --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+            --add-exports=java.management/com.sun.jmx.mbeanserver=ALL-UNNAMED
+            --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED
+            --add-exports=java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED --add-opens
+            jdk.management/com.sun.management.internal=ALL-UNNAMED
+        </camel.surefire.fork.vmargs>
     </properties>
 
     <dependencies>
@@ -91,4 +99,18 @@
         </dependency>
 
     </dependencies>
+
+    <!-- Apache Ignite does not work with Java 21 yet -->
+    <profiles>
+        <profile>
+            <id>skip-test-java-21</id>
+            <activation>
+                <jdk>21</jdk>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>

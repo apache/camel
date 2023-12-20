@@ -55,7 +55,11 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         if (inputStream instanceof ZipInputStream) {
             zipInputStream = (ZipInputStream) inputStream;
         } else {
-            zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream));
+            if (inputStream instanceof InputStream) {
+                zipInputStream = new ZipInputStream(inputStream);
+            } else {
+                zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream));
+            }
         }
         parent = null;
         first = true;

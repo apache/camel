@@ -290,7 +290,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         if (value == null) {
             return;
         }
-        if (builder.length() > 0) {
+        if (!builder.isEmpty()) {
             builder.append(',');
         }
         builder.append(key).append(':').append(value);

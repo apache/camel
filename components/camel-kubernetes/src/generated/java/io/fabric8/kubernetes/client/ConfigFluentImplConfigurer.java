@@ -57,8 +57,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DefaultNamespace": target.withDefaultNamespace(property(camelContext, boolean.class, value)); return true;
         case "disablehostnameverification":
         case "DisableHostnameVerification": target.withDisableHostnameVerification(property(camelContext, boolean.class, value)); return true;
-        case "errormessages":
-        case "ErrorMessages": target.withErrorMessages(property(camelContext, java.util.Map.class, value)); return true;
         case "file":
         case "File": target.withFile(property(camelContext, java.io.File.class, value)); return true;
         case "http2disable":
@@ -93,6 +91,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "OauthToken": target.withOauthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthtokenprovider":
         case "OauthTokenProvider": target.withOauthTokenProvider(property(camelContext, io.fabric8.kubernetes.client.OAuthTokenProvider.class, value)); return true;
+        case "onlyhttpwatches":
+        case "OnlyHttpWatches": target.withOnlyHttpWatches(property(camelContext, boolean.class, value)); return true;
         case "password":
         case "Password": target.withPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxypassword":
@@ -170,8 +170,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DefaultNamespace": return boolean.class;
         case "disablehostnameverification":
         case "DisableHostnameVerification": return boolean.class;
-        case "errormessages":
-        case "ErrorMessages": return java.util.Map.class;
         case "file":
         case "File": return java.io.File.class;
         case "http2disable":
@@ -206,6 +204,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "OauthToken": return java.lang.String.class;
         case "oauthtokenprovider":
         case "OauthTokenProvider": return io.fabric8.kubernetes.client.OAuthTokenProvider.class;
+        case "onlyhttpwatches":
+        case "OnlyHttpWatches": return boolean.class;
         case "password":
         case "Password": return java.lang.String.class;
         case "proxypassword":
@@ -284,8 +284,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DefaultNamespace": return target.isDefaultNamespace();
         case "disablehostnameverification":
         case "DisableHostnameVerification": return target.isDisableHostnameVerification();
-        case "errormessages":
-        case "ErrorMessages": return target.getErrorMessages();
         case "file":
         case "File": return target.getFile();
         case "http2disable":
@@ -320,6 +318,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "OauthToken": return target.getOauthToken();
         case "oauthtokenprovider":
         case "OauthTokenProvider": return target.getOauthTokenProvider();
+        case "onlyhttpwatches":
+        case "OnlyHttpWatches": return target.isOnlyHttpWatches();
         case "password":
         case "Password": return target.getPassword();
         case "proxypassword":

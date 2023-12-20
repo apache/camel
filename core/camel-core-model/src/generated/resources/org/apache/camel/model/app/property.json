@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "property",
+    "title": "Property",
+    "description": "Bean property",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.app.BeanPropertyDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the property" },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The property value" },
+    "properties": { "index": 2, "kind": "element", "displayName": "Properties", "required": false, "type": "object", "javaType": "org.apache.camel.model.app.BeanPropertiesDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Optional nested properties." }
+  }
+}

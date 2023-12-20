@@ -513,6 +513,63 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").xpath("resource:classpath:myxpath.txt", String.class)
 ----
 
+== Transforming a XML message
+
+For basic XML transformation where you have a fixed structure you can represent with a combination of using
+Camel simple and XPath language as:
+
+Given this XML body
+
+[source,xml]
+----
+<order id="123">
+  <item>Brake</item>
+  <first>scott</first>
+  <last>jackson</last>
+  <address>
+    <co>sweden</co>
+    <zip>12345</zip>
+  </address>
+</order>
+----
+
+Which you want to transform to a smaller structure:
+
+[source,xml]
+----
+<user>
+  <rool>123</rool>
+  <country>sweden</country>
+  <fullname>scott</fullname>
+</user>
+----
+
+Then you can use simple as template and XPath to grab the content from the message payload, as shown in the route snippet below:
+
+[source,java]
+----
+from("direct:start")
+        .transform().simple("""
+                <user>
+                  <rool>${xpath(/order/@id)}</rool>
+                  <country>${xpath(/order/address/co/text())}</country>
+                  <fullname>${xpath(/order/first/text())}</fullname>
+                </user>""")
+        .to("mock:result");
+----
+
+Notice how we use `${xpath(exp}` syntax in the simple template to use xpath that will be evaluated on the message body,
+to extract the content to be used in the output (see previous for output).
+
+Since the simple language can output anything you can also use this to output in plain text or JSon etc.
+
+[source,java]
+----
+from("direct:start")
+        .transform().simple("The order ${xpath(/order/@id)} is being shipped to ${xpath(/order/address/co/text())}")
+        .to("mock:result");
+----
+
 == Dependencies
 
 To use XPath in your camel routes you need to add the dependency on

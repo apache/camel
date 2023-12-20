@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCommitManager implements CommitManager {
     public static final long START_OFFSET = -1;
+    public static final long NON_PARTITION = -1;
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommitManager.class);
 
     protected final KafkaConsumer kafkaConsumer;
@@ -69,14 +71,14 @@ public abstract class AbstractCommitManager implements CommitManager {
 
     @Override
     public KafkaManualCommit getManualCommit(
-            Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record) {
+            Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> consumerRecord) {
 
         KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
         if (manualCommitFactory == null) {
             manualCommitFactory = new DefaultKafkaManualCommitFactory();
         }
 
-        return getManualCommit(exchange, partition, record, manualCommitFactory);
+        return getManualCommit(exchange, partition, consumerRecord, manualCommitFactory);
     }
 
     @Override

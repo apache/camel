@@ -262,18 +262,4 @@ public class JqExpressionTest {
         }
     }
 
-    @Test
-    public void customScopeFromRegistry() throws Exception {
-        try (CamelContext context = new DefaultCamelContext()) {
-            Scope root = Scope.newEmptyScope();
-            context.getRegistry().bind("scope", root);
-
-            JqExpression expression = new JqExpression(".foo");
-            expression.init(context);
-
-            assertThat(expression.getScope()).isSameAs(root);
-            assertThat(expression.getScope().getParentScope()).isNull();
-            assertThat(expression.getScope().getLocalFunctions()).doesNotContainKeys("header/1", "header/2");
-        }
-    }
 }

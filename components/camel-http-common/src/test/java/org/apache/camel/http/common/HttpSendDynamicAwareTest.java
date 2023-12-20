@@ -28,7 +28,7 @@ public class HttpSendDynamicAwareTest {
     private HttpSendDynamicAware httpSendDynamicAware;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         this.httpSendDynamicAware = new HttpSendDynamicAware();
     }
 

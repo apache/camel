@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -122,6 +122,7 @@
         <module>camel-dynamic-router</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch</module>
+        <module>camel-elasticsearch-rest-client</module>
         <module>camel-elytron</module>
         <module>camel-etcd3</module>
         <module>camel-exec</module>
@@ -205,6 +206,7 @@
         <module>camel-mapstruct</module>
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
+        <module>camel-micrometer-prometheus</module>
         <module>camel-microprofile</module>
         <module>camel-mina</module>
         <module>camel-minio</module>
@@ -265,6 +267,7 @@
         <module>camel-sjms2</module>
         <module>camel-sjms</module>
         <module>camel-slack</module>
+        <module>camel-smb</module>
         <module>camel-smpp</module>
         <module>camel-snakeyaml</module>
         <module>camel-snmp</module>
@@ -294,6 +297,7 @@
         <module>camel-telegram</module>
         <module>camel-threadpoolfactory-vertx</module>
         <module>camel-thrift</module>
+        <module>camel-thymeleaf</module>
         <module>camel-tika</module>
         <module>camel-twilio</module>
         <module>camel-twitter</module>

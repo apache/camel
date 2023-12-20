@@ -31,10 +31,7 @@ import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.pulsar.client.api.Producer;
-import org.apache.pulsar.client.api.ProducerBuilder;
-import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.client.api.TypedMessageBuilder;
+import org.apache.pulsar.client.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,6 +135,7 @@ public class PulsarProducer extends DefaultAsyncProducer {
                         .enableBatching(configuration.isBatchingEnabled()).batcherBuilder(configuration.getBatcherBuilder())
                         .initialSequenceId(configuration.getInitialSequenceId())
                         .compressionType(configuration.getCompressionType())
+                        .hashingScheme(HashingScheme.valueOf(configuration.getHashingScheme()))
                         .enableChunking(configuration.isChunkingEnabled());
                 if (ObjectHelper.isNotEmpty(configuration.getMessageRouter())) {
                     producerBuilder.messageRouter(configuration.getMessageRouter());

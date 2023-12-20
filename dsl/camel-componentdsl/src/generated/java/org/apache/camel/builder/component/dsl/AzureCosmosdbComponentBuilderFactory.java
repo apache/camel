@@ -322,12 +322,17 @@ public interface AzureCosmosdbComponentBuilderFactory {
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -561,6 +566,24 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder indexingPolicy(
+                com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -598,20 +621,20 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Indicates whether to use the default identity mechanism instead of
-         * the access key.
+         * Determines the credential strategy to adopt.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: SHARED_ACCOUNT_KEY
          * Group: security
          * 
-         * @param useDefaultIdentity the value to set
+         * @param credentialType the value to set
          * @return the dsl builder
          */
-        default AzureCosmosdbComponentBuilder useDefaultIdentity(
-                boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+        default AzureCosmosdbComponentBuilder credentialType(
+                org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
     }
@@ -665,9 +688,10 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((CosmosDbComponent) component).setOperation((org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition) value); return true;
             case "query": getOrCreateConfiguration((CosmosDbComponent) component).setQuery((java.lang.String) value); return true;
             case "queryRequestOptions": getOrCreateConfiguration((CosmosDbComponent) component).setQueryRequestOptions((com.azure.cosmos.models.CosmosQueryRequestOptions) value); return true;
+            case "indexingPolicy": getOrCreateConfiguration((CosmosDbComponent) component).setIndexingPolicy((com.azure.cosmos.models.IndexingPolicy) value); return true;
             case "autowiredEnabled": ((CosmosDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accountKey": getOrCreateConfiguration((CosmosDbComponent) component).setAccountKey((java.lang.String) value); return true;
-            case "useDefaultIdentity": getOrCreateConfiguration((CosmosDbComponent) component).setUseDefaultIdentity((boolean) value); return true;
+            case "credentialType": getOrCreateConfiguration((CosmosDbComponent) component).setCredentialType((org.apache.camel.component.azure.cosmosdb.CredentialType) value); return true;
             default: return false;
             }
         }

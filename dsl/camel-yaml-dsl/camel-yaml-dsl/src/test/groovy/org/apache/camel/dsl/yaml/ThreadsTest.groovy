@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ThreadsDefinition
+import org.junit.jupiter.api.Assertions
 
 class ThreadsTest extends YamlTestSupport {
 
@@ -28,11 +29,29 @@ class ThreadsTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:    
                       - threads:  
-                          pool-size: 5
+                          poolSize: 5
             '''
         then:
             with(context.routeDefinitions[0].outputs[0], ThreadsDefinition) {
                 poolSize == '5'
             }
+    }
+
+    def "Error: kebab-case: pool-size"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - threads:  
+                          pool-size: 5
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
     }
 }

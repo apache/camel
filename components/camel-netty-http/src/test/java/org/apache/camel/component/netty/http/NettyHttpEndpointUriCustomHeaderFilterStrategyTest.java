@@ -58,7 +58,7 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
         };
     }
 
-    private class CustomHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+    private static class CustomHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         CustomHeaderFilterStrategy() {
             // allow all outbound headers to pass through but only filter out
             // below inbound header
