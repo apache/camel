@@ -334,8 +334,8 @@ int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 
 == Disabling Cookies
 
-To disable cookies you can set the HTTP Client to ignore cookies by
-adding this URI option: `httpClient.cookieSpec=ignoreCookies`
+To disable cookies in the CookieStore you can set the HTTP Client to ignore cookies by
+adding this URI option: `httpClient.cookieSpec=ignore`. This doesn't affect cookies manually set in the `Cookie` header
 
 == Basic auth with the streaming message body
 
