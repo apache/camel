@@ -23,6 +23,8 @@ import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.auth.NTCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.utils.Base64;
 
@@ -46,6 +48,17 @@ public final class HttpCredentialsHelper {
         final String auth = user + ":" + pass;
         final byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
         return "Basic " + new String(encodedAuth);
+    }
+
+    public static Credentials getCredentials(String method, String username, String password, String host, String domain) {
+        if (username != null && password != null) {
+            if (domain != null && host != null) {
+                return new NTCredentials(username, password.toCharArray(), host, domain);
+            } else {
+                return new UsernamePasswordCredentials(username, password.toCharArray());
+            }
+        }
+        return null;
     }
 
 }
