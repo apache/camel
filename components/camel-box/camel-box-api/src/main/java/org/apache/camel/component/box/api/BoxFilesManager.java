@@ -37,6 +37,7 @@ import com.box.sdk.Metadata;
 import com.box.sdk.ProgressListener;
 import com.box.sdk.sharedlink.BoxSharedLinkRequest;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,7 +158,7 @@ public class BoxFilesManager {
                         // for faster results, we recommend the folder to contain no more than 500 items
                         // otherwise it can take more time to iterate over all items to check if the filename exists
                         // display a WARN if the delay is higher than 5s
-                        long init = System.currentTimeMillis();
+                        final StopWatch watch = new StopWatch();
                         int delayLimit = 5;
                         boolean exists = false;
 
@@ -174,8 +175,7 @@ public class BoxFilesManager {
                                 }
                             }
                         }
-                        long end = System.currentTimeMillis();
-                        long elapsed = (end - init) / 1000;
+                        long elapsed = watch.taken();
                         if (elapsed > delayLimit) {
                             LOG.warn(
                                     "The upload operation, checks if the file exists by using the Box list folder, however it took {}"
