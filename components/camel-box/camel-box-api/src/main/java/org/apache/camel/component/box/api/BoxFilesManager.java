@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
  */
 public class BoxFilesManager {
 
-    public static final String BASE_ERROR_MESSAGE = "Box API returned the error code %d%n%n%s";
     private static final Logger LOG = LoggerFactory.getLogger(BoxFilesManager.class);
 
     /**
@@ -63,12 +62,6 @@ public class BoxFilesManager {
         this.boxConnection = boxConnection;
     }
 
-    private static <T> void notNull(T value, String name) {
-        if (value == null) {
-            throw new IllegalArgumentException("Parameter '" + name + "' cannot be null");
-        }
-    }
-
     /**
      * Get file information.
      *
@@ -79,7 +72,7 @@ public class BoxFilesManager {
     public BoxFile.Info getFileInfo(String fileId, String... fields) {
         try {
             LOG.debug("Getting info for file(id={})", fileId);
-            notNull(fileId, "fileId");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
 
@@ -89,7 +82,7 @@ public class BoxFilesManager {
                 return file.getInfo(fields);
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -103,15 +96,15 @@ public class BoxFilesManager {
     public BoxFile updateFileInfo(String fileId, BoxFile.Info info) {
         try {
             LOG.debug("Updating info for file(id={})", fileId);
-            notNull(fileId, "fileId");
-            notNull(info, "info");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(info, BoxHelper.INFO);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
             file.updateInfo(info);
             return file;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    buildErrorMessage(e), e);
+                    BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -133,9 +126,9 @@ public class BoxFilesManager {
             Long size, Boolean check, ProgressListener listener) {
         try {
             LOG.debug("Uploading file with name '{}}' to parent_folder(id={}})", fileName, parentFolderId);
-            notNull(parentFolderId, "parentFolderId");
-            notNull(content, "content");
-            notNull(fileName, "fileName");
+            BoxHelper.notNull(parentFolderId, BoxHelper.PARENT_FOLDER_ID);
+            BoxHelper.notNull(content, BoxHelper.CONTENT);
+            BoxHelper.notNull(fileName, BoxHelper.FILE_NAME);
             BoxFile boxFile = null;
             boolean uploadNewFile = true;
             if (check != null && check) {
@@ -215,7 +208,7 @@ public class BoxFilesManager {
             return boxFile;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    buildErrorMessage(e), e);
+                    BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -234,8 +227,8 @@ public class BoxFilesManager {
             ProgressListener listener) {
         try {
             LOG.debug("Uploading new version of file(id={})", fileId);
-            notNull(fileId, "fileId");
-            notNull(fileContent, "fileContent");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(fileContent, BoxHelper.FILE_CONTENT);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
 
@@ -251,7 +244,7 @@ public class BoxFilesManager {
 
             return file;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -264,7 +257,7 @@ public class BoxFilesManager {
     public Collection<BoxFileVersion> getFileVersions(String fileId) {
         try {
             LOG.debug("Getting versions of file(id={})", fileId);
-            notNull(fileId, "fileId");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
 
@@ -272,12 +265,8 @@ public class BoxFilesManager {
 
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    buildErrorMessage(e), e);
+                    BoxHelper.buildBoxApiErrorMessage(e), e);
         }
-    }
-
-    private static String buildErrorMessage(BoxAPIException e) {
-        return String.format(BASE_ERROR_MESSAGE, e.getResponseCode(), e.getResponse());
     }
 
     /**
@@ -298,8 +287,8 @@ public class BoxFilesManager {
             ProgressListener listener) {
         try {
             LOG.debug("Downloading file(id={})", fileId);
-            notNull(fileId, "fileId");
-            notNull(output, "output");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(output, "output");
             BoxFile file = new BoxFile(boxConnection, fileId);
 
             if (listener != null) {
@@ -317,7 +306,7 @@ public class BoxFilesManager {
             }
             return output;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -337,9 +326,9 @@ public class BoxFilesManager {
             ProgressListener listener) {
         try {
             LOG.debug("Downloading file(id={}, version={})", fileId, version);
-            notNull(fileId, "fileId");
-            notNull(version, "version");
-            notNull(output, "output");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(version, BoxHelper.VERSION);
+            BoxHelper.notNull(output, "output");
             BoxFile file = new BoxFile(boxConnection, fileId);
 
             List<BoxFileVersion> fileVersions = (List<BoxFileVersion>) file.getVersions();
@@ -352,7 +341,7 @@ public class BoxFilesManager {
             }
             return output;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -367,8 +356,8 @@ public class BoxFilesManager {
     public BoxFileVersion promoteFileVersion(String fileId, Integer version) {
         try {
             LOG.debug("Promoting file(id={}, version={})", fileId, version);
-            notNull(fileId, "fileId");
-            notNull(version, "version");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(version, BoxHelper.VERSION);
             BoxFile file = new BoxFile(boxConnection, fileId);
 
             List<BoxFileVersion> fileVersions = (List<BoxFileVersion>) file.getVersions();
@@ -377,7 +366,7 @@ public class BoxFilesManager {
             fileVersion.promote();
             return fileVersion;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -395,8 +384,8 @@ public class BoxFilesManager {
             LOG.debug("Copying file(id={}) to destination_folder(id={}) {}",
                     fileId, destinationFolderId,
                     newName == null ? "" : " with new name '" + newName + "'");
-            notNull(fileId, "fileId");
-            notNull(destinationFolderId, "version");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(destinationFolderId, BoxHelper.VERSION);
             BoxFile fileToCopy = new BoxFile(boxConnection, fileId);
             BoxFolder destinationFolder = new BoxFolder(boxConnection, destinationFolderId);
             if (newName == null) {
@@ -405,7 +394,7 @@ public class BoxFilesManager {
                 return fileToCopy.copy(destinationFolder, newName).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -423,8 +412,8 @@ public class BoxFilesManager {
             LOG.debug("Moving file(id={}) to destination_folder(id={}) {}",
                     fileId, destinationFolderId,
                     newName == null ? "" : " with new name '" + newName + "'");
-            notNull(fileId, "fileId");
-            notNull(destinationFolderId, "version");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(destinationFolderId, BoxHelper.VERSION);
             BoxFile fileToMove = new BoxFile(boxConnection, fileId);
             BoxFolder destinationFolder = new BoxFolder(boxConnection, destinationFolderId);
             if (newName == null) {
@@ -433,7 +422,7 @@ public class BoxFilesManager {
                 return (BoxFile) fileToMove.move(destinationFolder, newName).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -447,13 +436,13 @@ public class BoxFilesManager {
     public BoxFile renameFile(String fileId, String newFileName) {
         try {
             LOG.debug("Renaming file(id={}) to '{}'", fileId, newFileName);
-            notNull(fileId, "fileId");
-            notNull(newFileName, "version");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(newFileName, BoxHelper.VERSION);
             BoxFile fileToRename = new BoxFile(boxConnection, fileId);
             fileToRename.rename(newFileName);
             return fileToRename;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -465,11 +454,11 @@ public class BoxFilesManager {
     public void deleteFile(String fileId) {
         try {
             LOG.debug("Deleting file(id={})", fileId);
-            notNull(fileId, "fileId");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
             BoxFile file = new BoxFile(boxConnection, fileId);
             file.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -483,8 +472,8 @@ public class BoxFilesManager {
     public void deleteFileVersion(String fileId, Integer version) {
         try {
             LOG.debug("Deleting file(id={}, version={})", fileId, version);
-            notNull(fileId, "fileId");
-            notNull(version, "version");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(version, BoxHelper.VERSION);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
             List<BoxFileVersion> versions = (List<BoxFileVersion>) file.getVersions();
@@ -492,7 +481,7 @@ public class BoxFilesManager {
 
             fileVersion.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -517,8 +506,8 @@ public class BoxFilesManager {
                             : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
                               + " permissions=" + permissions);
 
-            notNull(fileId, "fileId");
-            notNull(access, "access");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(access, "access");
 
             BoxFile file = new BoxFile(boxConnection, fileId);
             BoxSharedLinkRequest request = new BoxSharedLinkRequest();
@@ -526,7 +515,7 @@ public class BoxFilesManager {
                     .permissions(permissions.getCanDownload(), permissions.getCanPreview(), permissions.getCanEdit());
             return file.createSharedLink(request);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -540,14 +529,14 @@ public class BoxFilesManager {
     public URL getDownloadURL(String fileId) {
         try {
             LOG.debug("Getting download URL for file(id={})", fileId);
-            notNull(fileId, "fileId");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
 
             return file.getDownloadURL();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -562,12 +551,12 @@ public class BoxFilesManager {
         try {
             LOG.debug("Getting preview link for file(id={})", fileId);
 
-            notNull(fileId, "fileId");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
             return file.getPreviewLink();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -584,8 +573,8 @@ public class BoxFilesManager {
         try {
             LOG.debug("Creating metadata for file(id={})", fileId);
 
-            notNull(fileId, "fileId");
-            notNull(metadata, "metadata");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(metadata, BoxHelper.METADATA);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
 
@@ -595,7 +584,7 @@ public class BoxFilesManager {
                 return file.createMetadata(metadata);
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -611,7 +600,7 @@ public class BoxFilesManager {
         try {
             LOG.debug("Get metadata for file(id={})", fileId);
 
-            notNull(fileId, "fileId");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
 
@@ -621,7 +610,7 @@ public class BoxFilesManager {
                 return file.getMetadata();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
 
     }
@@ -636,12 +625,12 @@ public class BoxFilesManager {
     public Metadata updateFileMetadata(String fileId, Metadata metadata) {
         try {
             LOG.debug("Updating metadata for file(id={})", fileId);
-            notNull(fileId, "fileId");
-            notNull(metadata, "metadata");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(metadata, BoxHelper.METADATA);
             BoxFile file = new BoxFile(boxConnection, fileId);
             return file.updateMetadata(metadata);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -653,11 +642,11 @@ public class BoxFilesManager {
     public void deleteFileMetadata(String fileId) {
         try {
             LOG.debug("Deleting metadata for file(id={})", fileId);
-            notNull(fileId, "fileId");
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
             BoxFile file = new BoxFile(boxConnection, fileId);
             file.deleteMetadata();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -673,14 +662,14 @@ public class BoxFilesManager {
     public void checkUpload(String fileName, String parentFolderId, Long size) {
         try {
             LOG.debug("Preflight check file with name '{}' to parent_folder(id={})", fileName, parentFolderId);
-            notNull(parentFolderId, "parentFolderId");
-            notNull(fileName, "fileName");
-            notNull(size, "size");
+            BoxHelper.notNull(parentFolderId, BoxHelper.PARENT_FOLDER_ID);
+            BoxHelper.notNull(fileName, BoxHelper.FILE_NAME);
+            BoxHelper.notNull(size, BoxHelper.SIZE);
 
             BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
             parentFolder.canUpload(fileName, size);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 }

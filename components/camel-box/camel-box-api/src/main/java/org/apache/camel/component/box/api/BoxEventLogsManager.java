@@ -30,6 +30,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
+
 /**
  * Provides operations to read Box enterprise (admin) event logs.
  */
@@ -70,12 +72,8 @@ public class BoxEventLogsManager {
                     before == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(before),
                     position == null ? "" : (" starting at " + position));
 
-            if (after == null) {
-                throw new IllegalArgumentException("Parameter 'after' can not be null");
-            }
-            if (before == null) {
-                throw new IllegalArgumentException("Parameter 'before' can not be null");
-            }
+            BoxHelper.notNull(after, "after");
+            BoxHelper.notNull(before, "before");
 
             if (types == null) {
                 types = new BoxEvent.EventType[0];
@@ -93,8 +91,7 @@ public class BoxEventLogsManager {
             return results;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
-
 }

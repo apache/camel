@@ -32,6 +32,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.box.api.BoxHelper.FOLDER_ID;
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
+
 /**
  * Provides operations to manage Box folders.
  */
@@ -64,7 +67,7 @@ public class BoxFoldersManager {
             return BoxFolder.getRootFolder(boxConnection);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -100,7 +103,7 @@ public class BoxFoldersManager {
             return folder;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -121,9 +124,7 @@ public class BoxFoldersManager {
                 LOG.debug("Getting folder items in folder(id={}) at offset={} and limit={} with fields={}",
                         folderId, offset, limit, Arrays.toString(fields));
             }
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
+            BoxHelper.notNull(folderId, FOLDER_ID);
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             if (fields == null) {
                 fields = new String[0];
@@ -146,7 +147,7 @@ public class BoxFoldersManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -160,17 +161,14 @@ public class BoxFoldersManager {
     public BoxFolder createFolder(String parentFolderId, String folderName) {
         try {
             LOG.debug("Creating folder with name '{}' in parent_folder(id={})", folderName, parentFolderId);
-            if (parentFolderId == null) {
-                throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
-            }
-            if (folderName == null) {
-                throw new IllegalArgumentException("Parameter 'folderName' can not be null");
-            }
+            BoxHelper.notNull(parentFolderId, BoxHelper.PARENT_FOLDER_ID);
+            BoxHelper.notNull(folderName, BoxHelper.FOLDER_NAME);
+
             BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
             return parentFolder.createFolder(folderName).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -189,12 +187,9 @@ public class BoxFoldersManager {
                 LOG.debug("Creating folder with path '{}' in parent_folder(id={})", Arrays.toString(path), parentFolderId);
             }
 
-            if (parentFolderId == null) {
-                throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
-            }
-            if (path == null) {
-                throw new IllegalArgumentException("Paramerer 'path' can not be null");
-            }
+            BoxHelper.notNull(parentFolderId, BoxHelper.PARENT_FOLDER_ID);
+            BoxHelper.notNull(path, BoxHelper.PATH);
+
             BoxFolder folder = new BoxFolder(boxConnection, parentFolderId);
             searchPath: for (int folderIndex = 0; folderIndex < path.length; folderIndex++) {
                 for (BoxItem.Info itemInfo : folder) {
@@ -208,7 +203,7 @@ public class BoxFoldersManager {
             return folder;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -225,12 +220,10 @@ public class BoxFoldersManager {
         try {
             LOG.debug("Copying folder(id={}) to destination_folder(id={}) {}",
                     folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
-            if (destinationFolderId == null) {
-                throw new IllegalArgumentException("Parameter 'destinationFolderId' can not be null");
-            }
+
+            BoxHelper.notNull(folderId, FOLDER_ID);
+            BoxHelper.notNull(destinationFolderId, BoxHelper.DESTINATION_FOLDER_ID);
+
             BoxFolder folderToCopy = new BoxFolder(boxConnection, folderId);
             BoxFolder destinationFolder = new BoxFolder(boxConnection, destinationFolderId);
             if (newName == null) {
@@ -240,7 +233,7 @@ public class BoxFoldersManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -257,12 +250,9 @@ public class BoxFoldersManager {
         try {
             LOG.debug("Moving folder(id={}) to destination_folder(id={}) {}",
                     folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
-            if (destinationFolderId == null) {
-                throw new IllegalArgumentException("Parameter 'destinationFolderId' can not be null");
-            }
+            BoxHelper.notNull(folderId, FOLDER_ID);
+            BoxHelper.notNull(destinationFolderId, BoxHelper.DESTINATION_FOLDER_ID);
+
             BoxFolder folderToMove = new BoxFolder(boxConnection, folderId);
             BoxFolder destinationFolder = new BoxFolder(boxConnection, destinationFolderId);
             if (newName == null) {
@@ -272,7 +262,7 @@ public class BoxFoldersManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -286,18 +276,16 @@ public class BoxFoldersManager {
     public BoxFolder renameFolder(String folderId, String newFolderName) {
         try {
             LOG.debug("Renaming folder(id={}}) to '{}'", folderId, newFolderName);
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
-            if (newFolderName == null) {
-                throw new IllegalArgumentException("Parameter 'newFolderName' can not be null");
-            }
+
+            BoxHelper.notNull(folderId, FOLDER_ID);
+            BoxHelper.notNull(newFolderName, BoxHelper.NEW_FOLDER_NAME);
+
             BoxFolder folderToRename = new BoxFolder(boxConnection, folderId);
             folderToRename.rename(newFolderName);
             return folderToRename;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -309,14 +297,13 @@ public class BoxFoldersManager {
     public void deleteFolder(String folderId) {
         try {
             LOG.debug("Deleting folder(id={})", folderId);
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
+            BoxHelper.notNull(folderId, FOLDER_ID);
+
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             folder.delete(true);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -330,9 +317,7 @@ public class BoxFoldersManager {
     public BoxFolder.Info getFolderInfo(String folderId, String... fields) {
         try {
             LOG.debug("Getting info for folder(id={})", folderId);
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
+            BoxHelper.notNull(folderId, FOLDER_ID);
 
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
 
@@ -343,7 +328,7 @@ public class BoxFoldersManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -357,18 +342,15 @@ public class BoxFoldersManager {
     public BoxFolder updateFolderInfo(String folderId, BoxFolder.Info info) {
         try {
             LOG.debug("Updating info for folder(id={})", folderId);
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
-            if (info == null) {
-                throw new IllegalArgumentException("Parameter 'info' can not be null");
-            }
+            BoxHelper.notNull(folderId, FOLDER_ID);
+            BoxHelper.notNull(info, "info");
+
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             folder.updateInfo(info);
             return folder;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -393,12 +375,8 @@ public class BoxFoldersManager {
                             : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
                               + " permissions=" + permissions);
 
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
-            if (access == null) {
-                throw new IllegalArgumentException("Parameter 'access' can not be null");
-            }
+            BoxHelper.notNull(folderId, FOLDER_ID);
+            BoxHelper.notNull(access, BoxHelper.ACCESS);
 
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             BoxSharedLinkRequest request = new BoxSharedLinkRequest();
@@ -407,7 +385,7 @@ public class BoxFoldersManager {
             return folder.createSharedLink(request);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
