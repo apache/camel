@@ -65,14 +65,14 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
-        assertTrue(xml.contains("<param defaultValue=\"1\" dataType=\"integer\" name=\"header_count\""
-                                + " description=\"header param description1\" type=\"header\" required=\"true\">"));
-        assertTrue(xml.contains("<param defaultValue=\"b\" dataType=\"string\" name=\"header_letter\""
-                                + " description=\"header param description2\" type=\"query\" collectionFormat=\"multi\" required=\"false\">"));
+        assertTrue(xml.contains(
+                "<param dataType=\"integer\" defaultValue=\"1\" description=\"header param description1\" name=\"header_count\" required=\"true\" type=\"header\">"));
+        assertTrue(xml.contains(
+                "<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" description=\"header param description2\" name=\"header_letter\" required=\"false\" type=\"query\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
-        assertTrue(xml.contains("<responseMessage code=\"300\" responseModel=\"java.lang.Integer\" message=\"test msg\"/>"));
+        assertTrue(xml.contains("<responseMessage code=\"300\" message=\"test msg\" responseModel=\"java.lang.Integer\"/>"));
 
         String xml2 = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         log.info(xml2);

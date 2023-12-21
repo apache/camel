@@ -19,12 +19,14 @@ package org.apache.camel.clock;
 
 /**
  * A specialized clock that tracks the pass of time for one or more types of events
+ *
  * @param <T> The event type as an Enum
  */
 public interface EventClock<T extends Enum<T>> extends Clock {
 
     /**
      * Add the event to be tracked
+     *
      * @param event the event to track
      * @param clock the clock associated with the event
      */
@@ -32,8 +34,9 @@ public interface EventClock<T extends Enum<T>> extends Clock {
 
     /**
      * Get the clock for the event
-     * @param event the event to get the clock for
-     * @return the clock instance or null if not set
+     *
+     * @param  event the event to get the clock for
+     * @return       the clock instance or null if not set
      */
     Clock get(T event);
 }

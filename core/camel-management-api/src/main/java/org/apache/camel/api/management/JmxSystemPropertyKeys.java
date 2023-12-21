@@ -64,6 +64,9 @@ public final class JmxSystemPropertyKeys {
     // flag to enable host ip address instead of host name
     public static final String USE_HOST_IP_ADDRESS = "org.apache.camel.jmx.useHostIPAddress";
 
+    // flag to enable updating routes via XML
+    public static final String UPDATE_ROUTE_ENABLED = "org.apache.camel.jmx.updateRouteEnabled";
+
     private JmxSystemPropertyKeys() {
         // not instantiated
     }

@@ -76,6 +76,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String mask;
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String updateRouteEnabled;
 
     public String getDisabled() {
         return disabled;
@@ -234,6 +237,17 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.useHostIPAddress = useHostIPAddress;
     }
 
+    public String getUpdateRouteEnabled() {
+        return updateRouteEnabled;
+    }
+
+    /**
+     * Sets whether updating routes via JMX is allowed (is default disabled).
+     */
+    public void setUpdateRouteEnabled(String updateRouteEnabled) {
+        this.updateRouteEnabled = updateRouteEnabled;
+    }
+
     @Override
     public String toString() {
         StringJoiner buffer = new StringJoiner(", ", "CamelJMXAgent[", "]");
@@ -275,6 +289,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (mask != null) {
             buffer.add("mask=" + mask);
+        }
+        if (updateRouteEnabled != null) {
+            buffer.add("updateRouteEnabled=" + updateRouteEnabled);
         }
         return buffer.toString();
     }

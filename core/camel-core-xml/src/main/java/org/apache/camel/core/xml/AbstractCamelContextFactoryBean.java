@@ -726,6 +726,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             if (camelJMXAgent.getMask() != null) {
                 properties.put("mask", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getMask()));
             }
+            if (camelJMXAgent.getUpdateRouteEnabled() != null) {
+                properties.put("updateRouteEnabled",
+                        CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUpdateRouteEnabled()));
+            }
             if (camelJMXAgent.getLoadStatisticsEnabled() != null) {
                 properties.put("loadStatisticsEnabled",
                         CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getLoadStatisticsEnabled()));

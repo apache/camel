@@ -185,6 +185,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Gets a clock instance that keeps track of time for relevant CamelContext events
+     *
      * @return A clock instance
      */
     EventClock<ContextEvents> getClock();

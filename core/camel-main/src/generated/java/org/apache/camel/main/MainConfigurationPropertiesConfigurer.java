@@ -127,6 +127,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementNamePattern": target.setJmxManagementNamePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": target.setJmxManagementStatisticsLevel(property(camelContext, org.apache.camel.ManagementStatisticsLevel.class, value)); return true;
+        case "jmxupdaterouteenabled":
+        case "JmxUpdateRouteEnabled": target.setJmxUpdateRouteEnabled(property(camelContext, boolean.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "loadhealthchecks":
@@ -366,6 +368,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementNamePattern": return java.lang.String.class;
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
+        case "jmxupdaterouteenabled":
+        case "JmxUpdateRouteEnabled": return boolean.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
         case "loadhealthchecks":
@@ -606,6 +610,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementNamePattern": return target.getJmxManagementNamePattern();
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": return target.getJmxManagementStatisticsLevel();
+        case "jmxupdaterouteenabled":
+        case "JmxUpdateRouteEnabled": return target.isJmxUpdateRouteEnabled();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
         case "loadhealthchecks":

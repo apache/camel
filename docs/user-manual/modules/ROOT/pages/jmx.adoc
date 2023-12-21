@@ -115,6 +115,10 @@ usage of each incoming and outgoing endpoints).
 |`mask` |`org.apache.camel.jmx.mask` |`true`
 |A flag that indicates whether to remove detected sensitive information (such as passwords)
 from MBean names and attributes.
+
+|`updateRouteEnabled` |`org.apache.camel.jmx.updateRouteEnabled` |`false`
+|Whether to allow updating routes at runtime via JMX using the ManagedRouteMBean. This is disabled by default, but can be enabled for development and troubleshooting purposes, such as updating routes in an existing running Camel via JMX and other tools.
+
 |=======================================================================
 
 === Registering MBeans for specific resources only
