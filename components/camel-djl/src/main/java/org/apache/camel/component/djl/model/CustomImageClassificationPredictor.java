@@ -69,8 +69,8 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
             Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
             return classify(model, translator, image);
         } catch (IOException e) {
-            LOG.error("Couldn't transform input into a BufferedImage");
-            throw new RuntimeCamelException("Couldn't transform input into a BufferedImage", e);
+            LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
+            throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
         }
     }
 
@@ -79,8 +79,8 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
             Image image = ImageFactory.getInstance().fromInputStream(input);
             return classify(model, translator, image);
         } catch (IOException e) {
-            LOG.error("Couldn't transform input into a BufferedImage");
-            throw new RuntimeCamelException("Couldn't transform input into a BufferedImage", e);
+            LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
+            throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
         }
     }
 

@@ -67,6 +67,7 @@ final class CamelMainExtension
      * The name of the key used to store the watch instance.
      */
     private static final String WATCH = "watch";
+    public static final String SEPARATOR = "********************************************************************************";
     /**
      * The utility class allowing to dump the route coverage of a given test.
      */
@@ -83,9 +84,9 @@ final class CamelMainExtension
         if (LOG.isInfoEnabled()) {
             final Class<?> requiredTestClass = context.getRequiredTestClass();
             final String currentTestName = context.getDisplayName();
-            LOG.info("********************************************************************************");
+            LOG.info(SEPARATOR);
             LOG.info("Testing: {} ({})", currentTestName, requiredTestClass.getName());
-            LOG.info("********************************************************************************");
+            LOG.info(SEPARATOR);
         }
     }
 
@@ -95,10 +96,10 @@ final class CamelMainExtension
         final String currentTestName = context.getDisplayName();
         if (LOG.isInfoEnabled()) {
             final Class<?> requiredTestClass = context.getRequiredTestClass();
-            LOG.info("********************************************************************************");
+            LOG.info(SEPARATOR);
             LOG.info("Testing done: {} ({})", currentTestName, requiredTestClass.getName());
             LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
-            LOG.info("********************************************************************************");
+            LOG.info(SEPARATOR);
         }
         dumpRouteCoverageIfNeeded(context, time, currentTestName);
     }

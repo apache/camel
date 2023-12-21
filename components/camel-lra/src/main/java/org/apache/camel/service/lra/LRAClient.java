@@ -42,6 +42,8 @@ import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLET
 
 public class LRAClient implements Closeable {
 
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String TEXT_PLAIN_CONTENT = "text/plain";
     private final LRASagaService sagaService;
     private final HttpClient client;
     private final String lraUrl;
@@ -118,7 +120,7 @@ public class LRAClient implements Closeable {
             HttpRequest request = prepareRequest(URI.create(lraEndpoint), exchange)
                     .setHeader(HEADER_LINK, link.toString())
                     .setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, lra.toString())
-                    .setHeader("Content-Type", "text/plain")
+                    .setHeader(CONTENT_TYPE, TEXT_PLAIN_CONTENT)
                     .PUT(HttpRequest.BodyPublishers.ofString(link.toString()))
                     .build();
 
@@ -136,7 +138,7 @@ public class LRAClient implements Closeable {
 
     public CompletableFuture<Void> complete(URL lra, Exchange exchange) {
         HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CLOSE), exchange)
-                .setHeader("Content-Type", "text/plain")
+                .setHeader(CONTENT_TYPE, TEXT_PLAIN_CONTENT)
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
@@ -153,7 +155,7 @@ public class LRAClient implements Closeable {
 
     public CompletableFuture<Void> compensate(URL lra, Exchange exchange) {
         HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CANCEL), exchange)
-                .setHeader("Content-Type", "text/plain")
+                .setHeader(CONTENT_TYPE, TEXT_PLAIN_CONTENT)
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
