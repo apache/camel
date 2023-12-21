@@ -64,6 +64,7 @@ import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 public class AWS2EC2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2EC2Producer.class);
+    public static final String MISSING_INSTANCES_MESSAGE = "Instances Ids must be specified";
 
     private AWS2EC2ProducerHealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
@@ -254,7 +255,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
                 builder.instanceIds(instanceIds);
             } else {
-                throw new IllegalArgumentException("Instances Ids must be specified");
+                throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
             }
             StartInstancesResponse result;
             try {
@@ -296,7 +297,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
                 builder.instanceIds(instanceIds);
             } else {
-                throw new IllegalArgumentException("Instances Ids must be specified");
+                throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
             }
             StopInstancesResponse result;
             try {
@@ -338,7 +339,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
                 builder.instanceIds(instanceIds);
             } else {
-                throw new IllegalArgumentException("Instances Ids must be specified");
+                throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
             }
             TerminateInstancesResponse result;
             try {
@@ -446,7 +447,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
                 builder.instanceIds(instanceIds);
             } else {
-                throw new IllegalArgumentException("Instances Ids must be specified");
+                throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
             }
             try {
                 if (LOG.isTraceEnabled()) {
@@ -484,7 +485,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
                 builder.instanceIds(instanceIds);
             } else {
-                throw new IllegalArgumentException("Instances Ids must be specified");
+                throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
             }
             MonitorInstancesResponse result;
             try {
@@ -526,7 +527,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
                 builder.instanceIds(instanceIds);
             } else {
-                throw new IllegalArgumentException("Instances Ids must be specified");
+                throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
             }
             UnmonitorInstancesResponse result;
             try {
@@ -569,7 +570,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
                 builder.resources(instanceIds);
             } else {
-                throw new IllegalArgumentException("Instances Ids must be specified");
+                throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS))) {
                 tags = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS, Collection.class);
@@ -618,7 +619,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
                 builder.resources(instanceIds);
             } else {
-                throw new IllegalArgumentException("Instances Ids must be specified");
+                throw new IllegalArgumentException(MISSING_INSTANCES_MESSAGE);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS))) {
                 tags = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS, Collection.class);

@@ -28,6 +28,7 @@ import reactor.core.publisher.Mono;
 
 public final class CosmosDbClientOperations {
 
+    public static final String PARAM_DATABASE_NAME = "databaseName";
     private final CosmosAsyncClientWrapper client;
 
     private CosmosDbClientOperations(final CosmosAsyncClientWrapper client) {
@@ -40,20 +41,20 @@ public final class CosmosDbClientOperations {
 
     public Mono<CosmosDatabaseResponse> createDatabase(
             final String databaseName, final ThroughputProperties throughputProperties) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, "databaseName");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, PARAM_DATABASE_NAME);
 
         return client.createDatabaseIfNotExists(databaseName, throughputProperties);
     }
 
     public CosmosDbDatabaseOperations createDatabaseIfNotExistAndGetDatabaseOperations(
             final String databaseName, final ThroughputProperties throughputProperties) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, "databaseName");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, PARAM_DATABASE_NAME);
 
         return new CosmosDbDatabaseOperations(getAndCreateDatabaseIfNotExist(databaseName, true, throughputProperties));
     }
 
     public CosmosDbDatabaseOperations getDatabaseOperations(final String databaseName) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, "databaseName");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, PARAM_DATABASE_NAME);
 
         return new CosmosDbDatabaseOperations(getAndCreateDatabaseIfNotExist(databaseName, false, null));
     }

@@ -24,23 +24,26 @@ import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 
 public final class Sqs2MessageHelper {
 
+    public static final String TYPE_STRING = "String";
+    public static final String TYPE_BINARY = "Binary";
+
     private Sqs2MessageHelper() {
     }
 
     public static MessageAttributeValue toMessageAttributeValue(Object value) {
         if (value instanceof String && !((String) value).isEmpty()) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-            mav.dataType("String");
+            mav.dataType(TYPE_STRING);
             mav.stringValue((String) value);
             return mav.build();
         } else if (value instanceof ByteBuffer) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-            mav.dataType("Binary");
+            mav.dataType(TYPE_BINARY);
             mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer) value));
             return mav.build();
         } else if (value instanceof byte[]) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-            mav.dataType("Binary");
+            mav.dataType(TYPE_BINARY);
             mav.binaryValue(SdkBytes.fromByteArray((byte[]) value));
             return mav.build();
         } else if (value instanceof Boolean) {
@@ -71,7 +74,7 @@ public final class Sqs2MessageHelper {
             return mav.build();
         } else if (value instanceof Date) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-            mav.dataType("String");
+            mav.dataType(TYPE_STRING);
             mav.stringValue(value.toString());
             return mav.build();
         }
@@ -88,7 +91,7 @@ public final class Sqs2MessageHelper {
         } else if (mav.stringValue() != null) {
             String s = mav.stringValue();
             String dt = mav.dataType();
-            if (dt == null || "String".equals(dt)) {
+            if (dt == null || TYPE_STRING.equals(dt)) {
                 return s;
             } else if ("Number.Boolean".equals(dt)) {
                 return "1".equals(s) ? Boolean.TRUE : Boolean.FALSE;

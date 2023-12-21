@@ -55,6 +55,7 @@ import software.amazon.awssdk.services.mq.model.User;
 public class MQ2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MQ2Producer.class);
+    public static final String MISSING_BROKER_NAME = "Broker Name must be specified";
 
     private transient String mqProducerToString;
     private HealthCheck producerHealthCheck;
@@ -175,7 +176,7 @@ public class MQ2Producer extends DefaultProducer {
                 brokerName = exchange.getIn().getHeader(MQ2Constants.BROKER_NAME, String.class);
                 builder.brokerName(brokerName);
             } else {
-                throw new IllegalArgumentException("Broker Name must be specified");
+                throw new IllegalArgumentException(MISSING_BROKER_NAME);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.BROKER_ENGINE))) {
                 brokerEngine = exchange.getIn().getHeader(MQ2Constants.BROKER_ENGINE, String.class);
@@ -246,7 +247,7 @@ public class MQ2Producer extends DefaultProducer {
                 brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
                 builder.brokerId(brokerId);
             } else {
-                throw new IllegalArgumentException("Broker Name must be specified");
+                throw new IllegalArgumentException(MISSING_BROKER_NAME);
             }
             DeleteBrokerResponse result;
             try {
@@ -281,7 +282,7 @@ public class MQ2Producer extends DefaultProducer {
                 brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
                 builder.brokerId(brokerId);
             } else {
-                throw new IllegalArgumentException("Broker Name must be specified");
+                throw new IllegalArgumentException(MISSING_BROKER_NAME);
             }
             RebootBrokerResponse result;
             try {
@@ -317,13 +318,13 @@ public class MQ2Producer extends DefaultProducer {
                 brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
                 builder.brokerId(brokerId);
             } else {
-                throw new IllegalArgumentException("Broker Name must be specified");
+                throw new IllegalArgumentException(MISSING_BROKER_NAME);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.CONFIGURATION_ID))) {
                 configurationId = exchange.getIn().getHeader(MQ2Constants.CONFIGURATION_ID, ConfigurationId.class);
                 builder.configuration(configurationId);
             } else {
-                throw new IllegalArgumentException("Broker Name must be specified");
+                throw new IllegalArgumentException(MISSING_BROKER_NAME);
             }
             UpdateBrokerResponse result;
             try {
@@ -358,7 +359,7 @@ public class MQ2Producer extends DefaultProducer {
                 brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
                 builder.brokerId(brokerId);
             } else {
-                throw new IllegalArgumentException("Broker Name must be specified");
+                throw new IllegalArgumentException(MISSING_BROKER_NAME);
             }
             DescribeBrokerResponse result;
             try {

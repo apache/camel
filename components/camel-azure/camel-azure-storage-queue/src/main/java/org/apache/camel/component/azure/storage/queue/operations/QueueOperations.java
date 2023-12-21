@@ -34,6 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class QueueOperations {
 
+    public static final String MISSING_EXCHANGE = "exchange cannot be null";
     private final QueueConfigurationOptionsProxy configurationOptionsProxy;
     private final QueueClientWrapper client;
 
@@ -76,7 +77,7 @@ public class QueueOperations {
     }
 
     public QueueOperationResponse sendMessage(final Exchange exchange) {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final boolean queueCreated = configurationOptionsProxy.isCreateQueue(exchange);
 
@@ -93,7 +94,7 @@ public class QueueOperations {
     }
 
     public QueueOperationResponse deleteMessage(final Exchange exchange) {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final String messageId = configurationOptionsProxy.getMessageId(exchange);
         final String popReceipt = configurationOptionsProxy.getPopReceipt(exchange);
@@ -145,7 +146,7 @@ public class QueueOperations {
     }
 
     public QueueOperationResponse updateMessage(final Exchange exchange) {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final String updatedText = exchange.getIn().getBody(String.class);
         final String messageId = configurationOptionsProxy.getMessageId(exchange);

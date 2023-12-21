@@ -87,6 +87,7 @@ import software.amazon.awssdk.services.lambda.model.VpcConfig;
 public class Lambda2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Lambda2Producer.class);
+    public static final String MISSING_RESOURCE_ARN = "The resource ARN must be specified";
 
     private HealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
@@ -494,7 +495,7 @@ public class Lambda2Producer extends DefaultProducer {
                 String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
                 builder.resource(resource);
             } else {
-                throw new IllegalArgumentException("The resource ARN must be specified");
+                throw new IllegalArgumentException(MISSING_RESOURCE_ARN);
             }
             request = builder.build();
         }
@@ -520,7 +521,7 @@ public class Lambda2Producer extends DefaultProducer {
                 String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
                 builder.resource(resource);
             } else {
-                throw new IllegalArgumentException("The resource ARN must be specified");
+                throw new IllegalArgumentException(MISSING_RESOURCE_ARN);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS))) {
                 Map<String, String> tags = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS, Map.class);
@@ -552,7 +553,7 @@ public class Lambda2Producer extends DefaultProducer {
                 String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
                 builder.resource(resource);
             } else {
-                throw new IllegalArgumentException("The resource ARN must be specified");
+                throw new IllegalArgumentException(MISSING_RESOURCE_ARN);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS))) {
                 List<String> tagKeys = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS, List.class);

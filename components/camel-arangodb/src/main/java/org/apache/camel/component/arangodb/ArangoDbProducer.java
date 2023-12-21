@@ -52,6 +52,7 @@ import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS
 public class ArangoDbProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArangoDbProducer.class);
+    public static final String INVALID_PAYLOAD_MESSAGE = "Invalid payload for command";
 
     private final ArangoDbEndpoint endpoint;
     private final Map<ArangoDbOperation, Processor> operations = new EnumMap<>(ArangoDbOperation.class);
@@ -129,7 +130,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 Object obj = exchange.getMessage().getMandatoryBody();
                 return collection.insertDocument(obj);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -146,7 +147,7 @@ public class ArangoDbProducer extends DefaultProducer {
 
                 return collection.getDocument(key, resultClassType);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -169,7 +170,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 Object document = exchange.getMessage().getMandatoryBody();
                 return collection.updateDocument(key, document);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -190,7 +191,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 String singleKey = exchange.getMessage().getMandatoryBody(String.class);
                 return collection.deleteDocument(singleKey);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -202,7 +203,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 Object vertexDocument = exchange.getMessage().getMandatoryBody();
                 return vertexCollection.insertVertex(vertexDocument);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -215,7 +216,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 Object vertexDocument = exchange.getMessage().getMandatoryBody();
                 return vertexCollection.updateVertex(key, vertexDocument);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -228,7 +229,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 vertexCollection.deleteVertex(singleKey);
                 return true;
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -244,7 +245,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 resultClassType = resultClassType != null ? resultClassType : BaseDocument.class;
                 return vertexCollection.getVertex(key, resultClassType);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -256,7 +257,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 Object edgeDocument = exchange.getMessage().getMandatoryBody();
                 return edgeCollection.insertEdge(edgeDocument);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -269,7 +270,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 Object edgeDocument = exchange.getMessage().getMandatoryBody();
                 return edgeCollection.updateEdge(key, edgeDocument);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -282,7 +283,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 edgeCollection.deleteEdge(singleKey);
                 return true;
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -298,7 +299,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 resultClassType = resultClassType != null ? resultClassType : BaseEdgeDocument.class;
                 return edgeCollection.getEdge(key, resultClassType);
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
         };
     }
@@ -332,7 +333,7 @@ public class ArangoDbProducer extends DefaultProducer {
                     LOG.warn("Failed to close instance of ArangoCursor", e);
                 }
             } catch (InvalidPayloadException e) {
-                throw new RuntimeCamelException("Invalid payload for command", e);
+                throw new RuntimeCamelException(INVALID_PAYLOAD_MESSAGE, e);
             }
             return null;
         };

@@ -44,6 +44,15 @@ import reactor.core.publisher.Mono;
 
 public class CosmosDbContainerOperations {
 
+    public static final String PARAM_PARTITION_KEY = "partitionKey";
+    public static final String PARAM_ITEM_ID = "itemId";
+    public static final String PARAM_ITEM = "item";
+    public static final String PARAM_ITEM_TYPE = "itemType";
+    public static final String PARAM_QUERY = "query";
+    public static final String PARAM_LEASE_CONTAINER = "leaseContainer";
+    public static final String PARAM_RESULTS_CALLBACK = "resultsCallback";
+    public static final String PARAM_HOST_NAME = "hostName";
+    public static final String PARAM_ITEMS = "items";
     private final Mono<CosmosAsyncContainer> container;
 
     // visible for testing
@@ -71,15 +80,15 @@ public class CosmosDbContainerOperations {
     // operations on the item
     public <T> Mono<CosmosItemResponse<T>> createItem(
             final T item, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(item, "item");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(item, PARAM_ITEM);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, PARAM_PARTITION_KEY);
 
         return applyToContainer(container -> container.createItem(item, partitionKey, itemRequestOptions));
     }
 
     public <T> Flux<CosmosItemResponse<T>> createItems(
             final List<T> items, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(items, "items");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(items, PARAM_ITEMS);
 
         return Flux.fromIterable(items)
                 .flatMap(item -> createItem(item, partitionKey, itemRequestOptions));
@@ -87,15 +96,15 @@ public class CosmosDbContainerOperations {
 
     public <T> Mono<CosmosItemResponse<T>> upsertItem(
             final T item, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(item, "item");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(item, PARAM_ITEM);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, PARAM_PARTITION_KEY);
 
         return applyToContainer(container -> container.upsertItem(item, partitionKey, itemRequestOptions));
     }
 
     public <T> Flux<CosmosItemResponse<T>> upsertItems(
             final List<T> items, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(items, "items");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(items, PARAM_ITEMS);
 
         return Flux.fromIterable(items)
                 .flatMap(item -> upsertItem(item, partitionKey, itemRequestOptions));
@@ -103,8 +112,8 @@ public class CosmosDbContainerOperations {
 
     public Mono<CosmosItemResponse<Object>> deleteItem(
             final String itemId, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(itemId, "itemId");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemId, PARAM_ITEM_ID);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, PARAM_PARTITION_KEY);
 
         return applyToContainer(container -> container.deleteItem(itemId, partitionKey, itemRequestOptions));
     }
@@ -112,9 +121,9 @@ public class CosmosDbContainerOperations {
     public <T> Mono<CosmosItemResponse<T>> replaceItem(
             final T item, final String itemId, final PartitionKey partitionKey,
             final CosmosItemRequestOptions itemRequestOptions) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(item, "item");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(itemId, "itemId");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(item, PARAM_ITEM);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemId, PARAM_ITEM_ID);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, PARAM_PARTITION_KEY);
 
         return applyToContainer(container -> container.replaceItem(item, itemId, partitionKey, itemRequestOptions));
     }
@@ -122,17 +131,17 @@ public class CosmosDbContainerOperations {
     public <T> Mono<CosmosItemResponse<T>> readItem(
             final String itemId, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions,
             final Class<T> itemType) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(itemId, "itemId");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemId, PARAM_ITEM_ID);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, PARAM_PARTITION_KEY);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, PARAM_ITEM_TYPE);
 
         return applyToContainer(container -> container.readItem(itemId, partitionKey, itemRequestOptions, itemType));
     }
 
     public <T> Flux<T> readAllItems(
             final PartitionKey partitionKey, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, PARAM_PARTITION_KEY);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, PARAM_ITEM_TYPE);
 
         // a bug in Azure SDK, see: https://github.com/Azure/azure-sdk-for-java/issues/20743
         final CosmosQueryRequestOptions requestOptions
@@ -144,8 +153,8 @@ public class CosmosDbContainerOperations {
 
     public <T> Flux<T> queryItems(
             final String query, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(query, PARAM_QUERY);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, PARAM_ITEM_TYPE);
 
         return container
                 .flatMapMany(container -> CosmosDbUtils.convertCosmosPagedFluxToFluxResults(
@@ -154,8 +163,8 @@ public class CosmosDbContainerOperations {
 
     public <T> Flux<FeedResponse<T>> queryItemsAsFeed(
             final String query, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(query, PARAM_QUERY);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, PARAM_ITEM_TYPE);
 
         return container
                 .flatMapMany(container -> container.queryItems(query, queryRequestOptions, itemType).byPage());
@@ -164,9 +173,9 @@ public class CosmosDbContainerOperations {
     public ChangeFeedProcessor captureEventsWithChangeFeed(
             final Mono<CosmosAsyncContainer> leaseContainerMono, final String hostName,
             final Consumer<List<Map<String, ?>>> resultsCallback, final ChangeFeedProcessorOptions changeFeedProcessorOptions) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(leaseContainerMono, "leaseContainer");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(resultsCallback, "resultsCallback");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(hostName, "hostName");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(leaseContainerMono, PARAM_LEASE_CONTAINER);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(resultsCallback, PARAM_RESULTS_CALLBACK);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(hostName, PARAM_HOST_NAME);
 
         final ObjectMapper mapper = Utils.getSimpleObjectMapper();
 
