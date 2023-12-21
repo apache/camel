@@ -18,11 +18,13 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 @Tags({ @Tag("not-parallel") })
+@Disabled("Disabled due to CAMEL-20276")
 public class JmsTopicSharedTest extends AbstractPersistentJMSTest {
 
     private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.consumer.test";
