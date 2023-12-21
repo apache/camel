@@ -673,6 +673,9 @@ public interface Exchange {
      */
     ExchangeExtension getExchangeExtension();
 
+    /**
+     * Gets {@link Clock} that holds time information about the exchange
+     */
     Clock getClock();
 
 }

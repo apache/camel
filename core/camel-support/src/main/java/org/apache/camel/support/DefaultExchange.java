@@ -35,31 +35,26 @@ public final class DefaultExchange extends AbstractExchange {
     DefaultExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
                     Map<String, Object> properties) {
         super(context, internalProperties, properties);
-
         this.timeInfo = new MonotonicClock();
     }
 
     public DefaultExchange(CamelContext context) {
         super(context);
-
         this.timeInfo = new MonotonicClock();
     }
 
     public DefaultExchange(CamelContext context, ExchangePattern pattern) {
         super(context, pattern);
-
         this.timeInfo = new MonotonicClock();
     }
 
     public DefaultExchange(Exchange parent) {
         super(parent);
-
         this.timeInfo = parent.getClock();
     }
 
     DefaultExchange(AbstractExchange parent) {
         super(parent);
-
         this.timeInfo = parent.getClock();
     }
 
@@ -79,9 +74,7 @@ public final class DefaultExchange extends AbstractExchange {
 
     public static DefaultExchange newFromEndpoint(Endpoint fromEndpoint, ExchangePattern exchangePattern) {
         DefaultExchange exchange = new DefaultExchange(fromEndpoint.getCamelContext(), exchangePattern);
-
         exchange.getExchangeExtension().setFromEndpoint(fromEndpoint);
-
         return exchange;
     }
 }

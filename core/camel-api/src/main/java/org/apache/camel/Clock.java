@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel;
 
 import java.time.Instant;
@@ -26,6 +25,7 @@ import java.util.Date;
  * A clock used to track the lifetime of an exchange
  */
 public interface Clock {
+
     /**
      * The elapsed time since the creation of the exchange
      *

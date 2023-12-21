@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Clock;
 
+/**
+ * A clock that is used for precise timing.
+ */
 public class MonotonicClock implements Clock {
     private final long createdNano;
 

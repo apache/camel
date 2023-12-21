@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Clock;
 
+/**
+ * A clock that can be reset.
+ */
 public final class ResetableClock implements Clock {
     private long created;
     private long createdNano;
