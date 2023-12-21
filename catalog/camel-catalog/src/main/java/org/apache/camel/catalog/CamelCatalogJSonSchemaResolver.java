@@ -29,6 +29,7 @@ import org.apache.camel.catalog.impl.CatalogHelper;
 public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
     private static final String MODEL_DIR = "org/apache/camel/catalog/models";
+    public static final String EXTENSION = ".json";
 
     private final CamelCatalog camelCatalog;
     private ClassLoader classLoader;
@@ -57,7 +58,7 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
     @Override
     public String getComponentJSonSchema(String name) {
-        final String file = camelCatalog.getRuntimeProvider().getComponentJSonSchemaDirectory() + "/" + name + ".json";
+        final String file = camelCatalog.getRuntimeProvider().getComponentJSonSchemaDirectory() + "/" + name + EXTENSION;
 
         final String fromVersionManager = loadResourceFromVersionManager(file);
         if (fromVersionManager != null) {
@@ -77,7 +78,7 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
     @Override
     public String getDataFormatJSonSchema(String name) {
-        final String file = camelCatalog.getRuntimeProvider().getDataFormatJSonSchemaDirectory() + "/" + name + ".json";
+        final String file = camelCatalog.getRuntimeProvider().getDataFormatJSonSchemaDirectory() + "/" + name + EXTENSION;
 
         final String fromVersionManager = loadResourceFromVersionManager(file);
         if (fromVersionManager != null) {
@@ -102,14 +103,14 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
             name = "bean";
         }
 
-        final String file = camelCatalog.getRuntimeProvider().getLanguageJSonSchemaDirectory() + "/" + name + ".json";
+        final String file = camelCatalog.getRuntimeProvider().getLanguageJSonSchemaDirectory() + "/" + name + EXTENSION;
 
         return loadResourceFromVersionManager(file);
     }
 
     @Override
     public String getModelJSonSchema(String name) {
-        final String file = MODEL_DIR + "/" + name + ".json";
+        final String file = MODEL_DIR + "/" + name + EXTENSION;
 
         return loadResourceFromVersionManager(file);
     }
@@ -123,7 +124,7 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
     @Override
     public String getOtherJSonSchema(String name) {
-        final String file = camelCatalog.getRuntimeProvider().getOtherJSonSchemaDirectory() + "/" + name + ".json";
+        final String file = camelCatalog.getRuntimeProvider().getOtherJSonSchemaDirectory() + "/" + name + EXTENSION;
 
         return loadResourceFromVersionManager(file);
     }
@@ -132,7 +133,7 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
         if (className != null) {
             String packageName = className.substring(0, className.lastIndexOf('.'));
             packageName = packageName.replace('.', '/');
-            final String path = packageName + "/" + fileName + ".json";
+            final String path = packageName + "/" + fileName + EXTENSION;
 
             return loadResourceFromVersionManager(path);
         }

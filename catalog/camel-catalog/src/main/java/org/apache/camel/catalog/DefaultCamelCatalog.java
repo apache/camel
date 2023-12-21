@@ -57,6 +57,12 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
     private static final String MAIN_DIR = "org/apache/camel/catalog/main";
     private static final String BASE_RESOURCE_DIR = "org/apache/camel/catalog";
+    public static final String FIND_COMPONENT_NAMES = "findComponentNames";
+    public static final String LIST_COMPONENTS_AS_JSON = "listComponentsAsJson";
+    public static final String FIND_DATA_FORMAT_NAMES = "findDataFormatNames";
+    public static final String LIST_DATA_FORMATS_AS_JSON = "listDataFormatsAsJson";
+    public static final String FIND_LANGUAGE_NAMES = "findLanguageNames";
+    public static final String LIST_LANGUAGES_AS_JSON = "listLanguagesAsJson";
 
     private final VersionHelper version = new VersionHelper();
 
@@ -102,12 +108,12 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         // inject CamelCatalog to the provider
         this.runtimeProvider.setCamelCatalog(this);
         // invalidate the cache
-        cache.remove("findComponentNames");
-        cache.remove("listComponentsAsJson");
-        cache.remove("findDataFormatNames");
-        cache.remove("listDataFormatsAsJson");
-        cache.remove("findLanguageNames");
-        cache.remove("listLanguagesAsJson");
+        cache.remove(FIND_COMPONENT_NAMES);
+        cache.remove(LIST_COMPONENTS_AS_JSON);
+        cache.remove(FIND_DATA_FORMAT_NAMES);
+        cache.remove(LIST_DATA_FORMATS_AS_JSON);
+        cache.remove(FIND_LANGUAGE_NAMES);
+        cache.remove(LIST_LANGUAGES_AS_JSON);
     }
 
     @Override
@@ -134,9 +140,9 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public void addComponent(String name, String className) {
         extraComponents.put(name, className);
         // invalidate the cache
-        cache.remove("findComponentNames");
+        cache.remove(FIND_COMPONENT_NAMES);
         cache.remove("findComponentLabels");
-        cache.remove("listComponentsAsJson");
+        cache.remove(LIST_COMPONENTS_AS_JSON);
     }
 
     @Override
@@ -151,9 +157,9 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public void addDataFormat(String name, String className) {
         extraDataFormats.put(name, className);
         // invalidate the cache
-        cache.remove("findDataFormatNames");
+        cache.remove(FIND_DATA_FORMAT_NAMES);
         cache.remove("findDataFormatLabels");
-        cache.remove("listDataFormatsAsJson");
+        cache.remove(LIST_DATA_FORMATS_AS_JSON);
     }
 
     @Override
@@ -198,7 +204,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public List<String> findComponentNames() {
-        return cache("findComponentNames", () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
+        return cache(FIND_COMPONENT_NAMES, () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
                 .flatMap(Collection::stream)
                 .sorted()
                 .toList());
@@ -206,7 +212,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public List<String> findDataFormatNames() {
-        return cache("findDataFormatNames", () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
+        return cache(FIND_DATA_FORMAT_NAMES, () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
                 .flatMap(Collection::stream)
                 .sorted()
                 .toList());
@@ -214,7 +220,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public List<String> findLanguageNames() {
-        return cache("findLanguageNames", runtimeProvider::findLanguageNames);
+        return cache(FIND_LANGUAGE_NAMES, runtimeProvider::findLanguageNames);
     }
 
     @Override
@@ -398,7 +404,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public String listComponentsAsJson() {
-        return cache("listComponentsAsJson", () -> JsonMapper.serialize(findComponentNames().stream()
+        return cache(LIST_COMPONENTS_AS_JSON, () -> JsonMapper.serialize(findComponentNames().stream()
                 .map(this::componentJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("component"))
@@ -407,7 +413,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public String listDataFormatsAsJson() {
-        return cache("listDataFormatsAsJson", () -> JsonMapper.serialize(findDataFormatNames().stream()
+        return cache(LIST_DATA_FORMATS_AS_JSON, () -> JsonMapper.serialize(findDataFormatNames().stream()
                 .map(this::dataFormatJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("dataformat"))
@@ -416,7 +422,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public String listLanguagesAsJson() {
-        return cache("listLanguagesAsJson", () -> JsonMapper.serialize(findLanguageNames().stream()
+        return cache(LIST_LANGUAGES_AS_JSON, () -> JsonMapper.serialize(findLanguageNames().stream()
                 .map(this::languageJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("language"))

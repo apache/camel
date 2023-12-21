@@ -29,7 +29,7 @@ public class ElasticsearchSegmentDecorator extends AbstractSegmentDecorator {
 
     @Override
     public String getComponent() {
-        return "elasticsearch";
+        return ELASTICSARCH_DB_TYPE;
     }
 
     @Override

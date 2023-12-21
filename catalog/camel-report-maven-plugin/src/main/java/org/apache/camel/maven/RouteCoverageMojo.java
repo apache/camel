@@ -76,6 +76,7 @@ import static org.apache.camel.catalog.common.CatalogHelper.stripRootPath;
 @Mojo(name = "route-coverage", threadSafe = true)
 public class RouteCoverageMojo extends AbstractExecMojo {
 
+    public static final String DESTINATION_DIR = "/target/camel-route-coverage";
     /**
      * The maven project.
      */
@@ -259,7 +260,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             throws MojoExecutionException {
         try {
             List<CoverageData> coverageData = RouteCoverageHelper
-                    .parseDumpRouteCoverageByRouteId(project.getBasedir() + "/target/camel-route-coverage", routeId);
+                    .parseDumpRouteCoverageByRouteId(project.getBasedir() + DESTINATION_DIR, routeId);
             if (coverageData.isEmpty()) {
                 getLog().warn("No route coverage data found for route: " + routeId
                               + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
@@ -297,7 +298,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         // grab dump data for the route
         try {
             Map<String, List<CoverageData>> datas = RouteCoverageHelper
-                    .parseDumpRouteCoverageByClassAndTestMethod(project.getBasedir() + "/target/camel-route-coverage");
+                    .parseDumpRouteCoverageByClassAndTestMethod(project.getBasedir() + DESTINATION_DIR);
             if (datas.isEmpty()) {
                 getLog().warn("No route coverage data found"
                               + ". Make sure to enable route coverage in your unit tests. Also remember to run unit tests first.");
@@ -356,7 +357,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             CoverageResultsProcessor processor = new CoverageResultsProcessor();
             processor.writeCSS(cssPath);
             processor.writeJS(jsPath);
-            File xmlPath = new File(project.getBasedir() + "/target/camel-route-coverage");
+            File xmlPath = new File(project.getBasedir() + DESTINATION_DIR);
             String out = processor.generateReport(project, xmlPath, htmlPath);
             getLog().info(out);
         } catch (Exception e) {
