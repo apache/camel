@@ -30,6 +30,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
+
 /**
  * Provides operations to manage Box searches.
  */
@@ -64,13 +66,8 @@ public class BoxSearchManager {
     public Collection<BoxItem> searchFolder(String folderId, String query) {
         try {
             LOG.debug("Searching folder(id={}) with query={}", folderId, query);
-
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
-            if (query == null) {
-                throw new IllegalArgumentException("Parameter 'query' can not be null");
-            }
+            BoxHelper.notNull(folderId, BoxHelper.FOLDER_ID);
+            BoxHelper.notNull(query, BoxHelper.QUERY);
 
             // New box API for search requires offset and limit as parameters.
             // To preserve api from previous functionality fro previous version, we will execute more searches if needed and merge results
@@ -91,7 +88,7 @@ public class BoxSearchManager {
             return result;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 }

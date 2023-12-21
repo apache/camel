@@ -65,8 +65,12 @@ public class BoxGroupsManager {
             return groups;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
+    }
+
+    private static String buildBoxApiErrorMessage(BoxAPIException e) {
+        return String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse());
     }
 
     /**
@@ -95,7 +99,7 @@ public class BoxGroupsManager {
                     invitabilityLevel, memberViewabilityLevel).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -107,15 +111,13 @@ public class BoxGroupsManager {
     public void deleteGroup(String groupId) {
         try {
             LOG.debug("Deleting group({})", groupId);
-            if (groupId == null) {
-                throw new IllegalArgumentException("Parameter 'groupId' can not be null");
-            }
+            BoxHelper.notNull(groupId, BoxHelper.GROUP_ID);
 
             BoxGroup group = new BoxGroup(boxConnection, groupId);
             group.delete();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -128,16 +130,14 @@ public class BoxGroupsManager {
     public BoxGroup.Info getGroupInfo(String groupId) {
         try {
             LOG.debug("Getting info for group(id={})", groupId);
-            if (groupId == null) {
-                throw new IllegalArgumentException("Parameter 'groupId' can not be null");
-            }
+            BoxHelper.notNull(groupId, BoxHelper.GROUP_ID);
 
             BoxGroup group = new BoxGroup(boxConnection, groupId);
 
             return group.getInfo();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -151,19 +151,15 @@ public class BoxGroupsManager {
     public BoxGroup updateGroupInfo(String groupId, BoxGroup.Info groupInfo) {
         try {
             LOG.debug("Updating info for group(id={})", groupId);
-            if (groupId == null) {
-                throw new IllegalArgumentException("Parameter 'groupId' can not be null");
-            }
-            if (groupInfo == null) {
-                throw new IllegalArgumentException("Parameter 'groupInfo' can not be null");
-            }
+            BoxHelper.notNull(groupId, BoxHelper.GROUP_ID);
+            BoxHelper.notNull(groupInfo, BoxHelper.GROUP_INFO);
 
             BoxGroup group = new BoxGroup(boxConnection, groupId);
             group.updateInfo(groupInfo);
             return group;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -176,16 +172,14 @@ public class BoxGroupsManager {
     public Collection<BoxGroupMembership.Info> getGroupMemberships(String groupId) {
         try {
             LOG.debug("Getting information about all memberships for group(id={})", groupId);
-            if (groupId == null) {
-                throw new IllegalArgumentException("Parameter 'groupId' can not be null");
-            }
+            BoxHelper.notNull(groupId, BoxHelper.GROUP_ID);
 
             BoxGroup group = new BoxGroup(boxConnection, groupId);
 
             return group.getMemberships();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -201,12 +195,8 @@ public class BoxGroupsManager {
         try {
             LOG.debug("Adding user(id={}) as member to group(id={} {})",
                     userId, groupId, role == null ? "" : "with role=" + role.name());
-            if (groupId == null) {
-                throw new IllegalArgumentException("Parameter 'groupId' can not be null");
-            }
-            if (userId == null) {
-                throw new IllegalArgumentException("Parameter 'userId' can not be null");
-            }
+            BoxHelper.notNull(groupId, BoxHelper.GROUP_ID);
+            BoxHelper.notNull(userId, BoxHelper.USER_ID);
 
             BoxGroup group = new BoxGroup(boxConnection, groupId);
             BoxUser user = new BoxUser(boxConnection, userId);
@@ -214,7 +204,7 @@ public class BoxGroupsManager {
             return group.addMembership(user, role).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -226,16 +216,14 @@ public class BoxGroupsManager {
     public void deleteGroupMembership(String groupMembershipId) {
         try {
             LOG.debug("Deleting groupMembership(id={})", groupMembershipId);
-            if (groupMembershipId == null) {
-                throw new IllegalArgumentException("Parameter 'groupMembershipId' can not be null");
-            }
+            BoxHelper.notNull(groupMembershipId, BoxHelper.GROUP_MEMBERSHIP_ID);
 
             BoxGroupMembership groupMembership = new BoxGroupMembership(boxConnection, groupMembershipId);
 
             groupMembership.delete();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -248,16 +236,14 @@ public class BoxGroupsManager {
     public BoxGroupMembership.Info getGroupMembershipInfo(String groupMembershipId) {
         try {
             LOG.debug("Getting info for groupMemebership(id={})", groupMembershipId);
-            if (groupMembershipId == null) {
-                throw new IllegalArgumentException("Parameter 'groupMembershipId' can not be null");
-            }
+            BoxHelper.notNull(groupMembershipId, BoxHelper.GROUP_MEMBERSHIP_ID);
 
             BoxGroupMembership group = new BoxGroupMembership(boxConnection, groupMembershipId);
 
             return group.getInfo();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -271,12 +257,8 @@ public class BoxGroupsManager {
     public BoxGroupMembership updateGroupMembershipInfo(String groupMembershipId, BoxGroupMembership.Info info) {
         try {
             LOG.debug("Updating info for groupMembership(id={})", groupMembershipId);
-            if (groupMembershipId == null) {
-                throw new IllegalArgumentException("Parameter 'groupMembershipId' can not be null");
-            }
-            if (info == null) {
-                throw new IllegalArgumentException("Parameter 'info' can not be null");
-            }
+            BoxHelper.notNull(groupMembershipId, BoxHelper.GROUP_MEMBERSHIP_ID);
+            BoxHelper.notNull(info, BoxHelper.INFO);
 
             BoxGroupMembership groupMembership = new BoxGroupMembership(boxConnection, groupMembershipId);
 
@@ -284,7 +266,7 @@ public class BoxGroupsManager {
             return groupMembership;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 }

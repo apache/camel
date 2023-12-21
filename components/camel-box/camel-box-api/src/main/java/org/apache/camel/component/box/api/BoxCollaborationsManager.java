@@ -27,6 +27,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
+
 /**
  * Provides operations to manage Box collaborations.
  */
@@ -58,14 +60,12 @@ public class BoxCollaborationsManager {
     public Collection<BoxCollaboration.Info> getFolderCollaborations(String folderId) {
         try {
             LOG.debug("Getting collaborations for folder(id={})", folderId);
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
+            BoxHelper.notNull(folderId, BoxHelper.FOLDER_ID);
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.getCollaborations();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -82,22 +82,15 @@ public class BoxCollaborationsManager {
             String folderId, BoxCollaborator collaborator,
             BoxCollaboration.Role role) {
         try {
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
-            if (collaborator == null) {
-                throw new IllegalArgumentException("Parameter 'collaborator' can not be null");
-            }
+            BoxHelper.notNull(folderId, BoxHelper.FOLDER_ID);
+            BoxHelper.notNull(collaborator, BoxHelper.COLLABORATOR);
             LOG.debug("Creating  collaborations for folder(id={}) with collaborator({})", folderId, collaborator.getID());
-            if (role == null) {
-                throw new IllegalArgumentException("Parameter 'role' can not be null");
-            }
-
+            BoxHelper.notNull(role, BoxHelper.ROLE);
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.collaborate(collaborator, role).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -114,21 +107,15 @@ public class BoxCollaborationsManager {
     public BoxCollaboration addFolderCollaborationByEmail(String folderId, String email, BoxCollaboration.Role role) {
         try {
             LOG.debug("Creating  collaborations for folder(id={}) with collaborator({})", folderId, email);
-            if (folderId == null) {
-                throw new IllegalArgumentException("Parameter 'folderId' can not be null");
-            }
-            if (email == null) {
-                throw new IllegalArgumentException("Parameter 'email' can not be null");
-            }
-            if (role == null) {
-                throw new IllegalArgumentException("Parameter 'role' can not be null");
-            }
+            BoxHelper.notNull(folderId, BoxHelper.FOLDER_ID);
+            BoxHelper.notNull(email, BoxHelper.EMAIL);
+            BoxHelper.notNull(role, BoxHelper.ROLE);
 
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.collaborate(email, role).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -141,16 +128,14 @@ public class BoxCollaborationsManager {
     public BoxCollaboration.Info getCollaborationInfo(String collaborationId) {
         try {
             LOG.debug("Getting info for collaboration(id={})", collaborationId);
-            if (collaborationId == null) {
-                throw new IllegalArgumentException("Parameter 'collaborationId' can not be null");
-            }
+            BoxHelper.notNull(collaborationId, BoxHelper.COLLABORATION_ID);
 
             BoxCollaboration collaboration = new BoxCollaboration(boxConnection, collaborationId);
 
             return collaboration.getInfo();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -164,9 +149,7 @@ public class BoxCollaborationsManager {
     public BoxCollaboration updateCollaborationInfo(String collaborationId, BoxCollaboration.Info info) {
         try {
             LOG.debug("Updating info for collaboration(id={})", collaborationId);
-            if (collaborationId == null) {
-                throw new IllegalArgumentException("Parameter 'collaborationId' can not be null");
-            }
+            BoxHelper.notNull(collaborationId, BoxHelper.COLLABORATION_ID);
 
             BoxCollaboration collaboration = new BoxCollaboration(boxConnection, collaborationId);
 
@@ -174,7 +157,7 @@ public class BoxCollaborationsManager {
             return collaboration;
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -186,14 +169,12 @@ public class BoxCollaborationsManager {
     public void deleteCollaboration(String collaborationId) {
         try {
             LOG.debug("Deleting collaboration(id={})", collaborationId);
-            if (collaborationId == null) {
-                throw new IllegalArgumentException("Parameter 'collaborationId' can not be null");
-            }
+            BoxHelper.notNull(collaborationId, BoxHelper.COLLABORATION_ID);
             BoxCollaboration collaboration = new BoxCollaboration(boxConnection, collaborationId);
             collaboration.delete();
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -207,7 +188,7 @@ public class BoxCollaborationsManager {
             return BoxCollaboration.getPendingCollaborations(boxConnection);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
