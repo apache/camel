@@ -40,7 +40,7 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
     }
 
     protected void wireCamelContext(BeanDefinitionBuilder bean, String camelContextId) {
-        bean.addPropertyReference("camelContext", camelContextId);
+        bean.addPropertyReference(DEFAULT_CAMEL_CONTEXT_NAME, camelContextId);
     }
 
     @Override

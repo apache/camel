@@ -102,6 +102,7 @@ public abstract class CamelTestSupport
     private static final ThreadLocal<FluentProducerTemplate> THREAD_FLUENT_TEMPLATE = new ThreadLocal<>();
     private static final ThreadLocal<ConsumerTemplate> THREAD_CONSUMER = new ThreadLocal<>();
     private static final ThreadLocal<Service> THREAD_SERVICE = new ThreadLocal<>();
+    public static final String SEPARATOR = "********************************************************************************";
     protected Properties extra;
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
@@ -342,9 +343,9 @@ public abstract class CamelTestSupport
 
     @BeforeEach
     public void setUp() throws Exception {
-        LOG.info("********************************************************************************");
+        LOG.info(SEPARATOR);
         LOG.info("Testing: {} ({})", currentTestName, getClass().getName());
-        LOG.info("********************************************************************************");
+        LOG.info(SEPARATOR);
 
         doSpringBootCheck();
         doQuarkusCheck();
@@ -566,7 +567,7 @@ public abstract class CamelTestSupport
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        LOG.info("********************************************************************************");
+        LOG.info(SEPARATOR);
         LOG.info("Testing done: {} ({})", currentTestName, getClass().getName());
         LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
 
@@ -587,7 +588,7 @@ public abstract class CamelTestSupport
                         timeTaken());
             }
         }
-        LOG.info("********************************************************************************");
+        LOG.info(SEPARATOR);
 
         if (isCreateCamelContextPerClass()) {
             // will tear down test specially in afterAll callback
