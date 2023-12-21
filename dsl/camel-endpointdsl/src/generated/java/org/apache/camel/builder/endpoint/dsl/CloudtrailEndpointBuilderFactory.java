@@ -1107,6 +1107,19 @@ public interface CloudtrailEndpointBuilderFactory {
          * Since: 3.19
          * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CloudtrailHeaderNameBuilder awsCloudtrail() {
+            return CloudtrailHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Cloudtrail (camel-aws-cloudtrail)
+         * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management,monitoring
+         * Since: 3.19
+         * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
+         * 
          * Syntax: <code>aws-cloudtrail:label</code>
          * 
          * Path parameter: label (required)
@@ -1140,6 +1153,70 @@ public interface CloudtrailEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return CloudtrailEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Cloudtrail component.
+     */
+    public static class CloudtrailHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CloudtrailHeaderNameBuilder INSTANCE = new CloudtrailHeaderNameBuilder();
+
+        /**
+         * The event ID of the cloud trail event consumed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsCloudTrailEventId}.
+         */
+        public String awsCloudTrailEventId() {
+            return "CamelAwsCloudTrailEventId";
+        }
+
+        /**
+         * The event Name of the cloud trail event consumed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsCloudTrailEventName}.
+         */
+        public String awsCloudTrailEventName() {
+            return "CamelAwsCloudTrailEventName";
+        }
+
+        /**
+         * The event Source of the cloud trail event consumed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsCloudTrailEventSource}.
+         */
+        public String awsCloudTrailEventSource() {
+            return "CamelAwsCloudTrailEventSource";
+        }
+
+        /**
+         * The associated username of the event of the cloud trail event
+         * consumed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsCloudTrailEventUsername}.
+         */
+        public String awsCloudTrailEventUsername() {
+            return "CamelAwsCloudTrailEventUsername";
         }
     }
     static CloudtrailEndpointBuilder endpointBuilder(
