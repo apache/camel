@@ -458,6 +458,8 @@ public final class JsonMapper {
         option.setGetterMethod(mp.getString("getterMethod"));
         option.setSetterMethod(mp.getString("setterMethod"));
         option.setSupportFileReference(mp.getBooleanOrDefault("supportFileReference", false));
+        option.setLargeInput(mp.getBooleanOrDefault("largeInput", false));
+        option.setInputLanguage(mp.getString("inputLanguage"));
     }
 
     private static void parseGroup(JsonObject mp, MainGroupModel option) {
@@ -537,6 +539,14 @@ public final class JsonMapper {
         if (option.isSupportFileReference()) {
             // only include if supported to not regen all files
             prop.put("supportFileReference", option.isSupportFileReference());
+        }
+        if (option.isLargeInput()) {
+            // only include if supported to not regen all files
+            prop.put("largeInput", option.isLargeInput());
+        }
+        if (!Strings.isNullOrEmpty(option.getInputLanguage())) {
+            // only include if supported to not regen all files
+            prop.put("inputLanguage", option.getInputLanguage());
         }
         prop.put("asPredicate", option.isAsPredicate());
         prop.put("configurationClass", option.getConfigurationClass());
