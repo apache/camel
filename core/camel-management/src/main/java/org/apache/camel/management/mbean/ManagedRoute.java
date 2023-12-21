@@ -679,8 +679,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public void updateRouteFromXml(String xml) throws Exception {
         // check whether this is allowed
-        Boolean enabled = context.getManagementStrategy().getManagementAgent().getUpdateRouteEnabled();
-        if (enabled == null || !enabled) {
+        if (!isUpdateRouteEnabled()) {
             throw new IllegalAccessException("Updating route is not enabled");
         }
 
@@ -714,6 +713,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             LOG.warn(msg, e);
             throw e;
         }
+    }
+
+    @Override
+    public boolean isUpdateRouteEnabled() {
+        // check whether this is allowed
+        Boolean enabled = context.getManagementStrategy().getManagementAgent().getUpdateRouteEnabled();
+        return enabled != null ? enabled : false;
     }
 
     @Override

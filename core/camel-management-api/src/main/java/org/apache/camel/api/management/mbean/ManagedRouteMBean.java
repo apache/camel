@@ -169,4 +169,7 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Updates the route from XML")
     void updateRouteFromXml(String xml) throws Exception;
 
+    @ManagedAttribute(description = "Whether update route from XML is enabled")
+    boolean isUpdateRouteEnabled();
+
 }
