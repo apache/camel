@@ -22,19 +22,19 @@ import org.junit.jupiter.api.BeforeEach;
 
 public class JasytPropertiesParserCustomAlgTest extends JasyptPropertiesParserTest {
 
-	@BeforeEach
-	public void before() {
-		knowDecrypted = "tigertigertiger";
-		knownEncrypted = "ENC(LuCBTHaY1G6XHRwp63teshi/LbFRzpPtq5j8SNpJgv1yn9D25py+xHNGjXEMnf/J)";
+    @BeforeEach
+    public void before() {
+        knowDecrypted = "tigertigertiger";
+        knownEncrypted = "ENC(LuCBTHaY1G6XHRwp63teshi/LbFRzpPtq5j8SNpJgv1yn9D25py+xHNGjXEMnf/J)";
 
         encryptor.setAlgorithm("PBEWithHmacSHA256AndAES_256");
-		encryptor.setSaltGenerator(new RandomSaltGenerator("SHA1PRNG"));
+        encryptor.setSaltGenerator(new RandomSaltGenerator("SHA1PRNG"));
         encryptor.setIvGenerator(new RandomIvGenerator("SHA1PRNG"));
-		encryptor.setPassword(knownPassword);
+        encryptor.setPassword(knownPassword);
 
         jasyptPropertiesParser.setAlgorithm("PBEWithHmacSHA256AndAES_256");
-		jasyptPropertiesParser.setRandomSaltGeneratorAlgorithm("SHA1PRNG");
+        jasyptPropertiesParser.setRandomSaltGeneratorAlgorithm("SHA1PRNG");
         jasyptPropertiesParser.setRandomIvGeneratorAlgorithm("SHA1PRNG");
-		jasyptPropertiesParser.setEncryptor(encryptor);
-	}
+        jasyptPropertiesParser.setEncryptor(encryptor);
+    }
 }

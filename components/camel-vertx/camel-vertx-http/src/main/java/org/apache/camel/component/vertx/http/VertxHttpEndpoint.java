@@ -34,7 +34,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-http", title = "Vert.x HTTP Client", syntax = "vertx-http:httpUri",
              category = { Category.HTTP }, producerOnly = true, lenientProperties = true,

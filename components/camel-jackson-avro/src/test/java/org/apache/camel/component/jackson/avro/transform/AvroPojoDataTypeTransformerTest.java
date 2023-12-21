@@ -100,8 +100,8 @@ class AvroPojoDataTypeTransformerTest {
         exchange.getMessage()
                 .setBody(Avro.mapper().writerFor(JsonNode.class).with(avroSchema)
                         .writeValueAsBytes(Json.mapper().readTree("""
-                            { "name": "Goofy", "age": 25 }
-                        """)));
+                                    { "name": "Goofy", "age": 25 }
+                                """)));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
