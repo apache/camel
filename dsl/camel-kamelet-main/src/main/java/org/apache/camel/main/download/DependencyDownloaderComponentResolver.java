@@ -112,7 +112,6 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
     }
 
     private boolean accept(String name) {
-        // kamelet component must not be stubbed
         if (stubPattern == null) {
             return true;
         }

@@ -75,7 +75,6 @@ public final class DependencyDownloaderDataFormatResolver extends DefaultDataFor
     }
 
     private boolean accept(String name) {
-        // kamelet component must not be stubbed
         if (stubPattern == null) {
             return true;
         }
