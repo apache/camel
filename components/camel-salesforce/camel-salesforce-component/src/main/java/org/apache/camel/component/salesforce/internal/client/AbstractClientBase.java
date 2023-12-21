@@ -164,11 +164,12 @@ public abstract class AbstractClientBase extends ServiceSupport
 		return getRequest(method.asString(), url, headers);
 	}
 
-	protected Request getRequest(String method, String url, Map<String, List<String>> headers) {
-		SalesforceHttpRequest request = (SalesforceHttpRequest) httpClient.newHttpRequest(new HttpConversation(), URI.create(url)).method(method)
-				.timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
-		request.getConversation().setAttribute(SalesforceSecurityHandler.CLIENT_ATTRIBUTE, this);
-		addHeadersTo(request, headers);
+    protected Request getRequest(String method, String url, Map<String, List<String>> headers) {
+        HttpRequest request
+                = (HttpRequest) httpClient.newHttpRequest(new HttpConversation(), URI.create(url)).method(method)
+                        .timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
+        request.getConversation().setAttribute(SalesforceSecurityHandler.CLIENT_ATTRIBUTE, this);
+        addHeadersTo(request, headers);
 
 		return request;
 	}
@@ -184,7 +185,6 @@ public abstract class AbstractClientBase extends ServiceSupport
 		final Request.Content content = request.getBody();
 		if (content instanceof InputStreamRequestContent) {
 			InputStreamRequestContent inputStreamRequestContent = (InputStreamRequestContent) content;
-			inputStreamRequestContent.read().getByteBuffer();
 			final List<ByteBuffer> buffers = new ArrayList<>();
 			while (true) {
 				Content.Chunk chunk = inputStreamRequestContent.read();
@@ -225,11 +225,11 @@ public abstract class AbstractClientBase extends ServiceSupport
 						}
 					} else {
 
-						// HTTP error status
-						final int status = response.getStatus();
-						SalesforceHttpRequest request
-								= (SalesforceHttpRequest) ((SalesforceHttpRequest) result.getRequest()).getConversation()
-								.getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
+                        // HTTP error status
+                        final int status = response.getStatus();
+                        HttpRequest request
+                                = (HttpRequest) ((HttpRequest) result.getRequest()).getConversation()
+                                        .getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
 
 						if (status == HttpStatus.BAD_REQUEST_400 && request != null) {
 							// parse login error

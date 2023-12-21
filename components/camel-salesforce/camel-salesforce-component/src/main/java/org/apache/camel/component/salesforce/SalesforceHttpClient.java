@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.client.SalesforceHttpRequest;
 import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityHandler;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.ProtocolHandler;
@@ -37,7 +36,7 @@ import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
- * Custom Salesforce HTTP Client that creates {@link SalesforceHttpRequest} requests.
+ * Custom Salesforce HTTP Client that creates {@link HttpRequest} requests.
  */
 public class SalesforceHttpClient extends HttpClient {
 
@@ -97,8 +96,8 @@ public class SalesforceHttpClient extends HttpClient {
         return connector;
     }
 
-    public SalesforceHttpRequest newHttpRequest(HttpConversation conversation, URI uri) {
-        final SalesforceHttpRequest request = new SalesforceHttpRequest(this, conversation, uri);
+    public HttpRequest newHttpRequest(HttpConversation conversation, URI uri) {
+        final HttpRequest request = new HttpRequest(this, conversation, uri);
         request.timeout(timeout, TimeUnit.MILLISECONDS);
         return request;
     }

@@ -31,6 +31,7 @@ import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.client.Response;
 import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.client.transport.HttpConversation;
+import org.eclipse.jetty.client.transport.HttpRequest;
 import org.eclipse.jetty.http.HttpFields;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,8 +142,8 @@ public class AbstractClientBaseTest {
 		when(result.getResponse()).thenReturn(response);
 		when(response.getHeaders()).thenReturn(HttpFields.build());
 
-		final SalesforceHttpRequest salesforceRequest = mock(SalesforceHttpRequest.class);
-		when(result.getRequest()).thenReturn(salesforceRequest);
+        final HttpRequest salesforceRequest = mock(HttpRequest.class);
+        when(result.getRequest()).thenReturn(salesforceRequest);
 
 		final HttpConversation conversation = mock(HttpConversation.class);
 		when(salesforceRequest.getConversation()).thenReturn(conversation);

@@ -36,11 +36,6 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 
-import org.eclipse.jetty.client.BytesRequestContent;
-import org.eclipse.jetty.client.InputStreamRequestContent;
-import org.eclipse.jetty.client.Request;
-import org.eclipse.jetty.client.Response;
-import org.eclipse.jetty.http.HttpField;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -57,6 +52,11 @@ import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulk.ObjectFactory;
 import org.apache.camel.component.salesforce.api.dto.bulk.QueryResultList;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.eclipse.jetty.client.BytesRequestContent;
+import org.eclipse.jetty.client.InputStreamRequestContent;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 
@@ -110,7 +110,6 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(value, headers, ex);
             }
         });
-
     }
 
     // reset read only fields
@@ -370,7 +369,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     @Override
     protected void setAccessToken(Request request) {
         // Replace token
-        request.headers(headers -> headers.add(TOKEN_HEADER, accessToken));
+        request.headers(headers -> headers.put(TOKEN_HEADER, accessToken));
     }
 
     @Override

@@ -78,6 +78,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     public void approvals(Map<String, List<String>> headers, final ResponseCallback callback) {
         final Request get = getRequest(HttpMethod.GET, versionUrl() + "process/approvals/", headers);
 
+        // authorization
+        setAccessToken(get);
+
         doHttpRequest(get, new DelegatingClientCallback(callback));
     }
 
