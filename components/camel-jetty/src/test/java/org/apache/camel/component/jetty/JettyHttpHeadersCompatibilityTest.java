@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.issues;
+package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class JettyHttpTest extends CamelTestSupport {
+public class JettyHttpHeadersCompatibilityTest extends CamelTestSupport {
 
     private String targetProducerUri = "http://localhost:8542/someservice?bridgeEndpoint=true&throwExceptionOnFailure=false";
     private String targetConsumerUri = "jetty:http://localhost:8542/someservice?matchOnUriPrefix=true";
