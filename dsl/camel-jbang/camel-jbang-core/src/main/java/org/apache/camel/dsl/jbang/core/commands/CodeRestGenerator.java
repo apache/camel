@@ -82,7 +82,7 @@ public class CodeRestGenerator extends CamelCommand {
             }
             if (text != null) {
                 if (output == null) {
-                    System.out.println(text);
+                    printer().println(text);
                 } else {
                     Files.write(Paths.get(output), text.getBytes());
                 }

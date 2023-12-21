@@ -29,7 +29,7 @@ public final class VersionHelper {
 
     public static String getJBangVersion() {
         try {
-            File file = new File(System.getProperty("user.home"), ".jbang/cache/version.txt");
+            File file = new File(CommandLineHelper.getHomeDir(), ".jbang/cache/version.txt");
             if (file.exists() && file.isFile()) {
                 FileInputStream fis = new FileInputStream(file);
                 String text = IOHelper.loadText(fis);

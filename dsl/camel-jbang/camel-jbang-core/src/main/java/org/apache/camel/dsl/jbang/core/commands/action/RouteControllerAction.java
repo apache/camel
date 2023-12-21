@@ -89,8 +89,8 @@ public class RouteControllerAction extends ActionWatchCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            System.out.println("Name or pid " + name + " matches " + pids.size()
-                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer().println("Name or pid " + name + " matches " + pids.size()
+                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -151,7 +151,7 @@ public class RouteControllerAction extends ActionWatchCommand {
                 rows.add(row);
             }
         } else {
-            System.out.println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
             return 1;
         }
 
@@ -164,30 +164,30 @@ public class RouteControllerAction extends ActionWatchCommand {
         if (!rows.isEmpty()) {
             if (supervising) {
                 if (header) {
-                    System.out.println("Supervising Route Controller");
-                    System.out.printf("\tInitial Starting Routes: %b%n", jo.getBoolean("startingRoutes"));
-                    System.out.printf("\tUnhealthy Routes: %b%n", jo.getBoolean("unhealthyRoutes"));
-                    System.out.printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
-                    System.out.printf("\tRoutes Started: %d%n", jo.getInteger("startedRoutes"));
-                    System.out.printf("\tRoutes Restarting: %d%n", jo.getInteger("restartingRoutes"));
-                    System.out.printf("\tRoutes Exhausted: %d%n", jo.getInteger("exhaustedRoutes"));
-                    System.out.printf("\tInitial Delay: %d%n", jo.getInteger("initialDelay"));
-                    System.out.printf("\tBackoff Delay: %d%n", jo.getInteger("backoffDelay"));
-                    System.out.printf("\tBackoff Max Delay: %d%n", jo.getInteger("backoffMaxDelay"));
-                    System.out.printf("\tBackoff Max Elapsed Time: %d%n", jo.getInteger("backoffMaxElapsedTime"));
-                    System.out.printf("\tBackoff Max Attempts: %d%n", jo.getInteger("backoffMaxAttempts"));
-                    System.out.printf("\tThread Pool Size: %d%n", jo.getInteger("threadPoolSize"));
-                    System.out.printf("\tUnhealthy On Restarting: %b%n", jo.getBoolean("unhealthyOnRestarting"));
-                    System.out.printf("\tUnhealthy On Exhaust: %b%n", jo.getBoolean("unhealthyOnExhausted"));
-                    System.out.println("\n");
+                    printer().println("Supervising Route Controller");
+                    printer().printf("\tInitial Starting Routes: %b%n", jo.getBoolean("startingRoutes"));
+                    printer().printf("\tUnhealthy Routes: %b%n", jo.getBoolean("unhealthyRoutes"));
+                    printer().printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
+                    printer().printf("\tRoutes Started: %d%n", jo.getInteger("startedRoutes"));
+                    printer().printf("\tRoutes Restarting: %d%n", jo.getInteger("restartingRoutes"));
+                    printer().printf("\tRoutes Exhausted: %d%n", jo.getInteger("exhaustedRoutes"));
+                    printer().printf("\tInitial Delay: %d%n", jo.getInteger("initialDelay"));
+                    printer().printf("\tBackoff Delay: %d%n", jo.getInteger("backoffDelay"));
+                    printer().printf("\tBackoff Max Delay: %d%n", jo.getInteger("backoffMaxDelay"));
+                    printer().printf("\tBackoff Max Elapsed Time: %d%n", jo.getInteger("backoffMaxElapsedTime"));
+                    printer().printf("\tBackoff Max Attempts: %d%n", jo.getInteger("backoffMaxAttempts"));
+                    printer().printf("\tThread Pool Size: %d%n", jo.getInteger("threadPoolSize"));
+                    printer().printf("\tUnhealthy On Restarting: %b%n", jo.getBoolean("unhealthyOnRestarting"));
+                    printer().printf("\tUnhealthy On Exhaust: %b%n", jo.getBoolean("unhealthyOnExhausted"));
+                    printer().println("\n");
                 }
                 dumpTable(rows, true);
             } else {
                 if (header) {
-                    System.out.println("Default Route Controller");
-                    System.out.printf("\tStarting Routes: %b%n", jo.getBoolean("startingRoutes"));
-                    System.out.printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
-                    System.out.println("\n");
+                    printer().println("Default Route Controller");
+                    printer().printf("\tStarting Routes: %b%n", jo.getBoolean("startingRoutes"));
+                    printer().printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
+                    printer().println("\n");
                 }
                 dumpTable(rows, false);
             }
@@ -200,7 +200,7 @@ public class RouteControllerAction extends ActionWatchCommand {
     }
 
     protected void dumpTable(List<Row> rows, boolean supervised) {
-        System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.routeId),
                 new Column().header("URI").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -218,10 +218,10 @@ public class RouteControllerAction extends ActionWatchCommand {
             rows = rows.stream().filter(r -> r.error != null && !r.error.isEmpty()).collect(Collectors.toList());
             if (!rows.isEmpty()) {
                 for (Row row : rows) {
-                    System.out.println("\n");
-                    System.out.println(StringHelper.fillChars('-', 120));
-                    System.out.println(StringHelper.padString(1, 55) + "STACK-TRACE");
-                    System.out.println(StringHelper.fillChars('-', 120));
+                    printer().println("\n");
+                    printer().println(StringHelper.fillChars('-', 120));
+                    printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");
+                    printer().println(StringHelper.fillChars('-', 120));
                     StringBuilder sb = new StringBuilder();
                     sb.append(String.format("\tID: %s%n", row.routeId));
                     sb.append(String.format("\tURI: %s%n", row.uri));
@@ -229,7 +229,7 @@ public class RouteControllerAction extends ActionWatchCommand {
                     for (int i = 0; i < depth && i < row.stackTrace.size(); i++) {
                         sb.append(String.format("\t%s%n", row.stackTrace.get(i)));
                     }
-                    System.out.println(sb);
+                    printer().println(String.valueOf(sb));
                 }
             }
         }

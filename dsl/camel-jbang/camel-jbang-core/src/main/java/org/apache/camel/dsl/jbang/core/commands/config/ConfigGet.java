@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.config;
 
+import java.util.Optional;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -26,7 +28,7 @@ import picocli.CommandLine;
 public class ConfigGet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
-    private String key;
+    String key;
 
     public ConfigGet(CamelJBangMain main) {
         super(main);
@@ -35,10 +37,11 @@ public class ConfigGet extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         CommandLineHelper.loadProperties(properties -> {
-            if (properties.containsKey(key)) {
-                System.out.println(properties.getProperty(key));
+            Optional<Object> maybeProperty = Optional.ofNullable(properties.get(key));
+            if (maybeProperty.isPresent()) {
+                printer().println(String.valueOf(maybeProperty.get()));
             } else {
-                System.out.println(key + " key not found");
+                printer().println(key + " key not found");
             }
         });
 

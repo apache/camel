@@ -135,14 +135,14 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
         if (!rows.isEmpty()) {
             if (jsonOutput) {
-                System.out.println(
+                printer().println(
                         Jsoner.serialize(
                                 rows.stream().map(row -> Map.of(
                                         "name", row.name,
                                         "level", row.level,
                                         "native", row.nativeSupported)).collect(Collectors.toList())));
             } else {
-                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).maxWidth(30)
                                 .with(r -> r.name),
                         new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),

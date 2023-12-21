@@ -39,6 +39,8 @@
         <label>jbang</label>
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
+
+        <camel.surefire.reuseForks>false</camel.surefire.reuseForks>
     </properties>
 
     <dependencies>

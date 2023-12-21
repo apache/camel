@@ -40,7 +40,6 @@ public abstract class CamelCommand implements Callable<Integer> {
     CommandLine.Model.CommandSpec spec;
 
     private final CamelJBangMain main;
-    private File camelDir;
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;
@@ -96,38 +95,23 @@ public abstract class CamelCommand implements Callable<Integer> {
     public abstract Integer doCall() throws Exception;
 
     public File getStatusFile(String pid) {
-        if (camelDir == null) {
-            camelDir = new File(System.getProperty("user.home"), ".camel");
-        }
-        return new File(camelDir, pid + "-status.json");
+        return new File(CommandLineHelper.getCamelDir(), pid + "-status.json");
     }
 
     public File getActionFile(String pid) {
-        if (camelDir == null) {
-            camelDir = new File(System.getProperty("user.home"), ".camel");
-        }
-        return new File(camelDir, pid + "-action.json");
+        return new File(CommandLineHelper.getCamelDir(), pid + "-action.json");
     }
 
     public File getOutputFile(String pid) {
-        if (camelDir == null) {
-            camelDir = new File(System.getProperty("user.home"), ".camel");
-        }
-        return new File(camelDir, pid + "-output.json");
+        return new File(CommandLineHelper.getCamelDir(), pid + "-output.json");
     }
 
     public File getTraceFile(String pid) {
-        if (camelDir == null) {
-            camelDir = new File(System.getProperty("user.home"), ".camel");
-        }
-        return new File(camelDir, pid + "-trace.json");
+        return new File(CommandLineHelper.getCamelDir(), pid + "-trace.json");
     }
 
     public File getDebugFile(String pid) {
-        if (camelDir == null) {
-            camelDir = new File(System.getProperty("user.home"), ".camel");
-        }
-        return new File(camelDir, pid + "-debug.json");
+        return new File(CommandLineHelper.getCamelDir(), pid + "-debug.json");
     }
 
     protected Printer printer() {
@@ -147,8 +131,8 @@ public abstract class CamelCommand implements Callable<Integer> {
             }
         });
         if (!lines.isEmpty()) {
-            System.out.println(header);
-            lines.forEach(System.out::println);
+            printer().println(header);
+            lines.forEach(printer()::println);
         }
     }
 

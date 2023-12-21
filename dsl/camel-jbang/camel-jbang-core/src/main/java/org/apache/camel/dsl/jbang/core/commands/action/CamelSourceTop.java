@@ -60,8 +60,8 @@ public class CamelSourceTop extends ActionWatchCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            System.out.println("Name or pid " + name + " matches " + pids.size()
-                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer().println("Name or pid " + name + " matches " + pids.size()
+                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -133,7 +133,7 @@ public class CamelSourceTop extends ActionWatchCommand {
                 }
             }
         } else {
-            System.out.println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
             return 1;
         }
 
@@ -155,16 +155,16 @@ public class CamelSourceTop extends ActionWatchCommand {
 
     protected void printSource(List<Row> rows) {
         for (Row row : rows) {
-            System.out.printf("Route: %s\tSource: %s Total: %s Mean: %s Max: %s Min: %s Last: %s%n", row.routeId, row.location,
+            printer().printf("Route: %s\tSource: %s Total: %s Mean: %s Max: %s Min: %s Last: %s%n", row.routeId, row.location,
                     row.total, row.mean != null ? row.mean : "", row.max,
                     row.min, row.last != null ? row.last : "");
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
                 String c = Jsoner.unescape(code.code);
                 String arrow = code.match ? "-->" : "   ";
-                System.out.printf("%4d: %s %s%n", code.line, arrow, c);
+                printer().printf("%4d: %s %s%n", code.line, arrow, c);
             }
-            System.out.println();
+            printer().println();
         }
     }
 

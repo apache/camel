@@ -14,29 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.config;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import picocli.CommandLine;
+import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false)
-public class ConfigList extends CamelCommand {
+class ConfigGetTest extends CamelCommandBaseTest {
 
-    public ConfigList(CamelJBangMain main) {
-        super(main);
+    @Test
+    public void shouldGetConfig() throws Exception {
+        UserConfigHelper.createUserConfig("foo=bar");
+
+        ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
+        command.key = "foo";
+        command.doCall();
+
+        Assertions.assertEquals("bar", printer.getOutput());
     }
 
-    @Override
-    public Integer doCall() throws Exception {
-        CommandLineHelper
-                .loadProperties(p -> {
-                    for (String k : p.stringPropertyNames()) {
-                        String v = p.getProperty(k);
-                        printer().printf("%s = %s%n", k, v);
-                    }
-                });
-        return 0;
+    @Test
+    public void shouldHandleConfigGetKeyNotFound() throws Exception {
+        UserConfigHelper.createUserConfig("");
+
+        ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
+        command.key = "foo";
+        command.doCall();
+
+        Assertions.assertEquals("foo key not found", printer.getOutput());
     }
+
 }

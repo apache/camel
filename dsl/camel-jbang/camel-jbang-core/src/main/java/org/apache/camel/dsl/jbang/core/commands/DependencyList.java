@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.XmlHelper;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -39,7 +40,7 @@ import picocli.CommandLine;
                      description = "Displays all Camel dependencies required to run")
 public class DependencyList extends Export {
 
-    protected static final String EXPORT_DIR = ".camel-jbang/export";
+    protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
 
     @CommandLine.Option(names = { "--output" }, description = "Output format (gav, maven, jbang)", defaultValue = "gav")
     protected String output;
@@ -159,22 +160,22 @@ public class DependencyList extends Export {
 
     protected void outputGav(MavenGav gav, int index, int total) {
         if ("gav".equals(output)) {
-            System.out.println(gav);
+            printer().println(String.valueOf(gav));
         } else if ("maven".equals(output)) {
-            System.out.println("<dependency>");
-            System.out.printf("    <groupId>%s</groupId>%n", gav.getGroupId());
-            System.out.printf("    <artifactId>%s</artifactId>%n", gav.getArtifactId());
-            System.out.printf("    <version>%s</version>%n", gav.getVersion());
-            System.out.println("</dependency>");
+            printer().println("<dependency>");
+            printer().printf("    <groupId>%s</groupId>%n", gav.getGroupId());
+            printer().printf("    <artifactId>%s</artifactId>%n", gav.getArtifactId());
+            printer().printf("    <version>%s</version>%n", gav.getVersion());
+            printer().println("</dependency>");
         } else if ("jbang".equals(output)) {
             if (index == 0) {
-                System.out.println("//DEPS org.apache.camel:camel-bom:" + gav.getVersion() + "@pom");
+                printer().println("//DEPS org.apache.camel:camel-bom:" + gav.getVersion() + "@pom");
             }
             if (gav.getGroupId().equals("org.apache.camel")) {
                 // jbang has version in @pom so we should remove this
                 gav.setVersion(null);
             }
-            System.out.println("//DEPS " + gav);
+            printer().println("//DEPS " + gav);
         }
     }
 

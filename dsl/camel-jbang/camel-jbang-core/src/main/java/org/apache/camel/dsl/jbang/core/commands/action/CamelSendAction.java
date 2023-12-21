@@ -103,8 +103,8 @@ public class CamelSendAction extends ActionBaseCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            System.out.println("Name or pid " + name + " matches " + pids.size()
-                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer().println("Name or pid " + name + " matches " + pids.size()
+                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -125,7 +125,7 @@ public class CamelSendAction extends ActionBaseCommand {
             for (String h : headers) {
                 JsonObject jo = new JsonObject();
                 if (!h.contains("=")) {
-                    System.out.println("Header must be in key=value format, was: " + h);
+                    printer().println("Header must be in key=value format, was: " + h);
                     return 0;
                 }
                 jo.put("key", StringHelper.before(h, "="));
@@ -174,7 +174,7 @@ public class CamelSendAction extends ActionBaseCommand {
                     tableHelper.setLoggingColor(loggingColor);
                     tableHelper.setShowExchangeProperties(showExchangeProperties);
                     String table = tableHelper.getDataAsTable(exchangeId, mep, jo, message, cause);
-                    System.out.println(table);
+                    printer().println(table);
                 }
             }
         }
@@ -192,17 +192,17 @@ public class CamelSendAction extends ActionBaseCommand {
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
         } else {
-            System.out.print(ts);
+            printer().print(ts);
         }
         // pid
-        System.out.print("  ");
+        printer().print("  ");
         String p = String.format("%5.5s", this.pid);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
         } else {
-            System.out.print(p);
-            System.out.print(" --- ");
+            printer().print(p);
+            printer().print(" --- ");
         }
         // endpoint
         String ids = jo.getString("endpoint");
@@ -213,19 +213,19 @@ public class CamelSendAction extends ActionBaseCommand {
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
         } else {
-            System.out.print(ids);
+            printer().print(ids);
         }
-        System.out.print(" : ");
+        printer().print(" : ");
         // status
-        System.out.print(getStatus(jo));
+        printer().print(getStatus(jo));
         // elapsed
         String e = TimeUtils.printDuration(jo.getLong("elapsed"), true);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
         } else {
-            System.out.print("(" + e + ")");
+            printer().print("(" + e + ")");
         }
-        System.out.println();
+        printer().println();
     }
 
     private String getStatus(JsonObject r) {

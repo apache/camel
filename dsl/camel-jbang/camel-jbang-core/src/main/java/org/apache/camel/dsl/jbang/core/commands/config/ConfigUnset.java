@@ -26,7 +26,7 @@ import picocli.CommandLine;
 public class ConfigUnset extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
-    private String key;
+    String key;
 
     public ConfigUnset(CamelJBangMain main) {
         super(main);
@@ -36,7 +36,7 @@ public class ConfigUnset extends CamelCommand {
     public Integer doCall() throws Exception {
         CommandLineHelper.loadProperties(properties -> {
             properties.remove(key);
-            CommandLineHelper.storeProperties(properties);
+            CommandLineHelper.storeProperties(properties, printer());
         });
 
         return 0;

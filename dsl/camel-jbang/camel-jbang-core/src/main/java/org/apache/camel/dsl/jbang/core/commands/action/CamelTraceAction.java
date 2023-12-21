@@ -238,7 +238,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             do {
                 if (pids.isEmpty()) {
                     if (waitMessage) {
-                        System.out.println("Waiting for traces ...");
+                        printer().println("Waiting for traces ...");
                         waitMessage = false;
                     }
                     Thread.sleep(500);
@@ -592,7 +592,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             } else {
                 nameWithPrefix = String.format("%-" + nameMaxWidth + "s", name) + "| ";
             }
-            System.out.print(nameWithPrefix);
+            printer().print(nameWithPrefix);
         }
         if (timestamp) {
             String ts;
@@ -605,9 +605,9 @@ public class CamelTraceAction extends ActionBaseCommand {
             if (loggingColor) {
                 AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
             } else {
-                System.out.print(ts);
+                printer().print(ts);
             }
-            System.out.print("  ");
+            printer().print("  ");
         }
         // pid
         String p = String.format("%5.5s", row.pid);
@@ -615,8 +615,8 @@ public class CamelTraceAction extends ActionBaseCommand {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
         } else {
-            System.out.print(p);
-            System.out.print(" --- ");
+            printer().print(p);
+            printer().print(" --- ");
         }
         // thread name
         String tn = row.threadName;
@@ -627,9 +627,9 @@ public class CamelTraceAction extends ActionBaseCommand {
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
         } else {
-            System.out.print(tn);
+            printer().print(tn);
         }
-        System.out.print(" ");
+        printer().print(" ");
         // node ids or source location
         String ids;
         if (source) {
@@ -644,32 +644,32 @@ public class CamelTraceAction extends ActionBaseCommand {
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
         } else {
-            System.out.print(ids);
+            printer().print(ids);
         }
-        System.out.print(" : ");
+        printer().print(" : ");
         // uuid
         String u = String.format("%5.5s", row.uid);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(u).reset());
         } else {
-            System.out.print(u);
+            printer().print(u);
         }
-        System.out.print(" - ");
+        printer().print(" - ");
         // status
-        System.out.print(getStatus(row));
+        printer().print(getStatus(row));
         // elapsed
         String e = getElapsed(row);
         if (e != null) {
             if (loggingColor) {
                 AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
             } else {
-                System.out.print("(" + e + ")");
+                printer().print("(" + e + ")");
             }
         }
         // trace message
         String[] lines = data.split(System.lineSeparator());
         if (lines.length > 0) {
-            System.out.println();
+            printer().println();
             for (String line : lines) {
                 if (find != null) {
                     for (String f : find) {
@@ -682,17 +682,17 @@ public class CamelTraceAction extends ActionBaseCommand {
                     }
                 }
                 if (nameWithPrefix != null) {
-                    System.out.print(nameWithPrefix);
+                    printer().print(nameWithPrefix);
                 }
-                System.out.print(" ");
-                System.out.println(line);
+                printer().print(" ");
+                printer().println(line);
             }
             if (!compact) {
                 if (nameWithPrefix != null) {
-                    System.out.println(nameWithPrefix);
+                    printer().println(nameWithPrefix);
                 } else {
                     // empty line
-                    System.out.println();
+                    printer().println();
                 }
             }
         }
