@@ -220,6 +220,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     @Override
     public void onInit(Route route) {
         super.onInit(route);
+
         if (getMeterRegistry() == null) {
             setMeterRegistry(MicrometerUtils.getOrCreateMeterRegistry(
                     route.getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
@@ -239,12 +240,44 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+    }
 
+    @Override
+    public void onStart(Route route) {
         // create statistics holder
         // for now we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
         statisticsMap.computeIfAbsent(route,
                 it -> new MetricsStatistics(getMeterRegistry(), it, getNamingStrategy(), configuration));
+    }
+
+    @Override
+    public void onRemove(Route route) {
+        // route is removed, so remove metrics from micrometer
+        MetricsStatistics stats = statisticsMap.remove(route);
+        if (stats != null) {
+            if (stats.exchangesSucceeded != null) {
+                meterRegistry.remove(stats.exchangesSucceeded);
+            }
+            if (stats.exchangesFailed != null) {
+                meterRegistry.remove(stats.exchangesFailed);
+            }
+            if (stats.exchangesTotal != null) {
+                meterRegistry.remove(stats.exchangesTotal);
+            }
+            if (stats.externalRedeliveries != null) {
+                meterRegistry.remove(stats.externalRedeliveries);
+            }
+            if (stats.failuresHandled != null) {
+                meterRegistry.remove(stats.failuresHandled);
+            }
+            if (stats.timer != null) {
+                meterRegistry.remove(stats.timer);
+            }
+            if (stats.longTaskTimer != null) {
+                meterRegistry.remove(stats.longTaskTimer);
+            }
+        }
     }
 
     @Override

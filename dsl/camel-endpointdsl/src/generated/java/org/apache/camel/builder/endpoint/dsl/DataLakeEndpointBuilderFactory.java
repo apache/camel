@@ -122,6 +122,40 @@ public interface DataLakeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder credentialType(
+                org.apache.camel.component.azure.storage.datalake.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * count number of bytes to download.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
@@ -1299,37 +1333,6 @@ public interface DataLakeEndpointBuilderFactory {
             doSetProperty("sasSignature", sasSignature);
             return this;
         }
-        /**
-         * Use default identity.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param useDefaultIdentity the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointConsumerBuilder useDefaultIdentity(
-                Boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
-            return this;
-        }
-        /**
-         * Use default identity.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param useDefaultIdentity the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointConsumerBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
-            return this;
-        }
     }
 
     /**
@@ -1591,6 +1594,40 @@ public interface DataLakeEndpointBuilderFactory {
         default DataLakeEndpointProducerBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
             doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder credentialType(
+                org.apache.camel.component.azure.storage.datalake.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
@@ -2292,37 +2329,6 @@ public interface DataLakeEndpointBuilderFactory {
             doSetProperty("sasSignature", sasSignature);
             return this;
         }
-        /**
-         * Use default identity.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param useDefaultIdentity the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointProducerBuilder useDefaultIdentity(
-                Boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
-            return this;
-        }
-        /**
-         * Use default identity.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param useDefaultIdentity the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointProducerBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
-            return this;
-        }
     }
 
     /**
@@ -2470,6 +2476,39 @@ public interface DataLakeEndpointBuilderFactory {
         default DataLakeEndpointBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
             doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder credentialType(
+                org.apache.camel.component.azure.storage.datalake.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
@@ -3130,37 +3169,6 @@ public interface DataLakeEndpointBuilderFactory {
          */
         default DataLakeEndpointBuilder sasSignature(String sasSignature) {
             doSetProperty("sasSignature", sasSignature);
-            return this;
-        }
-        /**
-         * Use default identity.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param useDefaultIdentity the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointBuilder useDefaultIdentity(
-                Boolean useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
-            return this;
-        }
-        /**
-         * Use default identity.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param useDefaultIdentity the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointBuilder useDefaultIdentity(
-                String useDefaultIdentity) {
-            doSetProperty("useDefaultIdentity", useDefaultIdentity);
             return this;
         }
     }

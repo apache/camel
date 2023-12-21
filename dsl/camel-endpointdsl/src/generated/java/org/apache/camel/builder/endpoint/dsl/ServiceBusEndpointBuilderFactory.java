@@ -540,6 +540,40 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CONNECTION_STRING
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder credentialType(
+                org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CONNECTION_STRING
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Fully Qualified Namespace of the service bus.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -723,6 +757,40 @@ public interface ServiceBusEndpointBuilderFactory {
         default AdvancedServiceBusEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * If the consumer has connection failure to Azure ServiceBus, then
+         * delay (millis) some time before re-connecting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServiceBusEndpointConsumerBuilder reconnectDelay(
+                int reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * If the consumer has connection failure to Azure ServiceBus, then
+         * delay (millis) some time before re-connecting.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServiceBusEndpointConsumerBuilder reconnectDelay(
+                String reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
     }
@@ -1100,6 +1168,40 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CONNECTION_STRING
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder credentialType(
+                org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CONNECTION_STRING
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Fully Qualified Namespace of the service bus.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1412,6 +1514,39 @@ public interface ServiceBusEndpointBuilderFactory {
         default ServiceBusEndpointBuilder connectionString(
                 String connectionString) {
             doSetProperty("connectionString", connectionString);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CONNECTION_STRING
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder credentialType(
+                org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CONNECTION_STRING
+         * Group: security
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**

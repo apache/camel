@@ -87,11 +87,13 @@ public class ServiceBusConfiguration implements Cloneable {
     private ServiceBusTransactionContext serviceBusTransactionContext;
     @UriParam(label = "producer")
     private OffsetDateTime scheduledEnqueueTime;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer")
     private boolean binary;
     @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
               defaultValue = "CONNECTION_STRING")
     private CredentialType credentialType = CONNECTION_STRING;
+    @UriParam(label = "consumer,advanced", defaultValue = "5000")
+    private int reconnectDelay = 5000;
 
     /**
      * Selected topic name or the queue name, that is depending on serviceBusType config. For example if
@@ -367,6 +369,17 @@ public class ServiceBusConfiguration implements Cloneable {
      */
     public void setCredentialType(CredentialType credentialType) {
         this.credentialType = credentialType;
+    }
+
+    public int getReconnectDelay() {
+        return reconnectDelay;
+    }
+
+    /**
+     * If the consumer has connection failure to Azure ServiceBus, then delay (millis) some time before re-connecting.
+     */
+    public void setReconnectDelay(int reconnectDelay) {
+        this.reconnectDelay = reconnectDelay;
     }
 
     // *************************************************

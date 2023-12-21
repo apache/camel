@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.ThriftConstants;
 import org.apache.camel.component.thrift.ThriftConsumer;
-import org.apache.camel.component.thrift.ThriftEndpoint;
 import org.apache.camel.component.thrift.ThriftUtils;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;

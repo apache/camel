@@ -140,7 +140,6 @@
 *** xref:hazelcast-seda-component.adoc[Hazelcast SEDA]
 *** xref:hazelcast-set-component.adoc[Hazelcast Set]
 *** xref:hazelcast-topic-component.adoc[Hazelcast Topic]
-** xref:hdfs-component.adoc[HDFS]
 ** xref:http-component.adoc[HTTP]
 ** xref:hwcloud-summary.adoc[Huawei Cloud]
 *** xref:hwcloud-frs-component.adoc[Huawei Cloud Face Recognition Service (FRS)]

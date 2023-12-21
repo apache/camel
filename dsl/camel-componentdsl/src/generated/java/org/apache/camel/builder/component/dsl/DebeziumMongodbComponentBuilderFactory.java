@@ -548,6 +548,26 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify the strategy used for watermarking during an incremental
+         * snapshot: 'insert_insert' both open and close signal is written into
+         * signal data collection (default); 'insert_delete' only open signal is
+         * written on signal data collection, the close will delete the relative
+         * open signal;.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: INSERT_INSERT
+         * Group: mongodb
+         * 
+         * @param incrementalSnapshotWatermarkingStrategy the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder incrementalSnapshotWatermarkingStrategy(
+                java.lang.String incrementalSnapshotWatermarkingStrategy) {
+            doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -615,13 +635,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * The method used to connect to MongoDB cluster. Options include:
-         * 'replica_set' (the default) to individually connect to each replica
-         * set / shard 'sharded' to connect via single connection obtained from
-         * connection string.
+         * 'replica_set' to individually connect to each replica set / shard
+         * 'sharded' (the default) to connect via single connection obtained
+         * from connection string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: replica_set
+         * Default: sharded
          * Group: mongodb
          * 
          * @param mongodbConnectionMode the value to set
@@ -840,6 +860,22 @@ public interface DebeziumMongodbComponentBuilderFactory {
         default DebeziumMongodbComponentBuilder pollIntervalMs(
                 long pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * Optional list of post processors. The processors are defined using
+         * '.type' config option and configured using options ''.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param postProcessors the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder postProcessors(
+                java.lang.String postProcessors) {
+            doSetProperty("postProcessors", postProcessors);
             return this;
         }
         /**
@@ -1233,6 +1269,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "fieldRenames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldRenames((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
+            case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSizeInBytes((long) value); return true;
@@ -1251,6 +1288,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setPollIntervalMs((long) value); return true;
+            case "postProcessors": getOrCreateConfiguration((DebeziumMongodbComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumMongodbComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;

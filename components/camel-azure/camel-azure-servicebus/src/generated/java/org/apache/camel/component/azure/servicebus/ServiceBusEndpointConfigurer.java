@@ -58,6 +58,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": target.getConfiguration().setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
         case "receiverasyncclient":
         case "receiverAsyncClient": target.getConfiguration().setReceiverAsyncClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class, value)); return true;
+        case "reconnectdelay":
+        case "reconnectDelay": target.getConfiguration().setReconnectDelay(property(camelContext, int.class, value)); return true;
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": target.getConfiguration().setScheduledEnqueueTime(property(camelContext, java.time.OffsetDateTime.class, value)); return true;
         case "senderasyncclient":
@@ -123,6 +125,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
         case "receiverasyncclient":
         case "receiverAsyncClient": return com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return int.class;
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": return java.time.OffsetDateTime.class;
         case "senderasyncclient":
@@ -184,6 +188,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": return target.getConfiguration().getProxyOptions();
         case "receiverasyncclient":
         case "receiverAsyncClient": return target.getConfiguration().getReceiverAsyncClient();
+        case "reconnectdelay":
+        case "reconnectDelay": return target.getConfiguration().getReconnectDelay();
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": return target.getConfiguration().getScheduledEnqueueTime();
         case "senderasyncclient":

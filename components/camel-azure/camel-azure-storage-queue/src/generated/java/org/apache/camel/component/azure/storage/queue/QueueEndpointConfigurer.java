@@ -33,6 +33,8 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "createqueue":
         case "createQueue": target.getConfiguration().setCreateQueue(property(camelContext, boolean.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.storage.queue.CredentialType.class, value)); return true;
         case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
@@ -101,6 +103,8 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": return boolean.class;
         case "createqueue":
         case "createQueue": return boolean.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.storage.queue.CredentialType.class;
         case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
         case "delay": return long.class;
         case "exceptionhandler":
@@ -165,6 +169,8 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "createqueue":
         case "createQueue": return target.getConfiguration().isCreateQueue();
+        case "credentialtype":
+        case "credentialType": return target.getConfiguration().getCredentialType();
         case "credentials": return target.getConfiguration().getCredentials();
         case "delay": return target.getDelay();
         case "exceptionhandler":

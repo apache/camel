@@ -34,7 +34,7 @@ public class ConfigList extends CamelCommand {
                 .loadProperties(p -> {
                     for (String k : p.stringPropertyNames()) {
                         String v = p.getProperty(k);
-                        System.out.printf("%s = %s%n", k, v);
+                        printer().printf("%s = %s%n", k, v);
                     }
                 });
         return 0;

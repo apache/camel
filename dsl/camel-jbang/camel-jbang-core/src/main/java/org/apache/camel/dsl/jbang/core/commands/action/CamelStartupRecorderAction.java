@@ -62,8 +62,8 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            System.out.println("Name or pid " + name + " matches " + pids.size()
-                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer().println("Name or pid " + name + " matches " + pids.size()
+                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -103,7 +103,7 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("DURATION").dataAlign(HorizontalAlign.RIGHT).with(this::getDuration),
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
                     new Column().header("STEP (END)").dataAlign(HorizontalAlign.LEFT)

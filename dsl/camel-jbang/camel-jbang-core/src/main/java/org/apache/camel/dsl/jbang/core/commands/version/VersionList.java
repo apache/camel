@@ -133,7 +133,7 @@ public class VersionList extends CamelCommand {
             main.stop();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error downloading available Camel versions");
+            printer().println("Error downloading available Camel versions");
             return 1;
         }
 
@@ -173,7 +173,7 @@ public class VersionList extends CamelCommand {
         rows.sort(this::sortRow);
 
         // camel-quarkus is not LTS and have its own release schedule
-        System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("CAMEL VERSION")
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.coreVersion),
                 new Column().header("QUARKUS").visible("quarkus".equalsIgnoreCase(runtime))

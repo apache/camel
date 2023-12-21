@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -209,11 +210,11 @@ public class Debug extends Run {
             } else if (exit == -1) {
                 // maybe failed on startup, so dump log buffer
                 for (String line : logBuffer) {
-                    System.out.println(line);
+                    printer().println(line);
                 }
                 // and any error
                 String text = IOHelper.loadText(spawnError);
-                System.out.println(text);
+                printer().println(text);
                 return -1;
             }
         } while (exit == 0 && !quit.get());
@@ -254,7 +255,7 @@ public class Debug extends Run {
         this.spawnOutput = p.getInputStream();
         this.spawnError = p.getErrorStream();
         this.spawnPid = p.pid();
-        System.out.println("Debugging Camel integration: " + name + " with PID: " + p.pid());
+        printer().println("Debugging Camel integration: " + name + " with PID: " + p.pid());
         return 0;
     }
 
@@ -337,7 +338,7 @@ public class Debug extends Run {
                 if (arr != null) {
 
                     if (arr.size() > 1) {
-                        System.out.println(
+                        printer().println(
                                 "WARN: Multiple suspended breakpoints is not supported (You can use --breakpoint option to specify a starting breakpoint)");
                         return;
                     }
@@ -426,7 +427,7 @@ public class Debug extends Run {
             // okay there is some updates to the screen, so redraw
             clearScreen();
             // top header
-            System.out.println(buffer.toString());
+            printer().println(buffer.toString());
             // suspended breakpoints
             for (SuspendedRow row : rows) {
                 printSourceAndHistory(row);
@@ -461,9 +462,9 @@ public class Debug extends Run {
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {
-                    System.out.println(msg);
+                    printer().println(msg);
                 }
-                System.out.println();
+                printer().println();
             }
         }
     }
@@ -586,7 +587,7 @@ public class Debug extends Run {
                 h = h.substring(0, 90);
             }
             String line = c + "    " + h;
-            System.out.println(line);
+            printer().println(line);
         }
     }
 
@@ -602,9 +603,9 @@ public class Debug extends Run {
             if (loggingColor) {
                 AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
             } else {
-                System.out.print(ts);
+                printer().print(ts);
             }
-            System.out.print("  ");
+            printer().print("  ");
         }
         // pid
         String p = String.format("%5.5s", row.pid);
@@ -612,8 +613,8 @@ public class Debug extends Run {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
         } else {
-            System.out.print(p);
-            System.out.print(" --- ");
+            printer().print(p);
+            printer().print(" --- ");
         }
         // thread name
         String tn = row.threadName;
@@ -624,9 +625,9 @@ public class Debug extends Run {
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
         } else {
-            System.out.print(tn);
+            printer().print(tn);
         }
-        System.out.print(" ");
+        printer().print(" ");
         // node ids or source location
         String ids;
         if (source) {
@@ -641,31 +642,31 @@ public class Debug extends Run {
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
         } else {
-            System.out.print(ids);
+            printer().print(ids);
         }
-        System.out.print(" : ");
+        printer().print(" : ");
         // uuid
         String u = String.format("%5.5s", row.uid);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(u).reset());
         } else {
-            System.out.print(u);
+            printer().print(u);
         }
-        System.out.print(" - ");
+        printer().print(" - ");
         // status
-        System.out.print(getStatus(row));
+        printer().print(getStatus(row));
         // elapsed
         String e = getElapsed(row);
         if (e != null) {
             if (loggingColor) {
                 AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
             } else {
-                System.out.print("(" + e + ")");
+                printer().print("(" + e + ")");
             }
         }
-        System.out.println();
-        System.out.println(getDataAsTable(row));
-        System.out.println();
+        printer().println();
+        printer().println(getDataAsTable(row));
+        printer().println();
     }
 
     private static String locationAndLine(String loc, int line) {
@@ -680,10 +681,9 @@ public class Debug extends Run {
 
     private void handleHangup() {
         if (spawnPid > 0) {
-            File dir = new File(System.getProperty("user.home"), ".camel");
-            File pidFile = new File(dir, Long.toString(spawnPid));
+            File pidFile = new File(CommandLineHelper.getCamelDir(), Long.toString(spawnPid));
             if (pidFile.exists()) {
-                System.out.println("Shutting down Camel integration (PID: " + spawnPid + ")");
+                printer().println("Shutting down Camel integration (PID: " + spawnPid + ")");
                 FileUtil.deleteFile(pidFile);
             }
         }

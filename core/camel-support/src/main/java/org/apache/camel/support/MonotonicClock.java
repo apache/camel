@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Clock;
+import org.apache.camel.clock.Clock;
 
-public class MonotonicClock implements Clock {
-    private final long created;
+/**
+ * A clock that increases monotonically (i.e.: does not go back in time)
+ */
+public final class MonotonicClock implements Clock {
     private final long createdNano;
 
-    MonotonicClock() {
-        this.created = System.currentTimeMillis();
+    public MonotonicClock() {
         this.createdNano = System.nanoTime();
     }
 
@@ -37,6 +37,6 @@ public class MonotonicClock implements Clock {
 
     @Override
     public long getCreated() {
-        return created;
+        return System.currentTimeMillis() - elapsed();
     }
 }

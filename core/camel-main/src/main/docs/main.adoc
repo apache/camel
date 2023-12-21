@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 116 options, which are listed below.
+The camel.main supports 117 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -77,6 +77,7 @@ The camel.main supports 116 options, which are listed below.
 | *camel.main.jmxManagementMBeans{zwsp}Level* | Sets the mbeans registration level. The default value is Default. | Default | ManagementMBeansLevel
 | *camel.main.jmxManagementName{zwsp}Pattern* | The naming pattern for creating the CamelContext JMX management name. The default pattern is #name# | #name# | String
 | *camel.main.jmxManagement{zwsp}StatisticsLevel* | Sets the JMX statistics level, the level can be set to Extended to gather additional information The default value is Default. | Default | ManagementStatisticsLevel
+| *camel.main.jmxUpdateRoute{zwsp}Enabled* | Whether to allow updating routes at runtime via JMX using the ManagedRouteMBean. This is disabled by default, but can be enabled for development and troubleshooting purposes, such as updating routes in an existing running Camel via JMX and other tools. | false | boolean
 | *camel.main.lightweight* | Configure the context to be lightweight. This will trigger some optimizations and memory reduction options. Lightweight context have some limitations. At this moment, dynamic endpoint destinations are not supported. | false | boolean
 | *camel.main.loadHealthChecks* | Whether to load custom health checks by scanning classpath. | false | boolean
 | *camel.main.loadStatistics{zwsp}Enabled* | Sets whether context load statistics is enabled (something like the unix load average). The statistics requires to have camel-management on the classpath as JMX is required. The default value is false. | false | boolean
@@ -360,12 +361,13 @@ The camel.opentelemetry supports 4 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 8 options, which are listed below.
+The camel.metrics supports 9 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.metrics.binders* | Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple binders can be separated by comma. The following binders currently is available from Micrometer: class-loader, commons-object-pool2, file-descriptor, hystrix-metrics-binder, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory, jvm-thread, log4j2, logback, processor, uptime |  | String
+| *camel.metrics.clearOnReload* | Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang. | true | boolean
 | *camel.metrics.enabled* | To enable Micrometer metrics. | false | boolean
 | *camel.metrics.enableExchange{zwsp}EventNotifier* | Set whether to enable the MicrometerExchangeEventNotifier for capturing metrics on exchange processing times. | true | boolean
 | *camel.metrics.enableMessage{zwsp}History* | Set whether to enable the MicrometerMessageHistoryFactory for capturing metrics on individual route node processing times. Depending on the number of configured route nodes, there is the potential to create a large volume of metrics. Therefore, this option is disabled by default. | false | boolean

@@ -54,6 +54,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
     private static class KinesisData {
         private String partition;
         private String body;
+        private String shardId;
 
         @Override
         public String toString() {
@@ -97,6 +98,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
                             if (message != null) {
                                 data.body = message.getBody(String.class);
                                 data.partition = message.getHeader(Kinesis2Constants.PARTITION_KEY, String.class);
+                                data.shardId = message.getHeader(Kinesis2Constants.SHARD_ID, String.class);
                             }
 
                             receivedMessages.add(data);
@@ -135,6 +137,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
             assertTrue(data.partition.endsWith(data.body), "The data/partition mismatch for record: " + data);
             assertNotEquals(partitionKey, data.partition);
             partitionKey = data.partition;
+            assertNotNull(data.shardId);
         }
     }
 }

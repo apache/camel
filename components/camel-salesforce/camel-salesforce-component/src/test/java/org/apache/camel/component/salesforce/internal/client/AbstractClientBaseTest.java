@@ -26,6 +26,7 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.util.StopWatch;
 import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.client.Response;
 import org.eclipse.jetty.client.Result;
@@ -155,11 +156,11 @@ public class AbstractClientBaseTest {
 		// completes the request
 		listener.getValue().onComplete(result);
 
-		final long stopStartTime = System.currentTimeMillis();
+		StopWatch watch = new StopWatch();
 		// should not wait
 		client.stop();
 
-		final long elapsed = System.currentTimeMillis() - stopStartTime;
+		final long elapsed = watch.taken();
 		assertTrue(elapsed < 10);
 	}
 
@@ -170,11 +171,11 @@ public class AbstractClientBaseTest {
 
 		// the request never completes
 
-		final long stopStartTime = System.currentTimeMillis();
+		StopWatch watch = new StopWatch();
 		// will wait for 1 second
 		client.stop();
 
-		final long elapsed = System.currentTimeMillis() - stopStartTime;
+		final long elapsed = watch.taken();
 		assertTrue(elapsed > 900 && elapsed < 1100);
 	}
 

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-cloudtrail",
-    "version": "4.3.0-SNAPSHOT",
+    "version": "4.4.0-SNAPSHOT",
     "scheme": "aws-cloudtrail",
     "extendsScheme": "",
     "syntax": "aws-cloudtrail:label",
@@ -42,6 +42,12 @@
     "trustAllCertificates": { "index": 17, "kind": "property", "displayName": "Trust All Certificates", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration", "configurationField": "configuration", "description": "If we want to trust all certificates in case of overriding the endpoint" },
     "useDefaultCredentialsProvider": { "index": 18, "kind": "property", "displayName": "Use Default Credentials Provider", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration", "configurationField": "configuration", "description": "Set whether the Cloudtrail client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in." },
     "useProfileCredentialsProvider": { "index": 19, "kind": "property", "displayName": "Use Profile Credentials Provider", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration", "configurationField": "configuration", "description": "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider." }
+  },
+  "headers": {
+    "CamelAwsCloudTrailEventId": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The event ID of the cloud trail event consumed.", "constantName": "org.apache.camel.component.aws.cloudtrail.CloudtrailConstants#EVENT_ID" },
+    "CamelAwsCloudTrailEventName": { "index": 1, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The event Name of the cloud trail event consumed.", "constantName": "org.apache.camel.component.aws.cloudtrail.CloudtrailConstants#EVENT_NAME" },
+    "CamelAwsCloudTrailEventSource": { "index": 2, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The event Source of the cloud trail event consumed.", "constantName": "org.apache.camel.component.aws.cloudtrail.CloudtrailConstants#EVENT_SOURCE" },
+    "CamelAwsCloudTrailEventUsername": { "index": 3, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The associated username of the event of the cloud trail event consumed.", "constantName": "org.apache.camel.component.aws.cloudtrail.CloudtrailConstants#USERNAME" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration", "configurationField": "configuration", "description": "A label for indexing cloudtrail endpoints" },

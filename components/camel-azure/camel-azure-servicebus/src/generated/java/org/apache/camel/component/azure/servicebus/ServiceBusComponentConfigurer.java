@@ -64,6 +64,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "proxyOptions": getOrCreateConfiguration(target).setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
         case "receiverasyncclient":
         case "receiverAsyncClient": getOrCreateConfiguration(target).setReceiverAsyncClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class, value)); return true;
+        case "reconnectdelay":
+        case "reconnectDelay": getOrCreateConfiguration(target).setReconnectDelay(property(camelContext, int.class, value)); return true;
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": getOrCreateConfiguration(target).setScheduledEnqueueTime(property(camelContext, java.time.OffsetDateTime.class, value)); return true;
         case "senderasyncclient":
@@ -128,6 +130,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
         case "receiverasyncclient":
         case "receiverAsyncClient": return com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return int.class;
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": return java.time.OffsetDateTime.class;
         case "senderasyncclient":
@@ -188,6 +192,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "proxyOptions": return getOrCreateConfiguration(target).getProxyOptions();
         case "receiverasyncclient":
         case "receiverAsyncClient": return getOrCreateConfiguration(target).getReceiverAsyncClient();
+        case "reconnectdelay":
+        case "reconnectDelay": return getOrCreateConfiguration(target).getReconnectDelay();
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": return getOrCreateConfiguration(target).getScheduledEnqueueTime();
         case "senderasyncclient":

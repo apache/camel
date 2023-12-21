@@ -87,9 +87,9 @@ public class ListProcess extends ProcessWatchCommand {
 
         if (!rows.isEmpty()) {
             if (pid) {
-                rows.forEach(r -> System.out.println(r.pid));
+                rows.forEach(r -> printer().println(r.pid));
             } else {
-                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)

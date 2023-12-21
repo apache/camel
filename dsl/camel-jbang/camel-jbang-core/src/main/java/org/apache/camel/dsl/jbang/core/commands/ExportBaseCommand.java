@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -62,7 +63,7 @@ import picocli.CommandLine;
 
 abstract class ExportBaseCommand extends CamelCommand {
 
-    protected static final String BUILD_DIR = ".camel-jbang/work";
+    protected static final String BUILD_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/work";
 
     protected static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
             "camel.main.routesIncludePattern",
@@ -154,7 +155,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.6.1")
+                        defaultValue = "3.6.4")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -188,6 +189,10 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
+
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    protected boolean download = true;
 
     @CommandLine.Option(names = { "--additional-properties" },
                         description = "Additional maven properties, ex. --additional-properties=prop1=foo,prop2=bar")
@@ -286,6 +291,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.files = files;
         run.exclude = exclude;
         run.openapi = openapi;
+        run.download = download;
         return run.runSilent(ignoreLoadingError);
     }
 

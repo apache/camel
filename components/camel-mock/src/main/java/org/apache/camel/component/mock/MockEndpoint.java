@@ -166,16 +166,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public static void assertWait(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         long left = unit.toMillis(timeout);
-        long end = start + left;
         for (MockEndpoint endpoint : endpoints) {
             if (!endpoint.await(left, TimeUnit.MILLISECONDS)) {
                 throw new AssertionError(
                         "Timeout waiting for endpoints to receive enough messages. " + endpoint.getEndpointUri()
                                          + " timed out.");
             }
-            left = end - System.currentTimeMillis();
+            left = left - watch.taken();
             if (left <= 0) {
                 left = 0;
             }
@@ -976,7 +975,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         expects(() -> {
             // wait at most 5 seconds for the file to exists
-            final long timeout = System.currentTimeMillis() + 5000;
+            final long timeout = 5000;
+            final StopWatch watch = new StopWatch();
 
             boolean stop = false;
             while (!stop && !file.exists()) {
@@ -985,7 +985,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 } catch (InterruptedException e) {
                     // ignore
                 }
-                stop = System.currentTimeMillis() > timeout;
+                stop = watch.taken() > timeout;
             }
 
             assertTrue("The file should exists: " + name, file.exists());

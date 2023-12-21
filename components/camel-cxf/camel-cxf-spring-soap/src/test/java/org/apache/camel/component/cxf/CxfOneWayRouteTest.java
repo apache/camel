@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.io.ByteArrayOutputStream;
+import java.time.Duration;
 
 import jakarta.xml.ws.Service;
 
@@ -83,8 +84,8 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         client.greetMeOneWay("lemac");
 
         // may need to wait until the oneway call completes
-        long waitUntil = System.currentTimeMillis() + 10000;
-        while (!bindingDone && System.currentTimeMillis() < waitUntil) {
+        long waitUntil = System.nanoTime() + Duration.ofMillis(10000).toMillis();
+        while (!bindingDone && System.nanoTime() < waitUntil) {
             Thread.sleep(1000);
         }
 

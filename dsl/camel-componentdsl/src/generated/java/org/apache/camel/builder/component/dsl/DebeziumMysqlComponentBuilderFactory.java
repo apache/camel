@@ -449,6 +449,22 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies the connection adapter to be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: mysql
+         * Group: mysql
+         * 
+         * @param connectorAdapter the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder connectorAdapter(
+                java.lang.String connectorAdapter) {
+            doSetProperty("connectorAdapter", connectorAdapter);
+            return this;
+        }
+        /**
          * Maximum time to wait after trying to connect to the database before
          * timing out, given in milliseconds. Defaults to 30 seconds (30,000
          * ms).
@@ -982,11 +998,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Whether the connector should include the original SQL query that
          * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * excluded or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * configured with the binlog_rows_query_log_events option set to ON. If
+         * using MariaDB, configure the binlog_annotate_row_events option must
+         * be set to ON. Query will not be present for events generated from
+         * snapshot. WARNING: Enabling this option may expose tables or fields
+         * explicitly excluded or masked by including the original SQL statement
+         * in the change event. For this reason the default value is 'false'.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1103,6 +1120,26 @@ public interface DebeziumMysqlComponentBuilderFactory {
         default DebeziumMysqlComponentBuilder incrementalSnapshotChunkSize(
                 int incrementalSnapshotChunkSize) {
             doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
+         * Specify the strategy used for watermarking during an incremental
+         * snapshot: 'insert_insert' both open and close signal is written into
+         * signal data collection (default); 'insert_delete' only open signal is
+         * written on signal data collection, the close will delete the relative
+         * open signal;.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: INSERT_INSERT
+         * Group: mysql
+         * 
+         * @param incrementalSnapshotWatermarkingStrategy the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder incrementalSnapshotWatermarkingStrategy(
+                java.lang.String incrementalSnapshotWatermarkingStrategy) {
+            doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
             return this;
         }
         /**
@@ -1242,6 +1279,22 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder pollIntervalMs(long pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * Optional list of post processors. The processors are defined using
+         * '.type' config option and configured using options ''.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param postProcessors the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder postProcessors(
+                java.lang.String postProcessors) {
+            doSetProperty("postProcessors", postProcessors);
             return this;
         }
         /**
@@ -1894,6 +1947,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
             case "connectKeepAlive": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAlive((boolean) value); return true;
             case "connectKeepAliveIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAliveIntervalMs((long) value); return true;
+            case "connectorAdapter": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectorAdapter((java.lang.String) value); return true;
             case "connectTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectTimeoutMs((int) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumMySqlComponent) component).setCustomMetricTags((java.lang.String) value); return true;
@@ -1930,6 +1984,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "inconsistentSchemaHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setInconsistentSchemaHandlingMode((java.lang.String) value); return true;
             case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncrementalSnapshotAllowSchemaChanges((boolean) value); return true;
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
+            case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSizeInBytes((long) value); return true;
@@ -1938,6 +1993,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setPollIntervalMs((long) value); return true;
+            case "postProcessors": getOrCreateConfiguration((DebeziumMySqlComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumMySqlComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;

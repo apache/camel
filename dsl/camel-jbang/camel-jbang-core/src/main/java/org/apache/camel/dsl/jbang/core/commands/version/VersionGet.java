@@ -35,27 +35,31 @@ public class VersionGet extends CamelCommand {
     public Integer doCall() throws Exception {
         String jv = VersionHelper.getJBangVersion();
         if (jv != null) {
-            System.out.println("JBang version: " + jv);
+            printer().println("JBang version: " + jv);
         }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
         String v = catalog.getCatalogVersion();
-        System.out.println("Camel JBang version: " + v);
+        printer().println("Camel JBang version: " + v);
 
         CommandLineHelper.loadProperties(properties -> {
             String uv = properties.getProperty("camel-version");
+            String kv = properties.getProperty("kamelets-version");
             String repos = properties.getProperty("repos");
             String runtime = properties.getProperty("runtime");
             if (uv != null || repos != null || runtime != null) {
-                System.out.println("User configuration:");
+                printer().println("User configuration:");
                 if (uv != null) {
-                    System.out.println("    camel-version = " + uv);
+                    printer().println("    camel-version = " + uv);
+                }
+                if (kv != null) {
+                    printer().println("    kamelets-version = " + kv);
                 }
                 if (runtime != null) {
-                    System.out.println("    runtime = " + runtime);
+                    printer().println("    runtime = " + runtime);
                 }
                 if (repos != null) {
-                    System.out.println("    repos = " + repos);
+                    printer().println("    repos = " + repos);
                 }
             }
         });

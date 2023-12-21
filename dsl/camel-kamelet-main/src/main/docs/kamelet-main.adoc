@@ -23,6 +23,7 @@ The `KameletMain` is pre-configured with the following properties:
 camel.component.kamelet.location = classpath:/kamelets,github:apache:camel-kamelets/kamelets
 camel.component.rest.consumerComponentName = platform-http
 camel.component.rest.producerComponentName = vertx-http
+came.main.jmxUpdateRouteEnabled = true
 ----
 
 These settings can be overridden by configuration in `application.properties`.
@@ -48,4 +49,4 @@ For example a Camel route can be _coded_ in YAML which uses the Earthquake Kamel
 In this use-case the earthquake kamelet will be downloaded from github, and as well its required dependencies.
 
 You can find an example with this at
-https://github.com/apache/camel-examples/tree/main/examples/kamelet-main[kamelet-main].
+https://github.com/apache/camel-examples/tree/main/kamelet-main[kamelet-main].

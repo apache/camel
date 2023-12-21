@@ -46,6 +46,40 @@ public interface QueueEndpointBuilderFactory {
             return (AdvancedQueueEndpointConsumerBuilder) this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default QueueEndpointConsumerBuilder credentialType(
+                org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default QueueEndpointConsumerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
@@ -1020,6 +1054,40 @@ public interface QueueEndpointBuilderFactory {
             return (AdvancedQueueEndpointProducerBuilder) this;
         }
         /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default QueueEndpointProducerBuilder credentialType(
+                org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default QueueEndpointProducerBuilder credentialType(
+                String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
@@ -1432,6 +1500,39 @@ public interface QueueEndpointBuilderFactory {
                 QueueEndpointProducerBuilder {
         default AdvancedQueueEndpointBuilder advanced() {
             return (AdvancedQueueEndpointBuilder) this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default QueueEndpointBuilder credentialType(
+                org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: SHARED_ACCOUNT_KEY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default QueueEndpointBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
         }
         /**
          * Service client to a storage account to interact with the queue

@@ -432,18 +432,19 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         return fileStream;
     }
 
-  /**
-   * From a comma-separated list of headers in the format of "FIELD=VALUE" or "FIELD:VALUE", split on the commas
-   * and split on the separator to create a stream of Map.Entry values while filtering out invalid combinations
-   * @param headerList A string containing a comma-separated list of headers
-   * @return A Stream of Map.Entry items which can then be added as headers to a URLConnection
-   */
-  Stream<Map.Entry<String,String>> parseHeaders(String headerList) {
-      return Arrays.asList(headerList.split(","))
-        .stream()
-        .map(s -> s.split("[=:]"))
-        .filter(h -> h.length == 2)
-        .map(h -> Map.entry(h[0].trim(), h[1].trim()));
+    /**
+     * From a comma-separated list of headers in the format of "FIELD=VALUE" or "FIELD:VALUE", split on the commas and
+     * split on the separator to create a stream of Map.Entry values while filtering out invalid combinations
+     *
+     * @param  headerList A string containing a comma-separated list of headers
+     * @return            A Stream of Map.Entry items which can then be added as headers to a URLConnection
+     */
+    Stream<Map.Entry<String, String>> parseHeaders(String headerList) {
+        return Arrays.asList(headerList.split(","))
+                .stream()
+                .map(s -> s.split("[=:]"))
+                .filter(h -> h.length == 2)
+                .map(h -> Map.entry(h[0].trim(), h[1].trim()));
     }
 
     private InputStream resolveStreamFromUrl() throws IOException {
@@ -455,7 +456,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         String headers = endpoint.getHttpHeaders();
         if (headers != null) {
             parseHeaders(headers)
-              .forEach(e -> urlConnectionToClose.setRequestProperty(e.getKey(), e.getValue()));
+                    .forEach(e -> urlConnectionToClose.setRequestProperty(e.getKey(), e.getValue()));
         }
 
         InputStream is;

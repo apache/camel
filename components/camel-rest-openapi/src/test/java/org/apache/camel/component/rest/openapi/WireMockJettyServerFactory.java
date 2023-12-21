@@ -46,9 +46,10 @@ public final class WireMockJettyServerFactory extends JettyHttpServerFactory {
         return new Jetty11HttpServer(options, adminRequestHandler, stubRequestHandler) {
 
             @Override
-            protected ServerConnector createHttpsConnector(String bindAddress, HttpsSettings httpsSettings, JettySettings jettySettings, NetworkTrafficListener listener) {
-                SslContextFactory.Server http2SslContextFactory =
-                        SslContexts.buildHttp2SslContextFactory(httpsSettings);
+            protected ServerConnector createHttpsConnector(
+                    String bindAddress, HttpsSettings httpsSettings, JettySettings jettySettings,
+                    NetworkTrafficListener listener) {
+                SslContextFactory.Server http2SslContextFactory = SslContexts.buildHttp2SslContextFactory(httpsSettings);
                 http2SslContextFactory.setIncludeCipherSuites("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256");
                 http2SslContextFactory.setProtocol("TLSv1.3");
 
@@ -65,14 +66,12 @@ public final class WireMockJettyServerFactory extends JettyHttpServerFactory {
 
                 HttpConnectionFactory http = new HttpConnectionFactory(httpConfig);
 
-                SslConnectionFactory ssl =
-                        new SslConnectionFactory(http2SslContextFactory, http.getProtocol());
+                SslConnectionFactory ssl = new SslConnectionFactory(http2SslContextFactory, http.getProtocol());
 
                 int acceptors = jettySettings.getAcceptors().orElse(3);
 
-                NetworkTrafficServerConnector connector =
-                        new NetworkTrafficServerConnector(
-                                jettyServer, null, null, null, acceptors, 2, ssl, http);
+                NetworkTrafficServerConnector connector = new NetworkTrafficServerConnector(
+                        jettyServer, null, null, null, acceptors, 2, ssl, http);
 
                 connector.setPort(httpsSettings.port());
                 connector.setNetworkTrafficListener(listener);

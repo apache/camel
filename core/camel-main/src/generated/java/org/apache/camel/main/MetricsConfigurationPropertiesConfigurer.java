@@ -23,6 +23,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "binders":
         case "Binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
+        case "clearonreload":
+        case "ClearOnReload": target.setClearOnReload(property(camelContext, boolean.class, value)); return true;
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": target.setEnableExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "enablemessagehistory":
@@ -46,6 +48,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "binders":
         case "Binders": return java.lang.String.class;
+        case "clearonreload":
+        case "ClearOnReload": return boolean.class;
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": return boolean.class;
         case "enablemessagehistory":
@@ -70,6 +74,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "binders":
         case "Binders": return target.getBinders();
+        case "clearonreload":
+        case "ClearOnReload": return target.isClearOnReload();
         case "enableexchangeeventnotifier":
         case "EnableExchangeEventNotifier": return target.isEnableExchangeEventNotifier();
         case "enablemessagehistory":

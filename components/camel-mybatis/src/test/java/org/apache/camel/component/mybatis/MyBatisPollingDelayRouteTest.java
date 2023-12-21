@@ -18,6 +18,7 @@ package org.apache.camel.component.mybatis;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,12 +27,12 @@ public class MyBatisPollingDelayRouteTest extends MyBatisTestSupport {
 
     @Test
     public void testSendAccountBean() throws Exception {
-        long start = System.currentTimeMillis();
+        StopWatch stopWatch = new StopWatch();
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
         MockEndpoint.assertIsSatisfied(context);
-        long delta = System.currentTimeMillis() - start;
+        long delta = stopWatch.taken();
 
         assertTrue(delta < 7000, "Should not take that long: " + delta);
     }

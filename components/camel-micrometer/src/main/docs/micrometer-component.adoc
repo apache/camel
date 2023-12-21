@@ -83,8 +83,9 @@ Some Camel specific metrics are available out of the box.
 |=====================================================
 |Name |Type |Description
 |camel.message.history|timer |Sample of performance of each node in the route when message history is enabled
-|camel.routes.added |gauge |Number of routes added
-|camel.routes.running |gauge |Number of routes runnning
+|camel.routes.added |gauge |Number of routes in total
+|camel.routes.reloaded |gauge |Number of routes that has been reloaded
+|camel.routes.running |gauge |Number of routes currently running
 |camel.exchanges.inflight |gauge |Route inflight messages
 |camel.exchanges.total |counter |Total number of processed exchanges
 |camel.exchanges.succeeded |counter |Number of successfully completed exchange

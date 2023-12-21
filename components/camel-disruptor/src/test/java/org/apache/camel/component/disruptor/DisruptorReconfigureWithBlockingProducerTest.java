@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSuppo
         getMockEndpoint("mock:a").expectedMessageCount(20);
         getMockEndpoint("mock:b").expectedMinimumMessageCount(10);
 
-        long beforeStart = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         ProducerThread producerThread = new ProducerThread();
         producerThread.start();
 
@@ -54,7 +55,7 @@ public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSuppo
         // If the reconfigure does not correctly hold back the producer thread on this request,
         // it will take approximately 20*200=4000 ms.
         // be on the safe side and check that it was at least faster than 2 seconds.
-        assertTrue((System.currentTimeMillis() - beforeStart) < 2000, "Reconfigure of Disruptor blocked");
+        assertTrue(watch.taken() < 2000, "Reconfigure of Disruptor blocked");
 
         //Wait and check that the producer has produced all messages without throwing an exception
         assertTrue(producerThread.checkResult());

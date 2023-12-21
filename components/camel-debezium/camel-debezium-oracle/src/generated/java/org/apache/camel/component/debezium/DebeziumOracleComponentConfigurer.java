@@ -82,6 +82,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "includeSchemaChanges": getOrCreateConfiguration(target).setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
         case "includeschemacomments":
         case "includeSchemaComments": getOrCreateConfiguration(target).setIncludeSchemaComments(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotwatermarkingstrategy":
+        case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration(target).setIncrementalSnapshotWatermarkingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
@@ -184,6 +186,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "openlogreplicatorSource": getOrCreateConfiguration(target).setOpenlogreplicatorSource(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "postprocessors":
+        case "postProcessors": getOrCreateConfiguration(target).setPostProcessors(property(camelContext, java.lang.String.class, value)); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": getOrCreateConfiguration(target).setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
         case "queryfetchsize":
@@ -309,6 +313,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "includeSchemaChanges": return boolean.class;
         case "includeschemacomments":
         case "includeSchemaComments": return boolean.class;
+        case "incrementalsnapshotwatermarkingstrategy":
+        case "incrementalSnapshotWatermarkingStrategy": return java.lang.String.class;
         case "internalkeyconverter":
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
@@ -411,6 +417,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "openlogreplicatorSource": return java.lang.String.class;
         case "pollintervalms":
         case "pollIntervalMs": return long.class;
+        case "postprocessors":
+        case "postProcessors": return java.lang.String.class;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return boolean.class;
         case "queryfetchsize":
@@ -537,6 +545,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "includeSchemaChanges": return getOrCreateConfiguration(target).isIncludeSchemaChanges();
         case "includeschemacomments":
         case "includeSchemaComments": return getOrCreateConfiguration(target).isIncludeSchemaComments();
+        case "incrementalsnapshotwatermarkingstrategy":
+        case "incrementalSnapshotWatermarkingStrategy": return getOrCreateConfiguration(target).getIncrementalSnapshotWatermarkingStrategy();
         case "internalkeyconverter":
         case "internalKeyConverter": return getOrCreateConfiguration(target).getInternalKeyConverter();
         case "internalvalueconverter":
@@ -639,6 +649,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "openlogreplicatorSource": return getOrCreateConfiguration(target).getOpenlogreplicatorSource();
         case "pollintervalms":
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
+        case "postprocessors":
+        case "postProcessors": return getOrCreateConfiguration(target).getPostProcessors();
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return getOrCreateConfiguration(target).isProvideTransactionMetadata();
         case "queryfetchsize":

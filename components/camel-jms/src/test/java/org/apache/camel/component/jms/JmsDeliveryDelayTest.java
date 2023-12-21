@@ -19,8 +19,9 @@ package org.apache.camel.component.jms;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * taking a long time to handle this test workload. Nonetheless, it can still be useful for investigating
  * bugs which is why we keep them here.
  */
-@Isolated("These tests are highly susceptible to flakiness as they verify the results based on duration - which can vary a LOT in loaded systems")
+@Tags({ @Tag("not-parallel") })
 public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
 
     @Test
@@ -40,7 +41,7 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
         mock.expectedBodiesReceived("Hello World");
 
         StopWatch watch = new StopWatch();
-        template.sendBody("activemq:topic:foo?deliveryDelay=1000", "Hello World");
+        template.sendBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
@@ -49,7 +50,7 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
     @Test
     void testInOutWithDelay() {
         StopWatch watch = new StopWatch();
-        template.requestBody("activemq:topic:foo?deliveryDelay=1000", "Hello World");
+        template.requestBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
         assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
     }
 
@@ -58,7 +59,7 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:topic:foo")
+                from("activemq:topic:JmsDeliveryDelayTest")
                         .to("mock:result");
             }
         };

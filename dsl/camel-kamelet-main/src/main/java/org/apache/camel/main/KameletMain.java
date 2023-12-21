@@ -554,12 +554,12 @@ public class KameletMain extends MainCommandLineSupport {
 
             answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     new DependencyDownloaderComponentResolver(answer, stubPattern, silent));
+            answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
+                    new DependencyDownloaderDataFormatResolver(answer, stubPattern, silent));
+            answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
+                    new DependencyDownloaderLanguageResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
                     new DependencyDownloaderUriFactoryResolver(answer));
-            answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
-                    new DependencyDownloaderDataFormatResolver(answer));
-            answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
-                    new DependencyDownloaderLanguageResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
                     new DependencyDownloaderResourceLoader(answer));
 
@@ -718,6 +718,7 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.kamelet.location", location);
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
+        addInitialProperty("came.main.jmxUpdateRouteEnabled", "true");
     }
 
     protected String startupInfo() {

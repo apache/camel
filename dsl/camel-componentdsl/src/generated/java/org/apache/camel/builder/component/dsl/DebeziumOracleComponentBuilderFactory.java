@@ -725,6 +725,26 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify the strategy used for watermarking during an incremental
+         * snapshot: 'insert_insert' both open and close signal is written into
+         * signal data collection (default); 'insert_delete' only open signal is
+         * written on signal data collection, the close will delete the relative
+         * open signal;.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: INSERT_INSERT
+         * Group: oracle
+         * 
+         * @param incrementalSnapshotWatermarkingStrategy the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder incrementalSnapshotWatermarkingStrategy(
+                java.lang.String incrementalSnapshotWatermarkingStrategy) {
+            doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+        /**
          * Specify how INTERVAL columns should be represented in change events,
          * including: 'string' represents values as an exact ISO formatted
          * string; 'numeric' (default) represents values using the inexact
@@ -1446,6 +1466,22 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * Optional list of post processors. The processors are defined using
+         * '.type' config option and configured using options ''.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param postProcessors the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder postProcessors(
+                java.lang.String postProcessors) {
+            doSetProperty("postProcessors", postProcessors);
+            return this;
+        }
+        /**
          * Enables transaction metadata extraction together with event counting.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2109,6 +2145,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "includeSchemaChanges": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncludeSchemaChanges((boolean) value); return true;
             case "includeSchemaComments": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncludeSchemaComments((boolean) value); return true;
+            case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
             case "lobEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setLobEnabled((boolean) value); return true;
             case "logMiningArchiveDestinationName": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveDestinationName((java.lang.String) value); return true;
@@ -2150,6 +2187,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "openlogreplicatorPort": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlogreplicatorPort((int) value); return true;
             case "openlogreplicatorSource": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlogreplicatorSource((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setPollIntervalMs((long) value); return true;
+            case "postProcessors": getOrCreateConfiguration((DebeziumOracleComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumOracleComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setQueryFetchSize((int) value); return true;
             case "racNodes": getOrCreateConfiguration((DebeziumOracleComponent) component).setRacNodes((java.lang.String) value); return true;

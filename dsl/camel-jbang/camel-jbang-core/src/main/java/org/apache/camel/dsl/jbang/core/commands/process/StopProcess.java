@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -45,17 +46,16 @@ public class StopProcess extends ProcessBaseCommand {
 
         // stop by deleting the pid file
         for (Long pid : pids) {
-            File dir = new File(System.getProperty("user.home"), ".camel");
-            File pidFile = new File(dir, Long.toString(pid));
+            File pidFile = new File(CommandLineHelper.getCamelDir(), Long.toString(pid));
             if (pidFile.exists()) {
-                System.out.println("Shutting down Camel integration (PID: " + pid + ")");
+                printer().println("Shutting down Camel integration (PID: " + pid + ")");
                 FileUtil.deleteFile(pidFile);
             }
         }
         for (Long pid : pids) {
             if (kill) {
                 ProcessHandle.of(pid).ifPresent(ph -> {
-                    System.out.println("Killing Camel integration (PID: " + pid + ")");
+                    printer().println("Killing Camel integration (PID: " + pid + ")");
                     ph.destroyForcibly();
                 });
             }

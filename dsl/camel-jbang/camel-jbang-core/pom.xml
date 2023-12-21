@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -39,6 +39,8 @@
         <label>jbang</label>
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
+
+        <camel.surefire.reuseForks>false</camel.surefire.reuseForks>
     </properties>
 
     <dependencies>
@@ -83,6 +85,20 @@
             <groupId>com.github.freva</groupId>
             <artifactId>ascii-table</artifactId>
             <version>${ascii-table-version}</version>
+        </dependency>
+
+        <!-- kubernetes -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
+            <version>${kubernetes-client-version}</version>
+        </dependency>
+
+        <!-- camel k-->
+        <dependency>
+            <groupId>org.apache.camel.k</groupId>
+            <artifactId>camel-k-crds</artifactId>
+            <version>${camel-k-version}</version>
         </dependency>
 
         <!-- jolokia -->
@@ -150,6 +166,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-server-mock</artifactId>
+            <version>${kubernetes-client-version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

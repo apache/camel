@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,9 +41,9 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         template.sendBody("direct:start", "Hello World");
-        long delta = System.currentTimeMillis() - start;
+        long delta = watch.taken();
         assertTrue(delta > 1000, "Should be slower");
 
         assertMockEndpointsSatisfied();

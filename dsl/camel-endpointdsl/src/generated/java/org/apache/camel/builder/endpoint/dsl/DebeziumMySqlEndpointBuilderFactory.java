@@ -527,6 +527,22 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the connection adapter to be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: mysql
+         * Group: mysql
+         * 
+         * @param connectorAdapter the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder connectorAdapter(
+                String connectorAdapter) {
+            doSetProperty("connectorAdapter", connectorAdapter);
+            return this;
+        }
+        /**
          * Maximum time to wait after trying to connect to the database before
          * timing out, given in milliseconds. Defaults to 30 seconds (30,000
          * ms).
@@ -1204,11 +1220,12 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         /**
          * Whether the connector should include the original SQL query that
          * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * excluded or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * configured with the binlog_rows_query_log_events option set to ON. If
+         * using MariaDB, configure the binlog_annotate_row_events option must
+         * be set to ON. Query will not be present for events generated from
+         * snapshot. WARNING: Enabling this option may expose tables or fields
+         * explicitly excluded or masked by including the original SQL statement
+         * in the change event. For this reason the default value is 'false'.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1225,11 +1242,12 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         /**
          * Whether the connector should include the original SQL query that
          * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * excluded or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * configured with the binlog_rows_query_log_events option set to ON. If
+         * using MariaDB, configure the binlog_annotate_row_events option must
+         * be set to ON. Query will not be present for events generated from
+         * snapshot. WARNING: Enabling this option may expose tables or fields
+         * explicitly excluded or masked by including the original SQL statement
+         * in the change event. For this reason the default value is 'false'.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1433,6 +1451,26 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         default DebeziumMySqlEndpointBuilder incrementalSnapshotChunkSize(
                 String incrementalSnapshotChunkSize) {
             doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
+         * Specify the strategy used for watermarking during an incremental
+         * snapshot: 'insert_insert' both open and close signal is written into
+         * signal data collection (default); 'insert_delete' only open signal is
+         * written on signal data collection, the close will delete the relative
+         * open signal;.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: INSERT_INSERT
+         * Group: mysql
+         * 
+         * @param incrementalSnapshotWatermarkingStrategy the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder incrementalSnapshotWatermarkingStrategy(
+                String incrementalSnapshotWatermarkingStrategy) {
+            doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
             return this;
         }
         /**
@@ -1658,6 +1696,22 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         default DebeziumMySqlEndpointBuilder pollIntervalMs(
                 String pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * Optional list of post processors. The processors are defined using
+         * '.type' config option and configured using options ''.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param postProcessors the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder postProcessors(
+                String postProcessors) {
+            doSetProperty("postProcessors", postProcessors);
             return this;
         }
         /**

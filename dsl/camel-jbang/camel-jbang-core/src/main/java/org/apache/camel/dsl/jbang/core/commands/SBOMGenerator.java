@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
@@ -30,7 +31,7 @@ import picocli.CommandLine;
                      description = "Generate a CycloneDX or SPDX SBOM for a specific project")
 public class SBOMGenerator extends Export {
 
-    protected static final String EXPORT_DIR = ".camel-jbang/export";
+    protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
 
     protected static final String CYCLONEDX_FORMAT = "cyclonedx";
 

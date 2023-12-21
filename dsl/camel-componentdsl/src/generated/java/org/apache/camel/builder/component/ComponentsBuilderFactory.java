@@ -1856,20 +1856,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
     /**
-     * HDFS (camel-hdfs)
-     * Read and write from/to an HDFS filesystem using Hadoop 2.x.
-     * 
-     * Category: bigdata,file
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-hdfs
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.HdfsComponentBuilderFactory.HdfsComponentBuilder hdfs() {
-        return org.apache.camel.builder.component.dsl.HdfsComponentBuilderFactory.hdfs();
-    }
-    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 

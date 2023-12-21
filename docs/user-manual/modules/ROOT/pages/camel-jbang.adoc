@@ -70,7 +70,7 @@ So running a simple route will be as easy as doing the following:
 docker run apache/camel-jbang:3.20.5 run example.yaml
 ----
 
-or 
+or
 
 [source,bash]
 ----
@@ -255,12 +255,12 @@ And Camel will now prompt in the terminal for you to enter values for the placeh
 
 [source,bash]
 ----
-2023-12-15 21:46:44.218  INFO 15033 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 4.3.0-SNAPSHOT is starting
+2023-12-15 21:46:44.218  INFO 15033 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 4.4.0-SNAPSHOT is starting
 2023-12-15 21:46:44.331  INFO 15033 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 15033. Started by davsclaus in /Users/davsclaus/workspace/deleteme/prompt
 2023-12-15 21:46:45.360  INFO 15033 --- [           main] mel.cli.connector.LocalCliConnector : Management from Camel JBang enabled
 Enter optional value for time (1000):
 Enter required value for you: Jack
-2023-12-15 21:46:55.239  INFO 15033 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.3.0-SNAPSHOT (foo) is starting
+2023-12-15 21:46:55.239  INFO 15033 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.4.0-SNAPSHOT (foo) is starting
 2023-12-15 21:46:55.323  INFO 15033 --- [           main] g.apache.camel.main.BaseMainSupport : Property-placeholders summary
 2023-12-15 21:46:55.323  INFO 15033 --- [           main] g.apache.camel.main.BaseMainSupport :     [prompt]                       you=Jack
 2023-12-15 21:46:55.341  INFO 15033 --- [           main] el.impl.engine.AbstractCamelContext : Routes startup (started:1)
@@ -1082,7 +1082,6 @@ camel run clipboard.xml --dev
 
 Then you can quickly make changes and copy to clipboard, and Camel JBang will update while running.
 
-
 === Sending messages via Camel
 
 *Available since Camel 4*
@@ -1478,6 +1477,13 @@ camel cmd start-route --all
 TIP: You can stop one or more route by their ids by separating using
 comma such as: camel cmd start-route --id=route1,hello. Use `camel cmd start-route --help` for more details.
 
+==== Running Camel integrations on Kubernetes
+
+After developing the Camel routes locally with JBang you may want to run these also on the Kubernetes platform at some point.
+The Camel K commands get you started with this journey and help you to run and manage Camel integrations on Kubernetes.
+
+Read about it in xref:camel-jbang-k.adoc[Camel Integration with Kubernetes].
+
 ==== Configuring logging levels
 
 You can see the current logging levels of the running Camel integrations by:
@@ -1560,7 +1566,6 @@ $ camel get metric
  11562  MyCoolCamel  gauge  system.cpu.usage                        0.15222772277227722
  11562  MyCoolCamel  gauge  system.load.average.1m                        3.58935546875
 ----
-
 
 ==== Listing state of Circuit Breakers
 
@@ -2011,12 +2016,12 @@ And in the bottom you can see content of the message (similar to the `camel trac
 2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.loggingLevel=DEBUG
 2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.singleStepIncludeStartEnd=true
 2023-11-03 18:15:06.787  INFO 33384 --- [           main] mel.cli.connector.LocalCliConnector : Camel CLI enabled (local)
-2023-11-03 18:15:06.833  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.3.0-SNAPSHOT (foo) is starting
+2023-11-03 18:15:06.833  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.4.0-SNAPSHOT (foo) is starting
 2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport : Property-placeholders summary
 2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [application.properties]       my-name=Donald Duck
 2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Routes startup (started:1)
 2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext :     Started route-07a6 (timer://yaml)
-2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.3.0-SNAPSHOT (foo) started in 91ms (build:0ms init:0ms start:91ms)
+2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.4.0-SNAPSHOT (foo) started in 91ms (build:0ms init:0ms start:91ms)
 2023-11-03 18:15:11.951  INFO 33384 --- [ - timer://yaml] foo.camel.yaml:10                   : Before:
 
 Source: foo.camel.yaml:13                                                         History
@@ -2155,7 +2160,6 @@ This will then automatic insert or update the JBang depencies (`//DEPS`) in the 
 
 You may want to use this for making it easier to load the source into an IDE editor to do coding.
 See previous section for more details.
-
 
 ==== Camel route debugging using VSCode or IDEA editors
 
@@ -2905,13 +2909,13 @@ camel sbom --sbom-format=spdx
 You can also choose the target runtime as either _quarkus_ or _spring-boot_ as shown:
 
 ----
-camel sbom --runtime=quarkus 
+camel sbom --runtime=quarkus
 ----
 
-or 
+or
 
 ----
-camel sbom --runtime=spring-boot 
+camel sbom --runtime=spring-boot
 ----
 
 by default `camel-main` will be used

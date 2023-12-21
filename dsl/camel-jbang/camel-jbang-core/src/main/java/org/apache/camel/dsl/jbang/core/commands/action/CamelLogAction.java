@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -157,7 +158,7 @@ public class CamelLogAction extends ActionBaseCommand {
             do {
                 if (rows.isEmpty()) {
                     if (waitMessage) {
-                        System.out.println("Waiting for logs ...");
+                        printer().println("Waiting for logs ...");
                         waitMessage = false;
                     }
                     Thread.sleep(500);
@@ -366,8 +367,8 @@ public class CamelLogAction extends ActionBaseCommand {
             line = unescapeAnsi(line);
             if (name != null) {
                 String n = String.format("%-" + nameMaxWidth + "s", name);
-                System.out.print(n);
-                System.out.print("| ");
+                printer().print(n);
+                printer().print("| ");
             }
         }
         if (find != null || grep != null) {
@@ -388,14 +389,13 @@ public class CamelLogAction extends ActionBaseCommand {
         if (loggingColor) {
             AnsiConsole.out().println(line);
         } else {
-            System.out.println(line);
+            printer().println(line);
         }
     }
 
     private static File logFile(String pid) {
-        File dir = new File(System.getProperty("user.home"), ".camel");
         String name = pid + ".log";
-        return new File(dir, name);
+        return new File(CommandLineHelper.getCamelDir(), name);
     }
 
     private void tailLogFiles(Map<Long, Row> rows, int tail, Date limit) throws Exception {

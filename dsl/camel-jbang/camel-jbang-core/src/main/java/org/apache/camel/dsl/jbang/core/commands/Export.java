@@ -102,6 +102,7 @@ public class Export extends ExportBaseCommand {
         cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
         cmd.exportDir = this.exportDir;
         cmd.fresh = this.fresh;
+        cmd.download = this.download;
         cmd.javaVersion = this.javaVersion;
         cmd.camelVersion = this.camelVersion;
         cmd.kameletsVersion = this.kameletsVersion;

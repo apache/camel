@@ -854,6 +854,26 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify the strategy used for watermarking during an incremental
+         * snapshot: 'insert_insert' both open and close signal is written into
+         * signal data collection (default); 'insert_delete' only open signal is
+         * written on signal data collection, the close will delete the relative
+         * open signal;.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: INSERT_INSERT
+         * Group: postgres
+         * 
+         * @param incrementalSnapshotWatermarkingStrategy the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder incrementalSnapshotWatermarkingStrategy(
+                java.lang.String incrementalSnapshotWatermarkingStrategy) {
+            doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+        /**
          * Specify how INTERVAL columns should be represented in change events,
          * including: 'string' represents values as an exact ISO formatted
          * string; 'numeric' (default) represents values using the inexact
@@ -1042,6 +1062,22 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder pollIntervalMs(
                 long pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * Optional list of post processors. The processors are defined using
+         * '.type' config option and configured using options ''.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param postProcessors the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder postProcessors(
+                java.lang.String postProcessors) {
+            doSetProperty("postProcessors", postProcessors);
             return this;
         }
         /**
@@ -1876,6 +1912,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "includeSchemaComments": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncludeSchemaComments((boolean) value); return true;
             case "includeUnknownDatatypes": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncludeUnknownDatatypes((boolean) value); return true;
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
+            case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSize((int) value); return true;
@@ -1887,6 +1924,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "pluginName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPluginName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPollIntervalMs((long) value); return true;
+            case "postProcessors": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumPostgresComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "publicationAutocreateMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationAutocreateMode((java.lang.String) value); return true;
             case "publicationName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationName((java.lang.String) value); return true;

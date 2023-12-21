@@ -59,10 +59,8 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
     @Override
     public Component resolveComponent(String name, CamelContext context) {
         ComponentModel model = catalog.componentModel(name);
-        if (model != null && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(),
-                model.getVersion())) {
-            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
-                    model.getVersion());
+        if (model != null) {
+            downloadLoader(model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
 
         Component answer;
@@ -107,8 +105,13 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
         return answer;
     }
 
+    private void downloadLoader(String groupId, String artifactId, String version) {
+        if (!downloader.alreadyOnClasspath(groupId, artifactId, version)) {
+            downloader.downloadDependency(groupId, artifactId, version);
+        }
+    }
+
     private boolean accept(String name) {
-        // kamelet component must not be stubbed
         if (stubPattern == null) {
             return true;
         }

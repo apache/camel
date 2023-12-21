@@ -34,6 +34,12 @@ import org.apache.hc.core5.http.HttpHost;
 
 public class PreemptiveAuthExecChainHandler implements ExecChainHandler {
 
+    private final HttpEndpoint endpoint;
+
+    public PreemptiveAuthExecChainHandler(HttpEndpoint endpoint) {
+        this.endpoint = endpoint;
+    }
+
     @Override
     public ClassicHttpResponse execute(
             ClassicHttpRequest request,
@@ -48,6 +54,10 @@ public class PreemptiveAuthExecChainHandler implements ExecChainHandler {
             CredentialsProvider credentialsProvider = context.getCredentialsProvider();
             HttpHost httpHost = scope.route.getTargetHost();
             Credentials credentials = credentialsProvider.getCredentials(new AuthScope(httpHost), context);
+            if (credentials == null) {
+                credentials = HttpCredentialsHelper.getCredentials(endpoint.getAuthMethod(), endpoint.getAuthUsername(),
+                        endpoint.getAuthPassword(), endpoint.getAuthHost(), endpoint.getAuthHost());
+            }
             if (credentials == null) {
                 throw new HttpException("No credentials for preemptive authentication");
             }

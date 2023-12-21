@@ -131,6 +131,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
+    private boolean jmxUpdateRouteEnabled;
     @Metadata(enums = "xml,yaml")
     private String dumpRoutes;
     private String dumpRoutesInclude = "routes";
@@ -1324,6 +1325,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRoutesReloadRestartDuration(boolean routesReloadRestartDuration) {
         this.routesReloadRestartDuration = routesReloadRestartDuration;
+    }
+
+    public boolean isJmxUpdateRouteEnabled() {
+        return jmxUpdateRouteEnabled;
+    }
+
+    /**
+     * Whether to allow updating routes at runtime via JMX using the ManagedRouteMBean.
+     *
+     * This is disabled by default, but can be enabled for development and troubleshooting purposes, such as updating
+     * routes in an existing running Camel via JMX and other tools.
+     */
+    public void setJmxUpdateRouteEnabled(boolean jmxUpdateRouteEnabled) {
+        this.jmxUpdateRouteEnabled = jmxUpdateRouteEnabled;
     }
 
     public boolean isLightweight() {

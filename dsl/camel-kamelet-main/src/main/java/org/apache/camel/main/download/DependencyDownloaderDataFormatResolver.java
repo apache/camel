@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.DefaultDataFormatResolver;
+import org.apache.camel.main.stub.StubDataFormat;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -33,20 +34,30 @@ public final class DependencyDownloaderDataFormatResolver extends DefaultDataFor
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
+    private final String stubPattern;
+    private final boolean silent;
 
-    public DependencyDownloaderDataFormatResolver(CamelContext camelContext) {
+    public DependencyDownloaderDataFormatResolver(CamelContext camelContext, String stubPattern, boolean silent) {
         this.downloader = camelContext.hasService(DependencyDownloader.class);
+        this.stubPattern = stubPattern;
+        this.silent = silent;
     }
 
     @Override
     public DataFormat createDataFormat(String name, CamelContext context) {
         DataFormatModel model = catalog.dataFormatModel(name);
-        if (model != null && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(),
-                model.getVersion())) {
-            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
-                    model.getVersion());
+        if (model != null) {
+            downloadLoader(model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
-        DataFormat answer = super.createDataFormat(name, context);
+
+        DataFormat answer;
+        boolean accept = accept(name);
+        if (accept) {
+            answer = super.createDataFormat(name, context);
+        } else {
+            answer = new StubDataFormat();
+        }
+
         if (answer == null) {
             List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
             if (suggestion != null && !suggestion.isEmpty()) {
@@ -55,6 +66,19 @@ public final class DependencyDownloaderDataFormatResolver extends DefaultDataFor
             }
         }
         return answer;
+    }
+
+    private void downloadLoader(String groupId, String artifactId, String version) {
+        if (!downloader.alreadyOnClasspath(groupId, artifactId, version)) {
+            downloader.downloadDependency(groupId, artifactId, version);
+        }
+    }
+
+    private boolean accept(String name) {
+        if (stubPattern == null) {
+            return true;
+        }
+        return false;
     }
 
 }
