@@ -72,7 +72,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.clock.Clock;
 import org.apache.camel.clock.ContextClock;
 import org.apache.camel.clock.EventClock;
 import org.apache.camel.console.DevConsoleRegistry;
