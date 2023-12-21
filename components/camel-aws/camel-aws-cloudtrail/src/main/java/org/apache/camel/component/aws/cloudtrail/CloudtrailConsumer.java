@@ -30,11 +30,7 @@ import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
-import software.amazon.awssdk.services.cloudtrail.model.Event;
-import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
-import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
-import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
-import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
+import software.amazon.awssdk.services.cloudtrail.model.*;
 
 public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
     private static Instant lastTime;
@@ -107,7 +103,11 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     protected Exchange createExchange(Event event) {
         Exchange exchange = createExchange(true);
-        exchange.getIn().setBody(event.cloudTrailEvent().getBytes(StandardCharsets.UTF_8));
+        exchange.getMessage().setBody(event.cloudTrailEvent().getBytes(StandardCharsets.UTF_8));
+        exchange.getMessage().setHeader(CloudtrailConstants.EVENT_ID, event.eventId());
+        exchange.getMessage().setHeader(CloudtrailConstants.EVENT_NAME, event.eventName());
+        exchange.getMessage().setHeader(CloudtrailConstants.EVENT_SOURCE, event.eventSource());
+        exchange.getMessage().setHeader(CloudtrailConstants.USERNAME, event.username());
         return exchange;
     }
 }
