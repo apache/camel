@@ -153,10 +153,12 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
     }
 
     private void setLatLngToExchangeHeader(String resLat, String resLng, Exchange exchange) {
-        exchange.getIn().setHeader(GeoCoderConstants.LAT, formatLatOrLon(resLat));
-        exchange.getIn().setHeader(GeoCoderConstants.LNG, formatLatOrLon(resLng));
-        String resLatlng = formatLatOrLon(resLat) + ", " + formatLatOrLon(resLng);
-        exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
+        if (resLat != null && resLng != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.LAT, formatLatOrLon(resLat));
+            exchange.getIn().setHeader(GeoCoderConstants.LNG, formatLatOrLon(resLng));
+            String resLatlng = formatLatOrLon(resLat) + ", " + formatLatOrLon(resLng);
+            exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
+        }
     }
 
     private void extractCountry(DocumentContext doc, Message in) {
