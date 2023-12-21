@@ -155,4 +155,19 @@ public @interface Metadata {
      * file.
      */
     boolean supportFileReference() default false;
+
+    /**
+     * Whether the option can be large input such as a SQL query, XSLT template, or scripting code.
+     *
+     * This can be used to help tooling to provide an input form instead of a single input field to give better user
+     * experience.
+     */
+    boolean largeInput() default false;
+
+    /**
+     * If the option is some specific language such as SQL, XSLT, XML, JavaScript or something else.
+     *
+     * This can be used to help tooling to provide a better user experience.
+     */
+    String inputLanguage() default "";
 }
