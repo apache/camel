@@ -19,6 +19,11 @@ package org.apache.camel.component.platform.http.vertx;
 import java.time.Duration;
 import java.util.List;
 
+import io.vertx.core.Vertx;
+import io.vertx.ext.web.handler.SessionHandler;
+import io.vertx.ext.web.sstore.ClusteredSessionStore;
+import io.vertx.ext.web.sstore.LocalSessionStore;
+import io.vertx.ext.web.sstore.SessionStore;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
@@ -39,6 +44,7 @@ public class VertxPlatformHttpServerConfiguration {
 
     private BodyHandler bodyHandler = new BodyHandler();
     private Cors cors = new Cors();
+    private SessionConfig sessionConfig = new SessionConfig();
 
     public int getPort() {
         return getBindPort();
@@ -112,12 +118,84 @@ public class VertxPlatformHttpServerConfiguration {
         this.cors = corsConfiguration;
     }
 
+    public SessionConfig getSessionConfig() {
+        return sessionConfig;
+    }
+
+    public void setSessionConfig(SessionConfig sessionConfig) {
+        this.sessionConfig = sessionConfig;
+    }
+
     public BodyHandler getBodyHandler() {
         return bodyHandler;
     }
 
     public void setBodyHandler(BodyHandler bodyHandler) {
         this.bodyHandler = bodyHandler;
+    }
+
+    public static class SessionConfig {
+
+        private boolean enabled;
+
+        private SessionStoreType storeType = SessionStoreType.LOCAL;
+
+        private String cookieName = SessionHandler.DEFAULT_SESSION_COOKIE_NAME;
+
+        private long sessionTimeOut = SessionHandler.DEFAULT_SESSION_TIMEOUT;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public void setStoreType(SessionStoreType storeType) {
+            this.storeType = storeType;
+        }
+
+        public void setCookieName(String cookieName) {
+            if (cookieName != null) {
+                this.cookieName = cookieName;
+            }
+        }
+
+        public void setTimeout(long timeout) {
+            this.sessionTimeOut = timeout;
+        }
+
+        public SessionHandler createSessionHandler(Vertx vertx) {
+            SessionStore sessionStore = storeType.create(vertx);
+            SessionHandler handler = SessionHandler.create(sessionStore);
+            configure(handler);
+            return handler;
+        }
+
+        private void configure(SessionHandler handler) {
+            handler.setSessionTimeout(this.sessionTimeOut)
+                    .setSessionCookieName(this.cookieName);
+            // TODO and other properties;
+        }
+
+        // TODO CookieSessionStore also
+        public enum SessionStoreType {
+            LOCAL {
+                @Override
+                public SessionStore create(Vertx vertx) {
+                    return LocalSessionStore.create(vertx);
+                }
+            },
+            CLUSTERED {
+                @Override
+                public SessionStore create(Vertx vertx) {
+                    return ClusteredSessionStore.create(vertx);
+                }
+            };
+
+            public abstract SessionStore create(Vertx vertx);
+        }
     }
 
     public static class Cors {
