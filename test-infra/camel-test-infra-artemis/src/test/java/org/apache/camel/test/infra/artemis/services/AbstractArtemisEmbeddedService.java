@@ -100,7 +100,7 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
     }
 
     @Override
-    public void initialize() {
+    public synchronized void initialize() {
         try {
             if (embeddedBrokerService.getActiveMQServer() == null || !embeddedBrokerService.getActiveMQServer().isStarted()) {
                 embeddedBrokerService.start();
