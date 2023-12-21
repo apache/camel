@@ -140,8 +140,8 @@ public class CamelStubAction extends ActionWatchCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            System.out.println("Name or pid " + name + " matches " + pids.size()
-                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer().println("Name or pid " + name + " matches " + pids.size()
+                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -219,7 +219,7 @@ public class CamelStubAction extends ActionWatchCommand {
                 }
             }
         } else {
-            System.out.println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
             return 1;
         }
 
@@ -272,7 +272,7 @@ public class CamelStubAction extends ActionWatchCommand {
     protected void printStub(List<Row> rows) {
         if (browse) {
             for (Row row : rows) {
-                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(row), Arrays.asList(
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(row), Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -308,7 +308,7 @@ public class CamelStubAction extends ActionWatchCommand {
                                 }
 
                                 if (!compact && first) {
-                                    System.out.println();
+                                    printer().println();
                                 }
                                 for (String line : lines) {
                                     if (find != null) {
@@ -321,11 +321,11 @@ public class CamelStubAction extends ActionWatchCommand {
                                             line = line.replaceAll("(?i)" + g, findAnsi);
                                         }
                                     }
-                                    System.out.print(" ");
-                                    System.out.println(line);
+                                    printer().print(" ");
+                                    printer().println(line);
                                 }
                                 if (!compact) {
-                                    System.out.println();
+                                    printer().println();
                                 }
                                 first = false;
                             }
@@ -334,7 +334,7 @@ public class CamelStubAction extends ActionWatchCommand {
                 }
             }
         } else {
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),

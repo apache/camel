@@ -32,28 +32,31 @@ import picocli.CommandLine;
  */
 public final class CommandLineHelper {
 
+    private static volatile String homeDir = System.getProperty("user.home");
     public static final String USER_CONFIG = ".camel-jbang-user.properties";
+    public static final String CAMEL_DIR = ".camel";
+    public static final String CAMEL_JBANG_WORK_DIR = ".camel-jbang";
 
     private CommandLineHelper() {
         super();
     }
 
     public static void augmentWithUserConfiguration(CommandLine commandLine, String... args) {
-        File file = new File(System.getProperty("user.home"), USER_CONFIG);
+        File file = getUserPropertyFile();
         if (file.isFile() && file.exists()) {
             commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));
         }
     }
 
     public static void createPropertyFile() throws IOException {
-        File file = new File(System.getProperty("user.home"), USER_CONFIG);
+        File file = getUserPropertyFile();
         if (!file.exists()) {
             file.createNewFile();
         }
     }
 
     public static void loadProperties(Consumer<Properties> consumer) {
-        File file = new File(System.getProperty("user.home"), USER_CONFIG);
+        File file = getUserPropertyFile();
         if (file.isFile() && file.exists()) {
             FileInputStream fis = null;
             try {
@@ -69,8 +72,8 @@ public final class CommandLineHelper {
         }
     }
 
-    public static void storeProperties(Properties properties) {
-        File file = new File(System.getProperty("user.home"), USER_CONFIG);
+    public static void storeProperties(Properties properties, Printer printer) {
+        File file = getUserPropertyFile();
         if (file.isFile() && file.exists()) {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 properties.store(fos, null);
@@ -78,8 +81,49 @@ public final class CommandLineHelper {
                 throw new RuntimeException(ex);
             }
         } else {
-            System.out.println(USER_CONFIG + " does not exists");
+            printer.println(USER_CONFIG + " does not exists");
         }
+    }
+
+    private static File getUserPropertyFile() {
+        return new File(homeDir, USER_CONFIG);
+    }
+
+    /**
+     * Gets the user home directory.
+     *
+     * @return the user home directory.
+     */
+    public static String getHomeDir() {
+        return homeDir;
+    }
+
+    /**
+     * Adjust basic home directory where user properties and other settings will be stored. Unit tests may set this in
+     * order to create stable and independent tests.
+     *
+     * @param homeDir the home directory.
+     */
+    public static void useHomeDir(String homeDir) {
+        CommandLineHelper.homeDir = homeDir;
+    }
+
+    /**
+     * The basic Camel directory located in the user home directory.
+     *
+     * @return file pointing to the camel directory.
+     */
+    public static File getCamelDir() {
+        return new File(homeDir, CAMEL_DIR);
+    }
+
+    /**
+     * Gets the Camel JBang working directory.
+     *
+     * @return file pointing to the working directory.
+     */
+    public static File getWorkDir() {
+        return new File(CAMEL_JBANG_WORK_DIR);
     }
 
     private static class CamelUserConfigDefaultValueProvider extends CommandLine.PropertiesDefaultProvider {

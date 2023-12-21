@@ -14,29 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.config;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+package org.apache.camel.dsl.jbang.core.commands;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false)
-public class ConfigList extends CamelCommand {
+public final class UserConfigHelper {
 
-    public ConfigList(CamelJBangMain main) {
-        super(main);
+    private UserConfigHelper() {
+        // prevent instantiation of utility class
     }
 
-    @Override
-    public Integer doCall() throws Exception {
-        CommandLineHelper
-                .loadProperties(p -> {
-                    for (String k : p.stringPropertyNames()) {
-                        String v = p.getProperty(k);
-                        printer().printf("%s = %s%n", k, v);
-                    }
-                });
-        return 0;
+    public static void createUserConfig(String content) throws IOException {
+        CommandLineHelper.useHomeDir("target");
+        Path userConfigDir = Paths.get("target");
+        if (!userConfigDir.toFile().exists()) {
+            userConfigDir.toFile().mkdirs();
+        }
+
+        Files.writeString(userConfigDir.resolve(CommandLineHelper.USER_CONFIG), content,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.WRITE,
+                StandardOpenOption.TRUNCATE_EXISTING);
     }
 }

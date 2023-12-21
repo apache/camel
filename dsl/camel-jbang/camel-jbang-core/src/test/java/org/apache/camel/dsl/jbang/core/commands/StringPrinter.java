@@ -31,8 +31,18 @@ public class StringPrinter implements Printer {
     private final StringWriter writer = new StringWriter();
 
     @Override
+    public void println() {
+        writer.write(System.lineSeparator());
+    }
+
+    @Override
     public void println(String line) {
-        writer.write(line + "\n");
+        printf("%s%n", line);
+    }
+
+    @Override
+    public void print(String output) {
+        writer.write(output);
     }
 
     @Override

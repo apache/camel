@@ -64,8 +64,8 @@ public class CamelSourceAction extends ActionBaseCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            System.out.println("Name or pid " + name + " matches " + pids.size()
-                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer().println("Name or pid " + name + " matches " + pids.size()
+                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -128,7 +128,7 @@ public class CamelSourceAction extends ActionBaseCommand {
                 }
             }
         } else {
-            System.out.println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
             return 1;
         }
 
@@ -162,15 +162,15 @@ public class CamelSourceAction extends ActionBaseCommand {
 
     protected void printSource(List<Row> rows) {
         for (Row row : rows) {
-            System.out.println();
-            System.out.printf("Source: %s%n", row.location);
-            System.out.println("--------------------------------------------------------------------------------");
+            printer().println();
+            printer().printf("Source: %s%n", row.location);
+            printer().println("--------------------------------------------------------------------------------");
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
                 String c = Jsoner.unescape(code.code);
-                System.out.printf("%4d: %s%n", code.line, c);
+                printer().printf("%4d: %s%n", code.line, c);
             }
-            System.out.println();
+            printer().println();
         }
     }
 

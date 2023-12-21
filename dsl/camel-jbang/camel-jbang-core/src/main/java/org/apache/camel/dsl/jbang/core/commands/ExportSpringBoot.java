@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -61,11 +62,11 @@ class ExportSpringBoot extends Export {
         File profile = new File(getProfile() + ".properties");
 
         // the settings file has information what to export
-        File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
+        File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
         if (fresh || files != null || !settings.exists()) {
             // allow to automatic build
             if (!quiet) {
-                System.out.println("Generating fresh run data");
+                printer().println("Generating fresh run data");
             }
             int silent = runSilently(ignoreLoadingError);
             if (silent != 0) {
@@ -73,12 +74,12 @@ class ExportSpringBoot extends Export {
             }
         } else {
             if (!quiet) {
-                System.out.println("Reusing existing run data");
+                printer().println("Reusing existing run data");
             }
         }
 
         if (!quiet) {
-            System.out.println("Exporting as Spring Boot project to: " + exportDir);
+            printer().println("Exporting as Spring Boot project to: " + exportDir);
         }
 
         // use a temporary work dir

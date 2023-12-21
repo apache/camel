@@ -62,7 +62,7 @@ public class VersionSet extends CamelCommand {
                     properties.put("runtime", runtime);
                 }
             }
-            CommandLineHelper.storeProperties(properties);
+            CommandLineHelper.storeProperties(properties, printer());
         });
 
         return 0;

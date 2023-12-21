@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
@@ -70,7 +71,7 @@ public class TransformRoute extends CamelCommand {
         String dump = output;
         // if no output then we want to print to console, so we need to write to a hidden file, and dump that file afterwards
         if (output == null) {
-            dump = Run.WORK_DIR + "/transform-output." + format;
+            dump = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/transform-output." + format;
         }
         final String target = dump;
 
@@ -102,7 +103,7 @@ public class TransformRoute extends CamelCommand {
             // load target file and print to console
             dump = waitForDumpFile(new File(target));
             if (dump != null) {
-                System.out.println(dump);
+                printer().println(dump);
             }
         }
 

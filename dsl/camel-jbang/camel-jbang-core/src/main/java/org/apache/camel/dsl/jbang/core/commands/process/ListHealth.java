@@ -194,7 +194,7 @@ public class ListHealth extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -222,10 +222,10 @@ public class ListHealth extends ProcessWatchCommand {
                     = rows.stream().filter(r -> r.stackTrace != null && !r.stackTrace.isEmpty()).collect(Collectors.toList());
             if (!traces.isEmpty()) {
                 for (Row row : traces) {
-                    System.out.println("\n");
-                    System.out.println(StringHelper.fillChars('-', 120));
-                    System.out.println(StringHelper.padString(1, 55) + "STACK-TRACE");
-                    System.out.println(StringHelper.fillChars('-', 120));
+                    printer().println("\n");
+                    printer().println(StringHelper.fillChars('-', 120));
+                    printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");
+                    printer().println(StringHelper.fillChars('-', 120));
                     StringBuilder sb = new StringBuilder();
                     sb.append(String.format("\tPID: %s%n", row.pid));
                     sb.append(String.format("\tNAME: %s%n", row.name));
@@ -244,7 +244,7 @@ public class ListHealth extends ProcessWatchCommand {
                     for (int i = 0; i < depth && i < row.stackTrace.size(); i++) {
                         sb.append(String.format("\t%s%n", row.stackTrace.get(i)));
                     }
-                    System.out.println(sb);
+                    printer().println(sb.toString());
                 }
             }
         }

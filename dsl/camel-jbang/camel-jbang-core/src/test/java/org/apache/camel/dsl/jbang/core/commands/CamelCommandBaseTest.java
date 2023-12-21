@@ -15,33 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.common;
+package org.apache.camel.dsl.jbang.core.commands;
 
-/**
- * Printer interface used by commands to write output to given print stream. By default, uses System out print stream,
- * but unit tests for instance may use a different print stream.
- */
-public interface Printer {
+import org.junit.jupiter.api.BeforeEach;
 
-    default void println() {
-        System.out.println();
+public class CamelCommandBaseTest {
+
+    protected StringPrinter printer;
+
+    @BeforeEach
+    public void setup() {
+        printer = new StringPrinter();
     }
 
-    default void println(String line) {
-        System.out.println(line);
-    }
-
-    default void print(String output) {
-        System.out.print(output);
-    }
-
-    default void printf(String format, Object... args) {
-        System.out.printf(format, args);
-    }
-
-    /**
-     * Default printer uses System out print stream.
-     */
-    class SystemOutPrinter implements Printer {
-    }
 }
