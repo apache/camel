@@ -53,6 +53,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelInvocationHandler.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
+    public static final String CAMEL_INVOCATION_HANDLER = "CamelInvocationHandler";
     private static ExecutorService executorService;
     protected final Endpoint endpoint;
     protected final Producer producer;
@@ -281,14 +282,14 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         // re-create it (its a shared static instance)
         if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
             // try to lookup a pool first based on id/profile
-            executorService = context.getRegistry().lookupByNameAndType("CamelInvocationHandler", ExecutorService.class);
+            executorService = context.getRegistry().lookupByNameAndType(CAMEL_INVOCATION_HANDLER, ExecutorService.class);
             if (executorService == null) {
                 executorService = context.getExecutorServiceManager().newThreadPool(CamelInvocationHandler.class,
-                        "CamelInvocationHandler", "CamelInvocationHandler");
+                        CAMEL_INVOCATION_HANDLER, CAMEL_INVOCATION_HANDLER);
             }
             if (executorService == null) {
                 executorService = context.getExecutorServiceManager().newDefaultThreadPool(CamelInvocationHandler.class,
-                        "CamelInvocationHandler");
+                        CAMEL_INVOCATION_HANDLER);
             }
         }
         return executorService;

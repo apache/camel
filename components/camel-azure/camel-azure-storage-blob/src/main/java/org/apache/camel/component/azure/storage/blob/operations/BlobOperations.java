@@ -71,6 +71,7 @@ import org.slf4j.LoggerFactory;
 public class BlobOperations {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlobOperations.class);
+    public static final String MISSING_EXCHANGE = "exchange cannot be null";
 
     private final BlobClientWrapper client;
     private final BlobConfigurationOptionsProxy configurationProxy;
@@ -179,7 +180,7 @@ public class BlobOperations {
     }
 
     public BlobOperationResponse uploadBlockBlob(final Exchange exchange) throws IOException {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final BlobStreamAndLength blobStreamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
@@ -202,7 +203,7 @@ public class BlobOperations {
     }
 
     public BlobOperationResponse stageBlockBlobList(final Exchange exchange) throws Exception {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final Object object = exchange.getIn().getMandatoryBody();
 
@@ -249,7 +250,7 @@ public class BlobOperations {
 
     @SuppressWarnings("unchecked")
     public BlobOperationResponse commitBlobBlockList(final Exchange exchange) throws Exception {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final Object object = exchange.getIn().getMandatoryBody();
 
@@ -333,7 +334,7 @@ public class BlobOperations {
     }
 
     public BlobOperationResponse commitAppendBlob(final Exchange exchange) throws IOException {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final boolean createAppendBlob = configurationProxy.isCreateAppendBlob(exchange);
@@ -374,7 +375,7 @@ public class BlobOperations {
     }
 
     public BlobOperationResponse uploadPageBlob(final Exchange exchange) throws IOException {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final boolean createPageBlob = configurationProxy.isCreatePageBlob(exchange);
 
@@ -417,7 +418,7 @@ public class BlobOperations {
     }
 
     public BlobOperationResponse clearPageBlob(final Exchange exchange) {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final PageRange pageRange = configurationProxy.getPageRange(exchange);
         final BlobCommonRequestOptions requestOptions = getCommonRequestOptions(exchange);
@@ -433,7 +434,7 @@ public class BlobOperations {
     }
 
     public BlobOperationResponse getPageBlobRanges(final Exchange exchange) {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);

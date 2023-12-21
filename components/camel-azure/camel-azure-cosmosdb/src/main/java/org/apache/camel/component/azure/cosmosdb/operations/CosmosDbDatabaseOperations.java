@@ -28,6 +28,9 @@ import reactor.core.publisher.Mono;
 
 public class CosmosDbDatabaseOperations {
 
+    public static final String PARAM_CONTAINER_ID = "containerId";
+    public static final String PARAM_CONTAINER_PARTITION_KEY_PATH = "containerPartitionKeyPath";
+    public static final String PARAM_QUERY = "query";
     private final Mono<CosmosAsyncDatabase> database;
 
     public CosmosDbDatabaseOperations(final Mono<CosmosAsyncDatabase> database) {
@@ -46,8 +49,8 @@ public class CosmosDbDatabaseOperations {
     public Mono<CosmosContainerResponse> createContainer(
             final String containerId, final String containerPartitionKeyPath, final ThroughputProperties throughputProperties,
             final IndexingPolicy indexingPolicy) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, "containerId");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(containerPartitionKeyPath, "containerPartitionKeyPath");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, PARAM_CONTAINER_ID);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(containerPartitionKeyPath, PARAM_CONTAINER_PARTITION_KEY_PATH);
 
         // containerPartitionKeyPath it needs to start with /
         final String enhancedContainerPartitionKeyPath;
@@ -73,8 +76,8 @@ public class CosmosDbDatabaseOperations {
     public CosmosDbContainerOperations createContainerIfNotExistAndGetContainerOperations(
             final String containerId, final String containerPartitionKeyPath, final ThroughputProperties throughputProperties,
             final IndexingPolicy indexingPolicy) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, "containerId");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(containerPartitionKeyPath, "containerPartitionKeyPath");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, PARAM_CONTAINER_ID);
+        CosmosDbUtils.validateIfParameterIsNotEmpty(containerPartitionKeyPath, PARAM_CONTAINER_PARTITION_KEY_PATH);
 
         return new CosmosDbContainerOperations(
                 getAndCreateContainerIfNotExist(containerId, containerPartitionKeyPath, true, throughputProperties,
@@ -82,7 +85,7 @@ public class CosmosDbDatabaseOperations {
     }
 
     public CosmosDbContainerOperations getContainerOperations(final String containerId) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, "containerId");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, PARAM_CONTAINER_ID);
 
         return new CosmosDbContainerOperations(getAndCreateContainerIfNotExist(containerId, null, false, null, null));
     }
@@ -100,7 +103,7 @@ public class CosmosDbDatabaseOperations {
 
     public Flux<CosmosContainerProperties> queryContainers(
             final String query, final CosmosQueryRequestOptions queryRequestOptions) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(query, PARAM_QUERY);
 
         return database
                 .flatMapMany(database -> CosmosDbUtils

@@ -49,6 +49,8 @@ import software.amazon.awssdk.services.sns.model.PublishResponse;
 public class Sns2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Producer.class);
+    public static final String TYPE_STRING = "String";
+    public static final String TYPE_BINARY = "Binary";
 
     private transient String snsProducerToString;
     private HealthCheck producerHealthCheck;
@@ -107,27 +109,27 @@ public class Sns2Producer extends DefaultProducer {
                 Object value = entry.getValue();
                 if (value instanceof String && !((String) value).isEmpty()) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-                    mav.dataType("String");
+                    mav.dataType(TYPE_STRING);
                     mav.stringValue((String) value);
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Number) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-                    mav.dataType("String");
+                    mav.dataType(TYPE_STRING);
                     mav.stringValue(value.toString());
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof ByteBuffer) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-                    mav.dataType("Binary");
+                    mav.dataType(TYPE_BINARY);
                     mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer) value));
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof byte[]) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-                    mav.dataType("Binary");
+                    mav.dataType(TYPE_BINARY);
                     mav.binaryValue(SdkBytes.fromByteArray((byte[]) value));
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Date) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
-                    mav.dataType("String");
+                    mav.dataType(TYPE_STRING);
                     mav.stringValue(value.toString());
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof List) {

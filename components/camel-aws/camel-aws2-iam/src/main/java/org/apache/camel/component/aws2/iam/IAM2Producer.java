@@ -64,6 +64,8 @@ import software.amazon.awssdk.services.iam.model.UpdateAccessKeyResponse;
 public class IAM2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(IAM2Producer.class);
+    public static final String MISSING_GROUP_NAME = "Group Name must be specified";
+    public static final String MISSING_USER_NAME = "User Name must be specified";
     private transient String iamProducerToString;
     private HealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
@@ -196,7 +198,7 @@ public class IAM2Producer extends DefaultProducer {
                 String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
                 builder.userName(userName);
             } else {
-                throw new IllegalArgumentException("User Name must be specified");
+                throw new IllegalArgumentException(MISSING_USER_NAME);
             }
             CreateUserResponse result;
             try {
@@ -230,7 +232,7 @@ public class IAM2Producer extends DefaultProducer {
                 String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
                 builder.userName(userName);
             } else {
-                throw new IllegalArgumentException("User Name must be specified");
+                throw new IllegalArgumentException(MISSING_USER_NAME);
             }
             DeleteUserResponse result;
             try {
@@ -264,7 +266,7 @@ public class IAM2Producer extends DefaultProducer {
                 String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
                 builder.userName(userName);
             } else {
-                throw new IllegalArgumentException("User Name must be specified");
+                throw new IllegalArgumentException(MISSING_USER_NAME);
             }
             GetUserResponse result;
             try {
@@ -439,7 +441,7 @@ public class IAM2Producer extends DefaultProducer {
                 String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
                 builder.groupName(groupName);
             } else {
-                throw new IllegalArgumentException("Group Name must be specified");
+                throw new IllegalArgumentException(MISSING_GROUP_NAME);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_PATH))) {
                 String groupPath = exchange.getIn().getHeader(IAM2Constants.GROUP_PATH, String.class);
@@ -477,7 +479,7 @@ public class IAM2Producer extends DefaultProducer {
                 String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
                 builder.groupName(groupName);
             } else {
-                throw new IllegalArgumentException("Group Name must be specified");
+                throw new IllegalArgumentException(MISSING_GROUP_NAME);
             }
             DeleteGroupResponse result;
             try {
@@ -538,13 +540,13 @@ public class IAM2Producer extends DefaultProducer {
                 String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
                 builder.groupName(groupName);
             } else {
-                throw new IllegalArgumentException("Group Name must be specified");
+                throw new IllegalArgumentException(MISSING_GROUP_NAME);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
                 String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
                 builder.userName(userName);
             } else {
-                throw new IllegalArgumentException("User Name must be specified");
+                throw new IllegalArgumentException(MISSING_USER_NAME);
             }
             AddUserToGroupResponse result;
             try {
@@ -578,13 +580,13 @@ public class IAM2Producer extends DefaultProducer {
                 String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
                 builder.groupName(groupName);
             } else {
-                throw new IllegalArgumentException("Group Name must be specified");
+                throw new IllegalArgumentException(MISSING_GROUP_NAME);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
                 String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
                 builder.userName(userName);
             } else {
-                throw new IllegalArgumentException("User Name must be specified");
+                throw new IllegalArgumentException(MISSING_USER_NAME);
             }
             RemoveUserFromGroupResponse result;
             try {
