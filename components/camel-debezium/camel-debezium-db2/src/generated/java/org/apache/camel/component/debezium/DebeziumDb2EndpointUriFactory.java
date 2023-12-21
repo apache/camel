@@ -21,7 +21,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(68);
+        Set<String> props = new HashSet<>(70);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
@@ -44,6 +44,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("heartbeatTopicsPrefix");
         props.add("includeSchemaChanges");
         props.add("incrementalSnapshotChunkSize");
+        props.add("incrementalSnapshotWatermarkingStrategy");
         props.add("internalKeyConverter");
         props.add("internalValueConverter");
         props.add("maxBatchSize");
@@ -62,6 +63,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
         props.add("pollIntervalMs");
+        props.add("postProcessors");
         props.add("provideTransactionMetadata");
         props.add("queryFetchSize");
         props.add("retriableRestartConnectorWaitMs");

@@ -24,6 +24,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String signalEnabledChannels = "source";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean includeSchemaChanges = true;
+    @UriParam(label = LABEL_NAME, defaultValue = "mysql")
+    private String connectorAdapter = "mysql";
     @UriParam(label = LABEL_NAME)
     private String gtidSourceIncludes;
     @UriParam(label = LABEL_NAME, defaultValue = "com.mysql.cj.jdbc.Driver")
@@ -54,6 +56,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String snapshotTablesOrderByRowCount = "disabled";
     @UriParam(label = LABEL_NAME)
     private String gtidSourceExcludes;
+    @UriParam(label = LABEL_NAME, defaultValue = "INSERT_INSERT")
+    private String incrementalSnapshotWatermarkingStrategy = "INSERT_INSERT";
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
     @UriParam(label = LABEL_NAME)
@@ -146,6 +150,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private long signalPollIntervalMs = 5000;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventDeserializationFailureHandlingMode = "fail";
+    @UriParam(label = LABEL_NAME)
+    private String postProcessors;
     @UriParam(label = LABEL_NAME)
     private String notificationEnabledChannels;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
@@ -277,6 +283,17 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public boolean isIncludeSchemaChanges() {
         return includeSchemaChanges;
+    }
+
+    /**
+     * Specifies the connection adapter to be used
+     */
+    public void setConnectorAdapter(String connectorAdapter) {
+        this.connectorAdapter = connectorAdapter;
+    }
+
+    public String getConnectorAdapter() {
+        return connectorAdapter;
     }
 
     /**
@@ -469,6 +486,22 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getGtidSourceExcludes() {
         return gtidSourceExcludes;
+    }
+
+    /**
+     * Specify the strategy used for watermarking during an incremental
+     * snapshot: 'insert_insert' both open and close signal is written into
+     * signal data collection (default); 'insert_delete' only open signal is
+     * written on signal data collection, the close will delete the relative
+     * open signal;
+     */
+    public void setIncrementalSnapshotWatermarkingStrategy(
+            String incrementalSnapshotWatermarkingStrategy) {
+        this.incrementalSnapshotWatermarkingStrategy = incrementalSnapshotWatermarkingStrategy;
+    }
+
+    public String getIncrementalSnapshotWatermarkingStrategy() {
+        return incrementalSnapshotWatermarkingStrategy;
     }
 
     /**
@@ -1119,6 +1152,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Optional list of post processors. The processors are defined using
+     * '<post.processor.prefix>.type' config option and configured using options
+     * '<post.processor.prefix.<option>'
+     */
+    public void setPostProcessors(String postProcessors) {
+        this.postProcessors = postProcessors;
+    }
+
+    public String getPostProcessors() {
+        return postProcessors;
+    }
+
+    /**
      * List of notification channels names that are enabled.
      */
     public void setNotificationEnabledChannels(
@@ -1319,11 +1365,12 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     /**
      * Whether the connector should include the original SQL query that
      * generated the change event. Note: This option requires MySQL be
-     * configured with the binlog_rows_query_log_events option set to ON. Query
-     * will not be present for events generated from snapshot. WARNING: Enabling
-     * this option may expose tables or fields explicitly excluded or masked by
-     * including the original SQL statement in the change event. For this reason
-     * the default value is 'false'.
+     * configured with the binlog_rows_query_log_events option set to ON. If
+     * using MariaDB, configure the binlog_annotate_row_events option must be
+     * set to ON. Query will not be present for events generated from snapshot.
+     * WARNING: Enabling this option may expose tables or fields explicitly
+     * excluded or masked by including the original SQL statement in the change
+     * event. For this reason the default value is 'false'.
      */
     public void setIncludeQuery(boolean includeQuery) {
         this.includeQuery = includeQuery;
@@ -1354,6 +1401,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
+        addPropertyIfNotNull(configBuilder, "connector.adapter", connectorAdapter);
         addPropertyIfNotNull(configBuilder, "gtid.source.includes", gtidSourceIncludes);
         addPropertyIfNotNull(configBuilder, "database.jdbc.driver", databaseJdbcDriver);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
@@ -1369,6 +1417,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
         addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
         addPropertyIfNotNull(configBuilder, "gtid.source.excludes", gtidSourceExcludes);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
         addPropertyIfNotNull(configBuilder, "database.ssl.keystore", databaseSslKeystore);
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
@@ -1414,6 +1463,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "event.deserialization.failure.handling.mode", eventDeserializationFailureHandlingMode);
+        addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
         addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
