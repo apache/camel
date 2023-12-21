@@ -189,6 +189,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
 
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    protected boolean download = true;
+
     @CommandLine.Option(names = { "--additional-properties" },
                         description = "Additional maven properties, ex. --additional-properties=prop1=foo,prop2=bar")
     protected String additionalProperties;
@@ -286,6 +290,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.files = files;
         run.exclude = exclude;
         run.openapi = openapi;
+        run.download = download;
         return run.runSilent(ignoreLoadingError);
     }
 

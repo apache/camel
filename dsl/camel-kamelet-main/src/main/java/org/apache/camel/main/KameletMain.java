@@ -554,12 +554,12 @@ public class KameletMain extends MainCommandLineSupport {
 
             answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     new DependencyDownloaderComponentResolver(answer, stubPattern, silent));
+            answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
+                    new DependencyDownloaderDataFormatResolver(answer, stubPattern, silent));
+            answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
+                    new DependencyDownloaderLanguageResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
                     new DependencyDownloaderUriFactoryResolver(answer));
-            answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
-                    new DependencyDownloaderDataFormatResolver(answer));
-            answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
-                    new DependencyDownloaderLanguageResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
                     new DependencyDownloaderResourceLoader(answer));
 
