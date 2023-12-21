@@ -326,4 +326,14 @@ public interface ManagementAgent extends Service {
      */
     void setUseHostIPAddress(Boolean useHostIPAddress);
 
+    /**
+     * Gets whether updating routes via JMX is allowed (is default disabled).
+     */
+    Boolean getUpdateRouteEnabled();
+
+    /**
+     * Sets whether updating routes via JMX is allowed (is default disabled).
+     */
+    void setUpdateRouteEnabled(Boolean updateRouteEnabled);
+
 }

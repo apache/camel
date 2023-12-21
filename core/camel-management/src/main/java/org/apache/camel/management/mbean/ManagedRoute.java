@@ -678,6 +678,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public void updateRouteFromXml(String xml) throws Exception {
+        // check whether this is allowed
+        Boolean enabled = context.getManagementStrategy().getManagementAgent().getUpdateRouteEnabled();
+        if (enabled == null || !enabled) {
+            throw new IllegalAccessException("Updating route is not enabled");
+        }
+
         // convert to model from xml
         ExtendedCamelContext ecc = context.getCamelContextExtension();
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, xml);

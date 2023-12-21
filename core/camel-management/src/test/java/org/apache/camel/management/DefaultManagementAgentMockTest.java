@@ -79,7 +79,7 @@ public class DefaultManagementAgentMockTest {
     }
 
     @Test
-    public void testShouldUseHostIPAddressWhenFlagisTrue() throws Exception {
+    public void testShouldUseHostIPAddressWhenFlagIsTrue() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "true");
         try {
             CamelContext ctx = new DefaultCamelContext();
@@ -94,7 +94,7 @@ public class DefaultManagementAgentMockTest {
     }
 
     @Test
-    public void shouldUseHostNameWhenFlagisFalse() throws Exception {
+    public void shouldUseHostNameWhenFlagIsFalse() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "false");
         try {
             CamelContext ctx = new DefaultCamelContext();

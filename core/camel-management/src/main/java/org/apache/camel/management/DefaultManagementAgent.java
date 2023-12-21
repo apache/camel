@@ -72,6 +72,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean mask = true;
     private Boolean includeHostName = false;
     private Boolean useHostIPAddress = false;
+    private Boolean updateRouteEnabled = false;
     private String managementNamePattern = "#name#";
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.Default;
     private ManagementMBeansLevel mBeansLevel = ManagementMBeansLevel.Default;
@@ -140,6 +141,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (System.getProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS) != null) {
             useHostIPAddress = Boolean.getBoolean(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS);
             values.put(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, useHostIPAddress);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.UPDATE_ROUTE_ENABLED) != null) {
+            updateRouteEnabled = Boolean.getBoolean(JmxSystemPropertyKeys.UPDATE_ROUTE_ENABLED);
+            values.put(JmxSystemPropertyKeys.UPDATE_ROUTE_ENABLED, updateRouteEnabled);
         }
 
         if (!values.isEmpty()) {
@@ -295,6 +300,16 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     @Override
     public void setMBeansLevel(ManagementMBeansLevel mBeansLevel) {
         this.mBeansLevel = mBeansLevel;
+    }
+
+    @Override
+    public Boolean getUpdateRouteEnabled() {
+        return updateRouteEnabled != null && updateRouteEnabled;
+    }
+
+    @Override
+    public void setUpdateRouteEnabled(Boolean updateRouteEnabled) {
+        this.updateRouteEnabled = updateRouteEnabled;
     }
 
     @Override

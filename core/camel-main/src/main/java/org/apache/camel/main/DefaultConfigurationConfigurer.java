@@ -291,6 +291,8 @@ public final class DefaultConfigurationConfigurer {
                     .setMBeansLevel(config.getJmxManagementMBeansLevel());
             camelContext.getManagementStrategy().getManagementAgent()
                     .setManagementNamePattern(config.getJmxManagementNamePattern());
+            camelContext.getManagementStrategy().getManagementAgent()
+                    .setUpdateRouteEnabled(config.isJmxUpdateRouteEnabled());
         }
         if (config.isCamelEventsTimestampEnabled()) {
             camelContext.getManagementStrategy().getEventFactory().setTimestampEnabled(true);

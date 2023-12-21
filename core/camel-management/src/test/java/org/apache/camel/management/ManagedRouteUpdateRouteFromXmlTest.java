@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        // enable updating route
+        context.getManagementStrategy().getManagementAgent().setUpdateRouteEnabled(true);
+
+        return context;
+    }
 
     @Test
     public void testUpdateRouteFromXml() throws Exception {
