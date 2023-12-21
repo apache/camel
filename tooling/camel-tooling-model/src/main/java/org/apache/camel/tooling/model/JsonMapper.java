@@ -544,7 +544,7 @@ public final class JsonMapper {
             // only include if supported to not regen all files
             prop.put("largeInput", option.isLargeInput());
         }
-        if (option.getInputLanguage() != null) {
+        if (!Strings.isNullOrEmpty(option.getInputLanguage())) {
             // only include if supported to not regen all files
             prop.put("inputLanguage", option.getInputLanguage());
         }
