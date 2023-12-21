@@ -21,15 +21,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.orbitz.consul.CatalogClient;
-import com.orbitz.consul.HealthClient;
-import com.orbitz.consul.model.catalog.CatalogService;
-import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.CatalogClient;
+import org.kiwiproject.consul.HealthClient;
+import org.kiwiproject.consul.model.catalog.CatalogService;
+import org.kiwiproject.consul.model.health.ServiceHealth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

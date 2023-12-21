@@ -18,13 +18,13 @@ package org.apache.camel.component.consul;
 
 import java.util.List;
 
-import com.orbitz.consul.model.coordinate.Coordinate;
-import com.orbitz.consul.model.coordinate.Datacenter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulCoordinatesActions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.model.coordinate.Coordinate;
+import org.kiwiproject.consul.model.coordinate.Datacenter;
 
 public class ConsulCoordinatesIT extends ConsulTestSupport {
 

@@ -18,10 +18,10 @@ package org.apache.camel.component.consul;
 
 import java.util.List;
 
-import com.orbitz.consul.EventClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.EventClient;
 
 public class ConsulEventWatchIT extends ConsulTestSupport {
     private String key;

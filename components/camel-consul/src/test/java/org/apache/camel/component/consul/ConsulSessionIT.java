@@ -19,13 +19,13 @@ package org.apache.camel.component.consul;
 import java.util.List;
 import java.util.UUID;
 
-import com.orbitz.consul.model.session.ImmutableSession;
-import com.orbitz.consul.model.session.SessionCreatedResponse;
-import com.orbitz.consul.model.session.SessionInfo;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulSessionActions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.model.session.ImmutableSession;
+import org.kiwiproject.consul.model.session.SessionCreatedResponse;
+import org.kiwiproject.consul.model.session.SessionInfo;
 
 public class ConsulSessionIT extends ConsulTestSupport {
 

@@ -19,10 +19,10 @@ package org.apache.camel.component.consul;
 import java.security.SecureRandom;
 import java.util.List;
 
-import com.orbitz.consul.KeyValueClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.KeyValueClient;
 
 public class ConsulKeyValueWatchIT extends ConsulTestSupport {
     private String key;

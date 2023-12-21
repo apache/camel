@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.consul.endpoint;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.EventClient;
-import com.orbitz.consul.option.EventOptions;
-import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.spi.InvokeOnHeader;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.EventClient;
+import org.kiwiproject.consul.option.EventOptions;
+import org.kiwiproject.consul.option.QueryOptions;
 
 public final class ConsulEventProducer extends AbstractConsulProducer<EventClient> {
 

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.test.infra.consul.services;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.test.infra.consul.common.ConsulProperties;
+import org.kiwiproject.consul.Consul;
 
 public class ConsulRemoteService implements ConsulService {
 

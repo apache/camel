@@ -22,11 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.model.catalog.CatalogService;
-import com.orbitz.consul.model.health.ServiceHealth;
-import com.orbitz.consul.option.ImmutableQueryOptions;
-import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.consul.ConsulConfiguration;
@@ -35,6 +30,11 @@ import org.apache.camel.impl.cloud.DefaultServiceDiscovery;
 import org.apache.camel.impl.cloud.DefaultServiceHealth;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.model.catalog.CatalogService;
+import org.kiwiproject.consul.model.health.ServiceHealth;
+import org.kiwiproject.consul.option.ImmutableQueryOptions;
+import org.kiwiproject.consul.option.QueryOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

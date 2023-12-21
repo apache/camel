@@ -18,12 +18,12 @@ package org.apache.camel.component.consul;
 
 import java.util.List;
 
-import com.orbitz.consul.model.EventResponse;
-import com.orbitz.consul.model.event.Event;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulEventActions;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.model.EventResponse;
+import org.kiwiproject.consul.model.event.Event;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

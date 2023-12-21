@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.consul.endpoint;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.StatusClient;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.spi.InvokeOnHeader;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.StatusClient;
 
 public final class ConsulStatusProducer extends AbstractConsulProducer<StatusClient> {
 

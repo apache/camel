@@ -20,6 +20,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.consul.ConsulClientConfiguration;
 
 public class ConsulClusterConfiguration extends ConsulClientConfiguration {
+
     private int sessionTtl = 60;
     private int sessionLockDelay = 5;
     private int sessionRefreshInterval = 5;

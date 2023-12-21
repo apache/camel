@@ -45,7 +45,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.orbitz.consul</groupId>
+            <groupId>org.kiwiproject</groupId>
             <artifactId>consul-client</artifactId>
             <version>${consul-client-version}</version>
         </dependency>

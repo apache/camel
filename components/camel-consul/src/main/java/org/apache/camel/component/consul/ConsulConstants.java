@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.consul;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.spi.Metadata;
+import org.kiwiproject.consul.Consul;
 
 public interface ConsulConstants {
     String CONSUL_DEFAULT_URL = String.format("http://%s:%d", Consul.DEFAULT_HTTP_HOST, Consul.DEFAULT_HTTP_PORT);
@@ -82,11 +82,11 @@ public interface ConsulConstants {
     @Metadata(label = "producer", description = "Indicates whether it is the known leader", javaType = "Boolean")
     String CONSUL_KNOWN_LEADER = "CamelConsulKnownLeader";
     @Metadata(label = "producer", description = "The consistencyMode used for queries",
-              javaType = "com.orbitz.consul.option.ConsistencyMode", defaultValue = "DEFAULT")
+              javaType = "org.kiwiproject.consul.option.ConsistencyMode", defaultValue = "DEFAULT")
     String CONSUL_CONSISTENCY_MODE = "CamelConsulConsistencyMode";
     @Metadata(label = "producer", description = "Only on healthy services", javaType = "Boolean", defaultValue = "false")
     String CONSUL_HEALTHY_ONLY = "CamelConsulHealthyOnly";
-    @Metadata(label = "producer", description = "The state to query.", javaType = "com.orbitz.consul.model.State")
+    @Metadata(label = "producer", description = "The state to query.", javaType = "org.kiwiproject.consul.model.State")
     String CONSUL_HEALTHY_STATE = "CamelConsulHealthyState";
     @Metadata(label = "producer", description = "The id of the prepared query", javaType = "String")
     String CONSUL_PREPARED_QUERY_ID = "CamelConsulPreparedQueryID";

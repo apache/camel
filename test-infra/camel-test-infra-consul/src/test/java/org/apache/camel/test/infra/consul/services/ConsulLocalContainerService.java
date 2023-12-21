@@ -16,10 +16,10 @@
  */
 package org.apache.camel.test.infra.consul.services;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.consul.common.ConsulProperties;
+import org.kiwiproject.consul.Consul;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;

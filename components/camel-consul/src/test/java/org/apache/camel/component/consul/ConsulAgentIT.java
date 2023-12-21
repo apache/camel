@@ -18,12 +18,12 @@ package org.apache.camel.component.consul;
 
 import java.util.Map;
 
-import com.orbitz.consul.model.agent.ImmutableRegistration;
-import com.orbitz.consul.model.health.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulAgentActions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.model.agent.ImmutableRegistration;
+import org.kiwiproject.consul.model.health.Service;
 
 public class ConsulAgentIT extends ConsulTestSupport {
 

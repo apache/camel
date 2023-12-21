@@ -19,18 +19,18 @@ package org.apache.camel.component.consul.endpoint;
 import java.util.List;
 import java.util.Optional;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.KeyValueClient;
-import com.orbitz.consul.async.ConsulResponseCallback;
-import com.orbitz.consul.model.ConsulResponse;
-import com.orbitz.consul.model.kv.Value;
-import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.KeyValueClient;
+import org.kiwiproject.consul.async.ConsulResponseCallback;
+import org.kiwiproject.consul.model.ConsulResponse;
+import org.kiwiproject.consul.model.kv.Value;
+import org.kiwiproject.consul.option.QueryOptions;
 
 public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValueClient> {
 

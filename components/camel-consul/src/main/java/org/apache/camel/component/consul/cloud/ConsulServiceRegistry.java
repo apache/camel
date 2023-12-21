@@ -24,16 +24,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.NotRegisteredException;
-import com.orbitz.consul.model.agent.ImmutableRegCheck;
-import com.orbitz.consul.model.agent.ImmutableRegistration;
-import com.orbitz.consul.model.agent.Registration;
-import com.orbitz.consul.model.health.Service;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.impl.cloud.AbstractServiceRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.NotRegisteredException;
+import org.kiwiproject.consul.model.agent.ImmutableRegCheck;
+import org.kiwiproject.consul.model.agent.ImmutableRegistration;
+import org.kiwiproject.consul.model.agent.Registration;
+import org.kiwiproject.consul.model.health.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

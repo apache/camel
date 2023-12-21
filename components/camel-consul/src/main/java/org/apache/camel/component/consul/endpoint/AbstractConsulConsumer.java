@@ -20,13 +20,13 @@ import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.Processor;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.kiwiproject.consul.Consul;
 
 abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
     protected final ConsulEndpoint endpoint;
