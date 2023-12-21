@@ -50,9 +50,10 @@ public final class ContextClock implements EventClock<ContextEvents> {
 
     /**
      * Get the elapsed time for the event
-     * @param event the event to get the elapsed time
-     * @param defaultValue the default value to provide if the event is not being tracked
-     * @return The elapsed time or the default value if the event is not being tracked
+     *
+     * @param  event        the event to get the elapsed time
+     * @param  defaultValue the default value to provide if the event is not being tracked
+     * @return              The elapsed time or the default value if the event is not being tracked
      */
     public long elapsed(ContextEvents event, long defaultValue) {
         Clock clock = events.get(event);
@@ -65,9 +66,11 @@ public final class ContextClock implements EventClock<ContextEvents> {
 
     /**
      * Get the time for the event as a Date object
-     * @param event the event to get the elapsed time
-     * @param defaultValue the default value to provide if the event is not being tracked
-     * @return The Date object representing the creation date or the default value if the event is not being tracked
+     *
+     * @param  event        the event to get the elapsed time
+     * @param  defaultValue the default value to provide if the event is not being tracked
+     * @return              The Date object representing the creation date or the default value if the event is not
+     *                      being tracked
      */
     public Date asDate(ContextEvents event, Date defaultValue) {
         Clock clock = events.get(event);

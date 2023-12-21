@@ -32,7 +32,7 @@ public interface MessageHistory {
     NamedNode getNode();
 
     /**
-     * Gets the timestamp at the point of this history.
+     * Gets the point in time the message history was created
      */
     long getTime();
 
@@ -40,6 +40,13 @@ public interface MessageHistory {
      * Gets the elapsed time in millis processing the node took (this is 0 until the node processing is done)
      */
     long getElapsed();
+
+    /**
+     * The elapsed time since created.
+     */
+    default long getElapsedSinceCreated() {
+        return System.nanoTime() - getTime();
+    }
 
     /**
      * Used for signalling that processing of the node is done.

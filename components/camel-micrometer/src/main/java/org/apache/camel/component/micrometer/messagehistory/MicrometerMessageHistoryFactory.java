@@ -130,6 +130,11 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
 
     @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, long timestamp, Exchange exchange) {
+        return newMessageHistory(routeId, namedNode, exchange);
+    }
+
+    @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, Exchange exchange) {
         if (nodePattern != null) {
             String name = namedNode.getShortName();
             String[] parts = nodePattern.split(",");
@@ -148,15 +153,10 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
 
         Route route = camelContext.getRoute(routeId);
         if (route != null) {
-            return new MicrometerMessageHistory(getMeterRegistry(), route, namedNode, getNamingStrategy(), timestamp, msg);
+            return new MicrometerMessageHistory(getMeterRegistry(), route, namedNode, getNamingStrategy(), msg);
         } else {
             return null;
         }
-    }
-
-    @Override
-    public MessageHistory newMessageHistory(String routeId, NamedNode node, Exchange exchange) {
-        return newMessageHistory(routeId, node, System.currentTimeMillis(), exchange);
     }
 
     @Override

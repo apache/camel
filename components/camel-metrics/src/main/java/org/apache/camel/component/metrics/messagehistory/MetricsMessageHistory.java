@@ -29,8 +29,8 @@ public class MetricsMessageHistory extends DefaultMessageHistory {
 
     private final Timer.Context context;
 
-    public MetricsMessageHistory(String routeId, NamedNode namedNode, Timer timer, long timestamp, Message message) {
-        super(routeId, namedNode, timestamp, message);
+    public MetricsMessageHistory(String routeId, NamedNode namedNode, Timer timer, Message message) {
+        super(routeId, namedNode, message);
         this.context = timer.time();
     }
 
