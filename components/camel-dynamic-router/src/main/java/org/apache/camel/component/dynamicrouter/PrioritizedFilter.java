@@ -48,7 +48,7 @@ public record PrioritizedFilter(String id, int priority, Predicate predicate, St
 
     @Override
     public String toString() {
-        return String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s, endpoint %s]",
+        return String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s, endpoint: %s]",
                 this.id(), this.priority(), this.predicate(), this.endpoint());
     }
 

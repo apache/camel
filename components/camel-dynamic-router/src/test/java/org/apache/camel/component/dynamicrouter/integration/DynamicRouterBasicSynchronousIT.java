@@ -229,11 +229,10 @@ public class DynamicRouterBasicSynchronousIT {
 
         String filtersJson = template.requestBodyAndHeader("direct:list", "", "subscribeChannel", "test", String.class);
         Assertions.assertEquals(
-                "[{\"id\":\"testId1\",\"priority\":1,\"predicate\":{\"type\":\"java.lang.Boolean\"},\"endpoint\":\"direct:test1\"},"
-                                +
-                                "{\"id\":\"testId2\",\"priority\":2,\"predicate\":{\"type\":\"java.lang.Boolean\"},\"endpoint\":\"direct:test2\"},"
-                                +
-                                "{\"id\":\"testId3\",\"priority\":3,\"predicate\":{\"type\":\"java.lang.Boolean\"},\"endpoint\":\"direct:test3\"}]",
+                """
+                        [PrioritizedFilterProcessor [id: testId1, priority: 1, predicate: SpelExpression[#{headers.test == 'testValue1'}], endpoint: direct:test1],
+                        PrioritizedFilterProcessor [id: testId2, priority: 2, predicate: SpelExpression[#{headers.test == 'testValue2'}], endpoint: direct:test2],
+                        PrioritizedFilterProcessor [id: testId3, priority: 3, predicate: SpelExpression[#{headers.test == 'testValue3'}], endpoint: direct:test3]]""",
                 filtersJson);
     }
 }

@@ -44,6 +44,8 @@ class PrioritizedFilterTest {
 
     public static final String TEST_PREDICATE = "testPredicate";
 
+    public static final String TEST_URI = "testUri";
+
     @Mock
     Predicate predicate;
 
@@ -62,7 +64,7 @@ class PrioritizedFilterTest {
 
     @Test
     void testCompareToAndEqual() {
-        Mockito.when(endpoint.getEndpointUri()).thenReturn("testUri");
+        Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(prioritizedFilter.id()).thenReturn(TEST_ID);
         Mockito.when(prioritizedFilter.priority()).thenReturn(TEST_PRIORITY);
         PrioritizedFilter testProcessor
@@ -86,10 +88,11 @@ class PrioritizedFilterTest {
     @Test
     void testToString() {
         Mockito.when(predicate.toString()).thenReturn(TEST_PREDICATE);
+        Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         PrioritizedFilter testProcessor
                 = new PrioritizedFilter(TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri());
-        String expected = String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s]",
-                TEST_ID, TEST_PRIORITY, TEST_PREDICATE);
+        String expected = String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s, endpoint: %s]",
+                TEST_ID, TEST_PRIORITY, TEST_PREDICATE, TEST_URI);
         String result = testProcessor.toString();
         assertEquals(expected, result);
     }
