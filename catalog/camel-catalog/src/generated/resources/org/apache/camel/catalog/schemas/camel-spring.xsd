@@ -2820,6 +2820,15 @@ attributes. Default value: true
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="updateRouteEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets whether updating routes via JMX is allowed (is default disabled). Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
