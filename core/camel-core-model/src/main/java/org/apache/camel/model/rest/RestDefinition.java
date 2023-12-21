@@ -57,6 +57,7 @@ import org.apache.camel.util.URISupport;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition> implements ResourceAware {
 
+    public static final String MISSING_VERB = "Must add verb first, such as get/post/delete";
     @XmlAttribute
     private String path;
     @XmlAttribute
@@ -414,7 +415,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition routeId(String routeId) {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         // add on last verb as that is how the Java DSL works
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
@@ -458,7 +459,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public ParamDefinition param() {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         return param(verb);
@@ -466,7 +467,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition param(ParamDefinition param) {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.getParams().add(param);
@@ -475,7 +476,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition params(List<ParamDefinition> params) {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.getParams().addAll(params);
@@ -488,7 +489,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition responseMessage(ResponseMessageDefinition msg) {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.getResponseMsgs().add(msg);
@@ -497,7 +498,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public ResponseMessageDefinition responseMessage() {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         return responseMessage(verb);
@@ -509,7 +510,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition responseMessages(List<ResponseMessageDefinition> msgs) {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.getResponseMsgs().addAll(msgs);
@@ -518,7 +519,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition responseMessage(int code, String message) {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         ResponseMessageDefinition msg = responseMessage(verb);
@@ -529,7 +530,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition responseMessage(String code, String message) {
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         ResponseMessageDefinition response = responseMessage(verb);
@@ -564,7 +565,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public RestDefinition type(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
@@ -576,7 +577,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public RestDefinition outType(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
@@ -708,7 +709,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public RestDefinition to(String uri) {
         // add to last verb
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            throw new IllegalArgumentException(MISSING_VERB);
         }
 
         ToDefinition to = new ToDefinition(uri);

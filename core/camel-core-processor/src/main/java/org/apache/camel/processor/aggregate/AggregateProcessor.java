@@ -680,7 +680,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
      *                     pre-completion
      */
     protected String isPreCompleted(String key, Exchange oldExchange, Exchange newExchange) {
-        return aggregationStrategy.preComplete(oldExchange, newExchange) ? "strategy" : null;
+        return aggregationStrategy.preComplete(oldExchange, newExchange) ? COMPLETED_BY_STRATEGY : null;
     }
 
     /**
