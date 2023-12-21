@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.greeter;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.apache.camel.component.cxf;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -28,17 +25,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RecipientListCxfTest extends CamelSpringTestSupport {
+public class CxfRecipientListTest extends CamelSpringTestSupport {
 
     private static int port1 = AvailablePortFinder.getNextAvailable();
     private static int port2 = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
-        System.setProperty("RecipientListCxfTest.port1", Integer.toString(port1));
-        System.setProperty("RecipientListCxfTest.port2", Integer.toString(port2));
+        System.setProperty("CxfRecipientListTest.port1", Integer.toString(port1));
+        System.setProperty("CxfRecipientListTest.port2", Integer.toString(port2));
     }
 
     @EndpointInject("mock:reply")
@@ -52,11 +52,11 @@ public class RecipientListCxfTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/greeter/RecipientListCxfTest-context.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfRecipientListBeans.xml");
     }
 
     @Test
-    void testRecipientListCXF() throws Exception {
+    void testCxfRecipientList() throws Exception {
         replyEndpoint.expectedBodiesReceived("Hello Willem", "Hello Jonathan", "Hello Freeman");
         reply2Endpoint.expectedBodiesReceived("Bye Claus", "Bye Jonathan", "Bye Freeman");
         outputEndpoint.expectedBodiesReceived("Hello Willem", "Bye Claus", "Bye Jonathan", "Hello Freeman");

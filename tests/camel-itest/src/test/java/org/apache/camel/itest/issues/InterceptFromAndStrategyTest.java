@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class IntercepFromAndStrategyTest extends CamelTestSupport {
+public class InterceptFromAndStrategyTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -52,7 +52,7 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
                 // add a dummy strategy
                 // removing this line the test works
                 context.getCamelContextExtension().addInterceptStrategy(new DummyInterceptor());
-                // intercet from
+                // intercept from
                 interceptFrom("direct:start").log("Intercepted").to("mock:intercepted");
 
                 from("direct:start").to("mock:result");
