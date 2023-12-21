@@ -47,6 +47,8 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  */
 public final class RouteBuilderParser {
 
+    public static final String METHOD_NAME = "configure";
+
     private RouteBuilderParser() {
     }
 
@@ -286,7 +288,7 @@ public final class RouteBuilderParser {
                     CamelSimpleExpressionDetails detail = new CamelSimpleExpressionDetails();
                     detail.setFileName(fileName);
                     detail.setClassName(clazz.getQualifiedName());
-                    detail.setMethodName("configure");
+                    detail.setMethodName(METHOD_NAME);
                     int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
                     if (line > -1) {
                         detail.setLineNumber(Integer.toString(line));
@@ -343,7 +345,7 @@ public final class RouteBuilderParser {
         CamelCSimpleExpressionDetails detail = new CamelCSimpleExpressionDetails();
         detail.setFileName(fileName);
         detail.setClassName(clazz.getQualifiedName());
-        detail.setMethodName("configure");
+        detail.setMethodName(METHOD_NAME);
         int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
         if (line > -1) {
             detail.setLineNumber(Integer.toString(line));
@@ -390,7 +392,7 @@ public final class RouteBuilderParser {
                     CamelRouteDetails detail = new CamelRouteDetails();
                     detail.setFileName(fileName);
                     detail.setClassName(clazz.getQualifiedName());
-                    detail.setMethodName("configure");
+                    detail.setMethodName(METHOD_NAME);
                     int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
                     if (line > -1) {
                         detail.setLineNumber(Integer.toString(line));
