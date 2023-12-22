@@ -115,9 +115,12 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     // -------------------------------------------------------------------------
 
     /**
-     * Delimiter used in splitting messages. Can be turned off using the value <tt>false</tt>.
+     * Delimiter used in splitting messages.
+     * Can be turned off using the value <tt>false</tt>.
+     * To force not splitting then the delimiter can be set to <tt>single</tt> to use the value as a single list,
+     * this can be needed in some special situations.
      * <p/>
-     * The default value is ,
+     * The default value is comma.
      *
      * @param  delimiter the delimiter
      * @return           the builder
