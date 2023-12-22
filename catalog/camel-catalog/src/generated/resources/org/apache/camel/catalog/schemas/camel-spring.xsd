@@ -12668,7 +12668,9 @@ Sets the comparator to use for sorting.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Delimiter used in splitting messages. Can be turned off using the value false. The default value is ,. Default value: ,
+Delimiter used in splitting messages. Can be turned off using the value false. To force not splitting then the delimiter
+can be set to single to use the value as a single list, this can be needed in some special situations. The default value
+is comma. Default value: ,
 ]]>
             </xs:documentation>
           </xs:annotation>

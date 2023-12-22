@@ -5969,7 +5969,7 @@
           "delimiter" : {
             "type" : "string",
             "title" : "Delimiter",
-            "description" : "Delimiter used in splitting messages. Can be turned off using the value false. The default value is ,",
+            "description" : "Delimiter used in splitting messages. Can be turned off using the value false. To force not splitting then the delimiter can be set to single to use the value as a single list, this can be needed in some special situations. The default value is comma.",
             "default" : ","
           },
           "description" : {
