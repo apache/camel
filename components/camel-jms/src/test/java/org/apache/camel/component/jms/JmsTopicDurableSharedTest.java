@@ -22,10 +22,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 @Tags({ @Tag("not-parallel") })
 public class JmsTopicDurableSharedTest extends AbstractPersistentJMSTest {
 
     private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.shared.durable.test";
+
+    private CountDownLatch artemisConsumersWereCreated = new CountDownLatch(1);
 
     @Test
     void testDurableSharedTopic() throws Exception {
@@ -38,7 +43,7 @@ public class JmsTopicDurableSharedTest extends AbstractPersistentJMSTest {
         mock2.expectedMessageCount(1);
         mock2.expectedBodiesReceived("Hello World");
 
-        Thread.sleep(1000);
+        artemisConsumersWereCreated.await(1000, TimeUnit.MILLISECONDS);
         template.sendBody("direct:start", expectedBody);
 
         mock.assertIsSatisfied();
