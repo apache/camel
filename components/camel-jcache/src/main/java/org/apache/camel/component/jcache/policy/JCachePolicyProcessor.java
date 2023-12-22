@@ -118,6 +118,9 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
         if (keyExpression != null) {
             keyExpression.init(camelContext);
         }
+        if (bypassExpression != null) {
+            bypassExpression.init(camelContext);
+        }
     }
 
     @Override
