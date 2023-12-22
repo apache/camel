@@ -18,16 +18,14 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 @Tags({ @Tag("not-parallel") })
-@Disabled("Disabled due to CAMEL-20276")
 public class JmsTopicSharedTest extends AbstractPersistentJMSTest {
 
-    private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.consumer.test";
+    private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.shared.test";
 
     @Test
     void testSharedTopic() throws Exception {
@@ -40,6 +38,7 @@ public class JmsTopicSharedTest extends AbstractPersistentJMSTest {
         mock2.expectedMessageCount(1);
         mock2.expectedBodiesReceived("Hello World");
 
+        Thread.sleep(1000);
         template.sendBody("direct:start", expectedBody);
 
         mock.assertIsSatisfied();
