@@ -59,6 +59,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     private static final Logger LOG = LoggerFactory.getLogger(Splitter.class);
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
+    private static final String SINGLE_DELIMITER_MARKER = "single";
     private final Expression expression;
     private final String delimiter;
 
@@ -95,9 +96,6 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-        // eager load classes
-        Object dummy = new SplitterIterable();
-        LOG.trace("Loaded {}", dummy.getClass().getName());
     }
 
     @Override
@@ -189,6 +187,9 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
             if (IGNORE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
                 this.iterator = ObjectHelper.createIterator(value, null);
+            } else if (SINGLE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
+                // force single element
+                this.iterator = ObjectHelper.createIterator(List.of(value));
             } else {
                 this.iterator = ObjectHelper.createIterator(value, delimiter);
             }
