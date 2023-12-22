@@ -53,6 +53,9 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
         fallbackMock.expectedHeaderReceived("CamelSalesforceTopicName", "CamelFallbackTestTopic");
         fallbackMock.expectedHeaderReceived("CamelSalesforceChannel", "/topic/CamelFallbackTestTopic");
 
+        // give the subscriptions time to start
+        Thread.sleep(2000);
+
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("TestNotification");
         merchandise.setDescription__c("Merchandise for testing Streaming API updated on " +

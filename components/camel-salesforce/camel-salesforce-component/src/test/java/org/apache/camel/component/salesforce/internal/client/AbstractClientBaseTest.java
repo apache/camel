@@ -157,11 +157,11 @@ public class AbstractClientBaseTest {
         // completes the request
         listener.getValue().onComplete(result);
 
-		StopWatch watch = new StopWatch();
+        StopWatch watch = new StopWatch();
         // should not wait
         client.stop();
 
-		final long elapsed = watch.taken();
+        final long elapsed = watch.taken();
         assertTrue(elapsed < 10);
     }
 
@@ -172,11 +172,11 @@ public class AbstractClientBaseTest {
 
         // the request never completes
 
-		StopWatch watch = new StopWatch();
+        StopWatch watch = new StopWatch();
         // will wait for 1 second
         client.stop();
 
-		final long elapsed = watch.taken();
+        final long elapsed = watch.taken();
         assertTrue(elapsed > 900 && elapsed < 1100);
     }
 
