@@ -34,7 +34,6 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.RawClient;
 import org.apache.camel.support.service.ServiceHelper;
-import org.eclipse.jetty.util.StringUtil;
 
 public class RawProcessor extends AbstractSalesforceProcessor {
 

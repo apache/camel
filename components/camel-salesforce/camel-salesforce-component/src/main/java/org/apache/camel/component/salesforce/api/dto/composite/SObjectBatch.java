@@ -353,7 +353,8 @@ public final class SObjectBatch implements Serializable {
         return Stream
                 .concat(Stream.of(SObjectBatch.class, BatchRequest.class),
                         batchRequests.stream().map(BatchRequest::getRichInput).filter(Objects::nonNull)
-                                .map(Object::getClass)).distinct().toArray(Class[]::new);
+                                .map(Object::getClass))
+                .distinct().toArray(Class[]::new);
     }
 
     void addBatchRequest(final BatchRequest batchRequest) {

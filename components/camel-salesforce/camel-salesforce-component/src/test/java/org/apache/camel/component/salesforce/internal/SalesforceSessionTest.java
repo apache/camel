@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.salesforce.internal;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -25,9 +28,6 @@ import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,78 +39,78 @@ import static org.mockito.Mockito.when;
 
 public class SalesforceSessionTest {
 
-	private static final int TIMEOUT = 1;
+    private static final int TIMEOUT = 1;
 
-	private final KeyStoreParameters parameters;
+    private final KeyStoreParameters parameters;
 
-	public SalesforceSessionTest() {
-		parameters = new KeyStoreParameters();
-		parameters.setResource("test.p12");
-		parameters.setType("PKCS12");
-		parameters.setPassword("password");
-	}
+    public SalesforceSessionTest() {
+        parameters = new KeyStoreParameters();
+        parameters.setResource("test.p12");
+        parameters.setType("PKCS12");
+        parameters.setPassword("password");
+    }
 
-	@Test
-	public void shouldGenerateJwtTokens() {
-		final SalesforceLoginConfig config
-				= new SalesforceLoginConfig("https://login.salesforce.com", "ABCD", "username", parameters, true);
+    @Test
+    public void shouldGenerateJwtTokens() {
+        final SalesforceLoginConfig config
+                = new SalesforceLoginConfig("https://login.salesforce.com", "ABCD", "username", parameters, true);
 
-		final SalesforceSession session
-				= new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class), TIMEOUT, config);
+        final SalesforceSession session
+                = new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class), TIMEOUT, config);
 
-		final String jwtAssertion = session.generateJwtAssertion();
+        final String jwtAssertion = session.generateJwtAssertion();
 
-		assertNotNull(jwtAssertion);
-	}
+        assertNotNull(jwtAssertion);
+    }
 
-	@Test
-	public void shouldUseTheOverridenInstanceUrl() throws Exception {
-		final SalesforceLoginConfig config = new SalesforceLoginConfig(
-				"https://login.salesforce.com", "clientId", "clientSecret", "username", "password", true);
-		config.setInstanceUrl("https://custom.salesforce.com:8443");
+    @Test
+    public void shouldUseTheOverridenInstanceUrl() throws Exception {
+        final SalesforceLoginConfig config = new SalesforceLoginConfig(
+                "https://login.salesforce.com", "clientId", "clientSecret", "username", "password", true);
+        config.setInstanceUrl("https://custom.salesforce.com:8443");
 
-		final SalesforceSession session = login(config);
+        final SalesforceSession session = login(config);
 
-		assertEquals("https://custom.salesforce.com:8443", session.getInstanceUrl());
-	}
+        assertEquals("https://custom.salesforce.com:8443", session.getInstanceUrl());
+    }
 
-	@Test
-	public void shouldUseTheSalesforceSuppliedInstanceUrl() throws Exception {
-		final SalesforceLoginConfig config = new SalesforceLoginConfig(
-				"https://login.salesforce.com", "clientId", "clientSecret", "username", "password", true);
+    @Test
+    public void shouldUseTheSalesforceSuppliedInstanceUrl() throws Exception {
+        final SalesforceLoginConfig config = new SalesforceLoginConfig(
+                "https://login.salesforce.com", "clientId", "clientSecret", "username", "password", true);
 
-		final SalesforceSession session = login(config);
+        final SalesforceSession session = login(config);
 
-		assertEquals("https://eu11.salesforce.com", session.getInstanceUrl());
-	}
+        assertEquals("https://eu11.salesforce.com", session.getInstanceUrl());
+    }
 
-	static SalesforceSession login(final SalesforceLoginConfig config)
-			throws InterruptedException, TimeoutException, ExecutionException, SalesforceException {
-		final SalesforceHttpClient client = mock(SalesforceHttpClient.class);
+    static SalesforceSession login(final SalesforceLoginConfig config)
+            throws InterruptedException, TimeoutException, ExecutionException, SalesforceException {
+        final SalesforceHttpClient client = mock(SalesforceHttpClient.class);
 
-		final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), client, TIMEOUT, config);
+        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), client, TIMEOUT, config);
 
-		final Request request = mock(Request.class);
-		when(client.POST(eq("https://login.salesforce.com/services/oauth2/token"))).thenReturn(request);
+        final Request request = mock(Request.class);
+        when(client.POST(eq("https://login.salesforce.com/services/oauth2/token"))).thenReturn(request);
 
-		when(request.body(any())).thenReturn(request);
-		when(request.timeout(anyLong(), any())).thenReturn(request);
+        when(request.body(any())).thenReturn(request);
+        when(request.timeout(anyLong(), any())).thenReturn(request);
 
-		final ContentResponse response = mock(ContentResponse.class);
-		when(request.send()).thenReturn(response);
+        final ContentResponse response = mock(ContentResponse.class);
+        when(request.send()).thenReturn(response);
 
-		when(response.getStatus()).thenReturn(HttpStatus.OK_200);
-		when(response.getContentAsString()).thenReturn("{\n" +
-				"  \"access_token\": \"00D4100000xxxxx!faketoken\",\n" +
-				"  \"instance_url\": \"https://eu11.salesforce.com\",\n" +
-				"  \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\",\n"
-				+
-				"  \"token_type\": \"Bearer\",\n" +
-				"  \"issued_at\": \"1674496911543\",\n" +
-				"  \"signature\": \"/ai5/F+LXEocLQZKdO4uwLblDszPUibL/Dfcn82R9VI=\"\n" +
-				"}");
+        when(response.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(response.getContentAsString()).thenReturn("{\n" +
+                                                       "  \"access_token\": \"00D4100000xxxxx!faketoken\",\n" +
+                                                       "  \"instance_url\": \"https://eu11.salesforce.com\",\n" +
+                                                       "  \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\",\n"
+                                                       +
+                                                       "  \"token_type\": \"Bearer\",\n" +
+                                                       "  \"issued_at\": \"1674496911543\",\n" +
+                                                       "  \"signature\": \"/ai5/F+LXEocLQZKdO4uwLblDszPUibL/Dfcn82R9VI=\"\n" +
+                                                       "}");
 
-		session.login(null);
-		return session;
-	}
+        session.login(null);
+        return session;
+    }
 }

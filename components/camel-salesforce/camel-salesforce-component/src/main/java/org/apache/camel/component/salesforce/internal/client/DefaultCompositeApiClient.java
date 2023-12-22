@@ -48,7 +48,6 @@ import org.eclipse.jetty.client.InputStreamRequestContent;
 import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultCompositeApiClient extends AbstractClientBase implements CompositeApiClient {
 

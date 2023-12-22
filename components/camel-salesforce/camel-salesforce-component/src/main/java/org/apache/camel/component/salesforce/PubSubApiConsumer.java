@@ -78,7 +78,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
         if (endpoint.getComponent().getLoginConfig().isLazyLogin()) {
             throw new SalesforceException("Lazy login is not supported by salesforce consumers.", null);
         }
-        
+
         this.eventClassMap = endpoint.getComponent().getEventClassMap();
         this.pubSubClient = new PubSubApiClient(
                 endpoint.getComponent().getSession(), endpoint.getComponent().getLoginConfig(),
@@ -121,10 +121,9 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.usePlainTextConnection = usePlainTextConnection;
     }
 
-
     /**
-     * This updates the initial replay id. This will only take effect after the route is restarted, and should
-     * generally only be done while the route is stopped.
+     * This updates the initial replay id. This will only take effect after the route is restarted, and should generally
+     * only be done while the route is stopped.
      *
      * @param initialReplayId
      */

@@ -29,8 +29,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * Java class for ResultError complex type.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  *
  * <pre>
@@ -48,7 +47,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ResultError", propOrder = {"fields", "message", "statusCode"})
+@XmlType(name = "ResultError", propOrder = { "fields", "message", "statusCode" })
 public class ResultError {
 
     @XmlElement(nillable = true)
@@ -62,10 +61,9 @@ public class ResultError {
      * Gets the value of the fields property.
      * <p/>
      * <p/>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the fields property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to
+     * the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for
+     * the fields property.
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:

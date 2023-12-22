@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SObjectCompositeTest {
 
-    @JsonPropertyOrder({"account__c", "contactId__c"})
+    @JsonPropertyOrder({ "account__c", "contactId__c" })
     public static class AccountContactJunction__c extends AbstractDescribedSObjectBase {
 
         public AccountContactJunction__c() {

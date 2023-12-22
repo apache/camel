@@ -16,79 +16,67 @@
  */
 package org.apache.camel.component.salesforce.internal.pubsub;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.google.protobuf.ByteString;
-import com.salesforce.eventbus.protobuf.ConsumerEvent;
-import com.salesforce.eventbus.protobuf.EventHeader;
 import com.salesforce.eventbus.protobuf.FetchRequest;
 import com.salesforce.eventbus.protobuf.FetchResponse;
-import com.salesforce.eventbus.protobuf.ProducerEvent;
 import com.salesforce.eventbus.protobuf.PubSubGrpc;
 import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericDatumWriter;
-import org.apache.avro.generic.GenericRecordBuilder;
-import org.apache.avro.io.Encoder;
-import org.apache.avro.io.EncoderFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static org.apache.camel.component.salesforce.internal.client.PubSubApiClient.PUBSUB_ERROR_AUTH_ERROR;
 
 public class SendOneMessagePubSubServer extends PubSubGrpc.PubSubImplBase {
 
-  public int onNextCalls = 0;
+    public int onNextCalls = 0;
 
-  @Override
-  public StreamObserver<FetchRequest> subscribe(StreamObserver<FetchResponse> client) {
+    @Override
+    public StreamObserver<FetchRequest> subscribe(StreamObserver<FetchResponse> client) {
 
-    return new StreamObserver<>() {
-      @Override
-      public void onNext(FetchRequest request) {
-        onNextCalls = onNextCalls + 1;
-        if (onNextCalls > 1) {
-          TimerTask task = new TimerTask() {
-            public void run() {
-              StatusRuntimeException e = new StatusRuntimeException(Status.UNAUTHENTICATED, new Metadata());
-              e.getTrailers().put(Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER),
-                  PUBSUB_ERROR_AUTH_ERROR);
-              client.onError(e);
+        return new StreamObserver<>() {
+            @Override
+            public void onNext(FetchRequest request) {
+                onNextCalls = onNextCalls + 1;
+                if (onNextCalls > 1) {
+                    TimerTask task = new TimerTask() {
+                        public void run() {
+                            StatusRuntimeException e = new StatusRuntimeException(Status.UNAUTHENTICATED, new Metadata());
+                            e.getTrailers().put(Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER),
+                                    PUBSUB_ERROR_AUTH_ERROR);
+                            client.onError(e);
+                        }
+                    };
+                    Timer timer = new Timer("Timer");
+                    long delay = 1000L;
+                    timer.schedule(task, delay);
+                    return;
+                }
+                TimerTask task = new TimerTask() {
+                    public void run() {
+                        FetchResponse response = FetchResponse.newBuilder()
+                                .setLatestReplayId(ByteString.copyFromUtf8("123"))
+                                .build();
+                        client.onNext(response);
+                    }
+                };
+                Timer timer = new Timer("Timer");
+                long delay = 1000L;
+                timer.schedule(task, delay);
             }
-          };
-          Timer timer = new Timer("Timer");
-          long delay = 1000L;
-          timer.schedule(task, delay);
-          return;
-        }
-        TimerTask task = new TimerTask() {
-          public void run() {
-            FetchResponse response = FetchResponse.newBuilder()
-                .setLatestReplayId(ByteString.copyFromUtf8("123"))
-                .build();
-            client.onNext(response);
-          }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
         };
-        Timer timer = new Timer("Timer");
-        long delay = 1000L;
-        timer.schedule(task, delay);
-      }
-
-      @Override
-      public void onError(Throwable t) {
-
-      }
-
-      @Override
-      public void onCompleted() {
-
-      }
-    };
-  }
+    }
 }

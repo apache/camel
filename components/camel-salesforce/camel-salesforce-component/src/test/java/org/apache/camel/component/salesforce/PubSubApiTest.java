@@ -56,13 +56,13 @@ public class PubSubApiTest {
         int port = getPort();
         LOG.debug("Starting server on port {}", port);
         final Server grpcServer = ServerBuilder.forPort(port)
-            .addService(new SendOneMessagePubSubServer())
-            .build();
+                .addService(new SendOneMessagePubSubServer())
+                .build();
         grpcServer.start();
 
         PubSubApiClient client = Mockito.spy(new PubSubApiClient(
-            session, new SalesforceLoginConfig(), "localhost",
-            port, 1000, 10000));
+                session, new SalesforceLoginConfig(), "localhost",
+                port, 1000, 10000));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.LATEST, null);
@@ -86,13 +86,13 @@ public class PubSubApiTest {
         int port = getPort();
         LOG.debug("Starting server on port {}", port);
         final Server grpcServer = ServerBuilder.forPort(port)
-            .addService(new AuthErrorPubSubServer())
-            .build();
+                .addService(new AuthErrorPubSubServer())
+                .build();
         grpcServer.start();
 
         PubSubApiClient client = Mockito.spy(new PubSubApiClient(
-            session, new SalesforceLoginConfig(), "localhost",
-            port, 1000, 10000));
+                session, new SalesforceLoginConfig(), "localhost",
+                port, 1000, 10000));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.CUSTOM, "initial");
@@ -115,13 +115,13 @@ public class PubSubApiTest {
         int port = getPort();
         LOG.debug("Starting server on port {}", port);
         final Server grpcServer = ServerBuilder.forPort(port)
-            .addService(new AuthErrorPubSubServer())
-            .build();
+                .addService(new AuthErrorPubSubServer())
+                .build();
         grpcServer.start();
 
         PubSubApiClient client = Mockito.spy(new PubSubApiClient(
-            session, new SalesforceLoginConfig(), "localhost",
-            port, 1000, 10000));
+                session, new SalesforceLoginConfig(), "localhost",
+                port, 1000, 10000));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.LATEST, null);

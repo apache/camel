@@ -215,7 +215,9 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         final Request post = getRequest(HttpMethod.POST, batchUrl(jobId, null), headers);
         post.body(new InputStreamRequestContent(batchStream));
         post.headers(mutable -> mutable.add(
-                new HttpField(HttpHeader.CONTENT_TYPE, getContentType(contentTypeEnum) + ";charset=" + StandardCharsets.UTF_8.name())));
+                new HttpField(
+                        HttpHeader.CONTENT_TYPE,
+                        getContentType(contentTypeEnum) + ";charset=" + StandardCharsets.UTF_8.name())));
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
@@ -314,7 +316,9 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         }
         post.body(new BytesRequestContent(queryBytes));
         post.headers(mutable -> mutable.add(
-                new HttpField(HttpHeader.CONTENT_TYPE, getContentType(jobContentType) + ";charset=" + StandardCharsets.UTF_8.name())));
+                new HttpField(
+                        HttpHeader.CONTENT_TYPE,
+                        getContentType(jobContentType) + ";charset=" + StandardCharsets.UTF_8.name())));
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {

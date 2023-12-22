@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.salesforce.codegen;
 
+import java.io.IOException;
+import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
@@ -39,13 +46,6 @@ import org.eclipse.jetty.client.ProxyConfiguration;
 import org.eclipse.jetty.client.Socks4Proxy;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
-
-import java.io.IOException;
-import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Base class for any Salesforce Execution.

@@ -26,8 +26,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * Java class for Error complex type.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  *
  * <pre>
@@ -44,7 +43,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Error", propOrder = {"exceptionCode", "exceptionMessage"})
+@XmlType(name = "Error", propOrder = { "exceptionCode", "exceptionMessage" })
 public class Error {
 
     @XmlElement(required = true)
