@@ -33,17 +33,17 @@ import org.apache.camel.dsl.jbang.core.commands.config.ConfigGet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigList;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigSet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigUnset;
-import org.apache.camel.dsl.jbang.core.commands.k.IntegrationDelete;
-import org.apache.camel.dsl.jbang.core.commands.k.IntegrationGet;
-import org.apache.camel.dsl.jbang.core.commands.k.IntegrationLogs;
-import org.apache.camel.dsl.jbang.core.commands.k.IntegrationRun;
-import org.apache.camel.dsl.jbang.core.commands.k.KubeCommand;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginGet;
 import org.apache.camel.dsl.jbang.core.commands.process.*;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionCommand;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionGet;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -129,15 +129,16 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("get", new CommandLine(new ConfigGet(main)))
                         .addSubcommand("unset", new CommandLine(new ConfigUnset(main)))
                         .addSubcommand("set", new CommandLine(new ConfigSet(main))))
-                .addSubcommand("k", new CommandLine(new KubeCommand(main))
-                        .addSubcommand("get", new CommandLine(new IntegrationGet(main)))
-                        .addSubcommand("run", new CommandLine(new IntegrationRun(main)))
-                        .addSubcommand("delete", new CommandLine(new IntegrationDelete(main)))
-                        .addSubcommand("logs", new CommandLine(new IntegrationLogs(main))))
+                .addSubcommand("plugin", new CommandLine(new PluginCommand(main))
+                        .addSubcommand("get", new CommandLine(new PluginGet(main)))
+                        .addSubcommand("add", new CommandLine(new PluginAdd(main)))
+                        .addSubcommand("delete", new CommandLine(new PluginDelete(main))))
                 .addSubcommand("version", new CommandLine(new VersionCommand(main))
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
                         .addSubcommand("set", new CommandLine(new VersionSet(main)))
                         .addSubcommand("list", new CommandLine(new VersionList(main))));
+
+        PluginHelper.addPlugins(commandLine, main);
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();
@@ -156,7 +157,7 @@ public class CamelJBangMain implements Callable<Integer> {
      *
      * @param exitCode
      */
-    protected void quit(int exitCode) {
+    public void quit(int exitCode) {
         System.exit(exitCode);
     }
 

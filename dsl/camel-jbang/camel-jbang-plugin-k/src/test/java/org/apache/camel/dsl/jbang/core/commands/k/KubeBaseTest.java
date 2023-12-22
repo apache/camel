@@ -26,6 +26,9 @@ import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.Context;
 import okhttp3.mockwebserver.MockWebServer;
 import org.apache.camel.dsl.jbang.core.commands.StringPrinter;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
+import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.v1.Integration;
 import org.apache.camel.v1.IntegrationSpec;
@@ -52,6 +55,9 @@ public class KubeBaseTest {
                 new HashMap<>(), new KubernetesCrudDispatcher(), false);
 
         kubernetesClient = k8sServer.createClient();
+
+        CommandLineHelper.useHomeDir("target");
+        PluginHelper.enable(PluginType.CAMEL_K);
     }
 
     @BeforeEach

@@ -37,5 +37,6 @@
         <module>camel-jbang-console</module>
         <module>camel-jbang-core</module>
         <module>camel-jbang-main</module>
+        <module>camel-jbang-plugin-k</module>
     </modules>
 </project>
