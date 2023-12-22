@@ -22,13 +22,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.kiwiproject.consul.Consul;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

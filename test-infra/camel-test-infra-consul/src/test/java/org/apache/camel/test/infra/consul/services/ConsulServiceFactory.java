@@ -19,8 +19,8 @@ package org.apache.camel.test.infra.consul.services;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class ConsulServiceFactory {
-    private ConsulServiceFactory() {
 
+    private ConsulServiceFactory() {
     }
 
     public static SimpleTestServiceBuilder<ConsulService> builder() {

@@ -21,11 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import com.orbitz.consul.AgentClient;
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.model.agent.ImmutableRegistration;
-import com.orbitz.consul.model.agent.Registration;
-import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulHealthActions;
@@ -34,6 +29,11 @@ import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.AgentClient;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.model.agent.ImmutableRegistration;
+import org.kiwiproject.consul.model.agent.Registration;
+import org.kiwiproject.consul.model.health.ServiceHealth;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

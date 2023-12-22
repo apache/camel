@@ -41,9 +41,9 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "connecttimeout":
         case "connectTimeout": getOrCreateConfiguration(target).setConnectTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "consistencymode":
-        case "consistencyMode": getOrCreateConfiguration(target).setConsistencyMode(property(camelContext, com.orbitz.consul.option.ConsistencyMode.class, value)); return true;
+        case "consistencyMode": getOrCreateConfiguration(target).setConsistencyMode(property(camelContext, org.kiwiproject.consul.option.ConsistencyMode.class, value)); return true;
         case "consulclient":
-        case "consulClient": getOrCreateConfiguration(target).setConsulClient(property(camelContext, com.orbitz.consul.Consul.class, value)); return true;
+        case "consulClient": getOrCreateConfiguration(target).setConsulClient(property(camelContext, org.kiwiproject.consul.Consul.class, value)); return true;
         case "datacenter": getOrCreateConfiguration(target).setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
         case "firstindex":
         case "firstIndex": getOrCreateConfiguration(target).setFirstIndex(property(camelContext, java.math.BigInteger.class, value)); return true;
@@ -92,9 +92,9 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "connecttimeout":
         case "connectTimeout": return java.time.Duration.class;
         case "consistencymode":
-        case "consistencyMode": return com.orbitz.consul.option.ConsistencyMode.class;
+        case "consistencyMode": return org.kiwiproject.consul.option.ConsistencyMode.class;
         case "consulclient":
-        case "consulClient": return com.orbitz.consul.Consul.class;
+        case "consulClient": return org.kiwiproject.consul.Consul.class;
         case "datacenter": return java.lang.String.class;
         case "firstindex":
         case "firstIndex": return java.math.BigInteger.class;

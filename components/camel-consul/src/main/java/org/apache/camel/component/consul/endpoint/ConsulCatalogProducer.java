@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.consul.endpoint;
 
-import com.orbitz.consul.CatalogClient;
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.model.catalog.CatalogDeregistration;
-import com.orbitz.consul.model.catalog.CatalogRegistration;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.spi.InvokeOnHeader;
+import org.kiwiproject.consul.CatalogClient;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.model.catalog.CatalogDeregistration;
+import org.kiwiproject.consul.model.catalog.CatalogRegistration;
 
 public final class ConsulCatalogProducer extends AbstractConsulProducer<CatalogClient> {
 

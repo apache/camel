@@ -20,6 +20,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.consul.ConsulClientConfiguration;
 
 public class ConsulServiceRegistryConfiguration extends ConsulClientConfiguration {
+
     /**
      * Should we remove all the registered services know by this registry on stop?
      */

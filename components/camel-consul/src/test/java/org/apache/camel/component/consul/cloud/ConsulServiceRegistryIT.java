@@ -18,13 +18,13 @@ package org.apache.camel.component.consul.cloud;
 
 import java.util.List;
 
-import com.orbitz.consul.CatalogClient;
-import com.orbitz.consul.HealthClient;
-import com.orbitz.consul.model.catalog.CatalogService;
-import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.CatalogClient;
+import org.kiwiproject.consul.HealthClient;
+import org.kiwiproject.consul.model.catalog.CatalogService;
+import org.kiwiproject.consul.model.health.ServiceHealth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.consul.endpoint;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.PreparedQueryClient;
-import com.orbitz.consul.model.query.PreparedQuery;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.util.ObjectHelper;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.PreparedQueryClient;
+import org.kiwiproject.consul.model.query.PreparedQuery;
 
 public final class ConsulPreparedQueryProducer extends AbstractConsulProducer<PreparedQueryClient> {
 

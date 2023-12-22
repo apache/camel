@@ -19,11 +19,11 @@ package org.apache.camel.component.consul;
 import java.util.List;
 import java.util.Map;
 
-import com.orbitz.consul.model.health.Node;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulCatalogActions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.model.health.Node;
 
 public class ConsulCatalogIT extends ConsulTestSupport {
 

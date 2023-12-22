@@ -19,15 +19,15 @@ package org.apache.camel.component.consul.cloud;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.orbitz.consul.AgentClient;
-import com.orbitz.consul.model.agent.ImmutableRegistration;
-import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.consul.AgentClient;
+import org.kiwiproject.consul.model.agent.ImmutableRegistration;
+import org.kiwiproject.consul.model.agent.Registration;
 
 public class ConsulDefaultServiceCallRouteIT extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";

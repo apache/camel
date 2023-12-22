@@ -20,12 +20,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.kiwiproject.consul.Consul;
 
 public class ConsulTestSupport extends CamelTestSupport {
     @RegisterExtension

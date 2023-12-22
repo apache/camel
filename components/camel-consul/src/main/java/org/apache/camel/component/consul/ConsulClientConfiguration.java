@@ -25,14 +25,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.option.ConsistencyMode;
 
 @UriParams
 public abstract class ConsulClientConfiguration implements Cloneable {

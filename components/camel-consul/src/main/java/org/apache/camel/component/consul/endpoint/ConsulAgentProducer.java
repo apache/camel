@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.consul.endpoint;
 
-import com.orbitz.consul.AgentClient;
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.spi.InvokeOnHeader;
+import org.kiwiproject.consul.AgentClient;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.model.agent.Registration;
 
 public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
 
