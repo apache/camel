@@ -355,7 +355,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                             + "slow writes. The default of 1 sec. may be too fast if the producer is very slow writing the file. <p/>"
                                                                             + "Notice: For FTP the default readLockCheckInterval is 5000. <p/> The readLockTimeout value must be "
                                                                             + "higher than readLockCheckInterval, but a rule of thumb is to have a timeout that is at least 2 or more "
-                                                                            + "times higher than the readLockCheckInterval. This is needed to ensure that amble time is allowed for "
+                                                                            + "times higher than the readLockCheckInterval. This is needed to ensure that ample time is allowed for "
                                                                             + "the read lock process to try to grab the lock before the timeout was hit.")
     protected long readLockCheckInterval = 1000;
     @UriParam(label = "consumer,lock", defaultValue = "10000", description = "Optional timeout in millis for the "
@@ -365,7 +365,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                              + "fileLock, changed and rename support the timeout. <p/> Notice: For FTP the default readLockTimeout "
                                                                              + "value is 20000 instead of 10000. <p/> The readLockTimeout value must be higher than "
                                                                              + "readLockCheckInterval, but a rule of thumb is to have a timeout that is at least 2 or more times "
-                                                                             + "higher than the readLockCheckInterval. This is needed to ensure that amble time is allowed for the "
+                                                                             + "higher than the readLockCheckInterval. This is needed to ensure that ample time is allowed for the "
                                                                              + "read lock process to try to grab the lock before the timeout was hit.")
     protected long readLockTimeout = 10000;
     @UriParam(label = "consumer,lock", defaultValue = "true", description = "Whether to use marker file with the "
@@ -1100,7 +1100,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * Notice: For FTP the default readLockCheckInterval is 5000.
      * <p/>
      * The readLockTimeout value must be higher than readLockCheckInterval, but a rule of thumb is to have a timeout
-     * that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that amble time
+     * that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that ample time
      * is allowed for the read lock process to try to grab the lock before the timeout was hit.
      */
     public void setReadLockCheckInterval(long readLockCheckInterval) {
@@ -1120,7 +1120,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * Notice: For FTP the default readLockTimeout value is 20000 instead of 10000.
      * <p/>
      * The readLockTimeout value must be higher than readLockCheckInterval, but a rule of thumb is to have a timeout
-     * that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that amble time
+     * that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that ample time
      * is allowed for the read lock process to try to grab the lock before the timeout was hit.
      */
     public void setReadLockTimeout(long readLockTimeout) {
