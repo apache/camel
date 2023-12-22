@@ -75,10 +75,10 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.orbitz.consul.Consul in the registry.
+         * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
-         * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -86,15 +86,15 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder consulClient(
-                com.orbitz.consul.Consul consulClient) {
+                org.kiwiproject.consul.Consul consulClient) {
             doSetProperty("consulClient", consulClient);
             return this;
         }
         /**
-         * Reference to a com.orbitz.consul.Consul in the registry.
+         * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt; type.
+         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -551,8 +551,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -561,7 +560,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder consistencyMode(
-                com.orbitz.consul.option.ConsistencyMode consistencyMode) {
+                org.kiwiproject.consul.option.ConsistencyMode consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -570,8 +569,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -687,10 +685,10 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.orbitz.consul.Consul in the registry.
+         * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
-         * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -698,15 +696,15 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder consulClient(
-                com.orbitz.consul.Consul consulClient) {
+                org.kiwiproject.consul.Consul consulClient) {
             doSetProperty("consulClient", consulClient);
             return this;
         }
         /**
-         * Reference to a com.orbitz.consul.Consul in the registry.
+         * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt; type.
+         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1041,8 +1039,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -1051,7 +1048,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder consistencyMode(
-                com.orbitz.consul.option.ConsistencyMode consistencyMode) {
+                org.kiwiproject.consul.option.ConsistencyMode consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -1060,8 +1057,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -1177,10 +1173,10 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.orbitz.consul.Consul in the registry.
+         * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
-         * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1188,15 +1184,15 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ConsulEndpointBuilder consulClient(
-                com.orbitz.consul.Consul consulClient) {
+                org.kiwiproject.consul.Consul consulClient) {
             doSetProperty("consulClient", consulClient);
             return this;
         }
         /**
-         * Reference to a com.orbitz.consul.Consul in the registry.
+         * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt; type.
+         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1434,8 +1430,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -1444,7 +1439,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder consistencyMode(
-                com.orbitz.consul.option.ConsistencyMode consistencyMode) {
+                org.kiwiproject.consul.option.ConsistencyMode consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -1453,8 +1448,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -1937,8 +1931,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The consistencyMode used for queries.
          * 
-         * The option is a: {@code com.orbitz.consul.option.ConsistencyMode}
-         * type.
+         * The option is a: {@code
+         * org.kiwiproject.consul.option.ConsistencyMode} type.
          * 
          * Default: DEFAULT
          * Group: producer
@@ -1966,7 +1960,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The state to query.
          * 
-         * The option is a: {@code com.orbitz.consul.model.State} type.
+         * The option is a: {@code org.kiwiproject.consul.model.State} type.
          * 
          * Group: producer
          * 
