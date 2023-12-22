@@ -348,7 +348,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(map);
 
-        assertExpression("${BodyAs(Map)?.get(\"list\")[0].toString}", null);
+        assertExpression("${bodyAs(Map)?.get(\"list\")[0].toString}", null);
     }
 
     @Test
