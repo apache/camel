@@ -29,10 +29,10 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The com.google.api.services.drive.model.File"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.File media metadata or null if none")})
     private com.google.api.services.drive.model.File file;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The ID of the file"), @ApiMethod(methodName = "delete", description="The ID of the file"), @ApiMethod(methodName = "export", description="The ID of the file"), @ApiMethod(methodName = "get", description="The ID of the file"), @ApiMethod(methodName = "listLabels", description="The ID for the file or shared drive"), @ApiMethod(methodName = "modifyLabels", description="The ID of the file to which the labels belong"), @ApiMethod(methodName = "update", description="The ID of the file"), @ApiMethod(methodName = "watch", description="The ID of the file")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The ID of the file"), @ApiMethod(methodName = "delete", description="The ID of the file"), @ApiMethod(methodName = "export", description="The ID of the file"), @ApiMethod(methodName = "get", description="The ID of the file"), @ApiMethod(methodName = "listLabels", description="The ID for the file"), @ApiMethod(methodName = "modifyLabels", description="The ID of the file to which the labels belong"), @ApiMethod(methodName = "update", description="The ID of the file"), @ApiMethod(methodName = "watch", description="The ID of the file")})
     private String fileId;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The media HTTP content or null if none"), @ApiMethod(methodName = "update", description="The media HTTP content or null if none")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The media HTTP content"), @ApiMethod(methodName = "update", description="The media HTTP content")})
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "export", description="Required. The MIME type of the format requested for this export.")})
