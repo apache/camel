@@ -16,72 +16,95 @@
  */
 package org.apache.camel.component.grpc.client;
 
+import java.util.Objects;
+
 import io.grpc.stub.StreamObserver;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConfiguration;
 import org.apache.camel.component.grpc.GrpcConstants;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A stream observer that routes all responses to another endpoint.
  */
-public class GrpcResponseRouterStreamObserver extends ServiceSupport implements StreamObserver<Object> {
+public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> {
 
     private final Endpoint sourceEndpoint;
     private final GrpcConfiguration configuration;
-    private Endpoint endpoint;
-    private AsyncProducer producer;
+    private final AsyncProducer producer;
+    private final Exchange exchange;
+    private final AsyncCallback callback;
 
-    public GrpcResponseRouterStreamObserver(GrpcConfiguration configuration, Endpoint sourceEndpoint) {
+    public GrpcResponseRouterStreamObserver(GrpcConfiguration configuration,
+                                            Endpoint sourceEndpoint,
+                                            AsyncProducer producer,
+                                            Exchange exchange,
+                                            AsyncCallback callback) {
         this.configuration = configuration;
         this.sourceEndpoint = sourceEndpoint;
+        this.producer = producer;
+        this.exchange = exchange;
+        this.callback = callback;
     }
 
     @Override
     public void onNext(Object o) {
-        Exchange exchange = sourceEndpoint.createExchange();
-        exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT);
-        exchange.getIn().setBody(o);
-        doSend(exchange);
+        Exchange newExchange = sourceEndpoint.createExchange();
+        inherit(newExchange);
+        newExchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT);
+        newExchange.getIn().setBody(o);
+        doSend(newExchange);
     }
 
     @Override
     public void onError(Throwable throwable) {
         if (configuration.isForwardOnError()) {
-            Exchange exchange = sourceEndpoint.createExchange();
-            exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR);
-            exchange.getIn().setBody(throwable);
-            doSend(exchange);
+            Exchange newExchange = sourceEndpoint.createExchange();
+            inherit(newExchange);
+            newExchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR);
+            newExchange.getIn().setBody(throwable);
+            doSend(newExchange);
         }
+        callback.done(true);
     }
 
     @Override
     public void onCompleted() {
         if (configuration.isForwardOnCompleted()) {
-            Exchange exchange = sourceEndpoint.createExchange();
-            exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
-            doSend(exchange);
+            Exchange newExchange = sourceEndpoint.createExchange();
+            inherit(newExchange);
+            newExchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
+            doSend(newExchange);
+        }
+        callback.done(true);
+    }
+
+    private void doSend(Exchange newExchange) {
+        producer.processAsync(newExchange);
+    }
+
+    private void inherit(Exchange newExchange) {
+        if (configuration.isInheritExchangePropertiesForReplies()) {
+            for (var entry : exchange.getProperties().entrySet()) {
+                newExchange.setProperty(entry.getKey(), entry.getValue());
+            }
         }
     }
 
-    private void doSend(Exchange exchange) {
-        producer.processAsync(exchange);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        GrpcResponseRouterStreamObserver that = (GrpcResponseRouterStreamObserver) o;
+        return Objects.equals(sourceEndpoint, that.sourceEndpoint) && Objects.equals(producer, that.producer);
     }
 
     @Override
-    protected void doStart() throws Exception {
-        this.endpoint
-                = CamelContextHelper.getMandatoryEndpoint(sourceEndpoint.getCamelContext(), configuration.getStreamRepliesTo());
-        this.producer = endpoint.createAsyncProducer();
-        ServiceHelper.startService(producer);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(producer);
+    public int hashCode() {
+        return Objects.hash(sourceEndpoint, producer);
     }
 }

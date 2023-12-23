@@ -104,7 +104,7 @@ public class GrpcConsumer extends DefaultConsumer {
         if (configuration.isRouteControlledStreamObserver()
                 && configuration.getConsumerStrategy() == GrpcConsumerStrategy.AGGREGATION) {
             throw new IllegalArgumentException(
-                    "Consumer strategy AGGREGATION and routeControlledStreamObserver are not compatible. Set the consumer strategy to PROPAGATION");
+                    "Consumer strategy AGGREGATION and routeControlledStreamObserver are not compatible. Set the consumer strategy to PROPAGATION or DELEGATION");
         }
 
         if (configuration.getNegotiationType() == NegotiationType.TLS) {

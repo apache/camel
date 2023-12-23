@@ -30,10 +30,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
 import org.apache.camel.component.grpc.auth.jwt.JwtHelper;
-import org.apache.camel.component.grpc.client.GrpcExchangeForwarder;
-import org.apache.camel.component.grpc.client.GrpcExchangeForwarderFactory;
-import org.apache.camel.component.grpc.client.GrpcResponseAggregationStreamObserver;
-import org.apache.camel.component.grpc.client.GrpcResponseRouterStreamObserver;
+import org.apache.camel.component.grpc.client.*;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -53,7 +50,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
     private ManagedChannel channel;
     private Object grpcStub;
     private GrpcExchangeForwarder forwarder;
-    private StreamObserver<Object> globalResponseObserver;
+    private GrpcStreamObserverFactory streamObserverFactory;
 
     public GrpcProducer(GrpcEndpoint endpoint, GrpcConfiguration configuration) {
         super(endpoint);
@@ -76,11 +73,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        StreamObserver<Object> streamObserver = this.globalResponseObserver;
-        if (globalResponseObserver == null) {
-            streamObserver = new GrpcResponseAggregationStreamObserver(exchange, callback);
-        }
-
+        StreamObserver<Object> streamObserver = streamObserverFactory.getStreamObserver(exchange, callback);
         return forwarder.forward(exchange, streamObserver, callback);
     }
 
@@ -122,21 +115,14 @@ public class GrpcProducer extends DefaultAsyncProducer {
             }
             forwarder = GrpcExchangeForwarderFactory.createExchangeForwarder(configuration, grpcStub);
 
-            if (configuration.getStreamRepliesTo() != null) {
-                this.globalResponseObserver = new GrpcResponseRouterStreamObserver(configuration, getEndpoint());
-            }
-
-            if (this.globalResponseObserver != null) {
-                ServiceHelper.startService(this.globalResponseObserver);
-            }
+            streamObserverFactory = new GrpcStreamObserverFactory(getEndpoint(), configuration);
+            ServiceHelper.startService(streamObserverFactory);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (this.globalResponseObserver != null) {
-            ServiceHelper.stopService(this.globalResponseObserver);
-        }
+        ServiceHelper.stopService(streamObserverFactory);
         if (channel != null) {
             forwarder.shutdown();
             forwarder = null;
@@ -145,7 +131,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
             channel.shutdown().shutdownNow();
             channel = null;
             grpcStub = null;
-            globalResponseObserver = null;
+            streamObserverFactory = null;
         }
         super.doStop();
     }

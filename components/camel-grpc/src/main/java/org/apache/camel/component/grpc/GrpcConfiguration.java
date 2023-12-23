@@ -130,6 +130,14 @@ public class GrpcConfiguration {
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
+    @UriParam(defaultValue = "false", label = "producer",
+              description = "Copies exchange properties from original exchange to all exchanges created for route defined by streamRepliesTo.")
+    private boolean inheritExchangePropertiesForReplies = false;
+
+    @UriParam(defaultValue = "false", label = "producer",
+              description = "Expects that exchange property GrpcConstants.GRPC_RESPONSE_OBSERVER is set. Takes its value and calls onNext, onError and onComplete on that StreamObserver. All other gRPC parameters are ignored.")
+    private boolean toRouteControlledStreamObserver = false;
+
     /**
      * Fully qualified service name from the protocol buffer descriptor file (package dot service definition name)
      */
@@ -300,7 +308,10 @@ public class GrpcConfiguration {
      * This option specifies the top-level strategy for processing service requests and responses in streaming mode. If
      * an aggregation strategy is selected, all requests will be accumulated in the list, then transferred to the flow,
      * and the accumulated responses will be sent to the sender. If a propagation strategy is selected, request is sent
-     * to the stream, and the response will be immediately sent back to the sender.
+     * to the stream, and the response will be immediately sent back to the sender. If a delegation strategy is
+     * selected, request is sent to the stream, but no response generated under the assumption that all necessary
+     * responses will be sent at another part of route. Delegation strategy always comes with
+     * routeControlledStreamObserver=true to be able to achieve the assumption.
      */
     public GrpcConsumerStrategy getConsumerStrategy() {
         return consumerStrategy;
@@ -468,6 +479,22 @@ public class GrpcConfiguration {
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public boolean isInheritExchangePropertiesForReplies() {
+        return inheritExchangePropertiesForReplies;
+    }
+
+    public void setInheritExchangePropertiesForReplies(boolean inheritExchangePropertiesForReplies) {
+        this.inheritExchangePropertiesForReplies = inheritExchangePropertiesForReplies;
+    }
+
+    public boolean isToRouteControlledStreamObserver() {
+        return toRouteControlledStreamObserver;
+    }
+
+    public void setToRouteControlledStreamObserver(boolean toRouteControlledStreamObserver) {
+        this.toRouteControlledStreamObserver = toRouteControlledStreamObserver;
     }
 
     public void parseURI(URI uri) {

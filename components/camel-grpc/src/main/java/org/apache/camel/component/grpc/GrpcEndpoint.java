@@ -49,6 +49,9 @@ public class GrpcEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+        if (configuration.isToRouteControlledStreamObserver()) {
+            return new GrpcProducerToRouteControlledStreamObserver(this);
+        }
         GrpcProducer producer = new GrpcProducer(this, configuration);
         if (configuration.isSynchronous()) {
             return new SynchronousDelegateProducer(producer);
