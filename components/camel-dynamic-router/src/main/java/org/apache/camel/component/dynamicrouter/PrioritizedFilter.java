@@ -19,6 +19,7 @@ package org.apache.camel.component.dynamicrouter;
 import java.util.Comparator;
 
 import org.apache.camel.Predicate;
+import org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants;
 import org.apache.camel.processor.FilterProcessor;
 
 /**
@@ -35,13 +36,6 @@ public record PrioritizedFilter(String id, int priority, Predicate predicate, St
             Comparable<PrioritizedFilter> {
 
     /**
-     * A comparator to sort {@link PrioritizedFilter}s by their priority field.
-     */
-    public static final Comparator<PrioritizedFilter> COMPARATOR = Comparator
-            .comparingInt(PrioritizedFilter::priority)
-            .thenComparing(PrioritizedFilter::id);
-
-    /**
      * Compare the priority of this instance to the priority of the parameter.
      *
      * @param  other the processor to compare with
@@ -49,13 +43,13 @@ public record PrioritizedFilter(String id, int priority, Predicate predicate, St
      */
     @Override
     public int compareTo(final PrioritizedFilter other) {
-        return COMPARATOR.compare(this, other);
+        return DynamicRouterConstants.FILTER_COMPARATOR.compare(this, other);
     }
 
     @Override
     public String toString() {
-        return String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s]",
-                this.id(), this.priority(), this.predicate());
+        return String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s, endpoint: %s]",
+                this.id(), this.priority(), this.predicate(), this.endpoint());
     }
 
     /**

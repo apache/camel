@@ -63,6 +63,131 @@ public interface DynamicRouterEndpointBuilderFactory {
             return this;
         }
         /**
+         * Refers to an AggregationStrategy to be used to assemble the replies
+         * from the multicasts, into a single outgoing message from the
+         * Multicast. By default, Camel will use the last reply as the outgoing
+         * message. You can also use a POJO as the AggregationStrategy.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.AggregationStrategy&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param aggregationStrategyBean the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder aggregationStrategyBean(
+                org.apache.camel.AggregationStrategy aggregationStrategyBean) {
+            doSetProperty("aggregationStrategyBean", aggregationStrategyBean);
+            return this;
+        }
+        /**
+         * Refers to an AggregationStrategy to be used to assemble the replies
+         * from the multicasts, into a single outgoing message from the
+         * Multicast. By default, Camel will use the last reply as the outgoing
+         * message. You can also use a POJO as the AggregationStrategy.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.AggregationStrategy&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param aggregationStrategyBean the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder aggregationStrategyBean(
+                String aggregationStrategyBean) {
+            doSetProperty("aggregationStrategyBean", aggregationStrategyBean);
+            return this;
+        }
+        /**
+         * If this option is false then the aggregate method is not used if
+         * there was no data to enrich. If this option is true then null values
+         * is used as the oldExchange (when no data to enrich), when using POJOs
+         * as the AggregationStrategy.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param aggregationStrategyMethodAllowNull the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder aggregationStrategyMethodAllowNull(
+                boolean aggregationStrategyMethodAllowNull) {
+            doSetProperty("aggregationStrategyMethodAllowNull", aggregationStrategyMethodAllowNull);
+            return this;
+        }
+        /**
+         * If this option is false then the aggregate method is not used if
+         * there was no data to enrich. If this option is true then null values
+         * is used as the oldExchange (when no data to enrich), when using POJOs
+         * as the AggregationStrategy.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param aggregationStrategyMethodAllowNull the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder aggregationStrategyMethodAllowNull(
+                String aggregationStrategyMethodAllowNull) {
+            doSetProperty("aggregationStrategyMethodAllowNull", aggregationStrategyMethodAllowNull);
+            return this;
+        }
+        /**
+         * You can use a POJO as the AggregationStrategy. This refers to the
+         * name of the method that aggregates the exchanges.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param aggregationStrategyMethodName the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder aggregationStrategyMethodName(
+                String aggregationStrategyMethodName) {
+            doSetProperty("aggregationStrategyMethodName", aggregationStrategyMethodName);
+            return this;
+        }
+        /**
+         * When caching producer endpoints, this is the size of the cache.
+         * Default is 100.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param cacheSize the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder cacheSize(int cacheSize) {
+            doSetProperty("cacheSize", cacheSize);
+            return this;
+        }
+        /**
+         * When caching producer endpoints, this is the size of the cache.
+         * Default is 100.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param cacheSize the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder cacheSize(String cacheSize) {
+            doSetProperty("cacheSize", cacheSize);
+            return this;
+        }
+        /**
          * Refers to a custom Thread Pool to be used for parallel processing.
          * Notice that, if you set this option, then parallel processing is
          * automatically implied, and you do not have to enable that option in
@@ -78,6 +203,44 @@ public interface DynamicRouterEndpointBuilderFactory {
         default DynamicRouterEndpointBuilder executorService(
                 String executorService) {
             doSetProperty("executorService", executorService);
+            return this;
+        }
+        /**
+         * Refers to a custom Thread Pool to be used for parallel processing.
+         * Notice that, if you set this option, then parallel processing is
+         * automatically implied, and you do not have to enable that option in
+         * addition to this one.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param executorServiceBean the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder executorServiceBean(
+                ExecutorService executorServiceBean) {
+            doSetProperty("executorServiceBean", executorServiceBean);
+            return this;
+        }
+        /**
+         * Refers to a custom Thread Pool to be used for parallel processing.
+         * Notice that, if you set this option, then parallel processing is
+         * automatically implied, and you do not have to enable that option in
+         * addition to this one.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param executorServiceBean the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder executorServiceBean(
+                String executorServiceBean) {
+            doSetProperty("executorServiceBean", executorServiceBean);
             return this;
         }
         /**
@@ -119,7 +282,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * Uses the Processor when preparing the org.apache.camel.Exchange to be
          * sent. This can be used to deep-clone messages that should be sent, or
          * to provide any custom logic that is needed before the exchange is
-         * sent.
+         * sent. This is the name of a bean in the registry.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -130,6 +293,44 @@ public interface DynamicRouterEndpointBuilderFactory {
          */
         default DynamicRouterEndpointBuilder onPrepare(String onPrepare) {
             doSetProperty("onPrepare", onPrepare);
+            return this;
+        }
+        /**
+         * Uses the Processor when preparing the org.apache.camel.Exchange to be
+         * sent. This can be used to deep-clone messages that should be sent, or
+         * to provide any custom logic that is needed before the exchange is
+         * sent. This is a Processor instance.
+         * 
+         * The option is a: &lt;code&gt;org.apache.camel.Processor&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param onPrepareProcessor the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder onPrepareProcessor(
+                org.apache.camel.Processor onPrepareProcessor) {
+            doSetProperty("onPrepareProcessor", onPrepareProcessor);
+            return this;
+        }
+        /**
+         * Uses the Processor when preparing the org.apache.camel.Exchange to be
+         * sent. This can be used to deep-clone messages that should be sent, or
+         * to provide any custom logic that is needed before the exchange is
+         * sent. This is a Processor instance.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.Processor&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param onPrepareProcessor the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder onPrepareProcessor(
+                String onPrepareProcessor) {
+            doSetProperty("onPrepareProcessor", onPrepareProcessor);
             return this;
         }
         /**
@@ -476,127 +677,6 @@ public interface DynamicRouterEndpointBuilderFactory {
             doSetProperty("warnDroppedMessage", warnDroppedMessage);
             return this;
         }
-        /**
-         * The destination URI for exchanges that match.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: control
-         * 
-         * @param destinationUri the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointBuilder destinationUri(
-                String destinationUri) {
-            doSetProperty("destinationUri", destinationUri);
-            return this;
-        }
-        /**
-         * The subscription predicate language.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: simple
-         * Group: control
-         * 
-         * @param expressionLanguage the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointBuilder expressionLanguage(
-                String expressionLanguage) {
-            doSetProperty("expressionLanguage", expressionLanguage);
-            return this;
-        }
-        /**
-         * The subscription predicate.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: control
-         * 
-         * @param predicate the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointBuilder predicate(String predicate) {
-            doSetProperty("predicate", predicate);
-            return this;
-        }
-        /**
-         * A Predicate instance in the registry.
-         * 
-         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
-         * type.
-         * 
-         * Group: control
-         * 
-         * @param predicateBean the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointBuilder predicateBean(
-                org.apache.camel.Predicate predicateBean) {
-            doSetProperty("predicateBean", predicateBean);
-            return this;
-        }
-        /**
-         * A Predicate instance in the registry.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
-         * 
-         * Group: control
-         * 
-         * @param predicateBean the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointBuilder predicateBean(String predicateBean) {
-            doSetProperty("predicateBean", predicateBean);
-            return this;
-        }
-        /**
-         * The subscription priority.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: control
-         * 
-         * @param priority the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointBuilder priority(Integer priority) {
-            doSetProperty("priority", priority);
-            return this;
-        }
-        /**
-         * The subscription priority.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: control
-         * 
-         * @param priority the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointBuilder priority(String priority) {
-            doSetProperty("priority", priority);
-            return this;
-        }
-        /**
-         * The subscription ID; if unspecified, one will be assigned and
-         * returned.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: control
-         * 
-         * @param subscriptionId the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointBuilder subscriptionId(
-                String subscriptionId) {
-            doSetProperty("subscriptionId", subscriptionId);
-            return this;
-        }
     }
 
     /**
@@ -671,15 +751,12 @@ public interface DynamicRouterEndpointBuilderFactory {
          * 
          * Syntax: <code>dynamic-router:channel</code>
          * 
-         * Path parameter: channel (required)
-         * Channel of the Dynamic Router
-         * 
-         * Path parameter: controlAction
-         * Control channel action: subscribe or unsubscribe
-         * There are 2 enums and the value can be one of: subscribe, unsubscribe
-         * 
-         * Path parameter: subscribeChannel
-         * The channel to subscribe to
+         * Path parameter: channel
+         * Channel for the Dynamic Router. For example, if the Dynamic Router
+         * URI is dynamic-router://test, then the channel is test. Channels are
+         * a way of keeping routing participants, their rules, and exchanges
+         * logically separate from the participants, rules, and exchanges on
+         * other channels. This can be seen as analogous to VLANs in networking.
          * 
          * @param path channel
          * @return the dsl builder
@@ -698,15 +775,12 @@ public interface DynamicRouterEndpointBuilderFactory {
          * 
          * Syntax: <code>dynamic-router:channel</code>
          * 
-         * Path parameter: channel (required)
-         * Channel of the Dynamic Router
-         * 
-         * Path parameter: controlAction
-         * Control channel action: subscribe or unsubscribe
-         * There are 2 enums and the value can be one of: subscribe, unsubscribe
-         * 
-         * Path parameter: subscribeChannel
-         * The channel to subscribe to
+         * Path parameter: channel
+         * Channel for the Dynamic Router. For example, if the Dynamic Router
+         * URI is dynamic-router://test, then the channel is test. Channels are
+         * a way of keeping routing participants, their rules, and exchanges
+         * logically separate from the participants, rules, and exchanges on
+         * other channels. This can be seen as analogous to VLANs in networking.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

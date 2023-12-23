@@ -15,21 +15,39 @@
 
 *{component-header}*
 
-The Dynamic Router Component is an implementation of the Dynamic Router EIP.  Participants may send subscription messages over a special control channel, at runtime, to specify the conditions under which messages are routed to their endpoint (also provided in the control channel message).  In this way, the Dynamic Router is an extension of the content-based router EIP.  When a recipient wishes to remove itself, it can also send a message to unsubscribe.
+The Dynamic Router Component is an implementation of the Dynamic Router EIP.  Participants may send subscription
+messages over a special control channel, at runtime, to specify the conditions under which messages are routed to their
+endpoint (also provided in the control channel message).  In this way, the Dynamic Router is an extension of the
+content-based router EIP.  When a recipient wishes to remove itself, it can also send a message to unsubscribe.
 
-Note that, while Camel Core contains an implementation of the Dynamic Router EIP, this component is a completely separate implementation that aims to be a closer reflection of the EIP description.  The main differences between the Core implementation and this component implementation are as follows:
+Note that, while Camel Core contains an implementation of the Dynamic Router EIP, this component is a completely
+separate implementation that aims to be a closer reflection of the EIP description.  The main differences between the
+Core implementation and this component implementation are as follows:
 
- _Control Channel_:: A reserved communication channel by which routing participants can subscribe or unsubscribe to receiving messages that meet their criteria.
- * *core*: does not have a communication channel for control messages.  Perhaps the "re-circulation" behavior, discussed below, is the core Dynamic Router's control channel interpretation.
- * *component*: provides a control channel for participants to subscribe and unsubscribe with control messages that contain a `Predicate` to determine `Exchange` suitability, and the `Endpoint` URI that a matching `Exchange` will be sent to.
- _Dynamic Rule Base_:: The Dynamic Router should have a list of routing recipients' criteria that define the terms under which an exchange is suitable for them to receive.
- * *core*: implements a dynamic version of a `Routing Slip` for this purpose, but that is not inherently dynamic in terms of its content.  If the content of this slip will be dynamic, it will be up to the user to define and implement that capability.
- * *component*: builds the rule base at runtime, and maintains it as participants subscribe or unsubscribe via the control channel.
+_Control Channel_:: A reserved communication channel by which routing participants can subscribe or unsubscribe to
+receiving messages that meet their criteria.
+ * *core*: does not have a communication channel for control messages.  Perhaps the "re-circulation" behavior, discussed
+below, is the core Dynamic Router's control channel interpretation.
+ * *component*: provides a control channel for participants to subscribe and unsubscribe with control messages that
+contain a `Predicate` to determine `Exchange` suitability, and the `Endpoint` URI that a matching `Exchange` will be
+sent to.
+ _Dynamic Rule Base_:: The Dynamic Router should have a list of routing recipients' criteria that define the terms under
+which an exchange is suitable for them to receive.
+ * *core*: implements a dynamic version of a `Routing Slip` for this purpose, but that is not inherently dynamic in
+terms of its content.  If the content of this slip will be dynamic, it will be up to the user to define and implement
+that capability.
+ * *component*: builds the rule base at runtime, and maintains it as participants subscribe or unsubscribe via the
+control channel.
  _Message Re-Circulation_:: The Dynamic Router EIP description does not specify any message re-circulation behavior.
- * *core*: provides a feature that continuously routes the exchange to a recipient, then back through the dynamic router, until a recipient returns `null` to signify routing termination.  This may be an interpretation of the control channel feature.
- * *component*: does not provide a re-circulation feature.  If this is the desired behavior, the user will have to define and implement this behavior.  E.g., create a simple route to send a response back through the Dynamic Router under some condition(s).
+ * *core*: provides a feature that continuously routes the exchange to a recipient, then back through the dynamic
+router, until a recipient returns `null` to signify routing termination.  This may be an interpretation of the control
+channel feature.
+ * *component*: does not provide a re-circulation feature.  If this is the desired behavior, the user will have to
+define and implement this behavior.  E.g., create a simple route to send a response back through the Dynamic Router
+under some condition(s).
 
-For some use cases, the core Dynamic Router will be more appropriate.  In other cases, the Dynamic Router Component will be a better fit.
+For some use cases, the core Dynamic Router will be more appropriate.  In other cases, the Dynamic Router Component will
+be a better fit.
 
 == URI format
 
@@ -38,16 +56,7 @@ For some use cases, the core Dynamic Router will be more appropriate.  In other 
 dynamic-router:channel[?options]
 ----
 
-== Control URI format
-
-[source]
-----
-dynamic-router:control/controlAction/subscribeChannel[?options]
-----
-
 The `channel` is the routing channel that allows messaging to be logically separate from other channels.  Any string that can be included in a URI is a valid channel name.  Each channel can have a set of participant subscriptions, and can consume messages to be routed to appropriate recipients.  The only reserved channel is the `control` channel.  This is a single channel that handles control messages for participants to subscribe or unsubscribe for messaging over a desired channel.
-
-For control channel messages, the chanel must have a literal value of `control`.  The value of `controlAction` must be `subscribe` or `unsubscribe`.  The channel to which the action applies is specified as the `subscribeChannel` param.
 
 These messages will be described in greater detail below, with examples.
 
@@ -84,15 +93,16 @@ implementation group: 'org.apache.camel', name: 'camel-dynamic-router', version:
 // use the same version as your Camel core version
 ----
 
-The Dynamic Router component is used in the same way that other components are used.  Simply include the dynamic-router URI as a consumer in a route, along with the channel name.
+The Dynamic Router component is used in the same way that other components are used.  Simply include the dynamic-router
+URI as a consumer in a route, along with the channel name.
 
 In Java:
 
 .Example Java DSL Route Definition
 [source,java]
 ----
-// Send message to the Dynamic Router channel named "jupiter"
-from("direct:start").to("dynamic-router:jupiter");
+// Send message to the Dynamic Router channel named "orders"
+from("direct:start").to("dynamic-router:orders");
 ----
 
 And the same route using XML DSL:
@@ -102,128 +112,203 @@ And the same route using XML DSL:
 ----
 <route>
    <from uri="direct:start"/>
-   <to uri="dynamic-router:jupiter"/>
+   <to uri="dynamic-router:nameOfYourChannel"/>
 </route>
 ----
 
-== Subscribing
+== Dynamic Router EIP Component Use Cases
 
-=== Method 1: Subscribe Message POJO
+The benefit of the Dynamic Router EIP Component can best be seen, perhaps, through looking at some use cases.  These
+examples are not the only possibilities with this component, but they show the basics of two main usages -- message
+routing within a single JVM, and message routing across multiple JVMs.
 
-Participating recipients may subscribe by sending a `DynamicRouterControlMessage` to the `control` channel.  An example subscribe message might look like the following:
+=== Dynamic Router within a single JVM or Application
 
-.Example Subscribe Message as POJO
+The Dynamic Router EIP component can receive messages from a single source and dispatch them to interested recipients.
+If we have a simple point-of-sale application, we might have services that:
+
+ 1. Process orders
+ 2. Adjust inventory counts
+ 3. Process returns
+
+For the purpose of this example, the exact steps that each service carries out is not as important as the fact that
+each service needs to be notified that it needs to do something under the right condition(s).  So, each service will
+subscribe to participate in routing:
+
+.Orders processing service subscription
 [source,java]
 ----
-// Send a message to the Dynamic Router "billing" channel
-// to subscribe to billing messages, with a priority of 10
-DynamicRouterControlMessage billingSubMsg = new SubscribeMessageBuilder()
-                .id("billingSubscription")
-                .channel("billing")
-                .priority(10)
-                .endpointUri(myBillingNotificationUri)
-                .predicate(new SomeBillingPredicate())
-                .build();
-template.sendBody("dynamic-router:control", billingSubMsg);
+DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuilder()
+    .subscribeChannel("orders")
+    .subscriptionId("orderProcessing")
+    .destinationUri("direct:orders")
+    .priority(5)
+    .predicate("{(headers.command == 'processOrder'}")
+    .expressionLanguage("simple")
+    .build();
+producerTemplate.sendBody("dynamic-router-control:subscribe", controlMessage);
 ----
 
-The parameters, in order, are:
-
-. _Subscription ID_:  When unsubscribing, this is the only way to identify the subscription to remove.
-. _Channel Name_:  The dynamic router can have multiple channels, where the subscriptions (the registered rules and endpoints) are kept completely separate from the other channels.  This is equivalent to a VLAN in networking.
-. _Priority_:  A new subscription will be inserted into the rule base in order of precedence; lower numbers have higher priority.
-. _Endpoint URI_:  If an evaluation of the rules in the rule base determines that the exchange is appropriate for the recipient, it is sent to this URI.
-. _Predicate_:  For evaluating the exchange to determine if a message should be routed to the supplied URI.
-
-=== Method 2: URI Only
-
-You can also use a simplified method for subscribing using URL parameters, if you wish.  The subscribe message, detailed above, can be sent via the control URI like this (with an empty body, since it will be ignored):
-
-.Example Subscribe Message Using URI
+.Inventory service subscription
 [source,java]
 ----
-template.sendBody("dynamic-router:control/subscribe/billing?subscriptionId=billingSubscription&priority=10&destinationUri=<URI here>&predicate=<text predicate>", "");
+DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuilder()
+    .subscribeChannel("orders")
+    .subscriptionId("inventoryProcessing")
+    .destinationUri("direct:orders")
+    .priority(5)
+    .predicate("{headers.command == 'processOrder' or headers.command == 'processReturn'}")
+    .expressionLanguage("simple")
+    .build();
+producerTemplate.sendBody("dynamic-router-control:subscribe", controlMessage);
 ----
 
-=== Method 3: URI and Predicate as Bean
-
-The predicate can also be supplied as a bean in the Camel context registry.  The URI example is modified slightly:
-
-.Example Subscribe Message Using URI and Predicate Bean
+.Returns processing service subscription
 [source,java]
 ----
-// Register a bean, somehow, in the registry:
-camelContext.getRegistry().bind("predicateBean", Predicate.class, PredicateBuilder.constant(true));
-template.sendBody("dynamic-router:control/subscribe/billing?subscriptionId=billingSubscription&priority=10&destinationUri=<URI here>&predicate=#bean:predicateBean", "");
+DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuilder()
+    .subscribeChannel("orders")
+    .subscriptionId("orderProcessing")
+    .destinationUri("direct:orders")
+    .priority(5)
+    .predicate("{(headers.command == 'processReturn'}")
+    .expressionLanguage("simple")
+    .build();
+producerTemplate.sendBody("dynamic-router-control:subscribe", controlMessage);
 ----
 
-=== Method 4: URI and Predicate as Message Body
+Above, we have the Orders service subscribing for all messages where the `command` header is "processOrder", and the
+Returns service subscribing for all messages where the `command` header is "processReturn".  The Inventory service is
+interested in *both* types of messages, since it must deduct from the inventory when an order request comes through,
+and it must add to inventory counts when a return request comes through.  So, for either type of message, two services
+will be notified.
 
-As a final example, the URI subscription method can be modified, once again, to eliminate the `predicate` parameter altogether, and supply the `Predicate` as the message body:
+The order messages get sent to the dynamic router:
 
-.Example Subscribe Message Using URI and Predicate as Message Body
+.Routing order/return request messages
 [source,java]
 ----
-// Register a bean, somehow, in the registry:
-Predicate predicate = PredicateBuilder.constant(true));
-template.sendBody("dynamic-router:control/subscribe/billing?subscriptionId=billingSubscription&priority=10&destinationUri=<URI here>", predicate);
+from("direct:start")
+    .process(myOrderProcessor)
+    .to("dynamic-router:orders");
 ----
 
-=== Note: Subscription ID is Generated if Not Supplied
+Note the `.process(myOrderProcessor)` step.  If incoming messages need to be validated, enriched, transformed, or
+otherwise augmented, that can be done before the Dynamic Router receives the message.  Then, when the Dynamic Router
+receives a message, it checks the `Exchange` against all subscriptions for the "orders" channel to determine if it is
+suitable for any of the recipients.  Orders should have a header (`command` -> `processOrder`), so the message will be
+routed to the orders service, and the inventory service.  The system will process the order details, and then the
+inventory service will deduct from merchandise counts.  Likewise, returns should have a header
+(`command` -> `processReturn`), so the message will be routed to the returns service, where the return details will be
+processed, and the inventory service will increase the relevant merchandise counts.
 
-For any of the URI subscription examples, the `subscriptionId` URI parameter may be omitted, and a subscription ID will be generated and returned as the message body.  It will have the form of a UUID string.  As an example:
+==== Further learning: a complete Spring Boot example
 
-.Example Subscribe Message Using URI and Omitting Subscription ID
+In the `camel-spring-boot-examples` project, the `dynamic-router-eip` module serves as a complete example in this
+category that you can run and/or experiment with to get a practical feel for how you might use this in your own
+single-JVM application.
+
+=== Dynamic Router across multiple JVMs or Applications
+
+The Dynamic Router EIP component is particularly well-suited to serve as the primary orchestration mechanism between
+various applications and services that comprise an application stack.  Note that the Dynamic Router cannot achieve this
+by itself, and that some other transport is required to allow messages to pass between services that exist in separate
+JVMs.  For example, a message transport implementation like Kafka, Artemis, or Protocol Buffers, could be used.
+
+Let's look at the point-of-sale example in a different context.  In a microservice architecture, this system would have
+several separate application modules, with the orders service, inventory service, and returns service, contained within
+their own microservice (application).  Similar to the single-JVM example, all services will subscribe, but they will
+need to send their subscriptions through a transport that can communicate to another JVM.  Their subscriptions might
+look like:
+
+.Orders processing service subscription
 [source,java]
 ----
-Predicate predicate = PredicateBuilder.constant(true));
-// Capture the generated subscription ID from the returned message body:
-String generatedId = (String) template.sendBody("dynamic-router:control/subscribe/billing?priority=10&destinationUri=<URI here>", ExchangePattern.InOut, predicate);
+DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuilder()
+    .subscribeChannel("orders")
+    .subscriptionId("orderProcessing")
+    .destinationUri("direct:orders")
+    .priority(5)
+    .predicate("{(headers.command == 'processOrder'}")
+    .expressionLanguage("simple")
+    .build();
+ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+producerTemplate.sendBody("kafka://subscriptions", mapper.writeValueAsString(controlMessage));
 ----
 
-The `generatedId` variable will contain the generated UUID string.  If you are going to unsubscribe, you will need this ID.
-
-== Unsubscribing
-
-=== Method 1: Unsubscribe Message POJO
-
-Participating recipients may unsubscribe by sending a `DynamicRouterControlMessage` to the `control` channel.  An example unsubscribe message might look like the following:
-
-.Example Unsubscribe Message Using POJO
+.Inventory service subscription
 [source,java]
 ----
-// Send message to the Dynamic Router "billing" channel
-// to unsubscribe from billing messages
-DynamicRouterControlMessage unsubscribeMsg = new UnsubscribeMessageBuilder()
-                .id("billingSubscription")
-                .channel("billing")
-                .build();
-template.sendBody("dynamic-router:control", unsubscribeMsg);
+DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuilder()
+    .subscribeChannel("orders")
+    .subscriptionId("inventoryProcessing")
+    .destinationUri("direct:orders")
+    .priority(5)
+    .predicate("{headers.command == 'processOrder' or headers.command == 'processReturn'}")
+    .expressionLanguage("simple")
+    .build();
+ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+producerTemplate.sendBody("kafka://subscriptions", mapper.writeValueAsString(controlMessage));
 ----
 
-The builder for an unsubscribe message only requires the id and channel name.
-
-=== Method 2: URI Only
-
-You can also use a simplified method for unsubscribing using URL parameters, if you wish.  The unsubscribe message, detailed above, can be sent via the control URI like this (with an empty body, since it will be ignored):
-
-.Example Unsubscribe Message Using URI
+.Returns processing service subscription
 [source,java]
 ----
-template.sendBody("dynamic-router:control/unsubscribe/billing?subscriptionId=billingSubscription", "");
+DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuilder()
+    .subscribeChannel("orders")
+    .subscriptionId("orderProcessing")
+    .destinationUri("direct:orders")
+    .priority(5)
+    .predicate("{(headers.command == 'processReturn'}")
+    .expressionLanguage("simple")
+    .build();
+ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+producerTemplate.sendBody("kafka://subscriptions", mapper.writeValueAsString(controlMessage));
 ----
 
-== The Dynamic Rule Base
+In another module, additional routing will serve as a bridge to get the message from Kafka to the control channel of the
+Dynamic Router:
 
-To determine if an exchange is suitable for any of the participants, all predicates for the participants that are subscribed to the channel are evaluated until the first result of "true" is found, by default.  If the Dynamic Router is configured with the `recipientMode` set to `allMatch`, then all recipients with matching predicates will be selected.  The exchange will be routed to the corresponding endpoint(s).  The rule base contains a default filter that is registered at the least priority (which is the highest integer number).  Like the "default" case of a switch statement in Java, any message that is not appropriate for any registered participants will be processed by this filter.  The filter logs information about the dropped message at *debug* level, by default.  To turn the level up to *warn*, include `warnDroppedMessage=true` in the component URI.
-
-Rules are registered in a channel, and they are logically separate from rules in another channel.  Subscription IDs must be unique within a channel, although multiple subscriptions of the same name may coexist in a dynamic router instance if they are in separate channels.
-
-The Dynamic Router employs the use of xref:manual::predicate.adoc[Predicate] as rules.  Any valid predicate may be used to determine the suitability of exchanges for a participating recipient, whether they are simple or compound predicates.  Although it is advised to view the complete documentation, an example simple predicate might look like the following:
-
-.Example simple predicate
+.Bridge from Kafka to the Dynamic Router control channel
 [source,java]
 ----
-// The "messageType" must be "payment"
-Predicate msgType = header("messageType").isEqualTo("payment");
+RouteBuilder subscriptionRouter() {
+    return new RouteBuilder(camelContext) {
+        @Override
+        public void configure() {
+            from("kafka:subscriptions")
+                .unmarshal().json(DynamicRouterControlMessage.class)
+                .to("dynamic-router-control:subscribe");
+        }
+    };
+}
 ----
+
+Order requests or return requests might also arrive via Kafka.  The route is essentially the same as the route in the
+single-JVM example.  Instead of forwarding the incoming message, as-is, from the "direct" component to the router,
+the messages are deserialized from a String, and converted to an instance of the "order" object.  Then, it can be sent
+to the Dynamic Router for evaluation and distribution to the appropriate subscribing recipients:
+
+.Routing order/return request messages from Kafka to the Dynamic Router
+[source,java]
+----
+from("kafka://orders")
+    .unmarshal().json(MyOrderMessage.class)
+    .process(myOrderProcessor)
+    .to("dynamic-router:orders");
+----
+
+Note the `.process(myOrderProcessor)` step.  If incoming messages need to be validated, enriched, transformed, or
+otherwise augmented, that can be done before the Dynamic Router receives the message.  Then, when the Dynamic Router
+receives a message, it checks the `Exchange` against all subscriptions for the "orders" channel to determine if it is
+suitable for any of the recipients.  Orders should have a header (`command` -> `processOrder`), so the message will be
+routed to the orders service, and the inventory service.  The system will process the order details, and then the
+inventory service will deduct from merchandise counts.  Likewise, returns should have a header
+(`command` -> `processReturn`), so the message will be routed to the returns service, where the return details will be
+processed, and the inventory service will increase the relevant merchandise counts.
+
+==== Further learning: a complete Spring Boot example
+
+In the `camel-spring-boot-examples` project, the `dynamic-router-eip-multimodule` module serves as a complete example
+in this category that you can run and/or experiment with to get a practical feel for how you might use this in your own
+multi-JVM application stack.

@@ -91,6 +91,7 @@
 ** xref:drill-component.adoc[Drill]
 ** xref:dropbox-component.adoc[Dropbox]
 ** xref:dynamic-router-component.adoc[Dynamic Router]
+** xref:dynamic-router-control-component.adoc[Dynamic Router Control]
 ** xref:ehcache-component.adoc[Ehcache]
 ** xref:elasticsearch-component.adoc[Elasticsearch]
 ** xref:elasticsearch-rest-client-component.adoc[Elasticsearch Low level Rest Client]

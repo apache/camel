@@ -23,12 +23,18 @@
 		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd ">
 
-    <bean id="dynamic-router" class="org.apache.camel.component.dynamicrouter.DynamicRouterComponent"/>
-
     <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <to uri="dynamic-router:test"/>
+        </route>
+        <route>
+            <from uri="direct:subscribe-no-url-predicate"/>
+            <toD uri="dynamic-router-control:subscribe
+                      ?subscribeChannel=${headers.subscribeChannel}
+                      &amp;subscriptionId=${headers.subscriptionId}
+                      &amp;destinationUri=${headers.destinationUri}
+                      &amp;priority=${headers.priority}"/>
         </route>
     </camelContext>
 </beans>
