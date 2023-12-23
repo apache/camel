@@ -14,27 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.k;
+
+package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "k",
-                     description = "Manage Camel integrations on Kubernetes (use config --help to see sub commands)")
-public class KubeCommand extends KubeBaseCommand {
+@FunctionalInterface
+public interface Plugin {
 
-    public static final String OPERATOR_ID_LABEL = "camel.apache.org/operator.id";
-    public static final String INTEGRATION_LABEL = "camel.apache.org/integration";
-    public static final String INTEGRATION_CONTAINER_NAME = "integration";
-
-    public KubeCommand(CamelJBangMain main) {
-        super(main);
-    }
-
-    @Override
-    public Integer doCall() throws Exception {
-        // defaults to list integrations deployed on Kubernetes
-        new CommandLine(new IntegrationGet(getMain())).execute();
-        return 0;
-    }
+    /**
+     * Customize given command line adding sub-commands in particular.
+     *
+     * @param commandLine the command line to adjust.
+     * @param main        the current JBang main.
+     */
+    void customize(CommandLine commandLine, CamelJBangMain main);
 }

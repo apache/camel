@@ -24,6 +24,9 @@ import java.util.List;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultFactoryFinder;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.v1.Integration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -105,10 +108,17 @@ class KubeCommandMainTest extends KubeBaseTest {
                   traits: {}""", printer.getOutput());
     }
 
+    @Test
+    public void shouldResolvePlugin() {
+        FactoryFinder factoryFinder
+                = new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
+        Assertions.assertTrue(factoryFinder.newInstance("camel-jbang-plugin-k").isPresent());
+    }
+
     private CamelJBangMain createMain() {
         return new CamelJBangMain() {
             @Override
-            protected void quit(int exitCode) {
+            public void quit(int exitCode) {
                 if (exitCode != 0) {
                     Assertions.fail("Main finished with exit code %d".formatted(exitCode));
                 }
