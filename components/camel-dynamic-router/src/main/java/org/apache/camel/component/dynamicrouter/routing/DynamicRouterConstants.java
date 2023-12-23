@@ -33,7 +33,10 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 /**
  * Contains constants that are used within this component.
  */
-public abstract class DynamicRouterConstants {
+public final class DynamicRouterConstants {
+
+    private DynamicRouterConstants() {
+    }
 
     /**
      * The camel version where the dynamic router eip component was first introduced.

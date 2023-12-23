@@ -30,7 +30,10 @@ import org.apache.camel.spi.Metadata;
 /**
  * Constants pertaining to the Dynamic Router Control operations.
  */
-public abstract class DynamicRouterControlConstants {
+public final class DynamicRouterControlConstants {
+
+    private DynamicRouterControlConstants() {
+    }
 
     /**
      * The camel version where the dynamic router control channel endpoint was introduced.
@@ -55,7 +58,7 @@ public abstract class DynamicRouterControlConstants {
     /**
      * Function to determine if the control channel URI should be optimized.
      */
-    public static final Function<String, Boolean> SHOULD_OPTIMIZE = uri -> OPTIMIZE_MATCHER.apply(uri).find();
+    public static final java.util.function.Predicate<String> SHOULD_OPTIMIZE = uri -> OPTIMIZE_MATCHER.apply(uri).find();
 
     /**
      * Convenient constant for the control channel URI.

@@ -43,7 +43,7 @@ import static org.mockito.Mockito.verify;
  * This test verifies basic functionality with the Dynamic Router in synchronous mode. This configuration is entirely
  * manual. For Spring XML, refer to {@link DynamicRouterSingleRouteTwoParticipantsIT}.
  */
-public class DynamicRouterBasicSynchronousIT {
+class DynamicRouterBasicSynchronousIT {
 
     private final Predicate matchAllPredicate = PredicateBuilder.constant(true);
 
@@ -53,7 +53,7 @@ public class DynamicRouterBasicSynchronousIT {
      * @throws Exception if interrupted while waiting for mocks to be satisfied
      */
     @Test
-    public void testDynamicRouter() throws Exception {
+    void testDynamicRouter() throws Exception {
         CamelContext context = new DefaultCamelContext();
         ProducerTemplate template = context.createProducerTemplate();
         addRoutes.accept(context);
@@ -83,7 +83,7 @@ public class DynamicRouterBasicSynchronousIT {
      * @throws Exception if interrupted while waiting for mocks to be satisfied
      */
     @Test
-    public void testSubscribingWithMessage() throws Exception {
+    void testSubscribingWithMessage() throws Exception {
         CamelContext context = new DefaultCamelContext();
         ProducerTemplate template = context.createProducerTemplate();
         addRoutes.accept(context);
@@ -116,7 +116,7 @@ public class DynamicRouterBasicSynchronousIT {
      * @throws Exception if interrupted while waiting for mocks to be satisfied
      */
     @Test
-    public void testSubscribingWithMessageAndSpelPredicate() throws Exception {
+    void testSubscribingWithMessageAndSpelPredicate() throws Exception {
         CamelContext context = new DefaultCamelContext();
         ProducerTemplate template = context.createProducerTemplate();
         addRoutes.accept(context);

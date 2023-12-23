@@ -142,12 +142,10 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport {
          * @param  configuration the configuration
          * @param  filterService service that manages {@link PrioritizedFilter}s for dynamic router channels
          * @return               the {@link DynamicRouterProcessor} instance
-         * @throws Exception     if the {@link DynamicRouterProcessor} cannot be created
          */
         public DynamicRouterProcessor getInstance(
                 CamelContext camelContext, DynamicRouterConfiguration configuration,
-                DynamicRouterFilterService filterService)
-                throws Exception {
+                DynamicRouterFilterService filterService) {
             RecipientList recipientList
                     = (RecipientList) DynamicRouterRecipientListHelper.createProcessor(camelContext, configuration);
             return new DynamicRouterProcessor(

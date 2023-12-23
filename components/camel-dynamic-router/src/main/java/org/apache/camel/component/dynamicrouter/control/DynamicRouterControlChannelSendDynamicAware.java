@@ -97,7 +97,7 @@ public class DynamicRouterControlChannelSendDynamicAware extends SendDynamicAwar
     public String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) {
         String optimizedUri = null;
         String uri = entry.getUri();
-        if (DynamicRouterControlConstants.SHOULD_OPTIMIZE.apply(uri)) {
+        if (DynamicRouterControlConstants.SHOULD_OPTIMIZE.test(uri)) {
             optimizedUri = URISupport.stripQuery(uri);
         }
         return optimizedUri;
@@ -114,7 +114,7 @@ public class DynamicRouterControlChannelSendDynamicAware extends SendDynamicAwar
     @Override
     public Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) {
         Processor preProcessor = null;
-        if (DynamicRouterControlConstants.SHOULD_OPTIMIZE.apply(entry.getUri())) {
+        if (DynamicRouterControlConstants.SHOULD_OPTIMIZE.test(entry.getUri())) {
             preProcessor = queryParamsHeadersProcessor.apply(entry);
         }
         return preProcessor;
@@ -131,7 +131,7 @@ public class DynamicRouterControlChannelSendDynamicAware extends SendDynamicAwar
     @Override
     public Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) {
         Processor postProcessor = null;
-        if (DynamicRouterControlConstants.SHOULD_OPTIMIZE.apply(entry.getUri())) {
+        if (DynamicRouterControlConstants.SHOULD_OPTIMIZE.test(entry.getUri())) {
             postProcessor = ex -> {
                 Message message = exchange.getMessage();
                 DynamicRouterControlConstants.URI_PARAMS_TO_HEADER_NAMES.values().forEach(message::removeHeader);
