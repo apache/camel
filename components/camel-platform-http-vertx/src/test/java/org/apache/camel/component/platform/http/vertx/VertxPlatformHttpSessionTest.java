@@ -16,18 +16,23 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-import io.netty.handler.codec.http.cookie.Cookie;
 import io.restassured.RestAssured;
-import io.vertx.core.Vertx;
-import io.vertx.ext.web.client.spi.CookieStore;
-import org.apache.camel.*;
+import io.vertx.core.Handler;
+import io.vertx.core.http.CookieSameSite;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.Session;
+import io.vertx.ext.web.handler.SessionHandler;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.platform.http.PlatformHttpConstants;
+import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -35,172 +40,217 @@ import static io.restassured.matcher.RestAssuredMatchers.detailedCookie;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class VertxPlatformHttpSessionTest extends CamelTestSupport {
+public class VertxPlatformHttpSessionTest {
 
     @Test
-    public void testSessionCreation() throws Exception {
-        Vertx vertx = Vertx.vertx();
-        CamelContext context = createCamelContext(configuration -> {
-            VertxPlatformHttpServerConfiguration.SessionConfig sessionConfig
-                    = new VertxPlatformHttpServerConfiguration.SessionConfig();
-            sessionConfig.setEnabled(true);
-            configuration.setSessionConfig(sessionConfig);
+    public void testSessionDisabled() throws Exception {
+        CamelContext context = createCamelContext(sessionConfig -> {
+            // session handling disabled by default
         });
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/session")
-                        .routeId("session")
-                        .setBody().constant("session");
+                from("platform-http:/disabled")
+                        .setBody().constant("disabled");
             }
         });
-
-        context.getRegistry().bind("vertx", vertx);
 
         try {
             context.start();
 
-            // returns set-cookie header for created session
+            given()
+                    .when()
+                    .get("/disabled")
+                    .then()
+                    .statusCode(200)
+                    .header("set-cookie", nullValue())
+                    .header("cookie", nullValue())
+                    .body(equalTo("disabled"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testCookeForDefaultSessionConfig() throws Exception {
+        CamelContext context = createCamelContext(sessionConfig -> {
+            sessionConfig.setEnabled(true);
+        });
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("platform-http:/session")
+                        .setBody().constant("session");
+            }
+        });
+
+        try {
+            context.start();
+
             String sessionCookieValue = given()
                     .when()
                     .get("/session")
                     .then()
                     .statusCode(200)
-                    .header("set-cookie", startsWith("vertx-web.session=")) // new vertx-web session created
-                    // details of the set session cookie
-                    .cookie("vertx-web.session", detailedCookie().path("/").value(notNullValue()))
+                    .cookie("vertx-web.session",
+                            detailedCookie()
+                                    .path("/").value(notNullValue())
+                                    .httpOnly(false)
+                                    .secured(false)
+                                    .sameSite("Strict"))
                     .header("cookie", nullValue())
                     .body(equalTo("session"))
                     .extract().cookie("vertx-web.session");
 
-            // pass session cookie back on subsequent call
-            given()
-                    .header("cookie", "vertx-web.session=" + sessionCookieValue)
-                    .when()
-                    .get("/session")
-                    .then()
-                    .statusCode(200)
-                    .header("set-cookie", nullValue())  // session already established.
-                    .header("cookie", "vertx-web.session=" + sessionCookieValue)
-                    .body(equalTo("session"));
+            assertTrue(sessionCookieValue.length() >= SessionHandler.DEFAULT_SESSIONID_MIN_LENGTH);
 
         } finally {
             context.stop();
-            vertx.close();
         }
     }
 
     @Test
-    public void testNewSession() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-
-        final CamelContext context = createCamelContext(configuration -> {
-            VertxPlatformHttpServerConfiguration.SessionConfig sessionConfig
-                    = new VertxPlatformHttpServerConfiguration.SessionConfig();
+    public void testCookieForModifiedSessionConfig() throws Exception {
+        CamelContext context = createCamelContext(sessionConfig -> {
+            sessionConfig.setSessionCookieName("vertx-session");
             sessionConfig.setEnabled(true);
+            sessionConfig.setSessionCookiePath("/session");
+            sessionConfig.setCookieSecure(true);
+            sessionConfig.setCookieHttpOnly(true);
+            sessionConfig.setCookieSameSite(CookieSameSite.LAX);
+            sessionConfig.setSessionIdMinLength(64);
+        });
 
-            configuration.setSessionConfig(sessionConfig);
-        }, port);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("platform-http:/session")
+                        .setBody().constant("session");
+            }
+        });
 
-        CookieStore customCookieStore = new CustomCookieStore();
-        context.getRegistry().bind("customCookieStore", customCookieStore);
+        try {
+            context.start();
+
+            String sessionCookieValue = given()
+                    .when()
+                    .get("/session")
+                    .then()
+                    .statusCode(200)
+                    .cookie("vertx-session",
+                            detailedCookie()
+                                    .path("/session").value(notNullValue())
+                                    .httpOnly(true)
+                                    .secured(true)
+                                    .sameSite("Lax"))
+                    .header("cookie", nullValue())
+                    .body(equalTo("session"))
+                    .extract().cookie("vertx-session");
+
+            assertTrue(sessionCookieValue.length() >= 64);
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testSessionHandling() throws Exception {
+        int port = AvailablePortFinder.getNextAvailable();
+        CamelContext context = createCamelContext(port,
+                sessionConfig -> {
+                    sessionConfig.setEnabled(true);
+                });
+        addPlatformHttpEngineHandler(context, new HitCountHandler());
+        context.getRegistry().bind("instanceCookieHander", new InstanceCookieHandler());
 
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
                     from("platform-http:/session")
-                            .routeId("session")
                             .setBody().constant("session");
 
                     from("direct:session")
-                            .toF("vertx-http:http://localhost:%d/session?sessionManagement=true&cookieStore=#customCookieStore",
+                            .toF("http://localhost:%d/session?cookieHandler=#instanceCookieHander",
                                     port);
                 }
             });
 
             context.start();
 
+            // initial call establishes session
             ProducerTemplate template = context.createProducerTemplate();
-            Exchange exchange = template.request("direct:session", ex -> {
-            });
+            Exchange exchange = template.request("direct:session", null);
+            // 'set-cookie' header for new session, e.g. 'vertx-web.session=735944d69685aaf63421fb5b3c116b84; Path=/; SameSite=Strict'
+            String sessionCookie = getHeader("set-cookie", exchange);
+            assertNotNull(getHeader("set-cookie", exchange));
+            assertEquals(getHeader("hitcount", exchange), "1");
 
-            // session created by session handler
-            String sessionCookie = (String) exchange.getMessage().getHeader("set-cookie");
-            assertNotNull(sessionCookie);
-            assertTrue(sessionCookie.startsWith("vertx-web.session="));
+            // subsequent call reuses session
+            exchange = template.request("direct:session", null);
+            // 'cookie' header for existing session, e.g. 'vertx-web.session=735944d69685aaf63421fb5b3c116b84'
+            String cookieHeader = getHeader("cookie", exchange);
+            assertEquals(cookieHeader, sessionCookie.substring(0, sessionCookie.indexOf(';')));
+            assertNull(getHeader("set-cookie", exchange));
+            assertEquals(getHeader("hitcount", exchange), "2");
 
-            // returned session saved in vertx-http cookie store
-            Cookie savedCookie = customCookieStore.get(false, null, null).iterator().next();
-            assertNotNull(savedCookie);
-            assertEquals("vertx-web.session", savedCookie.name());
-            assertTrue(sessionCookie.startsWith(savedCookie.name() + '=' + savedCookie.value()));
-
-            // call again, headers added from cookie store
-            exchange = template.request("direct:session", ex -> {
-            });
-            // cookie for established session
-            Object cookieHeader = exchange.getMessage().getHeader("cookie");
-            assertNotNull(cookieHeader);
-            assert ((savedCookie.name() + '=' + savedCookie.value()).equals(cookieHeader));
-            // session already established, no new cookie set
-            sessionCookie = (String) exchange.getMessage().getHeader("set-cookie");
-            assertNull(sessionCookie);
         } finally {
             context.stop();
         }
     }
 
-    static CamelContext createCamelContext(ServerConfigurationCustomizer customizer)
-            throws Exception {
-        return createCamelContext(customizer, AvailablePortFinder.getNextAvailable());
+    private String getHeader(String header, Exchange exchange) {
+        return (String) exchange.getMessage().getHeader(header);
     }
 
-    static CamelContext createCamelContext(ServerConfigurationCustomizer customizer, int bindPort)
+    private CamelContext createCamelContext(SessionConfigCustomizer customizer)
+            throws Exception {
+        int bindPort = AvailablePortFinder.getNextAvailable();
+        RestAssured.port = bindPort;
+        return createCamelContext(bindPort, customizer);
+    }
+
+    private CamelContext createCamelContext(int bindPort, SessionConfigCustomizer customizer)
             throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
         conf.setBindPort(bindPort);
 
-        RestAssured.port = bindPort;
+        VertxPlatformHttpServerConfiguration.SessionConfig sessionConfig
+                = new VertxPlatformHttpServerConfiguration.SessionConfig();
+        customizer.customize(sessionConfig);
+        conf.setSessionConfig(sessionConfig);
 
-        if (customizer != null) {
-            customizer.customize(conf);
-        }
-
-        CamelContext context = new DefaultCamelContext();
-        context.addService(new VertxPlatformHttpServer(conf));
-        return context;
+        CamelContext camelContext = new DefaultCamelContext();
+        camelContext.addService(new VertxPlatformHttpServer(conf));
+        return camelContext;
     }
 
-    interface ServerConfigurationCustomizer {
-        void customize(VertxPlatformHttpServerConfiguration configuration);
+    private void addPlatformHttpEngineHandler(CamelContext camelContext, Handler<RoutingContext> handler) {
+        VertxPlatformHttpEngine platformEngine = new VertxPlatformHttpEngine();
+        platformEngine.setHandlers(Arrays.asList(handler));
+        PlatformHttpComponent component = new PlatformHttpComponent(camelContext);
+        component.setEngine(platformEngine);
+        camelContext.getRegistry().bind(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, component);
     }
 
-    // Cookie store for the producer
-    private static final class CustomCookieStore implements CookieStore {
-        private final List<io.netty.handler.codec.http.cookie.Cookie> cookies = new ArrayList<>();
-
+    private class HitCountHandler implements Handler<RoutingContext> {
         @Override
-        public Iterable<io.netty.handler.codec.http.cookie.Cookie> get(Boolean ssl, String domain, String path) {
-            return cookies;
+        public void handle(RoutingContext routingContext) {
+            Session session = routingContext.session();
+            Integer cnt = session.get("hitcount");
+            cnt = (cnt == null ? 0 : cnt) + 1;
+            session.put("hitcount", cnt);
+            routingContext.response().putHeader("hitcount", Integer.toString(cnt));
+            routingContext.next();
         }
+    }
 
-        @Override
-        public CookieStore put(io.netty.handler.codec.http.cookie.Cookie cookie) {
-            cookies.add(cookie);
-            return this;
-        }
-
-        @Override
-        public CookieStore remove(io.netty.handler.codec.http.cookie.Cookie cookie) {
-            cookies.remove(cookie);
-            return this;
-        }
+    interface SessionConfigCustomizer {
+        void customize(VertxPlatformHttpServerConfiguration.SessionConfig sessionConfig);
     }
 }

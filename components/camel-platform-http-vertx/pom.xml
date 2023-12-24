@@ -85,11 +85,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-vertx-http</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-auth-properties</artifactId>
             <version>${vertx-version}</version>
