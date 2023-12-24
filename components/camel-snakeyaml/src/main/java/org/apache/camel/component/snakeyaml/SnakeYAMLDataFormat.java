@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
@@ -118,9 +119,22 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
-        try (InputStreamReader isr = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange))) {
-            Class<?> unmarshalObjectType = unmarshalType != null ? unmarshalType : Object.class;
-            return getYaml(exchange.getContext()).loadAs(isr, unmarshalObjectType);
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
+        Class<?> unmarshalObjectType = unmarshalType != null ? unmarshalType : Object.class;
+
+        if (body instanceof String s) {
+            return getYaml(exchange.getContext()).loadAs(s, unmarshalObjectType);
+        } else if (body instanceof Reader r) {
+            return getYaml(exchange.getContext()).loadAs(r, unmarshalObjectType);
+        } else {
+            // fallback to InputStream
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            Reader r = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
+            return getYaml(exchange.getContext()).loadAs(r, unmarshalObjectType);
         }
     }
 
