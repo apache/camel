@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -110,7 +111,22 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        InputStreamReader reader = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange));
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
+        Reader reader;
+        if (body instanceof Reader r) {
+            reader = r;
+        } else if (body instanceof String s) {
+            reader = new StringReader(s);
+        } else {
+            // fallback to input stream
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
+        }
+
         try {
             Parser parser = createParser(exchange, reader);
             DataSet dataSet = parser.parse();
