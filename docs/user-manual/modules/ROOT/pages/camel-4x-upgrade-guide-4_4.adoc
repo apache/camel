@@ -84,6 +84,24 @@ This is part of the effort explained in CAMEL-18590.
 This component has migrated from `com.orbitz.consul:consul-client` to `org.kiwiproject:consul-client` as the former is no longer maintained,
 and kiwiproject took over.
 
+=== camel-dynamic-router
+
+The dynamic router EIP component now handles control messages through a separate control component: `dynamic-router-control`.
+These changes were made after a user reported a bug that resulted in query-parameter-based subscriptions being ignored
+after the first URI control message was processed.
+All control message parameters can be submitted as query parameters when subscribers are within the same JVM as the
+dynamic router instance. Users must use "dynamic to", or `toD` when sending these control message properties as query
+parameters.
+Predicates that are not string expressions may be specified in the message body, or bound to the registry and specified
+as a reference with the `predicateBean` parameter.
+Control messages can still be sent in the message body, as in the previous version.
+The `DynamicRouterControlMessage` no longer has separate builders for `subscribe` and `unsubscribe` messages, so there
+is only one builder that you can use for any type of control message.
+The control channel will now report subscription details for a routing channel if a message with a control action of
+`list` is submitted, along with the dynamic router channel of interest.
+Please see the `dynamic-router-eip` module in the `camel-spring-boot-examples` repository for
+useful examples of how you might need to change your code to be compatible with the changes in this version.
+
 === camel-hdfs
 
 The component has been removed after deprecation in 4.3.0
