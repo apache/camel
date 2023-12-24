@@ -109,11 +109,32 @@ public class FastjsonDataFormat extends ServiceSupport
     }
 
     @Override
-    public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
-        if (unmarshalGenericType == null) {
-            return JSON.parseObject(stream, config.getCharset(), unmarshalType, config.getFeatures());
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
+        if (body instanceof String str) {
+            if (unmarshalGenericType == null) {
+                return JSON.parseObject(str, unmarshalType, config.getFeatures());
+            } else {
+                return JSON.parseObject(str, unmarshalGenericType, config.getFeatures());
+            }
+        } else if (body instanceof byte[] arr) {
+            if (unmarshalGenericType == null) {
+                return JSON.parseObject(arr, unmarshalType, config.getFeatures());
+            } else {
+                return JSON.parseObject(arr, unmarshalGenericType, config.getFeatures());
+            }
         } else {
-            return JSON.parseObject(stream, config.getCharset(), unmarshalGenericType, config.getFeatures());
+            // fallback to input stream
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            if (unmarshalGenericType == null) {
+                return JSON.parseObject(is, config.getCharset(), unmarshalType, config.getFeatures());
+            } else {
+                return JSON.parseObject(is, config.getCharset(), unmarshalGenericType, config.getFeatures());
+            }
         }
     }
 
