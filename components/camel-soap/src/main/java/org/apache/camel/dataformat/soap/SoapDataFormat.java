@@ -158,7 +158,7 @@ public class SoapDataFormat extends JaxbDataFormat {
      * Unmarshal a given SOAP xml stream and return the content of the SOAP body
      */
     @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         String soapAction = getSoapActionFromExchange(exchange);
 
         // Determine the method name for an eventual BeanProcessor in the route
