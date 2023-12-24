@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.gson;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +32,7 @@ import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
+import com.google.gson.stream.JsonReader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -152,17 +153,43 @@ public class GsonDataFormat extends ServiceSupport
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
-        try (final InputStreamReader isr = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange));
-             final BufferedReader reader = IOHelper.buffered(isr)) {
+        return unmarshal(exchange, (Object) stream);
+    }
 
-            String type = exchange.getIn().getHeader(GsonConstants.UNMARSHAL_TYPE, String.class);
-            if (type != null) {
-                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
-                return gson.fromJson(reader, clazz);
-            } else if (unmarshalGenericType == null) {
-                return gson.fromJson(reader, unmarshalType);
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
+        Class<?> clazz = unmarshalType;
+        String type = exchange.getIn().getHeader(GsonConstants.UNMARSHAL_TYPE, String.class);
+        if (type != null) {
+            clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
+        }
+
+        if (body instanceof String str) {
+            if (unmarshalGenericType == null) {
+                return gson.fromJson(str, clazz);
             } else {
-                return gson.fromJson(reader, unmarshalGenericType);
+                return gson.fromJson(str, unmarshalGenericType);
+            }
+        } else if (body instanceof Reader r) {
+            if (unmarshalGenericType == null) {
+                return gson.fromJson(r, clazz);
+            } else {
+                return gson.fromJson(r, unmarshalGenericType);
+            }
+        } else if (body instanceof JsonReader r) {
+            if (unmarshalGenericType == null) {
+                return gson.fromJson(r, clazz);
+            } else {
+                return gson.fromJson(r, unmarshalGenericType);
+            }
+        } else {
+            // fallback to input stream
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            Reader r = new InputStreamReader(is);
+            if (unmarshalGenericType == null) {
+                return gson.fromJson(r, clazz);
+            } else {
+                return gson.fromJson(r, unmarshalGenericType);
             }
         }
     }
