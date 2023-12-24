@@ -16,20 +16,24 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.ContextEvents;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 @Tags({ @Tag("not-parallel") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
-@Disabled("Disabled due to CAMEL-20276")
 public class JmsTopicDurableSharedTest extends AbstractPersistentJMSTest {
 
-    private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.consumer.test";
+    private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.shared.durable.test";
+    
+    @BeforeEach
+    void waitForArtemisToFinishCreatingConsumers() {
+        Awaitility.await().until(() -> context.getClock().get(ContextEvents.START).elapsed() > 1000);
+    }
 
     @Test
     void testDurableSharedTopic() throws Exception {
