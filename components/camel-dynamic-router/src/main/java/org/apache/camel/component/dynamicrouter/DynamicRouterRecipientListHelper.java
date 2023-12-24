@@ -41,7 +41,12 @@ import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 /**
  * Utility class that creates a {@link RecipientList} {@link Processor} based on a {@link DynamicRouterConfiguration}.
  */
-public class DynamicRouterRecipientListHelper {
+public final class DynamicRouterRecipientListHelper {
+
+    private static final String ESM_NAME = "ExecutorServiceManager";
+
+    private DynamicRouterRecipientListHelper() {
+    }
 
     /**
      * Given an object, convert it to an {@link AggregationStrategy} based on its class.
@@ -50,8 +55,9 @@ public class DynamicRouterRecipientListHelper {
     static BiFunction<Object, DynamicRouterConfiguration, AggregationStrategy> convertAggregationStrategy = (aggStr, cfg) -> {
         if (aggStr instanceof AggregationStrategy as) {
             return as;
-        } else if (aggStr instanceof BiFunction bf) {
-            AggregationStrategyBiFunctionAdapter adapter = new AggregationStrategyBiFunctionAdapter(bf);
+        } else if (aggStr instanceof BiFunction<?, ?, ?> bf) {
+            AggregationStrategyBiFunctionAdapter adapter
+                    = new AggregationStrategyBiFunctionAdapter((BiFunction<Exchange, Exchange, Object>) bf);
             adapter.setAllowNullNewExchange(cfg.isAggregationStrategyMethodAllowNull());
             adapter.setAllowNullOldExchange(cfg.isAggregationStrategyMethodAllowNull());
             return adapter;
@@ -153,13 +159,12 @@ public class DynamicRouterRecipientListHelper {
      * @see               #getConfiguredExecutorService(CamelContext, String, DynamicRouterConfiguration, boolean)
      */
     static boolean willCreateNewThreadPool(CamelContext camelContext, DynamicRouterConfiguration cfg, boolean useDefault) {
-        ObjectHelper.notNull(camelContext.getExecutorServiceManager(), "ExecutorServiceManager", camelContext);
+        ObjectHelper.notNull(camelContext.getExecutorServiceManager(), ESM_NAME, camelContext);
         return Optional.ofNullable(cfg.getExecutorServiceBean())
                 .map(esb -> false)
                 .or(() -> Optional.ofNullable(cfg.getExecutorService())
-                        .map(es -> null == lookupByNameAndType(camelContext, es, ExecutorService.class)))
-                .or(() -> Optional.of(useDefault))
-                .get();
+                        .map(es -> lookupByNameAndType(camelContext, es, ExecutorService.class) == null))
+                .orElse(useDefault);
     }
 
     /**
@@ -183,7 +188,7 @@ public class DynamicRouterRecipientListHelper {
             CamelContext camelContext, String name, Object source,
             String executorServiceRef) {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
-        ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
+        ObjectHelper.notNull(manager, ESM_NAME, camelContext);
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
         // lookup in registry first and use existing thread pool if exists,
         // or create a new thread pool, assuming that the executor service ref is a thread pool ID
@@ -215,7 +220,7 @@ public class DynamicRouterRecipientListHelper {
             DynamicRouterConfiguration cfg, boolean useDefault)
             throws IllegalArgumentException {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
-        ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
+        ObjectHelper.notNull(manager, ESM_NAME, camelContext);
         // The first (preferred) option is to use an explicitly-configured executor if the configuration has it
         return Optional.ofNullable(cfg.getExecutorServiceBean())
                 // The second preference is to check for an executor service reference

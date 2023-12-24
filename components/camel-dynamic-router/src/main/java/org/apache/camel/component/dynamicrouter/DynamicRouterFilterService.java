@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
-import org.apache.camel.component.dynamicrouter.routing.DynamicRouterComponent;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterConfiguration;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants;
 import org.apache.camel.util.ObjectHelper;
@@ -42,7 +41,7 @@ import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterCons
 
 public class DynamicRouterFilterService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterFilterService.class);
 
     /**
      * Lists of {@link PrioritizedFilter}s, mapped by their channel.

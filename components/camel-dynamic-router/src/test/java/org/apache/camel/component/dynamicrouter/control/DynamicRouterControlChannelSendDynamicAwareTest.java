@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.SendDynamicAware;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -50,7 +51,7 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
             assertAll(
                     () -> assertEquals(entry.getOriginalUri(), originalUri),
                     () -> assertEquals(entry.getUri(), uri),
-                    () -> assertEquals(entry.getProperties().size(), 2),
+                    () -> assertEquals(2, entry.getProperties().size()),
                     () -> assertEquals("subscribe", entry.getProperties().get("controlAction")),
                     () -> assertEquals("testSub1", entry.getProperties().get("subscriptionId")));
         }
@@ -77,6 +78,7 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
         try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
             SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
             Processor preProcessor = testSubject.createPreProcessor(exchange, entry);
+            Assertions.assertNotNull(preProcessor);
             preProcessor.process(exchange);
         }
     }

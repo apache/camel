@@ -70,7 +70,7 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
      * Service that manages {@link org.apache.camel.component.dynamicrouter.PrioritizedFilter}s for the Dynamic Router
      * channels.
      */
-    private volatile DynamicRouterFilterService filterService;
+    private DynamicRouterFilterService filterService;
 
     /**
      * Creates a {@link DynamicRouterControlProducer} instance.

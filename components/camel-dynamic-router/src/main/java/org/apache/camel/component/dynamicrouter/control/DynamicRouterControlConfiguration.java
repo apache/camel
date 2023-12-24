@@ -23,7 +23,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class DynamicRouterControlConfiguration implements Cloneable {
+public class DynamicRouterControlConfiguration {
 
     /**
      * The control action (subscribe or unsubscribe).
@@ -235,14 +235,7 @@ public class DynamicRouterControlConfiguration implements Cloneable {
     }
 
     public DynamicRouterControlConfiguration() {
-
-    }
-
-    public DynamicRouterControlConfiguration copy() {
-        try {
-            return (DynamicRouterControlConfiguration) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        // Default constructor is empty because we need an instance, and
+        // then things can be populated through mutator methods.
     }
 }

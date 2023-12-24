@@ -43,7 +43,7 @@ import static org.apache.camel.component.dynamicrouter.control.DynamicRouterCont
 @CamelSpringTest
 @ContextConfiguration
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-public class DynamicRouterTwoRoutesIT {
+class DynamicRouterTwoRoutesIT {
 
     @Autowired
     CamelContext camelContext;

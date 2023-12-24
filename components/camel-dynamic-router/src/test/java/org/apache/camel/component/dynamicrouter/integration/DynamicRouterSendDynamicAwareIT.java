@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.dynamicrouter.DynamicRouterTestConstants.addRoutes;
 import static org.apache.camel.test.infra.core.MockUtils.getMockEndpoint;
 
-public class DynamicRouterSendDynamicAwareIT {
+class DynamicRouterSendDynamicAwareIT {
 
     /**
      * Tests participant subscription, and that messages are received at their registered destination endpoints.
@@ -36,7 +36,7 @@ public class DynamicRouterSendDynamicAwareIT {
      * @throws Exception if interrupted while waiting for mocks to be satisfied
      */
     @Test
-    public void testSubscribeWithUriAndMultipleSubscribers() throws Exception {
+    void testSubscribeWithUriAndMultipleSubscribers() throws Exception {
         CamelContext context = new DefaultCamelContext();
         ProducerTemplate template = context.createProducerTemplate();
         addRoutes.accept(context);
