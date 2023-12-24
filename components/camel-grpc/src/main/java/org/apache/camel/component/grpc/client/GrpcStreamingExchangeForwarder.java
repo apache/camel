@@ -21,6 +21,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.grpc.GrpcConfiguration;
+import org.apache.camel.component.grpc.GrpcConstants;
 import org.apache.camel.component.grpc.GrpcUtils;
 
 /**
@@ -44,7 +45,16 @@ class GrpcStreamingExchangeForwarder implements GrpcExchangeForwarder {
     @Override
     public boolean forward(Exchange exchange, StreamObserver<Object> responseObserver, AsyncCallback callback) {
         Message message = exchange.getIn();
-        checkAndRecreateStreamObserver(responseObserver).onNext(message.getBody());
+        StreamObserver<Object> streamObserver = checkAndRecreateStreamObserver(responseObserver);
+        if (message.getHeaders().containsKey(GrpcConstants.GRPC_EVENT_TYPE_HEADER)) {
+            switch (message.getHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, String.class)) {
+                case GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT -> streamObserver.onNext(message.getBody());
+                case GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR -> streamObserver.onError((Throwable) message.getBody());
+                case GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED -> streamObserver.onCompleted();
+            }
+        } else {
+            streamObserver.onNext(message.getBody());
+        }
         callback.done(true);
         return true;
     }

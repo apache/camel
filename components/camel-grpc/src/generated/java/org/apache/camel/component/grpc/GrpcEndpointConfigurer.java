@@ -41,6 +41,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forwardOnCompleted": target.getConfiguration().setForwardOnCompleted(property(camelContext, boolean.class, value)); return true;
         case "forwardonerror":
         case "forwardOnError": target.getConfiguration().setForwardOnError(property(camelContext, boolean.class, value)); return true;
+        case "inheritexchangepropertiesforreplies":
+        case "inheritExchangePropertiesForReplies": target.getConfiguration().setInheritExchangePropertiesForReplies(property(camelContext, boolean.class, value)); return true;
         case "jwtalgorithm":
         case "jwtAlgorithm": target.getConfiguration().setJwtAlgorithm(property(camelContext, org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class, value)); return true;
         case "jwtissuer":
@@ -73,6 +75,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamrepliesto":
         case "streamRepliesTo": target.getConfiguration().setStreamRepliesTo(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "toroutecontrolledstreamobserver":
+        case "toRouteControlledStreamObserver": target.getConfiguration().setToRouteControlledStreamObserver(property(camelContext, boolean.class, value)); return true;
         case "trustcertcollectionresource":
         case "trustCertCollectionResource": target.getConfiguration().setTrustCertCollectionResource(property(camelContext, java.lang.String.class, value)); return true;
         case "useragent":
@@ -104,6 +108,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forwardOnCompleted": return boolean.class;
         case "forwardonerror":
         case "forwardOnError": return boolean.class;
+        case "inheritexchangepropertiesforreplies":
+        case "inheritExchangePropertiesForReplies": return boolean.class;
         case "jwtalgorithm":
         case "jwtAlgorithm": return org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class;
         case "jwtissuer":
@@ -136,6 +142,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamrepliesto":
         case "streamRepliesTo": return java.lang.String.class;
         case "synchronous": return boolean.class;
+        case "toroutecontrolledstreamobserver":
+        case "toRouteControlledStreamObserver": return boolean.class;
         case "trustcertcollectionresource":
         case "trustCertCollectionResource": return java.lang.String.class;
         case "useragent":
@@ -168,6 +176,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forwardOnCompleted": return target.getConfiguration().isForwardOnCompleted();
         case "forwardonerror":
         case "forwardOnError": return target.getConfiguration().isForwardOnError();
+        case "inheritexchangepropertiesforreplies":
+        case "inheritExchangePropertiesForReplies": return target.getConfiguration().isInheritExchangePropertiesForReplies();
         case "jwtalgorithm":
         case "jwtAlgorithm": return target.getConfiguration().getJwtAlgorithm();
         case "jwtissuer":
@@ -200,6 +210,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamrepliesto":
         case "streamRepliesTo": return target.getConfiguration().getStreamRepliesTo();
         case "synchronous": return target.getConfiguration().isSynchronous();
+        case "toroutecontrolledstreamobserver":
+        case "toRouteControlledStreamObserver": return target.getConfiguration().isToRouteControlledStreamObserver();
         case "trustcertcollectionresource":
         case "trustCertCollectionResource": return target.getConfiguration().getTrustCertCollectionResource();
         case "useragent":

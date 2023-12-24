@@ -149,7 +149,11 @@ public interface GrpcEndpointBuilderFactory {
          * transferred to the flow, and the accumulated responses will be sent
          * to the sender. If a propagation strategy is selected, request is sent
          * to the stream, and the response will be immediately sent back to the
-         * sender.
+         * sender. If a delegation strategy is selected, request is sent to the
+         * stream, but no response generated under the assumption that all
+         * necessary responses will be sent at another part of route. Delegation
+         * strategy always comes with routeControlledStreamObserver=true to be
+         * able to achieve the assumption.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.grpc.GrpcConsumerStrategy&lt;/code&gt; type.
@@ -172,7 +176,11 @@ public interface GrpcEndpointBuilderFactory {
          * transferred to the flow, and the accumulated responses will be sent
          * to the sender. If a propagation strategy is selected, request is sent
          * to the stream, and the response will be immediately sent back to the
-         * sender.
+         * sender. If a delegation strategy is selected, request is sent to the
+         * stream, but no response generated under the assumption that all
+         * necessary responses will be sent at another part of route. Delegation
+         * strategy always comes with routeControlledStreamObserver=true to be
+         * able to achieve the assumption.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.grpc.GrpcConsumerStrategy&lt;/code&gt; type.
@@ -844,6 +852,41 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
+         * Copies exchange properties from original exchange to all exchanges
+         * created for route defined by streamRepliesTo.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param inheritExchangePropertiesForReplies the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder inheritExchangePropertiesForReplies(
+                boolean inheritExchangePropertiesForReplies) {
+            doSetProperty("inheritExchangePropertiesForReplies", inheritExchangePropertiesForReplies);
+            return this;
+        }
+        /**
+         * Copies exchange properties from original exchange to all exchanges
+         * created for route defined by streamRepliesTo.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param inheritExchangePropertiesForReplies the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder inheritExchangePropertiesForReplies(
+                String inheritExchangePropertiesForReplies) {
+            doSetProperty("inheritExchangePropertiesForReplies", inheritExchangePropertiesForReplies);
+            return this;
+        }
+        /**
          * gRPC method name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -913,6 +956,43 @@ public interface GrpcEndpointBuilderFactory {
         default GrpcEndpointProducerBuilder streamRepliesTo(
                 String streamRepliesTo) {
             doSetProperty("streamRepliesTo", streamRepliesTo);
+            return this;
+        }
+        /**
+         * Expects that exchange property GrpcConstants.GRPC_RESPONSE_OBSERVER
+         * is set. Takes its value and calls onNext, onError and onComplete on
+         * that StreamObserver. All other gRPC parameters are ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param toRouteControlledStreamObserver the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder toRouteControlledStreamObserver(
+                boolean toRouteControlledStreamObserver) {
+            doSetProperty("toRouteControlledStreamObserver", toRouteControlledStreamObserver);
+            return this;
+        }
+        /**
+         * Expects that exchange property GrpcConstants.GRPC_RESPONSE_OBSERVER
+         * is set. Takes its value and calls onNext, onError and onComplete on
+         * that StreamObserver. All other gRPC parameters are ignored.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param toRouteControlledStreamObserver the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder toRouteControlledStreamObserver(
+                String toRouteControlledStreamObserver) {
+            doSetProperty("toRouteControlledStreamObserver", toRouteControlledStreamObserver);
             return this;
         }
         /**

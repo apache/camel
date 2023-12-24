@@ -102,6 +102,91 @@ The table below shows the types of objects in the message body, depending on the
 
 |=======================================================================
 
+== gRPC Proxy
+
+It is not possible to create universal proxy-route for all methods, so you need to divide your gRPC service into several services by method's type: unary, server streaming, client streaming and bidirectional streaming.
+
+=== Unary
+
+For unary requests it is enough to write the following code:
+
+[source,java]
+----
+from("grpc://localhost:1101" +
+    "/org.apache.camel.component.grpc.PingPong"
+)
+    .toD("grpc://remotehost:1101" +
+        "/org.apache.camel.component.grpc.PingPong" +
+        "?method=${header.CamelGrpcMethodName}"
+    )
+----
+
+=== Server streaming
+
+Server streaming may be done by the same approach as unary, but in that configuration Camel route will wait stream for completion and will aggregate all responses to list before sending that data as response stream. If this behavior is unacceptable, you need to apply a number of options:
+
+1. Set `routeControlledStreamObserver=true` for consumer. Later it will be used to publish responses;
+2. Set `streamRepliesTo` option for producer to handle streaming nature of responses;
+3. Set forwarding of `onError` and `onCompleted` for producer;
+4. Set `inheritExchangePropertiesForReplies=true` to inherit `StreamObserver` obtained on the first step;
+5. Create another route to process streamed data. That route must contain gRPC-producer step with the only parameter `toRouteControlledStreamObserver=true` which will publish incoming exchanges as response stream elements.
+
+Example:
+
+[source,java]
+----
+from("grpc://localhost:1101" +
+    "/org.apache.camel.component.grpc.PingPong" +
+    "?routeControlledStreamObserver=true"
+)
+    .toD("grpc://remotehost:1101" +
+            "/org.apache.camel.component.grpc.PingPong" +
+            "?method=${header.CamelGrpcMethodName}" +
+            "&streamRepliesTo=direct:next" +
+            "&forwardOnError=true" +
+            "&forwardOnCompleted=true" +
+            "&inheritExchangePropertiesForReplies=true"
+    );
+
+from("direct:next")
+        .to("grpc://dummy:0/?toRouteControlledStreamObserver=true");
+----
+
+=== Client streaming and bidirectional streaming
+
+Both client streaming and bidirectional streaming gRPC methods exposes StreamObserver as responses handler, so you need the same technic as described in server streaming section -- all 5 steps.
+
+But there another thing -- requests also comes in streaming mode. So you need the following:
+
+1. Set consumer strategy to DELEGATION -- that differs from default PROPAGATION option in the fact that consumer will not produce responses at all. If you set PROPAGATION, then you will receive more responses than you expected;
+2. Forward `onError` and `onCompletion` on consumer;
+3. Set producer strategy to STREAMING.
+
+Example:
+
+[source,java]
+----
+from("grpc://localhost:1101" +
+    "/org.apache.camel.component.grpc.PingPong" +
+    "?routeControlledStreamObserver=true" +
+    "&consumerStrategy=DELEGATION" +
+    "&forwardOnError=true" +
+    "&forwardOnCompleted=true"
+)
+    .toD("grpc://remotehost:1101" +
+            "/org.apache.camel.component.grpc.PingPong" +
+            "?method=${header.CamelGrpcMethodName}" +
+            "&producerStrategy=STREAMING" +
+            "&streamRepliesTo=direct:next" +
+            "&forwardOnError=true" +
+            "&forwardOnCompleted=true" +
+            "&inheritExchangePropertiesForReplies=true"
+    );
+
+from("direct:next")
+        .to("grpc://dummy:0/?toRouteControlledStreamObserver=true");
+----
+
 == Examples
 
 Below is a simple synchronous method invoke with host and port parameters
