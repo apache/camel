@@ -107,6 +107,8 @@ like this
      .end();
 ----------------------------------------------------------------------------------------------------
 
+IMPORTANT: You cannot use TarSplitter in _parallel_ mode with the splitter.
+
 
 == Aggregate
 
