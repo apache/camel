@@ -92,7 +92,12 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        return unmarshaller.unmarshal(exchange, inputStream);
+        return unmarshal(exchange, (Object) inputStream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
+        return unmarshaller.unmarshal(exchange, body);
     }
 
     @Override
