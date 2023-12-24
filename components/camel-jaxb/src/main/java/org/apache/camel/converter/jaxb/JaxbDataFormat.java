@@ -272,7 +272,7 @@ public class JaxbDataFormat extends ServiceSupport
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        throw new UnsupportedOperationException("Not in use");
+        return unmarshal(exchange, (Object) stream);
     }
 
     @Override
