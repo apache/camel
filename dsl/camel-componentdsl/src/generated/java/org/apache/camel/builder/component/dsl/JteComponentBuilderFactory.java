@@ -93,7 +93,7 @@ public interface JteComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;gg.jte.ContentType&lt;/code&gt; type.
          * 
-         * Default: plain
+         * Default: Plain
          * Group: producer
          * 
          * @param contentType the value to set
