@@ -280,6 +280,7 @@
                                     <exclude>**/*utf16.vm</exclude>
                                     <exclude>**/.eslint*</exclude>
                                     <exclude>**/.pnp*</exclude>
+                                    <exclude>**/*.jte</exclude>
                                     <exclude>**/.yarn/**</exclude>
                                     <exclude>**/.yarnrc.yml</exclude>
                                     <exclude>**/CamelJBang.java</exclude>

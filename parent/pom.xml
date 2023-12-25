@@ -288,6 +288,7 @@
         <json-unit-version>3.2.2</json-unit-version>
         <jsoup-version>1.17.1</jsoup-version>
         <jt400-version>20.0.6</jt400-version>
+        <jte-version>3.1.6</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.10.1</junit-jupiter-version>
         <junit-pioneer-version>2.2.0</junit-pioneer-version>
@@ -1642,6 +1643,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-jta</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jte</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

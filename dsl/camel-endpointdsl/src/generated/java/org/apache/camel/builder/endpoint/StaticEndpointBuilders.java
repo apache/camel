@@ -8521,6 +8521,61 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * JTE (camel-jte)
+     * Transform messages using a Java based template engine (JTE).
+     * 
+     * Category: transformation
+     * Since: 4.4
+     * Maven coordinates: org.apache.camel:camel-jte
+     * 
+     * Syntax: <code>jte:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
+     * 
+     * @param path resourceUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.JteEndpointBuilderFactory.JteEndpointBuilder jte(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.JteEndpointBuilderFactory.endpointBuilder("jte", path);
+    }
+    /**
+     * JTE (camel-jte)
+     * Transform messages using a Java based template engine (JTE).
+     * 
+     * Category: transformation
+     * Since: 4.4
+     * Maven coordinates: org.apache.camel:camel-jte
+     * 
+     * Syntax: <code>jte:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path resourceUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.JteEndpointBuilderFactory.JteEndpointBuilder jte(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.JteEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kafka (camel-kafka)
      * Sent and receive messages to/from an Apache Kafka broker.
      * 

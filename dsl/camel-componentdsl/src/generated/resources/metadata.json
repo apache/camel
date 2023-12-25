@@ -4008,6 +4008,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "JteComponentBuilderFactory": {
+    "kind": "component",
+    "name": "jte",
+    "title": "JTE",
+    "description": "Transform messages using a Java based template engine (JTE).",
+    "deprecated": false,
+    "firstVersion": "4.4.0",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.jte.JteComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jte",
+    "version": "4.4.0-SNAPSHOT",
+    "scheme": "jte",
+    "extendsScheme": "",
+    "syntax": "jte:resourceUri",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "KafkaComponentBuilderFactory": {
     "kind": "component",
     "name": "kafka",
