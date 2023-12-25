@@ -15,9 +15,12 @@
 *{component-header}*
 
 The *jte:* component allows for processing a message using a
-https://jte.gg/[JTE] template. This can be ideal when
-using Templating to generate responses for
-requests.
+https://jte.gg/[JTE] template. The JTE is a Java Template Engine, which
+means you write templates that resemble Java code, which in fact gets
+transformed into .java source files that gets compiled to have very
+fast performance.
+
+Only use this component if you are familiar with Java programming.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
