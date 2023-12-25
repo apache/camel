@@ -2444,6 +2444,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Jt400ComponentBuilderFactory.jt400();
     }
     /**
+     * JTE (camel-jte)
+     * Transform messages using a Java based template engine (JTE).
+     * 
+     * Category: transformation
+     * Since: 4.4
+     * Maven coordinates: org.apache.camel:camel-jte
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.JteComponentBuilderFactory.JteComponentBuilder jte() {
+        return org.apache.camel.builder.component.dsl.JteComponentBuilderFactory.jte();
+    }
+    /**
      * Kafka (camel-kafka)
      * Sent and receive messages to/from an Apache Kafka broker.
      * 

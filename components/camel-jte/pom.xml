@@ -28,11 +28,11 @@
 
     <artifactId>camel-jte</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: JTA</name>
+    <name>Camel :: Java Template Engine</name>
     <description>Camel Java Template Engine support</description>
 
     <properties>
-        <camel.surefire.parallel>true</camel.surefire.parallel>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>
 
     <dependencies>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>gg.jte</groupId>
             <artifactId>jte</artifactId>
-            <version>3.1.6</version>
+            <version>${jte-version}</version>
         </dependency>
 
         <!-- testing -->

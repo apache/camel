@@ -27,6 +27,8 @@ public class JteComponentConfigurer extends PropertyConfigurerSupport implements
         case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "contenttype":
+        case "contentType": target.setContentType(property(camelContext, gg.jte.ContentType.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "precompile":
@@ -46,6 +48,8 @@ public class JteComponentConfigurer extends PropertyConfigurerSupport implements
         case "allowTemplateFromHeader": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "contenttype":
+        case "contentType": return gg.jte.ContentType.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "precompile":
@@ -66,6 +70,8 @@ public class JteComponentConfigurer extends PropertyConfigurerSupport implements
         case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "contenttype":
+        case "contentType": return target.getContentType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "precompile":

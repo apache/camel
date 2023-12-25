@@ -2,7 +2,7 @@
 :doctitle: JTE
 :shortname: jte
 :artifactid: camel-jte
-:description: Transform messages using JTE templates.
+:description: Transform messages using a Java based template engine (JTE).
 :since: 4.4
 :supportlevel: Preview
 :tabs-sync-option:

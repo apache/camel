@@ -29,7 +29,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Transform messages using JTE templates.
+ * Transform messages using a Java based template engine (JTE).
  */
 @UriEndpoint(firstVersion = "4.4.0", scheme = "jte", title = "JTE", syntax = "jte:resourceUri",
              producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = JteConstants.class)

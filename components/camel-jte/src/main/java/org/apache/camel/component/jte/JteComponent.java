@@ -41,7 +41,7 @@ public class JteComponent extends DefaultComponent {
     private String workDir = "jte-classes";
     @Metadata
     private boolean preCompile;
-    @Metadata(defaultValue = "Plain")
+    @Metadata(defaultValue = "plain", enums = "plain,html")
     private ContentType contentType = ContentType.Plain;
     @Metadata
     private boolean allowTemplateFromHeader;
@@ -121,6 +121,17 @@ public class JteComponent extends DefaultComponent {
      */
     public void setPreCompile(boolean preCompile) {
         this.preCompile = preCompile;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    /**
+     * Content type the JTE engine should use.
+     */
+    public void setContentType(ContentType contentType) {
+        this.contentType = contentType;
     }
 
     public boolean isAllowTemplateFromHeader() {
