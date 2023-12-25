@@ -218,7 +218,6 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         }
 
         return answer;
-
     }
 
     // Properties

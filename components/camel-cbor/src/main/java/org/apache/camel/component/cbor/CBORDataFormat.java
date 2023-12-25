@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.cbor;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,14 +30,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -88,6 +93,11 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
         Class<?> clazz = unmarshalType;
         String type = null;
         if (allowUnmarshallType) {
@@ -99,12 +109,37 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (type != null) {
             clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
         }
+
+        ObjectReader reader;
         if (collectionType != null) {
             CollectionType collType = objectMapper.getTypeFactory().constructCollectionType(collectionType, clazz);
-            return this.objectMapper.readValue(stream, collType);
+            reader = this.objectMapper.readerFor(collType);
         } else {
-            return this.objectMapper.readValue(stream, clazz);
+            reader = this.objectMapper.readerFor(clazz);
         }
+
+        // unwrap file (such as from camel-file)
+        if (body instanceof WrappedFile<?>) {
+            body = ((WrappedFile<?>) body).getBody();
+        }
+        Object answer;
+        if (body instanceof String b) {
+            answer = reader.readValue(b);
+        } else if (body instanceof byte[] arr) {
+            answer = reader.readValue(arr);
+        } else if (body instanceof Reader r) {
+            answer = reader.readValue(r);
+        } else if (body instanceof File f) {
+            answer = reader.readValue(f);
+        } else if (body instanceof JsonNode n) {
+            answer = reader.readValue(n);
+        } else {
+            // fallback to input stream
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            answer = reader.readValue(is);
+        }
+
+        return answer;
     }
 
     @Override
