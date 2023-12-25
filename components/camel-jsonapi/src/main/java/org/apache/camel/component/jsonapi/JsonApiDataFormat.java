@@ -80,9 +80,21 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
         ResourceConverter converter = new ResourceConverter(dataFormatTypeClasses);
-        JSONAPIDocument<?> jsonApiDocument = converter.readDocument(stream, mainFormatTypeClass);
-        return jsonApiDocument.get();
+
+        JSONAPIDocument<?> doc;
+        if (body instanceof byte[] arr) {
+            doc = converter.readDocument(arr, mainFormatTypeClass);
+        } else {
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            doc = converter.readDocument(is, mainFormatTypeClass);
+        }
+        return doc.get();
     }
 
     public String getDataFormatTypes() {
@@ -142,16 +154,6 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
         if (mainFormatTypeClass == null && mainFormatType != null) {
             mainFormatTypeClass = getCamelContext().getClassResolver().resolveMandatoryClass(mainFormatType);
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 
 }
