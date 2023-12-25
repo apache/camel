@@ -14,41 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jetty;
+package org.apache.camel.jaxb;
 
 import java.io.InputStream;
 
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.converter.jaxb.FallbackTypeConverter;
+import org.apache.camel.example.Bar;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JettyValidatorStreamTest extends CamelTestSupport {
-
-    private int port;
+public class FallbackTypeConverterTest extends CamelTestSupport {
 
     @Test
-    void testValideRequestAsStream() {
-        InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
-        assertNotNull(inputStream, "The inputStream should not be null");
-
-        String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
-        assertEquals("<ok/>", response, "The response should be ok");
+    void testJaxbFallbackTypeConverter() {
+        Bar bar = new Bar();
+        bar.setName("camel");
+        bar.setValue("cool");
+        String result = template.requestBody("direct:start", bar, String.class);
+        assertNotNull(result);
+        assertTrue(result.indexOf("<bar name=\"camel\" value=\"cool\"") > 0, "Get a wrong xml string");
+        assertTrue(result.indexOf("><bar") > 0, "The pretty print setting is not working");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:" + port + "/test")
-                        .to("validator:OptimizationRequest.xsd")
-                        .transform(constant("<ok/>"));
+                // setup the camel property for the PrettyPrint
+                context.getGlobalOptions().put(FallbackTypeConverter.PRETTY_PRINT, "false");
+
+                from("direct:start").process(exchange -> {
+                    Message in = exchange.getIn();
+                    InputStream is = in.getMandatoryBody(InputStream.class);
+                    // make sure we can get the InputStream rightly.
+                    exchange.getMessage().setBody(is);
+                });
             }
         };
     }

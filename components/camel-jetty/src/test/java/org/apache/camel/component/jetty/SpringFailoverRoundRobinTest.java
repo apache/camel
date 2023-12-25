@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jetty;
+package org.apache.camel.component.jetty;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
+public class SpringFailoverRoundRobinTest extends CamelSpringTestSupport {
 
     private static int port1 = AvailablePortFinder.getNextAvailable();
     private static int port2 = AvailablePortFinder.getNextAvailable();
@@ -43,7 +43,7 @@ public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/jetty/JettySpringFailoverRoundRobinTest.xml");
+        return new ClassPathXmlApplicationContext("/org/apache/camel/component/jetty/JettySpringFailoverRoundRobinTest.xml");
     }
 
     @Test

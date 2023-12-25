@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jetty;
+package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
@@ -53,7 +53,7 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
             public void configure() {
                 from("jetty:http://0.0.0.0:" + port + "/myxslt")
                         .pollEnrich(
-                                "file://src/test/resources/org/apache/camel/itest/jetty/?fileName=transform.xsl&noop=true&readLock=none",
+                                "file://src/test/resources/org/apache/camel/component/jetty/?fileName=transform.xsl&noop=true&readLock=none",
                                 2000)
                         .convertBodyTo(String.class)
                         .to("log:transform");
