@@ -196,6 +196,43 @@ public interface KameletEndpointBuilderFactory {
             doSetProperty("location", location);
             return this;
         }
+        /**
+         * Kamelets, by default, will not do fine-grained error handling, but
+         * works in no-error-handler mode. This can be turned off, to use old
+         * behaviour in earlier versions of Camel.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param noErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointConsumerBuilder noErrorHandler(
+                boolean noErrorHandler) {
+            doSetProperty("noErrorHandler", noErrorHandler);
+            return this;
+        }
+        /**
+         * Kamelets, by default, will not do fine-grained error handling, but
+         * works in no-error-handler mode. This can be turned off, to use old
+         * behaviour in earlier versions of Camel.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param noErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointConsumerBuilder noErrorHandler(
+                String noErrorHandler) {
+            doSetProperty("noErrorHandler", noErrorHandler);
+            return this;
+        }
     }
 
     /**
@@ -384,6 +421,43 @@ public interface KameletEndpointBuilderFactory {
             doSetProperty("location", location);
             return this;
         }
+        /**
+         * Kamelets, by default, will not do fine-grained error handling, but
+         * works in no-error-handler mode. This can be turned off, to use old
+         * behaviour in earlier versions of Camel.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param noErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder noErrorHandler(
+                boolean noErrorHandler) {
+            doSetProperty("noErrorHandler", noErrorHandler);
+            return this;
+        }
+        /**
+         * Kamelets, by default, will not do fine-grained error handling, but
+         * works in no-error-handler mode. This can be turned off, to use old
+         * behaviour in earlier versions of Camel.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param noErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder noErrorHandler(
+                String noErrorHandler) {
+            doSetProperty("noErrorHandler", noErrorHandler);
+            return this;
+        }
     }
 
     /**
@@ -423,6 +497,43 @@ public interface KameletEndpointBuilderFactory {
          */
         default AdvancedKameletEndpointBuilder location(String location) {
             doSetProperty("location", location);
+            return this;
+        }
+        /**
+         * Kamelets, by default, will not do fine-grained error handling, but
+         * works in no-error-handler mode. This can be turned off, to use old
+         * behaviour in earlier versions of Camel.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param noErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointBuilder noErrorHandler(
+                boolean noErrorHandler) {
+            doSetProperty("noErrorHandler", noErrorHandler);
+            return this;
+        }
+        /**
+         * Kamelets, by default, will not do fine-grained error handling, but
+         * works in no-error-handler mode. This can be turned off, to use old
+         * behaviour in earlier versions of Camel.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param noErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointBuilder noErrorHandler(
+                String noErrorHandler) {
+            doSetProperty("noErrorHandler", noErrorHandler);
             return this;
         }
     }

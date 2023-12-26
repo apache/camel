@@ -203,6 +203,23 @@ public interface KameletComponentBuilderFactory {
             return this;
         }
         /**
+         * Kamelets, by default, will not do fine-grained error handling, but
+         * works in no-error-handler mode. This can be turned off, to use old
+         * behaviour in earlier versions of Camel.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param noErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default KameletComponentBuilder noErrorHandler(boolean noErrorHandler) {
+            doSetProperty("noErrorHandler", noErrorHandler);
+            return this;
+        }
+        /**
          * To plugin a custom listener for when the Kamelet component is loading
          * Kamelets from external resources.
          * 
@@ -244,6 +261,7 @@ public interface KameletComponentBuilderFactory {
             case "lazyStartProducer": ((KameletComponent) component).setLazyStartProducer((boolean) value); return true;
             case "timeout": ((KameletComponent) component).setTimeout((long) value); return true;
             case "autowiredEnabled": ((KameletComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "noErrorHandler": ((KameletComponent) component).setNoErrorHandler((boolean) value); return true;
             case "routeTemplateLoaderListener": ((KameletComponent) component).setRouteTemplateLoaderListener((org.apache.camel.spi.RouteTemplateLoaderListener) value); return true;
             default: return false;
             }
