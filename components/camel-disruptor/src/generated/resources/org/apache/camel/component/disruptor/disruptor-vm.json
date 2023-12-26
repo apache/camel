@@ -20,7 +20,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": false
   },
   "componentProperties": {
     "bufferSize": { "index": 0, "kind": "property", "displayName": "Buffer Size", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1024, "description": "To configure the ring buffer size" },

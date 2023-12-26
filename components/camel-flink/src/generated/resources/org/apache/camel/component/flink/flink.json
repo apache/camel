@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "dataSetCallback": { "index": 0, "kind": "property", "displayName": "Data Set Callback", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.flink.DataSetCallback", "deprecated": false, "autowired": false, "secret": false, "description": "Function performing action against a DataSet." },

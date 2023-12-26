@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "defaultConnectionOptions": { "index": 0, "kind": "property", "displayName": "Default Connection Options", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.iec60870.client.ClientOptions", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Default connection options" },

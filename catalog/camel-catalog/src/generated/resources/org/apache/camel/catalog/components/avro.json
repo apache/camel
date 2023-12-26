@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "protocol": { "index": 0, "kind": "property", "displayName": "Protocol", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.apache.avro.Protocol", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.avro.AvroConfiguration", "configurationField": "configuration", "description": "Avro protocol to use" },

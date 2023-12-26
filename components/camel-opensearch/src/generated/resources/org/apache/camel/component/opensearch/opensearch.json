@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "connectionTimeout": { "index": 0, "kind": "property", "displayName": "Connection Timeout", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 30000, "description": "The time in ms to wait before connection will time out." },

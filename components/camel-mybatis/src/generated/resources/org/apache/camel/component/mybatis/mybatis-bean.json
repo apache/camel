@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "configurationUri": { "index": 0, "kind": "property", "displayName": "Configuration Uri", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "SqlMapConfig.xml", "supportFileReference": true, "description": "Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath" },

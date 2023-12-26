@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": true
+    "lenientProperties": true,
+    "remote": false
   },
   "componentProperties": {
     "shadow": { "index": 0, "kind": "property", "displayName": "Shadow", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If shadow is enabled then the stub component will register a shadow endpoint with the actual uri that refers to the stub endpoint, meaning you can lookup the endpoint via both stub:kafka:cheese and kafka:cheese." },

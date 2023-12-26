@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "dataSource": { "index": 0, "kind": "property", "displayName": "Data Source", "group": "common", "label": "", "required": false, "type": "object", "javaType": "javax.sql.DataSource", "deprecated": false, "autowired": true, "secret": false, "description": "Sets the DataSource to use to communicate with the database." },

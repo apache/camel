@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "clientTelemetryEnabled": { "index": 0, "kind": "property", "displayName": "Client Telemetry Enabled", "group": "common", "label": "common", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration", "configurationField": "configuration", "description": "Sets the flag to enable client telemetry which will periodically collect database operations aggregation statistics, system information like cpu\/memory and send it to cosmos monitoring service, which will be helpful during debugging. DEFAULT value is false indicating this is opt in feature, by default no telemetry collection." },

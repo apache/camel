@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": true
+    "lenientProperties": true,
+    "remote": true
   },
   "componentProperties": {
     "location": { "index": 0, "kind": "property", "displayName": "Location", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "classpath:\/kamelets", "description": "The location(s) of the Kamelets on the file system. Multiple locations can be set separated by comma." },

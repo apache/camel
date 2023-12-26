@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "autodetectSourceLanguage": { "index": 0, "kind": "property", "displayName": "Autodetect Source Language", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.aws2.translate.Translate2Configuration", "configurationField": "configuration", "description": "Being able to autodetect the source language" },

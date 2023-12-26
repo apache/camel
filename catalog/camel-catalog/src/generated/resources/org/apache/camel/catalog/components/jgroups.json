@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "channel": { "index": 0, "kind": "property", "displayName": "Channel", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.jgroups.JChannel", "deprecated": false, "autowired": false, "secret": false, "description": "Channel to use" },

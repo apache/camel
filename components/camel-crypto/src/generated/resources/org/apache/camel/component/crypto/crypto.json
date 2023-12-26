@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": false
   },
   "componentProperties": {
     "algorithm": { "index": 0, "kind": "property", "displayName": "Algorithm", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "SHA256withRSA", "configurationClass": "org.apache.camel.component.crypto.DigitalSignatureConfiguration", "configurationField": "configuration", "description": "Sets the JCE name of the Algorithm that should be used for the signer." },

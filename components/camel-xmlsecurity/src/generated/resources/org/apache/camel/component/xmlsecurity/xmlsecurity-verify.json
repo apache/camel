@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": false
   },
   "componentProperties": {
     "baseUri": { "index": 0, "kind": "property", "displayName": "Base Uri", "group": "producer", "label": "producer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration", "configurationField": "verifierConfiguration", "description": "You can set a base URI which is used in the URI dereferencing. Relative URIs are then concatenated with the base URI." },

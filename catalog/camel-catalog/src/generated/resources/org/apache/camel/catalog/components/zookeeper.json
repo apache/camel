@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "listChildren": { "index": 0, "kind": "property", "displayName": "List Children", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.zookeeper.ZooKeeperConfiguration", "configurationField": "configuration", "description": "Whether the children of the node should be listed" },

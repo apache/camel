@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "blobName": { "index": 0, "kind": "property", "displayName": "Blob Name", "group": "common", "label": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.azure.storage.blob.BlobConfiguration", "configurationField": "configuration", "description": "The blob name, to consume specific blob from a container. However, on producer it is only required for the operations on the blob level" },

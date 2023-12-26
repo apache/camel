@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": false
   },
   "componentProperties": {
     "threadPoolMaxSize": { "index": 0, "kind": "property", "displayName": "Thread Pool Max Size", "group": "common", "label": "common", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 10, "description": "The maximum number of threads used by the reactive streams internal engine." },

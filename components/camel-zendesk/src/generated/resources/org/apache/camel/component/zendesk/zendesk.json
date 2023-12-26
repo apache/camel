@@ -20,7 +20,8 @@
     "apiSyntax": "methodName",
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "serverUrl": { "index": 0, "kind": "property", "displayName": "Server Url", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The server URL to connect." },

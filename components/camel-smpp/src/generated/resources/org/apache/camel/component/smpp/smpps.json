@@ -20,7 +20,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": true
+    "lenientProperties": true,
+    "remote": true
   },
   "componentProperties": {
     "initialReconnectDelay": { "index": 0, "kind": "property", "displayName": "Initial Reconnect Delay", "group": "common", "label": "common", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 5000, "configurationClass": "org.apache.camel.component.smpp.SmppConfiguration", "configurationField": "configuration", "description": "Defines the initial delay in milliseconds after the consumer\/producer tries to reconnect to the SMSC, after the connection was lost." },

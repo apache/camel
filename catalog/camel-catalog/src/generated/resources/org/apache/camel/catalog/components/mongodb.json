@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "mongoConnection": { "index": 0, "kind": "property", "displayName": "Mongo Connection", "group": "common", "label": "", "required": false, "type": "object", "javaType": "com.mongodb.client.MongoClient", "deprecated": false, "autowired": true, "secret": false, "description": "Shared client used for connection. All endpoints generated from the component will share this connection client." },

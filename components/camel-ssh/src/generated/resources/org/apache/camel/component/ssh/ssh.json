@@ -20,7 +20,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "failOnUnknownHost": { "index": 0, "kind": "property", "displayName": "Fail On Unknown Host", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.ssh.SshConfiguration", "configurationField": "configuration", "description": "Specifies whether a connection to an unknown host should fail or not. This value is only checked when the property knownHosts is set." },

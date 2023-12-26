@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "amqpRetryOptions": { "index": 0, "kind": "property", "displayName": "Amqp Retry Options", "group": "common", "label": "common", "required": false, "type": "object", "javaType": "com.azure.core.amqp.AmqpRetryOptions", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.azure.eventhubs.EventHubsConfiguration", "configurationField": "configuration", "description": "Sets the retry policy for EventHubAsyncClient. If not specified, the default retry options are used." },

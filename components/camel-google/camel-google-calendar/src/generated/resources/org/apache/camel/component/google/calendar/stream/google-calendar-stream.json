@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": true,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "applicationName": { "index": 0, "kind": "property", "displayName": "Application Name", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration", "configurationField": "configuration", "description": "Google Calendar application name. Example would be camel-google-calendar\/1.0" },

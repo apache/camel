@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "influxDBClient": { "index": 0, "kind": "property", "displayName": "Influx DBClient", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "com.influxdb.client.InfluxDBClient", "deprecated": false, "autowired": true, "secret": false, "description": "The shared Influx DB to use for all endpoints" },

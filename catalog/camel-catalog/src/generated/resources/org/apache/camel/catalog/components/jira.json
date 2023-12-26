@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "delay": { "index": 0, "kind": "property", "displayName": "Delay", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "6000", "configurationClass": "org.apache.camel.component.jira.JiraConfiguration", "configurationField": "configuration", "description": "Time in milliseconds to elapse for the next poll." },
