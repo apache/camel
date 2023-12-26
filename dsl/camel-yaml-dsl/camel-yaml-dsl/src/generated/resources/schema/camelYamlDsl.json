@@ -10688,7 +10688,8 @@
               "type" : "string",
               "title" : "Compression Codec Name",
               "description" : "Compression codec to use when marshalling.",
-              "default" : "GZIP"
+              "default" : "GZIP",
+              "enum" : [ "UNCOMPRESSED", "SNAPPY", "GZIP", "LZO", "BROTLI", "LZ4", "ZSTD", "LZ4_RAW" ]
             },
             "id" : {
               "type" : "string",

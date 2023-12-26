@@ -55,9 +55,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     private static final DefaultUuidGenerator DEFAULT_UUID_GENERATOR = new DefaultUuidGenerator();
 
     private CompressionCodecName compressionCodecName = GZIP;
-
     private Class<?> unmarshalType;
-
     private boolean lazyLoad;
 
     @Override
@@ -86,7 +84,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
                 schema = ReflectData.AllowNull.get().getSchema(unmarshalType); // generate nullable fields
                 model = ReflectData.get();
             } catch (AvroRuntimeException e) {
-                LOG.warn("Fall back to use GenericRecord instead of POJO for marshalling", e);
+                LOG.warn("Fallback to use GenericRecord instead of POJO for marshalling", e);
             }
         }
         if (schema == null) {
