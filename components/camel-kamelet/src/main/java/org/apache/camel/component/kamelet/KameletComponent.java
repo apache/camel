@@ -45,6 +45,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kamelet.Kamelet.NO_ERROR_HANDLER;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
@@ -76,6 +77,8 @@ public class KameletComponent extends DefaultComponent {
     private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean noErrorHandler = true;
 
     @Metadata
     private Map<String, Properties> templateProperties;
@@ -141,6 +144,7 @@ public class KameletComponent extends DefaultComponent {
             endpoint = new KameletEndpoint(uri, this, templateId, routeId);
 
             // forward component properties
+            endpoint.setNoErrorHandler(noErrorHandler);
             endpoint.setBlock(block);
             endpoint.setTimeout(timeout);
             // endpoint specific location
@@ -162,6 +166,7 @@ public class KameletComponent extends DefaultComponent {
             };
 
             // forward component properties
+            endpoint.setNoErrorHandler(noErrorHandler);
             endpoint.setBlock(block);
             endpoint.setTimeout(timeout);
             // endpoint specific location
@@ -219,6 +224,7 @@ public class KameletComponent extends DefaultComponent {
             //
             kameletProperties.put(PARAM_TEMPLATE_ID, templateId);
             kameletProperties.put(PARAM_ROUTE_ID, routeId);
+            kameletProperties.put(NO_ERROR_HANDLER, endpoint.isNoErrorHandler());
 
             // set kamelet specific properties
             endpoint.setKameletProperties(kameletProperties);
@@ -238,6 +244,18 @@ public class KameletComponent extends DefaultComponent {
     @Override
     protected boolean resolveRawParameterValues() {
         return false;
+    }
+
+    public boolean isNoErrorHandler() {
+        return noErrorHandler;
+    }
+
+    /**
+     * Kamelets, by default, will not do fine-grained error handling, but works in no-error-handler mode. This can be
+     * turned off, to use old behaviour in earlier versions of Camel.
+     */
+    public void setNoErrorHandler(boolean noErrorHandler) {
+        this.noErrorHandler = noErrorHandler;
     }
 
     public boolean isBlock() {

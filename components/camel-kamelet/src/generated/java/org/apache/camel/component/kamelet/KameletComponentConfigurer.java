@@ -29,6 +29,8 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "location": target.setLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "noerrorhandler":
+        case "noErrorHandler": target.setNoErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "routeproperties":
         case "routeProperties": target.setRouteProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "routetemplateloaderlistener":
@@ -56,6 +58,8 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "location": return java.lang.String.class;
+        case "noerrorhandler":
+        case "noErrorHandler": return boolean.class;
         case "routeproperties":
         case "routeProperties": return java.util.Map.class;
         case "routetemplateloaderlistener":
@@ -79,6 +83,8 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "location": return target.getLocation();
+        case "noerrorhandler":
+        case "noErrorHandler": return target.isNoErrorHandler();
         case "routeproperties":
         case "routeProperties": return target.getRouteProperties();
         case "routetemplateloaderlistener":

@@ -35,6 +35,12 @@ All keys started with `camel.main.routesController` should be renamed to `camel.
 `camel.main.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
 And the option `camel.main.routeControllerSuperviseEnabled` has been renamed to `camel.routecontroller.enabled`.
 
+=== camel-kamelet
+
+All kamelets are now turned off error handling in the route templates. This is done to make using kamelets
+the same as calling a regular Camel component endpoint. Backwards mode can be enabled by setting `noErrorHandler=false`
+on the `KameletComponent` or as URI parameter `to("kamelet:http-sink?noErrorHandler=true&uri=xxxxx")`.
+
 === camel-azure-cosmosdb
 
 The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between SHARED_ACCOUNT_KEY and AZURE_IDENTITY.
