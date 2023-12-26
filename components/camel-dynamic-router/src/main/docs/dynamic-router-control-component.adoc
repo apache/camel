@@ -43,7 +43,7 @@ include::partial$component-endpoint-options.adoc[]
 Subscribing can be achieved by using query parameters in the control endpoint URI, or by sending a
 `DynamicRouterControlMessage` to the control endpoint URI.
 
-===== URI examples
+==== URI examples
 
 .Example Java URI `RouteBuilder` Subscription
 [source,java]
@@ -85,7 +85,7 @@ dynamic URI, we have to send subscription parameters from a `ProducerTemplate` i
 endpoint uses headers "under the hood", because the URI params are converted to headers, so we can set the headers
 deliberately.
 
-===== DynamicRouterControlMessage example
+==== DynamicRouterControlMessage example
 
 .Example Java `DynamicRouterControlMessage` Subscription
 [source,java]
@@ -107,7 +107,7 @@ Like subscribing, unsubscribing can also  be achieved by using query parameters 
 sending a `DynamicRouterControlMessage` to the control endpoint URI.  The difference is that unsubscribing can be
 achieved by using either one or two parameters.
 
-===== URI examples
+==== URI examples
 
 .Example Java URI `RouteBuilder` Unsubscribe
 [source,java]
