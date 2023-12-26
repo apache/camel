@@ -42,8 +42,6 @@ public class ManagedRouteNodePrefixIdTest extends ManagementTestSupport {
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
         assertEquals(4, set.size());
 
-        System.out.println(set);
-
         // hardcoded ids should also be prefixed
         ManagedProcessorMBean mb
                 = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)

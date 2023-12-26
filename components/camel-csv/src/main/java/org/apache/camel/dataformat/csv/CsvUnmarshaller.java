@@ -69,12 +69,12 @@ abstract class CsvUnmarshaller {
     /**
      * Unmarshal the CSV
      *
-     * @param  exchange    Exchange (used for accessing type converter)
-     * @param  inputStream Input CSV stream
-     * @return             Unmarshalled CSV
-     * @throws IOException if the stream cannot be read properly
+     * @param  exchange  Exchange (used for accessing type converter)
+     * @param  body      the input
+     * @return           Unmarshalled CSV
+     * @throws Exception if error during unmarshalling
      */
-    public abstract Object unmarshal(Exchange exchange, InputStream inputStream) throws IOException;
+    public abstract Object unmarshal(Exchange exchange, Object body) throws Exception;
 
     private static CsvRecordConverter<?> extractConverter(CsvDataFormat dataFormat) {
         if (dataFormat.getRecordConverter() != null) {
@@ -99,9 +99,15 @@ abstract class CsvUnmarshaller {
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream inputStream) throws IOException {
+        public Object unmarshal(Exchange exchange, Object body) throws Exception {
+            Reader reader = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange, body);
+            if (reader == null) {
+                // fallback to input stream
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
+            }
             CSVParser parser
-                    = new CSVParser(new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange)), format);
+                    = new CSVParser(reader, format);
             try {
                 if (dataFormat.isCaptureHeaderRecord()) {
                     exchange.getMessage().setHeader(CsvConstants.HEADER_RECORD, parser.getHeaderNames());
@@ -132,10 +138,14 @@ abstract class CsvUnmarshaller {
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream inputStream) throws IOException {
-            Reader reader = null;
+        public Object unmarshal(Exchange exchange, Object body) throws Exception {
+            Reader reader = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange, body);
+            if (reader == null) {
+                // fallback to input stream
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
+            }
             try {
-                reader = new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange));
                 CSVParser parser = new CSVParser(reader, format);
                 CsvIterator<?> answer = new CsvIterator<>(parser, converter);
                 // add to UoW, so we can close the iterator, so it can release any resources

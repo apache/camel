@@ -18,6 +18,7 @@ package org.apache.camel.component.jsonb;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.lang.reflect.Type;
 
 import jakarta.json.bind.Jsonb;
@@ -40,7 +41,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * Marshal POJOs to JSON and back using JSON-B.
  */
 @Dataformat("jsonb")
-@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyamingStrategy,skipNull")
+@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyNamingStrategy,skipNull")
 public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
     private CamelContext camelContext;
     private Jsonb objectMapper;
@@ -51,7 +52,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     private String encoding = "UTF-8";
     private String binaryStrategy = BinaryDataStrategy.BASE_64;
     private String propertyOrder = PropertyOrderStrategy.ANY;
-    private String propertyamingStrategy = PropertyNamingStrategy.IDENTITY;
+    private String propertyNamingStrategy = PropertyNamingStrategy.IDENTITY;
     private boolean skipNull = true;
 
     public JsonbDataFormat() {
@@ -170,12 +171,12 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
         this.propertyOrder = propertyOrder;
     }
 
-    public String getPropertyamingStrategy() {
-        return propertyamingStrategy;
+    public String getPropertyNamingStrategy() {
+        return propertyNamingStrategy;
     }
 
-    public void setPropertyamingStrategy(String propertyamingStrategy) {
-        this.propertyamingStrategy = propertyamingStrategy;
+    public void setPropertyNamingStrategy(String propertyNamingStrategy) {
+        this.propertyNamingStrategy = propertyNamingStrategy;
     }
 
     @Override
@@ -185,6 +186,11 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
         // is there a header with the unmarshal type?
         Class<?> expectedType = unmarshalType;
         String type = exchange.getIn().getHeader("CamelJsonbUnmarshallType", String.class);
@@ -192,9 +198,25 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
             expectedType = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
         }
         if (expectedType == null && customType != null) {
-            return objectMapper.fromJson(stream, customType);
+            if (body instanceof String str) {
+                return objectMapper.fromJson(str, customType);
+            } else if (body instanceof Reader r) {
+                return objectMapper.fromJson(r, customType);
+            } else {
+                // fallback to input stream
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                return objectMapper.fromJson(is, customType);
+            }
         } else {
-            return objectMapper.fromJson(stream, expectedType);
+            if (body instanceof String str) {
+                return objectMapper.fromJson(str, expectedType);
+            } else if (body instanceof Reader r) {
+                return objectMapper.fromJson(r, expectedType);
+            } else {
+                // fallback to input stream
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                return objectMapper.fromJson(is, expectedType);
+            }
         }
     }
 
@@ -213,7 +235,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
                     .withNullValues(!skipNull)
                     .withBinaryDataStrategy(binaryStrategy)
                     .withPropertyOrderStrategy(propertyOrder)
-                    .withPropertyNamingStrategy(propertyamingStrategy)
+                    .withPropertyNamingStrategy(propertyNamingStrategy)
                     .withEncoding(encoding));
         }
     }

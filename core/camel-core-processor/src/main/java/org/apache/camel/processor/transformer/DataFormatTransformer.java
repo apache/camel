@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.transformer;
 
-import java.io.InputStream;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -64,7 +62,7 @@ public class DataFormatTransformer extends Transformer {
         // Unmarshaling into Java Object
         if ((DataType.isAnyType(to) || to.isJavaType()) && (from.equals(getFrom()) || from.getScheme().equals(getName()))) {
             LOG.debug("Unmarshaling with: {}", dataFormat);
-            Object answer = dataFormat.unmarshal(exchange, message.getBody(InputStream.class));
+            Object answer = dataFormat.unmarshal(exchange, message.getBody());
             if (!DataType.isAnyType(to) && to.getName() != null) {
                 Class<?> toClass = context.getClassResolver().resolveClass(to.getName());
                 if (!toClass.isAssignableFrom(answer.getClass())) {

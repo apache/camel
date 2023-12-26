@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -53,12 +53,12 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -271,16 +271,26 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
         try {
             Object answer;
 
-            final XMLStreamReader xmlReader;
+            XMLStreamReader xmlReader;
             if (needFiltering(exchange)) {
                 xmlReader
-                        = typeConverter.convertTo(XMLStreamReader.class, exchange, createNonXmlFilterReader(exchange, stream));
+                        = typeConverter.convertTo(XMLStreamReader.class, exchange, createNonXmlFilterReader(exchange, body));
             } else {
-                xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, stream);
+                xmlReader = typeConverter.tryConvertTo(XMLStreamReader.class, exchange, body);
+                if (xmlReader == null) {
+                    // fallback to input stream
+                    InputStream is = getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                    xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, is);
+                }
             }
             String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
             if (partClass != null || partClassFromHeader != null) {
@@ -306,9 +316,15 @@ public class JaxbDataFormat extends ServiceSupport
         }
     }
 
-    private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, InputStream stream)
-            throws UnsupportedEncodingException {
-        return new NonXmlFilterReader(new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange)));
+    private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, Object body)
+            throws NoTypeConversionAvailableException {
+        Reader reader = getCamelContext().getTypeConverter().tryConvertTo(Reader.class, exchange, body);
+        if (reader == null) {
+            // fallback to input stream
+            InputStream is = getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            reader = new InputStreamReader(is);
+        }
+        return new NonXmlFilterReader(reader);
     }
 
     protected boolean needFiltering(Exchange exchange) {
