@@ -14,32 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jetty;
+package org.apache.camel.component.jetty;
+
+import java.io.InputStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JettyConstantSetHeaderTest extends CamelTestSupport {
+public class JettyValidatorStreamWithStreamCachingEnabledTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    void testJettyConstantSetHeader() throws Exception {
-        getMockEndpoint("mock:before").message(0).header("beer").isNull();
+    void testValideRequestAsStream() {
+        InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
+        assertNotNull(inputStream, "The inputStream should not be null");
 
-        MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hello World");
-        result.message(0).header("beer").isEqualTo("Carlsberg");
-
-        String reply = template.requestBody("http://localhost:" + port + "/beer", "Hello World", String.class);
-        assertEquals("Bye World", reply);
-
-        MockEndpoint.assertIsSatisfied(context);
+        String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
+        assertEquals("<ok/>", response, "The response should be ok");
     }
 
     @Override
@@ -49,12 +46,11 @@ public class JettyConstantSetHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:" + port + "/beer")
-                        .convertBodyTo(String.class)
-                        .to("mock:before")
-                        .setHeader("beer", constant("Carlsberg"))
-                        .to("mock:result")
-                        .transform(constant("Bye World"));
+                context.setStreamCaching(true);
+
+                from("jetty:http://localhost:" + port + "/test")
+                        .to("validator:OptimizationRequest.xsd")
+                        .transform(constant("<ok/>"));
             }
         };
     }

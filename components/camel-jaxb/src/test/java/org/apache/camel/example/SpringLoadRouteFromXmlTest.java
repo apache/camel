@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jaxb;
+package org.apache.camel.example;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
@@ -36,7 +36,7 @@ public class SpringLoadRouteFromXmlTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/jaxb/SpringLoadRouteFromXmlTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/example/SpringLoadRouteFromXmlTest.xml");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class SpringLoadRouteFromXmlTest extends CamelSpringTestSupport {
         JAXBContext jaxb = new DefaultModelJAXBContextFactory().newJAXBContext();
         Unmarshaller unmarshaller = jaxb.createUnmarshaller();
 
-        Resource rs = new ClassPathResource("org/apache/camel/itest/jaxb/BarRoute.xml");
+        Resource rs = new ClassPathResource("org/apache/camel/example/BarRoute.xml");
         Object value = unmarshaller.unmarshal(rs.getInputStream());
 
         // it should be a RoutesDefinition (we can have multiple routes in the same XML file)

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jetty;
+package org.apache.camel.component.jetty;
 
 import java.io.InputStream;
 
@@ -38,7 +38,8 @@ public class JettyXsltTest extends CamelTestSupport {
     @Test
     void testClasspath() {
         String response
-                = template.requestBody("xslt:org/apache/camel/itest/jetty/greeting.xsl", "<hello>Camel</hello>", String.class);
+                = template.requestBody("xslt:org/apache/camel/component/jetty/greeting.xsl", "<hello>Camel</hello>",
+                        String.class);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>Camel</goodbye>", response);
     }
@@ -46,7 +47,7 @@ public class JettyXsltTest extends CamelTestSupport {
     @Test
     void testClasspathInvalidParameter() {
         try {
-            template.requestBody("xslt:org/apache/camel/itest/jetty/greeting.xsl?name=greeting.xsl", "<hello>Camel</hello>",
+            template.requestBody("xslt:org/apache/camel/component/jetty/greeting.xsl?name=greeting.xsl", "<hello>Camel</hello>",
                     String.class);
             fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException e) {
@@ -73,7 +74,7 @@ public class JettyXsltTest extends CamelTestSupport {
                             String name = exchange.getIn().getHeader("name", String.class);
                             ObjectHelper.notNull(name, "name");
 
-                            name = "org/apache/camel/itest/jetty/" + name;
+                            name = "org/apache/camel/component/jetty/" + name;
                             InputStream is
                                     = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
                             String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
