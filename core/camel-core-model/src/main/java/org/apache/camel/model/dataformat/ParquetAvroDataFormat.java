@@ -35,15 +35,12 @@ import org.apache.camel.spi.Metadata;
 public class ParquetAvroDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "GZIP")
+    @Metadata(defaultValue = "GZIP", enums = "UNCOMPRESSED,SNAPPY,GZIP,LZO,BROTLI,LZ4,ZSTD,LZ4_RAW")
     private String compressionCodecName;
-
     @XmlTransient
     private Class<?> unmarshalType;
-
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
-
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String lazyLoad;
