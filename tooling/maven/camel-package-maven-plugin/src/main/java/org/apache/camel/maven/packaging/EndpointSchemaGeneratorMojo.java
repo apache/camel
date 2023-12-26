@@ -813,6 +813,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());
         model.setLenientProperties(uriEndpoint.lenientProperties());
+        model.setRemote(uriEndpoint.remote());
         model.setAsync(loadClass("org.apache.camel.AsyncEndpoint").isAssignableFrom(endpointClassElement));
         model.setApi(loadClass("org.apache.camel.ApiEndpoint").isAssignableFrom(endpointClassElement));
         model.setApiSyntax(uriEndpoint.apiSyntax());
