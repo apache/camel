@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
-            <version>5.1.4</version>
+            <version>5.2.0</version>
             <!-- force jar type -->
             <type>jar</type>
         </dependency>
