@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
  */
 @ManagedResource(description = "Managed XJEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true,
-             category = { Category.TRANSFORMATION }, headersClass = XJConstants.class)
+             remote = false, category = { Category.TRANSFORMATION }, headersClass = XJConstants.class)
 public class XJEndpoint extends XsltSaxonEndpoint {
 
     private final JsonFactory jsonFactory = new JsonFactory();

@@ -49,7 +49,7 @@ import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRA
  * Validate XML payload using the Schematron Library.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "schematron", title = "Schematron", syntax = "schematron:path",
-             producerOnly = true, category = { Category.VALIDATION })
+             remote = false, producerOnly = true, category = { Category.VALIDATION })
 public class SchematronEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SchematronEndpoint.class);

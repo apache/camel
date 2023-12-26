@@ -43,7 +43,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
  * Transform messages using a Thymeleaf template.
  */
 @UriEndpoint(firstVersion = "4.1.0", scheme = "thymeleaf", title = "Thymeleaf", syntax = "thymeleaf:resourceUri",
-             producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = ThymeleafConstants.class)
+             remote = false, producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = ThymeleafConstants.class)
 public class ThymeleafEndpoint extends ResourceEndpoint {
 
     private TemplateEngine templateEngine;

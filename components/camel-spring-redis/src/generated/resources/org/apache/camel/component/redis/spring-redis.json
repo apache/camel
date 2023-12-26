@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "redisTemplate": { "index": 0, "kind": "property", "displayName": "Redis Template", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.springframework.data.redis.core.RedisTemplate<java.lang.Object, java.lang.Object>", "deprecated": false, "autowired": true, "secret": false, "description": "Reference to a pre-configured RedisTemplate instance to use." },

@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "kubernetesClient": { "index": 0, "kind": "property", "displayName": "Kubernetes Client", "group": "common", "label": "", "required": false, "type": "object", "javaType": "io.fabric8.kubernetes.client.KubernetesClient", "deprecated": false, "autowired": true, "secret": false, "description": "To use an existing kubernetes client." },

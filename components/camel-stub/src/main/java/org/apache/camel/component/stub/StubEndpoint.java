@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriEndpoint;
  * parameters to let you quickly stub out one or more endpoints in your route temporarily.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "stub", title = "Stub", syntax = "stub:name",
-             category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+             remote = false, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
 public class StubEndpoint extends SedaEndpoint {
 
     public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {

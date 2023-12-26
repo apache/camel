@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "ceOverride": { "index": 0, "kind": "property", "displayName": "Ce Override", "group": "common", "label": "", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.String>", "prefix": "ce.override.", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.knative.KnativeConfiguration", "configurationField": "configuration", "description": "CloudEvent headers to override" },

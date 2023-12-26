@@ -21,6 +21,7 @@
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true,
+    "remote": true,
     "verifiers": "parameters,connectivity"
   },
   "componentProperties": {

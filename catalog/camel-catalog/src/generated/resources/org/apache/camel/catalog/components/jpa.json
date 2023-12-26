@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "aliases": { "index": 0, "kind": "property", "displayName": "Aliases", "group": "common", "label": "", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.Class<java.lang.Object>>", "deprecated": false, "autowired": false, "secret": false, "description": "Maps an alias to a JPA entity class. The alias can then be used in the endpoint URI (instead of the fully qualified class name)." },

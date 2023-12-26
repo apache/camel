@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": false
   },
   "componentProperties": {
     "eventBus": { "index": 0, "kind": "property", "displayName": "Event Bus", "group": "common", "label": "", "required": false, "type": "object", "javaType": "com.google.common.eventbus.EventBus", "deprecated": false, "autowired": false, "secret": false, "description": "To use the given Guava EventBus instance" },

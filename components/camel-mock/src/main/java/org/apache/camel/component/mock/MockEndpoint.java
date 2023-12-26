@@ -94,7 +94,7 @@ import org.slf4j.LoggerFactory;
  * overrides the number of expected message based on the number of values provided in the bodies/headers.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true,
-             category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+             remote = false, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, NotifyBuilderMatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);

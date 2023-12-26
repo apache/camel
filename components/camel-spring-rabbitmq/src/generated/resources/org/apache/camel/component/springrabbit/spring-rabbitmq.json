@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "amqpAdmin": { "index": 0, "kind": "property", "displayName": "Amqp Admin", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.springframework.amqp.core.AmqpAdmin", "deprecated": false, "autowired": true, "secret": false, "description": "Optional AMQP Admin service to use for auto declaring elements (queues, exchanges, bindings)" },

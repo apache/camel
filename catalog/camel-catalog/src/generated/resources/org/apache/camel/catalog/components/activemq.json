@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "brokerURL": { "index": 0, "kind": "property", "displayName": "Broker URL", "group": "common", "label": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Sets the broker URL to use to connect to ActiveMQ. If none configured then localhost:61616 is used by default (however can be overridden by configuration from environment variables)" },

@@ -51,6 +51,7 @@ import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterCons
              title = TITLE_CONTROL,
              syntax = SYNTAX_CONTROL,
              producerOnly = true,
+             remote = false,
              headersClass = DynamicRouterControlConstants.class,
              category = { Category.MESSAGING })
 public class DynamicRouterControlEndpoint extends DefaultEndpoint {

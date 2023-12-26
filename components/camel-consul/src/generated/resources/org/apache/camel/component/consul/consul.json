@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "connectTimeout": { "index": 0, "kind": "property", "displayName": "Connect Timeout", "group": "common", "label": "", "required": false, "type": "object", "javaType": "java.time.Duration", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.consul.ConsulConfiguration", "configurationField": "configuration", "description": "Connect timeout for OkHttpClient" },

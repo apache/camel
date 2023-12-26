@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "disconnect": { "index": 0, "kind": "property", "displayName": "Disconnect", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.mina.MinaConfiguration", "configurationField": "configuration", "description": "Whether to disconnect(close) from Mina session right after use. Can be used for both consumer and producer." },

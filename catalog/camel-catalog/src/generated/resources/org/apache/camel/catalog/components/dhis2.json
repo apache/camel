@@ -20,7 +20,8 @@
     "apiSyntax": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "baseApiUrl": { "index": 0, "kind": "property", "displayName": "Base Api Url", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.dhis2.Dhis2Configuration", "configurationField": "configuration", "description": "DHIS2 server base API URL (e.g., https:\/\/play.dhis2.org\/2.39.1.1\/api)" },

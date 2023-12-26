@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * match the number of expected messages and their message payloads are equal.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset-test", title = "DataSet Test", syntax = "dataset-test:name",
-             producerOnly = true, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+             remote = false, producerOnly = true, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
 public class DataSetTestEndpoint extends MockEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSetTestEndpoint.class);

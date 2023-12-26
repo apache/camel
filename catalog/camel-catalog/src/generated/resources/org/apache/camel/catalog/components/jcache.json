@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "cacheConfiguration": { "index": 0, "kind": "property", "displayName": "Cache Configuration", "group": "common", "label": "", "required": false, "type": "object", "javaType": "javax.cache.configuration.Configuration", "deprecated": false, "autowired": false, "secret": false, "description": "A Configuration for the Cache" },

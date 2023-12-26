@@ -33,7 +33,7 @@ import org.apache.camel.util.StringHelper;
  * This endpoint can be used to connect existing routes in the same CamelContext.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name",
-             category = { Category.CORE, Category.MESSAGING })
+             remote = false, category = { Category.CORE, Category.MESSAGING })
 public class DirectEndpoint extends DefaultEndpoint {
 
     private final DirectComponent component;

@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "cacheManager": { "index": 0, "kind": "property", "displayName": "Cache Manager", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.ehcache.CacheManager", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.ehcache.EhcacheConfiguration", "configurationField": "configuration", "description": "The cache manager" },

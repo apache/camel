@@ -48,7 +48,7 @@ import org.apache.camel.util.IOHelper;
  * defined as well.
  */
 @UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri",
-             producerOnly = true, category = { Category.CORE, Category.SCRIPT }, headersClass = LanguageConstants.class)
+             remote = false, producerOnly = true, category = { Category.CORE, Category.SCRIPT }, headersClass = LanguageConstants.class)
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;

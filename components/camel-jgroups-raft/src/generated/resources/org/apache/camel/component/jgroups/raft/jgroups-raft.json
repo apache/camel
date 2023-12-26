@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "channelProperties": { "index": 0, "kind": "property", "displayName": "Channel Properties", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "raft.xml", "description": "Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is provided)." },

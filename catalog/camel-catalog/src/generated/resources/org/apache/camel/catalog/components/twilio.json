@@ -20,7 +20,8 @@
     "apiSyntax": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "configuration": { "index": 0, "kind": "property", "displayName": "Configuration", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.twilio.TwilioConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "To use the shared configuration" },

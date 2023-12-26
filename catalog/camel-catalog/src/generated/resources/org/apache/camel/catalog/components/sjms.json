@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "connectionFactory": { "index": 0, "kind": "property", "displayName": "Connection Factory", "group": "common", "label": "common", "required": false, "type": "object", "javaType": "jakarta.jms.ConnectionFactory", "deprecated": false, "autowired": true, "secret": false, "description": "The connection factory to be use. A connection factory must be configured either on the component or endpoint." },

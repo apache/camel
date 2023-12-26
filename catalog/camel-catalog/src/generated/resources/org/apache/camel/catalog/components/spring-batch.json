@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": false
   },
   "componentProperties": {
     "jobLauncher": { "index": 0, "kind": "property", "displayName": "Job Launcher", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.springframework.batch.core.launch.JobLauncher", "deprecated": false, "autowired": false, "secret": false, "description": "Explicitly specifies a JobLauncher to be used." },

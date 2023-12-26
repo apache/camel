@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  * JSON to JSON transformation using JOLT.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true,
-             category = { Category.TRANSFORMATION }, headersClass = JoltConstants.class)
+             remote = false, category = { Category.TRANSFORMATION }, headersClass = JoltConstants.class)
 @Metadata(excludeProperties = "allowContextMapAll")
 public class JoltEndpoint extends ResourceEndpoint {
 

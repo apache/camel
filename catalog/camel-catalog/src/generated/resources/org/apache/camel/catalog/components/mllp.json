@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "autoAck": { "index": 0, "kind": "property", "displayName": "Auto Ack", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "configurationClass": "org.apache.camel.component.mllp.MllpConfiguration", "configurationField": "configuration", "description": "Enable\/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only" },

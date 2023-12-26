@@ -20,7 +20,8 @@
     "apiSyntax": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "encoding": { "index": 0, "kind": "property", "displayName": "Encoding", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "enum": [ "JSON", "XML" ], "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.fhir.FhirConfiguration", "configurationField": "configuration", "description": "Encoding to use for all request" },

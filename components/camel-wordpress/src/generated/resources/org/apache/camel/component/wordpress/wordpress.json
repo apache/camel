@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "apiVersion": { "index": 0, "kind": "property", "displayName": "Api Version", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "2", "configurationClass": "org.apache.camel.component.wordpress.WordpressConfiguration", "configurationField": "configuration", "description": "The Wordpress REST API version" },

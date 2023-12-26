@@ -196,4 +196,10 @@ public @interface UriEndpoint {
      * </pre>
      */
     String headersNameProvider() default "";
+
+    /**
+     * Whether the component does remote communication such as connecting to an external system over the network. Set
+     * this to false for internal components such as log, message transformations and other kinds.
+     */
+    boolean remote() default true;
 }

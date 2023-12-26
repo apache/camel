@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "connectionFactory": { "index": 0, "kind": "property", "displayName": "Connection Factory", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory", "deprecated": false, "autowired": true, "secret": false, "description": "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used" },

@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Collect various metrics directly from Camel routes using the DropWizard metrics library.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName",
-             producerOnly = true, category = { Category.MONITORING }, headersClass = MetricsConstants.class)
+             remote = false, producerOnly = true, category = { Category.MONITORING }, headersClass = MetricsConstants.class)
 public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;

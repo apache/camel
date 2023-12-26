@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "configurationResource": { "index": 0, "kind": "property", "displayName": "Configuration Resource", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "java.lang.Object", "deprecated": false, "autowired": false, "secret": false, "description": "The resource from where to load the configuration. It can be a: URL, String or InputStream type." },

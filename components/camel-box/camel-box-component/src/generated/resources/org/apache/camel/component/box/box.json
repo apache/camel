@@ -20,7 +20,8 @@
     "apiSyntax": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": true
+    "lenientProperties": true,
+    "remote": true
   },
   "componentProperties": {
     "clientId": { "index": 0, "kind": "property", "displayName": "Client Id", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.box.BoxConfiguration", "configurationField": "configuration", "description": "Box application client ID" },

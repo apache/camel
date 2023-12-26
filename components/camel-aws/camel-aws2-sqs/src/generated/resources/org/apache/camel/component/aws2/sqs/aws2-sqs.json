@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "amazonAWSHost": { "index": 0, "kind": "property", "displayName": "Amazon AWSHost", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "amazonaws.com", "configurationClass": "org.apache.camel.component.aws2.sqs.Sqs2Configuration", "configurationField": "configuration", "description": "The hostname of the Amazon AWS cloud." },

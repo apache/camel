@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri",
-             producerOnly = true, category = { Category.CORE, Category.TRANSFORMATION })
+             remote = false, producerOnly = true, category = { Category.CORE, Category.TRANSFORMATION })
 public class XsltSaxonEndpoint extends XsltEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonEndpoint.class);

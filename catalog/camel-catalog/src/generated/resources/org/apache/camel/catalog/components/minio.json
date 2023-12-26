@@ -19,7 +19,8 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": false,
+    "remote": true
   },
   "componentProperties": {
     "autoCreateBucket": { "index": 0, "kind": "property", "displayName": "Auto Create Bucket", "group": "common", "label": "common", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "configurationClass": "org.apache.camel.component.minio.MinioConfiguration", "configurationField": "configuration", "description": "Setting the autocreation of the bucket if bucket name not exist." },

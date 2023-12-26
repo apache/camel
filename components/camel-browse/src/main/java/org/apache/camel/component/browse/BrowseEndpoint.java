@@ -40,7 +40,7 @@ import org.apache.camel.support.DefaultProducer;
  * available to be browsed.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name",
-             category = { Category.CORE, Category.MONITORING })
+             remote = false, category = { Category.CORE, Category.MONITORING })
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint")

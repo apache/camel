@@ -188,6 +188,7 @@ public final class JsonMapper {
         model.setConsumerOnly(mobj.getBooleanOrDefault("consumerOnly", false));
         model.setProducerOnly(mobj.getBooleanOrDefault("producerOnly", false));
         model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
+        model.setRemote(mobj.getBooleanOrDefault("remote", false));
         parseArtifact(mobj, model);
     }
 
@@ -219,6 +220,7 @@ public final class JsonMapper {
         obj.put("consumerOnly", model.isConsumerOnly());
         obj.put("producerOnly", model.isProducerOnly());
         obj.put("lenientProperties", model.isLenientProperties());
+        obj.put("remote", model.isRemote());
         obj.put("verifiers", model.getVerifiers());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
