@@ -10707,7 +10707,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Parquet Avro serialization and de-serialization.",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "compressionCodecName", type = "string", defaultValue = "GZIP", description = "Compression codec to use when marshalling.", displayName = "Compression Codec Name"),
+                    @YamlProperty(name = "compressionCodecName", type = "enum:UNCOMPRESSED,SNAPPY,GZIP,LZO,BROTLI,LZ4,ZSTD,LZ4_RAW", defaultValue = "GZIP", description = "Compression codec to use when marshalling.", displayName = "Compression Codec Name"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "lazyLoad", type = "boolean", description = "Whether the unmarshalling should produce an iterator of records or read all the records at once.", displayName = "Lazy Load"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for unmarshalling and input objects are assumed as GenericRecords for marshalling.", displayName = "Unmarshal Type")
