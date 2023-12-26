@@ -56,6 +56,8 @@ public class KameletEndpoint extends DefaultEndpoint {
     private long timeout = 30000L;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean failIfNoConsumers = true;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean noErrorHandler = true;
 
     public KameletEndpoint(String uri,
                            KameletComponent component,
@@ -71,6 +73,18 @@ public class KameletEndpoint extends DefaultEndpoint {
         this.routeId = routeId;
         this.key = templateId + "/" + routeId;
         this.kameletProperties = new HashMap<>();
+    }
+
+    public boolean isNoErrorHandler() {
+        return noErrorHandler;
+    }
+
+    /**
+     * Kamelets, by default, will not do fine-grained error handling, but works in no-error-handler mode. This can be
+     * turned off, to use old behaviour in earlier versions of Camel.
+     */
+    public void setNoErrorHandler(boolean noErrorHandler) {
+        this.noErrorHandler = noErrorHandler;
     }
 
     public boolean isBlock() {
