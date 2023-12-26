@@ -60,7 +60,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  * Schedule sending of messages using the Quartz 2.x scheduler.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName",
-             consumerOnly = true, category = { Category.SCHEDULING })
+             remote = false, consumerOnly = true, category = { Category.SCHEDULING })
 public class QuartzEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);

@@ -40,7 +40,7 @@ import org.apache.camel.spi.UriParam;
 @ManagedResource(description = "Managed JsonValidatorEndpoint")
 @UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator",
              syntax = "json-validator:resourceUri",
-             producerOnly = true, category = { Category.VALIDATION })
+             remote = false, producerOnly = true, category = { Category.VALIDATION })
 public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     private volatile JsonSchema schema;

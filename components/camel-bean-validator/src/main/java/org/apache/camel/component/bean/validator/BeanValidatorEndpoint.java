@@ -41,7 +41,7 @@ import static org.apache.camel.component.bean.validator.ValidatorFactories.build
  * Camel uses the reference implementation, which is Hibernate Validator.
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "bean-validator", title = "Bean Validator", syntax = "bean-validator:label",
-             producerOnly = true, category = { Category.VALIDATION })
+             remote = false, producerOnly = true, category = { Category.VALIDATION })
 public class BeanValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Where label is an arbitrary text value describing the endpoint")

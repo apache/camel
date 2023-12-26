@@ -43,7 +43,7 @@ import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
  */
 @ManagedResource(description = "Managed ValidatorEndpoint")
 @UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri",
-             producerOnly = true, category = { Category.CORE, Category.VALIDATION })
+             remote = false, producerOnly = true, category = { Category.CORE, Category.VALIDATION })
 public class ValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"

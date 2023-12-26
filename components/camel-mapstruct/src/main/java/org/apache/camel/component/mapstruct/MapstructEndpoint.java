@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(firstVersion = "3.19.0", scheme = "mapstruct", title = "MapStruct", syntax = "mapstruct:className",
-             producerOnly = true,
+             remote = false, producerOnly = true,
              category = { Category.TRANSFORMATION })
 public class MapstructEndpoint extends DefaultEndpoint {
 

@@ -45,7 +45,7 @@ import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
  * Camel uses sfl4j which allows you to configure logging to the actual logging system.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log",
-             syntax = "log:loggerName", producerOnly = true, category = { Category.CORE, Category.MONITORING })
+             remote = false, syntax = "log:loggerName", producerOnly = true, category = { Category.CORE, Category.MONITORING })
 public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
 
     private volatile Processor logger;

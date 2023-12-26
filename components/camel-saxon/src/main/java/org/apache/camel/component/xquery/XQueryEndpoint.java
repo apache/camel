@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * Query and/or transform XML payloads using XQuery and Saxon.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri",
-             category = { Category.TRANSFORMATION })
+             remote = false, category = { Category.TRANSFORMATION })
 public class XQueryEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);

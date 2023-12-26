@@ -31,7 +31,7 @@ import org.apache.camel.support.ProcessorEndpoint;
  * Process XML payloads by a SAX ContentHandler.
  */
 @UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true,
-             category = { Category.TRANSFORMATION })
+             remote = false, category = { Category.TRANSFORMATION })
 public class StAXEndpoint extends ProcessorEndpoint {
 
     @UriPath

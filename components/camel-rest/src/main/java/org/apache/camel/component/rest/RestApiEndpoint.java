@@ -43,7 +43,7 @@ import org.apache.camel.util.ObjectHelper;
  * Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path",
-             consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
+             remote = false, consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
 public class RestApiEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_API_COMPONENT_NAME = "openapi";

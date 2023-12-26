@@ -36,7 +36,7 @@ import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.S
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_SIGN, title = "XML Security Sign",
              syntax = "xmlsecurity-sign:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
-             headersClass = XmlSignatureConstants.class)
+             remote = false, headersClass = XmlSignatureConstants.class)
 public class XmlSignerEndpoint extends DefaultEndpoint {
 
     @UriPath

@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  * Transform messages using a Java based template engine (JTE).
  */
 @UriEndpoint(firstVersion = "4.4.0", scheme = "jte", title = "JTE", syntax = "jte:resourceUri",
-             producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = JteConstants.class)
+             remote = false, producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = JteConstants.class)
 public class JteEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")

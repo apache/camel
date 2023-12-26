@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
  * Transforms JSON using JSON patch (RFC 6902).
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "json-patch", title = "JsonPatch", syntax = "json-patch:resourceUri",
-             producerOnly = true,
+             remote = false, producerOnly = true,
              category = { Category.TRANSFORMATION }, headersClass = JsonPatchConstants.class)
 public class JsonPatchEndpoint extends ResourceEndpoint {
 

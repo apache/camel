@@ -36,7 +36,7 @@ import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.S
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_VERIFIER, title = "XML Security Verify",
              syntax = "xmlsecurity-verify:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
-             headersClass = XmlSignatureConstants.class)
+             remote = false, headersClass = XmlSignatureConstants.class)
 public class XmlVerifierEndpoint extends DefaultEndpoint {
 
     @UriPath

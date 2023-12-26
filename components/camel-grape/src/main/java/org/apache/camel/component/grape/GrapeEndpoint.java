@@ -36,7 +36,7 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
  * Fetch, load and manage additional jars dynamically after Camel Context was started.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape",
-             producerOnly = true, category = { Category.MANAGEMENT }, headersClass = GrapeConstants.class)
+             remote = false, producerOnly = true, category = { Category.MANAGEMENT }, headersClass = GrapeConstants.class)
 public class GrapeEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Maven coordinates to use as default to grab if the message body is empty.")

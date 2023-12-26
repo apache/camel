@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  * Transforms JSON payload using JSONata transformation.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri", producerOnly = true,
-             category = { Category.TRANSFORMATION })
+             remote = false, category = { Category.TRANSFORMATION })
 public class JsonataEndpoint extends ResourceEndpoint {
 
     private Expressions expressions;

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
              category = { Category.CLOUD, Category.FILE, Category.API }, headersClass = DropboxConstants.class)
 public class DropboxEndpoint extends DefaultEndpoint {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
 
     @UriParam
     private DropboxConfiguration configuration;

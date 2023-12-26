@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "djl", title = "Deep Java Library", syntax = "djl:application",
-             category = { Category.AI }, producerOnly = true)
+             remote = false, category = { Category.AI }, producerOnly = true)
 public class DJLEndpoint extends DefaultEndpoint {
 
     @UriPath
