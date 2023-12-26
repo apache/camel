@@ -188,6 +188,7 @@
         <module>camel-json-patch</module>
         <module>camel-jt400</module>
         <module>camel-jta</module>
+        <module>camel-jte</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
         <module>camel-knative</module>
