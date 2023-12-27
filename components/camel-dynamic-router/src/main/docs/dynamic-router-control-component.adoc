@@ -38,12 +38,12 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 // endpoint options: END
 
-=== Subscribing
+== Subscribing
 
 Subscribing can be achieved by using query parameters in the control endpoint URI, or by sending a
 `DynamicRouterControlMessage` to the control endpoint URI.
 
-==== URI examples
+=== URI examples
 
 .Example Java URI `RouteBuilder` Subscription
 [source,java]
@@ -85,7 +85,7 @@ dynamic URI, we have to send subscription parameters from a `ProducerTemplate` i
 endpoint uses headers "under the hood", because the URI params are converted to headers, so we can set the headers
 deliberately.
 
-==== DynamicRouterControlMessage example
+=== DynamicRouterControlMessage example
 
 .Example Java `DynamicRouterControlMessage` Subscription
 [source,java]
@@ -101,13 +101,13 @@ DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuil
 producerTemplate.sendBody("dynamic-router-control:subscribe", controlMessage);
 ----
 
-=== Unsubscribing
+== Unsubscribing
 
 Like subscribing, unsubscribing can also  be achieved by using query parameters in the control endpoint URI, or by
 sending a `DynamicRouterControlMessage` to the control endpoint URI.  The difference is that unsubscribing can be
 achieved by using either one or two parameters.
 
-==== URI examples
+=== URI examples
 
 .Example Java URI `RouteBuilder` Unsubscribe
 [source,java]
@@ -135,7 +135,7 @@ template.sendBodyAndHeaders("direct:unsubscribe", "",
 Above, because the control URI is dynamic, we have to send it from a `ProducerTemplate` in a different way.  The
 dynamic-aware endpoint uses headers, rather than URI params, so we set the headers deliberately.
 
-===== DynamicRouterControlMessage example
+=== DynamicRouterControlMessage example
 
 .Example Java `DynamicRouterControlMessage` Unsubscribe
 [source,java]
