@@ -123,3 +123,13 @@ The route controller configuration has been moved from general main to its own g
 All keys started with `camel.springboot.routesController` should be renamed to `camel.routecontroller.`, for example
 `camel.springboot.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
 And the option `camel.springboot.routeControllerSuperviseEnabled` has been renamed to `camel.routecontroller.enabled`.
+
+=== camel-platform-http-vertx
+
+Added configuration to enable Vert.x session handling.
+Sessions are disabled by default, but can be enabled by setting the `enabled` property on `VertxPlatformHttpServerConfiguration.SessionConfig`
+to `true`.
+Other properties include `sessionCookieName`, `sessionCookiePath`, `sessionTimeout`, `cookieSecure`, `cookieHttpOnly`
+`cookieSameSite` and `storeType`.
+The session `storeType` defaults to the Vert.x `LocalSessionStore` and `cookieSameSite` to `Strict`. The remainder
+of the properties are configured with Vert.x defaults if not set.
