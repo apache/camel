@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms;
+package org.apache.camel.component.jms;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
@@ -22,21 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.jms.issues.CamelBrokerClientTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@CamelSpringTest
-@ContextConfiguration
-public class JmsPollingConsumerTest {
-    @RegisterExtension
-    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+public class JmsPollingConsumerTest extends CamelBrokerClientTestSupport {
 
     @Produce("jms:JmsPollingConsumerTestStartConsumer")
     protected ProducerTemplate startConsumer;
@@ -50,13 +44,17 @@ public class JmsPollingConsumerTest {
     @EndpointInject("mock:JmsPollingConsumerTestResult")
     protected MockEndpoint result;
 
+    @Override
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+                "/org/apache/camel/component/jms/JmsPollingConsumerTest.xml");
+    }
+
     /**
-     * Fails: Consumer is expected to read two messages from activemq:queue and concatenate their bodies. In this test,
+     * Consumer is expected to read two messages from activemq:queue and concatenate their bodies. In this test,
      * consumer bean is invoked from an activemq: route.
      */
     @Test
-    @DirtiesContext
-    @Disabled("CAMEL-2305")
     void testConsumerFromJMSRoute() throws Exception {
         result.expectedBodiesReceived("foobar");
 
@@ -73,7 +71,6 @@ public class JmsPollingConsumerTest {
      * test, consumer bean is invoked from a direct: route.
      */
     @Test
-    @DirtiesContext
     void testConsumerFromDirectRoute() throws Exception {
         result.expectedBodiesReceived("foobar");
 
@@ -85,13 +82,13 @@ public class JmsPollingConsumerTest {
         result.assertIsSatisfied();
     }
 
-    public static class Consumer {
+    public static class Consumer implements ApplicationContextAware {
 
-        @Autowired
-        protected ConsumerTemplate consumer;
+        private ApplicationContext applicationContext;
 
         @Handler
         public String consume() {
+            ConsumerTemplate consumer = applicationContext.getBean(ConsumerTemplate.class);
             StringBuilder result = new StringBuilder();
 
             Exchange exchange;
@@ -101,6 +98,11 @@ public class JmsPollingConsumerTest {
 
             return result.toString();
 
+        }
+
+        @Override
+        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+            this.applicationContext = applicationContext;
         }
     }
 }

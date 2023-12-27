@@ -62,7 +62,7 @@ public class JmsEndpointConfigurationTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
-    private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsMapMessageTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsEndpointConfigurationTest.class);
 
     @RegisterExtension
     public ArtemisService service = ArtemisServiceFactory.createVMService();
