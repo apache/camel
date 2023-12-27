@@ -281,6 +281,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                         for (Row r : rows) {
                             if (r.first) {
                                 position = counter;
+                                break;
                             }
                         }
                     }
