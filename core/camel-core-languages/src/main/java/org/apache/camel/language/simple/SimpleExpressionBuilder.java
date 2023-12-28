@@ -77,8 +77,7 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the variable invoking methods defined in a simple OGNL
-     * notation
+     * Returns the expression for the variable invoking methods defined in a simple OGNL notation
      *
      * @param ognl methods to invoke on the variable in a simple OGNL syntax
      */
