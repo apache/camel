@@ -9,10 +9,17 @@ The bean parameter binding annotations from Camel are as follows:
 |To bind to an inbound message body | 
 
 |`org.apache.camel.Header`
-|To bind to an message header |String name of the header
+|To bind to a message header |String name of the header
 
 |`org.apache.camel.Headers`
 |To bind to the Map of the message headers |
+
+|`org.apache.camel.Variable`
+|To bind to a named variable |String name of the
+variable
+
+|`org.apache.camel.Variables`
+|To bind to the variables map |
 
 |`org.apache.camel.ExchangeProperty`
 |To bind to a named property on the exchange |String name of the

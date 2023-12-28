@@ -42,6 +42,8 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
+import org.apache.camel.Variable;
+import org.apache.camel.Variables;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.AnnotationExpressionFactory;
@@ -1012,6 +1014,11 @@ public class BeanInfo {
             return ExpressionBuilder.headerExpression(headerAnnotation.value());
         } else if (annotation instanceof Headers) {
             return ExpressionBuilder.headersExpression();
+        } else if (annotation instanceof Variable) {
+            Variable variableAnnotation = (Variable) annotation;
+            return ExpressionBuilder.variableExpression(variableAnnotation.value());
+        } else if (annotation instanceof Variables) {
+            return ExpressionBuilder.variablesExpression();
         } else if (annotation instanceof ExchangeException) {
             return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
         } else if (annotation instanceof PropertyInject) {
