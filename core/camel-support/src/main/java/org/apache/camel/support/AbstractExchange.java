@@ -53,6 +53,7 @@ abstract class AbstractExchange implements Exchange {
 
     protected final CamelContext context;
     protected Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
+    protected Map<String, Object> variables;  // create variables on-demand
     protected Message in;
     protected Message out;
     protected Exception exception;
@@ -65,6 +66,7 @@ abstract class AbstractExchange implements Exchange {
     private final ExtendedExchangeExtension privateExtension;
     private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
+    // TODO: variables ?
     protected AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
                                Map<String, Object> properties) {
         this.context = context;
@@ -124,10 +126,12 @@ abstract class AbstractExchange implements Exchange {
         privateExtension.setErrorHandlerHandled(parent.getExchangeExtension().getErrorHandlerHandled());
         privateExtension.setStreamCacheDisabled(parent.getExchangeExtension().isStreamCacheDisabled());
 
+        if (parent.hasVariables()) {
+            this.variables = safeCopyProperties(parent.variables);
+        }
         if (parent.hasProperties()) {
             this.properties = safeCopyProperties(parent.properties);
         }
-
         if (parent.hasSafeCopyProperties()) {
             this.safeCopyProperties = parent.copySafeCopyProperties();
         }
@@ -383,6 +387,109 @@ abstract class AbstractExchange implements Exchange {
 
     private boolean hasSafeCopyProperties() {
         return safeCopyProperties != null && !safeCopyProperties.isEmpty();
+    }
+
+    @Override
+    public Object getVariable(String name) {
+        if (variables != null) {
+            return variables.get(name);
+        }
+        return null;
+    }
+
+    @Override
+    public <T> T getVariable(String name, Class<T> type) {
+        Object value = getVariable(name);
+        return evalPropertyValue(type, value);
+    }
+
+    @Override
+    public <T> T getVariable(String name, Object defaultValue, Class<T> type) {
+        Object value = getVariable(name);
+        return evalPropertyValue(defaultValue, type, value);
+    }
+
+    @Override
+    public void setVariable(String name, Object value) {
+        if (value != null) {
+            // avoid the NullPointException
+            if (variables == null) {
+                this.variables = new ConcurrentHashMap<>(8);
+            }
+            variables.put(name, value);
+        } else if (variables != null) {
+            // if the value is null, we just remove the key from the map
+            variables.remove(name);
+        }
+    }
+
+    @Override
+    public Object removeVariable(String name) {
+        if (!hasVariables()) {
+            return null;
+        }
+        return variables.remove(name);
+    }
+
+    @Override
+    public boolean removeVariables(String pattern) {
+        return removeVariables(pattern, (String[]) null);
+    }
+
+    @Override
+    public boolean removeVariables(String pattern, String... excludePatterns) {
+        // special optimized
+        if (excludePatterns == null && "*".equals(pattern)) {
+            if (variables != null) {
+                variables.clear();
+            }
+            return true;
+        }
+
+        boolean matches = false;
+
+        // store keys to be removed as we cannot loop and remove at the same time in implementations such as HashMap
+        if (variables != null) {
+            Set<String> toBeRemoved = null;
+            for (String key : variables.keySet()) {
+                if (PatternHelper.matchPattern(key, pattern)) {
+                    if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
+                        continue;
+                    }
+                    matches = true;
+                    if (toBeRemoved == null) {
+                        toBeRemoved = new HashSet<>();
+                    }
+                    toBeRemoved.add(key);
+                }
+            }
+
+            if (matches) {
+                if (toBeRemoved.size() == variables.size()) {
+                    // special optimization when all should be removed
+                    variables.clear();
+                } else {
+                    for (String key : toBeRemoved) {
+                        variables.remove(key);
+                    }
+                }
+            }
+        }
+
+        return matches;
+    }
+
+    @Override
+    public Map<String, Object> getVariables() {
+        if (variables == null) {
+            this.variables = new ConcurrentHashMap<>(8);
+        }
+        return variables;
+    }
+
+    @Override
+    public boolean hasVariables() {
+        return variables != null && !variables.isEmpty();
     }
 
     @Override

@@ -420,6 +420,83 @@ public interface Exchange {
     boolean hasProperties();
 
     /**
+     * Returns a variable by name
+     *
+     * @param  name the name of the variable
+     * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
+     */
+    Object getVariable(String name);
+
+    /**
+     * Returns a variable by name and specifying the type required
+     *
+     * @param  name the name of the variable
+     * @param  type the type of the variable
+     * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name or
+     *              <tt>null</tt> if it cannot be converted to the given type
+     */
+    <T> T getVariable(String name, Class<T> type);
+
+    /**
+     * Returns a variable by name and specifying the type required
+     *
+     * @param  name         the name of the variable
+     * @param  defaultValue the default value to return if variable was absent
+     * @param  type         the type of the variable
+     * @return              the value of the given variable or <tt>defaultValue</tt> if there is no variable for the
+     *                      given name or <tt>null</tt> if it cannot be converted to the given type
+     */
+    <T> T getVariable(String name, Object defaultValue, Class<T> type);
+
+    /**
+     * Sets a varialbe on the exchange
+     *
+     * @param name  of the variable
+     * @param value the value of the variable
+     */
+    void setVariable(String name, Object value);
+
+    /**
+     * Removes the given variable
+     *
+     * @param  name of the variable
+     * @return      the old value of the variable
+     */
+    Object removeVariable(String name);
+
+    /**
+     * Remove all the variables matching a specific pattern
+     *
+     * @param  pattern pattern of names
+     * @return         boolean whether any variables matched
+     */
+    boolean removeVariables(String pattern);
+
+    /**
+     * Removes the variables that match the given <tt>pattern</tt>, except for the ones matching one or more
+     * <tt>excludePatterns</tt>
+     *
+     * @param  pattern         pattern of names that should be removed
+     * @param  excludePatterns one or more pattern of variable names that should be excluded (= preserved)
+     * @return                 boolean whether any variables matched
+     */
+    boolean removeVariables(String pattern, String... excludePatterns);
+
+    /**
+     * Returns the variables
+     *
+     * @return the variables in a Map
+     */
+    Map<String, Object> getVariables();
+
+    /**
+     * Returns whether any variables have been set
+     *
+     * @return <tt>true</tt> if any variables has been set
+     */
+    boolean hasVariables();
+
+    /**
      * Returns the inbound request message
      *
      * @return the message
