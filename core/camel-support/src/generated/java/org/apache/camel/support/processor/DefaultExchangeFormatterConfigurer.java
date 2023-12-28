@@ -61,6 +61,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowStackTrace": target.setShowStackTrace(property(camelContext, boolean.class, value)); return true;
         case "showstreams":
         case "ShowStreams": target.setShowStreams(property(camelContext, boolean.class, value)); return true;
+        case "showvariables":
+        case "ShowVariables": target.setShowVariables(property(camelContext, boolean.class, value)); return true;
         case "skipbodylineseparator":
         case "SkipBodyLineSeparator": target.setSkipBodyLineSeparator(property(camelContext, boolean.class, value)); return true;
         case "style":
@@ -112,6 +114,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowStackTrace": return boolean.class;
         case "showstreams":
         case "ShowStreams": return boolean.class;
+        case "showvariables":
+        case "ShowVariables": return boolean.class;
         case "skipbodylineseparator":
         case "SkipBodyLineSeparator": return boolean.class;
         case "style":
@@ -164,6 +168,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowStackTrace": return target.isShowStackTrace();
         case "showstreams":
         case "ShowStreams": return target.isShowStreams();
+        case "showvariables":
+        case "ShowVariables": return target.isShowVariables();
         case "skipbodylineseparator":
         case "SkipBodyLineSeparator": return target.isSkipBodyLineSeparator();
         case "style":

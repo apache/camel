@@ -176,6 +176,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         assertFalse(formatter.isShowExchangeId());
         assertFalse(formatter.isShowProperties());
         assertFalse(formatter.isShowHeaders());
+        assertFalse(formatter.isShowVariables());
         assertTrue(formatter.isShowBodyType());
         assertTrue(formatter.isShowBody());
         assertFalse(formatter.isShowException());

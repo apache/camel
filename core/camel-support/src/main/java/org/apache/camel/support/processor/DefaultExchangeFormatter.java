@@ -63,6 +63,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show all the exchange properties (both internal and custom).")
     private boolean showAllProperties;
+    @UriParam(label = "formatting", description = "Show the variables.")
+    private boolean showVariables;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
     @UriParam(label = "formatting", defaultValue = "true",
@@ -178,6 +180,12 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                 sb.append(SEPARATOR);
             }
             style(sb, "Properties").append(sortMap(filterHeaderAndProperties(exchange.getProperties())));
+        }
+        if (showAll || showVariables) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
+            style(sb, "Variables").append(sortMap(filterHeaderAndProperties(exchange.getVariables())));
         }
         if (showAll || showHeaders) {
             if (multiline) {
@@ -325,6 +333,17 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
      */
     public void setShowAllProperties(boolean showAllProperties) {
         this.showAllProperties = showAllProperties;
+    }
+
+    public boolean isShowVariables() {
+        return showVariables;
+    }
+
+    /**
+     * Show the variables.
+     */
+    public void setShowVariables(boolean showVariables) {
+        this.showVariables = showVariables;
     }
 
     public boolean isShowHeaders() {

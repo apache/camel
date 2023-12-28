@@ -87,6 +87,8 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show all of the exchange properties (both internal and custom).")
     private boolean showAllProperties;
+    @UriParam(label = "formatting", description = "Show the variables.")
+    private boolean showVariables;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
     @UriParam(label = "formatting", defaultValue = "true",
@@ -163,7 +165,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
             boolean changed = showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
                     || style != DefaultExchangeFormatter.OutputStyle.Default || plain;
             changed |= showRouteId || showRouteGroup;
-            changed |= showExchangeId || showProperties || showAllProperties || showHeaders || showException
+            changed |= showExchangeId || showProperties || showAllProperties || showVariables || showHeaders || showException
                     || showCaughtException
                     || showStackTrace;
             changed |= showAll || multiline || showFuture || !showCachedStreams || showStreams || showFiles;
@@ -183,6 +185,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
                 def.setShowFiles(showFiles);
                 def.setShowFuture(showFuture);
                 def.setShowHeaders(showHeaders);
+                def.setShowVariables(showVariables);
                 def.setShowProperties(showProperties);
                 def.setShowAllProperties(showAllProperties);
                 def.setShowStackTrace(showStackTrace);
@@ -493,6 +496,14 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
 
     public void setShowAllProperties(boolean showAllProperties) {
         this.showAllProperties = showAllProperties;
+    }
+
+    public boolean isShowVariables() {
+        return showVariables;
+    }
+
+    public void setShowVariables(boolean showVariables) {
+        this.showVariables = showVariables;
     }
 
     public boolean isShowHeaders() {
