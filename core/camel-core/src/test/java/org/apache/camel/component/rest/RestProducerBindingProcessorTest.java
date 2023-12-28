@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rest;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.AsyncCallback;
