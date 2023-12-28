@@ -396,6 +396,11 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteSetPropertyDefinition("setProperty", def);
     }
+    public void writeSetVariableDefinition(
+            SetVariableDefinition def)
+            throws IOException {
+        doWriteSetVariableDefinition("setVariable", def);
+    }
     public void writeSortDefinition(SortDefinition def) throws IOException {
         doWriteSortDefinition("sort", def);
     }
@@ -2219,6 +2224,16 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSetPropertyDefinition(
             String name,
             SetPropertyDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("name", def.getName());
+        doWriteExpressionNodeElements(def);
+        endElement(name);
+    }
+    protected void doWriteSetVariableDefinition(
+            String name,
+            SetVariableDefinition def)
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
@@ -4812,6 +4827,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
                 case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
+                case "SetVariableDefinition" -> doWriteSetVariableDefinition("setVariable", (SetVariableDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);
@@ -4909,6 +4925,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
                 case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
+                case "SetVariableDefinition" -> doWriteSetVariableDefinition("setVariable", (SetVariableDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);

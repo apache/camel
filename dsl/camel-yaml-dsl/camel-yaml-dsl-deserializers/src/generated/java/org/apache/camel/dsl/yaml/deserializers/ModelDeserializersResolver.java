@@ -444,6 +444,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "set-property": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "setProperty": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "org.apache.camel.model.SetPropertyDefinition": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
+            case "set-variable": return new ModelDeserializers.SetVariableDefinitionDeserializer();
+            case "setVariable": return new ModelDeserializers.SetVariableDefinitionDeserializer();
+            case "org.apache.camel.model.SetVariableDefinition": return new ModelDeserializers.SetVariableDefinitionDeserializer();
             case "simple": return new ModelDeserializers.SimpleExpressionDeserializer();
             case "org.apache.camel.model.language.SimpleExpression": return new ModelDeserializers.SimpleExpressionDeserializer();
             case "soap": return new ModelDeserializers.SoapDataFormatDeserializer();

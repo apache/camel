@@ -80,6 +80,7 @@ import org.apache.camel.model.SetExchangePatternDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetHeadersDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
+import org.apache.camel.model.SetVariableDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
@@ -16065,6 +16066,88 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
         @Override
         protected boolean setProperty(SetPropertyDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "expression": {
+                    org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
+                    target.setExpression(val);
+                    break;
+                }
+                case "inheritErrorHandler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "set-variable",
+                    "setVariable"
+            },
+            types = org.apache.camel.model.SetVariableDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Set Variable",
+            description = "Sets the value of a variable",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression to return the value of the variable", displayName = "Expression", oneOf = "expression"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "name", type = "string", required = true, description = "Name of variable to set a new value The simple language can be used to define a dynamic evaluated variable name to be used. Otherwise a constant name will be used.", displayName = "Name")
+            }
+    )
+    public static class SetVariableDefinitionDeserializer extends YamlDeserializerBase<SetVariableDefinition> {
+        public SetVariableDefinitionDeserializer() {
+            super(SetVariableDefinition.class);
+        }
+
+        @Override
+        protected SetVariableDefinition newInstance() {
+            return new SetVariableDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(SetVariableDefinition target, String propertyKey,
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {

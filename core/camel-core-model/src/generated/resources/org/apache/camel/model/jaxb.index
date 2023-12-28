@@ -85,6 +85,7 @@ SetExchangePatternDefinition
 SetHeaderDefinition
 SetHeadersDefinition
 SetPropertyDefinition
+SetVariableDefinition
 SortDefinition
 SplitDefinition
 StepDefinition

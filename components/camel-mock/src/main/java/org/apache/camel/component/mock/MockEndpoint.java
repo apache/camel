@@ -116,6 +116,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile Map<String, Object> expectedHeaderValues;
     private volatile Map<String, Object> actualHeaderValues;
     private volatile Map<String, Object> expectedPropertyValues;
+    private volatile Map<String, Object> expectedVariableValues;
 
     private final AtomicInteger counter = new AtomicInteger();
 
@@ -328,6 +329,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         expectedHeaderValues = null;
         actualHeaderValues = null;
         expectedPropertyValues = null;
+        expectedVariableValues = null;
         retainFirst = -1;
         retainLast = -1;
     }
@@ -688,6 +690,94 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void expectedHeaderValuesReceivedInAnyOrder(String name, Object... values) {
         List<Object> valueList = new ArrayList<>(Arrays.asList(values));
         expectedHeaderValuesReceivedInAnyOrder(name, valueList);
+    }
+
+    /**
+     * Sets an expectation that the given variable name & value are received by this endpoint
+     * <p/>
+     * You can set multiple expectations for different variable names. If you set a value of <tt>null</tt> that means we
+     * accept either the variable is absent, or its value is <tt>null</tt>
+     */
+    public void expectedVariableReceived(final String name, final Object value) {
+        if (expectedVariableValues == null) {
+            expectedVariableValues = new HashMap<>();
+        }
+        expectedVariableValues.put(name, value);
+
+        expects(new AssertionTask() {
+            @Override
+            public void assertOnIndex(int i) {
+                Exchange exchange = getReceivedExchange(i);
+                for (Map.Entry<String, Object> entry : expectedVariableValues.entrySet()) {
+                    String key = entry.getKey();
+                    Object expectedValue = entry.getValue();
+
+                    // we accept that an expectedValue of null also means that the variable may be absent
+                    Object actualValue = null;
+                    if (expectedValue != null) {
+                        actualValue = exchange.getVariable(key);
+                        boolean hasKey = actualValue != null;
+                        assertTrue("No variable with name " + key + " found for message: " + i, hasKey);
+                    }
+
+                    actualValue = extractActualValue(exchange, actualValue, expectedValue);
+                    assertEquals("Variable with name " + key + " for message: " + i, expectedValue, actualValue);
+                }
+            }
+
+            public void run() {
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    assertOnIndex(i);
+                }
+            }
+        });
+    }
+
+    /**
+     * Adds an expectation that this endpoint receives the given variable values in any order.
+     * <p/>
+     * <b>Important:</b> The number of variable must match the expected number of messages, so if you expect 3 messages,
+     * then there must be 3 values.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedVariableValuesReceivedInAnyOrder(final String name, final List<?> values) {
+        expectedMessageCount(values.size());
+
+        expects(() -> {
+            // these are the expected values to find
+            final Set<Object> actualVariableValues = new CopyOnWriteArraySet<>(values);
+
+            for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                Exchange exchange = getReceivedExchange(i);
+
+                Object actualValue = exchange.getVariable(name);
+                for (Object expectedValue : actualVariableValues) {
+                    actualValue = extractActualValue(exchange, actualValue, expectedValue);
+                    // remove any found values
+                    actualVariableValues.remove(actualValue);
+                }
+            }
+
+            // should be empty, as we should find all the values
+            assertTrue("Expected " + values.size() + " variables with key[" + name + "], received "
+                       + (values.size() - actualVariableValues.size())
+                       + " variables. Expected variable values: " + actualVariableValues,
+                    actualVariableValues.isEmpty());
+        });
+    }
+
+    /**
+     * Adds an expectation that this endpoint receives the given variable values in any order
+     * <p/>
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
+     * then there must be 3 values.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedVariableValuesReceivedInAnyOrder(String name, Object... values) {
+        List<Object> valueList = new ArrayList<>(Arrays.asList(values));
+        expectedVariableValuesReceivedInAnyOrder(name, valueList);
     }
 
     /**

@@ -90,6 +90,7 @@ import org.apache.camel.model.SetExchangePatternDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetHeadersDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
+import org.apache.camel.model.SetVariableDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
@@ -297,6 +298,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new SetHeadersReifier(route, definition);
         } else if (definition instanceof SetPropertyDefinition) {
             return new SetPropertyReifier(route, definition);
+        } else if (definition instanceof SetVariableDefinition) {
+            return new SetVariableReifier(route, definition);
         } else if (definition instanceof SortDefinition) {
             return new SortReifier<>(route, definition);
         } else if (definition instanceof SplitDefinition) {
