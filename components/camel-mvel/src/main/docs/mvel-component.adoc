@@ -65,6 +65,7 @@ Camel will provide exchange information in the MVEL context (just a
 |key |value
 |exchange |The `Exchange` itself
 |exchange.properties |The `Exchange` properties
+|variables |The variables
 |headers |The headers of the message
 |camelContext |The `CamelContext`
 |request |The message

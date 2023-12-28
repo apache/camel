@@ -83,6 +83,8 @@ a `Map`). The `Exchange` is transferred as:
 
 |`exchange.properties` |The `Exchange` properties.
 
+|`variables` |The variables
+
 |`headers` |The headers of the In message.
 
 |`camelContext` |The Camel Context.

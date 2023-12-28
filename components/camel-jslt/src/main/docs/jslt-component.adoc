@@ -67,6 +67,7 @@ Camel can supply exchange information as variables when applying a JSLT expressi
 |===
 | name | value
 | headers | The headers of the In message as a json object
+| variables |The variables
 | exchange.properties | The *Exchange* properties as a json object. _exchange_ is the name of the variable and _properties_ is the path to the exchange properties. Available if _allowContextMapAll_ option is true.
 |===
 
