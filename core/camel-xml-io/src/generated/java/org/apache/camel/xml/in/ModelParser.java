@@ -859,6 +859,25 @@ public class ModelParser extends BaseParser {
             return processorDefinitionAttributeHandler().accept(def, key, val);
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected RemoveVariableDefinition doParseRemoveVariableDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RemoveVariableDefinition(), (def, key, val) -> {
+            if ("name".equals(key)) {
+                def.setName(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
+    protected RemoveVariablesDefinition doParseRemoveVariablesDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RemoveVariablesDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "excludePattern": def.setExcludePattern(val); break;
+                case "pattern": def.setPattern(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
     protected ResequenceDefinition doParseResequenceDefinition() throws IOException, XmlPullParserException {
         return doParse(new ResequenceDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
@@ -3478,6 +3497,8 @@ public class ModelParser extends BaseParser {
             case "removeHeaders": return doParseRemoveHeadersDefinition();
             case "removeProperties": return doParseRemovePropertiesDefinition();
             case "removeProperty": return doParseRemovePropertyDefinition();
+            case "removeVariable": return doParseRemoveVariableDefinition();
+            case "removeVariables": return doParseRemoveVariablesDefinition();
             case "resequence": return doParseResequenceDefinition();
             case "resumable": return doParseResumableDefinition();
             case "rollback": return doParseRollbackDefinition();

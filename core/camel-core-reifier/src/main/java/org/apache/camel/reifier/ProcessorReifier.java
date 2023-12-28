@@ -76,6 +76,8 @@ import org.apache.camel.model.RemoveHeaderDefinition;
 import org.apache.camel.model.RemoveHeadersDefinition;
 import org.apache.camel.model.RemovePropertiesDefinition;
 import org.apache.camel.model.RemovePropertyDefinition;
+import org.apache.camel.model.RemoveVariableDefinition;
+import org.apache.camel.model.RemoveVariablesDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.ResumableDefinition;
 import org.apache.camel.model.RollbackDefinition;
@@ -274,6 +276,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new RemovePropertyReifier(route, definition);
         } else if (definition instanceof RemovePropertiesDefinition) {
             return new RemovePropertiesReifier(route, definition);
+        } else if (definition instanceof RemoveVariableDefinition) {
+            return new RemoveVariableReifier(route, definition);
+        } else if (definition instanceof RemoveVariablesDefinition) {
+            return new RemoveVariablesReifier(route, definition);
         } else if (definition instanceof ResequenceDefinition) {
             return new ResequenceReifier(route, definition);
         } else if (definition instanceof RollbackDefinition) {
