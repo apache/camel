@@ -77,6 +77,21 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the variable invoking methods defined in a simple OGNL
+     * notation
+     *
+     * @param ognl methods to invoke on the variable in a simple OGNL syntax
+     */
+    public static Expression variablesOgnlExpression(final String ognl) {
+        return new KeyedOgnlExpressionAdapter(
+                ognl, "variableOgnl(" + ognl + ")",
+                (exchange, exp) -> {
+                    String text = exp.evaluate(exchange, String.class);
+                    return exchange.getVariable(text);
+                });
+    }
+
+    /**
      * Returns the message history (including exchange details or not)
      */
     public static Expression messageHistoryExpression(final boolean detailed) {
@@ -596,6 +611,8 @@ public final class SimpleExpressionBuilder {
             date = LanguageHelper.dateFromExchangeCreated(exchange);
         } else if (command.startsWith("header.")) {
             date = LanguageHelper.dateFromHeader(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
+        } else if (command.startsWith("variable.")) {
+            date = LanguageHelper.dateFromVariable(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
         } else if (command.startsWith("exchangeProperty.")) {
             date = LanguageHelper.dateFromExchangeProperty(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
         } else if ("file".equals(command)) {

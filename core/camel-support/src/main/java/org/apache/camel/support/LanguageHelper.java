@@ -256,6 +256,21 @@ public final class LanguageHelper {
         return null;
     }
 
+    public static Date dateFromVariable(Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
+        final String key = command.substring(command.lastIndexOf('.') + 1);
+        final Object obj = exchange.getVariable(key);
+        if (obj instanceof Date) {
+            return (Date) obj;
+        } else if (obj instanceof Long) {
+            return new Date((Long) obj);
+        } else {
+            if (orElseFunction != null) {
+                return orElseFunction.apply(exchange, obj);
+            }
+        }
+        return null;
+    }
+
     /**
      * Extracts the creation date from an exchange
      *

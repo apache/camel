@@ -232,7 +232,7 @@ public class ExpressionBuilder {
      * @param  typeName     the type to convert to as a FQN class name
      * @return              an expression object which will return the header value
      */
-    public static Expression varibleExpression(final String variableName, final String typeName) {
+    public static Expression variableExpression(final String variableName, final String typeName) {
         return variableExpression(simpleExpression(variableName), simpleExpression(typeName));
     }
 

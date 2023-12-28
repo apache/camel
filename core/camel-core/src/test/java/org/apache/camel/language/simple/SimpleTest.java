@@ -62,7 +62,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class SimpleTest extends LanguageTestSupport {
 
-    private static final String JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index: 2, Size: 2";
     private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
 
     @Override
@@ -935,6 +934,80 @@ public class SimpleTest extends LanguageTestSupport {
 
         try {
             assertExpression("${headerAs(bar,XXX)}", 123);
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+    }
+
+    @Test
+    public void testVariables() throws Exception {
+        exchange.getVariables().putAll(exchange.getMessage().getHeaders());
+        exchange.getMessage().removeHeaders("*");
+
+        Map<String, Object> variables = exchange.getVariables();
+        assertEquals(3, variables.size());
+
+        assertExpression("${variables}", variables);
+    }
+
+    @Test
+    public void testVariableKeyWithSpace() throws Exception {
+        exchange.getVariables().putAll(exchange.getMessage().getHeaders());
+        exchange.getMessage().removeHeaders("*");
+
+        Map<String, Object> variables = exchange.getVariables();
+        variables.put("some key", "Some Value");
+        assertEquals(4, variables.size());
+
+        assertExpression("${variableAs(foo,String)}", "abc");
+        assertExpression("${variableAs(some key,String)}", "Some Value");
+        assertExpression("${variableAs('some key',String)}", "Some Value");
+
+        assertExpression("${variable[foo]}", "abc");
+        assertExpression("${variable[cheese]}", "gauda");
+        assertExpression("${variable[some key]}", "Some Value");
+        assertExpression("${variable['some key']}", "Some Value");
+
+        assertExpression("${variables[foo]}", "abc");
+        assertExpression("${variables[cheese]}", "gauda");
+        assertExpression("${variables[some key]}", "Some Value");
+        assertExpression("${variables['some key']}", "Some Value");
+    }
+
+    @Test
+    public void testVariableAs() throws Exception {
+        exchange.getVariables().putAll(exchange.getMessage().getHeaders());
+        exchange.getMessage().removeHeaders("*");
+
+        assertExpression("${variableAs(foo,String)}", "abc");
+
+        assertExpression("${variableAs(bar,int)}", 123);
+        assertExpression("${variableAs(bar, int)}", 123);
+        assertExpression("${variableAs('bar', int)}", 123);
+        assertExpression("${variableAs('bar','int')}", 123);
+        assertExpression("${variableAs('bar','Integer')}", 123);
+        assertExpression("${variableAs('bar',\"int\")}", 123);
+        assertExpression("${variableAs(bar,String)}", "123");
+
+        assertExpression("${variableAs(unknown,String)}", null);
+
+        try {
+            assertExpression("${variableAs(unknown String)}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${variableAs(key, type)} was: variableAs(unknown String)"));
+        }
+
+        try {
+            assertExpression("${variableAs(fool,String).test}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${variableAs(key, type)} was: variableAs(fool,String).test"));
+        }
+
+        try {
+            assertExpression("${variableAs(bar,XXX)}", 123);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
