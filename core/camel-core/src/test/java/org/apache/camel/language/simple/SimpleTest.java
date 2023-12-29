@@ -45,6 +45,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
@@ -949,6 +951,39 @@ public class SimpleTest extends LanguageTestSupport {
         assertEquals(3, variables.size());
 
         assertExpression("${variables}", variables);
+    }
+
+    @Test
+    public void testGlobalVariable() throws Exception {
+        // exchange has 1 variable already set
+        Map<String, Object> variables = exchange.getVariables();
+        assertEquals(1, variables.size());
+
+        VariableRepository global = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
+                .getVariableRepository("global");
+        global.setVariable("foo", "123");
+        global.setVariable("bar", "456");
+        global.setVariable("cheese", "gorgonzola");
+
+        // exchange scoped
+        assertExpression("${variable.cheese}", "gauda");
+        assertExpression("${variable.foo}", null);
+        assertExpression("${variable.bar}", null);
+
+        // global scoped
+        assertExpression("${variable.global:cheese}", "gorgonzola");
+        assertExpression("${variable.global:foo}", "123");
+        assertExpression("${variable.global:bar}", "456");
+
+        // exchange scoped
+        assertExpression("${variableAs('cheese', 'String')}", "gauda");
+        assertExpression("${variableAs('foo', 'int')}", null);
+        assertExpression("${variableAA('bar', 'int')}", null);
+
+        // global scoped
+        assertExpression("${variableAs('global:cheese', 'String')}", "gorgonzola");
+        assertExpression("${variableAs('global:foo', 'int')}", 123);
+        assertExpression("${variableAs('global:bar', 'int')}", 456);
     }
 
     @Test

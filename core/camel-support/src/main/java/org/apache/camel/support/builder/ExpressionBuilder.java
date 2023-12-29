@@ -44,6 +44,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ConstantExpressionAdapter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -196,15 +198,29 @@ public class ExpressionBuilder {
      */
     public static Expression variableExpression(final Expression variableName) {
         return new ExpressionAdapter() {
+            private VariableRepositoryFactory factory;
+
             @Override
             public Object evaluate(Exchange exchange) {
-                String name = variableName.evaluate(exchange, String.class);
-                return exchange.getVariable(name);
+                String key = variableName.evaluate(exchange, String.class);
+                String id = StringHelper.before(key, ":");
+                if (id != null) {
+                    VariableRepository repo = factory.getVariableRepository(id);
+                    if (repo != null) {
+                        key = StringHelper.after(key, ":");
+                        return repo.getVariable(key);
+                    } else {
+                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exists");
+                    }
+                } else {
+                    return exchange.getVariable(key);
+                }
             }
 
             @Override
             public void init(CamelContext context) {
                 variableName.init(context);
+                factory = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
             }
 
             @Override
@@ -246,6 +262,8 @@ public class ExpressionBuilder {
     public static Expression variableExpression(final Expression variableName, final Expression typeName) {
         return new ExpressionAdapter() {
             private ClassResolver classResolver;
+            private VariableRepositoryFactory factory;
+            private TypeConverter converter;
 
             @Override
             public Object evaluate(Exchange exchange) {
@@ -256,8 +274,23 @@ public class ExpressionBuilder {
                 } catch (ClassNotFoundException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                String text = variableName.evaluate(exchange, String.class);
-                return exchange.getVariable(text, type);
+                String key = variableName.evaluate(exchange, String.class);
+                String id = StringHelper.before(key, ":");
+                if (id != null) {
+                    VariableRepository repo = factory.getVariableRepository(id);
+                    if (repo != null) {
+                        key = StringHelper.after(key, ":");
+                        Object value = repo.getVariable(key);
+                        if (value != null) {
+                            value = converter.convertTo(type, value);
+                        }
+                        return value;
+                    } else {
+                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exists");
+                    }
+                } else {
+                    return exchange.getVariable(key, type);
+                }
             }
 
             @Override
@@ -265,6 +298,8 @@ public class ExpressionBuilder {
                 variableName.init(context);
                 typeName.init(context);
                 classResolver = context.getClassResolver();
+                factory = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+                converter = context.getTypeConverter();
             }
 
             @Override
