@@ -413,7 +413,7 @@
         <shiro-version>1.13.0</shiro-version>
         <slack-api-model-version>1.36.1</slack-api-model-version>
         <slf4j-api-version>2.0.9</slf4j-api-version>
-        <slf4j-version>2.0.9</slf4j-version>
+        <slf4j-version>2.0.10</slf4j-version>
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.4.4</smallrye-config-version>
         <smallrye-health-version>4.0.4</smallrye-health-version>
