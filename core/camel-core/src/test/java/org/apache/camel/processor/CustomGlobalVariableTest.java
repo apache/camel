@@ -28,6 +28,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.spi.VariableRepositoryFactory.GLOBAL_VARIABLE_FACTORY_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -39,7 +40,7 @@ public class CustomGlobalVariableTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getRegistry().bind("myGlobal", new MyGlobalRepo());
+        context.getRegistry().bind(GLOBAL_VARIABLE_FACTORY_ID, new MyGlobalRepo());
         return context;
     }
 

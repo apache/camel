@@ -22,6 +22,11 @@ package org.apache.camel.spi;
 public interface VariableRepositoryFactory {
 
     /**
+     * ID for custom global {@link VariableRepository}.
+     */
+    String GLOBAL_VARIABLE_FACTORY_ID = "global-variable-repository";
+
+    /**
      * Gets the {@link VariableRepository} for the given id
      *
      * @param  id the repository id

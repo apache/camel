@@ -59,7 +59,7 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
     protected void doStart() throws Exception {
         super.doStart();
 
-        VariableRepository repo = CamelContextHelper.findSingleByType(camelContext, VariableRepository.class);
+        VariableRepository repo = CamelContextHelper.lookup(camelContext, GLOBAL_VARIABLE_FACTORY_ID, VariableRepository.class);
         if (repo != null) {
             LOG.info("Using VariableRepository: {} as global repository", repo.getId());
             global = repo;
