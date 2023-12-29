@@ -17,7 +17,9 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.CamelContextHelper;
@@ -33,8 +35,11 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultVariableRepositoryFactory.class);
 
+    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/variable-repository/";
+
     private final CamelContext camelContext;
     private VariableRepository global;
+    private FactoryFinder factoryFinder;
 
     public DefaultVariableRepositoryFactory(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -46,13 +51,28 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
             return global;
         }
 
-        // otherwise lookup in registry if the repo exists
         VariableRepository repo = CamelContextHelper.lookup(camelContext, id, VariableRepository.class);
-        if (repo != null) {
-            return repo;
+        if (repo == null) {
+            // try via factory finder
+            Class<?> clazz = factoryFinder.findClass(id).orElse(null);
+            if (clazz != null && VariableRepository.class.isAssignableFrom(clazz)) {
+                repo = (VariableRepository) camelContext.getInjector().newInstance(clazz, true);
+                camelContext.getRegistry().bind(id, repo);
+                try {
+                    camelContext.addService(repo);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            }
         }
 
-        return null;
+        return repo;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        this.factoryFinder = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH);
     }
 
     @Override
