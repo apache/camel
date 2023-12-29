@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
-import org.apache.camel.model.RemoveVariablesDefinition
 import org.apache.camel.model.RemoveVariableDefinition
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
@@ -51,24 +50,6 @@ class RemoveVariableTest extends YamlTestSupport {
                           - to: "mock:result"
                     ''')
             ]
-    }
-
-    def "removeVariables definition"() {
-        when:
-            loadRoutes'''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - removeVariables:
-                          pattern: toRemove
-                          excludePattern: toExclude
-                      - to: "mock:result"
-            '''
-        then:
-            with(context.routeDefinitions[0].outputs[0], RemoveVariablesDefinition) {
-                pattern == 'toRemove'
-                excludePattern == 'toExclude'
-            }
     }
 
     def "Error: kebab-case: remove-variable definition"() {

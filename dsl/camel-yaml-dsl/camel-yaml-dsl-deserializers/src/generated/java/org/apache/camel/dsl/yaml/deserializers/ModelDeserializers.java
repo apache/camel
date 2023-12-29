@@ -61,7 +61,6 @@ import org.apache.camel.model.RemoveHeadersDefinition;
 import org.apache.camel.model.RemovePropertiesDefinition;
 import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.model.RemoveVariableDefinition;
-import org.apache.camel.model.RemoveVariablesDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
@@ -13000,84 +12999,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "description": {
-                    String val = asText(node);
-                    target.setDescription(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = {
-                    "remove-variables",
-                    "removeVariables"
-            },
-            inline = true,
-            types = org.apache.camel.model.RemoveVariablesDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Remove Variables",
-            description = "Removes variables whose name matches a specified pattern",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
-                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of variables to not remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard (pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive).", displayName = "Exclude Pattern"),
-                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of variables to remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard (pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive).", displayName = "Pattern")
-            }
-    )
-    public static class RemoveVariablesDefinitionDeserializer extends YamlDeserializerBase<RemoveVariablesDefinition> {
-        public RemoveVariablesDefinitionDeserializer() {
-            super(RemoveVariablesDefinition.class);
-        }
-
-        @Override
-        protected RemoveVariablesDefinition newInstance() {
-            return new RemoveVariablesDefinition();
-        }
-
-        @Override
-        protected RemoveVariablesDefinition newInstance(String value) {
-            return new RemoveVariablesDefinition(value);
-        }
-
-        @Override
-        protected boolean setProperty(RemoveVariablesDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "disabled": {
-                    String val = asText(node);
-                    target.setDisabled(val);
-                    break;
-                }
-                case "excludePattern": {
-                    String val = asText(node);
-                    target.setExcludePattern(val);
-                    break;
-                }
-                case "inheritErrorHandler": {
-                    String val = asText(node);
-                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "pattern": {
-                    String val = asText(node);
-                    target.setPattern(val);
                     break;
                 }
                 case "id": {

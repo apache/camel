@@ -281,11 +281,6 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteRemoveVariableDefinition("removeVariable", def);
     }
-    public void writeRemoveVariablesDefinition(
-            RemoveVariablesDefinition def)
-            throws IOException {
-        doWriteRemoveVariablesDefinition("removeVariables", def);
-    }
     public void writeResequenceDefinition(
             ResequenceDefinition def)
             throws IOException {
@@ -1909,16 +1904,6 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("name", def.getName());
-        endElement(name);
-    }
-    protected void doWriteRemoveVariablesDefinition(
-            String name,
-            RemoveVariablesDefinition def)
-            throws IOException {
-        startElement(name);
-        doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("excludePattern", def.getExcludePattern());
-        doWriteAttribute("pattern", def.getPattern());
         endElement(name);
     }
     protected void doWriteResequenceDefinition(
@@ -4839,7 +4824,6 @@ public class ModelWriter extends BaseWriter {
                 case "RemovePropertiesDefinition" -> doWriteRemovePropertiesDefinition("removeProperties", (RemovePropertiesDefinition) v);
                 case "RemovePropertyDefinition" -> doWriteRemovePropertyDefinition("removeProperty", (RemovePropertyDefinition) v);
                 case "RemoveVariableDefinition" -> doWriteRemoveVariableDefinition("removeVariable", (RemoveVariableDefinition) v);
-                case "RemoveVariablesDefinition" -> doWriteRemoveVariablesDefinition("removeVariables", (RemoveVariablesDefinition) v);
                 case "ResequenceDefinition" -> doWriteResequenceDefinition("resequence", (ResequenceDefinition) v);
                 case "ResumableDefinition" -> doWriteResumableDefinition("resumable", (ResumableDefinition) v);
                 case "RollbackDefinition" -> doWriteRollbackDefinition("rollback", (RollbackDefinition) v);
@@ -4944,7 +4928,6 @@ public class ModelWriter extends BaseWriter {
                 case "RemovePropertiesDefinition" -> doWriteRemovePropertiesDefinition("removeProperties", (RemovePropertiesDefinition) v);
                 case "RemovePropertyDefinition" -> doWriteRemovePropertyDefinition("removeProperty", (RemovePropertyDefinition) v);
                 case "RemoveVariableDefinition" -> doWriteRemoveVariableDefinition("removeVariable", (RemoveVariableDefinition) v);
-                case "RemoveVariablesDefinition" -> doWriteRemoveVariablesDefinition("removeVariables", (RemoveVariablesDefinition) v);
                 case "ResequenceDefinition" -> doWriteResequenceDefinition("resequence", (ResequenceDefinition) v);
                 case "ResumableDefinition" -> doWriteResumableDefinition("resumable", (ResumableDefinition) v);
                 case "RollbackDefinition" -> doWriteRollbackDefinition("rollback", (RollbackDefinition) v);

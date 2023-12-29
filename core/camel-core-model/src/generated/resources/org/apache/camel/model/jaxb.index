@@ -58,7 +58,6 @@ RemoveHeadersDefinition
 RemovePropertiesDefinition
 RemovePropertyDefinition
 RemoveVariableDefinition
-RemoveVariablesDefinition
 ResequenceDefinition
 Resilience4jConfigurationDefinition
 RestContextRefDefinition

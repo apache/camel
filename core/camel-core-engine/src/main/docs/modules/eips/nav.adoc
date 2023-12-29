@@ -67,6 +67,7 @@
 ** xref:removeHeaders-eip.adoc[Remove Headers]
 ** xref:removeProperties-eip.adoc[Remove Properties]
 ** xref:removeProperty-eip.adoc[Remove Property]
+** xref:removeVariable-eip.adoc[Remove Variable]
 ** xref:requestReply-eip.adoc[Request Reply]
 ** xref:resequence-eip.adoc[Resequence]
 ** xref:resilience4jConfiguration-eip.adoc[Resilience4j Configuration]

@@ -74,7 +74,6 @@ import org.apache.camel.management.mbean.ManagedRemoveHeaders;
 import org.apache.camel.management.mbean.ManagedRemoveProperties;
 import org.apache.camel.management.mbean.ManagedRemoveProperty;
 import org.apache.camel.management.mbean.ManagedRemoveVariable;
-import org.apache.camel.management.mbean.ManagedRemoveVariables;
 import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRollback;
 import org.apache.camel.management.mbean.ManagedRoundRobinLoadBalancer;
@@ -156,7 +155,6 @@ import org.apache.camel.processor.RemoveHeadersProcessor;
 import org.apache.camel.processor.RemovePropertiesProcessor;
 import org.apache.camel.processor.RemovePropertyProcessor;
 import org.apache.camel.processor.RemoveVariableProcessor;
-import org.apache.camel.processor.RemoveVariablesProcessor;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.RollbackProcessor;
 import org.apache.camel.processor.RoutingSlip;
@@ -438,8 +436,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRemoveProperties(context, (RemovePropertiesProcessor) target, definition);
             } else if (target instanceof RemoveVariableProcessor) {
                 answer = new ManagedRemoveVariable(context, (RemoveVariableProcessor) target, definition);
-            } else if (target instanceof RemoveVariablesProcessor) {
-                answer = new ManagedRemoveVariables(context, (RemoveVariablesProcessor) target, definition);
             } else if (target instanceof SetPropertyProcessor) {
                 answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, (SetPropertyDefinition) definition);
             } else if (target instanceof ExchangePatternProcessor) {

@@ -201,13 +201,6 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("apple", exchange.getVariable("fruit"));
         assertEquals("banana", exchange.getVariable("fruit1"));
         assertEquals("Africa", exchange.getVariable("zone"));
-
-        exchange.removeVariables("fr*");
-        assertTrue(exchange.hasVariables());
-        assertEquals(1, exchange.getVariables().size());
-        assertNull(exchange.getVariable("fruit", String.class));
-        assertNull(exchange.getVariable("fruit1", String.class));
-        assertEquals("Africa", exchange.getVariable("zone", String.class));
     }
 
     @Test
@@ -235,7 +228,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         exchange.setVariable("zone", "Africa");
         assertTrue(exchange.hasVariables());
 
-        exchange.removeVariables("*");
+        exchange.removeVariable("*");
         assertFalse(exchange.hasVariables());
         assertEquals(0, exchange.getVariables().size());
     }
@@ -266,31 +259,6 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testRemoveVariablesWithExclusion() throws Exception {
-        exchange.removeVariable("cheese");
-        assertFalse(exchange.hasVariables());
-
-        exchange.setVariable("fruit", "apple");
-        exchange.setVariable("fruit1", "banana");
-        exchange.setVariable("fruit2", "peach");
-        exchange.setVariable("zone", "Africa");
-        assertTrue(exchange.hasVariables());
-
-        assertEquals("apple", exchange.getVariable("fruit"));
-        assertEquals("banana", exchange.getVariable("fruit1"));
-        assertEquals("peach", exchange.getVariable("fruit2"));
-        assertEquals("Africa", exchange.getVariable("zone"));
-
-        exchange.removeVariables("fr*", "fruit1", "fruit2");
-        assertTrue(exchange.hasVariables());
-        assertEquals(3, exchange.getVariables().size());
-        assertNull(exchange.getVariable("fruit", String.class));
-        assertEquals("banana", exchange.getVariable("fruit1", String.class));
-        assertEquals("peach", exchange.getVariable("fruit2", String.class));
-        assertEquals("Africa", exchange.getVariable("zone", String.class));
-    }
-
-    @Test
     public void testRemovePropertiesPatternWithAllExcluded() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -313,31 +281,6 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("banana", exchange.getProperty("fruit1", String.class));
         assertEquals("peach", exchange.getProperty("fruit2", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
-    }
-
-    @Test
-    public void testRemoveVariablesPatternWithAllExcluded() throws Exception {
-        exchange.removeVariable("cheese");
-        assertFalse(exchange.hasVariables());
-
-        exchange.setVariable("fruit", "apple");
-        exchange.setVariable("fruit1", "banana");
-        exchange.setVariable("fruit2", "peach");
-        exchange.setVariable("zone", "Africa");
-        assertTrue(exchange.hasVariables());
-
-        assertEquals("apple", exchange.getVariable("fruit"));
-        assertEquals("banana", exchange.getVariable("fruit1"));
-        assertEquals("peach", exchange.getVariable("fruit2"));
-        assertEquals("Africa", exchange.getVariable("zone"));
-
-        exchange.removeVariables("fr*", "fruit", "fruit1", "fruit2", "zone");
-        assertTrue(exchange.hasVariables());
-        assertEquals(4, exchange.getVariables().size());
-        assertEquals("apple", exchange.getVariable("fruit", String.class));
-        assertEquals("banana", exchange.getVariable("fruit1", String.class));
-        assertEquals("peach", exchange.getVariable("fruit2", String.class));
-        assertEquals("Africa", exchange.getVariable("zone", String.class));
     }
 
     @Test
@@ -395,7 +338,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("Carlsberg", copy.getVariable("beer"));
         assertEquals(2, copy.getVariables().size());
 
-        exchange.removeVariables("*");
+        exchange.removeVariable("*");
         assertFalse(exchange.hasVariables());
         assertTrue(copy.hasVariables());
         assertEquals(2, copy.getVariables().size());

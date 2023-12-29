@@ -346,9 +346,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "remove-variable": return new ModelDeserializers.RemoveVariableDefinitionDeserializer();
             case "removeVariable": return new ModelDeserializers.RemoveVariableDefinitionDeserializer();
             case "org.apache.camel.model.RemoveVariableDefinition": return new ModelDeserializers.RemoveVariableDefinitionDeserializer();
-            case "remove-variables": return new ModelDeserializers.RemoveVariablesDefinitionDeserializer();
-            case "removeVariables": return new ModelDeserializers.RemoveVariablesDefinitionDeserializer();
-            case "org.apache.camel.model.RemoveVariablesDefinition": return new ModelDeserializers.RemoveVariablesDefinitionDeserializer();
             case "resequence": return new ModelDeserializers.ResequenceDefinitionDeserializer();
             case "org.apache.camel.model.ResequenceDefinition": return new ModelDeserializers.ResequenceDefinitionDeserializer();
             case "resilience4j-configuration": return new ModelDeserializers.Resilience4jConfigurationDefinitionDeserializer();

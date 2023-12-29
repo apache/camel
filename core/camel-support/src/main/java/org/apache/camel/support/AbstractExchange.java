@@ -423,54 +423,13 @@ abstract class AbstractExchange implements Exchange {
     @Override
     public Object removeVariable(String name) {
         if (variableRepository != null) {
+            if ("*".equals(name)) {
+                variableRepository.clear();
+                return null;
+            }
             return variableRepository.removeVariable(name);
         }
         return null;
-    }
-
-    @Override
-    public boolean removeVariables(String pattern) {
-        return removeVariables(pattern, (String[]) null);
-    }
-
-    @Override
-    public boolean removeVariables(String pattern, String... excludePatterns) {
-        if (variableRepository == null) {
-            return false;
-        }
-
-        // special optimized
-        if (excludePatterns == null && "*".equals(pattern)) {
-            variableRepository.clear();
-            return true;
-        }
-
-        boolean matches = false;
-
-        // store keys to be removed as we cannot loop and remove at the same time in implementations such as HashMap
-        if (variableRepository.hasVariables()) {
-            Set<String> toBeRemoved = new HashSet<>();
-            variableRepository.names().forEach(key -> {
-                if (PatternHelper.matchPattern(key, pattern)) {
-                    boolean excluded = excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns);
-                    if (!excluded) {
-                        toBeRemoved.add(key);
-                    }
-                }
-            });
-
-            matches = !toBeRemoved.isEmpty();
-            if (toBeRemoved.size() == variableRepository.size()) {
-                // special optimization when all should be removed
-                variableRepository.clear();
-            } else {
-                for (String key : toBeRemoved) {
-                    variableRepository.removeVariable(key);
-                }
-            }
-        }
-
-        return matches;
     }
 
     @Override

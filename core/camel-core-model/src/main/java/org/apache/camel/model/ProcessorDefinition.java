@@ -2749,31 +2749,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Adds a processor which removes the variables
-     *
-     * @param  pattern a pattern to match variables names to be removed
-     * @return         the builder
-     */
-    public Type removeVariables(String pattern) {
-        RemoveVariablesDefinition answer = new RemoveVariablesDefinition(pattern);
-        addOutput(answer);
-        return asType();
-    }
-
-    /**
-     * Adds a processor which removes the variables
-     *
-     * @param  pattern         a pattern to match variables names to be removed
-     * @param  excludePatterns one or more pattern of variable names that should be excluded (= preserved)
-     * @return                 the builder
-     */
-    public Type removeVariables(String pattern, String... excludePatterns) {
-        RemoveVariablesDefinition answer = new RemoveVariablesDefinition(pattern, excludePatterns);
-        addOutput(answer);
-        return asType();
-    }
-
-    /**
      * Adds a processor which removes the exchange property
      *
      * @param  name the property name

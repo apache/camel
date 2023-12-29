@@ -459,28 +459,10 @@ public interface Exchange {
     /**
      * Removes the given variable
      *
-     * @param  name of the variable
+     * @param  name of the variable, or use * to remove all variables
      * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
      */
     Object removeVariable(String name);
-
-    /**
-     * Remove all the variables matching a specific pattern
-     *
-     * @param  pattern pattern of names
-     * @return         boolean whether any variables matched
-     */
-    boolean removeVariables(String pattern);
-
-    /**
-     * Removes the variables that match the given <tt>pattern</tt>, except for the ones matching one or more
-     * <tt>excludePatterns</tt>
-     *
-     * @param  pattern         pattern of names that should be removed
-     * @param  excludePatterns one or more pattern of variable names that should be excluded (= preserved)
-     * @return                 boolean whether any variables matched
-     */
-    boolean removeVariables(String pattern, String... excludePatterns);
 
     /**
      * Returns the variables
