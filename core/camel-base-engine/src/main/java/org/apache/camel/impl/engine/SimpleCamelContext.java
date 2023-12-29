@@ -91,6 +91,7 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.NormalizedUri;
@@ -718,6 +719,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() {
         return new DefaultValidatorRegistry(getCamelContextReference());
+    }
+
+    @Override
+    protected VariableRepositoryFactory createVariableRepositoryFactory() {
+        return new DefaultVariableRepositoryFactory(getCamelContextReference());
     }
 
     @Override

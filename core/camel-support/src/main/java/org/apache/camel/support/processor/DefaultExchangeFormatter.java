@@ -185,7 +185,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            style(sb, "Variables").append(sortMap(filterHeaderAndProperties(exchange.getVariables())));
+            if (exchange.hasVariables()) {
+                style(sb, "Variables").append(sortMap(filterHeaderAndProperties(exchange.getVariables())));
+            }
         }
         if (showAll || showHeaders) {
             if (multiline) {
@@ -574,7 +576,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     private static Map<String, Object> sortMap(Map<String, Object> map) {
         Map<String, Object> answer = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        answer.putAll(map);
+        if (map != null && !map.isEmpty()) {
+            answer.putAll(map);
+        }
         return answer;
     }
 

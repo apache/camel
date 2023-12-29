@@ -449,7 +449,7 @@ public interface Exchange {
     <T> T getVariable(String name, Object defaultValue, Class<T> type);
 
     /**
-     * Sets a varialbe on the exchange
+     * Sets a variable on the exchange
      *
      * @param name  of the variable
      * @param value the value of the variable
@@ -460,7 +460,7 @@ public interface Exchange {
      * Removes the given variable
      *
      * @param  name of the variable
-     * @return      the old value of the variable
+     * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
      */
     Object removeVariable(String name);
 
@@ -485,7 +485,7 @@ public interface Exchange {
     /**
      * Returns the variables
      *
-     * @return the variables in a Map
+     * @return the variables in a Map.
      */
     Map<String, Object> getVariables();
 

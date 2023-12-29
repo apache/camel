@@ -807,6 +807,25 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     String resolvePropertyPlaceholders(String text);
 
     /**
+     * To get a variable by name.
+     *
+     * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *              repository. If no repo-id is provided, then global repository will be used.
+     * @return      the variable, or <tt>null</tt> if not found.
+     */
+    Object getVariable(String name);
+
+    /**
+     * To get a variable by name and covert to the given type.
+     *
+     * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *              repository. If no repo-id is provided, then global repository will be used.
+     * @param  type the type to convert the variable to
+     * @return      the variable, or <tt>null</tt> if not found.
+     */
+    <T> T getVariable(String name, Class<T> type);
+
+    /**
      * Returns the configured properties component or create one if none has been configured.
      *
      * @return the properties component

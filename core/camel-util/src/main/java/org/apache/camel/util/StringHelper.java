@@ -569,6 +569,9 @@ public final class StringHelper {
      * @return       the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String after(String text, String after) {
+        if (text == null) {
+            return null;
+        }
         int pos = text.indexOf(after);
         if (pos == -1) {
             return null;
@@ -614,6 +617,9 @@ public final class StringHelper {
      * @return       the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String afterLast(String text, String after) {
+        if (text == null) {
+            return null;
+        }
         int pos = text.lastIndexOf(after);
         if (pos == -1) {
             return null;
@@ -642,6 +648,9 @@ public final class StringHelper {
      * @return        the text before the token, or <tt>null</tt> if text does not contain the token
      */
     public static String before(String text, String before) {
+        if (text == null) {
+            return null;
+        }
         int pos = text.indexOf(before);
         return pos == -1 ? null : text.substring(0, pos);
     }
@@ -655,6 +664,9 @@ public final class StringHelper {
      * @return              the text before the token, or the supplied defaultValue if text does not contain the token
      */
     public static String before(String text, String before, String defaultValue) {
+        if (text == null) {
+            return defaultValue;
+        }
         int pos = text.indexOf(before);
         return pos == -1 ? defaultValue : text.substring(0, pos);
     }
@@ -668,6 +680,9 @@ public final class StringHelper {
      * @return              the text before the token, or the supplied defaultValue if text does not contain the token
      */
     public static String before(String text, char before, String defaultValue) {
+        if (text == null) {
+            return defaultValue;
+        }
         int pos = text.indexOf(before);
         return pos == -1 ? defaultValue : text.substring(0, pos);
     }
@@ -697,6 +712,9 @@ public final class StringHelper {
      * @return        the text before the token, or <tt>null</tt> if text does not contain the token
      */
     public static String beforeLast(String text, String before) {
+        if (text == null) {
+            return null;
+        }
         int pos = text.lastIndexOf(before);
         return pos == -1 ? null : text.substring(0, pos);
     }

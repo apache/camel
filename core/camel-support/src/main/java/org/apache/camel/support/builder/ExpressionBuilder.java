@@ -294,7 +294,7 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns an expression for variables
+     * Returns an expression for the {@link Exchange} variables
      *
      * @return an expression object which will return the variables
      */

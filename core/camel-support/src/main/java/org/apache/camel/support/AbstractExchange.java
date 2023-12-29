@@ -53,7 +53,6 @@ abstract class AbstractExchange implements Exchange {
 
     protected final CamelContext context;
     protected Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
-    protected Map<String, Object> variables;  // create variables on-demand
     protected Message in;
     protected Message out;
     protected Exception exception;
@@ -63,10 +62,10 @@ abstract class AbstractExchange implements Exchange {
     protected boolean rollbackOnly;
     protected boolean rollbackOnlyLast;
     protected Map<String, SafeCopyProperty> safeCopyProperties;
+    protected ExchangeVariableRepository variableRepository;
     private final ExtendedExchangeExtension privateExtension;
     private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
-    // TODO: variables ?
     protected AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
                                Map<String, Object> properties) {
         this.context = context;
@@ -127,7 +126,11 @@ abstract class AbstractExchange implements Exchange {
         privateExtension.setStreamCacheDisabled(parent.getExchangeExtension().isStreamCacheDisabled());
 
         if (parent.hasVariables()) {
-            this.variables = safeCopyProperties(parent.variables);
+            if (this.variableRepository == null) {
+                this.variableRepository = new ExchangeVariableRepository();
+            }
+            this.variableRepository.setVariables(parent.getVariables());
+
         }
         if (parent.hasProperties()) {
             this.properties = safeCopyProperties(parent.properties);
@@ -391,8 +394,8 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public Object getVariable(String name) {
-        if (variables != null) {
-            return variables.get(name);
+        if (variableRepository != null) {
+            return variableRepository.getVariable(name);
         }
         return null;
     }
@@ -411,24 +414,18 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public void setVariable(String name, Object value) {
-        if (value != null) {
-            // avoid the NullPointException
-            if (variables == null) {
-                this.variables = new ConcurrentHashMap<>(8);
-            }
-            variables.put(name, value);
-        } else if (variables != null) {
-            // if the value is null, we just remove the key from the map
-            variables.remove(name);
+        if (variableRepository == null) {
+            variableRepository = new ExchangeVariableRepository();
         }
+        variableRepository.setVariable(name, value);
     }
 
     @Override
     public Object removeVariable(String name) {
-        if (!hasVariables()) {
-            return null;
+        if (variableRepository != null) {
+            return variableRepository.removeVariable(name);
         }
-        return variables.remove(name);
+        return null;
     }
 
     @Override
@@ -438,40 +435,37 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public boolean removeVariables(String pattern, String... excludePatterns) {
+        if (variableRepository == null) {
+            return false;
+        }
+
         // special optimized
         if (excludePatterns == null && "*".equals(pattern)) {
-            if (variables != null) {
-                variables.clear();
-            }
+            variableRepository.clear();
             return true;
         }
 
         boolean matches = false;
 
         // store keys to be removed as we cannot loop and remove at the same time in implementations such as HashMap
-        if (variables != null) {
-            Set<String> toBeRemoved = null;
-            for (String key : variables.keySet()) {
+        if (variableRepository.hasVariables()) {
+            Set<String> toBeRemoved = new HashSet<>();
+            variableRepository.names().forEach(key -> {
                 if (PatternHelper.matchPattern(key, pattern)) {
-                    if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
-                        continue;
+                    boolean excluded = excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns);
+                    if (!excluded) {
+                        toBeRemoved.add(key);
                     }
-                    matches = true;
-                    if (toBeRemoved == null) {
-                        toBeRemoved = new HashSet<>();
-                    }
-                    toBeRemoved.add(key);
                 }
-            }
+            });
 
-            if (matches) {
-                if (toBeRemoved.size() == variables.size()) {
-                    // special optimization when all should be removed
-                    variables.clear();
-                } else {
-                    for (String key : toBeRemoved) {
-                        variables.remove(key);
-                    }
+            matches = !toBeRemoved.isEmpty();
+            if (toBeRemoved.size() == variableRepository.size()) {
+                // special optimization when all should be removed
+                variableRepository.clear();
+            } else {
+                for (String key : toBeRemoved) {
+                    variableRepository.removeVariable(key);
                 }
             }
         }
@@ -481,15 +475,19 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public Map<String, Object> getVariables() {
-        if (variables == null) {
-            this.variables = new ConcurrentHashMap<>(8);
+        if (variableRepository == null) {
+            // force creating variables
+            variableRepository = new ExchangeVariableRepository();
         }
-        return variables;
+        return variableRepository.getVariables();
     }
 
     @Override
     public boolean hasVariables() {
-        return variables != null && !variables.isEmpty();
+        if (variableRepository != null) {
+            return variableRepository.hasVariables();
+        }
+        return false;
     }
 
     @Override

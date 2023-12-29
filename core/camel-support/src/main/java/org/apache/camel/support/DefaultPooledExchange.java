@@ -41,7 +41,6 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
         super(context);
         this.originalPattern = getPattern();
         this.properties = new ConcurrentHashMap<>(8);
-
         this.clock = new ResetableClock();
     }
 
@@ -184,9 +183,7 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
 
     public static DefaultPooledExchange newFromEndpoint(Endpoint fromEndpoint, ExchangePattern exchangePattern) {
         DefaultPooledExchange exchange = new DefaultPooledExchange(fromEndpoint.getCamelContext(), exchangePattern);
-
         exchange.getExchangeExtension().setFromEndpoint(fromEndpoint);
-
         return exchange;
     }
 }

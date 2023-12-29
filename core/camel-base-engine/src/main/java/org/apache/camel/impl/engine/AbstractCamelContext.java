@@ -166,6 +166,8 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
@@ -340,6 +342,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(FactoryFinderResolver.class, createFactoryFinderResolver());
         camelContextExtension.addContextPlugin(PackageScanClassResolver.class, createPackageScanClassResolver());
         camelContextExtension.addContextPlugin(PackageScanResourceResolver.class, createPackageScanResourceResolver());
+        camelContextExtension.addContextPlugin(VariableRepositoryFactory.class, createVariableRepositoryFactory());
         camelContextExtension.lazyAddContextPlugin(ModelineFactory.class, this::createModelineFactory);
         camelContextExtension.lazyAddContextPlugin(ModelJAXBContextFactory.class, this::createModelJAXBContextFactory);
         camelContextExtension.addContextPlugin(DataFormatResolver.class, createDataFormatResolver());
@@ -1555,6 +1558,27 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public String resolvePropertyPlaceholders(String text) {
         return camelContextExtension.resolvePropertyPlaceholders(text, false);
+    }
+
+    @Override
+    public Object getVariable(String name) {
+        String id = StringHelper.before(name, ":", "global");
+        name = StringHelper.after(name, ":", name);
+        VariableRepository repo
+                = camelContextExtension.getContextPlugin(VariableRepositoryFactory.class).getVariableRepository(id);
+        if (repo != null) {
+            return repo.getVariable(name);
+        }
+        return null;
+    }
+
+    @Override
+    public <T> T getVariable(String name, Class<T> type) {
+        Object value = getVariable(name);
+        if (value != null) {
+            return getTypeConverter().convertTo(type, value);
+        }
+        return null;
     }
 
     @Override
@@ -3995,6 +4019,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract TransformerRegistry<TransformerKey> createTransformerRegistry();
 
     protected abstract ValidatorRegistry<ValidatorKey> createValidatorRegistry();
+
+    protected abstract VariableRepositoryFactory createVariableRepositoryFactory();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.
