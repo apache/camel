@@ -17,34 +17,72 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A processor which removes the variable
  */
-public class RemoveVariableProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class RemoveVariableProcessor extends AsyncProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, CamelContextAware {
+    private CamelContext camelContext;
     private String id;
     private String routeId;
-    private final String variableName;
+    private final Expression variableName;
+    private VariableRepositoryFactory factory;
 
-    public RemoveVariableProcessor(String variableName) {
+    public RemoveVariableProcessor(Expression variableName) {
         this.variableName = variableName;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            exchange.removeVariable(variableName);
+            String key = variableName.evaluate(exchange, String.class);
+            String id = StringHelper.before(key, ":");
+            if (id != null) {
+                VariableRepository repo = factory.getVariableRepository(id);
+                if (repo != null) {
+                    key = StringHelper.after(key, ":");
+                    repo.removeVariable(key);
+                } else {
+                    exchange.setException(
+                            new IllegalArgumentException("VariableRepository with id: " + id + " does not exists"));
+                }
+            } else {
+                exchange.removeVariable(key);
+            }
         } catch (Exception e) {
             exchange.setException(e);
         }
 
         callback.done(true);
         return true;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        factory = getCamelContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
     }
 
     @Override
@@ -78,7 +116,7 @@ public class RemoveVariableProcessor extends AsyncProcessorSupport implements Tr
     }
 
     public String getVariableName() {
-        return variableName;
+        return variableName.toString();
     }
 
 }

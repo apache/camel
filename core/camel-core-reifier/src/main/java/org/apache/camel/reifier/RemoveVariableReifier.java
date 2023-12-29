@@ -16,11 +16,13 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemoveVariableDefinition;
 import org.apache.camel.processor.RemoveVariableProcessor;
+import org.apache.camel.support.LanguageSupport;
 
 public class RemoveVariableReifier extends ProcessorReifier<RemoveVariableDefinition> {
 
@@ -30,7 +32,14 @@ public class RemoveVariableReifier extends ProcessorReifier<RemoveVariableDefini
 
     @Override
     public Processor createProcessor() throws Exception {
-        String name = definition.getName();
-        return new RemoveVariableProcessor(parseString(name));
+        Expression nameExpr;
+        String key = parseString(definition.getName());
+        if (LanguageSupport.hasSimpleFunction(key)) {
+            nameExpr = camelContext.resolveLanguage("simple").createExpression(key);
+        } else {
+            nameExpr = camelContext.resolveLanguage("constant").createExpression(key);
+        }
+        nameExpr.init(camelContext);
+        return new RemoveVariableProcessor(nameExpr);
     }
 }
