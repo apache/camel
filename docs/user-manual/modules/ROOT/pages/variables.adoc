@@ -79,4 +79,60 @@ xref:components:eips:setVariable-eip.adoc[SetVariable], and xref:components:eips
 
 These EIPs makes it possible to set and remove variables from routes. And you can also access variables from the xref:components:languages:simple-language.adoc[Simple] language.
 
-TODO: Some examples here
+In the following route we set a variable on the exchange which we use later to build a human-readable event message:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kafka:order.in")
+  .setVariable("customerId", jq(".customer.custId"))
+  .setVariable("country", jq(".customer.address.co"))
+  .transform().simple("Order received from customer ${variable.customerId} in ${variable.country}")
+  .to("kafka:order.event");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="kafka:order.in"/>
+    <setVariable name="customerId">
+        <jq>.customer.custId</jq>
+    </setVariable>
+    <setVariable name="country">
+        <jq>.customer.address.co</jq>
+    </setVariable>
+    <transform>
+        <simple>Order received from customer ${variable.customerId} in ${variable.country}</simple>
+    </transform>
+    <to uri="kafka:order.event"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:order.in
+      steps:
+        - setVariable:
+            name: customerId
+            jq:
+              expression: .customer.custId
+        - setVariable:
+            name: country
+            jq:
+              expression: .customer.address.co
+        - transform:
+            simple:
+              expression: "Order received from customer ${variable.customerId} in ${variable.country}"
+        - to:
+            uri: kafka:order.event
+----
+====
