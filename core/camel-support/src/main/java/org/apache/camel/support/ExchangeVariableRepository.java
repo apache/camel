@@ -22,13 +22,14 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
+import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * {@link VariableRepository} which is local per {@link Exchange} to hold request-scoped variables.
  */
-class ExchangeVariableRepository extends ServiceSupport implements VariableRepository, NonManagedService {
+class ExchangeVariableRepository extends ServiceSupport implements BrowsableVariableRepository, NonManagedService {
 
     private final Map<String, Object> variables = new ConcurrentHashMap<>(8);
 

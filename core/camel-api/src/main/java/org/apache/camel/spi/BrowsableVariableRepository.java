@@ -14,25 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.spi;
 
-import java.util.Set;
+import java.util.Map;
+import java.util.stream.Stream;
 
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
+/**
+ * A {@link VariableRepository} that can browse the variables.
+ */
+public interface BrowsableVariableRepository extends VariableRepository {
 
-public interface ManagedVariableRepositoryMBean extends ManagedServiceMBean {
+    /**
+     * Are there any variables in the repository.
+     */
+    boolean hasVariables();
 
-    @ManagedAttribute(description = "Repository ID")
-    String getId();
+    /**
+     * Number of variables
+     */
+    int size();
 
-    @ManagedAttribute(description = "Number of variables")
-    int getSize();
+    /**
+     * The variable names
+     */
+    Stream<String> names();
 
-    @ManagedOperation(description = "Removes all variables")
+    /**
+     * Gets all the variables in a Map
+     */
+    Map<String, Object> getVariables();
+
+    /**
+     * Removes all variables
+     */
     void clear();
-
-    @ManagedOperation(description = "Variable names")
-    Set<String> names();
 
 }

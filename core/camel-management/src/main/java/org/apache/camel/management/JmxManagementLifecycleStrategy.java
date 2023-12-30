@@ -84,6 +84,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DumpRoutesStrategy;
@@ -107,7 +108,6 @@ import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.support.TimerListenerManager;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
@@ -567,7 +567,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedTransformerRegistry(context, transformerRegistry);
         } else if (service instanceof ValidatorRegistry<?> validatorRegistry) {
             answer = new ManagedValidatorRegistry(context, validatorRegistry);
-        } else if (service instanceof VariableRepository variableRepository) {
+        } else if (service instanceof BrowsableVariableRepository variableRepository) {
             answer = new ManagedVariableRepository(context, variableRepository);
         } else if (service instanceof CamelClusterService) {
             answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService) service);

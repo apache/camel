@@ -19,14 +19,16 @@ package org.apache.camel.support;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
+import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Global {@link VariableRepository} which stores variables in-memory in a {@link Map}.
  */
-public class GlobalVariableRepository extends ServiceSupport implements VariableRepository {
+public class GlobalVariableRepository extends ServiceSupport implements BrowsableVariableRepository {
 
     private final ConcurrentMap<String, Object> variables = new ConcurrentHashMap<>();
 
@@ -54,5 +56,30 @@ public class GlobalVariableRepository extends ServiceSupport implements Variable
     @Override
     public Object removeVariable(String name) {
         return variables.remove(name);
+    }
+
+    @Override
+    public boolean hasVariables() {
+        return !variables.isEmpty();
+    }
+
+    @Override
+    public int size() {
+        return variables.size();
+    }
+
+    @Override
+    public Stream<String> names() {
+        return variables.keySet().stream();
+    }
+
+    @Override
+    public Map<String, Object> getVariables() {
+        return variables;
+    }
+
+    @Override
+    public void clear() {
+        variables.clear();
     }
 }

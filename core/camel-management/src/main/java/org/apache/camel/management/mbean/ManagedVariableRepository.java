@@ -16,26 +16,44 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedVariableRepositoryMBean;
-import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.BrowsableVariableRepository;
 
 @ManagedResource(description = "Managed VariableRepository")
 public class ManagedVariableRepository extends ManagedService implements ManagedVariableRepositoryMBean {
-    private final VariableRepository variableRepository;
+    private final BrowsableVariableRepository variableRepository;
 
-    public ManagedVariableRepository(CamelContext context, VariableRepository variableRepository) {
+    public ManagedVariableRepository(CamelContext context, BrowsableVariableRepository variableRepository) {
         super(context, variableRepository);
         this.variableRepository = variableRepository;
     }
 
-    public VariableRepository getVariableRepository() {
+    public BrowsableVariableRepository getVariableRepository() {
         return variableRepository;
     }
 
     @Override
     public String getId() {
         return variableRepository.getId();
+    }
+
+    @Override
+    public int getSize() {
+        return variableRepository.size();
+    }
+
+    @Override
+    public void clear() {
+        variableRepository.clear();
+    }
+
+    @Override
+    public Set<String> names() {
+        return variableRepository.names().collect(Collectors.toSet());
     }
 }
