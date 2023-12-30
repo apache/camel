@@ -21,6 +21,8 @@ import java.util.Set;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
+import javax.management.openmbean.TabularData;
+
 public interface ManagedVariableRepositoryMBean extends ManagedServiceMBean {
 
     @ManagedAttribute(description = "Repository ID")
@@ -34,5 +36,8 @@ public interface ManagedVariableRepositoryMBean extends ManagedServiceMBean {
 
     @ManagedOperation(description = "Variable names")
     Set<String> names();
+
+    @ManagedOperation(description = "List all variables")
+    TabularData variables();
 
 }

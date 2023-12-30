@@ -16,13 +16,22 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedVariableRepositoryMBean;
 import org.apache.camel.spi.BrowsableVariableRepository;
+
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
 
 @ManagedResource(description = "Managed VariableRepository")
 public class ManagedVariableRepository extends ManagedService implements ManagedVariableRepositoryMBean {
@@ -56,4 +65,42 @@ public class ManagedVariableRepository extends ManagedService implements Managed
     public Set<String> names() {
         return variableRepository.names().collect(Collectors.toSet());
     }
+
+    @Override
+    public TabularData variables() {
+        try {
+            final TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.camelVariablesTabularType());
+            final CompositeType type = CamelOpenMBeanTypes.camelVariablesCompositeType();
+
+            for (Map.Entry<String, Object> entry : variableRepository.getVariables().entrySet()) {
+                String key = entry.getKey();
+                String className = entry.getValue() != null ? entry.getValue().getClass().getName() : "";
+                String value = entry.getValue() != null ? entry.getValue().toString() : "";
+                if (value.length() > 1000) {
+                    value = value.substring(0, 1000) + "...";
+                }
+
+                CompositeData data = new CompositeDataSupport(
+                        type,
+                        new String[] {
+                                "id",
+                                "key",
+                                "className",
+                                "value",
+                        },
+                        new Object[] {
+                                getId(),
+                                key,
+                                className,
+                                value
+                        });
+                answer.put(data);
+            }
+
+            return answer;
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
 }

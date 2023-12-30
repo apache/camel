@@ -295,4 +295,17 @@ public final class CamelOpenMBeanTypes {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
     }
 
+    public static CompositeType camelVariablesCompositeType() throws OpenDataException {
+        return new CompositeType(
+                "variables", "Variables",
+                new String[] { "id", "key", "className", "value" },
+                new String[] { "Id", "Key", "className", "Value" },
+                new OpenType[] { SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
+    }
+
+    public static TabularType camelVariablesTabularType() throws OpenDataException {
+        CompositeType ct = camelVariablesCompositeType();
+        return new TabularType("variables", "Variables", ct, new String[] { "id", "key" });
+    }
+
 }
