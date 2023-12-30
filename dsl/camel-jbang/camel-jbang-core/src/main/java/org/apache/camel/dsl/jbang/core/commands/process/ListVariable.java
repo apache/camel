@@ -107,10 +107,10 @@ public class ListVariable extends ProcessWatchCommand {
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("REPOSITORY").headerAlign(HorizontalAlign.CENTER).with(r -> r.id),
-                    new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.key),
                     new Column().header("TYPE").headerAlign(HorizontalAlign.CENTER)
                             .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(r -> r.className),
+                    new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(r -> r.key),
                     new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).maxWidth(80, OverflowBehaviour.NEWLINE)
                             .with(r -> r.value.toString()))));
         }
