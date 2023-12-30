@@ -25,6 +25,10 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "disableddeserializationfeatures":
+        case "disabledDeserializationFeatures": target.setDisabledDeserializationFeatures(property(camelContext, java.lang.String.class, value)); return true;
+        case "enableddeserializationfeatures":
+        case "enabledDeserializationFeatures": target.setEnabledDeserializationFeatures(property(camelContext, java.lang.String.class, value)); return true;
         case "errorhandler":
         case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class, value)); return true;
         case "failonnullbody":
@@ -48,6 +52,10 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "allowContextMapAll": return boolean.class;
         case "contentcache":
         case "contentCache": return boolean.class;
+        case "disableddeserializationfeatures":
+        case "disabledDeserializationFeatures": return java.lang.String.class;
+        case "enableddeserializationfeatures":
+        case "enabledDeserializationFeatures": return java.lang.String.class;
         case "errorhandler":
         case "errorHandler": return org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class;
         case "failonnullbody":
@@ -72,6 +80,10 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "allowContextMapAll": return target.isAllowContextMapAll();
         case "contentcache":
         case "contentCache": return target.isContentCache();
+        case "disableddeserializationfeatures":
+        case "disabledDeserializationFeatures": return target.getDisabledDeserializationFeatures();
+        case "enableddeserializationfeatures":
+        case "enabledDeserializationFeatures": return target.getEnabledDeserializationFeatures();
         case "errorhandler":
         case "errorHandler": return target.getErrorHandler();
         case "failonnullbody":
