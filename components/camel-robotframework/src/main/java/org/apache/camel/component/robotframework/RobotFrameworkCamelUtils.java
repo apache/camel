@@ -61,8 +61,7 @@ public final class RobotFrameworkCamelUtils {
             } else if (ROBOT_VAR_CAMEL_VARIABLES.equals(variableEntry.getKey())) {
                 // here the param is the headers map
                 createStringValueOfVariablesFromMap(variableKeyValuePairList, exchange.getVariables(),
-                        ObjectHelper.cast(Exchange.class, variableEntry.getValue()),
-                        new StringBuilder(), ROBOT_VAR_CAMEL_VARIABLES, true);
+                        exchange, new StringBuilder(), ROBOT_VAR_CAMEL_VARIABLES, true);
             } else if (ROBOT_CAMEL_EXCHANGE_NAME.equals(variableEntry.getKey())) {
                 // here the param is camel exchange
                 createStringValueOfVariablesFromMap(variableKeyValuePairList, exchange.getProperties(),
