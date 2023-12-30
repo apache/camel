@@ -39,12 +39,13 @@ public class VariablesDevConsole extends AbstractDevConsole {
 
         Set<BrowsableVariableRepository> repos = getCamelContext().getRegistry().findByType(BrowsableVariableRepository.class);
         for (BrowsableVariableRepository repo : repos) {
-            sb.append(String.format("Variable repository: %s (size: %n)", repo.getId(), repo.size()));
+            sb.append(String.format("Repository: %s (size: %d)", repo.getId(), repo.size()));
             sb.append("\n");
             for (Map.Entry<String, Object> entry : repo.getVariables().entrySet()) {
                 String k = entry.getKey();
                 Object v = entry.getValue();
-                sb.append(String.format("\n    %s = %s", k, v));
+                String t = v != null ? v.getClass().getName() : "<null>";
+                sb.append(String.format("\n    %s (%s) = %s", k, t, v));
             }
             sb.append("\n");
         }
@@ -66,9 +67,13 @@ public class VariablesDevConsole extends AbstractDevConsole {
             for (Map.Entry<String, Object> entry : repo.getVariables().entrySet()) {
                 String k = entry.getKey();
                 Object v = entry.getValue();
+                String t = v != null ? v.getClass().getName() : null;
                 JsonObject e = new JsonObject();
                 e.put("key", k);
                 e.put("value", v);
+                if (t != null) {
+                    e.put("className", t);
+                }
                 arr.add(e);
             }
             if (!arr.isEmpty()) {
