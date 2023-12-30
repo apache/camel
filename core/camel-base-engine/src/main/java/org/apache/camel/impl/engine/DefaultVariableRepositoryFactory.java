@@ -47,11 +47,14 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
 
     @Override
     public VariableRepository getVariableRepository(String id) {
-        if ("global".equals(id)) {
+        if (global != null && "global".equals(id)) {
             return global;
         }
 
         VariableRepository repo = CamelContextHelper.lookup(camelContext, id, VariableRepository.class);
+        if (repo == null) {
+            repo = CamelContextHelper.lookup(camelContext, id + "-variable-repository", VariableRepository.class);
+        }
         if (repo == null) {
             // try via factory finder
             Class<?> clazz = factoryFinder.findClass(id).orElse(null);
@@ -79,8 +82,8 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
     protected void doStart() throws Exception {
         super.doStart();
 
-        VariableRepository repo
-                = CamelContextHelper.lookup(camelContext, GLOBAL_VARIABLE_REPOSITORY_ID, VariableRepository.class);
+        // let's see if there is a custom global repo
+        VariableRepository repo = getVariableRepository("global");
         if (repo != null) {
             LOG.info("Using VariableRepository: {} as global repository", repo.getId());
             global = repo;

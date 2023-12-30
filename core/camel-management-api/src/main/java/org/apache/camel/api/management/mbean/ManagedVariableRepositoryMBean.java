@@ -18,10 +18,10 @@ package org.apache.camel.api.management.mbean;
 
 import java.util.Set;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
-
-import javax.management.openmbean.TabularData;
 
 public interface ManagedVariableRepositoryMBean extends ManagedServiceMBean {
 
