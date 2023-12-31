@@ -99,6 +99,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 headerName.init(context);
             }
 
@@ -168,6 +169,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 headerName.init(context);
                 typeName.init(context);
                 classResolver = context.getClassResolver();
@@ -219,6 +221,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 variableName.init(context);
                 factory = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
             }
@@ -295,6 +298,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 variableName.init(context);
                 typeName.init(context);
                 classResolver = context.getClassResolver();
@@ -435,6 +439,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 typeConverter = context.getTypeConverter();
             }
 
@@ -461,6 +466,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 registry = context.getRegistry();
             }
 
@@ -505,6 +511,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 ref.init(context);
                 registry = context.getRegistry();
             }
@@ -532,6 +539,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 this.context = context;
             }
 
@@ -558,6 +566,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 name = context.getName();
                 setValue(name);
             }
@@ -637,6 +646,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 propertyName.init(context);
             }
 
@@ -682,6 +692,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 globalOptions = context.getGlobalOptions();
             }
 
@@ -718,6 +729,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 propertyName.init(context);
             }
 
@@ -773,6 +785,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 exprName.init(context);
                 defaultValue.init(context);
             }
@@ -833,6 +846,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 propertyName.init(context);
                 defaultValue.init(context);
             }
@@ -859,6 +873,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 setValue(value);
             }
 
@@ -883,6 +898,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 exp = language.createExpression(expression);
                 exp.init(context);
             }
@@ -922,6 +938,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 Language lan = context.resolveLanguage(language);
                 if (lan != null) {
                     pred = lan.createPredicate(expression);
@@ -1112,6 +1129,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 name.init(context);
                 classResolver = context.getClassResolver();
             }
@@ -1191,6 +1209,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 hostname = InetAddressUtil.getLocalHostNameSafe();
                 setValue(hostname);
             }
@@ -1346,6 +1365,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 name.init(context);
                 classResolver = context.getClassResolver();
             }
@@ -1414,6 +1434,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
             }
 
@@ -1441,6 +1462,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
                 type.init(context);
             }
@@ -1477,6 +1499,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
                 token.init(context);
             }
@@ -1510,6 +1533,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
                 typeConverter = context.getTypeConverter();
             }
@@ -1536,6 +1560,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
             }
 
@@ -1571,6 +1596,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
                 groupExp = context.resolveLanguage("simple").createExpression(group);
                 groupExp.init(context);
@@ -1612,6 +1638,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
                 groupExp = context.resolveLanguage("simple").createExpression(group);
                 groupExp.init(context);
@@ -1657,6 +1684,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
                 converter = context.getTypeConverter();
             }
@@ -1689,6 +1717,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
             }
 
@@ -1719,6 +1748,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
             }
 
@@ -1751,6 +1781,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 expression.init(context);
                 replacementExpression.init(context);
             }
@@ -1774,6 +1805,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 left.init(context);
                 right.init(context);
             }
@@ -1797,6 +1829,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 left.init(context);
                 right.init(context);
             }
@@ -1858,6 +1891,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 for (Expression expression : expressions) {
                     expression.init(context);
                 }
@@ -1908,6 +1942,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 if (optimized == null) {
                     Collection<Object> preprocessedExpression = new ArrayList<>(expressions.size());
                     boolean constantsOnly = true;
@@ -2045,6 +2080,7 @@ public class ExpressionBuilder {
 
                 @Override
                 public void init(CamelContext context) {
+                    super.init(context);
                     final Language language = context.resolveLanguage("simple");
                     this.exp = language.createExpression(expression);
                     this.exp.init(context);
@@ -2073,6 +2109,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 final Language language = context.resolveLanguage("bean");
                 this.exp = language.createExpression(expression);
                 this.exp.init(context);
@@ -2096,6 +2133,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 final Language language = context.resolveLanguage("bean");
                 this.exp = language.createExpression(null, new Object[] { bean, method });
                 this.exp.init(context);
@@ -2121,6 +2159,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 this.language = context.resolveLanguage("bean");
             }
 
@@ -2152,6 +2191,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 exp = simpleExpression(key);
                 exp.init(context);
                 pc = context.getPropertiesComponent();
@@ -2180,6 +2220,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 pc = context.getPropertiesComponent();
             }
 
@@ -2230,6 +2271,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                super.init(context);
                 final Language language = context.resolveLanguage("xtokenize");
                 this.exp = language.createExpression(path, new Object[] { headerName, mode, group, namespaces });
                 this.exp.init(context);
