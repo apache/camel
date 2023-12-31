@@ -116,7 +116,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String allowNullBody;
 
     public UnmarshalDefinition() {
