@@ -160,3 +160,12 @@ camel.variable.random = 999
 ----
 
 Here the gold variable is set on the `acme` repository, and the other variables are set on the `global` repository.
+
+The value of a variable can also be loaded from file system, such as a JSon file. To do this you should
+prefix the value with `resource:file:` or `resource:classpath:` to load from file system or classpath,
+as shown below:
+
+[source,properties]
+----
+camel.variable.user-template = resource:file:/etc/user.json
+----
