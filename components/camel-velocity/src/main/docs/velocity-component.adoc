@@ -88,6 +88,8 @@ Camel will provide exchange information in the Velocity context (just a
 
 |`exchange.properties` |The `Exchange` properties.
 
+|`variables` |The variables
+
 |`headers` |The headers of the In message.
 
 |`camelContext` |The Camel Context instance.

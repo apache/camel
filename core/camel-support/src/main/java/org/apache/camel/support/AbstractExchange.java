@@ -62,6 +62,7 @@ abstract class AbstractExchange implements Exchange {
     protected boolean rollbackOnly;
     protected boolean rollbackOnlyLast;
     protected Map<String, SafeCopyProperty> safeCopyProperties;
+    protected ExchangeVariableRepository variableRepository;
     private final ExtendedExchangeExtension privateExtension;
     private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
@@ -124,10 +125,16 @@ abstract class AbstractExchange implements Exchange {
         privateExtension.setErrorHandlerHandled(parent.getExchangeExtension().getErrorHandlerHandled());
         privateExtension.setStreamCacheDisabled(parent.getExchangeExtension().isStreamCacheDisabled());
 
+        if (parent.hasVariables()) {
+            if (this.variableRepository == null) {
+                this.variableRepository = new ExchangeVariableRepository();
+            }
+            this.variableRepository.setVariables(parent.getVariables());
+
+        }
         if (parent.hasProperties()) {
             this.properties = safeCopyProperties(parent.properties);
         }
-
         if (parent.hasSafeCopyProperties()) {
             this.safeCopyProperties = parent.copySafeCopyProperties();
         }
@@ -383,6 +390,63 @@ abstract class AbstractExchange implements Exchange {
 
     private boolean hasSafeCopyProperties() {
         return safeCopyProperties != null && !safeCopyProperties.isEmpty();
+    }
+
+    @Override
+    public Object getVariable(String name) {
+        if (variableRepository != null) {
+            return variableRepository.getVariable(name);
+        }
+        return null;
+    }
+
+    @Override
+    public <T> T getVariable(String name, Class<T> type) {
+        Object value = getVariable(name);
+        return evalPropertyValue(type, value);
+    }
+
+    @Override
+    public <T> T getVariable(String name, Object defaultValue, Class<T> type) {
+        Object value = getVariable(name);
+        return evalPropertyValue(defaultValue, type, value);
+    }
+
+    @Override
+    public void setVariable(String name, Object value) {
+        if (variableRepository == null) {
+            variableRepository = new ExchangeVariableRepository();
+        }
+        variableRepository.setVariable(name, value);
+    }
+
+    @Override
+    public Object removeVariable(String name) {
+        if (variableRepository != null) {
+            if ("*".equals(name)) {
+                variableRepository.clear();
+                return null;
+            }
+            return variableRepository.removeVariable(name);
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getVariables() {
+        if (variableRepository == null) {
+            // force creating variables
+            variableRepository = new ExchangeVariableRepository();
+        }
+        return variableRepository.getVariables();
+    }
+
+    @Override
+    public boolean hasVariables() {
+        if (variableRepository != null) {
+            return variableRepository.hasVariables();
+        }
+        return false;
     }
 
     @Override

@@ -76,6 +76,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
                         .addSubcommand("count", new CommandLine(new CamelCount(main)))
                         .addSubcommand("health", new CommandLine(new ListHealth(main)))
+                        .addSubcommand("variable", new CommandLine(new ListVariable(main)))
                         .addSubcommand("consumer", new CommandLine(new ListConsumer(main)))
                         .addSubcommand("endpoint", new CommandLine(new ListEndpoint(main)))
                         .addSubcommand("event", new CommandLine(new ListEvent(main)))

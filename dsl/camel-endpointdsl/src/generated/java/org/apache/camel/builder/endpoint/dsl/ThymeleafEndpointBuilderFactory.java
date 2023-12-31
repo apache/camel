@@ -203,118 +203,11 @@ public interface ThymeleafEndpointBuilderFactory {
             return this;
         }
         /**
-         * The character encoding to be used for reading template resources.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param encoding the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder encoding(String encoding) {
-            doSetProperty("encoding", encoding);
-            return this;
-        }
-        /**
-         * The order in which this template will be resolved as part of the
-         * resolver chain.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param order the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder order(Integer order) {
-            doSetProperty("order", order);
-            return this;
-        }
-        /**
-         * The order in which this template will be resolved as part of the
-         * resolver chain.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param order the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder order(String order) {
-            doSetProperty("order", order);
-            return this;
-        }
-        /**
-         * An optional prefix added to template names to convert them into
-         * resource names.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param prefix the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder prefix(String prefix) {
-            doSetProperty("prefix", prefix);
-            return this;
-        }
-        /**
-         * The type of resolver to be used by the template engine.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thymeleaf.ThymeleafResolverType&lt;/code&gt; type.
-         * 
-         * Default: CLASS_LOADER
-         * Group: producer
-         * 
-         * @param resolver the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder resolver(
-                org.apache.camel.component.thymeleaf.ThymeleafResolverType resolver) {
-            doSetProperty("resolver", resolver);
-            return this;
-        }
-        /**
-         * The type of resolver to be used by the template engine.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thymeleaf.ThymeleafResolverType&lt;/code&gt; type.
-         * 
-         * Default: CLASS_LOADER
-         * Group: producer
-         * 
-         * @param resolver the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder resolver(String resolver) {
-            doSetProperty("resolver", resolver);
-            return this;
-        }
-        /**
-         * An optional suffix added to template names to convert them into
-         * resource names.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param suffix the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder suffix(String suffix) {
-            doSetProperty("suffix", suffix);
-            return this;
-        }
-        /**
          * The template mode to be applied to templates.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: HTML
          * Group: producer
          * 
          * @param templateMode the value to set
@@ -382,6 +275,114 @@ public interface ThymeleafEndpointBuilderFactory {
         default AdvancedThymeleafEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The character encoding to be used for reading template resources.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
+         */
+        default AdvancedThymeleafEndpointBuilder encoding(String encoding) {
+            doSetProperty("encoding", encoding);
+            return this;
+        }
+        /**
+         * The order in which this template will be resolved as part of the
+         * resolver chain.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param order the value to set
+         * @return the dsl builder
+         */
+        default AdvancedThymeleafEndpointBuilder order(Integer order) {
+            doSetProperty("order", order);
+            return this;
+        }
+        /**
+         * The order in which this template will be resolved as part of the
+         * resolver chain.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param order the value to set
+         * @return the dsl builder
+         */
+        default AdvancedThymeleafEndpointBuilder order(String order) {
+            doSetProperty("order", order);
+            return this;
+        }
+        /**
+         * An optional prefix added to template names to convert them into
+         * resource names.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
+         */
+        default AdvancedThymeleafEndpointBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
+            return this;
+        }
+        /**
+         * The type of resolver to be used by the template engine.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.thymeleaf.ThymeleafResolverType&lt;/code&gt; type.
+         * 
+         * Default: CLASS_LOADER
+         * Group: advanced
+         * 
+         * @param resolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedThymeleafEndpointBuilder resolver(
+                org.apache.camel.component.thymeleaf.ThymeleafResolverType resolver) {
+            doSetProperty("resolver", resolver);
+            return this;
+        }
+        /**
+         * The type of resolver to be used by the template engine.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.thymeleaf.ThymeleafResolverType&lt;/code&gt; type.
+         * 
+         * Default: CLASS_LOADER
+         * Group: advanced
+         * 
+         * @param resolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedThymeleafEndpointBuilder resolver(String resolver) {
+            doSetProperty("resolver", resolver);
+            return this;
+        }
+        /**
+         * An optional suffix added to template names to convert them into
+         * resource names.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param suffix the value to set
+         * @return the dsl builder
+         */
+        default AdvancedThymeleafEndpointBuilder suffix(String suffix) {
+            doSetProperty("suffix", suffix);
             return this;
         }
     }

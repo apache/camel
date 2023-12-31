@@ -1,0 +1,171 @@
+= Variables
+
+*Available from Camel 4.4*
+
+In Camel 4.4, we have introduced the concept of _variables_.
+
+A variable is a key/value that can hold a value that can either be private per `Exchange` or global shared
+in the `CamelContext`.
+
+NOTE: You can also use _exchange properties_ as variables but the exchange properties are also used internally by Camel,
+and some EIPs and components. With the newly introduced _variables_ then these are exclusively for end users.
+
+== Variable Repository
+
+The variables are stored in one or more `org.apache.camel.spi.VariableRepository`. By default, there are the following repositories
+
+- `ExchangeVariableRepository` - A private repository per `Exchange` that holds variables that are private for the lifecycle of each `Exchange`.
+- `GlobalVariableRepository` - Uses `global` as id. A shared global repository for the entire `CamelContext`.
+
+The `ExchangeVariableRepository` is special as its private per exchange and is the default repository when used during routing.
+
+TIP: There is also `org.apache.camel.spi.BrowsableVariableRepository` which is an extension to `VariableRepository` that
+has APIs to browse the currently variables. This is used by Camel with Camel JBang, and JMX to be able to see the current variables
+from management tooling, CLI and the developer console.
+
+=== Custom variable repositories
+
+You can implement custom `org.apache.camel.spi.VariableRepository` and plugin to be used out of the box with Apache Camel.
+For example, you can build a custom repository that stores the variables in a database, so they are persisted.
+
+Each repository must have its own unique id. However, it's also possible to replace the default `global` repository with another.
+
+== Getting and setting variables from Java API
+
+To get a local variable from the current exchange, you can do this via Java API:
+
+[source,java]
+----
+String myValue = "...";
+exchange.setVariable("myKey", myValue);
+
+// and later to get the variable
+Object val = exchange.getVariable("myKey");
+
+// you can get the value as a specific type
+String str = exchange.getVariable("myKey", String.class);
+----
+
+The API on `Exchange` will by default get the variables from its local private repository.
+However, you can also get variables from other repositories, such as the `global` as show:
+
+[source,java]
+----
+Object val = exchange.getVariable("global:myGlobalKey");
+----
+
+And you can also assign a global variable by prefixing with `global:` as follows:
+
+[source,java]
+----
+exchange.setVariable("global:myGlobalKey", someObjectHere);
+----
+
+There is also API on `CamelContext` to get variables. However, this API will by default get from the `global` repository,
+as it's not possible to get variables from any inflight `Exchange` currently being routed.
+
+[source,java]
+----
+Object val = context.getVariable("myGlobalKey");
+
+// you can get the value as a specific type
+String str = context.getVariable("myGlobalKey", String.class);
+----
+
+== Setting and getting variables from DSL
+
+It is also possible to use variables in Camel xref:routes.adoc[routes] using the
+xref:components:eips:setVariable-eip.adoc[SetVariable], and xref:components:eips:removeVariable-eip.adoc[RemoveVariable] EIPs.
+
+These EIPs makes it possible to set and remove variables from routes. And you can also access variables from the xref:components:languages:simple-language.adoc[Simple] language.
+
+In the following route we set a variable on the exchange which we use later to build a human-readable event message:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kafka:order.in")
+  .setVariable("customerId", jq(".customer.custId"))
+  .setVariable("country", jq(".customer.address.co"))
+  .transform().simple("Order received from customer ${variable.customerId} in ${variable.country}")
+  .to("kafka:order.event");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="kafka:order.in"/>
+    <setVariable name="customerId">
+        <jq>.customer.custId</jq>
+    </setVariable>
+    <setVariable name="country">
+        <jq>.customer.address.co</jq>
+    </setVariable>
+    <transform>
+        <simple>Order received from customer ${variable.customerId} in ${variable.country}</simple>
+    </transform>
+    <to uri="kafka:order.event"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:order.in
+      steps:
+        - setVariable:
+            name: customerId
+            jq:
+              expression: .customer.custId
+        - setVariable:
+            name: country
+            jq:
+              expression: .customer.address.co
+        - transform:
+            simple:
+              expression: "Order received from customer ${variable.customerId} in ${variable.country}"
+        - to:
+            uri: kafka:order.event
+----
+====
+
+== Configuring initial variables on startup
+
+When Camel is starting then it's possible to configure initial variables.
+
+This can be done in `application.properties` as shown below:
+
+[source,properties]
+----
+camel.variable.greeting = Random number
+camel.variable.random = 999
+----
+
+The variables are default set on the `global` repository, but you can specify a custom repository by
+prefixing with `id:` in the key, such as below:
+
+[source,properties]
+----
+camel.variable.acme:gold = true
+camel.variable.greeting = Random number
+camel.variable.random = 999
+----
+
+Here the gold variable is set on the `acme` repository, and the other variables are set on the `global` repository.
+
+The value of a variable can also be loaded from file system, such as a JSon file. To do this you should
+prefix the value with `resource:file:` or `resource:classpath:` to load from file system or classpath,
+as shown below:
+
+[source,properties]
+----
+camel.variable.user-template = resource:file:/etc/user.json
+----

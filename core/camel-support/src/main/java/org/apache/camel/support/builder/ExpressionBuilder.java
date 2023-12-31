@@ -44,6 +44,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ConstantExpressionAdapter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -179,6 +181,135 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the variable with the given name
+     *
+     * @param  variableName the name of the variable the expression will return
+     * @return              an expression object which will return the variable value
+     */
+    public static Expression variableExpression(final String variableName) {
+        return variableExpression(simpleExpression(variableName));
+    }
+
+    /**
+     * Returns an expression for the variable with the given name
+     *
+     * @param  variableName the name of the variable the expression will return
+     * @return              an expression object which will return the variable value
+     */
+    public static Expression variableExpression(final Expression variableName) {
+        return new ExpressionAdapter() {
+            private VariableRepositoryFactory factory;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String key = variableName.evaluate(exchange, String.class);
+                String id = StringHelper.before(key, ":");
+                if (id != null) {
+                    VariableRepository repo = factory.getVariableRepository(id);
+                    if (repo != null) {
+                        key = StringHelper.after(key, ":");
+                        return repo.getVariable(key);
+                    } else {
+                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exists");
+                    }
+                } else {
+                    return exchange.getVariable(key);
+                }
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                variableName.init(context);
+                factory = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+            }
+
+            @Override
+            public String toString() {
+                return "variable(" + variableName + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for the variable with the given name converted to the given type
+     *
+     * @param  variableName the name of the variable the expression will return
+     * @param  type         the type to convert to
+     * @return              an expression object which will return the variable value
+     */
+    public static <T> Expression variableExpression(final String variableName, final Class<T> type) {
+        return variableExpression(simpleExpression(variableName), constantExpression(type.getName()));
+    }
+
+    /**
+     * Returns an expression for the variable with the given name converted to the given type
+     *
+     * @param  variableName the name of the variable the expression will return
+     * @param  typeName     the type to convert to as a FQN class name
+     * @return              an expression object which will return the header value
+     */
+    public static Expression variableExpression(final String variableName, final String typeName) {
+        return variableExpression(simpleExpression(variableName), simpleExpression(typeName));
+    }
+
+    /**
+     * Returns an expression for the variable with the given name converted to the given type
+     *
+     * @param  variableName the name of the variable the expression will return
+     * @param  typeName     the type to convert to as a FQN class name
+     * @return              an expression object which will return the header value
+     */
+    public static Expression variableExpression(final Expression variableName, final Expression typeName) {
+        return new ExpressionAdapter() {
+            private ClassResolver classResolver;
+            private VariableRepositoryFactory factory;
+            private TypeConverter converter;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Class<?> type;
+                try {
+                    String text = typeName.evaluate(exchange, String.class);
+                    type = classResolver.resolveMandatoryClass(text);
+                } catch (ClassNotFoundException e) {
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                }
+                String key = variableName.evaluate(exchange, String.class);
+                String id = StringHelper.before(key, ":");
+                if (id != null) {
+                    VariableRepository repo = factory.getVariableRepository(id);
+                    if (repo != null) {
+                        key = StringHelper.after(key, ":");
+                        Object value = repo.getVariable(key);
+                        if (value != null) {
+                            value = converter.convertTo(type, value);
+                        }
+                        return value;
+                    } else {
+                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exists");
+                    }
+                } else {
+                    return exchange.getVariable(key, type);
+                }
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                variableName.init(context);
+                typeName.init(context);
+                classResolver = context.getClassResolver();
+                factory = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+                converter = context.getTypeConverter();
+            }
+
+            @Override
+            public String toString() {
+                return "variableAs(" + variableName + ", " + typeName + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the inbound message headers
      *
      * @return an expression object which will return the inbound headers
@@ -193,6 +324,25 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "headers";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for the {@link Exchange} variables
+     *
+     * @return an expression object which will return the variables
+     */
+    public static Expression variablesExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exchange.getVariables();
+            }
+
+            @Override
+            public String toString() {
+                return "variables";
             }
         };
     }

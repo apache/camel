@@ -43,6 +43,8 @@ import org.apache.camel.Headers;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Variable;
+import org.apache.camel.Variables;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -109,6 +111,8 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
             for (Parameter parameter : method.getParameters()) {
                 if (parameter.isAnnotationPresent(Header.class)
                         || parameter.isAnnotationPresent(Headers.class)
+                        || parameter.isAnnotationPresent(Variable.class)
+                        || parameter.isAnnotationPresent(Variables.class)
                         || parameter.isAnnotationPresent(ExchangeProperty.class)
                         || parameter.isAnnotationPresent(Body.class)) {
                     canUseBinding = true;
@@ -138,6 +142,16 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                                     = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
                             if (map != null) {
                                 exchange.getIn().getHeaders().putAll(map);
+                            }
+                        } else if (ann.annotationType().isAssignableFrom(Variable.class)) {
+                            Variable variable = (Variable) ann;
+                            String name = variable.value();
+                            exchange.setVariable(name, value);
+                        } else if (ann.annotationType().isAssignableFrom(Variables.class)) {
+                            Map<String, Object> map
+                                    = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
+                            if (map != null) {
+                                exchange.getVariables().putAll(map);
                             }
                         } else if (ann.annotationType().isAssignableFrom(ExchangeProperty.class)) {
                             ExchangeProperty ep = (ExchangeProperty) ann;

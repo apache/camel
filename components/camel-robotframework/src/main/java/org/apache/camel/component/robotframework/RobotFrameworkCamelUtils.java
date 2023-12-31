@@ -31,6 +31,7 @@ public final class RobotFrameworkCamelUtils {
     private static final String ROBOT_CAMEL_EXCHANGE_NAME = "exchange";
     private static final String ROBOT_VAR_CAMEL_BODY = "body";
     private static final String ROBOT_VAR_CAMEL_HEADERS = "headers";
+    private static final String ROBOT_VAR_CAMEL_VARIABLES = "variables";
     private static final String ROBOT_VAR_CAMEL_PROPERTIES = "properties";
     private static final String ROBOT_VAR_FIELD_SEPERATOR = ":";
     private static final String ROBOT_VAR_NESTING_SEPERATOR = ".";
@@ -57,6 +58,10 @@ public final class RobotFrameworkCamelUtils {
                 createStringValueOfVariablesFromMap(variableKeyValuePairList,
                         ObjectHelper.cast(Map.class, variableEntry.getValue()), exchange, new StringBuilder(),
                         ROBOT_VAR_CAMEL_HEADERS, true);
+            } else if (ROBOT_VAR_CAMEL_VARIABLES.equals(variableEntry.getKey())) {
+                // here the param is the headers map
+                createStringValueOfVariablesFromMap(variableKeyValuePairList, exchange.getVariables(),
+                        exchange, new StringBuilder(), ROBOT_VAR_CAMEL_VARIABLES, true);
             } else if (ROBOT_CAMEL_EXCHANGE_NAME.equals(variableEntry.getKey())) {
                 // here the param is camel exchange
                 createStringValueOfVariablesFromMap(variableKeyValuePairList, exchange.getProperties(),

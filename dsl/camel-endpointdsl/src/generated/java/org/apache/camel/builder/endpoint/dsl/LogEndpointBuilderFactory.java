@@ -912,6 +912,37 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
+         * Show the variables.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: formatting
+         * 
+         * @param showVariables the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showVariables(boolean showVariables) {
+            doSetProperty("showVariables", showVariables);
+            return this;
+        }
+        /**
+         * Show the variables.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: formatting
+         * 
+         * @param showVariables the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showVariables(String showVariables) {
+            doSetProperty("showVariables", showVariables);
+            return this;
+        }
+        /**
          * Whether to skip line separators when logging the message body. This
          * allows to log the message body in one line, setting this option to
          * false will preserve any line separators from the body, which then

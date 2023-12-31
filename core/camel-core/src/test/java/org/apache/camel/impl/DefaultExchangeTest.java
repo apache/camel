@@ -143,6 +143,30 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testVariable() throws Exception {
+        exchange.removeVariable("cheese");
+        assertFalse(exchange.hasVariables());
+
+        exchange.setVariable("fruit", "apple");
+        assertTrue(exchange.hasVariables());
+
+        assertEquals("apple", exchange.getVariable("fruit"));
+        assertNull(exchange.getVariable("beer"));
+        assertNull(exchange.getVariable("beer", String.class));
+
+        // Current TypeConverter support to turn the null value to false of
+        // boolean,
+        // as assertEquals needs the Object as the parameter, we have to use
+        // Boolean.FALSE value in this case
+        assertEquals(Boolean.FALSE, exchange.getVariable("beer", boolean.class));
+        assertNull(exchange.getVariable("beer", Boolean.class));
+
+        assertEquals("apple", exchange.getVariable("fruit", String.class));
+        assertEquals("apple", exchange.getVariable("fruit", "banana", String.class));
+        assertEquals("banana", exchange.getVariable("beer", "banana", String.class));
+    }
+
+    @Test
     public void testRemoveProperties() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -165,6 +189,21 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testRemoveVariables() throws Exception {
+        exchange.removeVariable("cheese");
+        assertFalse(exchange.hasVariables());
+
+        exchange.setVariable("fruit", "apple");
+        exchange.setVariable("fruit1", "banana");
+        exchange.setVariable("zone", "Africa");
+        assertTrue(exchange.hasVariables());
+
+        assertEquals("apple", exchange.getVariable("fruit"));
+        assertEquals("banana", exchange.getVariable("fruit1"));
+        assertEquals("Africa", exchange.getVariable("zone"));
+    }
+
+    @Test
     public void testRemoveAllProperties() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -177,6 +216,21 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         exchange.removeProperties("*");
         assertFalse(exchange.hasProperties());
         assertEquals(0, exchange.getProperties().size());
+    }
+
+    @Test
+    public void testRemoveAllVariables() throws Exception {
+        exchange.removeVariable("cheese");
+        assertFalse(exchange.hasVariables());
+
+        exchange.setVariable("fruit", "apple");
+        exchange.setVariable("fruit1", "banana");
+        exchange.setVariable("zone", "Africa");
+        assertTrue(exchange.hasVariables());
+
+        exchange.removeVariable("*");
+        assertFalse(exchange.hasVariables());
+        assertEquals(0, exchange.getVariables().size());
     }
 
     @Test
@@ -263,6 +317,31 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals(1, exchange.getProperties().size());
         assertEquals(2, exchange.getExchangeExtension().getInternalProperties().size());
         assertEquals(3, exchange.getAllProperties().size());
+    }
+
+    @Test
+    public void testCopyExchangeWithVariables() throws Exception {
+        exchange.setVariable("beer", "Carlsberg");
+        assertEquals(2, exchange.getVariables().size());
+
+        Exchange copy = exchange.copy();
+        assertTrue(copy.hasVariables());
+        assertEquals(2, copy.getVariables().size());
+        assertEquals("gauda", copy.getVariable("cheese"));
+        assertEquals("Carlsberg", copy.getVariable("beer"));
+
+        exchange.setVariable("beer", "Heineken");
+        assertEquals("Carlsberg", copy.getVariable("beer"));
+
+        exchange.removeVariable("beer");
+        assertEquals(1, exchange.getVariables().size());
+        assertEquals("Carlsberg", copy.getVariable("beer"));
+        assertEquals(2, copy.getVariables().size());
+
+        exchange.removeVariable("*");
+        assertFalse(exchange.hasVariables());
+        assertTrue(copy.hasVariables());
+        assertEquals(2, copy.getVariables().size());
     }
 
     @Test

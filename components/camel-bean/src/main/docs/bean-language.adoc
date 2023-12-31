@@ -76,7 +76,7 @@ public boolean isGoldCustomer(String body) {...}
 === Using Annotations for bean integration
 
 You can also use the xref:manual::bean-integration.adoc[Bean Integration]
-annotations, such as `@Header`, `@Body` etc
+annotations, such as `@Header`, `@Body`, `@Variable` etc
 
 [source,java]
 ----

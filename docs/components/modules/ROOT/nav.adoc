@@ -183,6 +183,7 @@
 ** xref:jsonata-component.adoc[JSONata]
 ** xref:json-patch-component.adoc[JsonPatch]
 ** xref:jt400-component.adoc[JT400]
+** xref:jte-component.adoc[JTE]
 ** xref:kafka-component.adoc[Kafka]
 ** xref:kamelet-component.adoc[Kamelet]
 ** xref:knative-component.adoc[Knative]

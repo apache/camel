@@ -1283,6 +1283,15 @@ Removes a named property from the message exchange
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="removeVariable" type="tns:removeVariableDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Removes a named variable
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="resequence" type="tns:resequenceDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -1703,6 +1712,15 @@ Allows to set multiple headers on the message at the same time.
       <xs:documentation xml:lang="en">
 <![CDATA[
 Sets a named property on the message exchange
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="setVariable" type="tns:setVariableDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the value of a variable
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -3506,6 +3524,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -3519,6 +3538,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -4065,6 +4085,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -4078,6 +4099,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -4169,6 +4191,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -4182,6 +4205,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -4266,6 +4290,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -4279,6 +4304,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -4346,6 +4372,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -4359,6 +4386,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -4793,6 +4821,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -4806,6 +4835,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -5843,6 +5873,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -5856,6 +5887,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -5930,6 +5962,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -5943,6 +5976,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -6076,6 +6110,7 @@ Global option value.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -6089,6 +6124,7 @@ Global option value.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -6233,6 +6269,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -6246,6 +6283,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -6327,6 +6365,7 @@ intercepted.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -6340,6 +6379,7 @@ intercepted.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -6432,6 +6472,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -6445,6 +6486,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -6528,6 +6570,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -6541,6 +6584,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -6836,6 +6880,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -6849,6 +6894,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -10133,6 +10179,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -10146,6 +10193,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -10353,6 +10401,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -10366,6 +10415,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -10548,6 +10598,7 @@ its considered handled as well.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -10561,6 +10612,7 @@ its considered handled as well.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -10803,6 +10855,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -10816,6 +10869,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -10880,6 +10934,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -10893,6 +10948,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -11396,6 +11452,22 @@ Name of property to remove.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="removeVariableDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Name of variable to remove.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="resequenceDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -11470,6 +11542,7 @@ Name of property to remove.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -11483,6 +11556,7 @@ Name of property to remove.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -11815,6 +11889,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -11828,6 +11903,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -12245,6 +12321,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -12258,6 +12335,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -12521,6 +12599,49 @@ property name to be used. Otherwise a constant name will be used.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="setVariableDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:processorDefinition">
+        <xs:choice>
+          <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
+          <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
+          <xs:element ref="tns:exchangeProperty"/>
+          <xs:element ref="tns:groovy"/>
+          <xs:element ref="tns:header"/>
+          <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
+          <xs:element ref="tns:js"/>
+          <xs:element ref="tns:joor"/>
+          <xs:element ref="tns:jq"/>
+          <xs:element ref="tns:jsonpath"/>
+          <xs:element ref="tns:language"/>
+          <xs:element ref="tns:method"/>
+          <xs:element ref="tns:mvel"/>
+          <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python"/>
+          <xs:element ref="tns:ref"/>
+          <xs:element ref="tns:simple"/>
+          <xs:element ref="tns:spel"/>
+          <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:xtokenize"/>
+          <xs:element ref="tns:xpath"/>
+          <xs:element ref="tns:xquery"/>
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Name of variable to set a new value The simple language can be used to define a dynamic evaluated variable name to be
+used. Otherwise a constant name will be used.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="sortDefinition">
     <xs:complexContent>
       <xs:extension base="tns:processorDefinition">
@@ -12633,6 +12754,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -12646,6 +12768,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -12860,6 +12983,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -12873,6 +12997,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -13413,6 +13538,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -13426,6 +13552,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
@@ -13550,6 +13677,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:removeHeaders"/>
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
@@ -13563,6 +13691,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setHeaders"/>
             <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
             <xs:element ref="tns:sort"/>
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>

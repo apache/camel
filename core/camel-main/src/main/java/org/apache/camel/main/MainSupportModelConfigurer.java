@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,11 @@ import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
+import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
@@ -80,6 +86,32 @@ public final class MainSupportModelConfigurer {
             }
             setPropertiesOnTarget(camelContext, faultToleranceModel, faultTolerance);
         }
+    }
+
+    static void setVariableProperties(
+            CamelContext camelContext,
+            OrderedLocationProperties variableProperties,
+            OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        for (String key : variableProperties.stringPropertyNames()) {
+            String value = variableProperties.getProperty(key);
+            String id = StringHelper.before(key, ":", "global");
+            key = StringHelper.after(key, ":", key);
+            VariableRepository repo = camelContext.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
+                    .getVariableRepository(id);
+            // it may be a resource to load from disk then
+            if (value.startsWith(LanguageSupport.RESOURCE)) {
+                value = value.substring(9);
+                if (ResourceHelper.hasScheme(value)) {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, value);
+                    value = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                }
+            }
+            repo.setVariable(key, value);
+        }
+        autoConfiguredProperties.putAll(variableProperties);
     }
 
     static void setThreadPoolProperties(

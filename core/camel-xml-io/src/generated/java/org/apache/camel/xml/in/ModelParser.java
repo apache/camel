@@ -859,6 +859,15 @@ public class ModelParser extends BaseParser {
             return processorDefinitionAttributeHandler().accept(def, key, val);
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected RemoveVariableDefinition doParseRemoveVariableDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RemoveVariableDefinition(), (def, key, val) -> {
+            if ("name".equals(key)) {
+                def.setName(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
     protected ResequenceDefinition doParseResequenceDefinition() throws IOException, XmlPullParserException {
         return doParse(new ResequenceDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
@@ -1320,6 +1329,15 @@ public class ModelParser extends BaseParser {
     }
     protected SetPropertyDefinition doParseSetPropertyDefinition() throws IOException, XmlPullParserException {
         return doParse(new SetPropertyDefinition(), (def, key, val) -> {
+            if ("name".equals(key)) {
+                def.setName(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, expressionNodeElementHandler(), noValueHandler());
+    }
+    protected SetVariableDefinition doParseSetVariableDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SetVariableDefinition(), (def, key, val) -> {
             if ("name".equals(key)) {
                 def.setName(val);
                 return true;
@@ -3469,6 +3487,7 @@ public class ModelParser extends BaseParser {
             case "removeHeaders": return doParseRemoveHeadersDefinition();
             case "removeProperties": return doParseRemovePropertiesDefinition();
             case "removeProperty": return doParseRemovePropertyDefinition();
+            case "removeVariable": return doParseRemoveVariableDefinition();
             case "resequence": return doParseResequenceDefinition();
             case "resumable": return doParseResumableDefinition();
             case "rollback": return doParseRollbackDefinition();
@@ -3482,6 +3501,7 @@ public class ModelParser extends BaseParser {
             case "setHeader": return doParseSetHeaderDefinition();
             case "setHeaders": return doParseSetHeadersDefinition();
             case "setProperty": return doParseSetPropertyDefinition();
+            case "setVariable": return doParseSetVariableDefinition();
             case "sort": return doParseSortDefinition();
             case "split": return doParseSplitDefinition();
             case "step": return doParseStepDefinition();

@@ -272,4 +272,5 @@ public interface ExchangeExtension {
      * @return         A new Exchange instance
      */
     Exchange createCopyWithProperties(CamelContext context);
+
 }

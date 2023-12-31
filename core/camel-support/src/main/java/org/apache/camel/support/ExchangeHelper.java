@@ -474,6 +474,7 @@ public final class ExchangeHelper {
         Message in = exchange.getIn();
         map.put("headers", in.getHeaders());
         map.put("body", in.getBody());
+        map.put("variables", exchange.getVariables());
         if (allowContextMapAll) {
             map.put("in", in);
             map.put("request", in);

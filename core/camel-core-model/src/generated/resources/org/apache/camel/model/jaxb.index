@@ -57,6 +57,7 @@ RemoveHeaderDefinition
 RemoveHeadersDefinition
 RemovePropertiesDefinition
 RemovePropertyDefinition
+RemoveVariableDefinition
 ResequenceDefinition
 Resilience4jConfigurationDefinition
 RestContextRefDefinition
@@ -85,6 +86,7 @@ SetExchangePatternDefinition
 SetHeaderDefinition
 SetHeadersDefinition
 SetPropertyDefinition
+SetVariableDefinition
 SortDefinition
 SplitDefinition
 StepDefinition

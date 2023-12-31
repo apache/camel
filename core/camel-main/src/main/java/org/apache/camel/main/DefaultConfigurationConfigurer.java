@@ -82,6 +82,7 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.DefaultUuidGenerator;
@@ -366,6 +367,10 @@ public final class DefaultConfigurationConfigurer {
         CliConnectorFactory ccf = getSingleBeanOfType(registry, CliConnectorFactory.class);
         if (ccf != null) {
             camelContext.getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, ccf);
+        }
+        VariableRepositoryFactory vrf = getSingleBeanOfType(registry, VariableRepositoryFactory.class);
+        if (vrf != null) {
+            camelContext.getCamelContextExtension().addContextPlugin(VariableRepositoryFactory.class, vrf);
         }
         PropertiesComponent pc = getSingleBeanOfType(registry, PropertiesComponent.class);
         if (pc != null) {

@@ -328,14 +328,13 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         setRedeliveryExhausted(false);
         setErrorHandlerHandled(null);
         setStreamCacheDisabled(false);
+        this.exchange.variableRepository = null;
     }
 
     @Override
     public Exchange createCopyWithProperties(CamelContext context) {
         DefaultExchange answer = new DefaultExchange(context, exchange.internalProperties, exchange.properties);
-
         answer.setPattern(exchange.pattern);
-
         return answer;
     }
 }

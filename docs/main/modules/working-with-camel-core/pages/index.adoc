@@ -94,6 +94,7 @@ Learn about additional ways to customize your integrations. Explore alternatives
 ** xref:manual::spring.adoc[Spring]
 ** xref:manual::spring-xml-extensions.adoc[Spring XML Extensions]
 ** xref:manual::validator.adoc[Validator]
+** xref:manual::variables.adoc[Variables]
 ** xref:manual::what-are-the-dependencies.adoc[Camel Requirements]
 ** xref:manual::testing.adoc[Testing]
 

@@ -106,6 +106,9 @@
           "removeProperty" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RemovePropertyDefinition"
           },
+          "removeVariable" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RemoveVariableDefinition"
+          },
           "resequence" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ResequenceDefinition"
           },
@@ -141,6 +144,9 @@
           },
           "setProperty" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SetPropertyDefinition"
+          },
+          "setVariable" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SetVariableDefinition"
           },
           "sort" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SortDefinition"
@@ -4272,6 +4278,39 @@
         } ],
         "required" : [ "name" ]
       },
+      "org.apache.camel.model.RemoveVariableDefinition" : {
+        "title" : "Remove Variable",
+        "description" : "Removes a named variable",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "description" : {
+              "type" : "string",
+              "title" : "Description",
+              "description" : "Sets the description of this node"
+            },
+            "disabled" : {
+              "type" : "boolean",
+              "title" : "Disabled",
+              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "Sets the id of this node"
+            },
+            "name" : {
+              "type" : "string",
+              "title" : "Name",
+              "description" : "Name of variable to remove."
+            }
+          }
+        } ],
+        "required" : [ "name" ]
+      },
       "org.apache.camel.model.ResequenceDefinition" : {
         "title" : "Resequence",
         "description" : "Resequences (re-order) messages based on an expression",
@@ -5725,6 +5764,129 @@
             "type" : "string",
             "title" : "Name",
             "description" : "Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated exchange property name to be used. Otherwise a constant name will be used."
+          },
+          "constant" : { },
+          "csimple" : { },
+          "datasonnet" : { },
+          "exchangeProperty" : { },
+          "groovy" : { },
+          "header" : { },
+          "hl7terser" : { },
+          "java" : { },
+          "joor" : { },
+          "jq" : { },
+          "js" : { },
+          "jsonpath" : { },
+          "language" : { },
+          "method" : { },
+          "mvel" : { },
+          "ognl" : { },
+          "python" : { },
+          "ref" : { },
+          "simple" : { },
+          "spel" : { },
+          "tokenize" : { },
+          "xpath" : { },
+          "xquery" : { },
+          "xtokenize" : { },
+          "expression" : { }
+        },
+        "required" : [ "name" ]
+      },
+      "org.apache.camel.model.SetVariableDefinition" : {
+        "title" : "Set Variable",
+        "description" : "Sets the value of a variable",
+        "type" : "object",
+        "additionalProperties" : false,
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "expression" ]
+              }, {
+                "required" : [ "constant" ]
+              }, {
+                "required" : [ "csimple" ]
+              }, {
+                "required" : [ "datasonnet" ]
+              }, {
+                "required" : [ "exchangeProperty" ]
+              }, {
+                "required" : [ "groovy" ]
+              }, {
+                "required" : [ "header" ]
+              }, {
+                "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
+              }, {
+                "required" : [ "joor" ]
+              }, {
+                "required" : [ "jq" ]
+              }, {
+                "required" : [ "js" ]
+              }, {
+                "required" : [ "jsonpath" ]
+              }, {
+                "required" : [ "language" ]
+              }, {
+                "required" : [ "method" ]
+              }, {
+                "required" : [ "mvel" ]
+              }, {
+                "required" : [ "ognl" ]
+              }, {
+                "required" : [ "python" ]
+              }, {
+                "required" : [ "ref" ]
+              }, {
+                "required" : [ "simple" ]
+              }, {
+                "required" : [ "spel" ]
+              }, {
+                "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "xpath" ]
+              }, {
+                "required" : [ "xquery" ]
+              }, {
+                "required" : [ "xtokenize" ]
+              } ]
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "expression" ],
+            "properties" : {
+              "expression" : {
+                "title" : "Expression",
+                "description" : "Expression to return the value of the variable",
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+              }
+            }
+          } ]
+        } ],
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "name" : {
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Name of variable to set a new value The simple language can be used to define a dynamic evaluated variable name to be used. Otherwise a constant name will be used."
           },
           "constant" : { },
           "csimple" : { },

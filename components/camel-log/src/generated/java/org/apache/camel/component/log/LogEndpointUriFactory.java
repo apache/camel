@@ -21,7 +21,7 @@ public class LogEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(33);
+        Set<String> props = new HashSet<>(34);
         props.add("exchangeFormatter");
         props.add("groupActiveOnly");
         props.add("groupDelay");
@@ -52,6 +52,7 @@ public class LogEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("showRouteId");
         props.add("showStackTrace");
         props.add("showStreams");
+        props.add("showVariables");
         props.add("skipBodyLineSeparator");
         props.add("sourceLocationLoggerName");
         props.add("style");

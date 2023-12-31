@@ -65,6 +65,32 @@ Camel will store a reference to the resource in the message header with
 key, `org.apache.camel.stringtemplate.resource`. The Resource is an
 `org.springframework.core.io.Resource` object.
 
+== String Template Context
+
+Camel will provide exchange information in the String Template context (just a
+`Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchange.properties` |The `Exchange` properties.
+
+|`variables` |The variables
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
+
 == Hot reloading
 
 The string template resource is by default hot-reloadable for both file

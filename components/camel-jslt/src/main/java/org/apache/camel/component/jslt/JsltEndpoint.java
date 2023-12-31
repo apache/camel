@@ -231,6 +231,9 @@ public class JsltEndpoint extends ResourceEndpoint {
         if (variableMap.containsKey("headers")) {
             serializedVariableMap.put("headers", serializeMapToJsonNode((Map<String, Object>) variableMap.get("headers")));
         }
+        if (variableMap.containsKey("variables")) {
+            serializedVariableMap.put("variables", serializeMapToJsonNode((Map<String, Object>) variableMap.get("variables")));
+        }
         if (variableMap.containsKey("exchange")) {
             Exchange ex = (Exchange) variableMap.get("exchange");
             ObjectNode exchangeNode = OBJECT_MAPPER.createObjectNode();

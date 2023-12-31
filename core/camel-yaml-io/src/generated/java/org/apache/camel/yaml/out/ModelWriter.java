@@ -276,6 +276,11 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteRemovePropertyDefinition("removeProperty", def);
     }
+    public void writeRemoveVariableDefinition(
+            RemoveVariableDefinition def)
+            throws IOException {
+        doWriteRemoveVariableDefinition("removeVariable", def);
+    }
     public void writeResequenceDefinition(
             ResequenceDefinition def)
             throws IOException {
@@ -395,6 +400,11 @@ public class ModelWriter extends BaseWriter {
             SetPropertyDefinition def)
             throws IOException {
         doWriteSetPropertyDefinition("setProperty", def);
+    }
+    public void writeSetVariableDefinition(
+            SetVariableDefinition def)
+            throws IOException {
+        doWriteSetVariableDefinition("setVariable", def);
     }
     public void writeSortDefinition(SortDefinition def) throws IOException {
         doWriteSortDefinition("sort", def);
@@ -1887,6 +1897,15 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("name", def.getName());
         endElement(name);
     }
+    protected void doWriteRemoveVariableDefinition(
+            String name,
+            RemoveVariableDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("name", def.getName());
+        endElement(name);
+    }
     protected void doWriteResequenceDefinition(
             String name,
             ResequenceDefinition def)
@@ -2219,6 +2238,16 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSetPropertyDefinition(
             String name,
             SetPropertyDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("name", def.getName());
+        doWriteExpressionNodeElements(def);
+        endElement(name);
+    }
+    protected void doWriteSetVariableDefinition(
+            String name,
+            SetVariableDefinition def)
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
@@ -4794,6 +4823,7 @@ public class ModelWriter extends BaseWriter {
                 case "RemoveHeadersDefinition" -> doWriteRemoveHeadersDefinition("removeHeaders", (RemoveHeadersDefinition) v);
                 case "RemovePropertiesDefinition" -> doWriteRemovePropertiesDefinition("removeProperties", (RemovePropertiesDefinition) v);
                 case "RemovePropertyDefinition" -> doWriteRemovePropertyDefinition("removeProperty", (RemovePropertyDefinition) v);
+                case "RemoveVariableDefinition" -> doWriteRemoveVariableDefinition("removeVariable", (RemoveVariableDefinition) v);
                 case "ResequenceDefinition" -> doWriteResequenceDefinition("resequence", (ResequenceDefinition) v);
                 case "ResumableDefinition" -> doWriteResumableDefinition("resumable", (ResumableDefinition) v);
                 case "RollbackDefinition" -> doWriteRollbackDefinition("rollback", (RollbackDefinition) v);
@@ -4812,6 +4842,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
                 case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
+                case "SetVariableDefinition" -> doWriteSetVariableDefinition("setVariable", (SetVariableDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);
@@ -4896,6 +4927,7 @@ public class ModelWriter extends BaseWriter {
                 case "RemoveHeadersDefinition" -> doWriteRemoveHeadersDefinition("removeHeaders", (RemoveHeadersDefinition) v);
                 case "RemovePropertiesDefinition" -> doWriteRemovePropertiesDefinition("removeProperties", (RemovePropertiesDefinition) v);
                 case "RemovePropertyDefinition" -> doWriteRemovePropertyDefinition("removeProperty", (RemovePropertyDefinition) v);
+                case "RemoveVariableDefinition" -> doWriteRemoveVariableDefinition("removeVariable", (RemoveVariableDefinition) v);
                 case "ResequenceDefinition" -> doWriteResequenceDefinition("resequence", (ResequenceDefinition) v);
                 case "ResumableDefinition" -> doWriteResumableDefinition("resumable", (ResumableDefinition) v);
                 case "RollbackDefinition" -> doWriteRollbackDefinition("rollback", (RollbackDefinition) v);
@@ -4909,6 +4941,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
                 case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
+                case "SetVariableDefinition" -> doWriteSetVariableDefinition("setVariable", (SetVariableDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);

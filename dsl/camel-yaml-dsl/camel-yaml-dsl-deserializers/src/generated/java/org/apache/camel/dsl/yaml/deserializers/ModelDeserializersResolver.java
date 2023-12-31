@@ -343,6 +343,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "remove-property": return new ModelDeserializers.RemovePropertyDefinitionDeserializer();
             case "removeProperty": return new ModelDeserializers.RemovePropertyDefinitionDeserializer();
             case "org.apache.camel.model.RemovePropertyDefinition": return new ModelDeserializers.RemovePropertyDefinitionDeserializer();
+            case "remove-variable": return new ModelDeserializers.RemoveVariableDefinitionDeserializer();
+            case "removeVariable": return new ModelDeserializers.RemoveVariableDefinitionDeserializer();
+            case "org.apache.camel.model.RemoveVariableDefinition": return new ModelDeserializers.RemoveVariableDefinitionDeserializer();
             case "resequence": return new ModelDeserializers.ResequenceDefinitionDeserializer();
             case "org.apache.camel.model.ResequenceDefinition": return new ModelDeserializers.ResequenceDefinitionDeserializer();
             case "resilience4j-configuration": return new ModelDeserializers.Resilience4jConfigurationDefinitionDeserializer();
@@ -444,6 +447,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "set-property": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "setProperty": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "org.apache.camel.model.SetPropertyDefinition": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
+            case "set-variable": return new ModelDeserializers.SetVariableDefinitionDeserializer();
+            case "setVariable": return new ModelDeserializers.SetVariableDefinitionDeserializer();
+            case "org.apache.camel.model.SetVariableDefinition": return new ModelDeserializers.SetVariableDefinitionDeserializer();
             case "simple": return new ModelDeserializers.SimpleExpressionDeserializer();
             case "org.apache.camel.model.language.SimpleExpression": return new ModelDeserializers.SimpleExpressionDeserializer();
             case "soap": return new ModelDeserializers.SoapDataFormatDeserializer();
