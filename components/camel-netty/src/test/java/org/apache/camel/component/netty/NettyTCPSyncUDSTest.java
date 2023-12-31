@@ -19,18 +19,14 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Add {@code <classifier>linux-x86_64</classifier>} to io.netty:netty-transport-native-epoll dependency or
- * {@code <classifier>osx-x86_64</classifier>} to io.netty:netty-transport-native-kqueue
  *
  * @see <a href="https://netty.io/wiki/native-transports.html">about netty native transport</a>
  */
-@Disabled("Requires native library to load, can be run manually")
 public class NettyTCPSyncUDSTest extends BaseNettyTest {
 
     @Test
