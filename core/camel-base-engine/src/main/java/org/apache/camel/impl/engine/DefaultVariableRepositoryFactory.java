@@ -47,6 +47,11 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
 
     @Override
     public VariableRepository getVariableRepository(String id) {
+        // ensure we are started if in use
+        if (!isStarted()) {
+            start();
+        }
+
         if (global != null && "global".equals(id)) {
             return global;
         }
@@ -79,13 +84,15 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
         // let's see if there is a custom global repo
         VariableRepository repo = getVariableRepository("global");
         if (repo != null) {
-            LOG.info("Using VariableRepository: {} as global repository", repo.getId());
+            if (!(repo instanceof GlobalVariableRepository)) {
+                LOG.info("Using VariableRepository: {} as global repository", repo.getId());
+            }
             global = repo;
         } else {
             global = new GlobalVariableRepository();

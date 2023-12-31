@@ -37,7 +37,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.main.MainHelper.computeProperties;
 import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
 
 /**
@@ -99,7 +98,8 @@ public final class MainSupportModelConfigurer {
             String value = variableProperties.getProperty(key);
             String id = StringHelper.before(key, ":", "global");
             key = StringHelper.after(key, ":", key);
-            VariableRepository repo = camelContext.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class).getVariableRepository(id);
+            VariableRepository repo = camelContext.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
+                    .getVariableRepository(id);
             // it may be a resource to load from disk then
             if (value.startsWith(LanguageSupport.RESOURCE)) {
                 value = value.substring(9);

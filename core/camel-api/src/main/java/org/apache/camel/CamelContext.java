@@ -828,7 +828,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Sets a variable
      *
-     * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     * @param name  the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
      *              repository. If no repo-id is provided, then global repository will be used.
      * @param value the value of the variable
      */

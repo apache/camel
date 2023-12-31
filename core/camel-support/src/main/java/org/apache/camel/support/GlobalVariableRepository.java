@@ -28,7 +28,7 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * Global {@link VariableRepository} which stores variables in-memory in a {@link Map}.
  */
-public class GlobalVariableRepository extends ServiceSupport implements BrowsableVariableRepository {
+public final class GlobalVariableRepository extends ServiceSupport implements BrowsableVariableRepository {
 
     private final ConcurrentMap<String, Object> variables = new ConcurrentHashMap<>();
 

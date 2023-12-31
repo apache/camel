@@ -16,11 +16,11 @@
  */
 package org.apache.camel.main;
 
+import java.io.FileInputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
-
-import java.io.FileInputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
