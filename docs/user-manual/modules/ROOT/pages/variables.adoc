@@ -136,3 +136,27 @@ YAML::
             uri: kafka:order.event
 ----
 ====
+
+== Configuring initial variables on startup
+
+When Camel is starting then it's possible to configure initial variables.
+
+This can be done in `application.properties` as shown below:
+
+[source,properties]
+----
+camel.variable.greeting = Random number
+camel.variable.random = 999
+----
+
+The variables are default set on the `global` repository, but you can specify a custom repository by
+prefixing with `id:` in the key, such as below:
+
+[source,properties]
+----
+camel.variable.acme:gold = true
+camel.variable.greeting = Random number
+camel.variable.random = 999
+----
+
+Here the gold variable is set on the `acme` repository, and the other variables are set on the `global` repository.

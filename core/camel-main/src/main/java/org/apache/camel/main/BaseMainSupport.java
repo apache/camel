@@ -970,6 +970,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties otelProperties = new OrderedLocationProperties();
         OrderedLocationProperties metricsProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeTemplateProperties = new OrderedLocationProperties();
+        OrderedLocationProperties variableProperties = new OrderedLocationProperties();
         OrderedLocationProperties beansProperties = new OrderedLocationProperties();
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
         OrderedLocationProperties globalOptions = new OrderedLocationProperties();
@@ -1051,6 +1052,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(17);
                 validateOptionAndValue(key, option, value);
                 devConsoleProperties.put(loc, optionKey(option), value);
+            } else if (key.startsWith("camel.variable.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(15);
+                validateOptionAndValue(key, option, value);
+                variableProperties.put(loc, optionKey(option), value);
             } else if (key.startsWith("camel.beans.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1096,6 +1103,11 @@ public abstract class BaseMainSupport extends BaseService {
                 Object value = globalOptions.getProperty(name);
                 mainConfigurationProperties.addGlobalOption(name, value);
             }
+        }
+        // create variables first as they may be used later
+        if (!variableProperties.isEmpty()) {
+            LOG.debug("Auto-configuring Variables from loaded properties: {}", variableProperties.size());
+            MainSupportModelConfigurer.setVariableProperties(camelContext, variableProperties, autoConfiguredProperties);
         }
         // create beans first as they may be used later
         if (!beansProperties.isEmpty()) {
@@ -1192,6 +1204,11 @@ public abstract class BaseMainSupport extends BaseService {
                 autoConfiguredProperties, resilience4jProperties, faultToleranceProperties);
 
         // log which options was not set
+        if (!variableProperties.isEmpty()) {
+            variableProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.variable.{}={}", k, v);
+            });
+        }
         if (!beansProperties.isEmpty()) {
             beansProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.beans.{}={}", k, v);

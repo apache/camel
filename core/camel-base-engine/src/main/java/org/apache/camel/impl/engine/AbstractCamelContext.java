@@ -1582,6 +1582,17 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void setVariable(String name, Object value) {
+        String id = StringHelper.before(name, ":", "global");
+        name = StringHelper.after(name, ":", name);
+        VariableRepository repo
+                = camelContextExtension.getContextPlugin(VariableRepositoryFactory.class).getVariableRepository(id);
+        if (repo != null) {
+            repo.setVariable(name, value);
+        }
+    }
+
+    @Override
     public TypeConverter getTypeConverter() {
         return camelContextExtension.getTypeConverter();
     }

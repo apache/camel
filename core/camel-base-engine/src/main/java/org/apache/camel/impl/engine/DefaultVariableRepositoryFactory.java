@@ -79,8 +79,8 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // let's see if there is a custom global repo
         VariableRepository repo = getVariableRepository("global");

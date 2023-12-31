@@ -826,6 +826,15 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     <T> T getVariable(String name, Class<T> type);
 
     /**
+     * Sets a variable
+     *
+     * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *              repository. If no repo-id is provided, then global repository will be used.
+     * @param value the value of the variable
+     */
+    void setVariable(String name, Object value);
+
+    /**
      * Returns the configured properties component or create one if none has been configured.
      *
      * @return the properties component
