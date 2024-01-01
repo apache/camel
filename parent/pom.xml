@@ -80,7 +80,7 @@
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.8</caffeine-version>
         <californium-version>2.8.0</californium-version>
-        <californium-scandium-version>2.8.0</californium-scandium-version>
+        <californium-scandium-version>3.10.0</californium-scandium-version>
         <camunda-version>7.20.0</camunda-version>
         <camel-k-version>2.1.0</camel-k-version>
         <cassandra-driver-version>4.17.0</cassandra-driver-version>
