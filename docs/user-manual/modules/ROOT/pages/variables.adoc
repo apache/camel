@@ -75,7 +75,7 @@ String str = context.getVariable("myGlobalKey", String.class);
 == Setting and getting variables from DSL
 
 It is also possible to use variables in Camel xref:routes.adoc[routes] using the
-xref:components:eips:setVariable-eip.adoc[SetVariable], and xref:components:eips:removeVariable-eip.adoc[RemoveVariable] EIPs.
+setVariable and removeVariable EIPs.
 
 These EIPs makes it possible to set and remove variables from routes. And you can also access variables from the xref:components:languages:simple-language.adoc[Simple] language.
 
