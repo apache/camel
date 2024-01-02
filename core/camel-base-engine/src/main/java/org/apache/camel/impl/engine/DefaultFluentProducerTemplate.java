@@ -214,7 +214,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withExchangeProperties and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withExchangeProperties and withProcessor with FluentProducerTemplate");
         }
 
         Map<String, Object> map = clone.exchangeProperties;
@@ -231,7 +232,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withExchangeProperty and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withExchangeProperty and withProcessor with FluentProducerTemplate");
         }
 
         Map<String, Object> map = clone.exchangeProperties;
@@ -457,24 +459,23 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         // Determine the target endpoint
         final Endpoint target = clone.target();
 
-        Future<T> result =
-                clone.template().asyncSend(target, exchange -> {
-                    // Make a copy of the headers and body so that async processing won't
-                    // be invalidated by subsequent reuse of the template
-                    Object bodyCopy = clone.body;
+        Future<T> result = clone.template().asyncSend(target, exchange -> {
+            // Make a copy of the headers and body so that async processing won't
+            // be invalidated by subsequent reuse of the template
+            Object bodyCopy = clone.body;
 
-                    exchange.setPattern(ExchangePattern.InOut);
-                    exchange.getMessage().setBody(bodyCopy);
-                    if (clone.headers != null) {
-                        exchange.getMessage().setHeaders(new HashMap<>(clone.headers));
-                    }
-                    if (clone.exchangeProperties != null) {
-                        exchange.getProperties().putAll(clone.exchangeProperties);
-                    }
-                    if (clone.variables != null) {
-                        clone.variables.forEach((k, v) -> ExchangeHelper.setVariable(exchange, k, v));
-                    }
-                }).thenApply(answer -> answer.getContext().getTypeConverter().convertTo(type, answer));
+            exchange.setPattern(ExchangePattern.InOut);
+            exchange.getMessage().setBody(bodyCopy);
+            if (clone.headers != null) {
+                exchange.getMessage().setHeaders(new HashMap<>(clone.headers));
+            }
+            if (clone.exchangeProperties != null) {
+                exchange.getProperties().putAll(clone.exchangeProperties);
+            }
+            if (clone.variables != null) {
+                clone.variables.forEach((k, v) -> ExchangeHelper.setVariable(exchange, k, v));
+            }
+        }).thenApply(answer -> answer.getMessage().getBody(type));
 
         // reset cloned flag so when we use it again it has to set values again
         cloned = false;
@@ -624,8 +625,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     private Processor defaultAsyncProcessor() {
         final Map<String, Object> headersCopy = ObjectHelper.isNotEmpty(this.headers) ? new HashMap<>(this.headers) : null;
-        final Map<String, Object> propertiesCopy = ObjectHelper.isNotEmpty(this.exchangeProperties) ? new HashMap<>(this.exchangeProperties) : null;
-        final Map<String, Object> variablesCopy = ObjectHelper.isNotEmpty(this.variables) ? new HashMap<>(this.variables) : null;
+        final Map<String, Object> propertiesCopy
+                = ObjectHelper.isNotEmpty(this.exchangeProperties) ? new HashMap<>(this.exchangeProperties) : null;
+        final Map<String, Object> variablesCopy
+                = ObjectHelper.isNotEmpty(this.variables) ? new HashMap<>(this.variables) : null;
         final Object bodyCopy = this.body;
         return exchange -> {
             if (headersCopy != null) {

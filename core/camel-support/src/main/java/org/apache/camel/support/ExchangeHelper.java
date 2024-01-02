@@ -1076,15 +1076,16 @@ public final class ExchangeHelper {
     /**
      * Sets the variable
      *
-     * @param exchange  the exchange
-     * @param name  the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
-     *              repository. If no repo-id is provided, then the variable is set on the exchange
-     * @param value the value of the variable
+     * @param exchange the exchange
+     * @param name     the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *                 repository. If no repo-id is provided, then the variable is set on the exchange
+     * @param value    the value of the variable
      */
     public static void setVariable(Exchange exchange, String name, Object value) {
         String id = StringHelper.before(name, ":");
         if (id != null) {
-            VariableRepositoryFactory factory = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+            VariableRepositoryFactory factory
+                    = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
             VariableRepository repo = factory.getVariableRepository(id);
             if (repo != null) {
                 name = StringHelper.after(name, ":");
