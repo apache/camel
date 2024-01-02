@@ -40,15 +40,20 @@ public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProce
     private String routeId;
     private final String name;
     private final Expression headerName;
+    private final String toName;
+    private final Expression toHeaderName;
     private final Class<?> type;
     private final String charset;
     private final boolean mandatory;
 
-    public ConvertHeaderProcessor(String name, Expression headerName, Class<?> type, String charset, boolean mandatory) {
+    public ConvertHeaderProcessor(String name, Expression headerName, String toName, Expression toHeaderName,
+                                  Class<?> type, String charset, boolean mandatory) {
         ObjectHelper.notNull(headerName, "headerName");
         ObjectHelper.notNull(type, "type", this);
         this.name = name;
         this.headerName = headerName;
+        this.toName = toName;
+        this.toHeaderName = toHeaderName;
         this.type = type;
         this.charset = IOHelper.normalizeCharset(charset);
         this.mandatory = mandatory;
@@ -85,6 +90,7 @@ public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProce
 
         // what is the header name
         String name = headerName.evaluate(exchange, String.class);
+        String targetName = toHeaderName != null ? toHeaderName.evaluate(exchange, String.class) : name;
 
         if (old.getHeader(name) == null) {
             // only convert if there is a header
@@ -114,7 +120,7 @@ public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProce
         } else {
             value = exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
         }
-        old.setHeader(name, value);
+        old.setHeader(targetName, value);
 
         // remove or restore charset when we are done as we should not propagate that,
         // as that can lead to double converting later on
@@ -147,6 +153,10 @@ public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProce
 
     public String getName() {
         return name;
+    }
+
+    public String getToName() {
+        return toName;
     }
 
     public Class<?> getType() {

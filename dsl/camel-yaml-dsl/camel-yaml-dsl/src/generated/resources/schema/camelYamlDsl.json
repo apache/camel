@@ -847,6 +847,11 @@
             "title" : "Name",
             "description" : "Name of message header to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
           },
+          "toName" : {
+            "type" : "string",
+            "title" : "To Name",
+            "description" : "To use another header to store the result. By default, the result is stored in the same header. This option allows to use another header. The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
+          },
           "type" : {
             "type" : "string",
             "title" : "Type",

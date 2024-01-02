@@ -57,6 +57,42 @@ class ConvertHeaderTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "convert-header-another-to"() {
+        setup:
+        loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - convertHeaderTo:
+                          name: foo
+                          toName: bar  
+                          type: "java.lang.String"
+                          charset: "UTF8"
+                      - to: "mock:result"
+            '''
+
+        withMock('mock:result') {
+            expectedHeaderReceived("bar", 'test')
+        }
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withHeader("foo", 'test'.bytes).send()
+        }
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0].outputs[0], ConvertHeaderDefinition) {
+            name == 'foo'
+            toName == 'bar'
+            type == 'java.lang.String'
+            charset == 'UTF8'
+        }
+
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "Error: kebab-case: convert-header-to"() {
         when:
         var route = '''

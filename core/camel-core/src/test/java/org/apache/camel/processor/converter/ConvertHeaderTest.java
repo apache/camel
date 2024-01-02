@@ -101,6 +101,19 @@ public class ConvertHeaderTest extends ContextTestSupport {
     }
 
     @Test
+    public void testConvertToName() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedHeaderReceived("foo", "11");
+        result.expectedHeaderReceived("bar", 11);
+        result.message(0).header("foo").isInstanceOf(String.class);
+        result.message(0).header("bar").isInstanceOf(Integer.class);
+
+        template.sendBodyAndHeader("direct:bar", null, "foo", "11");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testConvertToIntegerNotMandatory() throws Exception {
         // mandatory should fail
         try {
@@ -209,6 +222,7 @@ public class ConvertHeaderTest extends ContextTestSupport {
                 from("direct:charset").convertHeaderTo("foo", byte[].class, "iso-8859-1").to("mock:result");
                 from("direct:charset2").convertHeaderTo("foo", byte[].class, "utf-16").to("mock:result");
                 from("direct:charset3").convertHeaderTo("foo", String.class, "utf-16").to("mock:result");
+                from("direct:bar").convertHeaderTo("foo", "bar", Integer.class).to("mock:result");
             }
         };
     }
