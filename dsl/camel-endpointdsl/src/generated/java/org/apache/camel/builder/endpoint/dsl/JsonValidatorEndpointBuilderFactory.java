@@ -256,6 +256,38 @@ public interface JsonValidatorEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of Jackson DeserializationFeature enum values
+         * which will be disabled for parsing exchange body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param disabledDeserializationFeatures the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJsonValidatorEndpointBuilder disabledDeserializationFeatures(
+                String disabledDeserializationFeatures) {
+            doSetProperty("disabledDeserializationFeatures", disabledDeserializationFeatures);
+            return this;
+        }
+        /**
+         * Comma-separated list of Jackson DeserializationFeature enum values
+         * which will be enabled for parsing exchange body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param enabledDeserializationFeatures the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJsonValidatorEndpointBuilder enabledDeserializationFeatures(
+                String enabledDeserializationFeatures) {
+            doSetProperty("enabledDeserializationFeatures", enabledDeserializationFeatures);
+            return this;
+        }
+        /**
          * To use a custom ValidatorErrorHandler. The default error handler
          * captures the errors and throws an exception.
          * 
