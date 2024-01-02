@@ -25,12 +25,12 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Converts the message header to another type
+ * Converts the variable to another type
  */
 @Metadata(label = "eip,transformation")
-@XmlRootElement(name = "convertHeaderTo")
+@XmlRootElement(name = "convertVariableTo")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDefinition> {
+public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariableDefinition> {
 
     @XmlTransient
     private Class<?> typeClass;
@@ -46,28 +46,28 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
     @Metadata(label = "advanced")
     private String charset;
 
-    public ConvertHeaderDefinition() {
+    public ConvertVariableDefinition() {
     }
 
-    public ConvertHeaderDefinition(String name, String type) {
+    public ConvertVariableDefinition(String name, String type) {
         setName(name);
         setType(type);
     }
 
-    public ConvertHeaderDefinition(String name, Class<?> typeClass) {
+    public ConvertVariableDefinition(String name, Class<?> typeClass) {
         setName(name);
         setTypeClass(typeClass);
         setType(typeClass.getCanonicalName());
     }
 
-    public ConvertHeaderDefinition(String name, Class<?> typeClass, boolean mandatory) {
+    public ConvertVariableDefinition(String name, Class<?> typeClass, boolean mandatory) {
         setName(name);
         setTypeClass(typeClass);
         setType(typeClass.getCanonicalName());
         setMandatory(mandatory ? "true" : "false");
     }
 
-    public ConvertHeaderDefinition(String name, Class<?> typeClass, String charset) {
+    public ConvertVariableDefinition(String name, Class<?> typeClass, String charset) {
         setName(name);
         setTypeClass(typeClass);
         setType(typeClass.getCanonicalName());
@@ -76,21 +76,21 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
 
     @Override
     public String toString() {
-        return "ConvertHeaderTo[" + getName() + ": " + getType() + "]";
+        return "ConvertVariableTo[" + getName() + ": " + getType() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "convertHeaderTo";
+        return "convertVariableTo";
     }
 
     @Override
     public String getLabel() {
-        return "convertHeaderTo[" + getType() + "]";
+        return "convertVariableTo[" + getType() + "]";
     }
 
     /**
-     * Name of message header to convert its value
+     * Name of variable to convert its value
      * <p/>
      * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used. Otherwise a
      * constant name will be used.

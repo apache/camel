@@ -2859,6 +2859,44 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Converts the variable to the specified type
+     *
+     * @param  name the variable name
+     * @param  type the type to convert to
+     * @return      the builder
+     */
+    public Type convertVariableTo(String name, Class<?> type) {
+        addOutput(new ConvertVariableDefinition(name, type));
+        return asType();
+    }
+
+    /**
+     * Converts the variable to the specified type
+     *
+     * @param  name      the variable name
+     * @param  type      the type to convert to
+     * @param  mandatory whether to use mandatory type conversion or not
+     * @return           the builder
+     */
+    public Type convertVariableTo(String name, Class<?> type, boolean mandatory) {
+        addOutput(new ConvertVariableDefinition(name, type, mandatory));
+        return asType();
+    }
+
+    /**
+     * Converts the variable to the specified type
+     *
+     * @param  name    the variable name
+     * @param  type    the type to convert to
+     * @param  charset the charset to use by type converters (not all converters support specific charset)
+     * @return         the builder
+     */
+    public Type convertVariableTo(String name, Class<?> type, String charset) {
+        addOutput(new ConvertVariableDefinition(name, type, charset));
+        return asType();
+    }
+
+    /**
      * Sorts the expression using a default sorting based on toString representation.
      *
      * @param  expression the expression, must be convertable to {@link List}

@@ -244,6 +244,15 @@ Converts the message header to another type
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="convertVariableTo" type="tns:convertVariableDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Converts the variable to another type
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="crypto" type="tns:cryptoDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3497,6 +3506,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -4058,6 +4068,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -4164,6 +4175,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -4263,6 +4275,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -4345,6 +4358,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -4794,6 +4808,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -5015,6 +5030,52 @@ To use a specific charset when converting.
 <![CDATA[
 Name of message header to convert its value The simple language can be used to define a dynamic evaluated header name to
 be used. Otherwise a constant name will be used.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The java type to convert to.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mandatory" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+When mandatory then the conversion must return a value (cannot be null), if this is not possible then
+NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the value
+is null. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="charset" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a specific charset when converting.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="convertVariableDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Name of variable to convert its value The simple language can be used to define a dynamic evaluated header name to be
+used. Otherwise a constant name will be used.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5846,6 +5907,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -5935,6 +5997,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -6083,6 +6146,7 @@ Global option value.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -6242,6 +6306,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -6338,6 +6403,7 @@ intercepted.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -6445,6 +6511,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -6543,6 +6610,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -6853,6 +6921,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -10152,6 +10221,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -10374,6 +10444,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -10571,6 +10642,7 @@ its considered handled as well.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -10828,6 +10900,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -10907,6 +10980,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -11515,6 +11589,7 @@ Name of variable to remove.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -11862,6 +11937,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -12294,6 +12370,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -12727,6 +12804,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -12956,6 +13034,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -13511,6 +13590,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>
@@ -13650,6 +13730,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
             <xs:element ref="tns:delay"/>
             <xs:element ref="tns:dynamicRouter"/>
             <xs:element ref="tns:enrich"/>

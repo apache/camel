@@ -45,6 +45,7 @@ import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedConvertBody;
 import org.apache.camel.management.mbean.ManagedConvertHeader;
+import org.apache.camel.management.mbean.ManagedConvertVariable;
 import org.apache.camel.management.mbean.ManagedCustomLoadBalancer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedDelayer;
@@ -196,6 +197,7 @@ import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.apache.camel.support.processor.ConvertHeaderProcessor;
+import org.apache.camel.support.processor.ConvertVariableProcessor;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.PredicateValidatingProcessor;
 import org.apache.camel.support.processor.ThroughputLogger;
@@ -359,6 +361,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedConvertBody(context, (ConvertBodyProcessor) target, definition);
             } else if (target instanceof ConvertHeaderProcessor) {
                 answer = new ManagedConvertHeader(context, (ConvertHeaderProcessor) target, definition);
+            } else if (target instanceof ConvertVariableProcessor) {
+                answer = new ManagedConvertVariable(context, (ConvertVariableProcessor) target, definition);
             } else if (target instanceof ChoiceProcessor) {
                 answer = new ManagedChoice(context, (ChoiceProcessor) target, definition);
             } else if (target instanceof ClaimCheckProcessor) {
