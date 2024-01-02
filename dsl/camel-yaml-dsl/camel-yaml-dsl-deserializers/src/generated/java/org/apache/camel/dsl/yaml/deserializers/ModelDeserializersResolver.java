@@ -87,6 +87,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "convert-header-to": return new ModelDeserializers.ConvertHeaderDefinitionDeserializer();
             case "convertHeaderTo": return new ModelDeserializers.ConvertHeaderDefinitionDeserializer();
             case "org.apache.camel.model.ConvertHeaderDefinition": return new ModelDeserializers.ConvertHeaderDefinitionDeserializer();
+            case "convert-variable-to": return new ModelDeserializers.ConvertVariableDefinitionDeserializer();
+            case "convertVariableTo": return new ModelDeserializers.ConvertVariableDefinitionDeserializer();
+            case "org.apache.camel.model.ConvertVariableDefinition": return new ModelDeserializers.ConvertVariableDefinitionDeserializer();
             case "crypto": return new ModelDeserializers.CryptoDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.CryptoDataFormat": return new ModelDeserializers.CryptoDataFormatDeserializer();
             case "csv": return new ModelDeserializers.CsvDataFormatDeserializer();

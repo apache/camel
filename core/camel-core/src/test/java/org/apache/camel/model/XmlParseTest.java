@@ -168,6 +168,15 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
+    public void testParseConvertVariableXml() throws Exception {
+        RouteDefinition route = assertOneRoute("convertVariable.xml");
+        assertFrom(route, "seda:a");
+        ConvertVariableDefinition node = assertOneProcessorInstanceOf(ConvertVariableDefinition.class, route);
+        assertEquals("foo", node.getName());
+        assertEquals("java.lang.Integer", node.getType());
+    }
+
+    @Test
     public void testParseRoutingSlipXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlip.xml");
         assertFrom(route, "seda:a");
