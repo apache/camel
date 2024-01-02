@@ -30,70 +30,42 @@
 
         <route>
             <from uri="direct:start"/>
-            <setVariable name="foo">
-                <header>foo</header>
-            </setVariable>
-            <removeHeader name="foo"/>
             <convertVariableTo name="foo" type="java.lang.Integer"/>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:optional"/>
-            <setVariable name="foo">
-                <header>foo</header>
-            </setVariable>
-            <removeHeader name="foo"/>
             <convertVariableTo name="foo" type="java.lang.Integer" mandatory="false"/>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:invalid"/>
-            <setVariable name="foo">
-                <header>foo</header>
-            </setVariable>
-            <removeHeader name="foo"/>
             <convertVariableTo name="foo" type="java.util.Date"/>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:charset"/>
-            <setVariable name="foo">
-                <header>foo</header>
-            </setVariable>
-            <removeHeader name="foo"/>
             <convertVariableTo name="foo" type="java.lang.byte[]" charset="iso-8859-1"/>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:charset2"/>
-            <setVariable name="foo">
-                <header>foo</header>
-            </setVariable>
-            <removeHeader name="foo"/>
             <convertVariableTo name="foo" type="java.lang.byte[]" charset="utf-16"/>
             <to uri="mock:result"/>
         </route>
         
         <route>
             <from uri="direct:charset3"/>
-            <setVariable name="foo">
-                <header>foo</header>
-            </setVariable>
-            <removeHeader name="foo"/>
             <convertVariableTo name="foo" type="java.lang.String" charset="utf-16"/>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:bar"/>
-            <setVariable name="foo">
-                <header>foo</header>
-            </setVariable>
-            <removeHeader name="foo"/>
             <convertVariableTo name="foo" toName="bar" type="java.lang.Integer"/>
             <to uri="mock:result"/>
         </route>

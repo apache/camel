@@ -212,7 +212,7 @@ public class ExpressionBuilder {
                         key = StringHelper.after(key, ":");
                         return repo.getVariable(key);
                     } else {
-                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exists");
+                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
                     }
                 } else {
                     return exchange.getVariable(key);
@@ -289,7 +289,7 @@ public class ExpressionBuilder {
                         }
                         return value;
                     } else {
-                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exists");
+                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
                     }
                 } else {
                     return exchange.getVariable(key, type);

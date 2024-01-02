@@ -123,7 +123,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(0);
         errorEndpoint.expectedMessageCount(1);
 
-        //dynamic job should fail as header is present but the job does not exists
+        //dynamic job should fail as header is present but the job does not exist
         header(SpringBatchConstants.JOB_NAME).append("thisJobDoesNotExsistAtAll" + Date.from(Instant.now()));
         sendBody("direct:dyanmic?block=false", "Start the job, please.");
 

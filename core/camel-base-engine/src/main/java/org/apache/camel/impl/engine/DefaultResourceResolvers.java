@@ -73,7 +73,7 @@ public final class DefaultResourceResolvers {
                 @Override
                 public InputStream getInputStream() throws IOException {
                     if (!exists()) {
-                        throw new FileNotFoundException(path + " does not exists");
+                        throw new FileNotFoundException(path + " does not exist");
                     }
                     if (path.isDirectory()) {
                         throw new FileNotFoundException(path + " is a directory");

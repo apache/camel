@@ -482,7 +482,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param  parameters the parameters
      * @param  key        the key
      * @param  type       the requested type to convert the value from the parameter
-     * @return            the converted value parameter, <tt>null</tt> if parameter does not exists.
+     * @return            the converted value parameter, <tt>null</tt> if parameter does not exist.
      * @see               #resolveAndRemoveReferenceParameter(Map, String, Class)
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type) {

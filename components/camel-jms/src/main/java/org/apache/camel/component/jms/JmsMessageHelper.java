@@ -110,7 +110,7 @@ public final class JmsMessageHelper {
      *
      * @param  jmsMessage   the JMS message
      * @param  name         name of the property to get
-     * @return              the property value, or <tt>null</tt> if does not exists
+     * @return              the property value, or <tt>null</tt> if does not exist
      * @throws JMSException can be thrown
      */
     public static Object getProperty(Message jmsMessage, String name) throws JMSException {
@@ -126,7 +126,7 @@ public final class JmsMessageHelper {
      *
      * @param  jmsMessage the JMS message
      * @param  name       name of the property to get
-     * @return            the property value, or <tt>null</tt> if does not exists or failure to get the value
+     * @return            the property value, or <tt>null</tt> if does not exist or failure to get the value
      */
     public static Long getSafeLongProperty(Message jmsMessage, String name) {
         try {

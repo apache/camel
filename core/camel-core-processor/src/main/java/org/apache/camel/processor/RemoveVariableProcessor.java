@@ -66,7 +66,7 @@ public class RemoveVariableProcessor extends AsyncProcessorSupport
                     repo.removeVariable(key);
                 } else {
                     exchange.setException(
-                            new IllegalArgumentException("VariableRepository with id: " + id + " does not exists"));
+                            new IllegalArgumentException("VariableRepository with id: " + id + " does not exist"));
                 }
             } else {
                 exchange.removeVariable(key);

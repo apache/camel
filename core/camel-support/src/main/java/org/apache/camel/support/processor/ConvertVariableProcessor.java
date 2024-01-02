@@ -115,7 +115,7 @@ public class ConvertVariableProcessor extends ServiceSupport
             key = StringHelper.after(key, ":");
             repo = factory.getVariableRepository(id);
             if (repo == null) {
-                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exists");
+                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
             }
             value = repo.getVariable(key);
         } else {

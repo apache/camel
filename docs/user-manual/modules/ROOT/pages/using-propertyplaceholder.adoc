@@ -59,7 +59,7 @@ which is defined with the `?` (question mark) as prefix in the key name, as show
 {{?myBufferSize}}
 ----
 
-If a value for the key exists then the value is used, however if the key does not exists,
+If a value for the key exists then the value is used, however if the key does not exist,
 then Camel understands this, such as when used in xref:endpoint.adoc[Endpoints]:
 
 [source,text]
@@ -633,7 +633,7 @@ Then these values can be used in your Camel routes such as:
 </camelContext>
 ----
 
-You can also provide a default value in case a key does not exists:
+You can also provide a default value in case a key does not exist:
 
 [source,xml]
 ----

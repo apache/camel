@@ -248,7 +248,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             }
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
-                LOG.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
+                LOG.debug("Cannot list files in directory {} due directory does not exist or file permission error.", dir);
             } else {
                 throw e;
             }

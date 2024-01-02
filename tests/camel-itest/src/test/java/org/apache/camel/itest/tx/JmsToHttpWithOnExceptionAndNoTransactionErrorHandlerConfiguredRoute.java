@@ -73,7 +73,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
             if ("unknown".equals(user)) {
                 // no page for a unknown user
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                exchange.getMessage().setBody("Page does not exists");
+                exchange.getMessage().setBody("Page does not exist");
                 return;
             } else if ("guest".equals(user)) {
                 // not okay for guest user

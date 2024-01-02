@@ -72,7 +72,7 @@ public interface ManagementAgent extends Service {
      *
      * @param  name  the mbean name
      * @param  mbean the client interface, such as from the {@link org.apache.camel.api.management.mbean} package.
-     * @return       the client or <tt>null</tt> if mbean does not exists
+     * @return       the client or <tt>null</tt> if mbean does not exist
      */
     <T> T newProxyClient(ObjectName name, Class<T> mbean);
 

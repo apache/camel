@@ -861,7 +861,7 @@ public abstract class CamelTestSupport
      * @param  create                  whether or not to allow the endpoint to be created if it doesn't exist
      * @return                         the mock endpoint or an {@link NoSuchEndpointException} is thrown if it could not
      *                                 be resolved
-     * @throws NoSuchEndpointException is the mock endpoint does not exists
+     * @throws NoSuchEndpointException is the mock endpoint does not exist
      */
     protected MockEndpoint getMockEndpoint(String uri, boolean create) throws NoSuchEndpointException {
         // look for existing mock endpoints that have the same queue name, and

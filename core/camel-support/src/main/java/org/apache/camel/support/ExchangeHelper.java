@@ -1092,7 +1092,7 @@ public final class ExchangeHelper {
                 repo.setVariable(name, value);
             } else {
                 exchange.setException(
-                        new IllegalArgumentException("VariableRepository with id: " + id + " does not exists"));
+                        new IllegalArgumentException("VariableRepository with id: " + id + " does not exist"));
             }
         } else {
             exchange.setVariable(name, value);

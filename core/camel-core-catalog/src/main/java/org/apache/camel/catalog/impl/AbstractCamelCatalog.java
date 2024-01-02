@@ -379,7 +379,7 @@ public abstract class AbstractCamelCatalog {
             }
         }
 
-        // now check if all required values are there, and that a default value does not exists
+        // now check if all required values are there, and that a default value does not exist
         for (BaseOptionModel row : rows.values()) {
             if (row.isRequired()) {
                 String name = row.getName();

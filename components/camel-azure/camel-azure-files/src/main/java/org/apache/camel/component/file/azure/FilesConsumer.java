@@ -182,7 +182,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
                 LOG.debug(
-                        "Cannot list files in directory {} due directory does not exists or file permission error.",
+                        "Cannot list files in directory {} due directory does not exist or file permission error.",
                         dir);
                 return null;
             } else {

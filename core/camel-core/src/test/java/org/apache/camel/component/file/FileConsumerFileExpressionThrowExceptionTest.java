@@ -61,7 +61,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
                 from(fileUri("bean"
                              + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=next}.txt&delete=true"))
                         .to("mock:result");
-                // specify a method name that does not exists
+                // specify a method name that does not exist
             }
         });
 

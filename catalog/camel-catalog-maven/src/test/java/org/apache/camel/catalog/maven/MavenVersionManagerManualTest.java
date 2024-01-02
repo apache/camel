@@ -145,7 +145,7 @@ public class MavenVersionManagerManualTest {
         String current = manager.getLoadedVersion();
         assertNull(current);
 
-        // version 2.99 does not exists and cannot be loaded
+        // version 2.99 does not exist and cannot be loaded
         boolean loaded = manager.loadVersion("2.99");
         assertFalse(loaded);
     }
