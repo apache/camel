@@ -5043,6 +5043,17 @@ The java type to convert to.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="toName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use another header to store the result. By default, the result is stored in the same header. This option allows to
+use another header. The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a
+constant name will be used.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="mandatory" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -5085,6 +5096,17 @@ used. Otherwise a constant name will be used.
             <xs:documentation xml:lang="en">
 <![CDATA[
 The java type to convert to.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="toName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use another variable to store the result. By default, the result is stored in the same variable. This option allows
+to use another variable. The simple language can be used to define a dynamic evaluated variable name to be used.
+Otherwise a constant name will be used.
 ]]>
             </xs:documentation>
           </xs:annotation>
