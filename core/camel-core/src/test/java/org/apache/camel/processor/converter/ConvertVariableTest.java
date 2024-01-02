@@ -27,6 +27,7 @@ import org.apache.camel.NoSuchVariableException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -38,6 +39,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ConvertVariableTest extends ContextTestSupport {
 
     private FluentProducerTemplate fluent;
+
+    @BeforeEach
+    public void setupTemplate() {
+        fluent = context.createFluentProducerTemplate();
+    }
 
     @Test
     public void testConvertBodyTo() {
@@ -214,8 +220,6 @@ public class ConvertVariableTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fluent = context.createFluentProducerTemplate();
-
                 from("direct:start").convertVariableTo("foo", Integer.class).to("mock:result");
                 from("direct:optional").convertVariableTo("foo", Integer.class, false).to("mock:result");
                 from("direct:invalid").convertVariableTo("foo", Date.class).to("mock:result");

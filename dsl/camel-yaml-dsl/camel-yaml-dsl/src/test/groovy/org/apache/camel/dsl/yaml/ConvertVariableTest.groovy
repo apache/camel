@@ -73,7 +73,7 @@ class ConvertVariableTest extends YamlTestSupport {
             '''
 
         withMock('mock:result') {
-            expectedVariableReceived("foo", 'Hello World')
+            expectedVariableReceived("foo", 'test')
         }
         when:
         context.start()
