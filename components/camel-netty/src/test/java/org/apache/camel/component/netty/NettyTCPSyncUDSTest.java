@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @see <a href="https://netty.io/wiki/native-transports.html">about netty native transport</a>
  */
+@EnabledOnOs({OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD})
 public class NettyTCPSyncUDSTest extends BaseNettyTest {
 
     @Test
