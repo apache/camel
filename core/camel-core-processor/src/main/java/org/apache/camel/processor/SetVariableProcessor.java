@@ -79,7 +79,7 @@ public class SetVariableProcessor extends AsyncProcessorSupport implements Trace
                     repo.setVariable(key, newVariable);
                 } else {
                     exchange.setException(
-                            new IllegalArgumentException("VariableRepository with id: " + id + " does not exists"));
+                            new IllegalArgumentException("VariableRepository with id: " + id + " does not exist"));
                 }
             } else {
                 exchange.setVariable(key, newVariable);

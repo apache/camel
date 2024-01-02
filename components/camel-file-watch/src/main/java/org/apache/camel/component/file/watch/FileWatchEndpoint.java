@@ -41,7 +41,7 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
     @UriParam(description = "Comma separated list of events to watch. Possible values: CREATE,MODIFY,DELETE",
               defaultValue = "CREATE,MODIFY,DELETE")
     private String events = "CREATE,MODIFY,DELETE";
-    @UriParam(description = "Auto create directory if does not exists.", defaultValue = "true")
+    @UriParam(description = "Auto create directory if does not exist.", defaultValue = "true")
     private boolean autoCreate = true;
     @UriParam(description = "Watch recursive in current and child directories (including newly created directories).",
               defaultValue = "true")

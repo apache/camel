@@ -162,7 +162,7 @@ public final class DSAnnotationProcessor {
                 try {
                     isLoaded = schemaManager.load(schemaName);
                 } catch (LdapUnwillingToPerformException lutpe) {
-                    // Cannot load the schema, it does not exists
+                    // Cannot load the schema, it does not exist
                     LOG.error(lutpe.getMessage());
                     continue;
                 }

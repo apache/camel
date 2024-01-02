@@ -91,7 +91,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         LOG.trace("Destination Bucket created");
                     } else {
                         throw new IllegalArgumentException(
-                                "Destination Bucket does not exists, set autoCreateBucket option for bucket auto creation");
+                                "Destination Bucket does not exist, set autoCreateBucket option for bucket auto creation");
                     }
                 }
             } else {

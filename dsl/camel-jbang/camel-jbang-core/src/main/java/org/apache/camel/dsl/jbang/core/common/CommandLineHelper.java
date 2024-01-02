@@ -81,7 +81,7 @@ public final class CommandLineHelper {
                 throw new RuntimeException(ex);
             }
         } else {
-            printer.println(USER_CONFIG + " does not exists");
+            printer.println(USER_CONFIG + " does not exist");
         }
     }
 

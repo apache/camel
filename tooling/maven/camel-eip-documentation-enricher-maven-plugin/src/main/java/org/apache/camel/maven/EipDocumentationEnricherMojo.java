@@ -131,7 +131,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
             throw new MojoExecutionException("pathToModelDir parameter must not be null");
         }
 
-        // skip if input file does not exists
+        // skip if input file does not exist
         if (inputCamelSchemaFile == null || !inputCamelSchemaFile.exists()) {
             getLog().info("Input Camel schema file: " + inputCamelSchemaFile + " does not exist. Skip EIP document enrichment");
             return;

@@ -334,6 +334,30 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
+    public void testWithVariable() {
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
+
+        assertEquals("Hello World", template.withVariable("foo", "World").withBody("Hello")
+                .to("direct:var").request(String.class));
+
+        assertEquals("Hello Moon", template.withVariable("foo", "Moon").withVariable("global:planet", "Mars").withBody("Hello")
+                .to("direct:var").request(String.class));
+        assertEquals("Mars", context.getVariable("planet"));
+    }
+
+    @Test
+    public void testWithExchangeProperty() {
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
+
+        assertEquals("Hello World", template.withExchangeProperty("foo", "World").withBody("Hello")
+                .to("direct:ep").request(String.class));
+
+        assertEquals("Hello Moon",
+                template.withExchangeProperty("foo", "Moon").withExchangeProperty("planet", "Mars").withBody("Hello")
+                        .to("direct:ep").request(String.class));
+    }
+
+    @Test
     public void testAsyncRequest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:async");
         mock.expectedMessageCount(2);
@@ -473,6 +497,9 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
                 from("direct:red").setBody().simple("Red ${body}");
 
+                from("direct:var").transform().simple("${body} ${variable.foo}");
+
+                from("direct:ep").transform().simple("${body} ${exchangeProperty.foo}");
             }
         };
     }

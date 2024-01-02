@@ -18,7 +18,6 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
-import org.apache.camel.model.ConvertHeaderDefinition
 import org.apache.camel.model.ConvertVariableDefinition
 import org.junit.jupiter.api.Assertions
 
@@ -30,9 +29,6 @@ class ConvertVariableTest extends YamlTestSupport {
                 - from:
                     uri: "direct:start"
                     steps:    
-                      - setVariable:
-                          name: foo
-                          constant: "Hello World"
                       - convertVariableTo:
                           name: foo  
                           type: "java.lang.String"
@@ -47,12 +43,13 @@ class ConvertVariableTest extends YamlTestSupport {
             context.start()
 
             withTemplate {
+                withVariable("foo", "Hello World")
                 to('direct:start').send()
             }
         then:
             context.routeDefinitions.size() == 1
 
-            with(context.routeDefinitions[0].outputs[1], ConvertVariableDefinition) {
+            with(context.routeDefinitions[0].outputs[0], ConvertVariableDefinition) {
                 name == 'foo'
                 type == 'java.lang.String'
                 charset == 'UTF8'
@@ -67,9 +64,6 @@ class ConvertVariableTest extends YamlTestSupport {
                 - from:
                     uri: "direct:start"
                     steps:
-                      - setVariable:
-                          name: foo
-                          constant: "Hello World"
                       - convertVariableTo:
                           name: foo
                           toName: bar
@@ -79,18 +73,18 @@ class ConvertVariableTest extends YamlTestSupport {
             '''
 
         withMock('mock:result') {
-            expectedVariableReceived("foo", 'Hello World')
+            expectedVariableReceived("foo", 'test')
         }
         when:
         context.start()
 
         withTemplate {
-            to('direct:start').withHeader("foo", 'test'.bytes).send()
+            to('direct:start').withVariable("foo", 'test'.bytes).send()
         }
         then:
         context.routeDefinitions.size() == 1
 
-        with(context.routeDefinitions[0].outputs[1], ConvertVariableDefinition) {
+        with(context.routeDefinitions[0].outputs[0], ConvertVariableDefinition) {
             name == 'foo'
             toName == 'bar'
             type == 'java.lang.String'

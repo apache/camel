@@ -314,7 +314,7 @@ public final class AdviceWith {
                     }
                 }
                 if (rd == null) {
-                    throw new IllegalArgumentException("Cannot advice route as route with id: " + routeId + " does not exists");
+                    throw new IllegalArgumentException("Cannot advice route as route with id: " + routeId + " does not exist");
                 }
             } else {
                 // grab first route

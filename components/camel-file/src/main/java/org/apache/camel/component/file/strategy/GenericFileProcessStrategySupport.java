@@ -131,7 +131,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         try {
             operations.deleteFile(to.getAbsoluteFilePath());
         } catch (GenericFileOperationFailedException e) {
-            // ignore the file does not exists
+            // ignore the file does not exist
         }
 
         // make parent folder if missing

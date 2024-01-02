@@ -445,7 +445,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
                 if (!retrieved) {
                     if (ignoreCannotRetrieveFile(name, exchange, cause)) {
-                        LOG.trace("Cannot retrieve file {} maybe it does not exists. Ignoring.", name);
+                        LOG.trace("Cannot retrieve file {} maybe it does not exist. Ignoring.", name);
                         // remove file from the in progress list as we could not
                         // retrieve it, but should ignore
                         endpoint.getInProgressRepository().remove(absoluteFileName);
