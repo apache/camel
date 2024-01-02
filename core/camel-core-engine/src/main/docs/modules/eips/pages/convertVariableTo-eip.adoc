@@ -57,6 +57,50 @@ YAML::
 ----
 ====
 
+=== Convert to another variable
+
+By default, the converted value is replaced in the existing variable. However, you can tell Camel to store the result into another variable,
+such as shown below where the value is stored in the `bar` variable:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:foo")
+  .convertVariableTo("foo", "bar", String.class)
+  .log("The variable content: ${variable.bar}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:foo"/>
+  <convertVariableTo name="foo" toName="bar" type="String"/>
+  <log message="The variable content: ${variable.bar}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:foo
+    steps:
+      - convertVariableTo:
+          name: foo
+          toName: bar
+          type: String
+      - log:
+          message: "The variable content: ${variable.bar}"
+----
+====
+
+
 === Dynamic variable name
 
 The ConvertVariableTo supports using xref:components:languages:simple-language.adoc[Simple] language for dynamic variable name.

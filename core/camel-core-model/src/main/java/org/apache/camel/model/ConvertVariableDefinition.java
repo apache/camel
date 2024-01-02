@@ -40,6 +40,8 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
     @XmlAttribute(required = true)
     private String type;
     @XmlAttribute
+    private String toName;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String mandatory;
     @XmlAttribute
@@ -56,6 +58,13 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
 
     public ConvertVariableDefinition(String name, Class<?> typeClass) {
         setName(name);
+        setTypeClass(typeClass);
+        setType(typeClass.getCanonicalName());
+    }
+
+    public ConvertVariableDefinition(String name, String toName, Class<?> typeClass) {
+        setName(name);
+        setToName(toName);
         setTypeClass(typeClass);
         setType(typeClass.getCanonicalName());
     }
@@ -101,6 +110,21 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
 
     public String getName() {
         return name;
+    }
+
+    public String getToName() {
+        return toName;
+    }
+
+    /**
+     * To use another variable to store the result. By default, the result is stored in the same variable. This option
+     * allows to use another variable.
+     * <p/>
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated variable name to be used. Otherwise a
+     * constant name will be used.
+     */
+    public void setToName(String toName) {
+        this.toName = toName;
     }
 
     public String getType() {

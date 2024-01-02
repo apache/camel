@@ -43,13 +43,25 @@ public class ConvertVariableReifier extends ProcessorReifier<ConvertVariableDefi
             nameExpr = camelContext.resolveLanguage("constant").createExpression(key);
         }
         nameExpr.init(camelContext);
+
+        String toKey = parseString(definition.getToName());
+        Expression toNameExpr = null;
+        if (toKey != null) {
+            if (LanguageSupport.hasSimpleFunction(toKey)) {
+                toNameExpr = camelContext.resolveLanguage("simple").createExpression(toKey);
+            } else {
+                toNameExpr = camelContext.resolveLanguage("constant").createExpression(toKey);
+            }
+            toNameExpr.init(camelContext);
+        }
+
         Class<?> typeClass = parse(Class.class, or(definition.getTypeClass(), parseString(definition.getType())));
         String charset = validateCharset(parseString(definition.getCharset()));
         boolean mandatory = true;
         if (definition.getMandatory() != null) {
             mandatory = parseBoolean(definition.getMandatory(), true);
         }
-        return new ConvertVariableProcessor(key, nameExpr, typeClass, charset, mandatory);
+        return new ConvertVariableProcessor(key, nameExpr, toKey, toNameExpr, typeClass, charset, mandatory);
     }
 
     public static String validateCharset(String charset) throws UnsupportedCharsetException {

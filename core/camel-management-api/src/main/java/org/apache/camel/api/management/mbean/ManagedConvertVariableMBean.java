@@ -23,6 +23,9 @@ public interface ManagedConvertVariableMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "The variable name")
     String getName();
 
+    @ManagedAttribute(description = "If the result should be stored in another variable")
+    String getToName();
+
     @ManagedAttribute(description = "The java type to convert to")
     String getType();
 

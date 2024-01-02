@@ -2886,6 +2886,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Converts the variable to the specified type
      *
+     * @param  name   the variable name
+     * @param  toName to use another variable to store the result
+     * @param  type   the type to convert to
+     * @return        the builder
+     */
+    public Type convertVariableTo(String name, String toName, Class<?> type) {
+        addOutput(new ConvertVariableDefinition(name, toName, type));
+        return asType();
+    }
+
+    /**
+     * Converts the variable to the specified type
+     *
      * @param  name      the variable name
      * @param  type      the type to convert to
      * @param  mandatory whether to use mandatory type conversion or not

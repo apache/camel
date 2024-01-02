@@ -105,6 +105,19 @@ public class ConvertVariableTest extends ContextTestSupport {
     }
 
     @Test
+    public void testConvertToName() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedVariableReceived("foo", "11");
+        result.expectedVariableReceived("bar", 11);
+        result.message(0).variable("foo").isInstanceOf(String.class);
+        result.message(0).variable("bar").isInstanceOf(Integer.class);
+
+        template.sendBodyAndHeader("direct:bar", null, "foo", "11");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testConvertToIntegerNotMandatory() throws Exception {
         // mandatory should fail
         try {
@@ -224,6 +237,9 @@ public class ConvertVariableTest extends ContextTestSupport {
                         .convertVariableTo("foo", byte[].class, "utf-16").to("mock:result");
                 from("direct:charset3").setVariable("foo", header("foo")).removeHeader("foo")
                         .convertVariableTo("foo", String.class, "utf-16").to("mock:result");
+                from("direct:bar").setVariable("foo", header("foo")).removeHeader("foo")
+                        .convertVariableTo("foo", "bar", Integer.class).to("mock:result");
+
             }
         };
     }

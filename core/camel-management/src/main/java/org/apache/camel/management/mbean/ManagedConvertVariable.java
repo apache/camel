@@ -37,6 +37,11 @@ public class ManagedConvertVariable extends ManagedProcessor implements ManagedC
     }
 
     @Override
+    public String getToName() {
+        return processor.getToName();
+    }
+
+    @Override
     public String getType() {
         return processor.getType().getCanonicalName();
     }

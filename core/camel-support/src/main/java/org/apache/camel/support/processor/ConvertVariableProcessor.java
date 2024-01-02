@@ -47,15 +47,20 @@ public class ConvertVariableProcessor extends ServiceSupport
     private String routeId;
     private final String name;
     private final Expression variableName;
+    private final String toName;
+    private final Expression toVariableName;
     private final Class<?> type;
     private final String charset;
     private final boolean mandatory;
 
-    public ConvertVariableProcessor(String name, Expression variableName, Class<?> type, String charset, boolean mandatory) {
+    public ConvertVariableProcessor(String name, Expression variableName, String toName, Expression toVariableName,
+                                    Class<?> type, String charset, boolean mandatory) {
         ObjectHelper.notNull(variableName, "variableName");
         ObjectHelper.notNull(type, "type", this);
         this.name = name;
         this.variableName = variableName;
+        this.toName = toName;
+        this.toVariableName = toVariableName;
         this.type = type;
         this.charset = IOHelper.normalizeCharset(charset);
         this.mandatory = mandatory;
@@ -101,6 +106,7 @@ public class ConvertVariableProcessor extends ServiceSupport
         // what is the variable name
         String name = variableName.evaluate(exchange, String.class);
         String key = name;
+        String targetName = toVariableName != null ? toVariableName.evaluate(exchange, String.class) : name;
 
         VariableRepository repo = null;
         Object value;
@@ -137,9 +143,9 @@ public class ConvertVariableProcessor extends ServiceSupport
         }
 
         if (repo != null) {
-            repo.setVariable(key, value);
+            repo.setVariable(targetName, value);
         } else {
-            exchange.setVariable(key, value);
+            exchange.setVariable(targetName, value);
         }
 
         // remove or restore charset when we are done as we should not propagate that,
@@ -173,6 +179,10 @@ public class ConvertVariableProcessor extends ServiceSupport
 
     public String getName() {
         return name;
+    }
+
+    public String getToName() {
+        return toName;
     }
 
     public Class<?> getType() {
