@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @see <a href="https://netty.io/wiki/native-transports.html">about netty native transport</a>
  */
-@EnabledOnOs({OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD})
+@EnabledOnOs({ OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD })
 public class NettyTCPSyncUDSTest extends BaseNettyTest {
 
     @Test
