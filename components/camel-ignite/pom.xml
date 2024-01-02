@@ -100,17 +100,4 @@
 
     </dependencies>
 
-    <!-- Apache Ignite does not work with Java 21 yet -->
-    <profiles>
-        <profile>
-            <id>skip-test-java-21</id>
-            <activation>
-                <jdk>21</jdk>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-    </profiles>
-
 </project>
