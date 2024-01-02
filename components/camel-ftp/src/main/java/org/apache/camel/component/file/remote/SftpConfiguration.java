@@ -68,7 +68,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private int compression;
     @UriParam(label = "security")
     private String preferredAuthentications;
-    @UriParam(defaultValue = "WARN")
+    @UriParam(defaultValue = "WARN", enums = "DEBUG,INFO,WARN,ERROR")
     private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
     @UriParam(label = "advanced")
     private Integer bulkRequests;
