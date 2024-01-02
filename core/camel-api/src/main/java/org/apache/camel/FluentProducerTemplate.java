@@ -192,6 +192,48 @@ public interface FluentProducerTemplate extends Service {
     FluentProducerTemplate withHeader(String key, Object value);
 
     /**
+     * Set the exchange properties
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
+     * @param properties the exchange properties
+     */
+    FluentProducerTemplate withExchangeProperties(Map<String, Object> properties);
+
+    /**
+     * Set the exchange property
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
+     * @param key   the key of the exchange property
+     * @param value the value of the exchange property
+     */
+    FluentProducerTemplate withExchangeProperty(String key, Object value);
+
+    /**
+     * Set the variables
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
+     * @param variables the variables
+     */
+    FluentProducerTemplate withVariables(Map<String, Object> variables);
+
+    /**
+     * Set the exchange property
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
+     * @param key   the key of the variable
+     * @param value the value of the variable
+     */
+    FluentProducerTemplate withVariable(String key, Object value);
+
+    /**
      * Set the message body
      *
      * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of

@@ -50,6 +50,8 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
@@ -1068,6 +1070,31 @@ public final class ExchangeHelper {
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().copyFrom(exchange.getIn());
             exchange.getOut().setBody(body);
+        }
+    }
+
+    /**
+     * Sets the variable
+     *
+     * @param exchange  the exchange
+     * @param name  the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *              repository. If no repo-id is provided, then the variable is set on the exchange
+     * @param value the value of the variable
+     */
+    public static void setVariable(Exchange exchange, String name, Object value) {
+        String id = StringHelper.before(name, ":");
+        if (id != null) {
+            VariableRepositoryFactory factory = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+            VariableRepository repo = factory.getVariableRepository(id);
+            if (repo != null) {
+                name = StringHelper.after(name, ":");
+                repo.setVariable(name, value);
+            } else {
+                exchange.setException(
+                        new IllegalArgumentException("VariableRepository with id: " + id + " does not exists"));
+            }
+        } else {
+            exchange.setVariable(name, value);
         }
     }
 }
