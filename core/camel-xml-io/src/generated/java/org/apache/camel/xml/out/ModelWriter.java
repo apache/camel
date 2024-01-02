@@ -1188,6 +1188,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("charset", def.getCharset());
+        doWriteAttribute("toName", def.getToName());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("mandatory", def.getMandatory());
@@ -1200,6 +1201,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("charset", def.getCharset());
+        doWriteAttribute("toName", def.getToName());
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("mandatory", def.getMandatory());

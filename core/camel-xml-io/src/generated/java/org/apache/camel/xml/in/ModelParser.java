@@ -318,6 +318,7 @@ public class ModelParser extends BaseParser {
                 case "charset": def.setCharset(val); break;
                 case "mandatory": def.setMandatory(val); break;
                 case "name": def.setName(val); break;
+                case "toName": def.setToName(val); break;
                 case "type": def.setType(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
@@ -330,6 +331,7 @@ public class ModelParser extends BaseParser {
                 case "charset": def.setCharset(val); break;
                 case "mandatory": def.setMandatory(val); break;
                 case "name": def.setName(val); break;
+                case "toName": def.setToName(val); break;
                 case "type": def.setType(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }

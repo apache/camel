@@ -37,6 +37,11 @@ public class ManagedConvertHeader extends ManagedProcessor implements ManagedCon
     }
 
     @Override
+    public String getToName() {
+        return processor.getToName();
+    }
+
+    @Override
     public String getType() {
         return processor.getType().getCanonicalName();
     }

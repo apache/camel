@@ -40,6 +40,8 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
     @XmlAttribute(required = true)
     private String type;
     @XmlAttribute
+    private String toName;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String mandatory;
     @XmlAttribute
@@ -56,6 +58,13 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
 
     public ConvertHeaderDefinition(String name, Class<?> typeClass) {
         setName(name);
+        setTypeClass(typeClass);
+        setType(typeClass.getCanonicalName());
+    }
+
+    public ConvertHeaderDefinition(String name, String toName, Class<?> typeClass) {
+        setName(name);
+        setToName(toName);
         setTypeClass(typeClass);
         setType(typeClass.getCanonicalName());
     }
@@ -101,6 +110,21 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
 
     public String getName() {
         return name;
+    }
+
+    public String getToName() {
+        return toName;
+    }
+
+    /**
+     * To use another header to store the result. By default, the result is stored in the same header. This option
+     * allows to use another header.
+     * <p/>
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used. Otherwise a
+     * constant name will be used.
+     */
+    public void setToName(String toName) {
+        this.toName = toName;
     }
 
     public String getType() {

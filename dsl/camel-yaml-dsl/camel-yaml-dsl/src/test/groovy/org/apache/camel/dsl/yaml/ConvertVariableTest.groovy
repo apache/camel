@@ -61,6 +61,45 @@ class ConvertVariableTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "convert-variable-another-to"() {
+        setup:
+        loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - setVariable:
+                          name: foo
+                          constant: "Hello World"
+                      - convertVariableTo:
+                          name: foo
+                          toName: bar
+                          type: "java.lang.String"
+                          charset: "UTF8"
+                      - to: "mock:result"
+            '''
+
+        withMock('mock:result') {
+            expectedVariableReceived("foo", 'Hello World')
+        }
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withHeader("foo", 'test'.bytes).send()
+        }
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0].outputs[1], ConvertVariableDefinition) {
+            name == 'foo'
+            toName == 'bar'
+            type == 'java.lang.String'
+            charset == 'UTF8'
+        }
+
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "Error: kebab-case: convert-variable-to"() {
         when:
         var route = '''

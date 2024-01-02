@@ -57,6 +57,50 @@ YAML::
 ----
 ====
 
+=== Convert to another header
+
+By default, the converted value is replaced in the existing header. However, you can tell Camel to store the result into another header,
+such as shown below where the value is stored in the `bar` header:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:foo")
+  .convertHeaderTo("foo", "bar", String.class)
+  .log("The header content: ${header.bar}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:foo"/>
+  <convertHeaderTo name="foo" toName="bar" type="String"/>
+  <log message="The header content: ${header.bar}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:foo
+    steps:
+      - convertHeaderTo:
+          name: foo
+          toName: bar
+          type: String
+      - log:
+          message: "The header content: ${header.bar}"
+----
+====
+
+
 === Dynamic header name
 
 The ConvertHeaderTo supports using xref:components:languages:simple-language.adoc[Simple] language for dynamic header name.

@@ -23,6 +23,9 @@ public interface ManagedConvertHeaderMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "The header name")
     String getName();
 
+    @ManagedAttribute(description = "If the result should be stored in another header")
+    String getToName();
+
     @ManagedAttribute(description = "The java type to convert to")
     String getType();
 

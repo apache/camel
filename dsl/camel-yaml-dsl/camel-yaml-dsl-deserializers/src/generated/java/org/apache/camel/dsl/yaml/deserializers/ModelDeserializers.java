@@ -2583,6 +2583,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "mandatory", type = "boolean", description = "When mandatory then the conversion must return a value (cannot be null), if this is not possible then NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the value is null.", displayName = "Mandatory"),
                     @YamlProperty(name = "name", type = "string", required = true, description = "Name of message header to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used.", displayName = "Name"),
+                    @YamlProperty(name = "toName", type = "string", description = "To use another header to store the result. By default, the result is stored in the same header. This option allows to use another header. The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used.", displayName = "To Name"),
                     @YamlProperty(name = "type", type = "string", required = true, description = "The java type to convert to", displayName = "Type")
             }
     )
@@ -2626,6 +2627,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setName(val);
                     break;
                 }
+                case "toName": {
+                    String val = asText(node);
+                    target.setToName(val);
+                    break;
+                }
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
@@ -2667,6 +2673,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "mandatory", type = "boolean", description = "When mandatory then the conversion must return a value (cannot be null), if this is not possible then NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the value is null.", displayName = "Mandatory"),
                     @YamlProperty(name = "name", type = "string", required = true, description = "Name of variable to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used.", displayName = "Name"),
+                    @YamlProperty(name = "toName", type = "string", description = "To use another variable to store the result. By default, the result is stored in the same variable. This option allows to use another variable. The simple language can be used to define a dynamic evaluated variable name to be used. Otherwise a constant name will be used.", displayName = "To Name"),
                     @YamlProperty(name = "type", type = "string", required = true, description = "The java type to convert to", displayName = "Type")
             }
     )
@@ -2708,6 +2715,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
+                    break;
+                }
+                case "toName": {
+                    String val = asText(node);
+                    target.setToName(val);
                     break;
                 }
                 case "type": {

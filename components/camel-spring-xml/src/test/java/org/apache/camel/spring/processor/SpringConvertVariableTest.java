@@ -14,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.spring.processor;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.converter.ConvertVariableTest;
 
-public interface ManagedConvertVariableMBean extends ManagedProcessorMBean {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-    @ManagedAttribute(description = "The variable name")
-    String getName();
-
-    @ManagedAttribute(description = "If the result should be stored in another variable")
-    String getToName();
-
-    @ManagedAttribute(description = "The java type to convert to")
-    String getType();
-
-    @ManagedAttribute(description = "To use a specific charset when converting")
-    String getCharset();
-
+public class SpringConvertVariableTest extends ConvertVariableTest {
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/convertVariable.xml");
+    }
 }
