@@ -314,9 +314,12 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         if (this.unitOfWork != null) {
             this.unitOfWork.reset();
         }
-
         if (this.onCompletions != null) {
             this.onCompletions.clear();
+        }
+        if (this.exchange.variableRepository != null) {
+            this.exchange.variableRepository.clear();
+            ;
         }
 
         setHistoryNodeId(null);
@@ -328,7 +331,6 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         setRedeliveryExhausted(false);
         setErrorHandlerHandled(null);
         setStreamCacheDisabled(false);
-        this.exchange.variableRepository = null;
     }
 
     @Override
