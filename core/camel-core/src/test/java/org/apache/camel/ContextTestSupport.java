@@ -43,6 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public abstract class ContextTestSupport extends TestSupport {
 
+    private static final ThreadLocal<ModelCamelContext> THREAD_CAMEL_CONTEXT = new ThreadLocal<>();
+    private static final ThreadLocal<ProducerTemplate> THREAD_TEMPLATE = new ThreadLocal<>();
+    private static final ThreadLocal<ConsumerTemplate> THREAD_CONSUMER = new ThreadLocal<>();
+
+    private static final ThreadLocal<Service> THREAD_SERVICE = new ThreadLocal<>();
+
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
@@ -74,6 +80,7 @@ public abstract class ContextTestSupport extends TestSupport {
      */
     public void setCamelContextService(Service camelContextService) {
         this.camelContextService = camelContextService;
+        THREAD_SERVICE.set(camelContextService);
     }
 
     /**
@@ -97,6 +104,7 @@ public abstract class ContextTestSupport extends TestSupport {
         assertValidContext(context);
 
         context.build();
+        THREAD_CAMEL_CONTEXT.set(context);
 
         // make SEDA run faster
         context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
@@ -126,6 +134,9 @@ public abstract class ContextTestSupport extends TestSupport {
         template.start();
         consumer.start();
 
+        THREAD_TEMPLATE.set(template);
+        THREAD_CONSUMER.set(consumer);
+
         // create a default notifier when 1 exchange is done which is the most
         // common case
         oneExchangeDone = event().whenDone(1).create();
@@ -135,7 +146,7 @@ public abstract class ContextTestSupport extends TestSupport {
         }
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds
-        context.getShutdownStrategy().setTimeout(10);
+        context.getShutdownStrategy().setTimeout(getShutdownTimeout());
     }
 
     @Override
@@ -143,14 +154,31 @@ public abstract class ContextTestSupport extends TestSupport {
     public void tearDown() throws Exception {
         log.debug("tearDown test: {}", getName());
         if (consumer != null) {
+            if (consumer == THREAD_CONSUMER.get()) {
+                THREAD_CONSUMER.remove();
+            }
             consumer.stop();
         }
         if (template != null) {
+            if (template == THREAD_TEMPLATE.get()) {
+                THREAD_TEMPLATE.remove();
+            }
             template.stop();
         }
         stopCamelContext();
 
         super.tearDown();
+    }
+
+    /**
+     * Returns the timeout to use when shutting down (unit in seconds).
+     * <p/>
+     * Will default use 10 seconds.
+     *
+     * @return the timeout to use
+     */
+    protected int getShutdownTimeout() {
+        return 10;
     }
 
     /**
@@ -172,9 +200,15 @@ public abstract class ContextTestSupport extends TestSupport {
 
     protected void stopCamelContext() throws Exception {
         if (camelContextService != null) {
+            if (camelContextService == THREAD_SERVICE.get()) {
+                THREAD_SERVICE.remove();
+            }
             camelContextService.stop();
         } else {
             if (context != null) {
+                if (context == THREAD_CAMEL_CONTEXT.get()) {
+                    THREAD_CAMEL_CONTEXT.remove();
+                }
                 context.stop();
             }
         }
@@ -184,7 +218,14 @@ public abstract class ContextTestSupport extends TestSupport {
         if (camelContextService != null) {
             camelContextService.start();
         } else {
-            context.start();
+            if (context instanceof DefaultCamelContext) {
+                DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
+                if (!defaultCamelContext.isStarted()) {
+                    defaultCamelContext.start();
+                }
+            } else {
+                context.start();
+            }
         }
     }
 
