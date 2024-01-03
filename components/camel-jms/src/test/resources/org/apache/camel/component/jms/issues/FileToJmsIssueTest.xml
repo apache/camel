@@ -29,7 +29,9 @@
     </bean>
 
     <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://itest-jms?broker.persistent=false&amp;create=false"/>
+        <property name="brokerURL">
+            <bean class="org.apache.camel.component.jms.issues.CamelBrokerClientTestSupport"  factory-method="getServiceAddress"/>
+        </property>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">

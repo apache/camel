@@ -25,7 +25,9 @@
                 http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://itest-jms?broker.persistent=false&amp;create=false"/>
+        <property name="brokerURL">
+            <bean class="org.apache.camel.component.jms.issues.CamelBrokerClientTestSupport"  factory-method="getServiceAddress"/>
+        </property>
     </bean>
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
@@ -38,7 +40,7 @@
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 
-    <bean id="myRouteBuilder" class="org.apache.camel.itest.jms.JmsConsumerShutdownTest$MyRouteBuilder"/>
+    <bean id="myRouteBuilder" class="org.apache.camel.component.jms.JmsConsumerShutdownTest$MyRouteBuilder"/>
 
     <!-- Set short timeout  -->
     <bean id="shutdownStrategy" class="org.apache.camel.impl.engine.DefaultShutdownStrategy">

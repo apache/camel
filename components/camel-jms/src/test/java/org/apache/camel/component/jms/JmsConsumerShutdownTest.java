@@ -14,30 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms;
+package org.apache.camel.component.jms;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.issues.CamelBrokerClientTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 
-@CamelSpringTest
-@ContextConfiguration
-public class JmsConsumerShutdownTest {
-    @RegisterExtension
-    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
-
-    @Autowired
-    CamelContext camelContext;
+public class JmsConsumerShutdownTest extends CamelBrokerClientTestSupport {
 
     @Produce("jms:start")
     protected ProducerTemplate activemq;
@@ -51,10 +41,15 @@ public class JmsConsumerShutdownTest {
     @EndpointInject("mock:exception")
     protected MockEndpoint exception;
 
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/JmsConsumerShutdownTest.xml");
+    }
+
     @Test
     @DirtiesContext
     void testJmsConsumerShutdownWithMessageInFlight() throws InterruptedException {
-        camelContext.getShutdownStrategy().setTimeout(3);
+        context().getShutdownStrategy().setTimeout(3);
 
         end.expectedMessageCount(0);
         end.setResultWaitTime(1000);
@@ -73,7 +68,7 @@ public class JmsConsumerShutdownTest {
     @Test
     @DirtiesContext
     void testSedaConsumerShutdownWithMessageInFlight() throws InterruptedException {
-        camelContext.getShutdownStrategy().setTimeout(3);
+        context().getShutdownStrategy().setTimeout(3);
 
         end.expectedMessageCount(0);
         end.setResultWaitTime(1000);

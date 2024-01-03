@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms;
+package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 
-public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
-    @RegisterExtension
-    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+public class AdviceWithTransactionIssueTest extends CamelBrokerClientTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/jms/AdviceWithTransactionIssueTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/issues/AdviceWithTransactionIssueTest.xml");
     }
 
     @Override

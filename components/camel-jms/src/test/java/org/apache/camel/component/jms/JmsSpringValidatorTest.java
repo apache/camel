@@ -14,23 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms;
+package org.apache.camel.component.jms;
 
+import org.apache.camel.component.jms.issues.CamelBrokerClientTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringJmsValidatorTest extends CamelSpringTestSupport {
-    @RegisterExtension
-    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+public class JmsSpringValidatorTest extends CamelBrokerClientTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/jms/SpringJmsValidatorTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/JmsSpringValidatorTest.xml");
     }
 
     @Test

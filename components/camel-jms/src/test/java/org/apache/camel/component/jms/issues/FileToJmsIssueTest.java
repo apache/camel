@@ -14,29 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms;
+package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.support.AbstractApplicationContext;
 
-@CamelSpringTest
-@ContextConfiguration
-public class FileToJmsTest {
-    @RegisterExtension
-    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+public class FileToJmsIssueTest extends CamelBrokerClientTestSupport {
 
-    @Autowired
-    protected ProducerTemplate template;
     @EndpointInject("mock:result")
     protected MockEndpoint result;
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/issues/FileToJmsIssueTest.xml");
+    }
 
     @Test
     void testFileToJms() throws Exception {

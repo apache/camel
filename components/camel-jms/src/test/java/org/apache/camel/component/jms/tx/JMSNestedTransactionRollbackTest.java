@@ -14,29 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.jms;
+package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.jms.issues.CamelBrokerClientTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JMSNestedTransactionRollbackTest extends CamelSpringTestSupport {
-    @RegisterExtension
-    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+public class JMSNestedTransactionRollbackTest extends CamelBrokerClientTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "/org/apache/camel/itest/jms/JMSNestedTransactionTest-context.xml");
+                "/org/apache/camel/component/jms/tx/JMSNestedTransactionRollbackTest.xml");
     }
 
     @Test
-    void testNestedTransactionRolledbackSuccessfully() throws Exception {
+    void testNestedTransactionRolledackSuccessfully() throws Exception {
         context.start();
 
         // error handler should catch 1 exception and rollback producer transaction
