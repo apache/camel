@@ -142,7 +142,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     public void run() {
         if (status == Status.Active) {
             try {
-                lastAttemptTime = System.currentTimeMillis();
+                lastAttemptTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime());
                 if (firstAttemptTime < 0) {
                     firstAttemptTime = lastAttemptTime;
                 }
