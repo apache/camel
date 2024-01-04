@@ -243,7 +243,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
     @Override
     public void done(Exchange exchange) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
+            log.trace("UnitOfWork done for ExchangeId: {}", exchange.getExchangeId());
         }
 
         // at first done the synchronizations

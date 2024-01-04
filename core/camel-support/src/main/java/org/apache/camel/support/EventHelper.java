@@ -1505,7 +1505,6 @@ public final class EventHelper {
 
     private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
         if (!notifier.isEnabled(event)) {
-            LOG.trace("Notifier: {} is not enabled for the event: {}", notifier, event);
             return false;
         }
 
