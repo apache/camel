@@ -606,14 +606,18 @@ public abstract class AbstractCamelContext extends BaseService
         Component component = getComponent(name);
         if (componentType.isInstance(component)) {
             return componentType.cast(component);
+        }
+
+        final String message = invalidComponentMessage(name, componentType, component);
+        throw new IllegalArgumentException(message);
+    }
+
+    private static <
+            T extends Component> String invalidComponentMessage(String name, Class<T> componentType, Component component) {
+        if (component == null) {
+            return "Did not find component given by the name: " + name;
         } else {
-            String message;
-            if (component == null) {
-                message = "Did not find component given by the name: " + name;
-            } else {
-                message = "Found component of type: " + component.getClass() + " instead of expected: " + componentType;
-            }
-            throw new IllegalArgumentException(message);
+            return "Found component of type: " + component.getClass() + " instead of expected: " + componentType;
         }
     }
 
