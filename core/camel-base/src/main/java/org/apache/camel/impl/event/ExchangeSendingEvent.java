@@ -51,7 +51,7 @@ public class ExchangeSendingEvent extends AbstractExchangeEvent implements Camel
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getExchange().getExchangeId() + " exchange sending to: " + endpoint;
     }
 
