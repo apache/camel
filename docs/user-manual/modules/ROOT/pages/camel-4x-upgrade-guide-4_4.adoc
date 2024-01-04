@@ -11,10 +11,13 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 The `org.apache.camel.spi.DataFormat` has changed exception thrown from `IOException` to `Exception`
 in the unmarshal(Exchange exchange, InputStream stream)` method.
 
-Removed the deprecated constructor from the internal class `org.apache.camel.util.StopWatch`. Users of this class are advised to
-use the default constructor if necessary.
+Removed the deprecated constructor from the internal class `org.apache.camel.util.StopWatch`. Users of this class are advised to use the default constructor if necessary.
 
-The method `getCreated` is now deprecated. Access to the time-related information from the exchange should be done via `getClock`.
+The method `getCreated` from the `org.apache.camel.Exchange` is now deprecated. Access to the time-related information from the exchange should be done via `getClock`.
+
+We standardized and consolidated code computing durations so that they use a monotonic clock.
+
+Durations and some time-related information were consolidated in a new internal Clock API.
 
 The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` now has a 2nd parameter for the default value.
 
