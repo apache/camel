@@ -148,20 +148,18 @@ public final class JsonUtils {
             throws JsonProcessingException {
         ObjectMapper schemaObjectMapper = createSchemaObjectMapper();
         return getJsonSchemaString(schemaObjectMapper,
-                getSObjectJsonSchema(schemaObjectMapper, description, DEFAULT_ID_PREFIX, addQuerySchema, false),
-                DEFAULT_ID_PREFIX);
+                getSObjectJsonSchema(schemaObjectMapper, description, DEFAULT_ID_PREFIX, addQuerySchema), DEFAULT_ID_PREFIX);
     }
 
     public static JsonSchema getSObjectJsonSchemaAsSchema(SObjectDescription description, boolean addQuerySchema)
             throws JsonProcessingException {
         ObjectMapper schemaObjectMapper = createSchemaObjectMapper();
-        return getJsonSchemaAsSchema(
-                getSObjectJsonSchema(schemaObjectMapper, description, DEFAULT_ID_PREFIX, addQuerySchema, false),
+        return getJsonSchemaAsSchema(getSObjectJsonSchema(schemaObjectMapper, description, DEFAULT_ID_PREFIX, addQuerySchema),
                 DEFAULT_ID_PREFIX);
     }
 
     public static Set<JsonSchema> getSObjectJsonSchema(
-            ObjectMapper objectMapper, SObjectDescription description, String idPrefix, boolean addQuerySchema, boolean forCdc)
+            ObjectMapper objectMapper, SObjectDescription description, String idPrefix, boolean addQuerySchema)
             throws JsonProcessingException {
         Set<JsonSchema> allSchemas = new HashSet<>();
 
@@ -282,7 +280,7 @@ public final class JsonUtils {
             fieldSchema.setDescription(descriptionText);
 
             // add property to sobject schema
-            if (field.isNillable() || forCdc) {
+            if (field.isNillable()) {
                 sobjectSchema.putOptionalProperty(field.getName(), fieldSchema);
             } else {
                 sobjectSchema.putProperty(field.getName(), fieldSchema);
@@ -308,71 +306,6 @@ public final class JsonUtils {
         }
 
         return allSchemas;
-    }
-
-    public static JsonSchema getCdcSchema(
-            ObjectMapper objectMapper, Iterable<SObjectDescription> descriptions,
-            String idPrefix)
-            throws JsonProcessingException {
-        ObjectSchema cdcSchema = new ObjectSchema();
-        cdcSchema.set$schema(SCHEMA4);
-        cdcSchema.setId(idPrefix + ":cdc");
-        cdcSchema.setTitle("CDC Change Events");
-
-        ObjectSchema header = new ObjectSchema();
-        header.putProperty("entityName", new StringSchema());
-
-        ArraySchema recordIds = new ArraySchema();
-        recordIds.setItems(new ArraySchema.SingleItems(new StringSchema()));
-        header.putProperty("recordIds", recordIds);
-
-        ArraySchema changedFields = new ArraySchema();
-        changedFields.setItems(new ArraySchema.SingleItems(new StringSchema()));
-        header.putProperty("changedFields", changedFields);
-
-        StringSchema changeType = new StringSchema();
-        changeType.setEnums(Set.of(
-                "CREATE",
-                "UPDATE",
-                "DELETE",
-                "UNDELETE",
-                "GAP_CREATE",
-                "GAP_UPDATE",
-                "GAP_DELETE",
-                "GAP_UNDELETE",
-                "GAP_OVERFLOW"));
-        header.putProperty("changeType", changeType);
-
-        header.putProperty("changeOrigin", new StringSchema());
-        header.putProperty("transactionKey", new StringSchema());
-        header.putProperty("sequenceNumber", new IntegerSchema());
-        header.putProperty("commitTimestamp", new IntegerSchema());
-        header.putProperty("commitUser", new StringSchema());
-        header.putProperty("commitNumber", new IntegerSchema());
-
-        ObjectSchema data = new ObjectSchema();
-        data.putProperty("schema", new StringSchema());
-
-        ObjectSchema event = new ObjectSchema();
-        event.putProperty("replayId", new IntegerSchema());
-        data.putProperty("event", event);
-
-        cdcSchema.putProperty("data", data);
-        cdcSchema.putProperty("channel", new StringSchema());
-
-        Set<Object> sObjectSchemas = new HashSet<>();
-        for (SObjectDescription d : descriptions) {
-            final ObjectSchema schema
-                    = (ObjectSchema) getSObjectJsonSchema(objectMapper, d, idPrefix, false, true).toArray()[0];
-            schema.putProperty("ChangeEventHeader", header);
-            sObjectSchemas.add(schema);
-        }
-
-        ObjectSchema payload = new ObjectSchema();
-        payload.setOneOf(sObjectSchemas);
-        data.putProperty("payload", payload);
-
-        return cdcSchema;
     }
 
     public static ObjectMapper createSchemaObjectMapper() {
