@@ -52,7 +52,7 @@ public class ExchangeFailureHandlingEvent extends AbstractExchangeEvent implemen
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         if (isDeadLetterChannel()) {
             String uri = URISupport.sanitizeUri(deadLetterUri);
             return getExchange().getExchangeId() + " exchange failed"

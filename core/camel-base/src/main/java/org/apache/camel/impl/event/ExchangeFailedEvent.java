@@ -32,7 +32,7 @@ public class ExchangeFailedEvent extends AbstractExchangeEvent implements CamelE
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         Exception cause = getExchange().getException();
         if (cause != null) {
             return getExchange().getExchangeId() + " exchange failed due to: " + cause;
