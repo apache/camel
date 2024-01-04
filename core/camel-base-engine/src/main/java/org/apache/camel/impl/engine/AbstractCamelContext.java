@@ -546,27 +546,6 @@ public abstract class AbstractCamelContext extends BaseService
                 // creates the bean and then check the type so the getComponent
                 // is always triggered.
                 //
-                // Simple circular dependency:
-                //
-                // <camelContext id="camel"
-                // xmlns="http://camel.apache.org/schema/spring">
-                // <route>
-                // <from id="twitter"
-                // uri="twitter://timeline/home?type=polling"/>
-                // <log message="Got ${body}"/>
-                // </route>
-                // </camelContext>
-                //
-                // Complex circular dependency:
-                //
-                // <camelContext id="camel"
-                // xmlns="http://camel.apache.org/schema/spring">
-                // <route>
-                // <from id="log" uri="seda:test"/>
-                // <to id="seda" uri="log:test"/>
-                // </route>
-                // </camelContext>
-                //
                 // This would freeze the app (lock or infinite loop).
                 //
                 // See https://issues.apache.org/jira/browse/CAMEL-11225
