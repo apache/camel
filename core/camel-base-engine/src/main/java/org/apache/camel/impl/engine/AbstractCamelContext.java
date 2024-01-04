@@ -676,7 +676,7 @@ public abstract class AbstractCamelContext extends BaseService
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            String decodeUri = URISupport.getDecodeQuery(uri);
+            final String decodeUri = URISupport.getDecodeQuery(uri);
             if (decodeUri != null) {
                 oldEndpoint = endpoints.remove(getEndpointKey(decodeUri));
             }
@@ -684,22 +684,7 @@ public abstract class AbstractCamelContext extends BaseService
                 answer.add(oldEndpoint);
                 stopServices(oldEndpoint);
             } else {
-                List<NormalizedUri> toRemove = new ArrayList<>();
-                for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
-                    oldEndpoint = entry.getValue();
-                    if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
-                        try {
-                            stopServices(oldEndpoint);
-                        } catch (Exception e) {
-                            LOG.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint, e);
-                        }
-                        answer.add(oldEndpoint);
-                        toRemove.add(entry.getKey());
-                    }
-                }
-                for (NormalizedUri key : toRemove) {
-                    endpoints.remove(key);
-                }
+                tryMatchingEndpoints(uri, answer);
             }
         }
 
@@ -711,6 +696,26 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         return answer;
+    }
+
+    private void tryMatchingEndpoints(String uri, Collection<Endpoint> answer) {
+        Endpoint oldEndpoint;
+        List<NormalizedUri> toRemove = new ArrayList<>();
+        for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
+            oldEndpoint = entry.getValue();
+            if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
+                try {
+                    stopServices(oldEndpoint);
+                } catch (Exception e) {
+                    LOG.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint, e);
+                }
+                answer.add(oldEndpoint);
+                toRemove.add(entry.getKey());
+            }
+        }
+        for (NormalizedUri key : toRemove) {
+            endpoints.remove(key);
+        }
     }
 
     @Override
@@ -1216,35 +1221,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (routeService != null) {
             if (getRouteStatus(routeId).isStopped()) {
                 try {
-                    routeService.setRemovingRoutes(true);
-                    shutdownRouteService(routeService, loggingLevel);
-                    routeServices.remove(routeId);
-                    // remove route from startup order as well, as it was
-                    // removed
-                    routeStartupOrder.removeIf(order -> order.getRoute().getId().equals(routeId));
-
-                    // from the route which we have removed, then remove all its
-                    // private endpoints
-                    // (eg the endpoints which are not in use by other routes)
-                    Set<Endpoint> toRemove = new LinkedHashSet<>();
-                    for (Endpoint endpoint : endpointsInUse.get(routeId)) {
-                        // how many times is the endpoint in use
-                        int count = 0;
-                        for (Set<Endpoint> endpointSet : endpointsInUse.values()) {
-                            if (endpointSet.contains(endpoint)) {
-                                count++;
-                            }
-                        }
-                        // notice we will count ourselves so if there is only 1
-                        // then its safe to remove
-                        if (count <= 1) {
-                            toRemove.add(endpoint);
-                        }
-                    }
-                    for (Endpoint endpoint : toRemove) {
-                        LOG.debug("Removing: {} which was only in use by route: {}", endpoint, routeId);
-                        removeEndpoint(endpoint);
-                    }
+                    doRemove(routeId, loggingLevel, routeService, endpointsInUse);
                 } catch (Exception e) {
                     DefaultRouteError.set(this, routeId, Phase.REMOVE, e);
                     throw e;
@@ -1256,6 +1233,39 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
         return false;
+    }
+
+    private void doRemove(
+            String routeId, LoggingLevel loggingLevel, RouteService routeService, Map<String, Set<Endpoint>> endpointsInUse) {
+        routeService.setRemovingRoutes(true);
+        shutdownRouteService(routeService, loggingLevel);
+        routeServices.remove(routeId);
+        // remove route from startup order as well, as it was
+        // removed
+        routeStartupOrder.removeIf(order -> order.getRoute().getId().equals(routeId));
+
+        // from the route which we have removed, then remove all its
+        // private endpoints
+        // (eg the endpoints which are not in use by other routes)
+        Set<Endpoint> toRemove = new LinkedHashSet<>();
+        for (Endpoint endpoint : endpointsInUse.get(routeId)) {
+            // how many times is the endpoint in use
+            int count = 0;
+            for (Set<Endpoint> endpointSet : endpointsInUse.values()) {
+                if (endpointSet.contains(endpoint)) {
+                    count++;
+                }
+            }
+            // notice we will count ourselves so if there is only 1
+            // then its safe to remove
+            if (count <= 1) {
+                toRemove.add(endpoint);
+            }
+        }
+        for (Endpoint endpoint : toRemove) {
+            LOG.debug("Removing: {} which was only in use by route: {}", endpoint, routeId);
+            removeEndpoint(endpoint);
+        }
     }
 
     public void suspendRoute(String routeId) throws Exception {
