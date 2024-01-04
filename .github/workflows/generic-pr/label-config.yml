@@ -15,6 +15,15 @@
 # limitations under the License.
 #
 
+camel-3:
+  - base-branch:
+      - '^camel-3.x'
+
+camel-4:
+  - base-branch:
+      - 'main'
+      - '^camel-4.x'
+
 ci:
   - changed-files:
       - any-glob-to-any-file:
