@@ -27,7 +27,7 @@ function main() {
     local componentList="${commentBody:16}"
     echo "The list of components to test is ${componentList}"
   else
-    echo "No components has been detected, the expected format is '/component-test (camel-)component-name1 (camel-)component-name2...'"
+    echo "No components have been detected, the expected format is '/component-test (camel-)component-name1 (camel-)component-name2...'"
     exit 1
   fi
   local pl=""
@@ -39,7 +39,7 @@ function main() {
       componentPath="components/camel-${component}"
     fi
     if [[ -d "${componentPath}" ]] ; then
-      pl="$pl$(find "${componentPath}" -name pom.xml -exec dirname {} \; | sort | tr -s "\n" ",")"
+      pl="$pl$(find "${componentPath}" -name pom.xml -not -path "*/src/it/*" -exec dirname {} \; | sort | tr -s "\n" ",")"
     fi
   done
   len=${#pl}
