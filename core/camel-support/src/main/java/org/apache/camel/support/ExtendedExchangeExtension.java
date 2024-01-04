@@ -75,6 +75,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     /**
      * Is stream caching disabled on the given exchange
      */
+    @Override
     public boolean isStreamCacheDisabled() {
         return this.streamCacheDisabled;
     }
@@ -82,6 +83,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     /**
      * Used to force disabling stream caching which some components can do in special use-cases.
      */
+    @Override
     public void setStreamCacheDisabled(boolean streamCacheDisabled) {
         this.streamCacheDisabled = streamCacheDisabled;
     }
@@ -243,7 +245,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         this.transacted = transacted;
     }
 
-    public boolean isTransacted() {
+    boolean isTransacted() {
         return transacted;
     }
 
@@ -289,6 +291,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         return this.exchange.getSafeCopyProperty(key, type);
     }
 
+    @Override
     public void copySafeCopyPropertiesTo(ExchangeExtension target) {
         if (exchange.safeCopyProperties != null && !exchange.safeCopyProperties.isEmpty()) {
             exchange.safeCopyProperties.entrySet().stream()
@@ -306,7 +309,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         this.failureHandled = failureHandled;
     }
 
-    public UnitOfWork getUnitOfWork() {
+    UnitOfWork getUnitOfWork() {
         return unitOfWork;
     }
 
@@ -319,7 +322,6 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         }
         if (this.exchange.variableRepository != null) {
             this.exchange.variableRepository.clear();
-            ;
         }
 
         setHistoryNodeId(null);
