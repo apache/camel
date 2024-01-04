@@ -51,9 +51,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.ibm.jsonata4java</groupId>
-            <artifactId>JSONata4Java</artifactId>
-            <version>${jsonata4java-version}</version>
+            <groupId>com.dashjoin</groupId>
+            <artifactId>jsonata</artifactId>
+            <version>${jsonata-version}</version>
         </dependency>
 
         <!-- testing -->
