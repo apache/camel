@@ -16,14 +16,20 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /*
  * Note: these tests offer only a naive check of the deliveryDelay functionality as they check the
@@ -35,23 +41,42 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tags({ @Tag("not-parallel") })
 public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
 
+    private CountDownLatch routeComplete;
+
     @Test
     void testInOnlyWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        StopWatch watch = new StopWatch();
+        var startSendingMessageTime = System.nanoTime();
         template.sendBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
-        MockEndpoint.assertIsSatisfied(context);
+        if(!routeComplete.await(2000, TimeUnit.MILLISECONDS)) {
+            fail("Message was not received from Artemis topic for too long");
+        }
+        var messageReceivedTime = System.nanoTime() - mock.getReceivedExchanges().get(0).getClock().elapsed();
 
-        assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
+        MockEndpoint.assertIsSatisfied(context);
+        assertTrue(
+                messageReceivedTime - startSendingMessageTime >= TimeUnit.MILLISECONDS.toNanos(1000),
+                "Should take at least 1000 millis");
     }
 
     @Test
-    void testInOutWithDelay() {
+    void testInOutWithDelay() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
         StopWatch watch = new StopWatch();
-        template.requestBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
+        var response = template.requestBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertEquals(response, "Hello World");
         assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
+    }
+
+    @BeforeEach
+    public void initLatch() {
+        routeComplete = new CountDownLatch(1);
     }
 
     @Override
@@ -60,7 +85,8 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
             @Override
             public void configure() {
                 from("activemq:topic:JmsDeliveryDelayTest")
-                        .to("mock:result");
+                        .to("mock:result")
+                        .process(exchange -> routeComplete.countDown());
             }
         };
     }
