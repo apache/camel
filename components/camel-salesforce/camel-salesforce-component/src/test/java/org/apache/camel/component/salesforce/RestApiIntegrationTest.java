@@ -554,7 +554,6 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         final String schemaId = (String) map.get("uuid");
 
         final Object idResult = template.requestBodyAndHeader("salesforce:getEventSchema", "", EVENT_SCHEMA_ID, schemaId);
-        System.out.println(idResult);
         assertNotNull(idResult);
     }
 
