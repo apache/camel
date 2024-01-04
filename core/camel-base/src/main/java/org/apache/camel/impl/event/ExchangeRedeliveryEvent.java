@@ -35,7 +35,7 @@ public class ExchangeRedeliveryEvent extends AbstractExchangeEvent implements Ca
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         Exception cause = getExchange().getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         if (cause != null) {
             return getExchange().getExchangeId() + " retrying attempt " + attempt + " due to " + cause;
