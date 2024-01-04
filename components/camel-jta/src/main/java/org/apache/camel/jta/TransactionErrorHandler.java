@@ -39,6 +39,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  * Does transactional execution according given policy. This class is based on
@@ -268,51 +269,31 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         LOG.debug("Transaction commit ({}) redelivered({}) for {})", transactionKey, redelivered, ids);
     }
 
+    public void doLog(String redelivered, String ids, Throwable e, boolean rollbackOnly, Level level) {
+        if (rollbackOnly) {
+            LOG.atLevel(level).log("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
+                    transactionKey, redelivered, ids);
+        } else {
+            LOG.atLevel(level).log("Transaction rollback ({}) redelivered({}) for {} caught: {}",
+                    transactionKey, redelivered, ids, e.getMessage());
+        }
+    }
+
     /**
      * Logs the transaction rollback.
      */
     private void logTransactionRollback(String redelivered, String ids, Throwable e, boolean rollbackOnly) {
-        if (rollbackLoggingLevel == LoggingLevel.OFF) {
-            return;
-        } else if (rollbackLoggingLevel == LoggingLevel.ERROR && LOG.isErrorEnabled()) {
-            if (rollbackOnly) {
-                LOG.error("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
-            } else {
-                LOG.error("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        transactionKey, redelivered, ids, e.getMessage());
-            }
-        } else if (rollbackLoggingLevel == LoggingLevel.WARN && LOG.isWarnEnabled()) {
-            if (rollbackOnly) {
-                LOG.warn("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
-            } else {
-                LOG.warn("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        transactionKey, redelivered, ids, e.getMessage());
-            }
-        } else if (rollbackLoggingLevel == LoggingLevel.INFO && LOG.isInfoEnabled()) {
-            if (rollbackOnly) {
-                LOG.info("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
-            } else {
-                LOG.info("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        transactionKey, redelivered, ids, e.getMessage());
-            }
-        } else if (rollbackLoggingLevel == LoggingLevel.DEBUG && LOG.isDebugEnabled()) {
-            if (rollbackOnly) {
-                LOG.debug("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
-            } else {
-                LOG.debug("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        transactionKey, redelivered, ids, e.getMessage());
-            }
-        } else if (rollbackLoggingLevel == LoggingLevel.TRACE && LOG.isTraceEnabled()) {
-            if (rollbackOnly) {
-                LOG.trace("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
-            } else {
-                LOG.trace("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        transactionKey, redelivered, ids, e.getMessage());
+        if (rollbackLoggingLevel != LoggingLevel.OFF) {
+            if (rollbackLoggingLevel == LoggingLevel.ERROR && LOG.isErrorEnabled()) {
+                doLog(redelivered, ids, e, rollbackOnly, Level.ERROR);
+            } else if (rollbackLoggingLevel == LoggingLevel.WARN && LOG.isWarnEnabled()) {
+                doLog(redelivered, ids, e, rollbackOnly, Level.WARN);
+            } else if (rollbackLoggingLevel == LoggingLevel.INFO && LOG.isInfoEnabled()) {
+                doLog(redelivered, ids, e, rollbackOnly, Level.INFO);
+            } else if (rollbackLoggingLevel == LoggingLevel.DEBUG && LOG.isDebugEnabled()) {
+                doLog(redelivered, ids, e, rollbackOnly, Level.DEBUG);
+            } else if (rollbackLoggingLevel == LoggingLevel.TRACE && LOG.isTraceEnabled()) {
+                doLog(redelivered, ids, e, rollbackOnly, Level.TRACE);
             }
         }
     }
