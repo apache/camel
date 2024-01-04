@@ -685,7 +685,7 @@ abstract class AbstractExchange implements Exchange {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         // do not output information about the message as it may contain sensitive information
         if (exchangeId != null) {
             return "Exchange[" + exchangeId + "]";
