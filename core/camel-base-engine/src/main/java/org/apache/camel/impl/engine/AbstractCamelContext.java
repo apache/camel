@@ -381,16 +381,6 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
-    /**
-     * Reset context counter to a preset value. Mostly used for tests to ensure a predictable getName()
-     *
-     * @param value new value for the context counter
-     */
-    public static void setContextCounter(int value) {
-        DefaultCamelContextNameStrategy.setCounter(value);
-        DefaultManagementNameStrategy.setCounter(value);
-    }
-
     public void close() throws IOException {
         try {
             stop();
