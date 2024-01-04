@@ -666,7 +666,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public void removeEndpoint(Endpoint endpoint) throws Exception {
+    public void removeEndpoint(Endpoint endpoint) {
         Endpoint oldEndpoint = null;
         NormalizedUri oldKey = null;
         for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
@@ -690,7 +690,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
+    public Collection<Endpoint> removeEndpoints(String uri) {
         Collection<Endpoint> answer = new ArrayList<>();
         Endpoint oldEndpoint = endpoints.remove(getEndpointKey(uri));
         if (oldEndpoint != null) {
@@ -1329,7 +1329,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public void addPrototypeService(Object object) throws Exception {
+    public void addPrototypeService(Object object) {
         internalServiceManager.addService(this, object, false, true, false);
     }
 
@@ -1366,7 +1366,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public void deferStartService(Object object, boolean stopOnShutdown) throws Exception {
+    public void deferStartService(Object object, boolean stopOnShutdown) {
         internalServiceManager.deferStartService(this, object, stopOnShutdown, false);
     }
 
@@ -3192,7 +3192,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
-    protected synchronized void stopRouteService(RouteService routeService, LoggingLevel loggingLevel) throws Exception {
+    protected synchronized void stopRouteService(RouteService routeService, LoggingLevel loggingLevel) {
         routeService.stop();
         logRouteState(routeService.getRoute(), "Stopped", loggingLevel);
     }
@@ -3201,12 +3201,12 @@ public abstract class AbstractCamelContext extends BaseService
         shutdownRouteService(routeService, LoggingLevel.INFO);
     }
 
-    protected synchronized void shutdownRouteService(RouteService routeService, LoggingLevel loggingLevel) throws Exception {
+    protected synchronized void shutdownRouteService(RouteService routeService, LoggingLevel loggingLevel) {
         routeService.shutdown();
         logRouteState(routeService.getRoute(), "Shutdown", loggingLevel);
     }
 
-    protected synchronized void suspendRouteService(RouteService routeService) throws Exception {
+    protected synchronized void suspendRouteService(RouteService routeService) {
         routeService.setRemovingRoutes(false);
         routeService.suspend();
         logRouteState(routeService.getRoute(), "Suspended", LoggingLevel.INFO);
