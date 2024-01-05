@@ -32,6 +32,12 @@
   <name>Camel :: ElasticSearch Rest Client</name>
   <description>Camel ElasticSearch Rest Client Component</description>
 
+  <properties>
+    <!-- Elasticsearch container is not available on these platforms -->
+    <skipITs.ppc64le>true</skipITs.ppc64le>
+    <skipITs.s390x>true</skipITs.s390x>
+  </properties>
+
   <dependencies>
     <!-- camel -->
     <dependency>
