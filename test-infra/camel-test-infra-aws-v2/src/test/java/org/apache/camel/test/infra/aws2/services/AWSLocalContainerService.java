@@ -103,6 +103,7 @@ public abstract class AWSLocalContainerService implements AWSService, ContainerS
     @Override
     public void initialize() {
         LOG.debug("Trying to start the container");
+        container.withStartupAttempts(5);
         container.start();
 
         registerProperties();
