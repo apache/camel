@@ -42,23 +42,21 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
 
     private CountDownLatch routeComplete;
+    private final StopWatch routeWatch = new StopWatch();
 
     @Test
     void testInOnlyWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        var startSendingMessageTime = System.nanoTime();
+        routeWatch.restart();
         template.sendBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
         if(!routeComplete.await(2000, TimeUnit.MILLISECONDS)) {
             fail("Message was not received from Artemis topic for too long");
         }
-        var messageReceivedTime = System.nanoTime() - mock.getReceivedExchanges().get(0).getClock().elapsed();
 
         MockEndpoint.assertIsSatisfied(context);
-        assertTrue(
-                messageReceivedTime - startSendingMessageTime >= TimeUnit.MILLISECONDS.toNanos(1000),
-                "Should take at least 1000 millis");
+        assertTrue(routeWatch.taken() >= 1000, "Should take at least 1000 millis");
     }
 
     @Test
@@ -66,12 +64,12 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        StopWatch watch = new StopWatch();
+        routeWatch.restart();
         var response = template.requestBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(response, "Hello World");
-        assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
+        assertTrue(routeWatch.taken() >= 1000, "Should take at least 1000 millis");
     }
 
     @BeforeEach
