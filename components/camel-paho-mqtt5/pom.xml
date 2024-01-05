@@ -33,6 +33,7 @@
     <description>Camel Eclipse Paho support for MQTT v5</description>
 
     <properties>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
