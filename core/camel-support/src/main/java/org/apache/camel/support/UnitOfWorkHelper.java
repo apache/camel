@@ -53,7 +53,7 @@ public final class UnitOfWorkHelper {
             uow.done(exchange);
         } catch (Exception e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
-                    exchange, e);
+                    exchange.getExchangeId(), e);
         }
     }
 
