@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ElasticsearchRestClientComponentTest extends ElasticsearchRestClientTestSupport {
+public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientITSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
