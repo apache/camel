@@ -244,6 +244,7 @@ public class FileWatchConsumer extends DefaultConsumer {
                 try {
                     event = eventQueue.poll(1000, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     return;
                 }
 
