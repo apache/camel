@@ -420,7 +420,7 @@ more details about FIX sequence number management.
 
 Several examples are included in the QuickFIX/J component source code
 (test subdirectories). One of these examples implements a trival trade
-excecution simulation. The example defines an application component that
+execution simulation. The example defines an application component that
 uses the URI scheme "trade-executor".
 
 The following route receives messages for the trade executor session and
