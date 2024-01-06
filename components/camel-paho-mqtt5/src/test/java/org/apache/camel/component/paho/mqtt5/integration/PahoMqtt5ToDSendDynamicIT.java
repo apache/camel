@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.paho.mqtt5;
+package org.apache.camel.component.paho.mqtt5.integration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.paho.mqtt5.PahoMqtt5Component;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PahoMqtt5ToDSendDynamicTest extends PahoMqtt5TestSupport {
+public class PahoMqtt5ToDSendDynamicIT extends PahoMqtt5ITSupport {
 
     @Test
     public void testToD() {

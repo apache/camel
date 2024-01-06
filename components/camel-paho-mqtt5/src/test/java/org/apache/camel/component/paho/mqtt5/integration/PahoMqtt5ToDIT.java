@@ -14,13 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.paho.mqtt5;
+package org.apache.camel.component.paho.mqtt5.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.paho.mqtt5.PahoMqtt5Component;
 import org.junit.jupiter.api.Test;
 
-public class PahoMqtt5OverrideTopicMqtt5Test extends PahoMqtt5TestSupport {
+public class PahoMqtt5ToDIT extends PahoMqtt5ITSupport {
+
+    @Test
+    public void testToD() throws Exception {
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
+        getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
+
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -30,25 +42,13 @@ public class PahoMqtt5OverrideTopicMqtt5Test extends PahoMqtt5TestSupport {
                 PahoMqtt5Component paho = context.getComponent("paho-mqtt5", PahoMqtt5Component.class);
                 paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
 
-                from("direct:test").to("paho-mqtt5:queue").log("Message sent");
+                // route message dynamic using toD
+                from("direct:start").toD("paho-mqtt5:${header.where}");
 
-                from("paho-mqtt5:myoverride").log("Message received").to("mock:test");
+                from("paho-mqtt5:bar").to("mock:bar");
+                from("paho-mqtt5:beer").to("mock:beer");
             }
         };
-    }
-
-    // Tests
-
-    @Test
-    public void shouldOverride() throws InterruptedException {
-        // Given
-        getMockEndpoint("mock:test").expectedMessageCount(1);
-
-        // When
-        template.sendBodyAndHeader("direct:test", "Hello World", PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC, "myoverride");
-
-        // Then
-        MockEndpoint.assertIsSatisfied(context);
     }
 
 }
