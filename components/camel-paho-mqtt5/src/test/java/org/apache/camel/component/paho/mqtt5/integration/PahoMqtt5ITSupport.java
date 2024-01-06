@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.paho.mqtt5;
+package org.apache.camel.component.paho.mqtt5.integration;
 
 import org.apache.camel.test.infra.mosquitto.services.MosquittoService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public abstract class PahoMqtt5TestSupport extends CamelTestSupport {
+public abstract class PahoMqtt5ITSupport extends CamelTestSupport {
     @RegisterExtension
     public static MosquittoService service = MosquittoServiceFactory.createService();
 
