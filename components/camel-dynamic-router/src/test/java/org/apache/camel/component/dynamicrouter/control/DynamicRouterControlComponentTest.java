@@ -21,8 +21,11 @@ import java.util.Collections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlEndpoint.DynamicRouterControlEndpointFactory;
+import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlService.DynamicRouterControlServiceFactory;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,11 +42,16 @@ class DynamicRouterControlComponentTest {
     static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
     @Mock
-    protected DynamicRouterControlEndpoint endpoint;
+    DynamicRouterControlEndpoint endpoint;
+
+    @Mock
+    DynamicRouterControlService controlService;
 
     CamelContext context;
 
     DynamicRouterControlEndpointFactory endpointFactory;
+
+    DynamicRouterControlServiceFactory controlServiceFactory;
 
     DynamicRouterControlComponent component;
 
@@ -56,11 +64,38 @@ class DynamicRouterControlComponentTest {
                     final String uri,
                     final DynamicRouterControlComponent component,
                     final String controlAction,
-                    final DynamicRouterControlConfiguration configuration) {
+                    final DynamicRouterControlConfiguration configuration,
+                    final DynamicRouterControlService controlService) {
                 return endpoint;
             }
         };
-        component = new DynamicRouterControlComponent(context, () -> endpointFactory);
+        controlServiceFactory = new DynamicRouterControlServiceFactory() {
+            @Override
+            public DynamicRouterControlService getInstance(
+                    CamelContext camelContext, DynamicRouterFilterService dynamicRouterFilterService) {
+                return controlService;
+            }
+        };
+        component = new DynamicRouterControlComponent(context, () -> endpointFactory, () -> controlServiceFactory);
+    }
+
+    @Test
+    void testCreateDefaultInstance() {
+        DynamicRouterControlComponent instance = new DynamicRouterControlComponent();
+        Assertions.assertNotNull(instance);
+    }
+
+    @Test
+    void testCreateInstanceWithContext() {
+        DynamicRouterControlComponent instance = new DynamicRouterControlComponent(context);
+        Assertions.assertNotNull(instance);
+    }
+
+    @Test
+    void testCreateInstanceAllArgs() {
+        DynamicRouterControlComponent instance = new DynamicRouterControlComponent(
+                context, () -> endpointFactory, () -> controlServiceFactory);
+        Assertions.assertNotNull(instance);
     }
 
     @Test

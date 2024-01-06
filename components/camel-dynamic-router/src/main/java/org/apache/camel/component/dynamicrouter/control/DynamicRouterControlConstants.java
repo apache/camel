@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlEndpoint.DynamicRouterControlEndpointFactory;
 import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlProducer.DynamicRouterControlProducerFactory;
+import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlService.DynamicRouterControlServiceFactory;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -38,7 +39,7 @@ public final class DynamicRouterControlConstants {
     /**
      * The camel version where the dynamic router control channel endpoint was introduced.
      */
-    public static final String FIRST_VERSION_CONTROL = "4.3.0";
+    public static final String FIRST_VERSION_CONTROL = "4.4.0";
 
     /**
      * The component name/scheme for the {@link DynamicRouterControlEndpoint}.
@@ -86,9 +87,19 @@ public final class DynamicRouterControlConstants {
     public static final String CONTROL_ACTION_UNSUBSCRIBE = "unsubscribe";
 
     /**
+     * Update control channel action.
+     */
+    public static final String CONTROL_ACTION_UPDATE = "update";
+
+    /**
      * Subscription list control channel action.
      */
     public static final String CONTROL_ACTION_LIST = "list";
+
+    /**
+     * Routing statistics control channel action.
+     */
+    public static final String CONTROL_ACTION_STATS = "statistics";
 
     /**
      * The name of the "simple" language.
@@ -238,4 +249,10 @@ public final class DynamicRouterControlConstants {
      */
     public static final Supplier<DynamicRouterControlProducerFactory> CONTROL_PRODUCER_FACTORY_SUPPLIER
             = DynamicRouterControlProducerFactory::new;
+
+    /**
+     * The supplier for the control service factory.
+     */
+    public static final Supplier<DynamicRouterControlServiceFactory> CONTROL_SERVICE_FACTORY_SUPPLIER
+            = DynamicRouterControlServiceFactory::new;
 }

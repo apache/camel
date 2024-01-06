@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dynamicrouter;
+package org.apache.camel.component.dynamicrouter.filter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,6 +57,9 @@ class PrioritizedFilterTest {
     @Mock
     PrioritizedFilter prioritizedFilter;
 
+    @Mock
+    PrioritizedFilterStatistics prioritizedFilterStatistics;
+
     CamelContext context;
 
     @BeforeEach
@@ -68,20 +73,23 @@ class PrioritizedFilterTest {
         Mockito.when(prioritizedFilter.id()).thenReturn(TEST_ID);
         Mockito.when(prioritizedFilter.priority()).thenReturn(TEST_PRIORITY);
         PrioritizedFilter testProcessor
-                = new PrioritizedFilter(TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri());
+                = new PrioritizedFilter(
+                        TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri(), prioritizedFilterStatistics);
         assertEquals(0, testProcessor.compareTo(prioritizedFilter));
     }
 
     @Test
     void testCompareToAndNotEqualById() {
         PrioritizedFilter testProcessor
-                = new PrioritizedFilter("differentId", TEST_PRIORITY, predicate, endpoint.getEndpointUri());
+                = new PrioritizedFilter(
+                        "differentId", TEST_PRIORITY, predicate, endpoint.getEndpointUri(), prioritizedFilterStatistics);
         assertNotEquals(0, testProcessor.compareTo(prioritizedFilter));
     }
 
     @Test
     void testCompareToAndNotEqualByPriority() {
-        PrioritizedFilter testProcessor = new PrioritizedFilter(TEST_ID, 1, predicate, endpoint.getEndpointUri());
+        PrioritizedFilter testProcessor
+                = new PrioritizedFilter(TEST_ID, 1, predicate, endpoint.getEndpointUri(), prioritizedFilterStatistics);
         assertNotEquals(0, testProcessor.compareTo(prioritizedFilter));
     }
 
@@ -90,10 +98,18 @@ class PrioritizedFilterTest {
         Mockito.when(predicate.toString()).thenReturn(TEST_PREDICATE);
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         PrioritizedFilter testProcessor
-                = new PrioritizedFilter(TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri());
+                = new PrioritizedFilter(
+                        TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri(), prioritizedFilterStatistics);
         String expected = String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s, endpoint: %s]",
                 TEST_ID, TEST_PRIORITY, TEST_PREDICATE, TEST_URI);
         String result = testProcessor.toString();
         assertEquals(expected, result);
+    }
+
+    @Test
+    void testGetInstance() {
+        PrioritizedFilter instance = new PrioritizedFilterFactory()
+                .getInstance(TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri(), prioritizedFilterStatistics);
+        Assertions.assertNotNull(instance);
     }
 }

@@ -19,9 +19,10 @@ package org.apache.camel.component.dynamicrouter.routing;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Producer;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilterStatistics;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -97,7 +98,8 @@ class DynamicRouterEndpointTest {
         };
         prioritizedFilterFactory = new PrioritizedFilterFactory() {
             @Override
-            public PrioritizedFilter getInstance(String id, int priority, Predicate predicate, String endpoint) {
+            public PrioritizedFilter getInstance(
+                    String id, int priority, Predicate predicate, String endpoint, PrioritizedFilterStatistics statistics) {
                 return prioritizedFilter;
             }
         };
@@ -120,6 +122,13 @@ class DynamicRouterEndpointTest {
     void testGetInstanceWithDefaults() {
         DynamicRouterEndpoint endpoint = new DynamicRouterEndpoint.DynamicRouterEndpointFactory()
                 .getInstance(BASE_URI, component, configuration, filterService);
+        assertNotNull(endpoint);
+    }
+
+    @Test
+    void testGetInstance() {
+        DynamicRouterEndpoint endpoint = new DynamicRouterEndpoint.DynamicRouterEndpointFactory()
+                .getInstance(BASE_URI, component, configuration, () -> processorFactory, () -> producerFactory, filterService);
         assertNotNull(endpoint);
     }
 }

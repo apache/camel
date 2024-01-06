@@ -21,10 +21,10 @@ import java.util.Comparator;
 import java.util.function.Supplier;
 
 import org.apache.camel.Expression;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint.DynamicRouterEndpointFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;

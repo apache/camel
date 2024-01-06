@@ -20,10 +20,12 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +53,9 @@ class DynamicRouterProcessorTest {
     CamelContext context;
 
     DynamicRouterProcessor processor;
+
+    @Mock
+    DynamicRouterConfiguration configuration;
 
     @Mock
     RecipientList recipientList;
@@ -107,5 +112,12 @@ class DynamicRouterProcessorTest {
                 .thenReturn(MOCK_ENDPOINT);
         processor.process(exchange, asyncCallback);
         verify(recipientList, new Times(1)).process(exchange, asyncCallback);
+    }
+
+    @Test
+    void testGetInstance() {
+        DynamicRouterProcessor instance = new DynamicRouterProcessorFactory()
+                .getInstance(context, configuration, filterService);
+        Assertions.assertNotNull(instance);
     }
 }
