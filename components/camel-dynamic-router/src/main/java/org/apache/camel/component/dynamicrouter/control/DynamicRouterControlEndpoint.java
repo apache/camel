@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.dynamicrouter.control;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
 import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlProducer.DynamicRouterControlProducerFactory;
-import org.apache.camel.component.dynamicrouter.routing.DynamicRouterComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,13 +31,14 @@ import org.apache.camel.support.DefaultEndpoint;
 
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.COMPONENT_SCHEME_CONTROL;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_LIST;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_STATS;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_UNSUBSCRIBE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_UPDATE;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PRODUCER_FACTORY_SUPPLIER;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.FIRST_VERSION_CONTROL;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.SYNTAX_CONTROL;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.TITLE_CONTROL;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
 
 /**
  * The Dynamic Router control endpoint for operations that allow routing participants to subscribe or unsubscribe to
@@ -56,8 +54,10 @@ import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterCons
              category = { Category.MESSAGING })
 public class DynamicRouterControlEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Control action",
-             enums = CONTROL_ACTION_SUBSCRIBE + "," + CONTROL_ACTION_UNSUBSCRIBE + "," + CONTROL_ACTION_LIST)
+    static final String URI_CONTROL_ACTIONS = CONTROL_ACTION_SUBSCRIBE + "," + CONTROL_ACTION_UNSUBSCRIBE + "," +
+                                              CONTROL_ACTION_UPDATE + "," + CONTROL_ACTION_LIST + "," + CONTROL_ACTION_STATS;
+
+    @UriPath(description = "Control action", enums = URI_CONTROL_ACTIONS)
     @Metadata(required = true)
     private final String controlAction;
 
@@ -68,10 +68,9 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
     private final DynamicRouterControlConfiguration configuration;
 
     /**
-     * Service that manages {@link org.apache.camel.component.dynamicrouter.PrioritizedFilter}s for the Dynamic Router
-     * channels.
+     * Service that responds to control messages.
      */
-    private DynamicRouterFilterService filterService;
+    private final DynamicRouterControlService controlService;
 
     /**
      * Creates a {@link DynamicRouterControlProducer} instance.
@@ -81,35 +80,44 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
     /**
      * Creates the instance.
      *
-     * @param uri           the URI that was used to cause the endpoint creation
-     * @param component     the routing component to handle management of subscriber information from routing
-     *                      participants
-     * @param configuration the component/endpoint configuration
+     * @param uri                            the URI that was used to cause the endpoint creation
+     * @param component                      the routing component to handle management of subscriber information from
+     *                                       routing participants
+     * @param controlAction                  the control action of the endpoint
+     * @param configuration                  the component/endpoint configuration
+     * @param controlService                 the {@link DynamicRouterControlService}
+     * @param controlProducerFactorySupplier the {@link DynamicRouterControlProducerFactory} supplier
      */
     public DynamicRouterControlEndpoint(String uri, DynamicRouterControlComponent component, String controlAction,
                                         DynamicRouterControlConfiguration configuration,
+                                        DynamicRouterControlService controlService,
                                         Supplier<DynamicRouterControlProducerFactory> controlProducerFactorySupplier) {
         super(uri, component);
         this.controlAction = controlAction;
         this.configuration = configuration;
         this.configuration.setControlAction(controlAction);
+        this.controlService = controlService;
         this.controlProducerFactorySupplier = controlProducerFactorySupplier;
     }
 
     /**
      * Creates the instance.
      *
-     * @param uri           the URI that was used to cause the endpoint creation
-     * @param component     the routing component to handle management of subscriber information from routing
-     *                      participants
-     * @param configuration the component/endpoint configuration
+     * @param uri            the URI that was used to cause the endpoint creation
+     * @param component      the routing component to handle management of subscriber information from routing
+     *                       participants
+     * @param controlAction  the control action of the endpoint
+     * @param configuration  the component/endpoint configuration
+     * @param controlService the {@link DynamicRouterControlService}
      */
     public DynamicRouterControlEndpoint(String uri, DynamicRouterControlComponent component, String controlAction,
-                                        DynamicRouterControlConfiguration configuration) {
+                                        DynamicRouterControlConfiguration configuration,
+                                        DynamicRouterControlService controlService) {
         super(uri, component);
         this.controlAction = controlAction;
         this.configuration = configuration;
         this.configuration.setControlAction(controlAction);
+        this.controlService = controlService;
         this.controlProducerFactorySupplier = CONTROL_PRODUCER_FACTORY_SUPPLIER;
     }
 
@@ -126,7 +134,8 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
      */
     @Override
     public Producer createProducer() {
-        return controlProducerFactorySupplier.get().getInstance(this, filterService, configuration);
+        return controlProducerFactorySupplier.get()
+                .getInstance(this, controlService, configuration);
     }
 
     /**
@@ -138,21 +147,6 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(final Processor processor) {
         throw new IllegalStateException("Dynamic Router is a producer-only component");
-    }
-
-    /**
-     * Starts the endpoint.
-     *
-     * @throws Exception when the component could not be found
-     * @see              DefaultEndpoint#doStart() for more information about the startup process
-     */
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        this.filterService = Optional.ofNullable(
-                getCamelContext().getComponent(COMPONENT_SCHEME_ROUTING, DynamicRouterComponent.class))
-                .map(DynamicRouterComponent::getFilterService)
-                .orElseThrow(() -> new IllegalStateException("DynamicRouter component could not be found"));
     }
 
     /**
@@ -181,17 +175,20 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
         /**
          * Gets an instance of a {@link DynamicRouterControlEndpoint}.
          *
-         * @param  uri           the URI that was used to trigger the creation of the endpoint
-         * @param  component     the {@link DynamicRouterControlComponent}
-         * @param  configuration the {@link DynamicRouterControlConfiguration}
-         * @return               the {@link DynamicRouterControlEndpoint}
+         * @param  uri            the URI that was used to trigger the creation of the endpoint
+         * @param  component      the {@link DynamicRouterControlComponent}
+         * @param  controlAction  the control action of the endpoint
+         * @param  configuration  the {@link DynamicRouterControlConfiguration}
+         * @param  controlService the {@link DynamicRouterControlService}
+         * @return                the {@link DynamicRouterControlEndpoint}
          */
         public DynamicRouterControlEndpoint getInstance(
                 final String uri,
                 final DynamicRouterControlComponent component,
                 final String controlAction,
-                final DynamicRouterControlConfiguration configuration) {
-            return new DynamicRouterControlEndpoint(uri, component, controlAction, configuration);
+                final DynamicRouterControlConfiguration configuration,
+                final DynamicRouterControlService controlService) {
+            return new DynamicRouterControlEndpoint(uri, component, controlAction, configuration, controlService);
         }
 
         /**
@@ -199,8 +196,10 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
          *
          * @param  uri                            the URI that was used to trigger the creation of the endpoint
          * @param  component                      the {@link DynamicRouterControlComponent}
+         * @param  controlAction                  the control action of the endpoint
          * @param  configuration                  the {@link DynamicRouterControlConfiguration}
-         * @param  controlProducerFactorySupplier the {@link DynamicRouterControlProducerFactory}
+         * @param  controlService                 the {@link DynamicRouterControlService}
+         * @param  controlProducerFactorySupplier the {@link DynamicRouterControlProducerFactory} supplier
          * @return                                the {@link DynamicRouterControlEndpoint}
          */
         public DynamicRouterControlEndpoint getInstance(
@@ -208,10 +207,10 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
                 final DynamicRouterControlComponent component,
                 final String controlAction,
                 final DynamicRouterControlConfiguration configuration,
-                Supplier<DynamicRouterControlProducerFactory> controlProducerFactorySupplier) {
+                final DynamicRouterControlService controlService,
+                final Supplier<DynamicRouterControlProducerFactory> controlProducerFactorySupplier) {
             return new DynamicRouterControlEndpoint(
-                    uri, component, controlAction, configuration,
-                    controlProducerFactorySupplier);
+                    uri, component, controlAction, configuration, controlService, controlProducerFactorySupplier);
         }
     }
 }

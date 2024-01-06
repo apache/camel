@@ -312,3 +312,82 @@ processed, and the inventory service will increase the relevant merchandise coun
 In the `camel-spring-boot-examples` project, the `dynamic-router-eip-multimodule` module serves as a complete example
 in this category that you can run and/or experiment with to get a practical feel for how you might use this in your own
 multi-JVM application stack.
+
+== JMX Control and Monitoring Operations
+
+The Dynamic Router Control component supports some JMX operations that allow you to control and monitor the component.
+It is beyond the scope of this document to go into detail about JMX, so this is a list of the operations that are
+supported.  For more information about JMX, see the xref:manual::jmx.adoc[JMX] documentation.
+
+.Subscribing with a predicate expression
+[source,java]
+----
+String subscribeWithPredicateExpression(String, String, String, int, String, String, boolean)
+----
+This operation provides the ability to subscribe to a channel with a predicate expression. The parameters, in order, are
+as follows:
+
+- subscription ID
+- channel name
+- destination URI
+- priority
+- predicate expression
+- expression language
+- update the subscription (true), or add a new one (false)
+
+.Subscribing with a predicate bean
+[source,java]
+----
+String subscribeWithPredicateBean(String, String, String, int, String, boolean)
+----
+This operation provides the ability to subscribe to a channel with the name of a Predicate that has been bound in the
+registry. The parameters, in order, are as follows:
+
+- subscription ID
+- channel name
+- destination URI
+- priority
+- predicate bean name
+- update the subscription (true), or add a new one (false)
+
+.Subscribing with a predicate instance
+[source,java]
+----
+String subscribeWithPredicateInstance(String, String, String, int, Object, boolean)
+----
+This operation provides the ability to subscribe to a channel with an instance of a Predicate. The parameters, in order,
+are as follows:
+
+- subscription ID
+- channel name
+- destination URI
+- priority
+- predicate instance
+- update the subscription (true), or add a new one (false)
+
+.Unsubscribing
+[source,java]
+----
+boolean removeSubscription(String, String)
+----
+This operation provides the ability to unsubscribe from a channel. The parameters, in order, are as follows:
+
+- subscription ID
+- channel name
+
+.Getting the subscriptions map
+[source,java]
+----
+Map<String, ConcurrentSkipListSet<PrioritizedFilter>> getSubscriptionsMap()
+----
+This operation provides the ability to get the subscriptions map.  The map is keyed by channel name, and the values are
+a set of prioritized filters.
+
+.Getting the subscriptions statistics map
+[source,java]
+----
+Map<String, List<PrioritizedFilterStatistics>> getSubscriptionsStatisticsMap()
+----
+This operation provides the ability to get the subscriptions statistics map.  The map is keyed by channel name, and the
+values are a list of prioritized filter statistics, including the number of messages that have matched the filter, and
+had the exchange sent to the destination URI.

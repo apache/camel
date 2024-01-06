@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dynamicrouter;
+package org.apache.camel.component.dynamicrouter.filter;
 
 import java.util.Comparator;
 
@@ -26,14 +26,14 @@ import org.apache.camel.processor.FilterProcessor;
  * This class serves as a wrapper around a {@link FilterProcessor} to include an integer representing the priority of
  * this processor, and a {@link Comparator} to sort by priority, then by id.
  *
- * @param id        The identifier for this prioritized filter.
- * @param priority  The priority value of this processor.
- * @param predicate the rule expression
- * @param endpoint  the destination endpoint for matching exchanges
+ * @param id         The identifier for this prioritized filter.
+ * @param priority   The priority value of this processor.
+ * @param predicate  the rule expression
+ * @param endpoint   the destination endpoint for matching exchanges
+ * @param statistics the object that holds routing statistics for this filter
  */
-public record PrioritizedFilter(String id, int priority, Predicate predicate, String endpoint)
-        implements
-            Comparable<PrioritizedFilter> {
+public record PrioritizedFilter(String id, int priority, Predicate predicate, String endpoint,
+        PrioritizedFilterStatistics statistics) implements Comparable<PrioritizedFilter> {
 
     /**
      * Compare the priority of this instance to the priority of the parameter.
@@ -60,17 +60,19 @@ public record PrioritizedFilter(String id, int priority, Predicate predicate, St
         /**
          * Create this processor with all properties.
          *
-         * @param id        the identifier
-         * @param priority  the priority of this processor
-         * @param predicate the rule expression
-         * @param endpoint  the destination endpoint for matching exchanges
+         * @param id         the identifier
+         * @param priority   the priority of this processor
+         * @param predicate  the rule expression
+         * @param endpoint   the destination endpoint for matching exchanges
+         * @param statistics the object that holds routing statistics for this filter
          */
         public PrioritizedFilter getInstance(
                 final String id,
                 final int priority,
                 final Predicate predicate,
-                final String endpoint) {
-            return new PrioritizedFilter(id, priority, predicate, endpoint);
+                final String endpoint,
+                final PrioritizedFilterStatistics statistics) {
+            return new PrioritizedFilter(id, priority, predicate, endpoint, statistics);
         }
     }
 }
