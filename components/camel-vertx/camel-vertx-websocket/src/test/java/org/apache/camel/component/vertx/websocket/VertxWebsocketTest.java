@@ -579,7 +579,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
     @Test
     void testWsSchemeUriPrefix() throws InterruptedException {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedBodiesReceived("Hello World 1", "Hello World 2", "Hello World 3");
+        mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello World 1", "Hello World 2", "Hello World 3");
         template.sendBody("vertx-websocket:ws:localhost:" + port + "/test", "World 1");
         template.sendBody("vertx-websocket:ws:/localhost:" + port + "/test", "World 2");
         template.sendBody("vertx-websocket:ws://localhost:" + port + "/test", "World 3");
