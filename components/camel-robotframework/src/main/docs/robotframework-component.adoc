@@ -2,7 +2,7 @@
 :doctitle: Robot Framework
 :shortname: robotframework
 :artifactid: camel-robotframework
-:description: Pass camel exchanges to acceptence test written in Robot DSL.
+:description: Pass camel exchanges to acceptance test written in Robot DSL.
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:

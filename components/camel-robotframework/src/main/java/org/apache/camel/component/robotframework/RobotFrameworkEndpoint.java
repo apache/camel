@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.robotframework.RobotFramework;
 
 /**
- * Pass camel exchanges to acceptence test written in Robot DSL.
+ * Pass camel exchanges to acceptance test written in Robot DSL.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework",
              syntax = "robotframework:resourceUri", category = { Category.TESTING },
