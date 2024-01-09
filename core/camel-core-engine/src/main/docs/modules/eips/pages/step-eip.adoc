@@ -44,12 +44,12 @@ In Java, you use `step` to group together sub nodes as shown:
 from("activemq:SomeQueue")
     .step("foo")
       .bean("foo")
-      .to("acitvemq:OutputQueue")
+      .to("activemq:OutputQueue")
     .end()
     .to("direct:bar");
 ----
 
-As you can see this groups together `.bean("foo")` and `.to("acitvemq:OutputQueue")`
+As you can see this groups together `.bean("foo")` and `.to("activemq:OutputQueue")`
 into a logical unit with the name foo.
 
 In XML you use the `<step>` tag:
@@ -77,7 +77,7 @@ Java::
 from("activemq:SomeQueue")
     .step("foo")
       .bean("foo")
-      .to("acitvemq:OutputQueue")
+      .to("activemq:OutputQueue")
     .end()
     .step("bar")
       .bean("something")
