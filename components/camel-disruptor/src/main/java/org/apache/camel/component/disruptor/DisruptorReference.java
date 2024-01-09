@@ -178,7 +178,8 @@ public class DisruptorReference {
                     }
                     eventHandlerStarted = true;
                 } catch (InterruptedException e) {
-                    //just retry
+                    LOGGER.info("Interrupted while waiting for the startup to complete");
+                    Thread.currentThread().interrupt();
                 }
             }
         }
@@ -317,7 +318,8 @@ public class DisruptorReference {
                         }
                         eventHandlerFinished = true;
                     } catch (InterruptedException e) {
-                        //just retry
+                        LOGGER.info("Interrupted while waiting for the shutdown to complete");
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
