@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-
 public final class ProcessingResult {
     private static final ProcessingResult UNPROCESSED_RESULT
             = new ProcessingResult(false, false);

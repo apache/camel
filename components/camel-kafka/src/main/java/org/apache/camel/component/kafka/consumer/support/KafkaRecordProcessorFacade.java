@@ -83,7 +83,8 @@ public class KafkaRecordProcessorFacade {
                 result = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(),
                         kafkaRecordProcessor, consumerRecord);
 
-                LOG.debug("Processed record on partition {} with offset {}", consumerRecord.partition(), consumerRecord.offset());
+                LOG.debug("Processed record on partition {} with offset {}", consumerRecord.partition(),
+                        consumerRecord.offset());
 
                 if (consumerListener != null) {
                     if (!consumerListener.afterProcess(result)) {
