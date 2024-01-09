@@ -191,7 +191,8 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                             LOG.debug("Sleeping {} ms before starting route: {}", delay, id);
                             Thread.sleep(delay);
                         } catch (InterruptedException e) {
-                            // ignore
+                            LOG.info("Interrupted while waiting before starting the route");
+                            Thread.currentThread().interrupt();
                         }
                     }
                     getEndpoint().getCamelContext().getRouteController().startRoute(id);
