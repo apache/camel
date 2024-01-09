@@ -96,6 +96,13 @@ public class DirectProducer extends DefaultAsyncProducer {
                     return consumer.getAsyncProcessor().process(exchange, callback);
                 }
             }
+        } catch (InterruptedException e) {
+            LOG.info("Interrupted while processing the exchange");
+            Thread.currentThread().interrupt();
+
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
