@@ -122,6 +122,10 @@ The component has been removed after deprecation in 4.3.0
 
 The JdbcAggregationRepository now provides a deserializationFilter parameter. The default value for it is allowing all java packages and subpackages and all org.apache.camel packages and subpackages. If you plan to use particular classes and you want to expand the filter, you should change the value according to your needs. More details in CAMEL-20303.
 
+=== camel-jsonata
+
+Replaced the previous JSONata library with a new one that offers complete compatibility with the JSONata reference implementation's features.
+
 == Camel Spring Boot
 
 === Auto Configuration

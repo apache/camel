@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.jsonata;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,13 +24,16 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Unit test based on the first sample test from the JSONata project.
  */
-public class JsonataFirstSampleTest extends CamelTestSupport {
+class JsonataFirstSampleTest extends CamelTestSupport {
 
     @Test
-    public void testFirstSampleJsonata() throws Exception {
+    void testFirstSampleJsonata() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
                 IOHelper.loadText(
                         ResourceHelper.resolveMandatoryResourceAsInputStream(
@@ -51,13 +50,11 @@ public class JsonataFirstSampleTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final Processor processor = new Processor() {
-            public void process(Exchange exchange) {
-                Map<String, String> contextMap = new HashMap<>();
-                contextMap.put("contextB", "bb");
+        final Processor processor = exchange -> {
+            Map<String, String> contextMap = new HashMap<>();
+            contextMap.put("contextB", "bb");
 
-                exchange.getIn().setHeader(JsonataConstants.JSONATA_CONTEXT, contextMap);
-            }
+            exchange.getIn().setHeader(JsonataConstants.JSONATA_CONTEXT, contextMap);
         };
 
         return new RouteBuilder() {
