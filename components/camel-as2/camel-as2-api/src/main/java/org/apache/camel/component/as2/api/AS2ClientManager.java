@@ -392,7 +392,10 @@ public class AS2ClientManager {
             EntityParser.parseAS2MessageEntity(response);
         } catch (IOException e) {
             throw new HttpException("Failed to send http request message", e);
-        } catch (ExecutionException | InterruptedException ex) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new HttpException("Interrupted while sending the http request", e);
+        } catch (ExecutionException ex) {
             throw new HttpException("Retrieving connection from Pool failed or timed out", ex);
         }
         httpContext.setAttribute(HTTP_RESPONSE, response);
