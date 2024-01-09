@@ -2,7 +2,7 @@
 :doctitle: Robot Framework
 :shortname: robotframework
 :artifactid: camel-robotframework
-:description: Pass camel exchanges to acceptence test written in Robot DSL.
+:description: Pass camel exchanges to acceptance test written in Robot DSL.
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:
@@ -15,12 +15,12 @@
 *{component-header}*
 
 The *robotframework:* component allows for processing camel exchanges
-in acceptence test suites which are already implemented with its own DSL. 
+in acceptance test suites which are already implemented with its own DSL. 
 The depending keyword libraries that can be used inside test suites 
 implemented in Robot DSL, could have been implemented either via 
 Java or Pyhton.
 
-This component will let you execute business logic of acceptence test cases 
+This component will let you execute business logic of acceptance test cases 
 in Robot language on which you can pass parameters to feed data via power 
 of Camel Routes, however there is no reverse binding of parameters back where
 you can pass values back into Camel exchange. Therefore, for that reason,

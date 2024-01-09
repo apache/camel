@@ -68,7 +68,7 @@
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.22.10</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.22.13</aws-java-sdk2-version>
         <aws-xray-version>2.15.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.19</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
@@ -99,7 +99,7 @@
         <commons-cli-version>1.4</commons-cli-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-dbcp2-version>2.11.0</commons-dbcp2-version>
-        <commons-exec-version>1.3</commons-exec-version>
+        <commons-exec-version>1.4.0</commons-exec-version>
         <commons-io-version>2.15.1</commons-io-version>
         <commons-lang-version>2.6</commons-lang-version>
         <commons-lang3-version>3.14.0</commons-lang3-version>
@@ -110,10 +110,10 @@
         <commons-text-version>1.11.0</commons-text-version>
         <commons-validator-version>1.8.0</commons-validator-version>
         <compress-lzf-version>1.1.2</compress-lzf-version>
-        <consul-client-version>1.2.0</consul-client-version>
+        <consul-client-version>1.3.0</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-        <couchbase-client-version>3.5.1</couchbase-client-version>
-        <curator-version>5.5.0</curator-version>
+        <couchbase-client-version>3.5.2</couchbase-client-version>
+        <curator-version>5.6.0</curator-version>
         <cxf-version>4.0.3</cxf-version>
         <cxf-codegen-plugin-version>4.0.3</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
@@ -141,7 +141,7 @@
         <elytron-web>4.0.0.Final</elytron-web>
         <exec-maven-plugin-version>3.1.1</exec-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
-        <fastjson-version>2.0.44</fastjson-version>
+        <fastjson-version>2.0.45</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
@@ -168,7 +168,7 @@
         <jakarta-transaction-api-version>2.0.1</jakarta-transaction-api-version>
         <jakarta-jws-api-version>3.0.0</jakarta-jws-api-version>
         <gmavenplus-plugin-version>3.0.2</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.21.0</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.22.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.2.0</google-api-client-version>
         <google-api-services-drive-version>v3-rev20231128-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20231123-2.0.0</google-api-services-calendar-version>
@@ -184,7 +184,7 @@
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <grpc-version>1.60.1</grpc-version>
         <!-- keep grpc-google-auth-library-version in sync with that used by grpc-auth -->
-        <grpc-google-auth-library-version>1.21.0</grpc-google-auth-library-version>
+        <grpc-google-auth-library-version>1.22.0</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.4.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
         <gson-version>2.10.1</gson-version>
@@ -268,7 +268,7 @@
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-rest-client-api-version>5.2.7</jira-rest-client-api-version>
         <libthrift-version>0.19.0</libthrift-version>
-        <jodatime2-version>2.12.5</jodatime2-version>
+        <jodatime2-version>2.12.6</jodatime2-version>
         <jolokia-version>1.7.2</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
@@ -318,7 +318,7 @@
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.2.1</maven-archetype-packaging-version>
-        <maven-owasp-plugin-version>9.0.7</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>9.0.8</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.6.3</maven-javadoc-plugin-version>
         <maven-plugin-plugin-version>3.10.2</maven-plugin-plugin-version>
@@ -369,7 +369,7 @@
         <opensearch-version>2.11.0</opensearch-version>
         <opensearch-testcontainers-version>2.0.1</opensearch-testcontainers-version>
         <openstack4j-version>3.11</openstack4j-version>
-        <opentelemetry-version>1.33.0</opentelemetry-version>
+        <opentelemetry-version>1.34.0</opentelemetry-version>
         <opentelemetry-alpha-version>1.23.1-alpha</opentelemetry-alpha-version>
         <optaplanner-version>9.44.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.1</os-maven-plugin-version>
@@ -413,7 +413,7 @@
         <shiro-version>1.13.0</shiro-version>
         <slack-api-model-version>1.36.1</slack-api-model-version>
         <slf4j-api-version>2.0.10</slf4j-api-version>
-        <slf4j-version>2.0.10</slf4j-version>
+        <slf4j-version>2.0.11</slf4j-version>
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.5.1</smallrye-config-version>
         <smallrye-health-version>4.1.0</smallrye-health-version>
@@ -447,7 +447,7 @@
         <testcontainers-version>1.19.3</testcontainers-version>
         <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
         <tika-version>2.9.1</tika-version>
-        <twilio-version>9.14.1</twilio-version>
+        <twilio-version>9.15.0</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-version>2.3.10.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
@@ -455,7 +455,7 @@
         <vavr-version>0.10.4</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.3</velocity-version>
-        <vertx-version>4.4.6</vertx-version>
+        <vertx-version>4.5.1</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>

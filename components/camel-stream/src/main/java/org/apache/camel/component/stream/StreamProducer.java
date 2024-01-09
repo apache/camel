@@ -78,6 +78,9 @@ public class StreamProducer extends DefaultAsyncProducer {
                     closeStream(exchange, false);
                 }
             }
+        } catch (InterruptedException e) {
+            exchange.setException(e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             exchange.setException(e);
         }

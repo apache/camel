@@ -59,6 +59,12 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": getOrCreateConfig(target).setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
         case "defaultReplayId": getOrCreateConfig(target).setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "eventname":
+        case "eventName": getOrCreateConfig(target).setEventName(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventschemaformat":
+        case "eventSchemaFormat": getOrCreateConfig(target).setEventSchemaFormat(property(camelContext, org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum.class, value)); return true;
+        case "eventschemaid":
+        case "eventSchemaId": getOrCreateConfig(target).setEventSchemaId(property(camelContext, java.lang.String.class, value)); return true;
         case "fallbackreplayid":
         case "fallBackReplayId": getOrCreateConfig(target).setFallBackReplayId(property(camelContext, java.lang.Long.class, value)); return true;
         case "format": getOrCreateConfig(target).setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
@@ -255,6 +261,12 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
         case "defaultreplayid":
         case "defaultReplayId": return java.lang.Long.class;
+        case "eventname":
+        case "eventName": return java.lang.String.class;
+        case "eventschemaformat":
+        case "eventSchemaFormat": return org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum.class;
+        case "eventschemaid":
+        case "eventSchemaId": return java.lang.String.class;
         case "fallbackreplayid":
         case "fallBackReplayId": return java.lang.Long.class;
         case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
@@ -452,6 +464,12 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": return getOrCreateConfig(target).getContentType();
         case "defaultreplayid":
         case "defaultReplayId": return getOrCreateConfig(target).getDefaultReplayId();
+        case "eventname":
+        case "eventName": return getOrCreateConfig(target).getEventName();
+        case "eventschemaformat":
+        case "eventSchemaFormat": return getOrCreateConfig(target).getEventSchemaFormat();
+        case "eventschemaid":
+        case "eventSchemaId": return getOrCreateConfig(target).getEventSchemaId();
         case "fallbackreplayid":
         case "fallBackReplayId": return getOrCreateConfig(target).getFallBackReplayId();
         case "format": return getOrCreateConfig(target).getFormat();

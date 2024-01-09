@@ -363,7 +363,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                         topic);
             }
         } catch (InterruptedException e) {
-            log.warn("Interrupted while warming up cache. This exception is ignored.", e);
+            log.warn("Interrupted while warming up cache.", e);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -378,7 +379,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                 log.warn("Timeout waiting for cache to shutdown from topic {}. Proceeding anyway.", topic);
             }
         } catch (InterruptedException e) {
-            log.warn("Interrupted waiting on shutting down cache due {}. This exception is ignored.", e.getMessage());
+            log.warn("Interrupted waiting on shutting down cache due {}.", e.getMessage());
+            Thread.currentThread().interrupt();
         }
         camelContext.getExecutorServiceManager().shutdown(executorService);
 
@@ -406,7 +408,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
             ObjectHelper.notNull(producer, "producer");
 
             producer.send(new ProducerRecord<>(topic, key, action.toString())).get(); // sync send
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeCamelException(e);
+        } catch (ExecutionException e) {
             throw new RuntimeCamelException(e);
         }
     }

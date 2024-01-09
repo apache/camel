@@ -89,6 +89,7 @@ public class HashicorpVaultLocalContainerService implements HashicorpVaultServic
     @Override
     public void initialize() {
         LOG.info("Trying to start the Hashicorp Vault container");
+        container.withStartupAttempts(5);
         container.start();
 
         registerProperties();

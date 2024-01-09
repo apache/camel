@@ -45,11 +45,14 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequests;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
+import org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum;
 import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_METHOD;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_URL;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.EVENT_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.EVENT_SCHEMA_ID;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE;
@@ -192,6 +195,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 case APPROVALS:
                     processApprovals(exchange, callback);
                     break;
+                case GET_EVENT_SCHEMA:
+                    processGetEventSchema(exchange, callback);
+                    break;
                 default:
                     throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
@@ -210,6 +216,26 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         // continue routing asynchronously
         return false;
+    }
+
+    private void processGetEventSchema(Exchange exchange, AsyncCallback callback) throws SalesforceException {
+        endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION);
+        final String eventName = getParameter(EVENT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
+        final String schemaId = getParameter(EVENT_SCHEMA_ID, exchange, IGNORE_BODY, IS_OPTIONAL);
+        final EventSchemaFormatEnum eventSchemaFormat
+                = getParameter(SalesforceEndpointConfig.EVENT_SCHEMA_FORMAT, exchange, IGNORE_BODY,
+                        IS_OPTIONAL, EventSchemaFormatEnum.class);
+        final String payloadFormat
+                = eventSchemaFormat != null ? eventSchemaFormat.value() : EventSchemaFormatEnum.EXPANDED.value();
+        if (eventName != null) {
+            restClient.getEventSchemaByEventName(eventName, payloadFormat, determineHeaders(exchange),
+                    processWithResponseCallback(exchange, callback));
+        } else if (schemaId != null) {
+            restClient.getEventSchemaBySchemaId(schemaId, payloadFormat, determineHeaders(exchange),
+                    processWithResponseCallback(exchange, callback));
+        } else {
+            throw new SalesforceException("Either " + EVENT_NAME + " or " + EVENT_SCHEMA_ID + " is required.", 0);
+        }
     }
 
     final void processApproval(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {

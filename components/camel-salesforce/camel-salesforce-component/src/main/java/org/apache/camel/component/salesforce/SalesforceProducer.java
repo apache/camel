@@ -48,7 +48,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
     public SalesforceProducer(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        // check if its a Bulk Operation
+        // check if it's a Bulk Operation
         final OperationName operationName = endpoint.getOperationName();
         if (isBulkOperation(operationName)) {
             processor = new BulkApiProcessor(endpoint);

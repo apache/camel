@@ -246,7 +246,7 @@ will result in
 ----
 
 You may have noted that the input xml and output json is very similar to the examples above when converting from json to xml
-altough nothing special is done here. We only transformed an arbitrary XML document to json.
+although nothing special is done here. We only transformed an arbitrary XML document to json.
 XJ uses the following rules by default:
 
 * The XML root element can be named somehow, it will always end in a json root object declaration '{}'
@@ -354,7 +354,7 @@ and get the following output:
 }
 ----
 
-Note, this transformation resulted in exactly the same json document as we used as input to the json2xml convertion.
+Note, this transformation resulted in exactly the same json document as we used as input to the json2xml conversion.
 What did the stylesheet do? We just gave some hints to XJ on how to write the json document. The following XML
 document is that what is passed to XJ after xsl transformation:
 
