@@ -168,6 +168,8 @@ class Athena2QueryHelper {
             this.interrupted = Thread.interrupted(); // store, then clear, interrupt status
             LOG.trace(
                     "AWS Athena start query execution wait thread was interrupted; will return at earliest opportunity");
+
+            Thread.currentThread().interrupt();
         }
         this.currentDelay = this.delay;
     }
