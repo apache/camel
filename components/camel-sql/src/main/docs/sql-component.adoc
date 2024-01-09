@@ -594,6 +594,10 @@ the `currentThread` one. The benefit is to be able to load classes
 exposed by other bundles. This allows the exchange body and headers to
 have custom types object references.
 
+While deserializing it's important to notice that the decode function and the unmarshallExchange method will allow only all java packages and subpackages 
+and org.apache.camel packages and subpackages. The remaining classes will be blacklisted. So you'll need to change the filter in case of need. 
+This could be accomplished by changing the deserializationFilter field on the repository.
+
 === Transaction
 
 A Spring `PlatformTransactionManager` is required to orchestrate
