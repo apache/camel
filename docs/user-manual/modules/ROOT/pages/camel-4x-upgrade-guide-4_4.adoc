@@ -118,6 +118,10 @@ useful examples of how you might need to change your code to be compatible with 
 
 The component has been removed after deprecation in 4.3.0
 
+=== camel-jsonata
+
+Replaced the previous JSONata library with a new one that offers complete compatibility with the JSONata reference implementation's features.
+
 == Camel Spring Boot
 
 === Auto Configuration
