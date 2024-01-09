@@ -59,8 +59,8 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Tags({ @Tag("health") })
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-        architectures = { "amd64", "aarch_64", "s390x" },
-        disabledReason = "This test does not run reliably on ppc64le")
+             architectures = { "amd64", "aarch_64", "s390x" },
+             disabledReason = "This test does not run reliably on ppc64le")
 public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
     public static final String TOPIC = "test-health";
     public static final String SKIPPED_HEADER_KEY = "CamelSkippedHeader";
