@@ -16,13 +16,7 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -73,13 +67,14 @@ public class JdbcCamelCodec {
         encode(pe, outputStream);
     }
 
-    public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer) throws IOException, ClassNotFoundException {
-        return unmarshallExchange(camelContext, new ByteArrayInputStream(buffer));
+    public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer, String deserializationFilter)
+            throws IOException, ClassNotFoundException {
+        return unmarshallExchange(camelContext, new ByteArrayInputStream(buffer), deserializationFilter);
     }
 
-    public Exchange unmarshallExchange(CamelContext camelContext, InputStream inputStream)
+    public Exchange unmarshallExchange(CamelContext camelContext, InputStream inputStream, String deserializationFilter)
             throws IOException, ClassNotFoundException {
-        DefaultExchangeHolder pe = decode(camelContext, inputStream);
+        DefaultExchangeHolder pe = decode(camelContext, inputStream, deserializationFilter);
         Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
         // restore the from endpoint
@@ -99,12 +94,13 @@ public class JdbcCamelCodec {
         }
     }
 
-    private DefaultExchangeHolder decode(CamelContext camelContext, InputStream bytesIn)
+    private DefaultExchangeHolder decode(CamelContext camelContext, InputStream bytesIn, String deserializationFilter)
             throws IOException, ClassNotFoundException {
         ObjectInputStream objectIn = null;
         Object obj = null;
         try {
             objectIn = new ClassLoadingAwareObjectInputStream(camelContext.getApplicationContextClassLoader(), bytesIn);
+            objectIn.setObjectInputFilter(ObjectInputFilter.Config.createFilter(deserializationFilter));
             obj = objectIn.readObject();
         } finally {
             IOHelper.close(objectIn);
