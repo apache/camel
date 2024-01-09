@@ -33,6 +33,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "compressors": target.setCompressors(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeoutms":
         case "connectTimeoutMS": target.setConnectTimeoutMS(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "connectionuristring":
+        case "connectionUriString": target.setConnectionUriString(property(camelContext, java.lang.String.class, value)); return true;
         case "consumertype":
         case "consumerType": target.setConsumerType(property(camelContext, java.lang.String.class, value)); return true;
         case "createcollection":
@@ -139,6 +141,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "compressors": return java.lang.String.class;
         case "connecttimeoutms":
         case "connectTimeoutMS": return java.lang.Integer.class;
+        case "connectionuristring":
+        case "connectionUriString": return java.lang.String.class;
         case "consumertype":
         case "consumerType": return java.lang.String.class;
         case "createcollection":
@@ -246,6 +250,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "compressors": return target.getCompressors();
         case "connecttimeoutms":
         case "connectTimeoutMS": return target.getConnectTimeoutMS();
+        case "connectionuristring":
+        case "connectionUriString": return target.getConnectionUriString();
         case "consumertype":
         case "consumerType": return target.getConsumerType();
         case "createcollection":
