@@ -82,7 +82,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                             .getAsyncClient(getEndpoint())
                             .describeStream(request)
                             .get();
-                } catch (ExecutionException | InterruptedException e) {
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return 0;
+                } catch (ExecutionException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -123,10 +126,13 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             final Shard shard,
             final KinesisConnection kinesisConnection,
             AtomicInteger processedExchangeCount) {
-        String shardIterator;
+        String shardIterator = null;
         try {
             shardIterator = getShardIterator(shard, kinesisConnection);
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
 
@@ -151,7 +157,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                         .getAsyncClient(getEndpoint())
                         .getRecords(req)
                         .get();
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -229,7 +238,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                             .getAsyncClient(getEndpoint())
                             .getShardIterator(request.build())
                             .get();
-                } catch (ExecutionException | InterruptedException e) {
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -348,7 +360,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                         .listShards(request)
                         .get()
                         .shards();
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
                 throw new RuntimeException(e);
             }
         } else {
