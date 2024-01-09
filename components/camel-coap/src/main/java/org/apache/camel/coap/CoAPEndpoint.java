@@ -53,8 +53,8 @@ import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.CertificateType;
-import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
-import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
+import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
 
 /**
  * Send and receive messages to/from COAP capable devices.
@@ -71,9 +71,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
     @UriParam(label = "security")
     private PublicKey publicKey;
     @UriParam(label = "security")
-    private TrustedRpkStore trustedRpkStore;
+    private NewAdvancedCertificateVerifier advancedCertificateVerifier;
     @UriParam(label = "security")
-    private PskStore pskStore;
+    private AdvancedPskStore advancedPskStore;
     @UriParam(label = "security")
     private String cipherSuites;
     private transient String[] configuredCipherSuites;
@@ -219,7 +219,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     /**
      * Notify observers that the resource of this URI has changed, based on RFC 7641. Use this flag on a destination
-     * endpoint, with an URI that matches an existing source endpoint URI.
+     * endpoint, with a URI that matches an existing source endpoint URI.
      */
     public void setNotify(boolean notify) {
         this.notify = notify;
@@ -242,31 +242,31 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Get the TrustedRpkStore to use to determine trust in raw public keys.
+     * Get the AdvancedCertificateVerifier to use to determine trust in raw public keys.
      */
-    public TrustedRpkStore getTrustedRpkStore() {
-        return trustedRpkStore;
+    public NewAdvancedCertificateVerifier getAdvancedCertificateVerifier() {
+        return advancedCertificateVerifier;
     }
 
     /**
-     * Set the TrustedRpkStore to use to determine trust in raw public keys.
+     * Set the AdvancedCertificateVerifier to use to determine trust in raw public keys.
      */
-    public void setTrustedRpkStore(TrustedRpkStore trustedRpkStore) {
-        this.trustedRpkStore = trustedRpkStore;
+    public void setAdvancedCertificateVerifier(NewAdvancedCertificateVerifier advancedCertificateVerifier) {
+        this.advancedCertificateVerifier = advancedCertificateVerifier;
     }
 
     /**
-     * Get the PskStore to use for pre-shared key.
+     * Get the AdvancedPskStore to use for pre-shared key.
      */
-    public PskStore getPskStore() {
-        return pskStore;
+    public AdvancedPskStore getAdvancedPskStore() {
+        return advancedPskStore;
     }
 
     /**
-     * Set the PskStore to use for pre-shared key.
+     * Set the AdvancedPskStore to use for pre-shared key.
      */
-    public void setPskStore(PskStore pskStore) {
-        this.pskStore = pskStore;
+    public void setAdvancedPskStore(AdvancedPskStore advancedPskStore) {
+        this.advancedPskStore = advancedPskStore;
     }
 
     /**
@@ -407,17 +407,17 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
         DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
         if (client) {
-            if (trustedRpkStore == null && sslContextParameters == null && pskStore == null) {
+            if (advancedCertificateVerifier == null && sslContextParameters == null && advancedPskStore == null) {
                 throw new IllegalStateException(
-                        "Either a trustedRpkStore, sslContextParameters or pskStore object "
+                        "Either a newAdvancedCertificateVerifier, sslContextParameters or advancedPskStore object "
                                                 + "must be configured for a TLS client");
             }
             builder.setRecommendedCipherSuitesOnly(isRecommendedCipherSuitesOnly());
             builder.setClientOnly();
         } else {
-            if (privateKey == null && sslContextParameters == null && pskStore == null) {
+            if (privateKey == null && sslContextParameters == null && advancedPskStore == null) {
                 throw new IllegalStateException(
-                        "Either a privateKey, sslContextParameters or pskStore object "
+                        "Either a privateKey, sslContextParameters or advancedPskStore object "
                                                 + "must be configured for a TLS service");
             }
             if (privateKey != null && publicKey == null) {
@@ -465,8 +465,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 builder.setIdentity(privateKey, publicKey);
             }
 
-            if (pskStore != null) {
-                builder.setPskStore(pskStore);
+            if (advancedPskStore != null) {
+                builder.setAdvancedPskStore(advancedPskStore);
             }
 
             // Add all certificates from the truststore
@@ -474,9 +474,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
             if (certs.length > 0) {
                 builder.setTrustStore(certs);
             }
-            if (trustedRpkStore != null) {
+            if (advancedCertificateVerifier != null) {
                 builder.setTrustCertificateTypes(CertificateType.RAW_PUBLIC_KEY);
-                builder.setRpkTrustStore(trustedRpkStore);
+                builder.setAdvancedCertificateVerifier(advancedCertificateVerifier);
             }
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Error in configuring TLS", e);

@@ -42,7 +42,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "privatekey":
         case "privateKey": target.setPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
         case "pskstore":
-        case "pskStore": target.setPskStore(property(camelContext, org.eclipse.californium.scandium.dtls.pskstore.PskStore.class, value)); return true;
+        case "pskStore": target.setPskStore(property(camelContext, org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore.class, value)); return true;
         case "publickey":
         case "publicKey": target.setPublicKey(property(camelContext, java.security.PublicKey.class, value)); return true;
         case "recommendedciphersuitesonly":
@@ -79,7 +79,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "privatekey":
         case "privateKey": return java.security.PrivateKey.class;
         case "pskstore":
-        case "pskStore": return org.eclipse.californium.scandium.dtls.pskstore.PskStore.class;
+        case "pskStore": return org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore.class;
         case "publickey":
         case "publicKey": return java.security.PublicKey.class;
         case "recommendedciphersuitesonly":
