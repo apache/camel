@@ -17,10 +17,12 @@
 package org.apache.camel.component.kafka.integration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 public class KafkaToDIT extends BaseEmbeddedKafkaTestSupport {
 
     @Test

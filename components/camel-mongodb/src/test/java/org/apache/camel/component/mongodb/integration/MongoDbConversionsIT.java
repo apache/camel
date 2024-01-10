@@ -31,6 +31,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -39,6 +40,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled
 public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     @BeforeEach

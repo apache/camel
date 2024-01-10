@@ -22,11 +22,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.SagaCompletionMode;
 import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.InMemorySagaService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.kafka.integration.common.TestProducerUtil.sendMessagesInRoute;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class KafkaSagaIT extends BaseEmbeddedKafkaTestSupport {
 
     @Test

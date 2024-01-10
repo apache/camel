@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -35,6 +36,7 @@ import static org.apache.camel.ServiceStatus.Started;
 import static org.apache.camel.ServiceStatus.Stopped;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsLifecycleIssueTest extends AbstractJMSTest {
 

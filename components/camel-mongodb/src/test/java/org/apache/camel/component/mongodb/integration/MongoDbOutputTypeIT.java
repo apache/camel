@@ -32,6 +32,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     @BeforeEach

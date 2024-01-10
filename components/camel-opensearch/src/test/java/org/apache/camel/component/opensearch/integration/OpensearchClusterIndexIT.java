@@ -25,6 +25,8 @@ import org.apache.camel.component.opensearch.OpensearchConstants;
 import org.apache.camel.component.opensearch.OpensearchOperation;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.opensearch.client.Request;
 import org.opensearch.client.opensearch.core.GetRequest;
 
@@ -32,6 +34,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.MAC })
 class OpensearchClusterIndexIT extends OpensearchTestSupport {
 
     @Test

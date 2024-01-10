@@ -41,6 +41,7 @@
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>

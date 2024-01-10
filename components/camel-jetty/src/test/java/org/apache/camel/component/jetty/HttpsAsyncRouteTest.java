@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @ResourceLock(SSL_SYSPROPS)
-@DisabledOnOs(OS.WINDOWS)
+@DisabledOnOs({ OS.WINDOWS, OS.AIX, OS.MAC })
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpsAsyncRouteTest.class);

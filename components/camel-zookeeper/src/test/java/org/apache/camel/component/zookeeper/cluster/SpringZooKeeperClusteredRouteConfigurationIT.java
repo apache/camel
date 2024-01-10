@@ -20,12 +20,15 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.MAC })
 public class SpringZooKeeperClusteredRouteConfigurationIT extends CamelSpringTestSupport {
 
     @Test

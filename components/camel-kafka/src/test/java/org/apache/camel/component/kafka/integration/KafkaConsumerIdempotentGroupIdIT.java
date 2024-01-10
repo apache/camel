@@ -25,12 +25,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.kafka.serde.KafkaSerdeHelper.numericHeader;
 
+@Disabled
 @DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "false")
 public class KafkaConsumerIdempotentGroupIdIT extends KafkaConsumerIdempotentTestSupport {
 

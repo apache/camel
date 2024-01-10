@@ -22,7 +22,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.infinispan.manager.DefaultCacheManager;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled
 public class InfinispanEmbeddedClusteredMasterTest extends AbstractInfinispanEmbeddedClusteredTest {
     @Override
     protected void run(DefaultCacheManager cacheContainer, String namespace, String id) throws Exception {

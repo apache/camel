@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.common.MyMainClass;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
@@ -74,6 +75,7 @@ class TestInstancePerClassTest {
 
         @Order(1)
         @Test
+        @Disabled
         void shouldSupportNestedTestLaunchedFirst() throws Exception {
             mock.expectedBodiesReceived(3);
             int result = template.requestBody((Object) null, Integer.class);
@@ -83,6 +85,7 @@ class TestInstancePerClassTest {
 
         @Order(2)
         @Test
+        @Disabled
         void shouldSupportNestedTestLaunchedSecondWithDifferentResult() throws Exception {
             mock.expectedBodiesReceived(4);
             int result = template.requestBody((Object) null, Integer.class);

@@ -35,6 +35,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * this will test basic breakOnFirstError functionality uses allowManualCommit and set Synch Commit Manager this allows
  * Camel to handle when to commit an offset
  */
+@DisabledOnOs({ OS.WINDOWS, OS.MAC })
 @Tags({ @Tag("breakOnFirstError") })
 class KafkaBreakOnFirstErrorWithBatchUsingAsynchCommitManagerIT extends BaseEmbeddedKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";

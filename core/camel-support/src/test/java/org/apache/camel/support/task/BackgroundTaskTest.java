@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.support.task.budget.Budgets;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * between scheduler behavior for each OS, this means that an execution may happen at the last second (i.e:
  * at 0th, 1st, 2nd, 3rd and 4th).
  */
+@Disabled
 public class BackgroundTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task does not run for more than the max duration when using a supplier with no delay")

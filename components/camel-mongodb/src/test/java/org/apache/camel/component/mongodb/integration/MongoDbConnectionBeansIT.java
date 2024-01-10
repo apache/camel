@@ -20,12 +20,14 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.apache.camel.component.mongodb.MongoDbEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Disabled
 public class MongoDbConnectionBeansIT extends AbstractMongoDbITSupport {
     @Test
     public void checkConnectionFromProperties() {

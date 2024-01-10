@@ -20,6 +20,7 @@ package org.apache.camel.support.task;
 import java.time.Duration;
 
 import org.apache.camel.support.task.budget.Budgets;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class ForegroundTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")

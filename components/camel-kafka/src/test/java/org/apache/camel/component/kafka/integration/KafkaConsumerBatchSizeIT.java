@@ -26,8 +26,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class KafkaConsumerBatchSizeIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "test-batch";

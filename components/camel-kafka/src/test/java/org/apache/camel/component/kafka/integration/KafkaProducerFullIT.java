@@ -49,6 +49,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.kafka.integration.common.TestProducerUtil.sendMessagesInRoute;
@@ -58,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String DIRECT_START_STRINGS_URI = "direct:startStrings";

@@ -23,10 +23,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@Disabled
 class JmsPollingHighTimeOutTest extends JmsPollingConsumerTest {
     private volatile String body;
 

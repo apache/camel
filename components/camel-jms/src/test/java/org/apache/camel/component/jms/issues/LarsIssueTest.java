@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
  * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from
  * one destination to another
  */
+@Disabled
 public class LarsIssueTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension

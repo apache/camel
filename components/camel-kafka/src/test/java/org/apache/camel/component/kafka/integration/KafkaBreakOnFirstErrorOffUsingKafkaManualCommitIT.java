@@ -35,6 +35,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * this will test basic breakOnFirstError functionality when it is turned off and consumer uses allowManualCommit and
  * KafkaManualCommit and NOOP Commit Manager
  */
+@DisabledOnOs({ OS.WINDOWS, OS.MAC })
 @Tags({ @Tag("breakOnFirstError") })
 class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseEmbeddedKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorOff";

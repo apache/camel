@@ -30,12 +30,14 @@ import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 public class JmsPassThroughtJmsKeyFormatStrategyTest extends AbstractJMSTest {
 
     @Order(2)

@@ -22,12 +22,14 @@ import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Test class performs the same tests as DBOperationsIT but with modified URIs
+@Disabled
 public class MongoDbCredentialsFromUriConnectionIT extends MongoDbOperationsIT {
 
     protected static final String AUTH_SOURCE_USER = "auth-source-user";

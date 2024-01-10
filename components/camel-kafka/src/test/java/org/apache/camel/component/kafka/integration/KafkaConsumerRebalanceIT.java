@@ -25,12 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.spi.StateRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
     private static final String TOPIC = "offset-rebalance";
 

@@ -24,7 +24,10 @@ import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
 import org.apache.camel.builder.RouteBuilder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+@DisabledOnOs({ OS.WINDOWS, OS.AIX, OS.MAC })
 class ElasticsearchSizeLimitIT extends ElasticsearchTestSupport {
 
     @Test

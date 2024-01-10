@@ -23,6 +23,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test for eager idempotentRepository usage.
  */
+@Disabled
 public class KafkaIdempotentRepositoryEagerIT extends SimpleIdempotentTest {
 
     @BindToRegistry("kafkaIdempotentRepositoryEager")

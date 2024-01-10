@@ -30,6 +30,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.opensearch.OpensearchScrollRequestIterator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.opensearch.client.Request;
 import org.opensearch.client.Response;
 import org.opensearch.client.opensearch._types.query_dsl.MatchAllQuery;
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.MAC })
 class OpensearchScrollSearchIT extends OpensearchTestSupport {
 
     private static final String TWITTER_OPENSEARCH_INDEX_NAME = "scroll-search";

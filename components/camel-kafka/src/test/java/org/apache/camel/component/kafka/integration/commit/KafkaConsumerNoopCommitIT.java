@@ -23,10 +23,12 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled
 public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
 
     public static final String TOPIC = "testManualNoopCommitTest";

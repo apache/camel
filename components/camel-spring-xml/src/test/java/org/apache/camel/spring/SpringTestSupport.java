@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -59,9 +61,15 @@ public abstract class SpringTestSupport extends ContextTestSupport {
 
     protected abstract AbstractXmlApplicationContext createApplicationContext();
 
+    @TempDir
+    protected File testDirectory;
+
     @BeforeEach
     @Override
     public void setUp() throws Exception {
+
+        System.setProperty("testDirectory", testDirectory.getAbsolutePath());
+
         DefaultCamelContext.setDisableJmx(!useJmx());
         Class<?>[] excluded = excludeRoutes();
         if (excluded != null && excluded.length > 0) {

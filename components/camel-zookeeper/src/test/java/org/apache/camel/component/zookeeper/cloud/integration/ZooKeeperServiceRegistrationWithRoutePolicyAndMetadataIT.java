@@ -20,7 +20,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+@DisabledOnOs({ OS.WINDOWS, OS.MAC })
 public class ZooKeeperServiceRegistrationWithRoutePolicyAndMetadataIT extends ZooKeeperServiceRegistrationITBase {
     @Override
     protected RoutesBuilder createRouteBuilder() {

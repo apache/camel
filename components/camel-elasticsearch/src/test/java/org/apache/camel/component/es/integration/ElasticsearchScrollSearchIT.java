@@ -36,6 +36,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL;
 import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.AIX, OS.MAC })
 class ElasticsearchScrollSearchIT extends ElasticsearchTestSupport {
 
     private static final String TWITTER_ES_INDEX_NAME = "scroll-search";

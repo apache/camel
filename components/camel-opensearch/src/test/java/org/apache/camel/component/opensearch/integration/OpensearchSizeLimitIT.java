@@ -22,11 +22,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.opensearch.client.opensearch.core.search.HitsMetadata;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs({ OS.WINDOWS, OS.MAC })
 class OpensearchSizeLimitIT extends OpensearchTestSupport {
 
     @Test

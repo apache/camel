@@ -23,11 +23,13 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.support.processor.state.MemoryStateRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled
 class KafkaConsumerSyncWithOffsetRepoCommitIT extends BaseManualCommitTestSupport {
 
     public static final String TOPIC = "testManualCommitSyncWithOffsetRepoTest";

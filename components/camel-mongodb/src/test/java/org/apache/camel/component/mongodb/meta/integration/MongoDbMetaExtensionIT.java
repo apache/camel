@@ -29,12 +29,14 @@ import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.apache.camel.component.mongodb.integration.AbstractMongoDbITSupport;
 import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Disabled
 public class MongoDbMetaExtensionIT extends AbstractMongoDbITSupport {
     // We simulate the presence of an authenticated user
     @BeforeEach

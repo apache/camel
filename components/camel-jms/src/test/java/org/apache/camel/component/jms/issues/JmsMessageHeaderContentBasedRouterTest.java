@@ -27,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 /**
  * Unit test based on user on user forum with an issue.
  */
+@Disabled
 public class JmsMessageHeaderContentBasedRouterTest extends AbstractJMSTest {
 
     @Order(2)

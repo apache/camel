@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.jetty.file;
 
+import java.io.File;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
 
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;

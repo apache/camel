@@ -29,6 +29,8 @@ import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.kiwiproject.consul.AgentClient;
 import org.kiwiproject.consul.Consul;
 import org.kiwiproject.consul.model.agent.ImmutableRegistration;
@@ -37,6 +39,7 @@ import org.kiwiproject.consul.model.health.ServiceHealth;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.AIX, OS.MAC })
 public class ConsulHealthIT extends CamelTestSupport {
     /*
      NOTE: this one is not registered as extension because it requires a different lifecycle. It

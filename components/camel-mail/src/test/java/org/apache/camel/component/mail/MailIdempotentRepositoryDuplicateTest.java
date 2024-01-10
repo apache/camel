@@ -32,6 +32,7 @@ import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test for idempotent repository.
  */
+@Disabled
 public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
     protected static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 

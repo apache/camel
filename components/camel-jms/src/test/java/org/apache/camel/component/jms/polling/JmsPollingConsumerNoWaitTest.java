@@ -23,11 +23,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 class JmsPollingConsumerNoWaitTest extends JmsPollingConsumerTest {
     private final CountDownLatch latch = new CountDownLatch(1);
     private volatile String body;

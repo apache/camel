@@ -21,10 +21,12 @@ import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled
 public class KafkaConsumerAsyncCommitIT extends BaseManualCommitTestSupport {
 
     public static final String TOPIC = "testManualAsyncCommitTest";

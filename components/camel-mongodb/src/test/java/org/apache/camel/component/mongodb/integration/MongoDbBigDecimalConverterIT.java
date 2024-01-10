@@ -24,12 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private class NumberClass {

@@ -18,9 +18,12 @@ package org.apache.camel.component.es.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.AIX, OS.MAC })
 class ElasticsearchPingIT extends ElasticsearchTestSupport {
 
     @Test

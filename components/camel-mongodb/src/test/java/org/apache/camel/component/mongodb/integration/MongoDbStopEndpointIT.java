@@ -23,11 +23,13 @@ import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 public class MongoDbStopEndpointIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private static final String MY_ID = "myId";

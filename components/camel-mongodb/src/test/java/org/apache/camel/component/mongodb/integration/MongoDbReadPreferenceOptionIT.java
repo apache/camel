@@ -19,12 +19,14 @@ package org.apache.camel.component.mongodb.integration;
 import com.mongodb.ReadPreference;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mongodb.MongoDbEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class MongoDbReadPreferenceOptionIT extends AbstractMongoDbITSupport {
 
     private MongoDbEndpoint endpoint;

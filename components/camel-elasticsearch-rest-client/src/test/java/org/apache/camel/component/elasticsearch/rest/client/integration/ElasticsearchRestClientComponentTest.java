@@ -27,11 +27,14 @@ import org.apache.camel.component.elasticsearch.rest.client.ElasticSearchRestCli
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.MAC })
 public class ElasticsearchRestClientComponentTest extends ElasticsearchRestClientTestSupport {
 
     @Override

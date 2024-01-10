@@ -48,6 +48,8 @@ import org.apache.camel.component.es.ElasticsearchConstants;
 import org.apache.camel.component.es.ElasticsearchOperation;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -60,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.AIX, OS.MAC })
 class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSupport {
 
     @Test

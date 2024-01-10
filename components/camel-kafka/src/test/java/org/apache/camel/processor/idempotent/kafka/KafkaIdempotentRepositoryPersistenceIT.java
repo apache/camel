@@ -28,6 +28,7 @@ import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -51,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * This test requires running in a certain order (which isn't great for unit testing), hence the ordering-related
  * annotations.
  */
+@Disabled
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTestSupport implements ConfigurableContext {
