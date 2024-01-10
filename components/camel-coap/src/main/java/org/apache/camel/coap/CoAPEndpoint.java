@@ -71,11 +71,7 @@ import org.eclipse.californium.scandium.dtls.cipher.CipherSuite;
 import org.eclipse.californium.scandium.dtls.cipher.CipherSuite.CertificateKeyAlgorithm;
 import org.eclipse.californium.scandium.dtls.cipher.XECDHECryptography.SupportedGroup;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
-import org.eclipse.californium.scandium.dtls.x509.CertificateConfigurationHelper;
-import org.eclipse.californium.scandium.dtls.x509.CertificateProvider;
-import org.eclipse.californium.scandium.dtls.x509.KeyManagerCertificateProvider;
-import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
-import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
+import org.eclipse.californium.scandium.dtls.x509.*;
 import org.eclipse.californium.scandium.util.ServerNames;
 
 /**
@@ -432,7 +428,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         if (client) {
             if (advancedCertificateVerifier == null && sslContextParameters == null && advancedPskStore == null) {
                 throw new IllegalStateException(
-                        "Either a newAdvancedCertificateVerifier, sslContextParameters or advancedPskStore object "
+                        "Either an advancedCertificateVerifier, sslContextParameters or advancedPskStore object "
                                                 + "must be configured for a TLS client");
             }
             builder.set(DTLS_RECOMMENDED_CIPHER_SUITES_ONLY, isRecommendedCipherSuitesOnly());
@@ -486,9 +482,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 }
 
                 PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, keyManagers.getKeyPassword().toCharArray());
-                // Maybe something related to CertifacteIdentityProvier or CertifcateConfigurationHelper
-                builder.setIdentity(privateKey, keyStore.getCertificateChain(alias));
-                
+                builder.setCertificateIdentityProvider(new SingleCertificateProvider(privateKey, keyStore.getCertificateChain(alias)));
+
             } else if (privateKey != null) {
                 builder.setCertificateIdentityProvider(new SingleCertificateProvider(privateKey, publicKey));
             }
@@ -502,7 +497,6 @@ public class CoAPEndpoint extends DefaultEndpoint {
             if (certs.length > 0) {
                 certificateConfigurationHelper.addConfigurationDefaultsForTrusts(certs);
                 builder.setCertificateHelper(certificateConfigurationHelper);
-                //builder.setTrustStore(certs);
             }
             if (advancedCertificateVerifier != null) {
                 builder.set(DTLS_CERTIFICATE_TYPES, Arrays.asList(CertificateType.RAW_PUBLIC_KEY));

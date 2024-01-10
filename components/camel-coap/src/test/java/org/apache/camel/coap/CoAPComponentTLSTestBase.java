@@ -39,9 +39,9 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
-import org.eclipse.californium.scandium.dtls.pskstore.StaticPskStore;
-import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedSinglePskStore;
+import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -399,14 +399,14 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         PrivateKey privateKey = (PrivateKey) keyStore.getKey("service", "security".toCharArray());
         PublicKey publicKey = keyStore.getCertificate("service").getPublicKey();
 
-        TrustedRpkStore trustedRpkStore = id -> {
+        NewAdvancedCertificateVerifier advancedCertificateVerifier = id -> {
             return true;
         };
-        TrustedRpkStore failedTrustedRpkStore = id -> {
+        NewAdvancedCertificateVerifier failedAdvancedCertificateVerifier = id -> {
             return false;
         };
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        PskStore pskStore = new StaticPskStore("some-identity", keyGenerator.generateKey().getEncoded());
+        AdvancedPskStore advancedPskStore = new AdvancedSinglePskStore("some-identity", keyGenerator.generateKey().getEncoded());
 
         context.getRegistry().bind("serviceSSLContextParameters", serviceSSLContextParameters);
         context.getRegistry().bind("selfSignedServiceSSLContextParameters", selfSignedServiceSSLContextParameters);
@@ -419,9 +419,9 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
         context.getRegistry().bind("privateKey", privateKey);
         context.getRegistry().bind("publicKey", publicKey);
-        context.getRegistry().bind("trustedRpkStore", trustedRpkStore);
-        context.getRegistry().bind("failedTrustedRpkStore", failedTrustedRpkStore);
-        context.getRegistry().bind("pskStore", pskStore);
+        context.getRegistry().bind("newAdvancedCertificateVerifier", advancedCertificateVerifier);
+        context.getRegistry().bind("failedNewAdvancedCertificateVerifier", failedAdvancedCertificateVerifier);
+        context.getRegistry().bind("advancedPskStore", advancedPskStore);
     }
 
     protected void sendBodyAndHeader(String endpointUri, final Object body, String headerName, String headerValue) {
