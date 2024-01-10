@@ -305,7 +305,6 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     protected void startPolling() {
-        long partitionLastOffset = -1;
 
         try {
             /*
@@ -315,6 +314,7 @@ public class KafkaFetchRecords implements Runnable {
             lock.lock();
 
             long pollTimeoutMs = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
+            Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Polling {} from {} with timeout: {}", threadId, getPrintableTopic(), pollTimeoutMs);
@@ -322,10 +322,6 @@ public class KafkaFetchRecords implements Runnable {
 
             KafkaRecordProcessorFacade recordProcessorFacade = new KafkaRecordProcessorFacade(
                     kafkaConsumer, threadId, commitManager, consumerListener);
-
-            Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
-
-            ProcessingResult lastResult = null;
 
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
@@ -335,43 +331,15 @@ public class KafkaFetchRecords implements Runnable {
                     }
                 }
 
-                if (lastResult != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("This polling iteration is using lastresult on partition {} and offset {}",
-                                lastResult.getPartition(), lastResult.getPartitionLastOffset());
-                    }
-                } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("This polling iteration is using lastresult of null");
-                    }
-                }
-
-                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords, lastResult);
-
-                if (result != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("This polling iteration had a result returned for partition {} and offset {}",
-                                result.getPartition(), result.getPartitionLastOffset());
-                    }
-                } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("This polling iteration had a result returned as null");
-                    }
-                }
-
+                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
                 updateTaskState();
+
+                // when breakOnFirstError we want to unsubscribe from Kafka
                 if (result != null && result.isBreakOnErrorHit() && !this.state.equals(State.PAUSED)) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
                     // force re-connect
                     setReconnect(true);
                     setConnected(false);
-                } else {
-                    lastResult = result;
-
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Setting lastresult to partition {} and offset {}",
-                                lastResult.getPartition(), lastResult.getPartitionLastOffset());
-                    }
                 }
 
             }
@@ -405,6 +373,8 @@ public class KafkaFetchRecords implements Runnable {
                         e.getClass().getName(), threadId, getPrintableTopic(), e.getMessage());
             }
 
+            // why do we set this to -1
+            long partitionLastOffset = -1;
             pollExceptionStrategy.handle(partitionLastOffset, e);
         } finally {
             // only close if not retry

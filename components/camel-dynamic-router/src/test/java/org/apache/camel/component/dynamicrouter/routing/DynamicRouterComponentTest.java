@@ -22,15 +22,17 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilterStatistics;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint.DynamicRouterEndpointFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -111,13 +113,14 @@ class DynamicRouterComponentTest {
         };
         prioritizedFilterFactory = new PrioritizedFilterFactory() {
             @Override
-            public PrioritizedFilter getInstance(String id, int priority, Predicate predicate, String endpoint) {
+            public PrioritizedFilter getInstance(
+                    String id, int priority, Predicate predicate, String endpoint, PrioritizedFilterStatistics statistics) {
                 return prioritizedFilter;
             }
         };
         filterServiceFactory = new DynamicRouterFilterServiceFactory() {
             @Override
-            public DynamicRouterFilterService getInstance() {
+            public DynamicRouterFilterService getInstance(Supplier<PrioritizedFilterFactory> filterFactory) {
                 return filterService;
             }
         };
@@ -152,6 +155,11 @@ class DynamicRouterComponentTest {
         component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor);
         assertEquals(processor, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
         assertThrows(IllegalArgumentException.class, () -> component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor));
+    }
 
+    @Test
+    void testDefaultConstruction() {
+        DynamicRouterComponent instance = new DynamicRouterComponent();
+        Assertions.assertNotNull(instance);
     }
 }

@@ -18,7 +18,6 @@ package org.apache.camel.support;
 
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -327,21 +326,10 @@ abstract class AbstractExchange implements Exchange {
 
         // store keys to be removed as we cannot loop and remove at the same time in implementations such as HashMap
         if (properties != null) {
-            Set<String> toBeRemoved = null;
-            for (String key : properties.keySet()) {
-                if (PatternHelper.matchPattern(key, pattern)) {
-                    if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
-                        continue;
-                    }
-                    matches = true;
-                    if (toBeRemoved == null) {
-                        toBeRemoved = new HashSet<>();
-                    }
-                    toBeRemoved.add(key);
-                }
-            }
+            Set<String> toBeRemoved = PatternHelper.matchingSet(properties, pattern, excludePatterns);
 
-            if (matches && toBeRemoved != null) {
+            if (toBeRemoved != null) {
+                matches = true;
                 if (toBeRemoved.size() == properties.size()) {
                     // special optimization when all should be removed
                     properties.clear();
@@ -697,7 +685,7 @@ abstract class AbstractExchange implements Exchange {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         // do not output information about the message as it may contain sensitive information
         if (exchangeId != null) {
             return "Exchange[" + exchangeId + "]";

@@ -53,6 +53,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
 * xref:error-handler.adoc[Error handler]
 * xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
+* xref:variables.adoc[How to use Variables]
 * xref:examples.adoc[Examples]
 * xref:testing.adoc[Testing]
 * xref:camel-maven-plugin.adoc[Camel Maven Plugin] for running Camel from a Maven goal

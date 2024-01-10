@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -207,7 +208,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             Iterator<?> it = ObjectHelper.createIterator(values, ",", true);
             while (it.hasNext()) {
                 Object extracted = it.next();
-                Object decoded = shouldUrlDecodeHeader(configuration, name, extracted, "UTF-8");
+                Object decoded = shouldUrlDecodeHeader(configuration, name, extracted, StandardCharsets.UTF_8);
                 LOG.trace("HTTP-header: {}", extracted);
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(name, decoded, exchange)) {
@@ -233,7 +234,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 Iterator<?> it = ObjectHelper.createIterator(values, ",", true);
                 while (it.hasNext()) {
                     Object extracted = it.next();
-                    Object decoded = shouldUrlDecodeHeader(configuration, name, extracted, "UTF-8");
+                    Object decoded = shouldUrlDecodeHeader(configuration, name, extracted, StandardCharsets.UTF_8);
                     LOG.trace("URI-Parameter: {}", extracted);
                     if (headerFilterStrategy != null
                             && !headerFilterStrategy.applyFilterToExternalHeaders(name, decoded, exchange)) {
@@ -251,13 +252,11 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                         .startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
                 && !configuration.isBridgeEndpoint() && !configuration.isHttpProxy() && request instanceof FullHttpRequest) {
 
-            String charset = "UTF-8";
-
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
             String body;
             ByteBuf buffer = ((FullHttpRequest) request).content().retain();
             try {
-                body = buffer.toString(Charset.forName(charset));
+                body = buffer.toString(StandardCharsets.UTF_8);
             } finally {
                 buffer.release();
             }
@@ -265,8 +264,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 for (String param : body.split("&")) {
                     String[] pair = param.split("=", 2);
                     if (pair.length == 2) {
-                        String name = shouldUrlDecodeHeader(configuration, "", pair[0], charset);
-                        String value = shouldUrlDecodeHeader(configuration, name, pair[1], charset);
+                        String name = shouldUrlDecodeHeader(configuration, "", pair[0], StandardCharsets.UTF_8);
+                        String value = shouldUrlDecodeHeader(configuration, name, pair[1], StandardCharsets.UTF_8);
                         if (headerFilterStrategy != null
                                 && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                             NettyHttpHelper.appendHeader(headers, name, value);
@@ -310,17 +309,35 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     /**
      * Decodes the header if needed to, or returns the header value as is.
      *
-     * @param  configuration                the configuration
-     * @param  headerName                   the header name
-     * @param  value                        the current header value
-     * @param  charset                      the charset to use for decoding
-     * @return                              the decoded value (if decoded was needed) or a <tt>toString</tt>
-     *                                      representation of the value.
-     * @throws UnsupportedEncodingException is thrown if error decoding.
+     * @param      configuration                the configuration
+     * @param      headerName                   the header name
+     * @param      value                        the current header value
+     * @param      charset                      the charset to use for decoding
+     * @deprecated                              use
+     *                                          {@link #shouldUrlDecodeHeader(NettyHttpConfiguration, String, Object, Charset)}
+     * @return                                  the decoded value (if decoded was needed) or a <tt>toString</tt>
+     *                                          representation of the value.
+     * @throws     UnsupportedEncodingException is thrown if error decoding.
      */
+    @Deprecated(since = "4.4.0")
     protected String shouldUrlDecodeHeader(
             NettyHttpConfiguration configuration, String headerName, Object value, String charset)
             throws UnsupportedEncodingException {
+        return shouldUrlDecodeHeader(configuration, headerName, value, Charset.forName(charset));
+    }
+
+    /**
+     * Decodes the header if needed to, or returns the header value as is.
+     *
+     * @param  configuration the configuration
+     * @param  headerName    the header name
+     * @param  value         the current header value
+     * @param  charset       the charset to use for decoding
+     * @return               the decoded value (if decoded was needed) or a <tt>toString</tt> representation of the
+     *                       value.
+     */
+    protected String shouldUrlDecodeHeader(
+            NettyHttpConfiguration configuration, String headerName, Object value, Charset charset) {
         // do not decode Content-Type
         if (NettyHttpConstants.CONTENT_TYPE.equals(headerName)) {
             return value.toString();

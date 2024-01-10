@@ -102,7 +102,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             try {
                 latch.await();
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -147,6 +147,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                     Thread.sleep(Math.min(pollTimeout, 1000));
                 } catch (InterruptedException e) {
                     LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                    Thread.currentThread().interrupt();
                 }
                 continue;
             }
@@ -165,6 +166,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                         Thread.sleep(Math.min(pollTimeout, 1000));
                     } catch (InterruptedException e) {
                         LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                        Thread.currentThread().interrupt();
                     }
                     continue;
                 }
@@ -201,6 +203,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                 }
             } catch (InterruptedException e) {
                 LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
                 continue;
             } catch (Exception e) {
                 if (exchange != null) {

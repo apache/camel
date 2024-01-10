@@ -1,5 +1,12 @@
 = Working with Camel Core
 
+== Context
+
+The xref:manual::camelcontext.adoc[Camel Context] is the hearth of Apache Camel, which holds everything together.
+
+If you are not familiar with Apache Camel, then we recommend reading the xref:manual::camelcontext.adoc[Camel Context] first
+before coming back here.
+
 == Routes
 
 In Apache Camel, a _route_ is a set of processing steps that are applied to a message as it travels from a source to a destination. A route typically consists of a series of processing steps that are connected in a linear sequence.
@@ -9,6 +16,9 @@ In other words, a Camel _route_ is where the integration flow is defined. For ex
 * xref:manual::routes.adoc[Routes]: the basic guide about Camel Routes.
 
 If you have basic knowledge about _routes_, you can use the following guides to learn how to write them in different languages, handle errors, and customize them.
+
+* Content
+** xref:manual::camelcontext.adoc[Camel Context]: the hearth of Apache Camel
 
 * Routes (Basic + DSL)
 ** xref:manual::java-dsl.adoc[Java DSL]: the default language to write _routes_.
@@ -30,6 +40,7 @@ If you have basic knowledge about _routes_, you can use the following guides to 
 ** xref:manual::Endpoint-dsl.adoc[Endpoint DSL]
 ** xref:manual::route-template.adoc[Route Template]
 ** xref:manual::using-propertyplaceholder.adoc[Using Property Placeholder]
+** xref:manual::variables.adoc[Using Variables]
 
 == Components
 

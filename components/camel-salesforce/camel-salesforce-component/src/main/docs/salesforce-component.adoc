@@ -225,6 +225,7 @@ request as the input to a subsequent request.
 * <<compositeUpdateSObjectCollections,compositeUpdateSObjectCollections>> - Update up to 200 records.
 * <<compositeUpsertSObjectCollections,compositeUpsertSObjectCollections>> - Creates or updates up to 200 records based on an External Id field.
 * <<compositeDeleteSObjectCollections,compositeDeleteSObjectCollections>> - Deletes up to 200 records.
+* <<getEventSchema, getEventSchema>> - Gets the event schema for Plaform Events, Change Data Capture events, etc.
 
 Unless otherwise specified, DTO types for the following options are from  `org.apache.camel.component.salesforce.api.dto` or one if its sub-packages.
 
@@ -996,6 +997,25 @@ Delete up to 200 records. Mixed SObject types is supported.
 
 Type: `List<DeleteSObjectResult>`
 
+
+[[getEventSchema]]
+==== Get Event Schema
+
+`getEventSchema`
+
+Gets the definition of a Platform Event in JSON format. Other types of events such as Change Data Capture events or custom events are also supported. This operation is available in REST API version 40.0 and later.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| `eventName`  | String | Name of event | | `eventName` or `eventSchemaId` is required
+| `eventSchemaId`  | String | ID of a schema | | `eventName` or `eventSchemaId` is required
+| `eventSchemaFormat` | EventSchemaFormatEnum | `EXPANDED`: Apache Avro format but doesn’t strictly adhere to the record complex type. `COMPACT`: Apache Avro, adheres to the specification for the record complex type. This parameter is available in API version 43.0 and later. | `EXPANDED` |
+|===
+
+*Output*
+
+Type: `InputStream`
 
 [[ApexRESTAPI]]
 === Apex REST API

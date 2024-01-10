@@ -20,9 +20,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
-import org.apache.camel.component.dynamicrouter.DynamicRouterRecipientListHelper;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.support.AsyncProcessorSupport;
 

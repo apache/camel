@@ -31,7 +31,7 @@ public class ExchangeCompletedEvent extends AbstractExchangeEvent implements Cam
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getExchange().getExchangeId() + " exchange completed"
                + " took: " + TimeUtils.printDuration(timeTaken, true);
 

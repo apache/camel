@@ -19,8 +19,11 @@ package org.apache.camel.component.dynamicrouter.routing;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,8 +33,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,6 +60,9 @@ class DynamicRouterProducerTest {
 
     @Mock
     DynamicRouterConfiguration configuration;
+
+    @Mock
+    DynamicRouterFilterService filterService;
 
     @Mock
     Exchange exchange;
@@ -83,5 +92,24 @@ class DynamicRouterProducerTest {
         when(component.getRoutingProcessor(anyString())).thenReturn(processor);
         boolean result = producer.process(exchange, asyncCallback);
         assertFalse(result);
+    }
+
+    @Test
+    void testProcessAsynchronousWithException() {
+        when(configuration.getChannel()).thenReturn("testChannel");
+        when(configuration.isSynchronous()).thenReturn(true);
+        when(component.getRoutingProcessor(anyString())).thenReturn(processor);
+        doNothing().when(exchange).setException(any(Throwable.class));
+        doThrow(new IllegalArgumentException("Catch me, since I am a test exception!"))
+                .when(processor).process(exchange, asyncCallback);
+        boolean result = producer.process(exchange, asyncCallback);
+        assertTrue(result);
+    }
+
+    @Test
+    void testGetInstance() {
+        DynamicRouterProducer instance = new DynamicRouterProducerFactory()
+                .getInstance(endpoint, component, configuration);
+        Assertions.assertNotNull(instance);
     }
 }

@@ -185,6 +185,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private boolean directConnection = false;
     @UriParam(label = "advanced")
     private boolean loadBalanced;
+    //additional properties
+    @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint.",
+              label = "additional", defaultValue = "null")
+    private String connectionUriString;
 
     // tailable cursor consumer by default
     private MongoDbConsumerType dbConsumerType;
@@ -410,7 +414,11 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
             String connectionOptions = authSource == null ? "" : "/?authSource=" + authSource;
 
-            mongoClient = MongoClients.create(String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions));
+            if (connectionUriString != null) {
+                mongoClient = MongoClients.create(connectionUriString);
+            } else {
+                mongoClient = MongoClients.create(String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions));
+            }
             LOG.debug("Connection created using provided credentials");
         } else {
             mongoClient = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
@@ -1187,6 +1195,21 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public boolean isLoadBalanced() {
         return loadBalanced;
+    }
+
+    /**
+     * Set the whole Connection String/Uri for mongodb endpoint. To be flexible and future proof about supporting all
+     * the mongodb client options
+     * https://www.mongodb.com/docs/drivers/java/sync/current/fundamentals/connection/connect/#connection-uri
+     *
+     * @param connectionUriString
+     */
+    public void setConnectionUriString(String connectionUriString) {
+        this.connectionUriString = connectionUriString;
+    }
+
+    public String getConnectionUriString() {
+        return connectionUriString;
     }
 
 }

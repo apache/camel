@@ -38,7 +38,7 @@ public class ExchangeAsyncProcessingStartedEvent extends AbstractExchangeEvent
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getExchange().getExchangeId();
     }
 }

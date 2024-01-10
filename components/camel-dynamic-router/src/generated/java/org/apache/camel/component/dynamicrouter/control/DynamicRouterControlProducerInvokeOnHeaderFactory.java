@@ -17,8 +17,10 @@ public class DynamicRouterControlProducerInvokeOnHeaderFactory implements Invoke
         org.apache.camel.component.dynamicrouter.control.DynamicRouterControlProducer target = (org.apache.camel.component.dynamicrouter.control.DynamicRouterControlProducer) obj;
         switch (key) {
         case "list": target.performList(exchange, callback); return callback;
+        case "statistics": target.performStats(exchange, callback); return callback;
         case "subscribe": target.performSubscribe(exchange.getMessage(), callback); return callback;
         case "unsubscribe": target.performUnsubscribe(exchange.getMessage(), callback); return callback;
+        case "update": target.performUpdate(exchange.getMessage(), callback); return callback;
         default: return null;
         }
     }

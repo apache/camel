@@ -15,59 +15,102 @@
 # limitations under the License.
 #
 
+camel-3:
+  - base-branch:
+      - 'camel-3.21.x'
+      - 'camel-3.22.x'
+      - 'camel-3.x'
+
+camel-4:
+  - base-branch:
+      - 'main'
+      - 'camel-4.0.x'
+
 ci:
-  - Jenkinsfile
-  - Jenkinsfile.*
+  - changed-files:
+      - any-glob-to-any-file:
+        - Jenkinsfile
+        - Jenkinsfile.*
 
 core:
-  - core/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - core/**/*
 
 core-build-and-dependencies:
-  - apache-camel/**
-  - camel-dependencies/**
-  - parent/**
+  - changed-files:
+      - any-glob-to-any-file:
+        - apache-camel/**
+        - camel-dependencies/**
+        - parent/**
 
 core-build-tooling:
-  - buildingtools/**/*
-  - etc/**/*
-  - init/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - buildingtools/**/*
+        - etc/**/*
+        - init/**/*
 
 catalog:
-  - catalog/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - catalog/**/*
 
 components:
-  - components/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - components/**/*
 
 components-aws:
-  - components/camel-aws/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - components/camel-aws/**/*
 
 components-azure:
-  - components/camel-azure/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - components/camel-azure/**/*
 
 components-kafka:
-  - components/camel-kafka/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - components/camel-kafka/**/*
 
 components-jms:
-  - components/camel-*jms/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - components/camel-*jms/**/*
 
 docs:
-  - docs/**/*
-  - '**.adoc'
-  - '**.md'
+  - changed-files:
+      - any-glob-to-any-file:
+        - docs/**/*
+        - '**.adoc'
+        - '**.md'
 
 dsl:
-  - dsl/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - dsl/**/*
 
 test-infra:
-  - test-infra/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - test-infra/**/*
 
 tests:
-  - tests/**/*
-  - '**/src/tests/**/*'
+  - changed-files:
+      - any-glob-to-any-file:
+        - tests/**/*
+        - '**/src/tests/**/*'
 
 tooling:
-  - tooling/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - tooling/**/*
 
 tooling-maven:
-  - archetypes/**/*
-  - tooling/maven/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+        - archetypes/**/*
+        - tooling/maven/**/*

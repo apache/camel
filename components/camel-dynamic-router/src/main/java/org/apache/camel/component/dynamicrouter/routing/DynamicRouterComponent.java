@@ -21,10 +21,10 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
 import org.apache.camel.spi.annotations.Component;
@@ -98,7 +98,7 @@ public class DynamicRouterComponent extends DefaultComponent {
      * @param processorFactorySupplier     creates the {@link DynamicRouterProcessor}
      * @param producerFactorySupplier      creates the {@link DynamicRouterProducer}
      * @param filterFactorySupplier        creates the {@link PrioritizedFilter}
-     * @param filterServiceFactorySupplier creates the {@link PrioritizedFilter}
+     * @param filterServiceFactorySupplier creates the {@link DynamicRouterFilterService}
      */
     public DynamicRouterComponent(
                                   final Supplier<DynamicRouterEndpointFactory> endpointFactorySupplier,

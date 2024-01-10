@@ -29,6 +29,7 @@ import java.util.Optional;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -43,6 +44,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private static final String TOKEN_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String SERVICES_APEXREST = "/services/apexrest/";
+    private static final String GET_SCHEMA_MINIMUM_VERSION = "40.0";
 
     public DefaultRestClient(final SalesforceHttpClient httpClient, final String version,
                              final SalesforceSession session,
@@ -344,6 +346,34 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         }
     }
 
+    @Override
+    public void getEventSchemaByEventName(
+            String eventName, String payloadFormat, Map<String, List<String>> headers, ResponseCallback callback) {
+        validateMinimumVersion(GET_SCHEMA_MINIMUM_VERSION);
+        final Request request;
+        request = getRequest(HttpMethod.GET, sobjectsUrl(eventName) + "/eventSchema" + "?payloadFormat=" + payloadFormat,
+                headers);
+
+        // requires authorization token
+        setAccessToken(request);
+
+        doHttpRequest(request, new DelegatingClientCallback(callback));
+    }
+
+    @Override
+    public void getEventSchemaBySchemaId(
+            String schemaId, String payloadFormat, Map<String, List<String>> headers, ResponseCallback callback) {
+        validateMinimumVersion(GET_SCHEMA_MINIMUM_VERSION);
+        final Request request;
+        request = getRequest(HttpMethod.GET, versionUrl() + "event/eventSchema/" + schemaId + "?payloadFormat=" + payloadFormat,
+                headers);
+
+        // requires authorization token
+        setAccessToken(request);
+
+        doHttpRequest(request, new DelegatingClientCallback(callback));
+    }
+
     private String apexCallUrl(String apexUrl, Map<String, Object> queryParams)
             throws UnsupportedEncodingException, URISyntaxException {
 
@@ -378,6 +408,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     private String servicesDataUrl() {
         return instanceUrl + SERVICES_DATA;
+    }
+
+    private void validateMinimumVersion(String minimumVersion) {
+        if (Version.create(version).compareTo(Version.create(minimumVersion)) < 0) {
+            throw new IllegalArgumentException(
+                    "Salesforce API version " + minimumVersion + " or newer is required, version " + version + " was detected");
+        }
     }
 
     private String versionUrl() {

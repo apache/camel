@@ -49,7 +49,6 @@ public class Kinesis2Component extends HealthCheckComponent {
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         if (!configuration.isUseDefaultCredentialsProvider() && !configuration.isUseProfileCredentialsProvider()
-                && !configuration.isUseProfileCredentialsProvider()
                 && configuration.getAmazonKinesisClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(

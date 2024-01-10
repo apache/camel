@@ -21,14 +21,64 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.dynamicrouter.DynamicRouterTestConstants.addRoutes;
-import static org.apache.camel.test.infra.core.MockUtils.getMockEndpoint;
+@ExtendWith(MockitoExtension.class)
+public class DynamicRouterSendDynamicAwareIT {
 
-class DynamicRouterSendDynamicAwareIT {
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+
+    CamelContext context;
+
+    ProducerTemplate template;
+
+    MockEndpoint mock1;
+
+    MockEndpoint mock2;
+
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .routeId("directToDynamicRouter")
+                        .toD("dynamic-router://test?synchronous=true");
+                from("direct://subscribe-bean-expression")
+                        .routeId("subscribeRouteBeanExpression")
+                        .toD("dynamic-router-control://subscribe" +
+                             "?subscribeChannel=${header.subscribeChannel}" +
+                             "&subscriptionId=${header.subscriptionId}" +
+                             "&destinationUri=${header.destinationUri}" +
+                             "&priority=${header.priority}" +
+                             "&predicate=${header.predicate}");
+            }
+        });
+    }
+
+    @BeforeEach
+    void setUp() {
+        this.context = contextExtension.getContext();
+        this.template = context.createProducerTemplate();
+        this.mock1 = contextExtension.getMockEndpoint("mock:result1", true);
+        this.mock2 = contextExtension.getMockEndpoint("mock:result2", true);
+    }
+
+    @AfterEach
+    void tearDown() {
+        context.stop();
+    }
 
     /**
      * Tests participant subscription, and that messages are received at their registered destination endpoints.
@@ -37,11 +87,6 @@ class DynamicRouterSendDynamicAwareIT {
      */
     @Test
     void testSubscribeWithUriAndMultipleSubscribers() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        ProducerTemplate template = context.createProducerTemplate();
-        addRoutes.accept(context);
-        MockEndpoint mock1 = getMockEndpoint(context, "mock:result1", true);
-        MockEndpoint mock2 = getMockEndpoint(context, "mock:result2", true);
         mock1.expectedMinimumMessageCount(1);
         mock2.expectedMinimumMessageCount(1);
 
