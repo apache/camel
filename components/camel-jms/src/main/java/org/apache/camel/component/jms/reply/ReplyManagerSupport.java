@@ -113,7 +113,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 log.trace("Waiting for replyTo to be set done");
             }
         } catch (InterruptedException e) {
-            // ignore
+            Thread.currentThread().interrupt();
         }
         return replyTo;
     }
