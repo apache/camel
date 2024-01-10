@@ -16,10 +16,6 @@
  */
 package org.apache.camel.coap;
 
-import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CERTIFICATE_TYPES;
-import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CLIENT_AUTHENTICATION_MODE;
-import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDED_CIPHER_SUITES_ONLY;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -36,7 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
-import javax.security.auth.x500.X500Principal;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -52,7 +47,6 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.Resource;
 import org.eclipse.californium.elements.config.CertificateAuthenticationMode;
 import org.eclipse.californium.elements.config.Configuration;
@@ -62,17 +56,16 @@ import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConfig;
 import org.eclipse.californium.scandium.config.DtlsConfig.DtlsRole;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
-import org.eclipse.californium.scandium.dtls.CertificateIdentityResult;
 import org.eclipse.californium.scandium.dtls.CertificateType;
-import org.eclipse.californium.scandium.dtls.ConnectionId;
-import org.eclipse.californium.scandium.dtls.HandshakeResultHandler;
-import org.eclipse.californium.scandium.dtls.SignatureAndHashAlgorithm;
 import org.eclipse.californium.scandium.dtls.cipher.CipherSuite;
-import org.eclipse.californium.scandium.dtls.cipher.CipherSuite.CertificateKeyAlgorithm;
-import org.eclipse.californium.scandium.dtls.cipher.XECDHECryptography.SupportedGroup;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
-import org.eclipse.californium.scandium.dtls.x509.*;
-import org.eclipse.californium.scandium.util.ServerNames;
+import org.eclipse.californium.scandium.dtls.x509.CertificateConfigurationHelper;
+import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
+import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
+
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CERTIFICATE_TYPES;
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CLIENT_AUTHENTICATION_MODE;
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDED_CIPHER_SUITES_ONLY;
 
 /**
  * Send and receive messages to/from COAP capable devices.
@@ -482,7 +475,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 }
 
                 PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, keyManagers.getKeyPassword().toCharArray());
-                builder.setCertificateIdentityProvider(new SingleCertificateProvider(privateKey, keyStore.getCertificateChain(alias)));
+                builder.setCertificateIdentityProvider(
+                        new SingleCertificateProvider(privateKey, keyStore.getCertificateChain(alias)));
 
             } else if (privateKey != null) {
                 builder.setCertificateIdentityProvider(new SingleCertificateProvider(privateKey, publicKey));
@@ -507,7 +501,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
         }
 
         if (getConfiguredCipherSuites() != null) {
-            builder.set(org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CIPHER_SUITES, CipherSuite.getTypesByNames(getConfiguredCipherSuites()));
+            builder.set(org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CIPHER_SUITES,
+                    CipherSuite.getTypesByNames(getConfiguredCipherSuites()));
         }
 
         return new DTLSConnector(builder.build());
@@ -524,18 +519,14 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
             client.setEndpoint(coapBuilder.build());
         } else if (CoAPEndpoint.enableTCP(getUri())) {
-            NetworkConfig config = NetworkConfig.createStandardWithoutFile();
-            int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
-            int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);
-            int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
             TcpClientConnector tcpConnector = null;
 
             // TLS + TCP
             if (getUri().getScheme().startsWith("coaps")) {
                 SSLContext sslContext = getSslContextParameters().createSSLContext(getCamelContext());
-                tcpConnector = new TlsClientConnector(sslContext, tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                tcpConnector = new TlsClientConnector(sslContext, Configuration.createStandardWithoutFile());
             } else {
-                tcpConnector = new TcpClientConnector(tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                tcpConnector = new TcpClientConnector(Configuration.createStandardWithoutFile());
             }
 
             CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();

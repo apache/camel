@@ -122,6 +122,72 @@ public interface CoAPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the AdvancedCertificateVerifier to use to determine trust in raw
+         * public keys.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedCertificateVerifier the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder advancedCertificateVerifier(
+                org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier advancedCertificateVerifier) {
+            doSetProperty("advancedCertificateVerifier", advancedCertificateVerifier);
+            return this;
+        }
+        /**
+         * Set the AdvancedCertificateVerifier to use to determine trust in raw
+         * public keys.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedCertificateVerifier the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder advancedCertificateVerifier(
+                String advancedCertificateVerifier) {
+            doSetProperty("advancedCertificateVerifier", advancedCertificateVerifier);
+            return this;
+        }
+        /**
+         * Set the AdvancedPskStore to use for pre-shared key.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedPskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder advancedPskStore(
+                org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore advancedPskStore) {
+            doSetProperty("advancedPskStore", advancedPskStore);
+            return this;
+        }
+        /**
+         * Set the AdvancedPskStore to use for pre-shared key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedPskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder advancedPskStore(
+                String advancedPskStore) {
+            doSetProperty("advancedPskStore", advancedPskStore);
+            return this;
+        }
+        /**
          * Sets the alias used to query the KeyStore for the private key and
          * certificate. This parameter is used when we are enabling TLS with
          * certificates on the service side, and similarly on the client side
@@ -206,37 +272,6 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder pskStore(
-                org.eclipse.californium.scandium.dtls.pskstore.PskStore pskStore) {
-            doSetProperty("pskStore", pskStore);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder pskStore(String pskStore) {
-            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -341,38 +376,6 @@ public interface CoAPEndpointBuilderFactory {
         default CoAPEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder trustedRpkStore(
-                org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder trustedRpkStore(
-                String trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
     }
@@ -524,7 +527,7 @@ public interface CoAPEndpointBuilderFactory {
         }
         /**
          * Notify observers that the resource of this URI has changed, based on
-         * RFC 7641. Use this flag on a destination endpoint, with an URI that
+         * RFC 7641. Use this flag on a destination endpoint, with a URI that
          * matches an existing source endpoint URI.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -541,7 +544,7 @@ public interface CoAPEndpointBuilderFactory {
         }
         /**
          * Notify observers that the resource of this URI has changed, based on
-         * RFC 7641. Use this flag on a destination endpoint, with an URI that
+         * RFC 7641. Use this flag on a destination endpoint, with a URI that
          * matches an existing source endpoint URI.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -555,6 +558,72 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder notify(String notify) {
             doSetProperty("notify", notify);
+            return this;
+        }
+        /**
+         * Set the AdvancedCertificateVerifier to use to determine trust in raw
+         * public keys.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedCertificateVerifier the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder advancedCertificateVerifier(
+                org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier advancedCertificateVerifier) {
+            doSetProperty("advancedCertificateVerifier", advancedCertificateVerifier);
+            return this;
+        }
+        /**
+         * Set the AdvancedCertificateVerifier to use to determine trust in raw
+         * public keys.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedCertificateVerifier the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder advancedCertificateVerifier(
+                String advancedCertificateVerifier) {
+            doSetProperty("advancedCertificateVerifier", advancedCertificateVerifier);
+            return this;
+        }
+        /**
+         * Set the AdvancedPskStore to use for pre-shared key.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedPskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder advancedPskStore(
+                org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore advancedPskStore) {
+            doSetProperty("advancedPskStore", advancedPskStore);
+            return this;
+        }
+        /**
+         * Set the AdvancedPskStore to use for pre-shared key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedPskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder advancedPskStore(
+                String advancedPskStore) {
+            doSetProperty("advancedPskStore", advancedPskStore);
             return this;
         }
         /**
@@ -642,37 +711,6 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder pskStore(
-                org.eclipse.californium.scandium.dtls.pskstore.PskStore pskStore) {
-            doSetProperty("pskStore", pskStore);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder pskStore(String pskStore) {
-            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -779,38 +817,6 @@ public interface CoAPEndpointBuilderFactory {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder trustedRpkStore(
-                org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder trustedRpkStore(
-                String trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
-            return this;
-        }
     }
 
     /**
@@ -882,6 +888,71 @@ public interface CoAPEndpointBuilderFactory {
                 CoAPEndpointProducerBuilder {
         default AdvancedCoAPEndpointBuilder advanced() {
             return (AdvancedCoAPEndpointBuilder) this;
+        }
+        /**
+         * Set the AdvancedCertificateVerifier to use to determine trust in raw
+         * public keys.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedCertificateVerifier the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointBuilder advancedCertificateVerifier(
+                org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier advancedCertificateVerifier) {
+            doSetProperty("advancedCertificateVerifier", advancedCertificateVerifier);
+            return this;
+        }
+        /**
+         * Set the AdvancedCertificateVerifier to use to determine trust in raw
+         * public keys.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedCertificateVerifier the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointBuilder advancedCertificateVerifier(
+                String advancedCertificateVerifier) {
+            doSetProperty("advancedCertificateVerifier", advancedCertificateVerifier);
+            return this;
+        }
+        /**
+         * Set the AdvancedPskStore to use for pre-shared key.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedPskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointBuilder advancedPskStore(
+                org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore advancedPskStore) {
+            doSetProperty("advancedPskStore", advancedPskStore);
+            return this;
+        }
+        /**
+         * Set the AdvancedPskStore to use for pre-shared key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param advancedPskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointBuilder advancedPskStore(String advancedPskStore) {
+            doSetProperty("advancedPskStore", advancedPskStore);
+            return this;
         }
         /**
          * Sets the alias used to query the KeyStore for the private key and
@@ -968,37 +1039,6 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointBuilder pskStore(
-                org.eclipse.californium.scandium.dtls.pskstore.PskStore pskStore) {
-            doSetProperty("pskStore", pskStore);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointBuilder pskStore(String pskStore) {
-            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -1102,37 +1142,6 @@ public interface CoAPEndpointBuilderFactory {
         default CoAPEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointBuilder trustedRpkStore(
-                org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointBuilder trustedRpkStore(String trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
     }

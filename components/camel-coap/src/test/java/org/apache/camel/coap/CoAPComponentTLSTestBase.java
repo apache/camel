@@ -42,6 +42,7 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedSinglePskStore;
 import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -255,47 +256,52 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                             .transform(body().prepend("Hello "));
 
                     fromF(getProtocol()
-                          + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore",
+                          + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&advancedCertificateVerifier=#advancedCertificateVerifier",
                             PORT6).transform(body().prepend("Hello "));
 
                     from("direct:rpk")
-                            .toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore", PORT5)
+                            .toF(getProtocol()
+                                 + "://localhost:%d/TestResource?advancedCertificateVerifier=#advancedCertificateVerifier",
+                                    PORT5)
                             .to("mock:result");
 
                     from("direct:rpknotruststore").toF(getProtocol() + "://localhost:%d/TestResource", PORT5).to("mock:result");
 
-                    from("direct:rpkfailedtrust")
-                            .toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#failedTrustedRpkStore", PORT5)
-                            .to("mock:result");
+                    //                    from("direct:rpkfailedtrust")
+                    //                            .toF(getProtocol()
+                    //                                 + "://localhost:%d/TestResource?advancedCertificateVerifier=#failedAdvancedCertificateVerifier",
+                    //                                    PORT5)
+                    //                            .to("mock:result");
 
                     from("direct:rpkclientauth")
                             .toF(getProtocol()
-                                 + "://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&privateKey=#privateKey&publicKey=#publicKey",
+                                 + "://localhost:%d/TestResource?advancedCertificateVerifier=#advancedCertificateVerifier&privateKey=#privateKey&publicKey=#publicKey",
                                     PORT6)
                             .to("mock:result");
                 }
 
                 if (isPSKSupported()) {
-                    fromF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
+                    fromF(getProtocol() + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore", PORT7)
                             .transform(body().prepend("Hello "));
 
                     fromF(getProtocol()
-                          + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&pskStore=#pskStore",
+                          + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&advancedPskStore=#advancedPskStore",
                             PORT8)
                             .transform(body().prepend("Hello "));
 
-                    from("direct:psk").toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
+                    from("direct:psk")
+                            .toF(getProtocol() + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore", PORT7)
                             .to("mock:result");
 
                     from("direct:pskciphersuite")
                             .toF(getProtocol()
-                                 + "://localhost:%d/TestResource?pskStore=#pskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256",
+                                 + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256",
                                     PORT7)
                             .to("mock:result");
 
                     from("direct:pskx509")
                             .toF(getProtocol()
-                                 + "://localhost:%d/TestResource?pskStore=#pskStore&sslContextParameters=#clientSSLContextParameters",
+                                 + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&sslContextParameters=#clientSSLContextParameters",
                                     PORT8)
                             .to("mock:result");
                 }
@@ -399,14 +405,21 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         PrivateKey privateKey = (PrivateKey) keyStore.getKey("service", "security".toCharArray());
         PublicKey publicKey = keyStore.getCertificate("service").getPublicKey();
 
-        NewAdvancedCertificateVerifier advancedCertificateVerifier = id -> {
-            return true;
-        };
-        NewAdvancedCertificateVerifier failedAdvancedCertificateVerifier = id -> {
-            return false;
-        };
+        //        TrustedRpkStore trustedRpkStore = id -> {
+        //            return true;
+        //        };
+        //        TrustedRpkStore failedTrustedRpkStore = id -> {
+        //            return false;
+        //        };
+
+        NewAdvancedCertificateVerifier advancedCertificateVerifier = StaticNewAdvancedCertificateVerifier.builder()
+                .setTrustAllRPKs().setTrustAllCertificates().build();
+        //        NewAdvancedCertificateVerifier advancedCertificateVerifier = StaticNewAdvancedCertificateVerifier.builder()
+        //                .setTrustedRPKs(new RawPublicKeyIdentity(publicKey)).build();
+
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        AdvancedPskStore advancedPskStore = new AdvancedSinglePskStore("some-identity", keyGenerator.generateKey().getEncoded());
+        AdvancedPskStore advancedPskStore
+                = new AdvancedSinglePskStore("some-identity", keyGenerator.generateKey().getEncoded());
 
         context.getRegistry().bind("serviceSSLContextParameters", serviceSSLContextParameters);
         context.getRegistry().bind("selfSignedServiceSSLContextParameters", selfSignedServiceSSLContextParameters);
@@ -419,8 +432,9 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
         context.getRegistry().bind("privateKey", privateKey);
         context.getRegistry().bind("publicKey", publicKey);
-        context.getRegistry().bind("newAdvancedCertificateVerifier", advancedCertificateVerifier);
-        context.getRegistry().bind("failedNewAdvancedCertificateVerifier", failedAdvancedCertificateVerifier);
+
+        context.getRegistry().bind("advancedCertificateVerifier", advancedCertificateVerifier);
+        //        context.getRegistry().bind("failedAdvancedCertificateVerifier", failedAdvancedCertificateVerifier);
         context.getRegistry().bind("advancedPskStore", advancedPskStore);
     }
 
