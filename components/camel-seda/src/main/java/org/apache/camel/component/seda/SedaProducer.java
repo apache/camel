@@ -243,6 +243,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             } catch (InterruptedException e) {
                 // ignore
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
             }
         } else {
             queue.add(target);
