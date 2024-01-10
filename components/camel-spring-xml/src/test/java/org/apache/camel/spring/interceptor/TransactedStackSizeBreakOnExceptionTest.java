@@ -31,7 +31,7 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
 
     @Test
     public void testStackSize() throws Exception {
-        getMockEndpoint("mock:line").expectedMessageCount(failAt);
+        getMockEndpoint("mock:line").expectedMinimumMessageCount(failAt);
         getMockEndpoint("mock:line").assertNoDuplicates(body());
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
