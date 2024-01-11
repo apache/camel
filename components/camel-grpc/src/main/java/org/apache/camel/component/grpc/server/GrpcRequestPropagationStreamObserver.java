@@ -56,7 +56,9 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
                 responseObserver.onNext(responseBody);
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             responseObserver.onError(e);
+
         }
     }
 
