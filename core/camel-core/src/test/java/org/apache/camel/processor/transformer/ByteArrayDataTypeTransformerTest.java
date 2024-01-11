@@ -90,6 +90,12 @@ public class ByteArrayDataTypeTransformerTest {
         DefaultTransformerRegistry transformerRegistry = new DefaultTransformerRegistry(camelContext);
         Transformer transformer = transformerRegistry.resolveTransformer(new TransformerKey("application-octet-stream"));
         Assertions.assertNotNull(transformer);
+
+        transformer = transformerRegistry.resolveTransformer(new TransformerKey("application/octet-stream"));
+        Assertions.assertNotNull(transformer);
+
+        transformer = transformerRegistry.resolveTransformer(new TransformerKey("camel:application-octet-stream"));
+        Assertions.assertNotNull(transformer);
     }
 
     private static void assertBinaryBody(Exchange exchange, String key, String content) {

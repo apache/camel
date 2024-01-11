@@ -78,6 +78,12 @@ public class StringDataTypeTransformerTest {
         DefaultTransformerRegistry dataTypeRegistry = new DefaultTransformerRegistry(camelContext);
         Transformer transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("text-plain"));
         Assertions.assertNotNull(transformer);
+
+        transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("text/plain"));
+        Assertions.assertNotNull(transformer);
+
+        transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("camel:text-plain"));
+        Assertions.assertNotNull(transformer);
     }
 
     private static void assertStringBody(Exchange exchange, String key, String content) {

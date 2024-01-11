@@ -722,12 +722,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 if (dataTypes != null) {
                     MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
                     if (in != null) {
-                        route.inputType(extractTupleValue(in.getValue(), "format"));
+                        route.inputType(extractDataType(in));
                     }
 
                     MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
                     if (out != null) {
-                        route.transform(new DataType(extractTupleValue(out.getValue(), "format")));
+                        route.transform(new DataType(extractDataType(out)));
                     }
                 }
 
@@ -770,12 +770,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     if (dataTypes != null) {
                         MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
                         if (in != null) {
-                            route.transform(new DataType(extractTupleValue(in.getValue(), "format")));
+                            route.transform(new DataType(extractDataType(in)));
                         }
 
                         MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
                         if (out != null) {
-                            route.outputType(extractTupleValue(out.getValue(), "format"));
+                            route.outputType(extractDataType(out));
                         }
                     }
 
@@ -843,6 +843,24 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         }
 
         return answer;
+    }
+
+    /**
+     * Extracts the data type transformer name information form nodes dataTypes/in or dataTypes/out. When scheme is set
+     * construct the transformer name with a prefix like scheme:format. Otherwise, just use the given format as a data
+     * type transformer name.
+     *
+     * @param  node
+     * @return
+     */
+    private String extractDataType(MappingNode node) {
+        String scheme = extractTupleValue(node.getValue(), "scheme");
+        String format = extractTupleValue(node.getValue(), "format");
+        if (scheme != null) {
+            return scheme + ":" + format;
+        }
+
+        return format;
     }
 
     private String extractCamelEndpointUri(MappingNode node) {
