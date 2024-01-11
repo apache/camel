@@ -139,6 +139,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             try {
                 Thread.sleep(30000);
                 getEndpoint().createQueue(getClient());
+            } catch (InterruptedException e) {
+                LOG.warn("Interrupted while retrying queue connection.", e);
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 LOG.warn("failed to retry queue connection.", e);
             }
