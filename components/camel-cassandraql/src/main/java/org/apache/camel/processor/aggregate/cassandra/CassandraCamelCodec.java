@@ -16,11 +16,7 @@
  */
 package org.apache.camel.processor.aggregate.cassandra;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 
 import org.apache.camel.CamelContext;
@@ -62,9 +58,10 @@ public class CassandraCamelCodec {
         return ByteBuffer.wrap(serialize(pe));
     }
 
-    public Exchange unmarshallExchange(CamelContext camelContext, ByteBuffer buffer)
+    public Exchange unmarshallExchange(CamelContext camelContext, ByteBuffer buffer, String deserializationFilter)
             throws IOException, ClassNotFoundException {
-        DefaultExchangeHolder pe = (DefaultExchangeHolder) deserialize(camelContext, new ByteBufferInputStream(buffer));
+        DefaultExchangeHolder pe
+                = (DefaultExchangeHolder) deserialize(camelContext, new ByteBufferInputStream(buffer), deserializationFilter);
         Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
         // restore the from endpoint
@@ -86,9 +83,11 @@ public class CassandraCamelCodec {
         return bytesOut.toByteArray();
     }
 
-    private Object deserialize(CamelContext camelContext, InputStream bytes) throws IOException, ClassNotFoundException {
+    private Object deserialize(CamelContext camelContext, InputStream bytes, String deserializationFilter)
+            throws IOException, ClassNotFoundException {
         ClassLoader classLoader = camelContext.getApplicationContextClassLoader();
         ObjectInputStream objectIn = new ClassLoadingAwareObjectInputStream(classLoader, bytes);
+        objectIn.setObjectInputFilter(ObjectInputFilter.Config.createFilter(deserializationFilter));
         Object object = objectIn.readObject();
         objectIn.close();
         return object;
