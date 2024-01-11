@@ -21,7 +21,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(47);
         props.add("accessToken");
         props.add("amount");
         props.add("apiName");
@@ -49,6 +49,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
         props.add("logHandlerEnabled");
         props.add("merchantId");
         props.add("methodName");
+        props.add("packageTrackingRequest");
         props.add("page");
         props.add("payload");
         props.add("paymentMethodNonce");
