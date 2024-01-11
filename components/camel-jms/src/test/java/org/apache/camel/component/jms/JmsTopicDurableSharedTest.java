@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class JmsTopicDurableSharedTest extends AbstractPersistentJMSTest {
 
     private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.shared.durable.test";
-    
+
     @BeforeEach
     void waitForArtemisToFinishCreatingConsumers() {
         Awaitility.await().until(() -> context.getClock().get(ContextEvents.START).elapsed() > 1000);
