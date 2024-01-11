@@ -20,6 +20,7 @@ package org.apache.camel.spi;
 import java.util.Locale;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Resolves data type transformers from given transformer key. This represents the opportunity to lazy load transformers
@@ -42,13 +43,17 @@ public interface TransformerResolver<K> {
 
     /**
      * Normalize transformer key to conform with factory finder resource path. Replaces all non supported characters
-     * such as slashes and colons to dashes.
+     * such as slashes and colons to dashes. Automatically removes the default scheme prefix as it should not be part of
+     * the resource path.
      *
      * @param  key the transformer key
      * @return     normalized String representation of the key
      */
     default String normalize(K key) {
-        return key.toString().replaceAll("[^A-Za-z0-9-]", "-").toLowerCase(Locale.US);
+        String keyString = key.toString();
+        keyString = StringHelper.after(keyString, DataType.DEFAULT_SCHEME + ":", keyString);
+
+        return StringHelper.sanitize(keyString).toLowerCase(Locale.US);
     }
 
 }
