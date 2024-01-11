@@ -116,8 +116,10 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                 default:
                     throw new DockerException("Invalid operation: " + operation);
             }
-
-        } catch (DockerException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            LOG.error("Interrupted while processing", e);
+            Thread.currentThread().interrupt();
+        } catch (DockerException e) {
             LOG.error(e.getMessage(), e);
         }
 
