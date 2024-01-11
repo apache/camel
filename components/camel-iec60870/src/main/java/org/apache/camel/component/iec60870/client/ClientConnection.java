@@ -106,7 +106,7 @@ public class ClientConnection {
         try {
             latch.await(this.options.getConnectionTimeout(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            // ignore
+            Thread.currentThread().interrupt();
         }
     }
 
