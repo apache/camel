@@ -195,7 +195,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
             try {
                 Thread.sleep(getConfiguration().getReconnectDelay());
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
             }
         }
 
