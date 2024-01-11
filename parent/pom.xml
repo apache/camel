@@ -74,7 +74,7 @@
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
         <bouncycastle-version>1.77</bouncycastle-version>
         <box-java-sdk-version>4.6.1</box-java-sdk-version>
-        <braintree-gateway-version>3.31.0</braintree-gateway-version>
+        <braintree-gateway-version>3.32.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.5.0</build-helper-maven-plugin-version>
         <bytebuddy-version>1.14.11</bytebuddy-version>
         <c3p0-version>0.9.5.5</c3p0-version>
