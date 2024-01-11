@@ -68,6 +68,7 @@ public class DefaultLogSupervisor implements LogSupervisor {
             }
         } catch (InterruptedException e) {
             LOG.error("Failed to shutdown log flusher: {}", e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
     }
 }
