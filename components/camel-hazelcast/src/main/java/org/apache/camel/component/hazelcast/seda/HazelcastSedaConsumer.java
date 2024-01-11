@@ -132,6 +132,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Hzlq Consumer Interrupted: {}", e, e);
                 }
+                Thread.currentThread().interrupt();
                 continue;
             } catch (Exception e) {
                 // Rollback
@@ -145,7 +146,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 try {
                     Thread.sleep(endpoint.getConfiguration().getOnErrorDelay());
-                } catch (InterruptedException ignore) {
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
                 }
             }
         }
