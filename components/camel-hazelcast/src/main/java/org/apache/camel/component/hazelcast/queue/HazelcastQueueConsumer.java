@@ -97,7 +97,7 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                             }
                         }
                     } catch (InterruptedException e) {
-                        // ignore
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
