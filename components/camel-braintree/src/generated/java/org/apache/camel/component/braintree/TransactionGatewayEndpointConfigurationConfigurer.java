@@ -32,6 +32,7 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         map.put("LogHandlerEnabled", boolean.class);
         map.put("MerchantId", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PackageTrackingRequest", com.braintreegateway.PackageTrackingRequest.class);
         map.put("PrivateKey", java.lang.String.class);
         map.put("ProxyHost", java.lang.String.class);
         map.put("ProxyPort", java.lang.Integer.class);
@@ -70,6 +71,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "MerchantId": target.setMerchantId(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "packagetrackingrequest":
+        case "PackageTrackingRequest": target.setPackageTrackingRequest(property(camelContext, com.braintreegateway.PackageTrackingRequest.class, value)); return true;
         case "privatekey":
         case "PrivateKey": target.setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -120,6 +123,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "MerchantId": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
+        case "packagetrackingrequest":
+        case "PackageTrackingRequest": return com.braintreegateway.PackageTrackingRequest.class;
         case "privatekey":
         case "PrivateKey": return java.lang.String.class;
         case "proxyhost":
@@ -166,6 +171,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "MerchantId": return target.getMerchantId();
         case "methodname":
         case "MethodName": return target.getMethodName();
+        case "packagetrackingrequest":
+        case "PackageTrackingRequest": return target.getPackageTrackingRequest();
         case "privatekey":
         case "PrivateKey": return target.getPrivateKey();
         case "proxyhost":
