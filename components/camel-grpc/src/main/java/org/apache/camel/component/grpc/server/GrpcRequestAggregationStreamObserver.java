@@ -71,6 +71,7 @@ public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStr
             }
             responseObserver.onCompleted();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             responseObserver.onError(e);
         }
     }
