@@ -96,7 +96,7 @@ class CloudEventJsonDataTypeTransformerTest {
     @Test
     public void shouldLookupTransformer() throws Exception {
         Transformer transformer
-                = camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("application-cloudevents+json"));
+                = camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("application-cloudevents/json"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(CloudEventJsonDataTypeTransformer.class, transformer.getClass());
     }
