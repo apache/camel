@@ -50,5 +50,6 @@ public class AWS2S3CloudEventDataTypeTransformer extends Transformer {
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(AWS2S3Constants.KEY, String.class));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
+        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
     }
 }

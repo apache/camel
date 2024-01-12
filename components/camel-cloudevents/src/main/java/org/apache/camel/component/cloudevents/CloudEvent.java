@@ -41,6 +41,8 @@ public interface CloudEvent {
     String DEFAULT_CAMEL_CLOUD_EVENT_TYPE = "org.apache.camel.event";
     String DEFAULT_CAMEL_CLOUD_EVENT_SOURCE = "org.apache.camel";
 
+    String APPLICATION_OCTET_STREAM_MIME_TYPE = "application/octet-stream";
+
     /**
      * The CloudEvent spec version.
      */
