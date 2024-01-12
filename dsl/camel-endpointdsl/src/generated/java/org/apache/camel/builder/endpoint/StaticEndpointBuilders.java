@@ -4241,15 +4241,15 @@ public class StaticEndpointBuilders {
      * message routing.
      * 
      * Category: messaging
-     * Since: 4.3
+     * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-dynamic-router
      * 
      * Syntax: <code>dynamic-router-control:controlAction</code>
      * 
      * Path parameter: controlAction (required)
      * Control action
-     * There are 3 enums and the value can be one of: subscribe, unsubscribe,
-     * list
+     * There are 5 enums and the value can be one of: subscribe, unsubscribe,
+     * update, list, statistics
      * 
      * @param path controlAction
      * @return the dsl builder
@@ -4265,15 +4265,15 @@ public class StaticEndpointBuilders {
      * message routing.
      * 
      * Category: messaging
-     * Since: 4.3
+     * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-dynamic-router
      * 
      * Syntax: <code>dynamic-router-control:controlAction</code>
      * 
      * Path parameter: controlAction (required)
      * Control action
-     * There are 3 enums and the value can be one of: subscribe, unsubscribe,
-     * list
+     * There are 5 enums and the value can be one of: subscribe, unsubscribe,
+     * update, list, statistics
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12347,7 +12347,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Robot Framework (camel-robotframework)
-     * Pass camel exchanges to acceptence test written in Robot DSL.
+     * Pass camel exchanges to acceptance test written in Robot DSL.
      * 
      * Category: testing
      * Since: 3.0
@@ -12373,7 +12373,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Robot Framework (camel-robotframework)
-     * Pass camel exchanges to acceptence test written in Robot DSL.
+     * Pass camel exchanges to acceptance test written in Robot DSL.
      * 
      * Category: testing
      * Since: 3.0
@@ -12543,16 +12543,16 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName (required)
      * The operation to use
-     * There are 68 enums and the value can be one of: getVersions,
+     * There are 69 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
-     * queryAll, search, apexCall, recent, createJob, getJob, closeJob,
-     * abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults,
-     * createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports,
-     * getReportDescription, executeSyncReport, executeAsyncReport,
-     * getReportInstances, getReportResults, limits, approval, approvals,
-     * composite-tree, composite-batch, composite,
+     * queryAll, search, apexCall, recent, getEventSchema, createJob, getJob,
+     * closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest,
+     * getResults, createBatchQuery, getQueryResultIds, getQueryResult,
+     * getRecentReports, getReportDescription, executeSyncReport,
+     * executeAsyncReport, getReportInstances, getReportResults, limits,
+     * approval, approvals, composite-tree, composite-batch, composite,
      * compositeRetrieveSObjectCollections, compositeCreateSObjectCollections,
      * compositeUpdateSObjectCollections, compositeUpsertSObjectCollections,
      * compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob,
@@ -12584,16 +12584,16 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName (required)
      * The operation to use
-     * There are 68 enums and the value can be one of: getVersions,
+     * There are 69 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
-     * queryAll, search, apexCall, recent, createJob, getJob, closeJob,
-     * abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults,
-     * createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports,
-     * getReportDescription, executeSyncReport, executeAsyncReport,
-     * getReportInstances, getReportResults, limits, approval, approvals,
-     * composite-tree, composite-batch, composite,
+     * queryAll, search, apexCall, recent, getEventSchema, createJob, getJob,
+     * closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest,
+     * getResults, createBatchQuery, getQueryResultIds, getQueryResult,
+     * getRecentReports, getReportDescription, executeSyncReport,
+     * executeAsyncReport, getReportInstances, getReportResults, limits,
+     * approval, approvals, composite-tree, composite-batch, composite,
      * compositeRetrieveSObjectCollections, compositeCreateSObjectCollections,
      * compositeUpdateSObjectCollections, compositeUpsertSObjectCollections,
      * compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob,

@@ -60,7 +60,7 @@ public interface FileWatchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Auto create directory if does not exists.
+         * Auto create directory if does not exist.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -75,7 +75,7 @@ public interface FileWatchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Auto create directory if does not exists.
+         * Auto create directory if does not exist.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

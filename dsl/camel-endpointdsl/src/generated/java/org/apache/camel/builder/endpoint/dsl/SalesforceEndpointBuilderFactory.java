@@ -2766,6 +2766,73 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Name of Platform Event, Change Data Capture Event, custom event, etc.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param eventName the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder eventName(String eventName) {
+            doSetProperty("eventName", eventName);
+            return this;
+        }
+        /**
+         * EXPANDED: Apache Avro format but doesnt strictly adhere to the record
+         * complex type. COMPACT: Apache Avro, adheres to the specification for
+         * the record complex type. This parameter is available in API version
+         * 43.0 and later.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param eventSchemaFormat the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder eventSchemaFormat(
+                org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum eventSchemaFormat) {
+            doSetProperty("eventSchemaFormat", eventSchemaFormat);
+            return this;
+        }
+        /**
+         * EXPANDED: Apache Avro format but doesnt strictly adhere to the record
+         * complex type. COMPACT: Apache Avro, adheres to the specification for
+         * the record complex type. This parameter is available in API version
+         * 43.0 and later.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param eventSchemaFormat the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder eventSchemaFormat(
+                String eventSchemaFormat) {
+            doSetProperty("eventSchemaFormat", eventSchemaFormat);
+            return this;
+        }
+        /**
+         * The ID of the event schema.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param eventSchemaId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder eventSchemaId(
+                String eventSchemaId) {
+            doSetProperty("eventSchemaId", eventSchemaId);
+            return this;
+        }
+        /**
          * Comma separated list of message headers to include as HTTP parameters
          * for Raw operation.
          * 
@@ -4097,17 +4164,18 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: operationName (required)
          * The operation to use
-         * There are 68 enums and the value can be one of: getVersions,
+         * There are 69 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
-         * query, queryMore, queryAll, search, apexCall, recent, createJob,
-         * getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches,
-         * getRequest, getResults, createBatchQuery, getQueryResultIds,
-         * getQueryResult, getRecentReports, getReportDescription,
-         * executeSyncReport, executeAsyncReport, getReportInstances,
-         * getReportResults, limits, approval, approvals, composite-tree,
-         * composite-batch, composite, compositeRetrieveSObjectCollections,
+         * query, queryMore, queryAll, search, apexCall, recent, getEventSchema,
+         * createJob, getJob, closeJob, abortJob, createBatch, getBatch,
+         * getAllBatches, getRequest, getResults, createBatchQuery,
+         * getQueryResultIds, getQueryResult, getRecentReports,
+         * getReportDescription, executeSyncReport, executeAsyncReport,
+         * getReportInstances, getReportResults, limits, approval, approvals,
+         * composite-tree, composite-batch, composite,
+         * compositeRetrieveSObjectCollections,
          * compositeCreateSObjectCollections, compositeUpdateSObjectCollections,
          * compositeUpsertSObjectCollections, compositeDeleteSObjectCollections,
          * bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch,
@@ -4138,17 +4206,18 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: operationName (required)
          * The operation to use
-         * There are 68 enums and the value can be one of: getVersions,
+         * There are 69 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
-         * query, queryMore, queryAll, search, apexCall, recent, createJob,
-         * getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches,
-         * getRequest, getResults, createBatchQuery, getQueryResultIds,
-         * getQueryResult, getRecentReports, getReportDescription,
-         * executeSyncReport, executeAsyncReport, getReportInstances,
-         * getReportResults, limits, approval, approvals, composite-tree,
-         * composite-batch, composite, compositeRetrieveSObjectCollections,
+         * query, queryMore, queryAll, search, apexCall, recent, getEventSchema,
+         * createJob, getJob, closeJob, abortJob, createBatch, getBatch,
+         * getAllBatches, getRequest, getResults, createBatchQuery,
+         * getQueryResultIds, getQueryResult, getRecentReports,
+         * getReportDescription, executeSyncReport, executeAsyncReport,
+         * getReportInstances, getReportResults, limits, approval, approvals,
+         * composite-tree, composite-batch, composite,
+         * compositeRetrieveSObjectCollections,
          * compositeCreateSObjectCollections, compositeUpdateSObjectCollections,
          * compositeUpsertSObjectCollections, compositeDeleteSObjectCollections,
          * bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch,
