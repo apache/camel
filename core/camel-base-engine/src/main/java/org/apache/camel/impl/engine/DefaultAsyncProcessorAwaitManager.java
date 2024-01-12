@@ -110,6 +110,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             }
 
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
                         exchange.getExchangeId(), exchange);
