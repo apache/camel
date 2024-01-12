@@ -252,7 +252,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
          * message routing.
          * 
          * Category: messaging
-         * Since: 4.3
+         * Since: 4.4
          * Maven coordinates: org.apache.camel:camel-dynamic-router
          * 
          * @return the dsl builder for the headers' name.
@@ -267,15 +267,15 @@ public interface DynamicRouterControlEndpointBuilderFactory {
          * message routing.
          * 
          * Category: messaging
-         * Since: 4.3
+         * Since: 4.4
          * Maven coordinates: org.apache.camel:camel-dynamic-router
          * 
          * Syntax: <code>dynamic-router-control:controlAction</code>
          * 
          * Path parameter: controlAction (required)
          * Control action
-         * There are 3 enums and the value can be one of: subscribe,
-         * unsubscribe, list
+         * There are 5 enums and the value can be one of: subscribe,
+         * unsubscribe, update, list, statistics
          * 
          * @param path controlAction
          * @return the dsl builder
@@ -291,15 +291,15 @@ public interface DynamicRouterControlEndpointBuilderFactory {
          * message routing.
          * 
          * Category: messaging
-         * Since: 4.3
+         * Since: 4.4
          * Maven coordinates: org.apache.camel:camel-dynamic-router
          * 
          * Syntax: <code>dynamic-router-control:controlAction</code>
          * 
          * Path parameter: controlAction (required)
          * Control action
-         * There are 3 enums and the value can be one of: subscribe,
-         * unsubscribe, list
+         * There are 5 enums and the value can be one of: subscribe,
+         * unsubscribe, update, list, statistics
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

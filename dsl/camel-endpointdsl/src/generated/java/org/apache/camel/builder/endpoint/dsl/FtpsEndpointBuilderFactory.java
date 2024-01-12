@@ -2725,7 +2725,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether to ignore when (trying to list files in directories or when
          * downloading a file), which does not exist or due to permission error.
-         * By default when a directory or file does not exists or insufficient
+         * By default when a directory or file does not exist or insufficient
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
          * 
@@ -2745,7 +2745,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether to ignore when (trying to list files in directories or when
          * downloading a file), which does not exist or due to permission error.
-         * By default when a directory or file does not exists or insufficient
+         * By default when a directory or file does not exist or insufficient
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
          * 
