@@ -99,7 +99,10 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
 
         try {
             handler.sendMessage(exchange, callback, message, authorizationToken);
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeCamelException("Could not send message " + message, e);
+        } catch (IOException e) {
             throw new RuntimeCamelException("Could not send message " + message, e);
         }
     }
