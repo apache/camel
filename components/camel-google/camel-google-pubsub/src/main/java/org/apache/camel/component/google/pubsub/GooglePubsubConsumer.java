@@ -140,6 +140,9 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                 }
 
                 localLog.debug("Exit run for subscription {}", subscriptionName);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                localLog.error("Failure getting messages from PubSub", e);
             } catch (Exception e) {
                 localLog.error("Failure getting messages from PubSub", e);
             }
