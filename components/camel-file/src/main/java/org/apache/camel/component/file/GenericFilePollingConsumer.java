@@ -176,7 +176,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                         // sleep for next pool
                         sleep(min);
                     } catch (InterruptedException e) {
-                        // ignore
+                        Thread.currentThread().interrupt();
                     }
                 } else {
                     // timeout hit
