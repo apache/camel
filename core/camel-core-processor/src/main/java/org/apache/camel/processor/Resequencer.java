@@ -491,6 +491,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
                         }
 
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         break;
                     }
 

@@ -731,7 +731,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    // ignore
+                    Thread.currentThread().interrupt();
                 }
                 runnable.run();
             });

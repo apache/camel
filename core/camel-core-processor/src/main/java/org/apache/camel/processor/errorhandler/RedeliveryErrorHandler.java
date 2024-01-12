@@ -827,6 +827,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                             // as we do not want to continue routing (for example a task has been cancelled)
                             exchange.setRouteStop(true);
                             reactiveExecutor.schedule(callback);
+
+                            Thread.currentThread().interrupt();
                         }
                     }
                 } else {

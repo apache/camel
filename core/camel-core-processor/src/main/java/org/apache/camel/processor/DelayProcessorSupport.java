@@ -102,6 +102,12 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                 delay(delay, exchange);
                 // then continue routing
                 return processor.process(exchange, callback);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                // exception occurred so we are done
+                exchange.setException(e);
+                callback.done(true);
+                return true;
             } catch (Exception e) {
                 // exception occurred so we are done
                 exchange.setException(e);
@@ -138,6 +144,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                             delay(delay, exchange);
                         } catch (InterruptedException ie) {
                             exchange.setException(ie);
+                            Thread.currentThread().interrupt();
                         }
                         // then continue routing
                         return processor.process(exchange, callback);
