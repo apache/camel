@@ -62,7 +62,7 @@ public class DynamicRouterFilterService {
     private final Map<String, List<PrioritizedFilterStatistics>> filterStatisticsMap = new ConcurrentHashMap<>();
 
     /**
-     * Creates a {@link PrioritizedFilter} instance.
+     * Supplier for the {@link PrioritizedFilterFactory} instance.
      */
     private final Supplier<PrioritizedFilterFactory> filterFactorySupplier;
 
@@ -71,11 +71,21 @@ public class DynamicRouterFilterService {
         LOG.debug("Created Dynamic Router component");
     }
 
+    /**
+     * Constructor that allows the {@link PrioritizedFilterFactory} supplier to be specified.
+     *
+     * @param filterFactorySupplier the {@link PrioritizedFilterFactory} supplier
+     */
     public DynamicRouterFilterService(final Supplier<PrioritizedFilterFactory> filterFactorySupplier) {
         this.filterFactorySupplier = filterFactorySupplier;
         LOG.debug("Created Dynamic Router component");
     }
 
+    /**
+     * Initialize the filter list for the specified channel.
+     *
+     * @param channel channel to initialize filter list for
+     */
     public void initializeChannelFilters(final String channel) {
         filterMap.computeIfAbsent(channel, c -> new ConcurrentSkipListSet<>(DynamicRouterConstants.FILTER_COMPARATOR));
         filterStatisticsMap.computeIfAbsent(channel, c -> Collections.synchronizedList(new ArrayList<>()));

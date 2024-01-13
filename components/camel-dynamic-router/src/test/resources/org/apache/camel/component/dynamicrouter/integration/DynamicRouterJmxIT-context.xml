@@ -40,5 +40,11 @@
                       &amp;destinationUri=${headers.destinationUri}
                       &amp;priority=${headers.priority}"/>
         </route>
+        <!--  This route is not used, but it uses a non-dynamic "to" so that the control component and endpoint are
+              instantiated right away, which causes the control service to be registered with the context.  -->
+        <route id="directControlToSubscribeNonDynamic">
+            <from uri="direct:control"/>
+            <to uri="dynamic-router-control://subscribe?subscribeChannel=test"/>
+        </route>
     </camelContext>
 </beans>

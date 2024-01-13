@@ -49,6 +49,9 @@ import static org.apache.camel.component.dynamicrouter.control.DynamicRouterCont
  */
 public class DynamicRouterControlProducer extends HeaderSelectorProducer {
 
+    /**
+     * The {@link DynamicRouterControlService} for the Dynamic Router.
+     */
     private final DynamicRouterControlService dynamicRouterControlService;
 
     /**

@@ -31,7 +31,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
 import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
 import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilterStatistics;
-import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -78,8 +77,7 @@ public class DynamicRouterControlService extends ServiceSupport {
             final String predExpression,
             final String expressionLanguage) {
         try {
-            Language language = camelContext.resolveLanguage(expressionLanguage);
-            return language.createPredicate(predExpression);
+            return camelContext.resolveLanguage(expressionLanguage).createPredicate(predExpression);
         } catch (Exception e) {
             String message = String.format(ERROR_INVALID_PREDICATE_EXPRESSION, expressionLanguage, predExpression);
             throw new IllegalArgumentException(message, e);

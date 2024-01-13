@@ -46,6 +46,11 @@ public record PrioritizedFilter(String id, int priority, Predicate predicate, St
         return DynamicRouterConstants.FILTER_COMPARATOR.compare(this, other);
     }
 
+    /**
+     * Create a string representation of this processor.
+     *
+     * @return the string representation of this processor
+     */
     @Override
     public String toString() {
         return String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s, endpoint: %s]",

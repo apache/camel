@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,7 +77,7 @@ class DynamicRouterFilterServiceTest {
 
     @Test
     void testDefaultConstruct() {
-        assertNotNull(new DynamicRouterFilterService());
+        assertDoesNotThrow(() -> new DynamicRouterFilterService());
     }
 
     @Test
@@ -117,6 +118,47 @@ class DynamicRouterFilterServiceTest {
         filterService.addFilterForChannel(prioritizedFilter, DYNAMIC_ROUTER_CHANNEL, false);
         Collection<PrioritizedFilter> filters = filterService.getFiltersForChannel(DYNAMIC_ROUTER_CHANNEL);
         assertEquals(1, filters.size());
+    }
+
+    @Test
+    void testAddFilterInstanceAlreadyExists() {
+        Mockito.when(prioritizedFilter.id()).thenReturn("id");
+        Mockito.when(prioritizedFilter.priority()).thenReturn(1);
+        filterService.addFilterForChannel(prioritizedFilter, DYNAMIC_ROUTER_CHANNEL, false);
+        Collection<PrioritizedFilter> filters = filterService.getFiltersForChannel(DYNAMIC_ROUTER_CHANNEL);
+        assertEquals(1, filters.size());
+        String result = filterService.addFilterForChannel(prioritizedFilter, DYNAMIC_ROUTER_CHANNEL, false);
+        assertEquals("Error: Filter could not be added -- existing filter found with matching ID: true", result);
+    }
+
+    @Test
+    void testUpdateFilter() {
+        Mockito.when(prioritizedFilter.id()).thenReturn("id");
+        Mockito.when(prioritizedFilter.priority()).thenReturn(1);
+        filterService.addFilterForChannel(prioritizedFilter, DYNAMIC_ROUTER_CHANNEL, false);
+        Collection<PrioritizedFilter> filters = filterService.getFiltersForChannel(DYNAMIC_ROUTER_CHANNEL);
+        assertEquals(1, filters.size());
+        PrioritizedFilter filter = filters.stream()
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Could not get added filter"));
+        // Verify filter priority is (originally) 1
+        assertEquals(1, filter.priority());
+        // Update filter (change priority from 1 to 10)
+        Mockito.when(prioritizedFilter.priority()).thenReturn(10);
+        filterService.addFilterForChannel(prioritizedFilter, DYNAMIC_ROUTER_CHANNEL, true);
+        filters = filterService.getFiltersForChannel(DYNAMIC_ROUTER_CHANNEL);
+        assertEquals(1, filters.size());
+        filter = filters.stream()
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Could not get added filter"));
+        // Verify filter priority is now 10
+        assertEquals(10, filter.priority());
+    }
+
+    @Test
+    void testUpdateFilterDoesNotExist() {
+        String result = filterService.addFilterForChannel(prioritizedFilter, DYNAMIC_ROUTER_CHANNEL, true);
+        assertEquals("Error: Filter could not be updated -- existing filter found with matching ID: false", result);
     }
 
     @Test
@@ -228,6 +270,28 @@ class DynamicRouterFilterServiceTest {
         Mockito.when(predicate.matches(exchange)).thenReturn(false);
         filterService.addFilterForChannel(prioritizedFilter, DYNAMIC_ROUTER_CHANNEL, false);
         String result = filterService.getMatchingEndpointsForExchangeByChannel(exchange, channel, false, false);
-        Assertions.assertTrue(result.startsWith("log:"));
+        assertEquals("log:org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService.test" +
+                     "?level=DEBUG" +
+                     "&showAll=true" +
+                     "&multiline=true",
+                result);
+    }
+
+    @Test
+    void testGetMatchingEndpointsForExchangeByChannelWithNoMatchingRecipientsWithWarnDroppedMessage() {
+        String channel = "test";
+        Mockito.when(exchange.getMessage()).thenReturn(message);
+        Mockito.when(prioritizedFilter.id()).thenReturn("id");
+        Mockito.when(prioritizedFilter.priority()).thenReturn(1);
+        Mockito.when(prioritizedFilter.predicate()).thenReturn(predicate);
+        Mockito.when(prioritizedFilter.statistics()).thenReturn(prioritizedFilterStatistics);
+        Mockito.when(predicate.matches(exchange)).thenReturn(false);
+        filterService.addFilterForChannel(prioritizedFilter, DYNAMIC_ROUTER_CHANNEL, false);
+        String result = filterService.getMatchingEndpointsForExchangeByChannel(exchange, channel, false, true);
+        assertEquals("log:org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService.test" +
+                     "?level=WARN" +
+                     "&showAll=true" +
+                     "&multiline=true",
+                result);
     }
 }

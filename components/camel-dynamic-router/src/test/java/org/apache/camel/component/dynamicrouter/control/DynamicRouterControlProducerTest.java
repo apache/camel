@@ -49,6 +49,9 @@ import static org.apache.camel.component.dynamicrouter.control.DynamicRouterCont
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PRIORITY;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIBE_CHANNEL;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIPTION_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterControlProducerTest {
@@ -96,11 +99,29 @@ class DynamicRouterControlProducerTest {
                 CONTROL_PREDICATE, "true",
                 CONTROL_EXPRESSION_LANGUAGE, "simple",
                 CONTROL_PRIORITY, 10);
-        Mockito.when(message.getHeaders()).thenReturn(headers);
+        when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1)).subscribeWithPredicateExpression(
                 subscribeChannel, "testId", "mock://test", 10, "true", "simple", false);
+    }
+
+    @Test
+    void performSubscribeActionWithEmptyExpressionLanguage() {
+        String subscribeChannel = "testChannel";
+        Map<String, Object> headers = Map.of(
+                CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
+                CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel,
+                CONTROL_SUBSCRIPTION_ID, "testId",
+                CONTROL_DESTINATION_URI, "mock://test",
+                CONTROL_PREDICATE, "true",
+                CONTROL_EXPRESSION_LANGUAGE, "",
+                CONTROL_PRIORITY, 10);
+        when(message.getHeaders()).thenReturn(headers);
+        Mockito.doNothing().when(callback).done(false);
+        producer.performSubscribe(message, callback);
+        Mockito.verify(controlService, Mockito.times(1)).subscribeWithPredicateInstance(
+                subscribeChannel, "testId", "mock://test", 10, null, false);
     }
 
     @Test
@@ -111,7 +132,7 @@ class DynamicRouterControlProducerTest {
                 CONTROL_ACTION_HEADER, CONTROL_ACTION_UNSUBSCRIBE,
                 CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel,
                 CONTROL_SUBSCRIPTION_ID, subscriptionId);
-        Mockito.when(message.getHeaders()).thenReturn(headers);
+        when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performUnsubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
@@ -130,7 +151,7 @@ class DynamicRouterControlProducerTest {
                 CONTROL_PREDICATE, "true",
                 CONTROL_EXPRESSION_LANGUAGE, "simple",
                 CONTROL_PRIORITY, 10);
-        Mockito.when(message.getHeaders()).thenReturn(headers);
+        when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
@@ -146,7 +167,7 @@ class DynamicRouterControlProducerTest {
                 CONTROL_PREDICATE, "true",
                 CONTROL_EXPRESSION_LANGUAGE, "simple",
                 CONTROL_PRIORITY, 100);
-        Mockito.when(message.getHeaders()).thenReturn(headers);
+        when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performUpdate(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
@@ -165,8 +186,8 @@ class DynamicRouterControlProducerTest {
                 CONTROL_PRIORITY, 10);
         Language language = context.resolveLanguage("simple");
         Predicate predicate = language.createPredicate("true");
-        Mockito.when(message.getBody()).thenReturn(predicate);
-        Mockito.when(message.getHeaders()).thenReturn(headers);
+        when(message.getBody()).thenReturn(predicate);
+        when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
@@ -184,7 +205,7 @@ class DynamicRouterControlProducerTest {
                 CONTROL_DESTINATION_URI, "mock://test",
                 CONTROL_PRIORITY, 10,
                 CONTROL_PREDICATE_BEAN, "testPredicate");
-        Mockito.when(message.getHeaders()).thenReturn(headers);
+        when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
@@ -203,13 +224,47 @@ class DynamicRouterControlProducerTest {
                 .predicate("true")
                 .expressionLanguage("simple")
                 .build();
-        Mockito.when(message.getBody()).thenReturn(subMsg);
-        Mockito.when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
+        when(message.getBody()).thenReturn(subMsg);
+        when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
                 .subscribeWithPredicateExpression(
                         subscribeChannel, "testId", "mock://test", 10, "true", "simple", false);
+    }
+
+    @Test
+    void performSubscribeActionWithMessageInBodyWithEmptyExpressionLanguage() {
+        String subscribeChannel = "testChannel";
+        DynamicRouterControlMessage subMsg = DynamicRouterControlMessage.Builder.newBuilder()
+                .subscribeChannel(subscribeChannel)
+                .subscriptionId("testId")
+                .destinationUri("mock://test")
+                .priority(10)
+                .predicate("true")
+                .expressionLanguage("")
+                .build();
+        when(message.getBody()).thenReturn(subMsg);
+        when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
+        Exception ex = assertThrows(IllegalStateException.class, () -> producer.performSubscribe(message, callback));
+        assertEquals("Predicate bean could not be found", ex.getMessage());
+    }
+
+    @Test
+    void performSubscribeActionWithMessageInBodyWithEmptyExpression() {
+        String subscribeChannel = "testChannel";
+        DynamicRouterControlMessage subMsg = DynamicRouterControlMessage.Builder.newBuilder()
+                .subscribeChannel(subscribeChannel)
+                .subscriptionId("testId")
+                .destinationUri("mock://test")
+                .priority(10)
+                .predicate("")
+                .expressionLanguage("simple")
+                .build();
+        when(message.getBody()).thenReturn(subMsg);
+        when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
+        Exception ex = assertThrows(IllegalStateException.class, () -> producer.performSubscribe(message, callback));
+        assertEquals("Predicate bean could not be found", ex.getMessage());
     }
 
     @Test
@@ -222,8 +277,8 @@ class DynamicRouterControlProducerTest {
                 .priority(10)
                 .predicateBean("testPredicate")
                 .build();
-        Mockito.when(message.getBody()).thenReturn(subMsg);
-        Mockito.when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
+        when(message.getBody()).thenReturn(subMsg);
+        when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
@@ -242,8 +297,8 @@ class DynamicRouterControlProducerTest {
                 .predicate("true")
                 .expressionLanguage("simple")
                 .build();
-        Mockito.when(message.getBody()).thenReturn(subMsg);
-        Mockito.when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
+        when(message.getBody()).thenReturn(subMsg);
+        when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
         Mockito.doNothing().when(callback).done(false);
         producer.performUpdate(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
@@ -258,12 +313,27 @@ class DynamicRouterControlProducerTest {
         Map<String, Object> headers = Map.of(
                 CONTROL_ACTION_HEADER, CONTROL_ACTION_LIST,
                 CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel);
-        Mockito.when(exchange.getMessage()).thenReturn(message);
-        Mockito.when(message.getHeaders()).thenReturn(headers);
-        Mockito.when(controlService.getSubscriptionsForChannel(subscribeChannel)).thenReturn("[" + filterString + "]");
+        when(exchange.getMessage()).thenReturn(message);
+        when(message.getHeaders()).thenReturn(headers);
+        when(controlService.getSubscriptionsForChannel(subscribeChannel)).thenReturn("[" + filterString + "]");
         Mockito.doNothing().when(callback).done(false);
         producer.performList(exchange, callback);
         Mockito.verify(message, Mockito.times(1)).setBody("[" + filterString + "]", String.class);
+    }
+
+    @Test
+    void testPerformListActionWithException() {
+        String subscribeChannel = "testChannel";
+        Map<String, Object> headers = Map.of(
+                CONTROL_ACTION_HEADER, CONTROL_ACTION_LIST,
+                CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel);
+        when(exchange.getMessage()).thenReturn(message);
+        when(message.getHeaders()).thenReturn(headers);
+        Mockito.doNothing().when(callback).done(false);
+        Exception ex = new IllegalArgumentException("test exception");
+        Mockito.doThrow(ex).when(controlService).getSubscriptionsForChannel(subscribeChannel);
+        producer.performList(exchange, callback);
+        Mockito.verify(exchange, Mockito.times(1)).setException(ex);
     }
 
     @Test
@@ -273,12 +343,27 @@ class DynamicRouterControlProducerTest {
         Map<String, Object> headers = Map.of(
                 CONTROL_ACTION_HEADER, CONTROL_ACTION_STATS,
                 CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel);
-        Mockito.when(exchange.getMessage()).thenReturn(message);
-        Mockito.when(message.getHeaders()).thenReturn(headers);
-        Mockito.when(controlService.getStatisticsForChannel(subscribeChannel)).thenReturn("[" + statString + "]");
+        when(exchange.getMessage()).thenReturn(message);
+        when(message.getHeaders()).thenReturn(headers);
+        when(controlService.getStatisticsForChannel(subscribeChannel)).thenReturn("[" + statString + "]");
         Mockito.doNothing().when(callback).done(false);
         producer.performStats(exchange, callback);
         Mockito.verify(message, Mockito.times(1)).setBody("[" + statString + "]", String.class);
+    }
+
+    @Test
+    void testPerformStatsActionWithException() {
+        String subscribeChannel = "testChannel";
+        Map<String, Object> headers = Map.of(
+                CONTROL_ACTION_HEADER, CONTROL_ACTION_STATS,
+                CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel);
+        when(exchange.getMessage()).thenReturn(message);
+        when(message.getHeaders()).thenReturn(headers);
+        Exception ex = new IllegalArgumentException("test exception");
+        Mockito.doThrow(ex).when(controlService).getStatisticsForChannel(subscribeChannel);
+        Mockito.doNothing().when(callback).done(false);
+        producer.performStats(exchange, callback);
+        Mockito.verify(exchange, Mockito.times(1)).setException(ex);
     }
 
     @Test

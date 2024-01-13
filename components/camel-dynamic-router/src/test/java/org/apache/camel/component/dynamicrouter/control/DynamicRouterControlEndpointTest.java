@@ -73,6 +73,8 @@ class DynamicRouterControlEndpointTest {
 
     DynamicRouterControlProducerFactory producerFactory;
 
+    DynamicRouterControlService.DynamicRouterControlServiceFactory controlServiceFactory;
+
     @BeforeEach
     void setup() {
         context = contextExtension.getContext();
@@ -86,8 +88,8 @@ class DynamicRouterControlEndpointTest {
             }
         };
         endpoint = new DynamicRouterControlEndpoint(
-                CONTROL_ENDPOINT_URI, component, CONTROL_ACTION_SUBSCRIBE,
-                configuration, controlService, () -> producerFactory);
+                CONTROL_ENDPOINT_URI, component, CONTROL_ACTION_SUBSCRIBE, configuration, () -> producerFactory,
+                () -> controlServiceFactory);
         endpoint.setCamelContext(context);
     }
 
@@ -99,7 +101,7 @@ class DynamicRouterControlEndpointTest {
     @Test
     void testConstruction() {
         DynamicRouterControlEndpoint instance = new DynamicRouterControlEndpoint(
-                CONTROL_ENDPOINT_URI, component, CONTROL_ACTION_SUBSCRIBE, configuration, controlService);
+                CONTROL_ENDPOINT_URI, component, CONTROL_ACTION_SUBSCRIBE, configuration);
         Assertions.assertNotNull(instance);
     }
 

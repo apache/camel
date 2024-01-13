@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.dynamicrouter.routing;
 
+import java.util.function.BiFunction;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
 import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
@@ -28,6 +31,12 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_FIRST_MATCH;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_HEADER;
 
+/**
+ * The {@link DynamicRouterProcessor} is responsible for routing an exchange to the appropriate recipients. It uses the
+ * {@link DynamicRouterFilterService} to determine which filters match the exchange, and then sets the recipient list
+ * header on the exchange to the list of matching filters. The {@link RecipientList} processor is then used to route the
+ * exchange to the matching recipients.
+ */
 public class DynamicRouterProcessor extends AsyncProcessorSupport {
 
     /**
@@ -137,16 +146,18 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport {
          * create a {@link RecipientList} instance for the {@link DynamicRouterProcessor} to use for routing the
          * exchange to matching recipients.
          *
-         * @param  camelContext  the CamelContext
-         * @param  configuration the configuration
-         * @param  filterService service that manages {@link PrioritizedFilter}s for dynamic router channels
-         * @return               the {@link DynamicRouterProcessor} instance
+         * @param  camelContext          the CamelContext
+         * @param  configuration         the configuration
+         * @param  filterService         service that manages {@link PrioritizedFilter}s for dynamic router channels
+         * @param  recipientListSupplier the supplier for the {@link RecipientList} instance
+         * @return                       the {@link DynamicRouterProcessor} instance
          */
         public DynamicRouterProcessor getInstance(
                 CamelContext camelContext, DynamicRouterConfiguration configuration,
-                DynamicRouterFilterService filterService) {
-            RecipientList recipientList
-                    = (RecipientList) DynamicRouterRecipientListHelper.createProcessor(camelContext, configuration);
+                DynamicRouterFilterService filterService,
+                BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier) {
+            RecipientList recipientList = (RecipientList) DynamicRouterRecipientListHelper
+                    .createProcessor(camelContext, configuration, recipientListSupplier);
             return new DynamicRouterProcessor(
                     configuration.getRecipientMode(), configuration.isWarnDroppedMessage(),
                     configuration.getChannel(), recipientList, filterService);

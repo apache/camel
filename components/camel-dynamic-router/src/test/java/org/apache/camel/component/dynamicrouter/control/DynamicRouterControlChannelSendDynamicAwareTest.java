@@ -69,6 +69,17 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
     }
 
     @Test
+    void resolveStaticUriShouldNotOptimize() throws Exception {
+        String originalUri = "dynamic-router-ctrl:subscribe?subscriptionId=testSub1";
+        String uri = "dynamic-router-ctrl://subscribe?subscriptionId=testSub1";
+        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+            SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
+            String result = testSubject.resolveStaticUri(exchange, entry);
+            assertEquals(null, result);
+        }
+    }
+
+    @Test
     void createPreProcessor() throws Exception {
         Mockito.when(exchange.getMessage()).thenReturn(message);
         Mockito.doNothing().when(message).setHeader(CONTROL_ACTION_HEADER, "subscribe");
@@ -84,6 +95,17 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
     }
 
     @Test
+    void createPreProcessorShouldNotOptimize() throws Exception {
+        String originalUri = "dynamic-router-ctrl:subscribe?subscriptionId=testSub1";
+        String uri = "dynamic-router-ctrl://subscribe?subscriptionId=testSub1";
+        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+            SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
+            Processor preProcessor = testSubject.createPreProcessor(exchange, entry);
+            Assertions.assertNull(preProcessor);
+        }
+    }
+
+    @Test
     void createPostProcessor() throws Exception {
         Mockito.when(exchange.getMessage()).thenReturn(message);
         Mockito.when(message.removeHeader(any())).thenReturn("test");
@@ -95,5 +117,16 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
             postProcessor.process(exchange);
         }
         Mockito.verify(message, Mockito.times(URI_PARAMS_TO_HEADER_NAMES.size())).removeHeader(any());
+    }
+
+    @Test
+    void createPostProcessorShouldNotOptimize() throws Exception {
+        String originalUri = "dynamic-router-ctrl:subscribe?subscriptionId=testSub1";
+        String uri = "dynamic-router-ctrl://subscribe?subscriptionId=testSub1";
+        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+            SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
+            Processor postProcessor = testSubject.createPostProcessor(exchange, entry);
+            assertNull(postProcessor);
+        }
     }
 }
