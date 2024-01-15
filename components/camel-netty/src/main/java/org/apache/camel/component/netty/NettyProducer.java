@@ -374,6 +374,9 @@ public class NettyProducer extends DefaultAsyncProducer {
                         // but we can try to get a result with a 0 timeout, then netty will throw the caused
                         // exception wrapped in an outer exception
                         channelFuture.get(0, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        cause = e.getCause();
                     } catch (Exception e) {
                         cause = e.getCause();
                     }
