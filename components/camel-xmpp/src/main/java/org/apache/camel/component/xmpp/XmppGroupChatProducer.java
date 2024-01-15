@@ -52,6 +52,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
         if (connection == null) {
             try {
                 connection = endpoint.createConnection();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeExchangeException("Interrupted while connecting to XMPP server.", exchange, e);
             } catch (Exception e) {
                 throw new RuntimeExchangeException("Could not connect to XMPP server.", exchange, e);
             }
@@ -60,6 +63,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
         if (chat == null) {
             try {
                 initializeChat();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeExchangeException("Interrupted while initializing XMPP chat.", exchange, e);
             } catch (Exception e) {
                 throw new RuntimeExchangeException("Could not initialize XMPP chat.", exchange, e);
             }
@@ -84,6 +90,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
             // must invoke nextMessage to consume the response from the server
             // otherwise the client local queue will fill up (CAMEL-1467)
             chat.pollMessage();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeExchangeException("Interrupted while sending XMPP message: " + message, exchange, e);
         } catch (Exception e) {
             throw new RuntimeExchangeException("Could not send XMPP message: " + message, exchange, e);
         }
