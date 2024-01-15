@@ -95,6 +95,7 @@ public class Olingo2AppWrapper {
                         }
 
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         throw new RuntimeCamelException(e.getMessage(), e);
                     }
 
