@@ -28,7 +28,7 @@ public interface PlatformHttpCookieHandler<T> {
     /**
      * Add a cookie that will be sent back in the response.
      *
-     * @param name the cookie name
+     * @param name  the cookie name
      * @param value the cookie value
      */
     void addCookie(String name, String value);
@@ -36,25 +36,24 @@ public interface PlatformHttpCookieHandler<T> {
     /**
      * Expire a cookie.
      *
-     * @param name the cookie name
-     * @return the cookie if it existed otherwise {@code null}
+     * @param  name the cookie name
+     * @return      the cookie if it existed otherwise {@code null}
      */
     T removeCookie(String name);
 
     /**
      * Get the cookie with the specified name.
      *
-     * @param name the cookie name
-     * @return the cookie if it exists otherwise {@code null}
+     * @param  name the cookie name
+     * @return      the cookie if it exists otherwise {@code null}
      */
     T getCookie(String name);
 
     /**
-     * Gets an instance of {@code PlatformHttpCookieHandler} that can be used
-     * to add, retrieve, and expire cookies.
+     * Gets an instance of {@code PlatformHttpCookieHandler} that can be used to add, retrieve, and expire cookies.
      *
-     * @param exchange the message exchange
-     * @return the configured Cookie Handler
+     * @param  exchange the message exchange
+     * @return          the configured Cookie Handler
      */
     PlatformHttpCookieHandler<T> getInstance(Exchange exchange);
 }
