@@ -89,6 +89,9 @@ public class Jt400PgmProducer extends DefaultProducer {
             } else {
                 throw new Jt400PgmCallException(getOutputMessages(pgmCall));
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new Jt400PgmCallException(e);
         } catch (Exception e) {
             throw new Jt400PgmCallException(e);
         } finally {
