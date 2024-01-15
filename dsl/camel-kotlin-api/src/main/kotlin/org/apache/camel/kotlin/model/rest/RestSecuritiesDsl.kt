@@ -1,0 +1,63 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.kotlin.model.rest
+
+import org.apache.camel.kotlin.CamelDslMarker
+import org.apache.camel.model.rest.*
+
+@CamelDslMarker
+class RestSecuritiesDsl(
+    val def: RestSecuritiesDefinition,
+    private val rest: RestDefinition
+) {
+
+    fun apiKey(i: ApiKeyDsl.() -> Unit) {
+        val apiKeyDef = ApiKeyDefinition(rest)
+        ApiKeyDsl(apiKeyDef).apply(i)
+        def.securityDefinitions.add(apiKeyDef)
+    }
+
+    fun basicAuth(i: BasicAuthDsl.() -> Unit) {
+        val basicAuthDef = BasicAuthDefinition(rest)
+        BasicAuthDsl(basicAuthDef).apply(i)
+        def.securityDefinitions.add(basicAuthDef)
+    }
+
+    fun bearer(i: BearerTokenDsl.() -> Unit) {
+        val bearerDef = BearerTokenDefinition(rest)
+        BearerTokenDsl(bearerDef).apply(i)
+        def.securityDefinitions.add(bearerDef)
+    }
+
+    fun oauth2(i: OAuth2Dsl.() -> Unit) {
+        val oauth2Def = OAuth2Definition(rest)
+        OAuth2Dsl(oauth2Def).apply(i)
+        def.securityDefinitions.add(oauth2Def)
+    }
+
+    fun openIdConnect(i: OpenIdConnectDsl.() -> Unit) {
+        val openIdConnectDef = OpenIdConnectDefinition(rest)
+        OpenIdConnectDsl(openIdConnectDef).apply(i)
+        def.securityDefinitions.add(openIdConnectDef)
+    }
+
+    fun mutualTLS(i: MutualTLSDsl.() -> Unit) {
+        val mutualTLSDef = MutualTLSDefinition(rest)
+        MutualTLSDsl(mutualTLSDef).apply(i)
+        def.securityDefinitions.add(mutualTLSDef)
+    }
+}

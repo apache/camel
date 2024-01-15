@@ -1,0 +1,16 @@
+= Kotlin API Component
+:doctitle: Kotlin API
+:shortname: kotlin-api
+:artifactid: camel-kotlin-api
+:description: Camel Kotlin API
+:since: 4.4
+:supportlevel: Experimental
+:tabs-sync-option:
+//Manually maintained attributes
+:group: DSL
+
+*Since Camel {since}*
+
+IMPORTANT: This API is experimental support level and is not recommended being used for production
+
+Kotlin API provides alternative approach to define routes in addition to Java API.

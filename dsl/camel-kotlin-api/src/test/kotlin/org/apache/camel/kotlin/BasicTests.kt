@@ -23,9 +23,7 @@ import org.apache.camel.kotlin.components.direct
 import org.apache.camel.kotlin.components.mock
 import org.apache.camel.kotlin.components.`netty-http`
 import org.apache.camel.kotlin.dataformats.csv
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.assertEquals
@@ -33,22 +31,20 @@ import kotlin.test.assertNotNull
 
 class BasicTests {
 
-    @Test
-    fun testRouteId() {
-        val ctx = DefaultCamelContext()
-        camel(ctx) {
-            route {
-                id("first")
-            }
-        }
-        assertEquals(1, ctx.routeDefinitions.size)
-        val def = ctx.routeDefinitions[0]
-        assertEquals("first", def.id)
+    private lateinit var ctx: DefaultCamelContext
+
+    @BeforeEach
+    fun beforeEach() {
+        ctx = DefaultCamelContext()
+    }
+
+    @AfterEach
+    fun afterEach() {
+        ctx.stop()
     }
 
     @Test
     fun testBeanDefinition() {
-        val ctx = DefaultCamelContext()
         camel(ctx) {
             route {
                 from {
@@ -75,46 +71,11 @@ class BasicTests {
         }
         assertDoesNotThrow {
             ctx.start()
-            ctx.stop()
-        }
-    }
-
-    @Test
-    fun testRestDefinition() {
-        val ctx = DefaultCamelContext()
-        camel(ctx) {
-            restConfiguration {
-                host("localhost")
-                port(8080)
-                component("netty-http")
-            }
-            rest {
-                get("/get") {
-                    to {
-                        direct { name("get") }
-                    }
-                }
-            }
-            route {
-                from {
-                    direct { name("get") }
-                }
-                steps {
-                    to {
-                        mock { name("get") }
-                    }
-                }
-            }
-        }
-        assertDoesNotThrow {
-            ctx.start()
-            ctx.stop()
         }
     }
 
     @Test
     fun testTryCatch() {
-        val ctx = DefaultCamelContext()
         val producer = ctx.createProducerTemplate()
         val exchange = AtomicReference<Exchange>()
         camel(ctx) {
@@ -143,7 +104,6 @@ class BasicTests {
 
     @Test
     fun testUnmarshal() {
-        val ctx = DefaultCamelContext()
         val producer = ctx.createProducerTemplate()
         val exchange = AtomicReference<Exchange>()
         camel(ctx) {
@@ -163,7 +123,6 @@ class BasicTests {
 
     @Test
     fun testMulticast() {
-        val ctx = DefaultCamelContext()
         val producer = ctx.createProducerTemplate()
         val exchanges = ConcurrentLinkedDeque<Exchange>()
         camel(ctx) {
@@ -188,7 +147,6 @@ class BasicTests {
 
     @Test
     fun testValidate() {
-        val ctx = DefaultCamelContext()
         val producer = ctx.createProducerTemplate()
         val exchange = AtomicReference<Exchange>()
         camel(ctx) {

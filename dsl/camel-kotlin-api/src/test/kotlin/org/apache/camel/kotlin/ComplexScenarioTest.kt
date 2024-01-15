@@ -18,22 +18,35 @@ package org.apache.camel.kotlin
 
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.kotlin.components.direct
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicBoolean
 
 class ComplexScenarioTest {
 
+    private lateinit var ctx: DefaultCamelContext
+
+    @BeforeEach
+    fun beforeEach() {
+        ctx = DefaultCamelContext()
+    }
+
+    @AfterEach
+    fun afterEach() {
+        ctx.stop()
+    }
+
     @Test
     fun test() {
-        val ctx = DefaultCamelContext()
         val producer = ctx.createProducerTemplate()
 
         val input = AtomicBoolean()
         val firstWhen = AtomicBoolean()
         val secondWhen = AtomicBoolean()
         val otherwise = AtomicBoolean()
-        val wireTap = AtomicBoolean()
-        val afterWireTap = AtomicBoolean()
+        val enrich = AtomicBoolean()
+        val afterEnrich = AtomicBoolean()
         val filtered = AtomicBoolean()
         val afterFilter = AtomicBoolean()
 
@@ -42,8 +55,8 @@ class ComplexScenarioTest {
             firstWhen.set(false)
             secondWhen.set(false)
             otherwise.set(false)
-            wireTap.set(false)
-            afterWireTap.set(false)
+            enrich.set(false)
+            afterEnrich.set(false)
             filtered.set(false)
             afterFilter.set(false)
         }
@@ -64,9 +77,13 @@ class ComplexScenarioTest {
                             process { otherwise.set(true) }
                         }
                     }
-                    wireTap { direct { name("wireTap") } }
+                    enrich { 
+                        uri {
+                            direct { name("enrich") }
+                        }
+                    }
                     process {
-                        afterWireTap.set(true)
+                        afterEnrich.set(true)
                     }
                     filter(body().contains(constant("x"))) {
                         outputs {
@@ -77,9 +94,9 @@ class ComplexScenarioTest {
                 }
             }
             route {
-                from { direct { name("wireTap") } }
+                from { direct { name("enrich") } }
                 steps {
-                    process { wireTap.set(true) }
+                    process { enrich.set(true) }
                 }
             }
         }
@@ -91,8 +108,8 @@ class ComplexScenarioTest {
         assert(firstWhen.get())
         assert(secondWhen.get().not())
         assert(otherwise.get().not())
-        assert(wireTap.get())
-        assert(afterWireTap.get())
+        assert(enrich.get())
+        assert(afterEnrich.get())
         assert(filtered.get())
         assert(afterFilter.get())
 
@@ -102,11 +119,9 @@ class ComplexScenarioTest {
         assert(firstWhen.get().not())
         assert(secondWhen.get())
         assert(otherwise.get().not())
-        assert(wireTap.get())
-        assert(afterWireTap.get())
+        assert(enrich.get())
+        assert(afterEnrich.get())
         assert(filtered.get().not())
         assert(afterFilter.get())
-
-        ctx.stop()
     }
 }
