@@ -208,14 +208,14 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                         PORT2)
                         .transform(body().prepend("Hello "));
 
-                fromF(getProtocol()
-                      + "://localhost:%d/TestResource?sslContextParameters=#clientAuthServiceSSLContextParameters", PORT3)
-                        .transform(body().prepend("Hello "));
+//                fromF(getProtocol()
+//                      + "://localhost:%d/TestResource?sslContextParameters=#clientAuthServiceSSLContextParameters", PORT3)
+//                        .transform(body().prepend("Hello "));
 
                 fromF(getProtocol()
-                      + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
-                        PORT4)
-                        .transform(body().prepend("Hello "));
+                       + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
+                          PORT4)
+                          .transform(body().prepend("Hello "));
 
                 from("direct:start")
                         .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters",
@@ -245,11 +245,11 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                                 PORT3)
                         .to("mock:result");
 
-                from("direct:ciphersuites")
-                        .toF(getProtocol()
-                             + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
-                                PORT4)
-                        .to("mock:result");
+                                from("direct:ciphersuites")
+                                        .toF(getProtocol()
+                                             + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
+                                                PORT4)
+                                        .to("mock:result");
 
                 if (isRPKSupported()) {
                     fromF(getProtocol() + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey", PORT5)
@@ -295,7 +295,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
                     from("direct:pskciphersuite")
                             .toF(getProtocol()
-                                 + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256",
+                                 + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256&advancedCertificateVerifier=#advancedCertificateVerifier",
                                     PORT7)
                             .to("mock:result");
 

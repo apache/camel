@@ -33,7 +33,8 @@ import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConfig;
 import org.eclipse.californium.scandium.config.DtlsConfig.DtlsRole;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
-import org.eclipse.californium.scandium.dtls.x509.CertificateConfigurationHelper;
+import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 
 /**
  * Test the CoAP Rest Component with UDP + TLS
@@ -59,9 +60,12 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
         KeyStore trustStore = truststoreParameters.createKeyStore();
         X509Certificate[] certs
                 = new X509Certificate[] { (X509Certificate) trustStore.getCertificate(trustStore.aliases().nextElement()) };
-        CertificateConfigurationHelper certificateConfigurationHelper = new CertificateConfigurationHelper();
-        certificateConfigurationHelper.addConfigurationDefaultsForTrusts(certs);
-        builder.setCertificateHelper(certificateConfigurationHelper);
+        
+        NewAdvancedCertificateVerifier trust = StaticNewAdvancedCertificateVerifier
+                .builder()
+                .setTrustedCertificates(certs)
+                .build();
+        builder.setAdvancedCertificateVerifier(trust);
 
         CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
         coapBuilder.setConnector(new DTLSConnector(builder.build()));

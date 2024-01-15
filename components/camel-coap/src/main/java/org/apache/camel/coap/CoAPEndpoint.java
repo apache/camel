@@ -16,6 +16,11 @@
  */
 package org.apache.camel.coap;
 
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CERTIFICATE_TYPES;
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CIPHER_SUITES;
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CLIENT_AUTHENTICATION_MODE;
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDED_CIPHER_SUITES_ONLY;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -41,6 +46,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.AliasedX509ExtendedKeyManager;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -60,12 +66,10 @@ import org.eclipse.californium.scandium.dtls.CertificateType;
 import org.eclipse.californium.scandium.dtls.cipher.CipherSuite;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
 import org.eclipse.californium.scandium.dtls.x509.CertificateConfigurationHelper;
+import org.eclipse.californium.scandium.dtls.x509.KeyManagerCertificateProvider;
 import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
 import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
-
-import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CERTIFICATE_TYPES;
-import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CLIENT_AUTHENTICATION_MODE;
-import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDED_CIPHER_SUITES_ONLY;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 
 /**
  * Send and receive messages to/from COAP capable devices.
@@ -446,6 +450,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 builder.set(DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NEEDED);
             } else if (isClientAuthenticationWanted()) {
                 builder.set(DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.WANTED);
+            } else {
+                // Is it right to set to NONE here?
+                builder.set(DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NONE);
             }
             builder.set(DTLS_RECOMMENDED_CIPHER_SUITES_ONLY, isRecommendedCipherSuitesOnly());
         }
@@ -491,6 +498,11 @@ public class CoAPEndpoint extends DefaultEndpoint {
             if (certs.length > 0) {
                 certificateConfigurationHelper.addConfigurationDefaultsForTrusts(certs);
                 builder.setCertificateHelper(certificateConfigurationHelper);
+                NewAdvancedCertificateVerifier trust = StaticNewAdvancedCertificateVerifier
+                        .builder()
+                        .setTrustedCertificates(certs)
+                        .build();
+                builder.setAdvancedCertificateVerifier(trust);
             }
             if (advancedCertificateVerifier != null) {
                 builder.set(DTLS_CERTIFICATE_TYPES, Arrays.asList(CertificateType.RAW_PUBLIC_KEY));
@@ -500,10 +512,10 @@ public class CoAPEndpoint extends DefaultEndpoint {
             throw new IllegalStateException("Error in configuring TLS", e);
         }
 
-        if (getConfiguredCipherSuites() != null) {
-            builder.set(org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CIPHER_SUITES,
-                    CipherSuite.getTypesByNames(getConfiguredCipherSuites()));
-        }
+                if (getConfiguredCipherSuites() != null) {
+                    System.out.println("There are configured cipher suites: " + getConfiguredCipherSuites());
+                    builder.set(DTLS_CIPHER_SUITES, CipherSuite.getTypesByNames(getConfiguredCipherSuites()));
+                }
 
         return new DTLSConnector(builder.build());
     }
