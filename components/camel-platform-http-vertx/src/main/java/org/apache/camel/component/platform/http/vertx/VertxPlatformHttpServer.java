@@ -232,6 +232,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                     try {
                         latch.await();
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         throw new RuntimeException(e);
                     }
                 },
@@ -269,6 +270,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                         try {
                             latch.await();
                         } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
                             throw new RuntimeException(e);
                         }
                     },
@@ -306,6 +308,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                         try {
                             latch.await();
                         } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
                             throw new RuntimeException(e);
                         }
                     },
