@@ -186,6 +186,10 @@ Alternatively, the `CassandraAggregationRepository` does not have a
 `LOCAL_QUORUM`…
 |=======================================================================
 
+While deserializing it's important to notice that the the unmarshallExchange method will allow only all java packages and subpackages
+and org.apache.camel packages and subpackages. The remaining classes will be blacklisted. So you'll need to change the filter in case of need.
+This could be accomplished by changing the deserializationFilter field on the repository.
+
 == Examples
 
 To insert something on a table you can use the following code:
