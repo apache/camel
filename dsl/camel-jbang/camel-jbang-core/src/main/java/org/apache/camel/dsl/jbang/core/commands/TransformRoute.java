@@ -123,7 +123,8 @@ public class TransformRoute extends CamelCommand {
                     IOHelper.close(fis);
                     return text;
                 }
-
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 // ignore
             }

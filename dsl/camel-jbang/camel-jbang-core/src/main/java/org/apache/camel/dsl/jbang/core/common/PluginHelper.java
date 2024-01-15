@@ -131,7 +131,11 @@ public final class PluginHelper {
                         // wait for that process to exit as we run in foreground
                         int exitCode = p.waitFor();
                         main.quit(exitCode);
-                    } catch (IOException | InterruptedException e) {
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        main.getOut().printf("Interrupted while spawning JBang process");
+                        main.quit(1);
+                    } catch (IOException e) {
                         main.getOut().printf("Unable to spawn JBang process - %s%n", e.getMessage());
                         main.quit(1);
                     }

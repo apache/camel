@@ -1413,7 +1413,7 @@ public class Run extends CamelCommand {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException ex) {
-                // Ignore Exception
+                Thread.currentThread().interrupt();
             }
             if (!f.delete()) {
                 f.deleteOnExit();

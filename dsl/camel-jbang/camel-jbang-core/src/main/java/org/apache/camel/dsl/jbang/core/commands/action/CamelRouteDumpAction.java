@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +26,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -209,24 +207,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
     }
 
     protected JsonObject waitForOutputFile(File outputFile) {
-        StopWatch watch = new StopWatch();
-        while (watch.taken() < 5000) {
-            try {
-                // give time for response to be ready
-                Thread.sleep(100);
-
-                if (outputFile.exists()) {
-                    FileInputStream fis = new FileInputStream(outputFile);
-                    String text = IOHelper.loadText(fis);
-                    IOHelper.close(fis);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
-
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return null;
+        return getJsonObject(outputFile);
     }
 
     public static String extractSourceName(String loc) {
