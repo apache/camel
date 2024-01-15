@@ -86,6 +86,9 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
 
                         // wait for result
                         populateResult(exchange, solverJob);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        exchange.setException(e);
                     } catch (Exception e) {
                         exchange.setException(e);
                     } finally {
@@ -103,6 +106,9 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
             // synchronous or wrong type of body
             callback.done(true);
             return true;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            exchange.setException(e);
         } catch (Exception e) {
             exchange.setException(e);
         }
