@@ -41,6 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.platform.http.PlatformHttpCookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
@@ -338,5 +339,10 @@ public final class VertxPlatformHttpSupport {
             match = lowerCaseContentType.startsWith(expectedContentType);
         }
         return match;
+    }
+
+    static <T extends PlatformHttpCookieHandler> T getCookieHandler(Exchange exchange) {
+        return (T) exchange.getMessage().getHeader(
+                VertxPlatformHttpConstants.COOKIE_HANDLER, PlatformHttpCookieHandler.class);
     }
 }

@@ -45,6 +45,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
+import org.apache.camel.component.platform.http.PlatformHttpCookieHandler;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.spi.Method;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -270,6 +271,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             in.setHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, user);
         }
 
+        PlatformHttpCookieHandler cookieHandler = getEndpoint().getCookieHandler();
+        if (cookieHandler != null) {
+            in.setHeader(VertxPlatformHttpConstants.ROUTING_CONTEXT, ctx);
+            in.setHeader(VertxPlatformHttpConstants.COOKIE_HANDLER, cookieHandler.getInstance(exchange));
+        }
         return populateCamelMessage(ctx, exchange, in);
     }
 

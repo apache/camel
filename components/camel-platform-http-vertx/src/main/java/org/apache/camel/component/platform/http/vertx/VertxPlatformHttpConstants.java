@@ -21,6 +21,8 @@ public final class VertxPlatformHttpConstants {
     public static final String AUTHENTICATED_USER = "CamelVertxPlatformHttpAuthenticatedUser";
     public static final String LOCAL_ADDRESS = "CamelVertxPlatformHttpLocalAddress";
     public static final String REMOTE_ADDRESS = "CamelVertxPlatformHttpRemoteAddress";
+    public static final String COOKIE_HANDLER = "CamelVertxPlatformHttpCookieHandler";
+    public static final String ROUTING_CONTEXT = "CamelVertxPlatformRoutingContext";
 
     private VertxPlatformHttpConstants() {
     }
