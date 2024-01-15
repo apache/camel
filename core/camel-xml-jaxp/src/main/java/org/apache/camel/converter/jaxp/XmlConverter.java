@@ -1122,7 +1122,7 @@ public class XmlConverter {
     private int[] retrieveSaxonVersion(ClassLoader loader) {
         try {
             final Class<?> versionClass = loader.loadClass("net.sf.saxon.Version");
-            final Method method = versionClass.getDeclaredMethod("getStructuredVersionNumber", int[].class);
+            final Method method = versionClass.getDeclaredMethod("getStructuredVersionNumber");
             final Object result = method.invoke(null);
             return (int[]) result;
         } catch (ClassNotFoundException e) {
