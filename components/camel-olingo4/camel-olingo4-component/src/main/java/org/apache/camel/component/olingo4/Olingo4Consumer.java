@@ -106,7 +106,9 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
             } else {
                 return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
             }
-
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
