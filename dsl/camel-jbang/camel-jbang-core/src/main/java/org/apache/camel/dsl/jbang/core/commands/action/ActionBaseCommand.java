@@ -27,6 +27,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -34,6 +35,28 @@ abstract class ActionBaseCommand extends CamelCommand {
 
     public ActionBaseCommand(CamelJBangMain main) {
         super(main);
+    }
+
+    protected static JsonObject getJsonObject(File outputFile) {
+        StopWatch watch = new StopWatch();
+        while (watch.taken() < 5000) {
+            try {
+                // give time for response to be ready
+                Thread.sleep(100);
+
+                if (outputFile.exists()) {
+                    FileInputStream fis = new FileInputStream(outputFile);
+                    String text = IOHelper.loadText(fis);
+                    IOHelper.close(fis);
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     List<Long> findPids(String name) {
@@ -91,5 +114,4 @@ abstract class ActionBaseCommand extends CamelCommand {
         }
         return null;
     }
-
 }

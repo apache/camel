@@ -353,7 +353,8 @@ public class TransformMessageAction extends ActionWatchCommand {
                     IOHelper.close(fis);
                     return (JsonObject) Jsoner.deserialize(text);
                 }
-
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 // ignore
             }
