@@ -52,5 +52,6 @@ public class AzureStorageQueueCloudEventDataTypeTransformer extends Transformer 
             headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(QueueConstants.POP_RECEIPT, String.class));
         }
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
+        headers.put(CloudEvents.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvents.TEXT_PLAIN_MIME_TYPE);
     }
 }
