@@ -22,7 +22,7 @@ import org.apache.camel.model.LoopDefinition
 @CamelDslMarker
 class LoopDsl(
     val def: LoopDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun copy(copy: Boolean) {
         def.copy = copy.toString()

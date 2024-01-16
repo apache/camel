@@ -24,7 +24,7 @@ import org.slf4j.Logger
 @CamelDslMarker
 class LogDsl(
     val def: LogDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun message(message: String) {
         def.message = message

@@ -24,7 +24,7 @@ import org.apache.camel.model.ClaimCheckOperation
 @CamelDslMarker
 class ClaimCheckDsl(
     val def: ClaimCheckDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun operation(operation: ClaimCheckOperation) {
         def.operation(operation)

@@ -22,7 +22,7 @@ import org.apache.camel.model.DynamicRouterDefinition
 @CamelDslMarker
 class DynamicRouterDsl(
     val def: DynamicRouterDefinition<*>
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun uriDelimiter(uriDelimiter: String) {
         def.uriDelimiter(uriDelimiter)

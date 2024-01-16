@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService
 @CamelDslMarker
 class SplitDsl(
     val def: SplitDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun delimiter(delimiter: String) {
         def.delimiter(delimiter)

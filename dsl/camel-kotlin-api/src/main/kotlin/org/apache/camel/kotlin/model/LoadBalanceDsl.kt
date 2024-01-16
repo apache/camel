@@ -75,6 +75,7 @@ class LoadBalanceDsl(
     }
 }
 
+@CamelDslMarker
 class FailoverLoadBalancerDsl(
     val def: FailoverLoadBalancerDefinition
 ) {

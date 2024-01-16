@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService
 @CamelDslMarker
 class DelayDsl(
     val def: DelayDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun asyncDelayed(asyncDelayed: Boolean) {
         def.asyncDelayed = asyncDelayed.toString()

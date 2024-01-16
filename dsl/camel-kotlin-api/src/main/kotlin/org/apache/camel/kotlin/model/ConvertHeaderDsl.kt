@@ -22,7 +22,7 @@ import org.apache.camel.model.ConvertHeaderDefinition
 @CamelDslMarker
 class ConvertHeaderDsl(
     val def: ConvertHeaderDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun mandatory(mandatory: Boolean) {
         def.mandatory = mandatory.toString()

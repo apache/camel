@@ -29,7 +29,7 @@ import java.time.Duration
 @CamelDslMarker
 class SagaDsl(
     val def: SagaDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun outputs(i: StepsDsl.() -> Unit) {
         StepsDsl(def).apply(i)

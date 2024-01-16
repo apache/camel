@@ -27,7 +27,7 @@ import java.time.Duration
 @CamelDslMarker
 class ResequenceDsl(
     val def: ResequenceDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun batch(i: BatchResequenceDsl.() -> Unit = {}) {
         val config = BatchResequencerConfig.getDefault()

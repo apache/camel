@@ -22,7 +22,7 @@ import org.apache.camel.model.RoutingSlipDefinition
 @CamelDslMarker
 class RoutingSlipDsl(
     val def: RoutingSlipDefinition<*>
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun uriDelimiter(uriDelimiter: String) {
         def.uriDelimiter(uriDelimiter)

@@ -25,7 +25,7 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition
 @CamelDslMarker
 class CircuitBreakerDsl(
     val def: CircuitBreakerDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun resilience4jConfiguration(i: Resilience4jConfigurationDsl.() -> Unit) {
         val resilience4jDef = def.resilience4jConfiguration()

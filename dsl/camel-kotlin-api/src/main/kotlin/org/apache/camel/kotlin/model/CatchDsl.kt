@@ -24,7 +24,7 @@ import org.apache.camel.model.CatchDefinition
 @CamelDslMarker
 class CatchDsl(
     val def: CatchDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun onWhen(onWhen: Predicate) {
         def.onWhen(onWhen)

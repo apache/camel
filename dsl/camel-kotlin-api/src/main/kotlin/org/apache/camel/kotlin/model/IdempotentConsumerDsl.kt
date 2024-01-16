@@ -23,7 +23,7 @@ import org.apache.camel.spi.IdempotentRepository
 @CamelDslMarker
 class IdempotentConsumerDsl(
     val def: IdempotentConsumerDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun idempotentRepository(idempotentRepository: String) {
         def.idempotentRepository(idempotentRepository)

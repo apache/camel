@@ -23,7 +23,7 @@ import java.time.Duration
 @CamelDslMarker
 class SampleDsl(
     val def: SamplingDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun sampleMessageFrequency(sampleMessageFrequency: Long) {
         def.sampleMessageFrequency(sampleMessageFrequency)

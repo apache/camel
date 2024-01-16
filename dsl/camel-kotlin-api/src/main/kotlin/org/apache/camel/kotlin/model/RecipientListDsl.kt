@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService
 @CamelDslMarker
 class RecipientListDsl(
     val def: RecipientListDefinition<*>
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun delimiter(delimiter: String) {
         def.delimiter(delimiter)

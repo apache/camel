@@ -22,7 +22,7 @@ import org.apache.camel.model.ConvertBodyDefinition
 @CamelDslMarker
 class ConvertBodyDsl(
     val def: ConvertBodyDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun mandatory(mandatory: Boolean) {
         def.mandatory = mandatory.toString()

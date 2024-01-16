@@ -31,7 +31,7 @@ import java.util.concurrent.ScheduledExecutorService
 @CamelDslMarker
 class AggregateDsl(
     val def: AggregateDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun eagerCheckCompletion(eagerCheckCompletion: Boolean) {
         def.eagerCheckCompletion = eagerCheckCompletion.toString()

@@ -23,7 +23,7 @@ import org.apache.camel.model.FilterDefinition
 @CamelDslMarker
 class FilterDsl(
     val def: FilterDefinition
-) {
+) : OptionalIdentifiedDsl(def) {
 
     fun statusPropertyName(statusPropertyName: String) {
         def.statusPropertyName = statusPropertyName
