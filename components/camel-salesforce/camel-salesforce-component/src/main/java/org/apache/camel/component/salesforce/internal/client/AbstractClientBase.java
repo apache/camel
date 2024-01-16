@@ -136,7 +136,9 @@ public abstract class AbstractClientBase extends ServiceSupport
             if (!inflightRequests.isTerminated()) {
                 try {
                     inflightRequests.awaitAdvanceInterruptibly(0, terminationTimeout, TimeUnit.SECONDS);
-                } catch (InterruptedException | TimeoutException ignored) {
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } catch (TimeoutException ignored) {
                     // exception is ignored
                 }
             }

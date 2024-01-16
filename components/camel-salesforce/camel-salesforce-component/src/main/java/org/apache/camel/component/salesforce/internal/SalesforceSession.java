@@ -118,6 +118,7 @@ public class SalesforceSession extends ServiceSupport {
                 }
                 latch.await();
             } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
                 throw new RuntimeException("Failed to login.", ex);
             }
             LOG.debug("done waiting");
@@ -145,6 +146,7 @@ public class SalesforceSession extends ServiceSupport {
                     try {
                         Thread.sleep(backoff);
                     } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
                         throw new RuntimeException("Failed to login.", ex);
                     }
                 }
@@ -180,7 +182,8 @@ public class SalesforceSession extends ServiceSupport {
                 parseLoginResponse(loginResponse, loginResponse.getContentAsString());
 
             } catch (InterruptedException e) {
-                throw new SalesforceException("Login error: " + e.getMessage(), e);
+                Thread.currentThread().interrupt();
+                throw new SalesforceException("Login error: interrupted", e);
             } catch (TimeoutException e) {
                 throw new SalesforceException("Login request timeout: " + e.getMessage(), e);
             } catch (ExecutionException e) {
@@ -371,8 +374,8 @@ public class SalesforceSession extends ServiceSupport {
             }
 
         } catch (InterruptedException e) {
-            String msg = "Logout error: " + e.getMessage();
-            throw new SalesforceException(msg, e);
+            Thread.currentThread().interrupt();
+            throw new SalesforceException("Interrupted while logging out", e);
         } catch (ExecutionException e) {
             final Throwable ex = e.getCause();
             throw new SalesforceException("Unexpected logout exception: " + ex.getMessage(), ex);
