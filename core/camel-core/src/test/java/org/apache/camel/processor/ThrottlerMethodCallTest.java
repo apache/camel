@@ -18,19 +18,28 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @DisabledOnOs(OS.WINDOWS)
 public class ThrottlerMethodCallTest extends ContextTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(ThrottlerMethodCallTest.class);
     private static final int INTERVAL = 100;
     protected int messageCount = 10;
+    private MockEndpoint resultEndpoint;
+    private ExecutorService executor;
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -43,21 +52,35 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
         return 3;
     }
 
-    @Test
-    public void testConfigurationWithMethodCallExpression() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+    @BeforeEach
+    public void prepareTest() {
+        resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);
 
-        ExecutorService executor = Executors.newFixedThreadPool(messageCount);
+        executor = Executors.newFixedThreadPool(messageCount);
+    }
 
+    @AfterEach
+    public void cleanupTest() throws InterruptedException {
+        executor.shutdown();
+        if (!executor.awaitTermination(2, TimeUnit.SECONDS)) {
+            LOG.warn("The tasks did not finish within the expected time");
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testConfigurationWithMethodCallExpression()  {
         for (int i = 0; i < messageCount; i++) {
             executor.execute(() -> template.sendBody("direct:expressionMethod", "<message>payload</message>"));
         }
 
         // let's wait for the exchanges to arrive
-        resultEndpoint.assertIsSatisfied();
-
-        executor.shutdownNow();
+        try {
+            resultEndpoint.assertIsSatisfied();
+        } catch (InterruptedException e) {
+            Assertions.fail(e);
+        }
     }
 
     @Override

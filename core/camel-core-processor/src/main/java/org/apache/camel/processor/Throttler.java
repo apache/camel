@@ -173,6 +173,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
 
     private static boolean handleInterrupt(
             Exchange exchange, AsyncCallback callback, InterruptedException e, boolean doneSync) {
+        Thread.currentThread().interrupt();
         // determine if we can still run, or the camel context is forcing a shutdown
         boolean forceShutdown = exchange.getContext().getShutdownStrategy().isForceShutdown();
         if (forceShutdown) {
@@ -384,6 +385,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                 // honours fairness setting
                 return super.tryAcquire(0L, TimeUnit.NANOSECONDS);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 return false;
             }
         }
