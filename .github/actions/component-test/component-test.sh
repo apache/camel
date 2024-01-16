@@ -39,7 +39,7 @@ function main() {
       componentPath="components/camel-${component}"
     fi
     if [[ -d "${componentPath}" ]] ; then
-      pl="$pl$(find "${componentPath}" -name pom.xml -not -path "*/src/it/*" -exec dirname {} \; | sort | tr -s "\n" ",")"
+      pl="$pl$(find "${componentPath}" -name pom.xml -not -path "*/src/it/*" -not -path "*/target/*" -exec dirname {} \; | sort | tr -s "\n" ",")"
     fi
   done
   len=${#pl}
