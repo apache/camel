@@ -711,6 +711,7 @@ public final class ExchangeHelper {
         try {
             return doExtractFutureBody(context, future.get(), type);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (ExecutionException e) {
             // execution failed due to an exception so rethrow the cause
@@ -747,6 +748,7 @@ public final class ExchangeHelper {
             }
         } catch (InterruptedException e) {
             // execution failed due interruption so rethrow the cause
+            Thread.currentThread().interrupt();
             throw CamelExecutionException.wrapCamelExecutionException(null, e);
         } catch (ExecutionException e) {
             // execution failed due to an exception so rethrow the cause
