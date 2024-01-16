@@ -79,7 +79,7 @@ class PathVisitor<T> {
             result.put(HttpMethod.PATCH, path.getPatch());
         }
         if (path.getHead() != null) {
-            result.put(HttpMethod.HEAD, path.getGet());
+            result.put(HttpMethod.HEAD, path.getHead());
         }
         if (path.getOptions() != null) {
             result.put(HttpMethod.OPTIONS, path.getOptions());
