@@ -85,6 +85,7 @@ public class QueryResultIterator<T extends AbstractSObjectBase> implements Itera
                 latch.await();
                 return valueHolder.get(0);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new RuntimeCamelException(e);
             }
         } else {

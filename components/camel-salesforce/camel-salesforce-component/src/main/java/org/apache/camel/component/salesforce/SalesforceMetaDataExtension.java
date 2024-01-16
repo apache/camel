@@ -97,7 +97,10 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
 
         try {
             return ret.get();
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        } catch (ExecutionException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
