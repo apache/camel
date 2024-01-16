@@ -193,7 +193,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
                     }
                 }
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
                 LOG.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
             }
         } else {
@@ -228,6 +228,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     protected void handleInterruptedException(InterruptedException e) {
+        Thread.currentThread().interrupt();
         getInterruptedExceptionHandler().handleException(e);
     }
 

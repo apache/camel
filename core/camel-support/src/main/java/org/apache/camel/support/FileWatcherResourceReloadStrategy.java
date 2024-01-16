@@ -277,6 +277,8 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                     // wait for a key to be available
                     key = watcher.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException ex) {
+                    LOG.info("Interrupted while polling for file changes");
+                    Thread.currentThread().interrupt();
                     break;
                 }
 
