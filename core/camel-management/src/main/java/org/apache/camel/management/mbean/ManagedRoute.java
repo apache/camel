@@ -384,7 +384,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 LOG.debug("Sleeping {} seconds before starting route: {}", delay, getRouteId());
                 Thread.sleep(delay * 1000);
             } catch (InterruptedException e) {
-                // ignore
+                LOG.info("Interrupted while waiting before starting the route");
+                Thread.currentThread().interrupt();
             }
         }
         start();
