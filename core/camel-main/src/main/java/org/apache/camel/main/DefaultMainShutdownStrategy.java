@@ -111,7 +111,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                         // wait 1 sec and loop and log activity, so we can see we are waiting
                         done = latch.await(1000, TimeUnit.MILLISECONDS);
                     } catch (InterruptedException e) {
-                        // ignore
+                        Thread.currentThread().interrupt();
                     }
                 }
                 boolean success = done || main.getCamelContext().isStopped();
