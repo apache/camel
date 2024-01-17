@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.jsonata;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.dashjoin.jsonata.Jsonata;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,20 +35,14 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import static com.dashjoin.jsonata.Jsonata.jsonata;
 
 /**
  * Transforms JSON payload using JSONata transformation.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri", producerOnly = true,
-        category = { Category.TRANSFORMATION })
+@UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri",
+             producerOnly = true, remote = false,
+             category = { Category.TRANSFORMATION })
 public class JsonataEndpoint extends ResourceEndpoint {
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -99,15 +100,17 @@ public class JsonataEndpoint extends ResourceEndpoint {
         Map<String, Object> input;
         if (getInputType() == JsonataInputOutputType.JsonString) {
             InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-            input = mapper.readValue(inputStream, new TypeReference<>() {});
+            input = mapper.readValue(inputStream, new TypeReference<>() {
+            });
         } else {
-            input = mapper.convertValue(exchange.getIn().getBody(), new TypeReference<>() {});
+            input = mapper.convertValue(exchange.getIn().getBody(), new TypeReference<>() {
+            });
         }
 
         Object output = null;
         Jsonata expression = null;
         try (InputStreamReader inputStreamReader
-                     = new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8);
+                = new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8);
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader);) {
             String spec = bufferedReader
                     .lines()
