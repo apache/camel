@@ -116,6 +116,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "restartingPolicy": getOrCreateConfiguration(target).setRestartingPolicy(property(camelContext, org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclass":
         case "storageClass": getOrCreateConfiguration(target).setStorageClass(property(camelContext, java.lang.String.class, value)); return true;
         case "streaminguploadmode":
@@ -136,6 +138,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useProfileCredentialsProvider": getOrCreateConfiguration(target).setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usesses3":
         case "useSSES3": getOrCreateConfiguration(target).setUseSSES3(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": getOrCreateConfiguration(target).setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -236,6 +240,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "restartingPolicy": return org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "storageclass":
         case "storageClass": return java.lang.String.class;
         case "streaminguploadmode":
@@ -256,6 +262,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useProfileCredentialsProvider": return boolean.class;
         case "usesses3":
         case "useSSES3": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         default: return null;
         }
     }
@@ -352,6 +360,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "restartingPolicy": return getOrCreateConfiguration(target).getRestartingPolicy();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
+        case "sessiontoken":
+        case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
         case "storageclass":
         case "storageClass": return getOrCreateConfiguration(target).getStorageClass();
         case "streaminguploadmode":
@@ -372,6 +382,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useProfileCredentialsProvider": return getOrCreateConfiguration(target).isUseProfileCredentialsProvider();
         case "usesses3":
         case "useSSES3": return getOrCreateConfiguration(target).isUseSSES3();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return getOrCreateConfiguration(target).isUseSessionCredentials();
         default: return null;
         }
     }
