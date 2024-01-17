@@ -17,137 +17,17 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.component.kafka.KafkaConsumer;
-import org.apache.camel.component.kafka.consumer.CommitManager;
-import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class KafkaRecordProcessorFacade {
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordProcessorFacade.class);
-
-    private final KafkaConsumer camelKafkaConsumer;
-    private final String threadId;
-    private final KafkaRecordProcessor kafkaRecordProcessor;
-    private final CommitManager commitManager;
-    private final KafkaConsumerListener consumerListener;
-
-    public KafkaRecordProcessorFacade(KafkaConsumer camelKafkaConsumer, String threadId,
-                                      CommitManager commitManager, KafkaConsumerListener consumerListener) {
-        this.camelKafkaConsumer = camelKafkaConsumer;
-        this.threadId = threadId;
-        this.commitManager = commitManager;
-
-        kafkaRecordProcessor = buildKafkaRecordProcessor(commitManager);
-        this.consumerListener = consumerListener;
-    }
-
-    private boolean isStopping() {
-        return camelKafkaConsumer.isStopping();
-    }
-
-    public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
-        logRecords(allRecords);
-
-        ProcessingResult result = ProcessingResult.newUnprocessed();
-
-        Set<TopicPartition> partitions = allRecords.partitions();
-        Iterator<TopicPartition> partitionIterator = partitions.iterator();
-
-        LOG.debug("Poll received records on {} partitions", partitions.size());
-
-        while (partitionIterator.hasNext() && !isStopping()) {
-            TopicPartition partition = partitionIterator.next();
-
-            LOG.debug("Processing records on partition {}", partition.partition());
-
-            List<ConsumerRecord<Object, Object>> partitionRecords = allRecords.records(partition);
-            Iterator<ConsumerRecord<Object, Object>> recordIterator = partitionRecords.iterator();
-
-            logRecordsInPartition(partitionRecords, partition);
-
-            while (!result.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
-                ConsumerRecord<Object, Object> consumerRecord = recordIterator.next();
-
-                LOG.debug("Processing record on partition {} with offset {}", consumerRecord.partition(),
-                        consumerRecord.offset());
-
-                result = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(),
-                        kafkaRecordProcessor, consumerRecord);
-
-                LOG.debug("Processed record on partition {} with offset {}", consumerRecord.partition(),
-                        consumerRecord.offset());
-
-                if (consumerListener != null) {
-                    if (!consumerListener.afterProcess(result)) {
-                        commitManager.commit(partition);
-                        return result;
-                    }
-                }
-            }
-
-            if (!result.isBreakOnErrorHit()) {
-                LOG.debug("Committing offset on successful execution");
-                // all records processed from partition so commit them
-                commitManager.commit(partition);
-            }
-        }
-
-        return result;
-    }
-
-    private void logRecordsInPartition(List<ConsumerRecord<Object, Object>> partitionRecords, TopicPartition partition) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Records count {} received for partition {}", partitionRecords.size(),
-                    partition);
-        }
-    }
-
-    private void logRecords(ConsumerRecords<Object, Object> allRecords) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Last poll on thread {} resulted on {} records to process", threadId, allRecords.count());
-        }
-    }
-
-    private ProcessingResult processRecord(
-            TopicPartition partition,
-            boolean partitionHasNext,
-            boolean recordHasNext,
-            KafkaRecordProcessor kafkaRecordProcessor,
-            ConsumerRecord<Object, Object> consumerRecord) {
-
-        logRecord(consumerRecord);
-
-        Exchange exchange = camelKafkaConsumer.createExchange(false);
-
-        ProcessingResult result = kafkaRecordProcessor.processExchange(exchange, partition, partitionHasNext,
-                recordHasNext, consumerRecord, camelKafkaConsumer.getExceptionHandler());
-
-        // success so release the exchange
-        camelKafkaConsumer.releaseExchange(exchange, false);
-
-        return result;
-    }
-
-    private void logRecord(ConsumerRecord<Object, Object> consumerRecord) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Partition = {}, offset = {}, key = {}, value = {}", consumerRecord.partition(),
-                    consumerRecord.offset(), consumerRecord.key(), consumerRecord.value());
-        }
-    }
-
-    private KafkaRecordProcessor buildKafkaRecordProcessor(CommitManager commitManager) {
-        return new KafkaRecordProcessor(
-                camelKafkaConsumer.getEndpoint().getConfiguration(),
-                camelKafkaConsumer.getProcessor(),
-                commitManager);
-    }
+/**
+ * A processing facade that allows processing consumer records in different ways
+ */
+public interface KafkaRecordProcessorFacade {
+    /**
+     * Sends a set of records polled from Kafka for processing
+     *
+     * @param  allRecords All records received from a call to the Kafka's consumer poll method
+     * @return            The result of processing this set of records
+     */
+    ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords);
 }

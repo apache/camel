@@ -306,8 +306,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     /**
      * Sets the group id of the Kafka consumer.
      *
-     * @param groupId The poll duration in milliseconds.
-     * @deprecated The parameter groupId is ignored.
+     * @param      groupId The poll duration in milliseconds.
+     * @deprecated         The parameter groupId is ignored.
      */
     @Deprecated
     public void setGroupId(String groupId) {
