@@ -64,8 +64,7 @@ class DynamicRouterControlComponentTest {
                     final String uri,
                     final DynamicRouterControlComponent component,
                     final String controlAction,
-                    final DynamicRouterControlConfiguration configuration,
-                    final DynamicRouterControlService controlService) {
+                    final DynamicRouterControlConfiguration configuration) {
                 return endpoint;
             }
         };
@@ -76,7 +75,7 @@ class DynamicRouterControlComponentTest {
                 return controlService;
             }
         };
-        component = new DynamicRouterControlComponent(context, () -> endpointFactory, () -> controlServiceFactory);
+        component = new DynamicRouterControlComponent(context, () -> endpointFactory);
     }
 
     @Test
@@ -93,8 +92,7 @@ class DynamicRouterControlComponentTest {
 
     @Test
     void testCreateInstanceAllArgs() {
-        DynamicRouterControlComponent instance = new DynamicRouterControlComponent(
-                context, () -> endpointFactory, () -> controlServiceFactory);
+        DynamicRouterControlComponent instance = new DynamicRouterControlComponent(context, () -> endpointFactory);
         Assertions.assertNotNull(instance);
     }
 

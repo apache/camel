@@ -125,12 +125,6 @@ public final class DynamicRouterControlConstants {
     public static final String ERROR_NO_PREDICATE_BEAN_FOUND = "Predicate bean could not be found";
 
     /**
-     * The characters immediately following a protocol (or camel component name) in a URI. For the latter, there is
-     * always a colon, but the two slashes do not always follow.
-     */
-    public static final String PROTOCOL_SUFFIX = "://";
-
-    /**
      * The configuration property for the control channel action.
      */
     public static final String CONTROL_ACTION_PROPERTY = "controlAction";

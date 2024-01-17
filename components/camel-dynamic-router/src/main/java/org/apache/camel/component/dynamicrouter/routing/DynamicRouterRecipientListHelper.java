@@ -24,6 +24,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -48,26 +49,42 @@ public final class DynamicRouterRecipientListHelper {
     }
 
     /**
+     * Creates an {@link AggregationStrategyBiFunctionAdapter} from a {@link BiFunction} and a
+     * {@link DynamicRouterConfiguration}.
+     */
+    static BiFunction<BiFunction<Exchange, Exchange, Object>, DynamicRouterConfiguration, AggregationStrategyBiFunctionAdapter> createBiFunctionAdapter
+            = (bf, cfg) -> {
+                AggregationStrategyBiFunctionAdapter adapter = new AggregationStrategyBiFunctionAdapter(bf);
+                adapter.setAllowNullNewExchange(cfg.isAggregationStrategyMethodAllowNull());
+                adapter.setAllowNullOldExchange(cfg.isAggregationStrategyMethodAllowNull());
+                return adapter;
+            };
+
+    /**
+     * Creates an {@link AggregationStrategyBeanAdapter} from an object and a {@link DynamicRouterConfiguration}.
+     */
+    static BiFunction<Object, DynamicRouterConfiguration, AggregationStrategyBeanAdapter> createBeanAdapter = (obj, cfg) -> {
+        AggregationStrategyBeanAdapter adapter
+                = new AggregationStrategyBeanAdapter(obj, cfg.getAggregationStrategyMethodName());
+        adapter.setAllowNullNewExchange(cfg.isAggregationStrategyMethodAllowNull());
+        adapter.setAllowNullOldExchange(cfg.isAggregationStrategyMethodAllowNull());
+        return adapter;
+    };
+
+    /**
      * Given an object, convert it to an {@link AggregationStrategy} based on its class.
      */
     @SuppressWarnings({ "unchecked" })
-    static BiFunction<Object, DynamicRouterConfiguration, AggregationStrategy> convertAggregationStrategy = (aggStr, cfg) -> {
-        if (aggStr instanceof AggregationStrategy as) {
-            return as;
-        } else if (aggStr instanceof BiFunction<?, ?, ?> bf) {
-            AggregationStrategyBiFunctionAdapter adapter
-                    = new AggregationStrategyBiFunctionAdapter((BiFunction<Exchange, Exchange, Object>) bf);
-            adapter.setAllowNullNewExchange(cfg.isAggregationStrategyMethodAllowNull());
-            adapter.setAllowNullOldExchange(cfg.isAggregationStrategyMethodAllowNull());
-            return adapter;
-        } else {
-            AggregationStrategyBeanAdapter adapter
-                    = new AggregationStrategyBeanAdapter(aggStr, cfg.getAggregationStrategyMethodName());
-            adapter.setAllowNullNewExchange(cfg.isAggregationStrategyMethodAllowNull());
-            adapter.setAllowNullOldExchange(cfg.isAggregationStrategyMethodAllowNull());
-            return adapter;
-        }
-    };
+    static BiFunction<Object, DynamicRouterConfiguration, AggregationStrategy> convertAggregationStrategy
+            = (aggStr, cfg) -> Optional.ofNullable(aggStr)
+                    .filter(AggregationStrategy.class::isInstance)
+                    .map(s -> (AggregationStrategy) s)
+                    .or(() -> Optional.ofNullable(aggStr)
+                            .filter(BiFunction.class::isInstance)
+                            .map(s -> createBiFunctionAdapter.apply((BiFunction<Exchange, Exchange, Object>) s, cfg)))
+                    .or(() -> Optional.ofNullable(aggStr)
+                            .map(s -> createBeanAdapter.apply(s, cfg)))
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot convert AggregationStrategy from: " + aggStr));
 
     /**
      * Create and configure the {@link RecipientList} {@link Processor}. The returned recipient list will be started.
@@ -76,8 +93,10 @@ public final class DynamicRouterRecipientListHelper {
      * @param  cfg          the {@link DynamicRouterConfiguration}
      * @return              the configured {@link RecipientList} {@link Processor}
      */
-    public static Processor createProcessor(CamelContext camelContext, DynamicRouterConfiguration cfg) {
-        RecipientList recipientList = new RecipientList(camelContext, RECIPIENT_LIST_EXPRESSION, ",");
+    public static Processor createProcessor(
+            CamelContext camelContext, DynamicRouterConfiguration cfg,
+            BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier) {
+        RecipientList recipientList = recipientListSupplier.apply(camelContext, RECIPIENT_LIST_EXPRESSION);
         setPropertiesForRecipientList(recipientList, camelContext, cfg);
         ExecutorService threadPool
                 = getConfiguredExecutorService(camelContext, "RecipientList", cfg, cfg.isParallelProcessing());
@@ -128,7 +147,7 @@ public final class DynamicRouterRecipientListHelper {
     static AggregationStrategy createAggregationStrategy(CamelContext camelContext, DynamicRouterConfiguration cfg) {
         AggregationStrategy strategy = Optional.ofNullable(cfg.getAggregationStrategyBean())
                 .or(() -> Optional.ofNullable(cfg.getAggregationStrategy())
-                        .map(ref -> Optional.ofNullable(lookupByNameAndType(camelContext, ref, Object.class))
+                        .map(ref -> lookupByNameAndType(camelContext, ref, Object.class)
                                 .map(aggStr -> convertAggregationStrategy.apply(aggStr, cfg))
                                 .orElseThrow(() -> new IllegalArgumentException(
                                         "Cannot find AggregationStrategy in Registry with name: " +
@@ -138,12 +157,11 @@ public final class DynamicRouterRecipientListHelper {
         return cfg.isShareUnitOfWork() ? new ShareUnitOfWorkAggregationStrategy(strategy) : strategy;
     }
 
-    static <T> T lookupByNameAndType(CamelContext camelContext, String name, Class<T> type) {
+    static <T> Optional<T> lookupByNameAndType(CamelContext camelContext, String name, Class<T> type) {
         return Optional.ofNullable(ObjectHelper.isEmpty(name) ? null : name)
                 .map(n -> EndpointHelper.isReferenceParameter(n)
                         ? EndpointHelper.resolveReferenceParameter(camelContext, n, type, false)
-                        : camelContext.getRegistry().lookupByNameAndType(n, type))
-                .orElse(null);
+                        : camelContext.getRegistry().lookupByNameAndType(n, type));
     }
 
     /**
@@ -162,7 +180,7 @@ public final class DynamicRouterRecipientListHelper {
         return Optional.ofNullable(cfg.getExecutorServiceBean())
                 .map(esb -> false)
                 .or(() -> Optional.ofNullable(cfg.getExecutorService())
-                        .map(es -> lookupByNameAndType(camelContext, es, ExecutorService.class) == null))
+                        .map(es -> lookupByNameAndType(camelContext, es, ExecutorService.class).isEmpty()))
                 .orElse(useDefault);
     }
 
@@ -183,16 +201,15 @@ public final class DynamicRouterRecipientListHelper {
      * @param  executorServiceRef reference name of the thread pool
      * @return                    the executor service, or <tt>null</tt> if none was found.
      */
-    static ExecutorService lookupExecutorServiceRef(
-            CamelContext camelContext, String name, Object source,
-            String executorServiceRef) {
+    static Optional<ExecutorService> lookupExecutorServiceRef(
+            CamelContext camelContext, String name, Object source, String executorServiceRef) {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
-        ObjectHelper.notNull(manager, ESM_NAME, camelContext);
+        ObjectHelper.notNull(manager, ESM_NAME);
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
         // lookup in registry first and use existing thread pool if exists,
         // or create a new thread pool, assuming that the executor service ref is a thread pool ID
-        return Optional.ofNullable(lookupByNameAndType(camelContext, executorServiceRef, ExecutorService.class))
-                .orElse(manager.newThreadPool(source, name, executorServiceRef));
+        return lookupByNameAndType(camelContext, executorServiceRef, ExecutorService.class)
+                .or(() -> Optional.ofNullable(manager.newThreadPool(source, name, executorServiceRef)));
     }
 
     /**
@@ -215,22 +232,23 @@ public final class DynamicRouterRecipientListHelper {
      *                                  was not found
      */
     static ExecutorService getConfiguredExecutorService(
-            CamelContext camelContext, String name,
-            DynamicRouterConfiguration cfg, boolean useDefault)
+            CamelContext camelContext, String name, DynamicRouterConfiguration cfg, boolean useDefault)
             throws IllegalArgumentException {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ObjectHelper.notNull(manager, ESM_NAME, camelContext);
+        String exSvcRef = cfg.getExecutorService();
+        ExecutorService exSvcBean = cfg.getExecutorServiceBean();
+        String errorMessage = "ExecutorServiceRef '" + exSvcRef + "' not found in registry as an ExecutorService " +
+                              "instance or as a thread pool profile";
         // The first (preferred) option is to use an explicitly-configured executor if the configuration has it
-        return Optional.ofNullable(cfg.getExecutorServiceBean())
+        return Optional.ofNullable(exSvcBean)
                 // The second preference is to check for an executor service reference
-                .or(() -> Optional.ofNullable(cfg.getExecutorService())
+                .or(() -> Optional.ofNullable(exSvcRef)
                         // Try to get the referenced executor service
-                        .map(r -> Optional.ofNullable(lookupExecutorServiceRef(camelContext, name, cfg, r))
+                        .map(r -> lookupExecutorServiceRef(camelContext, name, cfg, r)
                                 // But, if the reference is specified in the config,
                                 // and could not be obtained, this is an error
-                                .orElseThrow(() -> new IllegalArgumentException(
-                                        "ExecutorServiceRef %s not found in registry ".formatted(cfg.getExecutorService()) +
-                                                                                "(as an ExecutorService instance) or as a thread pool profile."))))
+                                .orElseThrow(() -> new IllegalArgumentException(errorMessage))))
                 // The third and final option is to create a new "default" thread pool if the parameter
                 // specifies to that the default thread pool should be used as a fallback
                 .or(() -> useDefault ? Optional.of(manager.newDefaultThreadPool(cfg, name)) : Optional.empty())

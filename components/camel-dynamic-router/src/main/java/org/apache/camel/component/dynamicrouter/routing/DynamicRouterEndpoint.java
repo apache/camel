@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.dynamicrouter.routing;
 
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -37,6 +40,7 @@ import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterCons
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FIRST_VERSION;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PROCESSOR_FACTORY_SUPPLIER;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PRODUCER_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_SUPPLIER;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.SYNTAX;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.TITLE;
 
@@ -64,6 +68,11 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
      * Creates a {@link DynamicRouterProducer} instance.
      */
     private final Supplier<DynamicRouterProducerFactory> producerFactorySupplier;
+
+    /**
+     * Creates a {@link RecipientList} instance.
+     */
+    private final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier;
 
     /**
      * Channel for the Dynamic Router. For example, if the Dynamic Router URI is "dynamic-router://test", then the
@@ -94,18 +103,21 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
      * @param configuration            the {@link DynamicRouterConfiguration}
      * @param processorFactorySupplier creates the {@link DynamicRouterProcessor}
      * @param producerFactorySupplier  creates the {@link DynamicRouterProcessor}
+     * @param recipientListSupplier    creates the {@link RecipientList}
      * @param filterService            the {@link DynamicRouterFilterService}
      */
     public DynamicRouterEndpoint(final String uri, final DynamicRouterComponent component,
                                  final DynamicRouterConfiguration configuration,
                                  final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
                                  final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
+                                 final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
                                  final DynamicRouterFilterService filterService) {
         super(uri, component);
         this.channel = configuration.getChannel();
         this.configuration = configuration;
         this.processorFactorySupplier = processorFactorySupplier;
         this.producerFactorySupplier = producerFactorySupplier;
+        this.recipientListSupplier = recipientListSupplier;
         this.configuration.setChannel(channel);
         this.filterService = filterService;
         LOG.debug("Created Dynamic Router endpoint URI: {}", uri);
@@ -125,6 +137,7 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.processorFactorySupplier = PROCESSOR_FACTORY_SUPPLIER;
         this.producerFactorySupplier = PRODUCER_FACTORY_SUPPLIER;
+        this.recipientListSupplier = RECIPIENT_LIST_SUPPLIER;
         this.channel = configuration.getChannel();
         this.configuration = configuration;
         this.filterService = filterService;
@@ -143,7 +156,7 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
         DynamicRouterComponent component = getDynamicRouterComponent();
         CamelContext camelContext = getCamelContext();
         DynamicRouterProcessor processor = processorFactorySupplier.get()
-                .getInstance(camelContext, configuration, filterService);
+                .getInstance(camelContext, configuration, filterService, recipientListSupplier);
         component.addRoutingProcessor(configuration.getChannel(), processor);
     }
 
@@ -210,10 +223,11 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
                 final DynamicRouterConfiguration configuration,
                 final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
                 final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
+                final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
                 final DynamicRouterFilterService filterService) {
             return new DynamicRouterEndpoint(
-                    uri, component, configuration, processorFactorySupplier,
-                    producerFactorySupplier, filterService);
+                    uri, component, configuration, processorFactorySupplier, producerFactorySupplier,
+                    recipientListSupplier, filterService);
         }
 
         /**

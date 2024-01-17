@@ -18,8 +18,10 @@
 package org.apache.camel.component.dynamicrouter.routing;
 
 import java.util.Comparator;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
 import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
@@ -28,6 +30,7 @@ import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.Priorit
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint.DynamicRouterEndpointFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
@@ -116,6 +119,11 @@ public final class DynamicRouterConstants {
     public static final Comparator<PrioritizedFilter> FILTER_COMPARATOR = Comparator
             .comparingInt(PrioritizedFilter::priority)
             .thenComparing(PrioritizedFilter::id);
+
+    /**
+     * Creates a {@link RecipientList} instance.
+     */
+    public static final BiFunction<CamelContext, Expression, RecipientList> RECIPIENT_LIST_SUPPLIER = RecipientList::new;
 
     /**
      * Template for a logging endpoint, showing all, and multiline.

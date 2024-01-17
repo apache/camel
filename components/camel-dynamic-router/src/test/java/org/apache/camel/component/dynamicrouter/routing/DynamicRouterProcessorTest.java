@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.dynamicrouter.routing;
 
+import java.util.function.BiFunction;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
@@ -37,6 +40,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_FIRST_MATCH;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_HEADER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -62,6 +67,9 @@ class DynamicRouterProcessorTest {
 
     @Mock
     DynamicRouterFilterService filterService;
+
+    @Mock
+    BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier;
 
     @Mock
     Exchange exchange;
@@ -116,8 +124,9 @@ class DynamicRouterProcessorTest {
 
     @Test
     void testGetInstance() {
+        when(recipientListSupplier.apply(eq(context), any(Expression.class))).thenReturn(recipientList);
         DynamicRouterProcessor instance = new DynamicRouterProcessorFactory()
-                .getInstance(context, configuration, filterService);
+                .getInstance(context, configuration, filterService, recipientListSupplier);
         Assertions.assertNotNull(instance);
     }
 }

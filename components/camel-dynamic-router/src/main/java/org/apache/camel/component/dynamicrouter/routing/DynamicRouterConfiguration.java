@@ -280,130 +280,290 @@ public class DynamicRouterConfiguration {
         this.warnDroppedMessage = warnDroppedMessage;
     }
 
+    /**
+     * Gets whether the multicast should be streaming or not.
+     *
+     * @return true if streaming, false otherwise
+     */
     public boolean isStreaming() {
         return streaming;
     }
 
+    /**
+     * Sets whether the multicast should be streaming or not.
+     *
+     * @param streaming flag to set whether the multicast should be streaming or not
+     */
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
     }
 
+    /**
+     * Gets whether invalid endpoints should be ignored.
+     *
+     * @return true if invalid endpoints should be ignored, false otherwise
+     */
     public boolean isIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
 
+    /**
+     * Sets whether invalid endpoints should be ignored.
+     *
+     * @param ignoreInvalidEndpoints flag to set whether invalid endpoints should be ignored
+     */
     public void setIgnoreInvalidEndpoints(boolean ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
+    /**
+     * Gets whether parallel processing is enabled.
+     *
+     * @return true if parallel processing is enabled, false otherwise
+     */
     public boolean isParallelProcessing() {
         return parallelProcessing;
     }
 
+    /**
+     * Sets whether parallel processing is enabled.
+     *
+     * @param parallelProcessing flag to set whether parallel processing is enabled
+     */
     public void setParallelProcessing(boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 
+    /**
+     * Gets whether parallel aggregation is enabled.
+     *
+     * @return true if parallel aggregation is enabled, false otherwise
+     */
     public boolean isParallelAggregate() {
         return parallelAggregate;
     }
 
+    /**
+     * Sets whether parallel aggregation is enabled.
+     *
+     * @param parallelAggregate flag to set whether parallel aggregation is enabled
+     */
     public void setParallelAggregate(boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
     }
 
+    /**
+     * Gets whether the multicast should stop on exception.
+     *
+     * @return true if the multicast should stop on exception, false otherwise
+     */
     public boolean isStopOnException() {
         return stopOnException;
     }
 
+    /**
+     * Sets whether the multicast should stop on exception.
+     *
+     * @param stopOnException flag to set whether the multicast should stop on exception
+     */
     public void setStopOnException(boolean stopOnException) {
         this.stopOnException = stopOnException;
     }
 
+    /**
+     * Gets the executor service.
+     *
+     * @return the executor service
+     */
     public String getExecutorService() {
         return executorService;
     }
 
+    /**
+     * Sets the executor service.
+     *
+     * @param executorService the executor service
+     */
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
     }
 
+    /**
+     * Gets the executor service bean.
+     *
+     * @return the executor service bean
+     */
     public ExecutorService getExecutorServiceBean() {
         return executorServiceBean;
     }
 
+    /**
+     * Sets the executor service bean.
+     *
+     * @param executorServiceBean the executor service bean
+     */
     public void setExecutorServiceBean(ExecutorService executorServiceBean) {
         this.executorServiceBean = executorServiceBean;
     }
 
+    /**
+     * Gets the aggregation strategy.
+     *
+     * @return the aggregation strategy
+     */
     public String getAggregationStrategy() {
         return aggregationStrategy;
     }
 
+    /**
+     * Sets the aggregation strategy.
+     *
+     * @param aggregationStrategy the aggregation strategy
+     */
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
+    /**
+     * Gets the timeout.
+     *
+     * @return the timeout
+     */
     public long getTimeout() {
         return timeout;
     }
 
+    /**
+     * Sets the timeout.
+     *
+     * @param timeout the timeout
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
 
+    /**
+     * Gets the cache size.
+     *
+     * @return the cache size
+     */
     public int getCacheSize() {
         return cacheSize;
     }
 
+    /**
+     * Sets the cache size.
+     *
+     * @param cacheSize the cache size
+     */
     public void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
     }
 
+    /**
+     * Gets the on prepare processor reference.
+     *
+     * @return the on prepare processor reference
+     */
     public String getOnPrepare() {
         return onPrepare;
     }
 
+    /**
+     * Sets the on prepare processor reference.
+     *
+     * @param onPrepare the on prepare processor reference
+     */
     public void setOnPrepare(String onPrepare) {
         this.onPrepare = onPrepare;
     }
 
+    /**
+     * Gets the on prepare processor.
+     *
+     * @return the on prepare processor
+     */
     public Processor getOnPrepareProcessor() {
         return onPrepareProcessor;
     }
 
+    /**
+     * Sets the on prepare processor.
+     *
+     * @param onPrepare the on prepare processor
+     */
     public void setOnPrepareProcessor(Processor onPrepare) {
         this.onPrepareProcessor = onPrepare;
     }
 
+    /**
+     * Gets the share unit of work flag.
+     *
+     * @return the share unit of work flag
+     */
     public boolean isShareUnitOfWork() {
         return shareUnitOfWork;
     }
 
+    /**
+     * Sets the share unit of work flag.
+     *
+     * @param shareUnitOfWork the share unit of work flag
+     */
     public void setShareUnitOfWork(boolean shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
+    /**
+     * Gets the aggregation strategy method name.
+     *
+     * @return the aggregation strategy method name
+     */
     public String getAggregationStrategyMethodName() {
         return aggregationStrategyMethodName;
     }
 
+    /**
+     * Sets the aggregation strategy method name.
+     *
+     * @param aggregationStrategyMethodName the aggregation strategy method name
+     */
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
 
+    /**
+     * Gets whether the aggregation strategy method allows null.
+     *
+     * @return true if the aggregation strategy method allows null, false otherwise
+     */
     public boolean isAggregationStrategyMethodAllowNull() {
         return aggregationStrategyMethodAllowNull;
     }
 
+    /**
+     * Sets whether the aggregation strategy method allows null.
+     *
+     * @param aggregationStrategyMethodAllowNull flag to set whether the aggregation strategy method allows null
+     */
     public void setAggregationStrategyMethodAllowNull(boolean aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
+    /**
+     * Gets the aggregation strategy bean.
+     *
+     * @return the aggregation strategy bean
+     */
     public AggregationStrategy getAggregationStrategyBean() {
         return aggregationStrategyBean;
     }
 
+    /**
+     * Sets the aggregation strategy bean.
+     *
+     * @param aggregationStrategyBean the aggregation strategy bean
+     */
     public void setAggregationStrategyBean(AggregationStrategy aggregationStrategyBean) {
         this.aggregationStrategyBean = aggregationStrategyBean;
     }

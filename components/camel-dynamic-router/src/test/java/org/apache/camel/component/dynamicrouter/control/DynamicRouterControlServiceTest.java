@@ -32,6 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.builder.PredicateBuilder.constant;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_PREDICATE_CLASS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,7 +74,7 @@ class DynamicRouterControlServiceTest {
     }
 
     @Test
-    void obtainPredicateFromBean() {
+    void obtainPredicateFromBeanName() {
         context.getRegistry().bind(predicateBeanName, Predicate.class, predicateInstance);
         Predicate actualPredicate = DynamicRouterControlService.obtainPredicateFromBeanName(predicateBeanName, context);
         assertEquals(predicateInstance, actualPredicate);
@@ -94,6 +95,14 @@ class DynamicRouterControlServiceTest {
         Predicate expectedPredicate = PredicateBuilder.constant(true);
         Predicate actualPredicate = DynamicRouterControlService.obtainPredicateFromInstance(expectedPredicate);
         assertEquals(expectedPredicate, actualPredicate);
+    }
+
+    @Test
+    void obtainPredicateFromInstanceWhenNotPredicateInstance() {
+        String expectedPredicate = "thisMightHurt";
+        Exception ex = assertThrows(IllegalArgumentException.class,
+                () -> DynamicRouterControlService.obtainPredicateFromInstance(expectedPredicate));
+        assertEquals(ERROR_PREDICATE_CLASS, ex.getMessage());
     }
 
     @Test
