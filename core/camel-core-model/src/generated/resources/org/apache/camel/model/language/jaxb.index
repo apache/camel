@@ -22,6 +22,7 @@ SimpleExpression
 SpELExpression
 TokenizerExpression
 VariableExpression
+WasmExpression
 XMLTokenizerExpression
 XPathExpression
 XQueryExpression

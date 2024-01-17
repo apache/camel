@@ -547,6 +547,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ValueDefinition": return new ModelDeserializers.ValueDefinitionDeserializer();
             case "variable": return new ModelDeserializers.VariableExpressionDeserializer();
             case "org.apache.camel.model.language.VariableExpression": return new ModelDeserializers.VariableExpressionDeserializer();
+            case "wasm": return new ModelDeserializers.WasmExpressionDeserializer();
+            case "org.apache.camel.model.language.WasmExpression": return new ModelDeserializers.WasmExpressionDeserializer();
             case "weighted": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
             case "when": return new ModelDeserializers.WhenDefinitionDeserializer();

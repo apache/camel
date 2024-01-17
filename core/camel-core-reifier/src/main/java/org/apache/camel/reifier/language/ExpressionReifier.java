@@ -41,6 +41,7 @@ import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SingleInputTypedExpressionDefinition;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.TypedExpressionDefinition;
+import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -130,6 +131,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             return new XQueryExpressionReifier(camelContext, definition);
         } else if (definition instanceof SingleInputTypedExpressionDefinition) {
             return new SingleInputTypedExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof WasmExpression) {
+            return new WasmExpressionReifier(camelContext, definition);
         } else if (definition instanceof TypedExpressionDefinition) {
             return new TypedExpressionReifier<>(camelContext, definition);
         } else if (definition != null) {

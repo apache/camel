@@ -899,6 +899,9 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteVariableExpression("variable", def);
     }
+    public void writeWasmExpression(WasmExpression def) throws IOException {
+        doWriteWasmExpression("wasm", def);
+    }
     public void writeXMLTokenizerExpression(
             XMLTokenizerExpression def)
             throws IOException {
@@ -4198,6 +4201,16 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteWasmExpression(
+            String name,
+            WasmExpression def)
+            throws IOException {
+        startElement(name);
+        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("module", def.getModule());
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
     protected void doWriteXMLTokenizerExpression(
             String name,
             XMLTokenizerExpression def)
@@ -5108,6 +5121,7 @@ public class ModelWriter extends BaseWriter {
                 case "SpELExpression" -> doWriteSpELExpression("spel", (SpELExpression) v);
                 case "TokenizerExpression" -> doWriteTokenizerExpression("tokenize", (TokenizerExpression) v);
                 case "VariableExpression" -> doWriteVariableExpression("variable", (VariableExpression) v);
+                case "WasmExpression" -> doWriteWasmExpression("wasm", (WasmExpression) v);
                 case "XMLTokenizerExpression" -> doWriteXMLTokenizerExpression("xtokenize", (XMLTokenizerExpression) v);
                 case "XPathExpression" -> doWriteXPathExpression("xpath", (XPathExpression) v);
                 case "XQueryExpression" -> doWriteXQueryExpression("xquery", (XQueryExpression) v);
