@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
+/**
+ * Holds the result of processing one or more consumer records
+ */
 public final class ProcessingResult {
     private static final ProcessingResult UNPROCESSED_RESULT
             = new ProcessingResult(false, false);
@@ -24,7 +27,13 @@ public final class ProcessingResult {
     private final boolean breakOnErrorHit;
     private final boolean failed;
 
-    ProcessingResult(boolean breakOnErrorHit, boolean failed) {
+    /**
+     * Constructs a new processing result
+     *
+     * @param breakOnErrorHit break on error hit setting
+     * @param failed          whether processing has failed
+     */
+    public ProcessingResult(boolean breakOnErrorHit, boolean failed) {
         this.breakOnErrorHit = breakOnErrorHit;
         this.failed = failed;
     }

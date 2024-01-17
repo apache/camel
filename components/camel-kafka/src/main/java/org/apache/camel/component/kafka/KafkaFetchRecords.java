@@ -31,6 +31,7 @@ import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFac
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
 import org.apache.camel.component.kafka.consumer.support.classic.ClassicRebalanceListener;
 import org.apache.camel.component.kafka.consumer.support.resume.ResumeRebalanceListener;
+import org.apache.camel.component.kafka.consumer.support.streaming.KafkaRecordStreamingProcessorFacade;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.ForegroundTask;
 import org.apache.camel.support.task.Tasks;
@@ -320,7 +321,7 @@ public class KafkaFetchRecords implements Runnable {
                 LOG.trace("Polling {} from {} with timeout: {}", threadId, getPrintableTopic(), pollTimeoutMs);
             }
 
-            KafkaRecordProcessorFacade recordProcessorFacade = new KafkaRecordProcessorFacade(
+            KafkaRecordProcessorFacade recordProcessorFacade = new KafkaRecordStreamingProcessorFacade(
                     kafkaConsumer, threadId, commitManager, consumerListener);
 
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {

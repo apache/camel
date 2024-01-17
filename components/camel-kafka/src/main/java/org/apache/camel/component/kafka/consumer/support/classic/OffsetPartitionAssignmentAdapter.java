@@ -24,9 +24,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor.deserializeOffsetValue;
-import static org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor.serializeOffsetKey;
-
 /**
  * A resume strategy that uses Kafka's offset for resuming
  */
@@ -61,5 +58,13 @@ public class OffsetPartitionAssignmentAdapter implements PartitionAssignmentAdap
                 resumeFromOffset(consumer, topicPartition, offsetState);
             }
         }
+    }
+
+    public static String serializeOffsetKey(TopicPartition topicPartition) {
+        return topicPartition.topic() + '/' + topicPartition.partition();
+    }
+
+    public static long deserializeOffsetValue(String offset) {
+        return Long.parseLong(offset);
     }
 }
