@@ -84,6 +84,7 @@ public final class SensitiveUtils {
                     "secret",
                     "secretkey",
                     "securerandom",
+                    "sessiontoken",
                     "sharedaccesskey",
                     "sourceblobaccesskey",
                     "sslkeypassword",
@@ -163,6 +164,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qsecret\\E"
                                                     + "|\\Qsecretkey\\E"
                                                     + "|\\Qsecurerandom\\E"
+                                                    + "|\\Qsessiontoken\\E"
                                                     + "|\\Qsharedaccesskey\\E"
                                                     + "|\\Qsourceblobaccesskey\\E"
                                                     + "|\\Qsslkeypassword\\E"
@@ -180,7 +182,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {
