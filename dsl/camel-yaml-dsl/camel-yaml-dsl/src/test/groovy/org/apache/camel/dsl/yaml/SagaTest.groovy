@@ -94,6 +94,31 @@ class SagaTest extends YamlTestSupport {
                                    simple: "${body}"        
                           - to: "mock:result"
                     '''),
+                asResource('full-parameters-id', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - saga:  
+                             propagation: "MANDATORY"
+                             completionMode: "MANUAL"
+                             compensation: 
+                                 uri: "direct"
+                                 parameters:
+                                   name: compensation
+                             completion:
+                                 uri: "direct:completion"
+                             steps:
+                               - to: "direct:something"
+                             option:
+                               - key: o1
+                                 simple: "${body}" 
+                               - key: o2
+                                 expression:
+                                   simple:
+                                     id: key2
+                                     expression: "${body}"        
+                          - to: "mock:result"
+                    '''),
                 asResource('full-parameters-out-of-order)', '''
                     - from:
                         uri: "direct:start"
