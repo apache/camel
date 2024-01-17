@@ -42,8 +42,8 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
         MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
         if (downloader != null) {
             sb.append("Offline: " + !downloader.isDownload());
-            sb.append("\nFresh:   " + !downloader.isFresh());
-            sb.append("\nVerbose: " + !downloader.isVerbose());
+            sb.append("\nFresh:   " + downloader.isFresh());
+            sb.append("\nVerbose: " + downloader.isVerbose());
             if (downloader.getRepos() != null) {
                 sb.append("\nExtra Repositories: " + downloader.getRepos());
             }
