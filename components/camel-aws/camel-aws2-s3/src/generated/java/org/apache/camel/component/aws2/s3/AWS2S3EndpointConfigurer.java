@@ -133,6 +133,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": target.getConfiguration().setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "storageclass":
@@ -159,6 +161,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usesses3":
         case "useSSES3": target.getConfiguration().setUseSSES3(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": target.getConfiguration().setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -283,6 +287,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "secretKey": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "storageclass":
@@ -309,6 +315,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useProfileCredentialsProvider": return boolean.class;
         case "usesses3":
         case "useSSES3": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         default: return null;
         }
     }
@@ -429,6 +437,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "sessiontoken":
+        case "sessionToken": return target.getConfiguration().getSessionToken();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "storageclass":
@@ -455,6 +465,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
         case "usesses3":
         case "useSSES3": return target.getConfiguration().isUseSSES3();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return target.getConfiguration().isUseSessionCredentials();
         default: return null;
         }
     }
