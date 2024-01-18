@@ -75,8 +75,6 @@ public class CustomResolver implements YamlDeserializerResolver {
             //
             // Expression
             //
-            case "org.apache.camel.model.PropertyExpressionDefinition":
-                return new PropertyExpressionDefinitionDeserializer();
             case "expression":
             case "org.apache.camel.model.language.ExpressionDefinition":
                 return new ExpressionDeserializers.ExpressionDefinitionDeserializers();

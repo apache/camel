@@ -3827,17 +3827,73 @@
       },
       "org.apache.camel.model.PropertyExpressionDefinition" : {
         "title" : "Property Expression",
-        "description" : "A key value pair where the value is an expression",
+        "description" : "A key value pair where the value is an expression.",
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "expression" ]
+              }, {
+                "required" : [ "constant" ]
+              }, {
+                "required" : [ "csimple" ]
+              }, {
+                "required" : [ "datasonnet" ]
+              }, {
+                "required" : [ "exchangeProperty" ]
+              }, {
+                "required" : [ "groovy" ]
+              }, {
+                "required" : [ "header" ]
+              }, {
+                "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
+              }, {
+                "required" : [ "joor" ]
+              }, {
+                "required" : [ "jq" ]
+              }, {
+                "required" : [ "js" ]
+              }, {
+                "required" : [ "jsonpath" ]
+              }, {
+                "required" : [ "language" ]
+              }, {
+                "required" : [ "method" ]
+              }, {
+                "required" : [ "mvel" ]
+              }, {
+                "required" : [ "ognl" ]
+              }, {
+                "required" : [ "python" ]
+              }, {
+                "required" : [ "ref" ]
+              }, {
+                "required" : [ "simple" ]
+              }, {
+                "required" : [ "spel" ]
+              }, {
+                "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "xpath" ]
+              }, {
+                "required" : [ "xquery" ]
+              }, {
+                "required" : [ "xtokenize" ]
+              } ]
+            }
+          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
               "expression" : {
                 "title" : "Expression",
-                "description" : "The property value as an expression",
+                "description" : "Property values as an expression",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
@@ -3847,8 +3903,32 @@
           "key" : {
             "type" : "string",
             "title" : "Key",
-            "description" : "The name of the property"
+            "description" : "Property key"
           },
+          "constant" : { },
+          "csimple" : { },
+          "datasonnet" : { },
+          "exchangeProperty" : { },
+          "groovy" : { },
+          "header" : { },
+          "hl7terser" : { },
+          "java" : { },
+          "joor" : { },
+          "jq" : { },
+          "js" : { },
+          "jsonpath" : { },
+          "language" : { },
+          "method" : { },
+          "mvel" : { },
+          "ognl" : { },
+          "python" : { },
+          "ref" : { },
+          "simple" : { },
+          "spel" : { },
+          "tokenize" : { },
+          "xpath" : { },
+          "xquery" : { },
+          "xtokenize" : { },
           "expression" : { }
         },
         "required" : [ "key" ]
