@@ -260,6 +260,16 @@ public final class SimpleTokenizer {
             boolean functionEnd = previous.equals("}");
             return functionEnd && whiteSpace;
         }
+        if (token.isBinary()) {
+            int len = token.getValue().length();
+            // The binary operator must be used in the format of "exp1 op exp2"
+            if (index < 2 || len >= text.length() - 1) {
+                return false;
+            }
+            String previousOne = expression.substring(index - 1, index);
+            String afterOne = text.substring(len, len + 1);
+            return " ".equals(previousOne) && " ".equals(afterOne) && text.substring(0, len).equals(token.getValue());
+        }
 
         return text.startsWith(token.getValue());
     }
