@@ -17,11 +17,53 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import org.apache.camel.component.kafka.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
+import java.util.stream.StreamSupport;
 
-public interface KafkaRecordProcessor<T> {
-    ProcessingResult processExchange(
-            KafkaConsumer camelKafkaConsumer, TopicPartition topicPartition, boolean partitionHasNext,
-            boolean recordHasNext, T processable);
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.component.kafka.KafkaConfiguration;
+import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Header;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public abstract class KafkaRecordProcessor {
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordProcessor.class);
+
+    protected void setupExchangeMessage(Message message, ConsumerRecord<Object, Object> consumerRecord) {
+        message.setHeader(KafkaConstants.PARTITION, consumerRecord.partition());
+        message.setHeader(KafkaConstants.TOPIC, consumerRecord.topic());
+        message.setHeader(KafkaConstants.OFFSET, consumerRecord.offset());
+        message.setHeader(KafkaConstants.HEADERS, consumerRecord.headers());
+        message.setHeader(KafkaConstants.TIMESTAMP, consumerRecord.timestamp());
+        message.setHeader(Exchange.MESSAGE_TIMESTAMP, consumerRecord.timestamp());
+
+        if (consumerRecord.key() != null) {
+            message.setHeader(KafkaConstants.KEY, consumerRecord.key());
+        }
+
+        LOG.debug("Setting up the exchange for message from partition {} and offset {}",
+                consumerRecord.partition(), consumerRecord.offset());
+
+        message.setBody(consumerRecord.value());
+    }
+
+    protected boolean shouldBeFiltered(Header header, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
+        return !headerFilterStrategy.applyFilterToExternalHeaders(header.key(), header.value(), exchange);
+    }
+
+    protected void propagateHeaders(
+            KafkaConfiguration configuration, ConsumerRecord<Object, Object> consumerRecord, Exchange exchange) {
+
+        HeaderFilterStrategy headerFilterStrategy = configuration.getHeaderFilterStrategy();
+        KafkaHeaderDeserializer headerDeserializer = configuration.getHeaderDeserializer();
+
+        StreamSupport.stream(consumerRecord.headers().spliterator(), false)
+                .filter(header -> shouldBeFiltered(header, exchange, headerFilterStrategy))
+                .forEach(header -> exchange.getIn().setHeader(header.key(),
+                        headerDeserializer.deserialize(header.key(), header.value())));
+    }
 }

@@ -29,6 +29,7 @@ import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListe
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaErrorStrategies;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
+import org.apache.camel.component.kafka.consumer.support.batching.KafkaRecordBatchingProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.classic.ClassicRebalanceListener;
 import org.apache.camel.component.kafka.consumer.support.resume.ResumeRebalanceListener;
 import org.apache.camel.component.kafka.consumer.support.streaming.KafkaRecordStreamingProcessorFacade;
@@ -321,8 +322,7 @@ public class KafkaFetchRecords implements Runnable {
                 LOG.trace("Polling {} from {} with timeout: {}", threadId, getPrintableTopic(), pollTimeoutMs);
             }
 
-            KafkaRecordProcessorFacade recordProcessorFacade = new KafkaRecordStreamingProcessorFacade(
-                    kafkaConsumer, threadId, commitManager, consumerListener);
+            final KafkaRecordProcessorFacade recordProcessorFacade = createRecordProcessor();
 
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
@@ -384,6 +384,17 @@ public class KafkaFetchRecords implements Runnable {
                 safeConsumerClose();
             }
             lock.unlock();
+        }
+    }
+
+    private KafkaRecordProcessorFacade createRecordProcessor() {
+        final KafkaConfiguration configuration = kafkaConsumer.getEndpoint().getConfiguration();
+        if (configuration.isBatching()) {
+            return new KafkaRecordBatchingProcessorFacade(
+                    kafkaConsumer, threadId, commitManager, consumerListener);
+        } else {
+            return new KafkaRecordStreamingProcessorFacade(
+                    kafkaConsumer, threadId, commitManager, consumerListener);
         }
     }
 

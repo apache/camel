@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.kafka.consumer.support.streaming;
 
-import java.util.stream.StreamSupport;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -28,16 +26,13 @@ import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
-import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.header.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class KafkaRecordStreamingProcessor implements KafkaRecordProcessor<ConsumerRecord<Object, Object>> {
+final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordStreamingProcessor.class);
 
     private final boolean autoCommitEnabled;
@@ -52,52 +47,17 @@ final class KafkaRecordStreamingProcessor implements KafkaRecordProcessor<Consum
         this.commitManager = commitManager;
     }
 
-    private void setupExchangeMessage(Message message, ConsumerRecord<?, ?> consumerRecord) {
-        message.setHeader(KafkaConstants.PARTITION, consumerRecord.partition());
-        message.setHeader(KafkaConstants.TOPIC, consumerRecord.topic());
-        message.setHeader(KafkaConstants.OFFSET, consumerRecord.offset());
-        message.setHeader(KafkaConstants.HEADERS, consumerRecord.headers());
-        message.setHeader(KafkaConstants.TIMESTAMP, consumerRecord.timestamp());
-        message.setHeader(Exchange.MESSAGE_TIMESTAMP, consumerRecord.timestamp());
-
-        if (consumerRecord.key() != null) {
-            message.setHeader(KafkaConstants.KEY, consumerRecord.key());
-        }
-
-        LOG.debug("Setting up the exchange for message from partition {} and offset {}",
-                consumerRecord.partition(), consumerRecord.offset());
-
-        message.setBody(consumerRecord.value());
-    }
-
-    private boolean shouldBeFiltered(Header header, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
-        return !headerFilterStrategy.applyFilterToExternalHeaders(header.key(), header.value(), exchange);
-    }
-
-    private void propagateHeaders(ConsumerRecord<Object, Object> consumerRecord, Exchange exchange) {
-
-        HeaderFilterStrategy headerFilterStrategy = configuration.getHeaderFilterStrategy();
-        KafkaHeaderDeserializer headerDeserializer = configuration.getHeaderDeserializer();
-
-        StreamSupport.stream(consumerRecord.headers().spliterator(), false)
-                .filter(header -> shouldBeFiltered(header, exchange, headerFilterStrategy))
-                .forEach(header -> exchange.getIn().setHeader(header.key(),
-                        headerDeserializer.deserialize(header.key(), header.value())));
-    }
-
-    @Override
     public ProcessingResult processExchange(
             KafkaConsumer camelKafkaConsumer, TopicPartition topicPartition, boolean partitionHasNext,
             boolean recordHasNext, ConsumerRecord<Object, Object> consumerRecord) {
 
         final Exchange exchange = camelKafkaConsumer.createExchange(false);
-        final ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
 
         Message message = exchange.getMessage();
 
         setupExchangeMessage(message, consumerRecord);
 
-        propagateHeaders(consumerRecord, exchange);
+        propagateHeaders(configuration, consumerRecord, exchange);
 
         // if not auto commit then we have additional information on the exchange
         if (!autoCommitEnabled) {
@@ -123,6 +83,7 @@ final class KafkaRecordStreamingProcessor implements KafkaRecordProcessor<Consum
         if (exchange.getException() != null) {
             LOG.debug("An exception was thrown for consumerRecord at partition {} and offset {}",
                     consumerRecord.partition(), consumerRecord.offset());
+            final ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
 
             boolean breakOnErrorExit = processException(exchange, topicPartition, consumerRecord, exceptionHandler);
             result = new ProcessingResult(breakOnErrorExit, true);
