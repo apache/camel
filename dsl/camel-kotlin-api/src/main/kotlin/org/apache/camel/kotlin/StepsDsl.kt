@@ -23,6 +23,7 @@ import org.apache.camel.Predicate
 import org.apache.camel.kotlin.model.*
 import org.apache.camel.model.*
 import org.apache.camel.spi.DataType
+import org.apache.camel.spi.Policy
 import kotlin.reflect.KClass
 
 @CamelDslMarker
@@ -80,6 +81,18 @@ class StepsDsl(
         val convertHeaderDef = ConvertHeaderDefinition(convertHeaderTo, type)
         def.addOutput(convertHeaderDef)
         ConvertHeaderDsl(convertHeaderDef).apply(i)
+    }
+
+    fun convertVariableTo(convertVariableTo: String, type: KClass<*>, i: ConvertVariableDsl.() -> Unit = {}) {
+        val convertVarDef = ConvertVariableDefinition(convertVariableTo, type.java)
+        def.addOutput(convertVarDef)
+        ConvertVariableDsl(convertVarDef).apply(i)
+    }
+
+    fun convertVariableTo(convertVariableTo: String, type: String, i: ConvertVariableDsl.() -> Unit = {}) {
+        val convertVarDef = ConvertVariableDefinition(convertVariableTo, type)
+        def.addOutput(convertVarDef)
+        ConvertVariableDsl(convertVarDef).apply(i)
     }
 
     fun delay(delay: Long, i: DelayDsl.() -> Unit = {}) {
@@ -159,10 +172,23 @@ class StepsDsl(
         multicastDef.end()
     }
 
+    fun pausable(i: PausableDsl.() -> Unit) {
+        val pausableDef = def.pausable()
+        PausableDsl(pausableDef).apply(i)
+    }
+
     fun pipeline(i: StepsDsl.() -> Unit) {
         val pipelineDef = def.pipeline()
         StepsDsl(pipelineDef).apply(i)
         pipelineDef.end()
+    }
+
+    fun policy(policy: String) {
+        def.policy(policy)
+    }
+
+    fun policy(policy: Policy) {
+        def.policy(policy)
     }
 
     fun pollEnrich(i: PollEnrichDsl.() -> Unit) {
@@ -204,9 +230,18 @@ class StepsDsl(
         def.removeProperty(removeProperty)
     }
 
+    fun removeVariable(removeVariable: String) {
+        def.removeVariable(removeVariable)
+    }
+
     fun resequence(resequence: Expression, i: ResequenceDsl.() -> Unit = {}) {
         val resequenceDef = def.resequence(resequence)
         ResequenceDsl(resequenceDef).apply(i)
+    }
+
+    fun resumable(i: ResumableDsl.() -> Unit) {
+        val resumableDef = def.resumable()
+        ResumableDsl(resumableDef).apply(i)
     }
 
     fun rollback() {
@@ -249,16 +284,16 @@ class StepsDsl(
         def.setBody(setBody)
     }
 
+    fun setBody(function: (Exchange) -> Any) {
+        def.setBody(function)
+    }
+
     fun setExchangePattern(setExchangePattern: ExchangePattern) {
         def.setExchangePattern(setExchangePattern)
     }
 
     fun setExchangePattern(setExchangePattern: String) {
         def.setExchangePattern(setExchangePattern)
-    }
-
-    fun setBody(function: (Exchange) -> Any) {
-        def.setBody(function)
     }
 
     fun setHeader(setHeader: String, value: String) {
@@ -283,6 +318,14 @@ class StepsDsl(
 
     fun setProperty(setProperty: String, function: () -> Any) {
         def.setProperty(setProperty, function)
+    }
+
+    fun setVariable(setVariable: String, expression: Expression) {
+        def.setVariable(setVariable, expression)
+    }
+
+    fun setVariable(setVariable: String, function: () -> Any) {
+        def.setVariable(setVariable, function)
     }
 
     fun sort(sort: Expression, comparator: Comparator<*>? = null) {
