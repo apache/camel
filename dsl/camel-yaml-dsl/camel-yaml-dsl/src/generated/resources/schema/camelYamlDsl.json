@@ -3832,6 +3832,62 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "expression" ]
+              }, {
+                "required" : [ "constant" ]
+              }, {
+                "required" : [ "csimple" ]
+              }, {
+                "required" : [ "datasonnet" ]
+              }, {
+                "required" : [ "exchangeProperty" ]
+              }, {
+                "required" : [ "groovy" ]
+              }, {
+                "required" : [ "header" ]
+              }, {
+                "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
+              }, {
+                "required" : [ "joor" ]
+              }, {
+                "required" : [ "jq" ]
+              }, {
+                "required" : [ "js" ]
+              }, {
+                "required" : [ "jsonpath" ]
+              }, {
+                "required" : [ "language" ]
+              }, {
+                "required" : [ "method" ]
+              }, {
+                "required" : [ "mvel" ]
+              }, {
+                "required" : [ "ognl" ]
+              }, {
+                "required" : [ "python" ]
+              }, {
+                "required" : [ "ref" ]
+              }, {
+                "required" : [ "simple" ]
+              }, {
+                "required" : [ "spel" ]
+              }, {
+                "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "xpath" ]
+              }, {
+                "required" : [ "xquery" ]
+              }, {
+                "required" : [ "xtokenize" ]
+              } ]
+            }
+          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -3841,12 +3897,6 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              } ]
-            }
           } ]
         } ],
         "properties" : {
@@ -3855,6 +3905,30 @@
             "title" : "Key",
             "description" : "Property key"
           },
+          "constant" : { },
+          "csimple" : { },
+          "datasonnet" : { },
+          "exchangeProperty" : { },
+          "groovy" : { },
+          "header" : { },
+          "hl7terser" : { },
+          "java" : { },
+          "joor" : { },
+          "jq" : { },
+          "js" : { },
+          "jsonpath" : { },
+          "language" : { },
+          "method" : { },
+          "mvel" : { },
+          "ognl" : { },
+          "python" : { },
+          "ref" : { },
+          "simple" : { },
+          "spel" : { },
+          "tokenize" : { },
+          "xpath" : { },
+          "xquery" : { },
+          "xtokenize" : { },
           "expression" : { }
         },
         "required" : [ "key" ]
