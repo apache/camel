@@ -3827,7 +3827,7 @@
       },
       "org.apache.camel.model.PropertyExpressionDefinition" : {
         "title" : "Property Expression",
-        "description" : "A key value pair where the value is an expression.",
+        "description" : "A key value pair where the value is an expression",
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {
@@ -3837,15 +3837,9 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
-                "description" : "Property values as an expression",
+                "description" : "The property value as an expression",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
-            }
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              } ]
             }
           } ]
         } ],
@@ -3853,7 +3847,7 @@
           "key" : {
             "type" : "string",
             "title" : "Key",
-            "description" : "Property key"
+            "description" : "The name of the property"
           },
           "expression" : { }
         },
