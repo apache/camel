@@ -56,7 +56,9 @@ public final class OpenApiHelper {
         if (openApi.getComponents() != null
                 && openApi.getComponents().getSchemas() != null) {
             for (Schema<?> schemaDefinition : openApi.getComponents().getSchemas().values()) {
-                schemaDefinition.getExtensions().clear();
+                if (schemaDefinition.getExtensions() != null) {
+                    schemaDefinition.getExtensions().clear();
+                }
             }
         }
         if (openApi.getPaths() != null) {
