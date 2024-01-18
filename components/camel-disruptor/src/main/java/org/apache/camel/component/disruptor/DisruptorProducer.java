@@ -100,7 +100,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                 try {
                     done = latch.await(timeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    // ignore
+                    LOG.info("Interrupted while waiting for the task to complete");
+                    Thread.currentThread().interrupt();
                 }
                 if (!done) {
                     // Remove timed out Exchange from disruptor endpoint.
@@ -127,7 +128,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                 try {
                     latch.await();
                 } catch (InterruptedException e) {
-                    // ignore
+                    LOG.info("Interrupted while waiting for the task to complete");
+                    Thread.currentThread().interrupt();
                 }
             }
         } else {

@@ -168,6 +168,10 @@ public class SplunkConnectionFactory {
             }
             LOG.info("Successfully connected to Splunk");
             return service;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(
+                    String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()), e);
         } catch (Exception e) {
             throw new RuntimeException(
                     String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()), e);

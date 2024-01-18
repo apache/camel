@@ -74,7 +74,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         context.setUseMDCLogging(true);
-        context.setName(this.getClass().getSimpleName());
 
         return context;
     }
@@ -369,15 +368,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
                 assertTrue(invalidMessageDone.matches(5, TimeUnit.SECONDS),
                         "Exchange containing invalid message should have completed");
                 // The component may reset the connection in this case, so reconnect if needed
-                /*
-                // TODO: Figure out why this isn't working
-                try {
-                    mllpClient.checkConnection();
-                } catch (MllpJUnitResourceException checkConnectionEx) {
-                    mllpClient.disconnect();
-                    mllpClient.connect();
-                }
-                */
                 mllpClient.disconnect();
                 mllpClient.connect();
             } else {

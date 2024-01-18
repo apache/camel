@@ -1233,6 +1233,7 @@ public class NotifyBuilder {
                 LOG.warn("The notify builder latch has timed out. It's likely the condition has never been satisfied");
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return matches();

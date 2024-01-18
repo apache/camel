@@ -59,7 +59,10 @@ public class DynamicRouterControlComponent extends DefaultComponent {
     }
 
     /**
-     * Default constructor to create the instance.
+     * Create the instance, allowing the caller to specify the factory suppliers.
+     *
+     * @param context                        the {@link CamelContext}
+     * @param controlEndpointFactorySupplier the {@link Supplier<DynamicRouterControlEndpointFactory>}
      */
     public DynamicRouterControlComponent(CamelContext context,
                                          Supplier<DynamicRouterControlEndpointFactory> controlEndpointFactorySupplier) {
@@ -78,8 +81,8 @@ public class DynamicRouterControlComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DynamicRouterControlConfiguration configuration = new DynamicRouterControlConfiguration();
-        DynamicRouterControlEndpoint endpoint
-                = controlEndpointFactorySupplier.get().getInstance(uri, this, remaining, configuration);
+        DynamicRouterControlEndpoint endpoint = controlEndpointFactorySupplier.get()
+                .getInstance(uri, this, remaining, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
     }

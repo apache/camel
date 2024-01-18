@@ -60,12 +60,23 @@ public final class DynamicRouterControlMessage {
      */
     private String expressionLanguage;
 
+    /**
+     * Default constructor for a new Dynamic Router control message without any values.
+     */
     public DynamicRouterControlMessage() {
         // Default constructor
     }
 
     /**
-     * All-argument constructor. At a minimum, this must include
+     * Constructor for a new Dynamic Router control message with the given values.
+     *
+     * @param subscribeChannel   the channel to subscribe to
+     * @param subscriptionId     the subscription ID
+     * @param destinationUri     the destination URI
+     * @param priority           the subscription priority
+     * @param predicateBean      the name of a predicate bean in the registry
+     * @param predicate          the predicate expression
+     * @param expressionLanguage the subscription predicate language
      */
     public DynamicRouterControlMessage(String subscribeChannel, String subscriptionId,
                                        String destinationUri, int priority, String predicateBean, String predicate,
@@ -80,6 +91,11 @@ public final class DynamicRouterControlMessage {
                 ? "simple" : expressionLanguage;
     }
 
+    /**
+     * Constructor for a new Dynamic Router control message with the given values.
+     *
+     * @param builder the {@link Builder} to construct the new {@link DynamicRouterControlMessage}.
+     */
     private DynamicRouterControlMessage(Builder builder) {
         subscribeChannel = builder.subscribeChannel;
         subscriptionId = builder.subscriptionId;
@@ -127,7 +143,7 @@ public final class DynamicRouterControlMessage {
     }
 
     /**
-     * The subscription predicate to determine if an exchange should be routed.
+     * The name of a predicate bean in the registry.
      *
      * @return the subscription predicate
      */
@@ -136,16 +152,18 @@ public final class DynamicRouterControlMessage {
     }
 
     /**
-     * The name of a Predicate bean in the registry.
+     * The predicate expression as a String that is interpreted in the context of the {@link #expressionLanguage}
+     * parameter.
      *
-     * @return the predicate name
+     * @return the predicate expression
      */
     public String getPredicate() {
         return predicate;
     }
 
     /**
-     * The subscription predicate language.
+     * The subscription predicate language. Used to interpret the String expression provided by the {@link #predicate}
+     * parameter.
      *
      * @return the subscription predicate language
      */
@@ -172,9 +190,19 @@ public final class DynamicRouterControlMessage {
 
         private String expressionLanguage;
 
+        /**
+         * Instantiates a new {@code DynamicRouterControlMessage.Builder}.
+         */
         private Builder() {
         }
 
+        /**
+         * Returns a {@code DynamicRouterControlMessage.Builder} object that can be used to create a new
+         * {@code DynamicRouterControlMessage}.
+         *
+         * @return a {@code DynamicRouterControlMessage.Builder} object that can be used to create a new
+         *         {@code DynamicRouterControlMessage}
+         */
         public static Builder newBuilder() {
             return new Builder();
         }

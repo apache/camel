@@ -100,6 +100,9 @@ public final class ObjectDescriptions {
             // properties in order to minimize the code size
             // for CAMEL-11310
             return description.prune();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while getting SObject description for '" + name + "'", e);
         } catch (final Exception e) {
             throw new IllegalStateException("Error getting SObject description for '" + name + "': " + e.getMessage(), e);
         }
@@ -131,6 +134,9 @@ public final class ObjectDescriptions {
             for (final SObject sObject : globalObjects.getSobjects()) {
                 objectNames.add(sObject.getName());
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Interrupted while getting global Objects", e);
         } catch (final Exception e) {
             throw new RuntimeException("Error getting global Objects: " + e.getMessage(), e);
         }

@@ -120,8 +120,8 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2023-08-14T08:51:45Z</project.build.outputTimestamp>
 
-        <cyclonedx-maven-plugin-version>2.7.10</cyclonedx-maven-plugin-version>
-        <flatten-maven-plugin-version>1.5.0</flatten-maven-plugin-version>
+        <cyclonedx-maven-plugin-version>2.7.11</cyclonedx-maven-plugin-version>
+        <flatten-maven-plugin-version>1.6.0</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <license-maven-plugin-version>4.3</license-maven-plugin-version>
         <maven-assembly-plugin-version>3.6.0</maven-assembly-plugin-version>
@@ -132,7 +132,7 @@
         <maven-javadoc-plugin-version>3.6.3</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
-        <maven-surefire-plugin-version>3.2.3</maven-surefire-plugin-version>
+        <maven-surefire-plugin-version>3.2.5</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.16.2</versions-maven-plugin-version>
 
         <jaxb-core-version>4.0.4</jaxb-core-version>

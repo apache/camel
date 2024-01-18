@@ -20,6 +20,8 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.SagaActionUriDefinition
 import org.apache.camel.model.SagaDefinition
 import org.apache.camel.model.ToDefinition
+import org.apache.camel.model.language.JqExpression
+import org.apache.camel.model.language.SimpleExpression
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
 
@@ -47,31 +49,17 @@ class SagaTest extends YamlTestSupport {
                 with(outputs[1], ToDefinition) {
                     endpointUri == 'direct:something'
                 }
+                options.size() == 2
+                options[0].key == "o1"
+                options[0].expression instanceof JqExpression
+                options[0].expression.expression == '.foo'
+                options[1].key == "o2"
+                options[1].expression instanceof SimpleExpression
+                options[1].expression.expression == '${body}'
             }
         where:
             resource << [
-                asResource('full', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - saga:  
-                             propagation: "MANDATORY"
-                             completionMode: "MANUAL"
-                             compensation: 
-                                 uri: "direct:compensation"
-                             completion:
-                                 uri: "direct:completion"
-                             steps:
-                               - to: "direct:something"
-                             option:
-                               - key: o1
-                                 simple: "${body}" 
-                               - key: o2
-                                 expression:
-                                   simple: "${body}"        
-                          - to: "mock:result"
-                    '''),
-                asResource('full-parameters', '''
+                asResource('full-parameters-id', '''
                     - from:
                         uri: "direct:start"
                         steps:    
@@ -88,10 +76,12 @@ class SagaTest extends YamlTestSupport {
                                - to: "direct:something"
                              option:
                                - key: o1
-                                 simple: "${body}" 
+                                 jq: ".foo" 
                                - key: o2
                                  expression:
-                                   simple: "${body}"        
+                                   simple:
+                                     id: key2
+                                     expression: "${body}"        
                           - to: "mock:result"
                     '''),
                 asResource('full-parameters-out-of-order)', '''
@@ -111,7 +101,7 @@ class SagaTest extends YamlTestSupport {
                                - to: "direct:something"
                              option:
                                - key: o1
-                                 simple: "${body}" 
+                                 jq: ".foo" 
                                - key: o2
                                  expression:
                                    simple: "${body}"        
@@ -130,7 +120,7 @@ class SagaTest extends YamlTestSupport {
                                - to: "direct:something"    
                              option:
                                - key: o1
-                                 simple: "${body}" 
+                                 jq: ".foo" 
                                - key: o2
                                  expression:
                                    simple: "${body}"        

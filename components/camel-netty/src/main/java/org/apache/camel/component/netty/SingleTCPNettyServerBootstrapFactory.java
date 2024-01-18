@@ -28,10 +28,14 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollServerDomainSocketChannel;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.kqueue.KQueue;
+import io.netty.channel.kqueue.KQueueServerDomainSocketChannel;
+import io.netty.channel.kqueue.KQueueServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.unix.DomainSocketAddress;
 import io.netty.util.concurrent.ImmediateEventExecutor;
@@ -148,18 +152,34 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
         serverBootstrap = new ServerBootstrap();
         if (configuration.getUnixDomainSocketPath() != null) {
-            serverBootstrap.group(bg, wg).channel(EpollServerDomainSocketChannel.class);
+            if (KQueue.isAvailable()) {
+                serverBootstrap.group(bg, wg).channel(KQueueServerDomainSocketChannel.class);
+            } else if (Epoll.isAvailable()) {
+                serverBootstrap.group(bg, wg).channel(EpollServerDomainSocketChannel.class);
+            } else {
+                throw new IllegalStateException(
+                        "Unable to use unix domain sockets - both Epoll and KQueue are not available");
+            }
         } else {
             if (configuration.isNativeTransport()) {
-                serverBootstrap.group(bg, wg).channel(EpollServerSocketChannel.class);
+                if (KQueue.isAvailable()) {
+                    serverBootstrap.group(bg, wg).channel(KQueueServerSocketChannel.class);
+                } else if (Epoll.isAvailable()) {
+                    serverBootstrap.group(bg, wg).channel(EpollServerSocketChannel.class);
+                } else {
+                    throw new IllegalStateException(
+                            "Unable to use native transport - both Epoll and KQueue are not available");
+                }
             } else {
                 serverBootstrap.group(bg, wg).channel(NioServerSocketChannel.class);
             }
         }
-        serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
-        serverBootstrap.childOption(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
-        serverBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
-        serverBootstrap.childOption(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+        if (configuration.getUnixDomainSocketPath() == null) {
+            serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
+            serverBootstrap.childOption(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
+            serverBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+            serverBootstrap.childOption(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+        }
         serverBootstrap.childOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
         if (configuration.getBacklog() > 0) {
             serverBootstrap.option(ChannelOption.SO_BACKLOG, configuration.getBacklog());

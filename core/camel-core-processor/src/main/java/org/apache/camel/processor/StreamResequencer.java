@@ -243,6 +243,7 @@ public class StreamResequencer extends AsyncProcessorSupport
             try {
                 Thread.sleep(getTimeout());
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 // we were interrupted so break out
                 exchange.setException(e);
                 callback.done(true);
@@ -303,6 +304,7 @@ public class StreamResequencer extends AsyncProcessorSupport
                         deliveryRequestLock.unlock();
                     }
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
                 try {

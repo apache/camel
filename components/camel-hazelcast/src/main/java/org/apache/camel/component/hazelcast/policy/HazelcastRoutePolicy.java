@@ -298,7 +298,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
                             tryLockTimeoutUnit.name());
                 }
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 getExceptionHandler().handleException(e);
             } finally {

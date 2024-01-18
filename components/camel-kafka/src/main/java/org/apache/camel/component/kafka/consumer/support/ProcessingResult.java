@@ -17,37 +17,29 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import org.apache.camel.component.kafka.consumer.AbstractCommitManager;
-
+/**
+ * Holds the result of processing one or more consumer records
+ */
 public final class ProcessingResult {
     private static final ProcessingResult UNPROCESSED_RESULT
-            = new ProcessingResult(
-                    false,
-                    AbstractCommitManager.NON_PARTITION,
-                    AbstractCommitManager.START_OFFSET, false);
+            = new ProcessingResult(false, false);
 
     private final boolean breakOnErrorHit;
-    private final long lastPartition;
-    private final long partitionLastOffset;
     private final boolean failed;
 
-    ProcessingResult(boolean breakOnErrorHit, long lastPartition, long partitionLastOffset, boolean failed) {
+    /**
+     * Constructs a new processing result
+     *
+     * @param breakOnErrorHit break on error hit setting
+     * @param failed          whether processing has failed
+     */
+    public ProcessingResult(boolean breakOnErrorHit, boolean failed) {
         this.breakOnErrorHit = breakOnErrorHit;
-        this.lastPartition = lastPartition;
-        this.partitionLastOffset = partitionLastOffset;
         this.failed = failed;
     }
 
     public boolean isBreakOnErrorHit() {
         return breakOnErrorHit;
-    }
-
-    public long getPartitionLastOffset() {
-        return partitionLastOffset;
-    }
-
-    public long getPartition() {
-        return lastPartition;
     }
 
     public boolean isFailed() {

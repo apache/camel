@@ -33,7 +33,7 @@ public class ExchangeCreatedEvent extends AbstractExchangeEvent implements Camel
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getExchange().getExchangeId() + " exchange created";
     }
 }

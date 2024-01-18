@@ -23,19 +23,25 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.PredicateBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlMessage;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.dynamicrouter.DynamicRouterTestConstants.addRoutes;
-import static org.apache.camel.test.infra.core.MockUtils.getMockEndpoint;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -43,9 +49,63 @@ import static org.mockito.Mockito.verify;
  * This test verifies basic functionality with the Dynamic Router in synchronous mode. This configuration is entirely
  * manual. For Spring XML, refer to {@link DynamicRouterSingleRouteTwoParticipantsIT}.
  */
-class DynamicRouterBasicSynchronousIT {
+@ExtendWith(MockitoExtension.class)
+public class DynamicRouterBasicSynchronousIT {
 
-    private final Predicate matchAllPredicate = PredicateBuilder.constant(true);
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+
+    CamelContext context;
+
+    ProducerTemplate template;
+
+    MockEndpoint mock;
+
+    @Mock
+    Predicate predicate;
+
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .routeId("directToDynamicRouter")
+                        .toD("dynamic-router://test?synchronous=true");
+                from("direct:list")
+                        .routeId("directToControlList")
+                        .toD("dynamic-router-control://list" +
+                             "?subscribeChannel=${header.subscribeChannel}");
+                from("direct://subscribe")
+                        .routeId("subscribeRoute")
+                        .toD("dynamic-router-control://subscribe" +
+                             "?subscribeChannel=${header.subscribeChannel}" +
+                             "&subscriptionId=${header.subscriptionId}" +
+                             "&destinationUri=${header.destinationUri}" +
+                             "&priority=${header.priority}" +
+                             "&predicateBean=${header.predicateBean}");
+                from("direct://unsubscribe")
+                        .routeId("unsubscribeRoute")
+                        .toD("dynamic-router-control://unsubscribe" +
+                             "?subscribeChannel=${header.subscribeChannel}" +
+                             "&subscriptionId=${header.subscriptionId}");
+            }
+        });
+    }
+
+    @BeforeEach
+    void setUp() {
+        this.context = contextExtension.getContext();
+        this.template = context.createProducerTemplate();
+        this.mock = contextExtension.getMockEndpoint("mock:result", true);
+        this.context.getRegistry().bind("spyPredicate", predicate);
+        lenient().when(predicate.matches(any(Exchange.class))).thenReturn(true);
+    }
+
+    @AfterEach
+    void tearDown() {
+        context.stop();
+    }
 
     /**
      * Tests participant subscription, and that messages are received at their registered destination endpoints.
@@ -54,13 +114,7 @@ class DynamicRouterBasicSynchronousIT {
      */
     @Test
     void testDynamicRouter() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        ProducerTemplate template = context.createProducerTemplate();
-        addRoutes.accept(context);
-        MockEndpoint mock = getMockEndpoint(context, "mock:result", true);
         mock.expectedMessageCount(1);
-        Predicate predicate = spy(matchAllPredicate);
-        context.getRegistry().bind("spyPredicate", predicate);
 
         template.sendBodyAndHeaders("direct:subscribe", "",
                 Map.of("subscribeChannel", "test",
@@ -84,13 +138,7 @@ class DynamicRouterBasicSynchronousIT {
      */
     @Test
     void testSubscribingWithMessage() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        ProducerTemplate template = context.createProducerTemplate();
-        addRoutes.accept(context);
-        MockEndpoint mock = getMockEndpoint(context, "mock:result", true);
         mock.expectedMessageCount(1);
-        Predicate predicate = spy(matchAllPredicate);
-        context.getRegistry().bind("spyPredicate", predicate);
 
         DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.Builder.newBuilder()
                 .subscribeChannel("test")
@@ -117,10 +165,6 @@ class DynamicRouterBasicSynchronousIT {
      */
     @Test
     void testSubscribingWithMessageAndSpelPredicate() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        ProducerTemplate template = context.createProducerTemplate();
-        addRoutes.accept(context);
-        MockEndpoint mock = getMockEndpoint(context, "mock:result", true);
         mock.expectedMessageCount(1);
 
         DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.Builder.newBuilder()
@@ -147,13 +191,7 @@ class DynamicRouterBasicSynchronousIT {
      */
     @Test
     void testUnsubscribe() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        ProducerTemplate template = context.createProducerTemplate();
-        addRoutes.accept(context);
-        MockEndpoint mock = getMockEndpoint(context, "mock:result", true);
         mock.expectedMessageCount(1);
-        Predicate predicate = spy(matchAllPredicate);
-        context.getRegistry().bind("spyPredicate", predicate);
 
         template.sendBodyAndHeaders("direct:subscribe", "",
                 Map.of("subscribeChannel", "test",
@@ -193,10 +231,6 @@ class DynamicRouterBasicSynchronousIT {
 
     @Test
     void testListControlAction() {
-        CamelContext context = new DefaultCamelContext();
-        ProducerTemplate template = context.createProducerTemplate();
-        addRoutes.accept(context);
-
         DynamicRouterControlMessage controlMessage1 = DynamicRouterControlMessage.Builder.newBuilder()
                 .subscribeChannel("test")
                 .subscriptionId("testId1")

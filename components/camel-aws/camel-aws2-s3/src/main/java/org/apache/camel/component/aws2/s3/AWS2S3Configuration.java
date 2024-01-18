@@ -40,6 +40,8 @@ public class AWS2S3Configuration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam(label = "security", secret = true)
+    private String sessionToken;
     @UriParam(label = "consumer")
     private String fileName;
     @UriParam
@@ -110,6 +112,8 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean useDefaultCredentialsProvider;
     @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
+    @UriParam(label = "security")
+    private boolean useSessionCredentials;
     @UriParam(label = "security")
     private String profileCredentialsName;
     @UriParam(label = "producer")
@@ -186,6 +190,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    /**
+     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     */
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
     }
 
     public S3Client getAmazonS3Client() {
@@ -559,6 +574,18 @@ public class AWS2S3Configuration implements Cloneable {
 
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
+    }
+
+    public boolean isUseSessionCredentials() {
+        return useSessionCredentials;
+    }
+
+    /**
+     * Set whether the S3 client should expect to use Session Credentials. This is useful in situation in which the user
+     * needs to assume a IAM role for doing operations in S3.
+     */
+    public void setUseSessionCredentials(boolean useSessionCredentials) {
+        this.useSessionCredentials = useSessionCredentials;
     }
 
     public boolean isAutoCreateBucket() {

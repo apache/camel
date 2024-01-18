@@ -43,6 +43,12 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "contentType": target.getConfiguration().setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
         case "defaultReplayId": target.getConfiguration().setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "eventname":
+        case "eventName": target.getConfiguration().setEventName(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventschemaformat":
+        case "eventSchemaFormat": target.getConfiguration().setEventSchemaFormat(property(camelContext, org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum.class, value)); return true;
+        case "eventschemaid":
+        case "eventSchemaId": target.getConfiguration().setEventSchemaId(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -173,6 +179,12 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
         case "defaultreplayid":
         case "defaultReplayId": return java.lang.Long.class;
+        case "eventname":
+        case "eventName": return java.lang.String.class;
+        case "eventschemaformat":
+        case "eventSchemaFormat": return org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum.class;
+        case "eventschemaid":
+        case "eventSchemaId": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -304,6 +316,12 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "contentType": return target.getConfiguration().getContentType();
         case "defaultreplayid":
         case "defaultReplayId": return target.getConfiguration().getDefaultReplayId();
+        case "eventname":
+        case "eventName": return target.getConfiguration().getEventName();
+        case "eventschemaformat":
+        case "eventSchemaFormat": return target.getConfiguration().getEventSchemaFormat();
+        case "eventschemaid":
+        case "eventSchemaId": return target.getConfiguration().getEventSchemaId();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

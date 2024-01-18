@@ -30,6 +30,7 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
+import org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
 import org.apache.camel.spi.UriParam;
@@ -67,6 +68,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String COMPOSITE_METHOD = "compositeMethod";
     public static final String LIMIT = "limit";
     public static final String ALL_OR_NONE = "allOrNone";
+    public static final String EVENT_NAME = "eventName";
+    public static final String EVENT_SCHEMA_ID = "eventSchemaId";
+    public static final String EVENT_SCHEMA_FORMAT = "eventSchemaFormat";
 
     // prefix for parameters in headers
     public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
@@ -151,6 +155,12 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String sObjectSearch;
     @UriParam
     private String apexMethod;
+    @UriParam(displayName = "Event Name", label = "producer")
+    private String eventName;
+    @UriParam(displayName = "Event Schema Format", label = "producer")
+    private EventSchemaFormatEnum eventSchemaFormat;
+    @UriParam(displayName = "Event Schema Id", label = "producer")
+    private String eventSchemaId;
     @UriParam(label = "producer")
     private String compositeMethod;
     @UriParam(label = "producer", defaultValue = "false", description = "Composite API option to indicate" +
@@ -813,10 +823,13 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);
+        // apexQueryParams are handled explicitly in AbstractRestProcessor
         valueMap.put(COMPOSITE_METHOD, compositeMethod);
         valueMap.put(LIMIT, limit);
         valueMap.put(APPROVAL, approval);
-        // apexQueryParams are handled explicitly in AbstractRestProcessor
+        valueMap.put(EVENT_NAME, eventName);
+        valueMap.put(EVENT_SCHEMA_FORMAT, eventSchemaFormat);
+        valueMap.put(EVENT_SCHEMA_ID, eventSchemaId);
 
         // add bulk API properties
         if (contentType != null) {
@@ -1174,4 +1187,44 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.pubSubBatchSize = pubSubBatchSize;
     }
 
+    public String getEventName() {
+        return eventName;
+    }
+
+    /**
+     * Name of Platform Event, Change Data Capture Event, custom event, etc.
+     *
+     * @param eventName
+     */
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public EventSchemaFormatEnum getEventSchemaFormat() {
+        return eventSchemaFormat;
+    }
+
+    /**
+     * EXPANDED: Apache Avro format but doesn’t strictly adhere to the record complex type. COMPACT: Apache Avro,
+     * adheres to the specification for the record complex type. This parameter is available in API version 43.0 and
+     * later.
+     *
+     * @param eventSchemaFormat
+     */
+    public void setEventSchemaFormat(EventSchemaFormatEnum eventSchemaFormat) {
+        this.eventSchemaFormat = eventSchemaFormat;
+    }
+
+    public String getEventSchemaId() {
+        return eventSchemaId;
+    }
+
+    /**
+     * The ID of the event schema.
+     *
+     * @param eventSchemaId
+     */
+    public void setEventSchemaId(String eventSchemaId) {
+        this.eventSchemaId = eventSchemaId;
+    }
 }

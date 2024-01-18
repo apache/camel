@@ -107,6 +107,9 @@ public class GooglePubsubComponent extends DefaultComponent {
         publisher.shutdown();
         try {
             publisher.awaitTermination(publisherTerminationTimeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeCamelException(e);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }

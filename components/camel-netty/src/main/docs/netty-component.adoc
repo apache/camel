@@ -614,6 +614,46 @@ This provides support for timeout and other complexities you otherwise would nee
 You can find an example with the Apache Camel source code in the examples directory
 under the `camel-example-netty-custom-correlation` directory.
 
+== Native transport
+
+To enable native transport you need to add additional dependency for epoll or kqueue depending on your OS and CPU arch. To make it easier add the following extension to your `build` section of `pom.xml`:
+
+[source,xml]
+----
+<extensions>
+    <extension>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+    </extension>
+</extensions>
+----
+
+So then you need to add the following dependency:
+
+[tabs]
+====
+Linux/Unix::
++
+[source,xml]
+----
+<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-transport-native-epoll</artifactId>
+    <classifier>${os.detected.classifier}</classifier>
+</dependency>
+----
+
+MacOS/BSD::
++
+[source,xml]
+----
+<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-transport-native-kqueue</artifactId>
+    <classifier>${os.detected.classifier}</classifier>
+</dependency>
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

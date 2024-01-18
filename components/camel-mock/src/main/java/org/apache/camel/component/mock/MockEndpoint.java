@@ -1073,7 +1073,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    // ignore
+                    LOG.warn("Interrupted while waiting for the file to exist");
+                    Thread.currentThread().interrupt();
                 }
                 stop = watch.taken() > timeout;
             }
@@ -1427,6 +1428,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             try {
                 return latch.await(0, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         } else {

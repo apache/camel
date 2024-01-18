@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.paho.mqtt5;
+package org.apache.camel.component.paho.mqtt5.integration;
 
 import java.nio.charset.StandardCharsets;
 
@@ -22,13 +22,19 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.paho.mqtt5.PahoMqtt5Component;
+import org.apache.camel.component.paho.mqtt5.PahoMqtt5Constants;
+import org.apache.camel.component.paho.mqtt5.PahoMqtt5Endpoint;
+import org.apache.camel.component.paho.mqtt5.PahoMqtt5Message;
+import org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
+public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
 
     @EndpointInject("mock:test")
     MockEndpoint mock;
@@ -72,7 +78,7 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
         assertEquals("sampleClient", endpoint.getConfiguration().getClientId());
         assertEquals("tcp://localhost:" + mqttPort, endpoint.getConfiguration().getBrokerUrl());
         assertEquals(2, endpoint.getConfiguration().getQos());
-        assertEquals(PahoMqtt5Persistence.FILE, endpoint.getConfiguration().getPersistence());
+        Assertions.assertEquals(PahoMqtt5Persistence.FILE, endpoint.getConfiguration().getPersistence());
     }
 
     @Test

@@ -11696,6 +11696,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "A key value pair where the value is an expression.",
             deprecated = false,
             properties = {
+                    @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Property values as an expression", displayName = "Expression", oneOf = "expression"),
                     @YamlProperty(name = "key", type = "string", required = true, description = "Property key", displayName = "Key")
             }
@@ -11726,7 +11727,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 default: {
-                    return false;
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;

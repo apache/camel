@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class PahoMqtt5ReconnectAfterFailureTest extends CamelTestSupport {
+public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
 
     public static final String TESTING_ROUTE_ID = "testingRoute";
     private static int mqttPort = AvailablePortFinder.getNextAvailable();
@@ -73,8 +73,8 @@ public class PahoMqtt5ReconnectAfterFailureTest extends CamelTestSupport {
         // to ensure first consumer connection fails
         service = MosquittoServiceFactory
                 .builder()
-                .addLocalMapping(PahoMqtt5ReconnectAfterFailureTest::createLocalService)
-                .addRemoteMapping(PahoMqtt5ReconnectAfterFailureTest::createRemoteService)
+                .addLocalMapping(PahoMqtt5ReconnectAfterFailureIT::createLocalService)
+                .addRemoteMapping(PahoMqtt5ReconnectAfterFailureIT::createRemoteService)
                 .build();
     }
 

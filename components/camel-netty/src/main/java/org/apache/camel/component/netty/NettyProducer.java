@@ -32,12 +32,16 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollDomainSocketChannel;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.kqueue.KQueue;
+import io.netty.channel.kqueue.KQueueDomainSocketChannel;
+import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.channel.unix.DomainSocketAddress;
@@ -370,6 +374,9 @@ public class NettyProducer extends DefaultAsyncProducer {
                         // but we can try to get a result with a 0 timeout, then netty will throw the caused
                         // exception wrapped in an outer exception
                         channelFuture.get(0, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        cause = e.getCause();
                     } catch (Exception e) {
                         cause = e.getCause();
                     }
@@ -454,18 +461,34 @@ public class NettyProducer extends DefaultAsyncProducer {
             // its okay to create a new bootstrap for each new channel
             Bootstrap clientBootstrap = new Bootstrap();
             if (configuration.getUnixDomainSocketPath() != null) {
-                clientBootstrap.channel(EpollDomainSocketChannel.class);
+                if (KQueue.isAvailable()) {
+                    clientBootstrap.channel(KQueueDomainSocketChannel.class);
+                } else if (Epoll.isAvailable()) {
+                    clientBootstrap.channel(EpollDomainSocketChannel.class);
+                } else {
+                    throw new IllegalStateException(
+                            "Unable to use unix domain sockets - both Epoll and KQueue are not available");
+                }
             } else {
                 if (configuration.isNativeTransport()) {
-                    clientBootstrap.channel(EpollSocketChannel.class);
+                    if (KQueue.isAvailable()) {
+                        clientBootstrap.channel(KQueueSocketChannel.class);
+                    } else if (Epoll.isAvailable()) {
+                        clientBootstrap.channel(EpollSocketChannel.class);
+                    } else {
+                        throw new IllegalStateException(
+                                "Unable to use native transport - both Epoll and KQueue are not available");
+                    }
                 } else {
                     clientBootstrap.channel(NioSocketChannel.class);
                 }
             }
             clientBootstrap.group(getWorkerGroup());
-            clientBootstrap.option(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
-            clientBootstrap.option(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
-            clientBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+            if (configuration.getUnixDomainSocketPath() == null) {
+                clientBootstrap.option(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
+                clientBootstrap.option(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
+                clientBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+            }
             clientBootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
 
             //TODO need to check it later;

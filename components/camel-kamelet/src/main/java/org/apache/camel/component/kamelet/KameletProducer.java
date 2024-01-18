@@ -112,6 +112,11 @@ final class KameletProducer extends DefaultAsyncProducer {
                 // kamelet producer that calls its kamelet consumer to process the incoming exchange
                 return consumer.getAsyncProcessor().process(exchange, callback);
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);

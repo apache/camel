@@ -32,14 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ElasticsearchRestClientTestSupport extends CamelTestSupport {
+public class ElasticsearchRestClientITSupport extends CamelTestSupport {
 
     @RegisterExtension
     protected static ElasticSearchService service = ElasticSearchServiceFactory.createSingletonService();
 
     protected static RestClient restClient;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchRestClientTestSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchRestClientITSupport.class);
 
     @Override
     protected void setupResources() throws Exception {

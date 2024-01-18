@@ -14,41 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.paho.mqtt5;
+package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class PahoMqtt5OverrideTopicMqtt5Test extends PahoMqtt5TestSupport {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class NettyHttpClientChunkedResponseTest extends BaseNettyTest {
+
+    @Test
+    public void testNettyHttpClientChunkedResponse() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
+        assertEquals("Bye World", out);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                PahoMqtt5Component paho = context.getComponent("paho-mqtt5", PahoMqtt5Component.class);
-                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
-
-                from("direct:test").to("paho-mqtt5:queue").log("Message sent");
-
-                from("paho-mqtt5:myoverride").log("Message received").to("mock:test");
+                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                        .to("mock:input")
+                        .setHeader("Transfer-Encoding", constant("chunked"))
+                        .transform().simple("Bye World");
             }
         };
-    }
-
-    // Tests
-
-    @Test
-    public void shouldOverride() throws InterruptedException {
-        // Given
-        getMockEndpoint("mock:test").expectedMessageCount(1);
-
-        // When
-        template.sendBodyAndHeader("direct:test", "Hello World", PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC, "myoverride");
-
-        // Then
-        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

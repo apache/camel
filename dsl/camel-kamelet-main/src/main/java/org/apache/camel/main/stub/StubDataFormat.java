@@ -21,12 +21,14 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A data format that does nothing
  */
-public class StubDataFormat extends ServiceSupport implements DataFormat {
+public class StubDataFormat extends ServiceSupport implements DataFormat, PropertyConfigurerAware {
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -38,4 +40,9 @@ public class StubDataFormat extends ServiceSupport implements DataFormat {
         return null;
     }
 
+    @Override
+    public PropertyConfigurer getPropertyConfigurer(Object instance) {
+        // dummy configurer tha does nothing
+        return (camelContext, target, name, value, ignoreCase) -> true;
+    }
 }

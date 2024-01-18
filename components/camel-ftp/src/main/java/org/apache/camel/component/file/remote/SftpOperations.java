@@ -1197,6 +1197,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             tmp.join(timeout);
             message = "timeout: ";
         } catch (java.lang.InterruptedException eee) {
+            Thread.currentThread().interrupt();
         }
         if (sockp[0] != null && sockp[0].isConnected()) {
             socket = sockp[0];

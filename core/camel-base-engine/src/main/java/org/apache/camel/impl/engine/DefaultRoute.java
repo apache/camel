@@ -204,6 +204,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     public void initializeServices() throws Exception {
+        services.clear();
         // gather all the services for this route
         gatherServices(services);
     }
@@ -634,7 +635,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
         }
     }
 
-    protected void gatherRootServices(List<Service> services) throws Exception {
+    private void gatherRootServices(List<Service> services) throws Exception {
         Endpoint endpoint = getEndpoint();
         consumer = endpoint.createConsumer(processor);
         if (consumer != null) {

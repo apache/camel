@@ -693,6 +693,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         if (abortAfterTimeout) {
                             LOG.warn("Interrupted while waiting during graceful shutdown, will abort.");
                             return;

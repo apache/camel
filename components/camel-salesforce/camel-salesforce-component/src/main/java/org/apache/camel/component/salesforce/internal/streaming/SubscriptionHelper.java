@@ -250,6 +250,7 @@ public class SubscriptionHelper extends ServiceSupport {
             } catch (InterruptedException e) {
                 LOG.error("Aborting handshake on interrupt!");
                 abort = true;
+                Thread.currentThread().interrupt();
             }
 
             abort = abort || isStoppingOrStopped();
@@ -271,6 +272,7 @@ public class SubscriptionHelper extends ServiceSupport {
                 } catch (InterruptedException e) {
                     LOG.error("Aborting handshake on interrupt!");
                     abort = true;
+                    Thread.currentThread().interrupt();
                 }
             }
 
@@ -478,6 +480,7 @@ public class SubscriptionHelper extends ServiceSupport {
                                     component.getHttpClient().getWorkerPool().execute(() -> subscribe(topicName, consumer));
                                 } catch (InterruptedException e) {
                                     LOG.warn("Aborting subscribe on interrupt!", e);
+                                    Thread.currentThread().interrupt();
                                 }
                             }
                         } else if (error.matches(INVALID_REPLAY_ID_PATTERN)) {

@@ -65,7 +65,7 @@ class IntegrationRunTest extends KubeBaseTest {
     public void shouldAddTraits() throws Exception {
         IntegrationRun command = createCommand();
         command.filePaths = new String[] { "classpath:route.yaml" };
-        command.traits = new String[] { "logging.level=DEBUG", "container.imagePullPolicy=ALWAYS" };
+        command.traits = new String[] { "logging.level=DEBUG", "container.imagePullPolicy=Always" };
         command.output = "yaml";
         command.doCall();
 

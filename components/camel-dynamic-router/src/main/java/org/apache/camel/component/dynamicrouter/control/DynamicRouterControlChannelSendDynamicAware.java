@@ -30,7 +30,6 @@ import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.COMPONENT_SCHEME_CONTROL;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_PROPERTY;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.PROTOCOL_SUFFIX;
 
 /**
  * A {@link SendDynamicAwareSupport} implementation to process control channel messages for the Dynamic Router.
@@ -78,9 +77,6 @@ public class DynamicRouterControlChannelSendDynamicAware extends SendDynamicAwar
         Map<String, Object> properties = endpointProperties(exchange, uri);
         URI normalizedUri = URISupport.normalizeUriAsURI(uri);
         String controlAction = URISupport.extractRemainderPath(normalizedUri, false);
-        if (controlAction.contains(PROTOCOL_SUFFIX)) {
-            controlAction = controlAction.substring(controlAction.indexOf(PROTOCOL_SUFFIX) + 3);
-        }
         properties.put(CONTROL_ACTION_PROPERTY, controlAction);
         return new DynamicAwareEntry(uri, originalUri, properties, null);
     }

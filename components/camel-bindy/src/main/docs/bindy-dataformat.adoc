@@ -896,7 +896,7 @@ public static class Order {
 
 *case 3 : Field padding*
 
-Sometimes, the default padding defined for record cannnot be applied to
+Sometimes, the default padding defined for record cannot be applied to
 the field as we have a number format where we would like to pad with
 '0' instead of ' '. In this case, you can use in the model the attribute
 `paddingChar` on `@DataField` to set this value.
@@ -1140,7 +1140,7 @@ public class OrderFooter {
 It is common to integrate with systems that provide fixed-length records
 containing more information than needed for the target use case. It is
 useful in this situation to skip the declaration and parsing of those
-fields that we do not need. To accomodate this, Bindy will skip forward
+fields that we do not need. To accommodate this, Bindy will skip forward
 to the next mapped field within a record if the `pos` value of the next
 declared field is beyond the cursor position of the last parsed field.
 Using absolute `pos` locations for the fields of interest (instead of

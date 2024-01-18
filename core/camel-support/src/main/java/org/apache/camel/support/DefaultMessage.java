@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -242,24 +241,9 @@ public class DefaultMessage extends MessageSupport {
             return true;
         }
 
-        boolean matches = false;
-        // must use a set to store the keys to remove as we cannot walk using entrySet and remove at the same time
-        // due concurrent modification error
-        Set<String> toBeRemoved = null;
-        for (String key : headers.keySet()) {
-            if (PatternHelper.matchPattern(key, pattern)) {
-                if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
-                    continue;
-                }
-                matches = true;
-                if (toBeRemoved == null) {
-                    toBeRemoved = new HashSet<>();
-                }
-                toBeRemoved.add(key);
-            }
-        }
+        final Set<String> toBeRemoved = PatternHelper.matchingSet(headers, pattern, excludePatterns);
 
-        if (matches) {
+        if (toBeRemoved != null) {
             if (toBeRemoved.size() == headers.size()) {
                 // special optimization when all should be removed
                 headers.clear();
@@ -268,9 +252,11 @@ public class DefaultMessage extends MessageSupport {
                     headers.remove(key);
                 }
             }
+
+            return true;
         }
 
-        return matches;
+        return false;
     }
 
     @Override

@@ -18,15 +18,19 @@ package org.apache.camel.component.dynamicrouter.routing;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.Expression;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.service.ServiceHelper;
@@ -40,6 +44,7 @@ import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterCons
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FILTER_SERVICE_FACTORY_SUPPLIER;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PROCESSOR_FACTORY_SUPPLIER;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PRODUCER_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_SUPPLIER;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint.DynamicRouterEndpointFactory;
 
 /**
@@ -76,6 +81,11 @@ public class DynamicRouterComponent extends DefaultComponent {
     private final Supplier<DynamicRouterProducerFactory> producerFactorySupplier;
 
     /**
+     * Creates a {@link RecipientList} instance.
+     */
+    private final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier;
+
+    /**
      * Service that manages {@link PrioritizedFilter}s for the Dynamic Router channels.
      */
     private final DynamicRouterFilterService filterService;
@@ -87,6 +97,7 @@ public class DynamicRouterComponent extends DefaultComponent {
         this.endpointFactorySupplier = ENDPOINT_FACTORY_SUPPLIER;
         this.processorFactorySupplier = PROCESSOR_FACTORY_SUPPLIER;
         this.producerFactorySupplier = PRODUCER_FACTORY_SUPPLIER;
+        this.recipientListSupplier = RECIPIENT_LIST_SUPPLIER;
         this.filterService = FILTER_SERVICE_FACTORY_SUPPLIER.get().getInstance(FILTER_FACTORY_SUPPLIER);
         LOG.debug("Created Dynamic Router component");
     }
@@ -97,18 +108,21 @@ public class DynamicRouterComponent extends DefaultComponent {
      * @param endpointFactorySupplier      creates the {@link DynamicRouterEndpoint}
      * @param processorFactorySupplier     creates the {@link DynamicRouterProcessor}
      * @param producerFactorySupplier      creates the {@link DynamicRouterProducer}
+     * @param recipientListSupplier        creates the {@link RecipientList}
      * @param filterFactorySupplier        creates the {@link PrioritizedFilter}
-     * @param filterServiceFactorySupplier creates the {@link PrioritizedFilter}
+     * @param filterServiceFactorySupplier creates the {@link DynamicRouterFilterService}
      */
     public DynamicRouterComponent(
                                   final Supplier<DynamicRouterEndpointFactory> endpointFactorySupplier,
                                   final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
                                   final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
+                                  final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
                                   final Supplier<PrioritizedFilterFactory> filterFactorySupplier,
                                   final Supplier<DynamicRouterFilterServiceFactory> filterServiceFactorySupplier) {
         this.endpointFactorySupplier = endpointFactorySupplier;
         this.processorFactorySupplier = processorFactorySupplier;
         this.producerFactorySupplier = producerFactorySupplier;
+        this.recipientListSupplier = recipientListSupplier;
         this.filterService = filterServiceFactorySupplier.get().getInstance(filterFactorySupplier);
         LOG.debug("Created Dynamic Router component");
     }
@@ -131,8 +145,8 @@ public class DynamicRouterComponent extends DefaultComponent {
         configuration.setChannel(remaining);
         filterService.initializeChannelFilters(configuration.getChannel());
         DynamicRouterEndpoint endpoint = endpointFactorySupplier.get()
-                .getInstance(uri, this, configuration, processorFactorySupplier,
-                        producerFactorySupplier, filterService);
+                .getInstance(uri, this, configuration, processorFactorySupplier, producerFactorySupplier, recipientListSupplier,
+                        filterService);
         setProperties(endpoint, parameters);
         return endpoint;
     }

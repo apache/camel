@@ -199,7 +199,10 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         Future<Exchange> future = executorService.submit((Callable<Exchange>) this::receive);
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        } catch (ExecutionException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (TimeoutException e) {
             // ignore as we hit timeout then return null

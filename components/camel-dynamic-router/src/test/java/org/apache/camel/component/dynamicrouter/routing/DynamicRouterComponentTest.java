@@ -17,20 +17,25 @@
 package org.apache.camel.component.dynamicrouter.routing;
 
 import java.util.Collections;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter;
-import org.apache.camel.component.dynamicrouter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService.DynamicRouterFilterServiceFactory;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
+import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilterStatistics;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint.DynamicRouterEndpointFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.DynamicRouterProducerFactory;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,6 +79,8 @@ class DynamicRouterComponentTest {
 
     DynamicRouterProducerFactory producerFactory;
 
+    BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier;
+
     PrioritizedFilterFactory prioritizedFilterFactory;
 
     DynamicRouterFilterServiceFactory filterServiceFactory;
@@ -89,6 +96,7 @@ class DynamicRouterComponentTest {
                     final DynamicRouterConfiguration configuration,
                     final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
                     final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
+                    final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
                     final DynamicRouterFilterService filterService) {
                 return endpoint;
             }
@@ -97,7 +105,8 @@ class DynamicRouterComponentTest {
             @Override
             public DynamicRouterProcessor getInstance(
                     CamelContext camelContext, DynamicRouterConfiguration configuration,
-                    DynamicRouterFilterService filterService) {
+                    DynamicRouterFilterService filterService,
+                    final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier) {
                 return processor;
             }
         };
@@ -111,20 +120,20 @@ class DynamicRouterComponentTest {
         };
         prioritizedFilterFactory = new PrioritizedFilterFactory() {
             @Override
-            public PrioritizedFilter getInstance(String id, int priority, Predicate predicate, String endpoint) {
+            public PrioritizedFilter getInstance(
+                    String id, int priority, Predicate predicate, String endpoint, PrioritizedFilterStatistics statistics) {
                 return prioritizedFilter;
             }
         };
         filterServiceFactory = new DynamicRouterFilterServiceFactory() {
             @Override
-            public DynamicRouterFilterService getInstance() {
+            public DynamicRouterFilterService getInstance(Supplier<PrioritizedFilterFactory> filterFactory) {
                 return filterService;
             }
         };
         component = new DynamicRouterComponent(
-                () -> endpointFactory, () -> processorFactory,
-                () -> producerFactory, () -> prioritizedFilterFactory,
-                () -> filterServiceFactory);
+                () -> endpointFactory, () -> processorFactory, () -> producerFactory, recipientListSupplier,
+                () -> prioritizedFilterFactory, () -> filterServiceFactory);
     }
 
     @Test
@@ -152,6 +161,11 @@ class DynamicRouterComponentTest {
         component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor);
         assertEquals(processor, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
         assertThrows(IllegalArgumentException.class, () -> component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor));
+    }
 
+    @Test
+    void testDefaultConstruction() {
+        DynamicRouterComponent instance = new DynamicRouterComponent();
+        Assertions.assertNotNull(instance);
     }
 }

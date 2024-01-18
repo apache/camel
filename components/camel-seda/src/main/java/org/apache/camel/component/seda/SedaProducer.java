@@ -122,7 +122,7 @@ public class SedaProducer extends DefaultAsyncProducer {
                 try {
                     done = latch.await(timeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    // ignore
+                    Thread.currentThread().interrupt();
                 }
                 if (!done) {
                     exchange.setException(new ExchangeTimedOutException(exchange, timeout));
@@ -139,7 +139,7 @@ public class SedaProducer extends DefaultAsyncProducer {
                 try {
                     latch.await();
                 } catch (InterruptedException e) {
-                    // ignore
+                    Thread.currentThread().interrupt();
                 }
             }
         } else {
@@ -222,15 +222,15 @@ public class SedaProducer extends DefaultAsyncProducer {
                     LOG.trace("Discarding Exchange as queue is full: {}", target);
                 }
             } catch (InterruptedException e) {
-                // ignore
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
             }
         } else if (blockWhenFull && offerTimeout == 0) {
             try {
                 queue.put(target);
             } catch (InterruptedException e) {
-                // ignore
                 LOG.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
             }
         } else if (blockWhenFull && offerTimeout > 0) {
             try {
@@ -243,6 +243,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             } catch (InterruptedException e) {
                 // ignore
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
             }
         } else {
             queue.add(target);

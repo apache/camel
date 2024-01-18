@@ -42,22 +42,8 @@ jobs:
             (github.event.action == 'opened' ||
              github.event.action == 'reopened' ||
              github.event.action == 'synchronize')
-        uses: actions/labeler@v4.3.0
+        uses: actions/labeler@v5.0.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/workflows/generic-pr/label-config.yml
-          sync-labels: true
-      - name: Label changes scope (Camel 4)
-        if: github.ref == 'refs/heads/main'
-        uses: actions/labeler@v4.3.0
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: .github/workflows/generic-pr/label-config-main.yml
-          sync-labels: true
-      - name: Label changes scope (Camel 3)
-        if: github.ref == 'refs/heads/camel-3.x'
-        uses: actions/labeler@v4.3.0
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: .github/workflows/generic-pr/label-config-camel-3.yml
           sync-labels: true

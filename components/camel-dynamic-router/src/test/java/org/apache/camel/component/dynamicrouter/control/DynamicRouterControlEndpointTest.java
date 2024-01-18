@@ -18,22 +18,23 @@ package org.apache.camel.component.dynamicrouter.control;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
 import org.apache.camel.component.dynamicrouter.control.DynamicRouterControlProducer.DynamicRouterControlProducerFactory;
 import org.apache.camel.component.dynamicrouter.routing.DynamicRouterComponent;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterControlEndpointTest {
@@ -55,7 +56,7 @@ class DynamicRouterControlEndpointTest {
     DynamicRouterComponent routerComponent;
 
     @Mock
-    DynamicRouterFilterService filterService;
+    DynamicRouterControlService controlService;
 
     @Mock
     DynamicRouterControlConfiguration configuration;
@@ -72,21 +73,23 @@ class DynamicRouterControlEndpointTest {
 
     DynamicRouterControlProducerFactory producerFactory;
 
+    DynamicRouterControlService.DynamicRouterControlServiceFactory controlServiceFactory;
+
     @BeforeEach
     void setup() {
         context = contextExtension.getContext();
         context.addComponent(COMPONENT_SCHEME_ROUTING, routerComponent);
-        endpoint = new DynamicRouterControlEndpoint(
-                CONTROL_ENDPOINT_URI, component, "subscribe",
-                configuration, () -> producerFactory);
         producerFactory = new DynamicRouterControlProducerFactory() {
             @Override
             public DynamicRouterControlProducer getInstance(
-                    DynamicRouterControlEndpoint endpoint, DynamicRouterFilterService filterService,
+                    DynamicRouterControlEndpoint endpoint, DynamicRouterControlService dynamicRouterControlService,
                     DynamicRouterControlConfiguration configuration) {
                 return producer;
             }
         };
+        endpoint = new DynamicRouterControlEndpoint(
+                CONTROL_ENDPOINT_URI, component, CONTROL_ACTION_SUBSCRIBE, configuration, () -> producerFactory,
+                () -> controlServiceFactory);
         endpoint.setCamelContext(context);
     }
 
@@ -96,16 +99,16 @@ class DynamicRouterControlEndpointTest {
     }
 
     @Test
-    void createProducer() {
-        DynamicRouterControlProducer actualProducer = (DynamicRouterControlProducer) endpoint.createProducer();
-        assertEquals(producer, actualProducer);
+    void testConstruction() {
+        DynamicRouterControlEndpoint instance = new DynamicRouterControlEndpoint(
+                CONTROL_ENDPOINT_URI, component, CONTROL_ACTION_SUBSCRIBE, configuration);
+        Assertions.assertNotNull(instance);
     }
 
     @Test
-    void testDoStart() throws Exception {
-        Mockito.when(routerComponent.getFilterService()).thenReturn(filterService);
-        endpoint.doStart();
-        Mockito.verify(routerComponent, Mockito.times(1)).getFilterService();
+    void createProducer() {
+        DynamicRouterControlProducer actualProducer = (DynamicRouterControlProducer) endpoint.createProducer();
+        assertEquals(producer, actualProducer);
     }
 
     @Test

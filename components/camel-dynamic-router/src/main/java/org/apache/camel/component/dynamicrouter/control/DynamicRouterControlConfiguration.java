@@ -22,6 +22,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
+/**
+ * Configuration for the {@link DynamicRouterControlEndpoint}.
+ */
 @UriParams
 public class DynamicRouterControlConfiguration {
 
@@ -87,7 +90,7 @@ public class DynamicRouterControlConfiguration {
     }
 
     /**
-     * The control action (subscribe or unsubscribe).
+     * The control action (subscribe or unsubscribe) that returns the default value of "subscribe" if null.
      *
      * @return the control action
      */

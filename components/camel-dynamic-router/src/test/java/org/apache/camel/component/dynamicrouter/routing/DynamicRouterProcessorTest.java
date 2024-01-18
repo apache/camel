@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.dynamicrouter.routing;
 
+import java.util.function.BiFunction;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.component.dynamicrouter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterService;
+import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +40,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_FIRST_MATCH;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_HEADER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,10 +60,16 @@ class DynamicRouterProcessorTest {
     DynamicRouterProcessor processor;
 
     @Mock
+    DynamicRouterConfiguration configuration;
+
+    @Mock
     RecipientList recipientList;
 
     @Mock
     DynamicRouterFilterService filterService;
+
+    @Mock
+    BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier;
 
     @Mock
     Exchange exchange;
@@ -107,5 +120,13 @@ class DynamicRouterProcessorTest {
                 .thenReturn(MOCK_ENDPOINT);
         processor.process(exchange, asyncCallback);
         verify(recipientList, new Times(1)).process(exchange, asyncCallback);
+    }
+
+    @Test
+    void testGetInstance() {
+        when(recipientListSupplier.apply(eq(context), any(Expression.class))).thenReturn(recipientList);
+        DynamicRouterProcessor instance = new DynamicRouterProcessorFactory()
+                .getInstance(context, configuration, filterService, recipientListSupplier);
+        Assertions.assertNotNull(instance);
     }
 }

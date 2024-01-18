@@ -50,5 +50,6 @@ public class AzureStorageBlobCloudEventDataTypeTransformer extends Transformer {
 
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(BlobConstants.BLOB_NAME, String.class));
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
+        headers.put(CloudEvents.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvents.APPLICATION_OCTET_STREAM_MIME_TYPE);
     }
 }

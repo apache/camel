@@ -217,6 +217,7 @@ public class KubernetesLeadershipController implements Service {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
             LOG.warn("Thread interrupted", e);
+            Thread.currentThread().interrupt();
         }
 
         LOG.info("{} Current pod is becoming the new leader now...", logPrefix);
@@ -238,6 +239,7 @@ public class KubernetesLeadershipController implements Service {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
             LOG.warn("Thread interrupted", e);
+            Thread.currentThread().interrupt();
         }
 
         LOG.info("{} Current pod is losing leadership now...", logPrefix);

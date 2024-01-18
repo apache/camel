@@ -385,7 +385,8 @@ public final class FileUtil {
             try {
                 Thread.sleep(RETRY_SLEEP_MILLIS);
             } catch (InterruptedException ex) {
-                // Ignore Exception
+                LOG.info("Interrupted while trying to delete file {}", f, e);
+                Thread.currentThread().interrupt();
             }
             try {
                 Files.delete(f.toPath());
@@ -424,7 +425,8 @@ public final class FileUtil {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    // ignore
+                    LOG.info("Interrupted while trying to rename file from {} to {}", from, to, e);
+                    Thread.currentThread().interrupt();
                 }
             }
             count++;
@@ -511,7 +513,8 @@ public final class FileUtil {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ie) {
-                        // ignore
+                        LOG.info("Interrupted while trying to delete file {}", file, e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             }

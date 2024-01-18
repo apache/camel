@@ -19,11 +19,11 @@ import org.apache.camel.spi.TypeConverterRegistry;
  */
 @SuppressWarnings("unchecked")
 @DeferredContextBinding
-public final class DynamicRouterControlProducerBulkConverterLoader implements TypeConverterLoader, BulkTypeConverters, CamelContextAware {
+public final class DynamicRouterControlServiceBulkConverterLoader implements TypeConverterLoader, BulkTypeConverters, CamelContextAware {
 
     private CamelContext camelContext;
 
-    public DynamicRouterControlProducerBulkConverterLoader() {
+    public DynamicRouterControlServiceBulkConverterLoader() {
     }
 
     @Override
@@ -66,7 +66,7 @@ public final class DynamicRouterControlProducerBulkConverterLoader implements Ty
     private Object doConvertTo(Class<?> from, Class<?> to, Exchange exchange, Object value) throws Exception {
         if (to == org.apache.camel.Predicate.class) {
             if (value instanceof java.lang.String) {
-                return org.apache.camel.component.dynamicrouter.control.DynamicRouterControlProducer.obtainPredicateFromBeanName((java.lang.String) value, camelContext);
+                return org.apache.camel.component.dynamicrouter.control.DynamicRouterControlService.obtainPredicateFromBeanName((java.lang.String) value, camelContext);
             }
         }
         return null;

@@ -48,17 +48,19 @@ public class Dhis2ResourceTables {
         while (notification == null || !(Boolean) notification.get("completed")) {
             try {
                 Thread.sleep(Objects.requireNonNullElse(interval, 30000));
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            Iterable<Map> notifications = dhis2Client.get("system/tasks/ANALYTICS_TABLE/{taskId}",
-                    taskId).withoutPaging().transfer().returnAs(Map.class);
-            if (notifications.iterator().hasNext()) {
-                notification = notifications.iterator().next();
-                if (notification.get("level").equals("ERROR")) {
-                    throw new RuntimeException("Analytics failed => " + notification);
+
+                Iterable<Map> notifications = dhis2Client.get("system/tasks/ANALYTICS_TABLE/{taskId}",
+                        taskId).withoutPaging().transfer().returnAs(Map.class);
+                if (notifications.iterator().hasNext()) {
+                    notification = notifications.iterator().next();
+                    if (notification.get("level").equals("ERROR")) {
+                        throw new RuntimeException("Analytics failed => " + notification);
+                    }
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
+
         }
     }
 

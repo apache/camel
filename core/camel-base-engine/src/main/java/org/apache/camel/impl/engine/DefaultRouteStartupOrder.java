@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Consumer;
@@ -57,7 +57,7 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
     @Override
     public List<Service> getServices() {
         List<Service> services = routeService.getRoute().getServices();
-        return new ArrayList<>(services);
+        return Collections.unmodifiableList(services);
     }
 
     public RouteService getRouteService() {
