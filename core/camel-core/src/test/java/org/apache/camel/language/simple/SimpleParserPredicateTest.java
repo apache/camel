@@ -318,8 +318,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
                 context,
                 expression,
                 true,
-                new HashMap<>()
-        );
+                new HashMap<>());
         Predicate predicate = simplePredicateParser.parsePredicate();
         assertNotNull(predicate);
     }
