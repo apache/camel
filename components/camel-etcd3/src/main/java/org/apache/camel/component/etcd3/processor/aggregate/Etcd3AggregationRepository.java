@@ -444,6 +444,9 @@ public class Etcd3AggregationRepository extends ServiceSupport
                     LOG.trace(
                             "Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
                             exchange.getExchangeId(), key);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeCamelException(e.getMessage(), e);
                 } catch (Exception exception) {
                     throw new RuntimeCamelException(exception.getMessage(), exception);
                 }
@@ -493,7 +496,11 @@ public class Etcd3AggregationRepository extends ServiceSupport
             Set<String> keys = new TreeSet<>();
             getResponse.getKvs().forEach(kv -> keys.add(new String(kv.getKey().getBytes())));
             scanned = Collections.unmodifiableSet(keys);
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
+        } catch (ExecutionException e) {
             LOG.error(e.getMessage(), e);
             throw new RuntimeCamelException(e.getMessage(), e);
         }
