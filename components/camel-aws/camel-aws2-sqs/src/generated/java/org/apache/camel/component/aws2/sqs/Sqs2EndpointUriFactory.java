@@ -21,7 +21,7 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(65);
+        Set<String> props = new HashSet<>(67);
         props.add("accessKey");
         props.add("amazonAWSHost");
         props.add("amazonSQSClient");
@@ -78,6 +78,7 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("secretKey");
         props.add("sendEmptyMessageWhenIdle");
         props.add("serverSideEncryptionEnabled");
+        props.add("sessionToken");
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("trustAllCertificates");
@@ -85,13 +86,15 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("useDefaultCredentialsProvider");
         props.add("useFixedDelay");
         props.add("useProfileCredentialsProvider");
+        props.add("useSessionCredentials");
         props.add("visibilityTimeout");
         props.add("waitTimeSeconds");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
+        Set<String> secretProps = new HashSet<>(4);
         secretProps.add("accessKey");
         secretProps.add("queueOwnerAWSAccountId");
         secretProps.add("secretKey");
+        secretProps.add("sessionToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);
         prefixes.add("scheduler.");

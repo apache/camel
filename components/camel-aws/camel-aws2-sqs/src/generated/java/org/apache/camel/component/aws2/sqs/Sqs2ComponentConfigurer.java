@@ -107,6 +107,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -115,6 +117,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": getOrCreateConfiguration(target).setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": getOrCreateConfiguration(target).setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": getOrCreateConfiguration(target).setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
@@ -210,6 +214,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": return java.lang.String.class;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": return boolean.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -218,6 +224,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         case "visibilitytimeout":
         case "visibilityTimeout": return java.lang.Integer.class;
         case "waittimeseconds":
@@ -309,6 +317,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
+        case "sessiontoken":
+        case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "uriendpointoverride":
@@ -317,6 +327,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return getOrCreateConfiguration(target).isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return getOrCreateConfiguration(target).isUseSessionCredentials();
         case "visibilitytimeout":
         case "visibilityTimeout": return getOrCreateConfiguration(target).getVisibilityTimeout();
         case "waittimeseconds":

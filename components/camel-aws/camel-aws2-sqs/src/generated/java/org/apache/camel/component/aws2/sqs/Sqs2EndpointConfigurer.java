@@ -124,6 +124,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": target.getConfiguration().setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": target.getConfiguration().setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -138,6 +140,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": target.getConfiguration().setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": target.getConfiguration().setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
@@ -257,6 +261,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": return boolean.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
@@ -271,6 +277,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "useFixedDelay": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         case "visibilitytimeout":
         case "visibilityTimeout": return java.lang.Integer.class;
         case "waittimeseconds":
@@ -386,6 +394,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": return target.getConfiguration().isServerSideEncryptionEnabled();
+        case "sessiontoken":
+        case "sessionToken": return target.getConfiguration().getSessionToken();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "timeunit":
@@ -400,6 +410,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "useFixedDelay": return target.isUseFixedDelay();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return target.getConfiguration().isUseSessionCredentials();
         case "visibilitytimeout":
         case "visibilityTimeout": return target.getConfiguration().getVisibilityTimeout();
         case "waittimeseconds":

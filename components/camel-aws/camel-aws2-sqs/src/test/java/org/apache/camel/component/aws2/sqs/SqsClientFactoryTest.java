@@ -20,6 +20,7 @@ import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.apache.camel.component.aws2.sqs.client.Sqs2InternalClient;
 import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientIAMOptimized;
 import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientIAMProfileOptimizedImpl;
+import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -56,5 +57,13 @@ public class SqsClientFactoryTest {
         sqsConfiguration.setUseProfileCredentialsProvider(true);
         Sqs2InternalClient awsssqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
         assertTrue(awsssqsClient instanceof Sqs2ClientIAMProfileOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenSqsClient() {
+        Sqs2Configuration sqsConfiguration = new Sqs2Configuration();
+        sqsConfiguration.setUseSessionCredentials(true);
+        Sqs2InternalClient awsssqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
+        assertTrue(awsssqsClient instanceof Sqs2ClientSessionTokenImpl);
     }
 }
