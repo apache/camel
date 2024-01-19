@@ -134,7 +134,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 readFromStreamRawMode();
             }
         } catch (InterruptedException e) {
-            // we are closing down so ignore
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             getExceptionHandler().handleException(e);
         }
