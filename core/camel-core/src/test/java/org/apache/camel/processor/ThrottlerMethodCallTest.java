@@ -70,7 +70,7 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
     }
 
     @Test
-    public void testConfigurationWithMethodCallExpression()  {
+    public void testConfigurationWithMethodCallExpression() {
         for (int i = 0; i < messageCount; i++) {
             executor.execute(() -> template.sendBody("direct:expressionMethod", "<message>payload</message>"));
         }
