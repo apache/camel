@@ -369,21 +369,21 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     public boolean isClientAuthenticationRequired() {
-        String clientAuth = clientAuthentication;
+        CertificateAuthenticationMode clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
-            clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
+            clientAuth = CertificateAuthenticationMode.valueOf(sslContextParameters.getServerParameters().getClientAuthentication());
         }
 
-        return clientAuth != null && ClientAuthentication.valueOf(clientAuth) == ClientAuthentication.REQUIRE;
+        return clientAuth != null && ClientAuthentication.valueOf(String.valueOf(clientAuth)) == ClientAuthentication.REQUIRE;
     }
 
     public boolean isClientAuthenticationWanted() {
-        String clientAuth = clientAuthentication;
+        CertificateAuthenticationMode clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
-            clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
+            clientAuth = CertificateAuthenticationMode.valueOf(sslContextParameters.getServerParameters().getClientAuthentication());
         }
 
-        return clientAuth != null && ClientAuthentication.valueOf(clientAuth) == ClientAuthentication.WANT;
+        return clientAuth != null && ClientAuthentication.valueOf(String.valueOf(clientAuth)) == ClientAuthentication.WANT;
     }
 
     /**
