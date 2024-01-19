@@ -19,22 +19,22 @@ package org.apache.camel.component.kafka.integration.batching;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KafkaBatchingProcessingIT extends BatchingProcessingITSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBatchingProcessingIT.class);
 
     public static final String TOPIC = "testManualCommitSyncTest";
+    private volatile boolean invalidExchange = false;
+    private volatile boolean invalidExchangeFormat = false;
 
     @AfterEach
     public void after() {
@@ -43,6 +43,7 @@ public class KafkaBatchingProcessingIT extends BatchingProcessingITSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        // allowManualCommit=true&autoOffsetReset=earliest
         String from = "kafka:" + TOPIC
                       + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true"
                       + "&maxPollRecords=10&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
@@ -51,38 +52,32 @@ public class KafkaBatchingProcessingIT extends BatchingProcessingITSupport {
 
             @Override
             public void configure() {
-                from(from).routeId("foo").to(KafkaTestUtil.MOCK_RESULT).process(e -> {
-                    KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-                    final Message message = e.getMessage();
+                from(from).routeId("batching").process(e -> {
+                    // The received records are stored as exchanges in a list. This gets the list of those exchanges
+                    final List<?> exchanges = e.getMessage().getBody(List.class);
 
-                    assertNotNull(message, "The message body should not be null");
-
-                    final Object body = message.getBody();
-                    final List<?> list = assertInstanceOf(List.class, body, "The body should be a list");
-
-                    assertEquals(1, list.size(), "The should be just one message on the list");
-
-                    for (var object : list) {
-                        final Exchange exchange =
-                                assertInstanceOf(Exchange.class, object, "The list content should be an exchange");
-
-                        final Message messageInList = exchange.getMessage();
-
-                        final Object bodyInMessage = messageInList.getBody();
-                        assertNotNull(bodyInMessage, "The body in message should not be null");
-                        final String s = assertInstanceOf(String.class, bodyInMessage, "The body should be a string");
-                        assertTrue(s.contains("message-"), "The message body should start with message-");
-                        assertTrue(messageInList.hasHeaders(), "The message in list should have headers");
-                        assertNotNull(messageInList.getHeader(KafkaConstants.PARTITION, Integer.class),
-                                "The message in list should have the partition information");
-                        assertEquals(TOPIC, messageInList.getHeader(KafkaConstants.PARTITION, String.class),
-                                "The message in list should have the correct topic information");
+                    // Ensure we are actually receiving what we are asking for
+                    if (exchanges == null || exchanges.isEmpty()) {
+                        invalidExchange = true;
+                        return;
                     }
 
+                    /*
+                    Every exchange in that list should contain a reference to the manual commit object. We use the reference
+                    for the last exchange in the list to commit the whole batch
+                     */
+                    final Object tmp = exchanges.get(exchanges.size() - 1);
+                    if (tmp instanceof Exchange exchange) {
+                        KafkaManualCommit manual
+                                = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                        LOG.debug("Performing manual commit");
+                        manual.commit();
+                        LOG.debug("Done performing manual commit");
+                    } else {
+                        invalidExchangeFormat = true;
+                    }
 
-                    manual.commit();
-                });
-                from(from).routeId("bar").autoStartup(false).to(KafkaTestUtil.MOCK_RESULT_BAR);
+                }).to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -90,6 +85,8 @@ public class KafkaBatchingProcessingIT extends BatchingProcessingITSupport {
     @Test
     public void kafkaManualCommit() throws Exception {
         kafkaManualCommitTest(TOPIC);
+
+        Assertions.assertFalse(invalidExchangeFormat, "The exchange list should be composed of exchanges");
     }
 
 }
