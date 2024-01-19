@@ -343,7 +343,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
      * one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back to checking the
      * sslContextParameters.getServerParameters().getClientAuthentication() value.
      */
-    public String getClientAuthentication() {
+    public CertificateAuthenticationMode getClientAuthentication() {
         return clientAuthentication;
     }
 
@@ -352,7 +352,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
      * WANT, REQUIRE. If this value is not specified, then it falls back to checking the
      * sslContextParameters.getServerParameters().getClientAuthentication() value.
      */
-    public void setClientAuthentication(String clientAuthentication) {
+    public void setClientAuthentication(CertificateAuthenticationMode clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
     }
 
@@ -419,7 +419,6 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) throws IOException {
 
         DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder(Configuration.getStandard());
-        CertificateConfigurationHelper certificateConfigurationHelper = new CertificateConfigurationHelper();
         if (client) {
             if (advancedCertificateVerifier == null && sslContextParameters == null && advancedPskStore == null) {
                 throw new IllegalStateException(
