@@ -476,11 +476,12 @@ public class ModelParser extends BaseParser {
     }
     protected FromDefinition doParseFromDefinition() throws IOException, XmlPullParserException {
         return doParse(new FromDefinition(), (def, key, val) -> {
-            if ("uri".equals(key)) {
-                def.setUri(val);
-                return true;
+            switch (key) {
+                case "uri": def.setUri(val); break;
+                case "variable": def.setVariable(val); break;
+                default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }
-            return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
+            return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected GlobalOptionDefinition doParseGlobalOptionDefinition() throws IOException, XmlPullParserException {

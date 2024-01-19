@@ -390,6 +390,24 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
+     * Creates an input to the route, and use a variable to store a copy of the incoming message body (only body, not
+     * headers). This is handy for easy access to the incoming message body via variables.
+     *
+     * @param  uri      the from uri
+     * @param  variable the name of the variable
+     * @return          the builder
+     */
+    public RouteDefinition fromV(String uri, String variable) {
+        getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
+        RouteDefinition answer = getRouteCollection().fromV(uri, variable);
+        configureRoute(answer);
+        return answer;
+    }
+
+    /**
      * Creates a new route from the given endpoint
      *
      * @param  endpoint the from endpoint
@@ -405,12 +423,36 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return answer;
     }
 
-    public RouteDefinition from(EndpointConsumerBuilder endpointDefinition) {
+    /**
+     * Creates a new route from the given endpoint
+     *
+     * @param  endpoint the from endpoint
+     * @return          the builder
+     */
+    public RouteDefinition from(EndpointConsumerBuilder endpoint) {
         getRouteCollection().setCamelContext(getContext());
         if (resource != null) {
             getRouteCollection().setResource(resource);
         }
-        RouteDefinition answer = getRouteCollection().from(endpointDefinition);
+        RouteDefinition answer = getRouteCollection().from(endpoint);
+        configureRoute(answer);
+        return answer;
+    }
+
+    /**
+     * Creates an input to the route, and use a variable to store a copy of the incoming message body (only body, not
+     * headers). This is handy for easy access to the incoming message body via variables.
+     *
+     * @param  endpoint the from endpoint
+     * @param  variable the name of the variable
+     * @return          the builder
+     */
+    public RouteDefinition fromV(EndpointConsumerBuilder endpoint, String variable) {
+        getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
+        RouteDefinition answer = getRouteCollection().fromV(endpoint, variable);
         configureRoute(answer);
         return answer;
     }

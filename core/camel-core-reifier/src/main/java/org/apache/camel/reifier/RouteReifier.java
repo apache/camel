@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConsumerResolver;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -41,6 +42,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.RoutePipeline;
 import org.apache.camel.reifier.rest.RestBindingReifier;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.InternalProcessor;
@@ -100,11 +102,19 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // create route
         String id = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         String desc = definition.getDescriptionText();
+
         Route route = PluginHelper.getRouteFactory(camelContext).createRoute(camelContext, definition, id,
                 desc, endpoint, definition.getResource());
 
         // configure error handler
         route.setErrorHandlerFactory(definition.getErrorHandlerFactory());
+
+        // configure variable
+        String variable = definition.getInput().getVariable();
+        if (variable != null) {
+            // when using variable we need to turn on original message
+            route.setAllowUseOriginalMessage(true);
+        }
 
         // configure tracing
         if (definition.getTrace() != null) {
@@ -318,6 +328,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             camelContext.setUseDataType(true);
         }
 
+        // wrap with variable
+        if (variable != null) {
+            internal.addAdvice(new VariableAdvice(variable));
+        }
+
         // and create the route that wraps all of this
         route.setProcessor(internal);
         route.getProperties().putAll(routeProperties);
@@ -403,6 +418,35 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             }
         }
         return routeProperties;
+    }
+
+    /**
+     * Advice for copying the message body into a variable
+     */
+    private static class VariableAdvice implements CamelInternalProcessorAdvice<Object> {
+
+        private final String name;
+
+        public VariableAdvice(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public Object before(Exchange exchange) throws Exception {
+            Object body = exchange.getMessage().getBody();
+            exchange.setVariable(name, body);
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object data) throws Exception {
+            // noop
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
+        }
     }
 
 }
