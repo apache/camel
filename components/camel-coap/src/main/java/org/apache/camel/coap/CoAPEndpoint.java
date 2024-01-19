@@ -494,8 +494,6 @@ public class CoAPEndpoint extends DefaultEndpoint {
             // Add all certificates from the truststore
             X509Certificate[] certs = getTrustedCerts();
             if (certs.length > 0) {
-                //                certificateConfigurationHelper.addConfigurationDefaultsForTrusts(certs);
-                //                builder.setCertificateHelper(certificateConfigurationHelper);
                 NewAdvancedCertificateVerifier trust = StaticNewAdvancedCertificateVerifier
                         .builder()
                         .setTrustedCertificates(certs)
