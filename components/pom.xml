@@ -126,7 +126,6 @@
         <module>camel-elytron</module>
         <module>camel-etcd3</module>
         <module>camel-exec</module>
-        <module>camel-facebook</module>
         <module>camel-fastjson</module>
         <module>camel-fhir</module>
         <module>camel-file-watch</module>

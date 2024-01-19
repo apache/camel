@@ -130,6 +130,10 @@ Replaced the previous JSONata library with a new one that offers complete compat
 
 The JdbcAggregationRepository now provides a deserializationFilter parameter. The default value for it is allowing all java packages and subpackages and all org.apache.camel packages and subpackages. If you plan to use particular classes and you want to expand the filter, you should change the value according to your needs. More details in CAMEL-20303.
 
+=== camel-facebook
+
+The component was removed without deprecation. The library supporting this component has been unmaintained for a long time. We found no indications that the library itself no the component are working with modern Facebook, along with the absense of community interest.
+
 == Camel Spring Boot
 
 === Auto Configuration
