@@ -740,7 +740,11 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     public boolean getAutoCommitEnable() {
-        return autoCommitEnable;
+        if (!batching) {
+            return autoCommitEnable;
+        }
+
+        return false;
     }
 
     /**
