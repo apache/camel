@@ -134,6 +134,10 @@ The JdbcAggregationRepository now provides a deserializationFilter parameter. Th
 
 The component was removed without deprecation. The library supporting this component has been unmaintained for a long time. We found no indications that the library itself nor the component are working with modern Facebook, along with the absence of community interest, which lead us to decide to remove this component without deprecation.
 
+=== camel-kafka
+
+The component now has support for batch processing.
+
 == Camel Spring Boot
 
 === Auto Configuration
