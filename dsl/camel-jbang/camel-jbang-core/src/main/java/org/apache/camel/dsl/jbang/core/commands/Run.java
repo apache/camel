@@ -1294,6 +1294,11 @@ public class Run extends CamelCommand {
     }
 
     private boolean skipFile(String name) {
+        if (name.startsWith("github:") || name.startsWith("https://github.com/")
+                || name.startsWith("https://gist.github.com/")) {
+            return false;
+        }
+
         // flatten file
         name = FileUtil.stripPath(name);
 
