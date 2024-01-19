@@ -21,18 +21,13 @@ import org.apache.camel.model.ModelCamelContext
 import org.apache.camel.model.RouteDefinition
 import org.apache.camel.model.app.RegistryBeanDefinition
 import org.apache.camel.model.rest.RestConfigurationDefinition
+import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.support.PropertyBindingSupport
 
 @CamelDslMarker
 class RootDsl(
     val ctx: ModelCamelContext
 ) {
-
-    private val routeBuilder = RouteBuilderImpl(ctx)
-
-    internal fun build() {
-        ctx.addRoutes(routeBuilder)
-    }
 
     fun route(i: RouteDsl.() -> Unit) {
         val def = RouteDefinition()
@@ -62,15 +57,21 @@ class RootDsl(
     }
 
     fun restConfiguration(i: RestConfigurationDefinition.() -> Unit) {
-        routeBuilder.restConfiguration().apply(i)
+        val def = RestConfigurationDefinition()
+        def.apply(i)
+        def.asRestConfiguration(ctx, ctx.restConfiguration)
+        if (def.apiContextPath != null) {
+            val apiDef = RestDefinition.asRouteApiDefinition(ctx, ctx.restConfiguration)
+            ctx.addRouteDefinition(apiDef)
+        }
     }
 
     fun rest(rest: String? = null, i: RestDsl.() -> Unit) {
-        val def = if (rest == null) {
-            routeBuilder.rest()
-        } else {
-            routeBuilder.rest(rest)
-        }
-        RestDsl(def).apply(i)
+        val restDef = RestDefinition()
+        restDef.path = rest
+        RestDsl(restDef).apply(i)
+        ctx.restDefinitions.add(restDef)
+        val routeDef = restDef.asRouteDefinition(ctx)
+        ctx.addRouteDefinitions(routeDef)
     }
 }

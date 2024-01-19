@@ -356,6 +356,18 @@ public class SalesforceUriDsl(
     it.property("compositeMethod", compositeMethod)
   }
 
+  public fun eventName(eventName: String) {
+    it.property("eventName", eventName)
+  }
+
+  public fun eventSchemaFormat(eventSchemaFormat: String) {
+    it.property("eventSchemaFormat", eventSchemaFormat)
+  }
+
+  public fun eventSchemaId(eventSchemaId: String) {
+    it.property("eventSchemaId", eventSchemaId)
+  }
+
   public fun rawHttpHeaders(rawHttpHeaders: String) {
     it.property("rawHttpHeaders", rawHttpHeaders)
   }

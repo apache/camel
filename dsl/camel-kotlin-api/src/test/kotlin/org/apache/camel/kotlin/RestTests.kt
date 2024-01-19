@@ -21,8 +21,10 @@ import org.apache.camel.kotlin.components.direct
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import reactor.netty.http.client.HttpClient
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class RestTests {
@@ -40,33 +42,42 @@ class RestTests {
     }
 
     @Test
-    fun testRest() {
-        val httpClient = HttpClient.create()
-
-        val caught = AtomicBoolean(false)
+    fun testRests() {
+        val someReached = AtomicBoolean(false)
 
         camel(ctx) {
             restConfiguration {
+                host("localhost")
+                port("8080")
                 component("netty-http")
-                host("0.0.0.0")
-                port(8080)
+                contextPath("/")
+                apiContextPath("/openapi")
             }
-            rest {
-                get {
-                    to { direct { name("get") } }
+
+            rest("/q") {
+                get("/some") {
+                    to {
+                        direct { name("some") }
+                    }
                 }
             }
+
             route {
-                from { direct { name("get") } }
+                from { direct { name("some") } }
                 steps {
-                    process { caught.set(true) }
+                    process { someReached.set(true) }
                 }
             }
         }
+
         ctx.start()
-
-        httpClient.get().uri("localhost:8080").response().block()
-
-        assertTrue(caught.get())
+        val client = HttpClient.create()
+        assertDoesNotThrow {
+            client.get().uri("http://localhost:8080/q/some").response().block()
+        }
+        assertTrue(someReached.get())
+        val openapi = client.get().uri("http://localhost:8080/openapi").responseContent()
+            .aggregate().asString().block()
+        assertNotNull(openapi)
     }
 }

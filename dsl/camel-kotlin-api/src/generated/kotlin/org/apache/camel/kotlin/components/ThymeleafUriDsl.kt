@@ -85,6 +85,18 @@ public class ThymeleafUriDsl(
     it.property("contentCache", contentCache.toString())
   }
 
+  public fun templateMode(templateMode: String) {
+    it.property("templateMode", templateMode)
+  }
+
+  public fun lazyStartProducer(lazyStartProducer: String) {
+    it.property("lazyStartProducer", lazyStartProducer)
+  }
+
+  public fun lazyStartProducer(lazyStartProducer: Boolean) {
+    it.property("lazyStartProducer", lazyStartProducer.toString())
+  }
+
   public fun encoding(encoding: String) {
     it.property("encoding", encoding)
   }
@@ -107,17 +119,5 @@ public class ThymeleafUriDsl(
 
   public fun suffix(suffix: String) {
     it.property("suffix", suffix)
-  }
-
-  public fun templateMode(templateMode: String) {
-    it.property("templateMode", templateMode)
-  }
-
-  public fun lazyStartProducer(lazyStartProducer: String) {
-    it.property("lazyStartProducer", lazyStartProducer)
-  }
-
-  public fun lazyStartProducer(lazyStartProducer: Boolean) {
-    it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 }

@@ -94,6 +94,16 @@
             <artifactId>camel-csv</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rest</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-openapi-java</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>io.projectreactor.netty</groupId>

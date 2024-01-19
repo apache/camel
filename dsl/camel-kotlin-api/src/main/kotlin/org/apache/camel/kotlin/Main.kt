@@ -22,5 +22,5 @@ import org.apache.camel.model.ModelCamelContext
 annotation class CamelDslMarker
 
 fun camel(camelContext: ModelCamelContext, i: RootDsl.() -> Unit) {
-    RootDsl(camelContext).apply(i).build()
+    RootDsl(camelContext).apply(i)
 }

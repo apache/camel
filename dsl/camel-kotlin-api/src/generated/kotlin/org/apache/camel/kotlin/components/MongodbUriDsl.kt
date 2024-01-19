@@ -109,6 +109,10 @@ public class MongodbUriDsl(
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  public fun connectionUriString(connectionUriString: String) {
+    it.property("connectionUriString", connectionUriString)
+  }
+
   public fun appName(appName: String) {
     it.property("appName", appName)
   }

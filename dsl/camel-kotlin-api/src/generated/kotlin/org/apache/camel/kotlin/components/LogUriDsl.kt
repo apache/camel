@@ -273,6 +273,14 @@ public class LogUriDsl(
     it.property("showStreams", showStreams.toString())
   }
 
+  public fun showVariables(showVariables: String) {
+    it.property("showVariables", showVariables)
+  }
+
+  public fun showVariables(showVariables: Boolean) {
+    it.property("showVariables", showVariables.toString())
+  }
+
   public fun skipBodyLineSeparator(skipBodyLineSeparator: String) {
     it.property("skipBodyLineSeparator", skipBodyLineSeparator)
   }
