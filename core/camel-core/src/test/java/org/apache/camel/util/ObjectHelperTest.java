@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -44,6 +45,7 @@ import org.apache.camel.component.bean.MyOtherFooBean.AbstractClassSize;
 import org.apache.camel.component.bean.MyOtherFooBean.Clazz;
 import org.apache.camel.component.bean.MyOtherFooBean.InterfaceSize;
 import org.apache.camel.component.bean.MyStaticClass;
+import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultMessage;
@@ -121,6 +123,54 @@ public class ObjectHelperTest {
             assertFalse(ObjectHelper.typeCoerceContains(tc, array, "xyz", true));
             assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "xyz", true));
             assertFalse(ObjectHelper.typeCoerceContains(tc, "foo", "xyz", true));
+        }
+    }
+
+    @Test
+    void testContainsStreamCaching() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            TypeConverter tc = context.getTypeConverter();
+
+            File file = new File("src/test/resources/org/apache/camel/util/quote.txt");
+            FileInputStreamCache data = new FileInputStreamCache(file);
+
+            assertTrue(ObjectHelper.typeCoerceContains(tc, data, "foo", true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, data, "FOO", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, data, "FOO", false));
+
+            assertTrue(ObjectHelper.typeCoerceContains(tc, data, "foo", true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, data, "FOO", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, data, "FOO", false));
+
+            assertTrue(ObjectHelper.typeCoerceContains(tc, "foo", "foo", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, data, "xyz", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, data, "xyz", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, "foo", "xyz", true));
+        }
+    }
+
+    @Test
+    void testEqualsStreamCaching() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            TypeConverter tc = context.getTypeConverter();
+
+            File file = new File("src/test/resources/org/apache/camel/util/foo.txt");
+            FileInputStreamCache data = new FileInputStreamCache(file);
+
+            assertTrue(ObjectHelper.typeCoerceEquals(tc, data, "foo", true));
+            assertTrue(ObjectHelper.typeCoerceEquals(tc, data, "FOO", true));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, data, "FOO", false));
+
+            assertTrue(ObjectHelper.typeCoerceEquals(tc, data, "foo", true));
+            assertTrue(ObjectHelper.typeCoerceEquals(tc, data, "FOO", true));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, data, "FOO", false));
+
+            assertTrue(ObjectHelper.typeCoerceEquals(tc, "foo", "foo", true));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, data, "xyz", true));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, data, "xyz", true));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, "foo", "xyz", true));
         }
     }
 

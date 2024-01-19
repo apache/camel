@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,7 +47,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.Scanner;
 import org.apache.camel.util.StringHelper;
@@ -145,15 +149,28 @@ public final class ObjectHelper {
         }
 
         // convert left to right
-        Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
-        final boolean isEqualLeftToRight = org.apache.camel.util.ObjectHelper.equal(value, rightValue, ignoreCase);
-        if (isEqualLeftToRight) {
-            return true;
-        }
+        StreamCache sc = null;
+        try {
+            if (leftValue instanceof StreamCache) {
+                sc = (StreamCache) leftValue;
+            }
+            Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
+            final boolean isEqualLeftToRight = org.apache.camel.util.ObjectHelper.equal(value, rightValue, ignoreCase);
+            if (isEqualLeftToRight) {
+                return true;
+            }
 
-        // convert right to left
-        value = converter.tryConvertTo(leftValue.getClass(), rightValue);
-        return org.apache.camel.util.ObjectHelper.equal(leftValue, value, ignoreCase);
+            // convert right to left
+            if (rightValue instanceof StreamCache) {
+                sc = (StreamCache) rightValue;
+            }
+            value = converter.tryConvertTo(leftValue.getClass(), rightValue);
+            return org.apache.camel.util.ObjectHelper.equal(leftValue, value, ignoreCase);
+        } finally {
+            if (sc != null) {
+                sc.reset();
+            }
+        }
     }
 
     private static boolean booleanStringComparison(Boolean leftBool, String rightValue) {
@@ -964,14 +981,32 @@ public final class ObjectHelper {
      */
     public static boolean typeCoerceContains(
             TypeConverter typeConverter, Object collectionOrArray, Object value, boolean ignoreCase) {
-        // favor String types
-        if (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder) {
-            collectionOrArray = collectionOrArray.toString();
+
+        // unwrap file
+        if (collectionOrArray instanceof WrappedFile<?> wf) {
+            collectionOrArray = wf.getBody();
         }
+        if (collectionOrArray instanceof StreamCache sc) {
+            try {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                sc.writeTo(bos);
+                collectionOrArray = bos.toByteArray();
+            } catch (IOException e) {
+                // ignore
+            } finally {
+                sc.reset();
+            }
+        }
+        // favor String types
         if (value instanceof StringBuffer || value instanceof StringBuilder) {
             value = value.toString();
         }
-
+        if (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder) {
+            collectionOrArray = collectionOrArray.toString();
+        }
+        if (collectionOrArray instanceof byte[] arr) {
+            collectionOrArray = new String(arr);
+        }
         if (collectionOrArray instanceof Collection) {
             Collection<?> collection = (Collection<?>) collectionOrArray;
             if (ignoreCase) {
