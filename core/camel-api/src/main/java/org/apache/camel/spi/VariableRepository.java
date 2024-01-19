@@ -29,7 +29,11 @@ public interface VariableRepository extends StaticService {
     String getId();
 
     /**
-     * Returns a variable by name
+     * Returns a variable by name.
+     *
+     * If the variable is of type {@link org.apache.camel.StreamCache} then the repository should ensure to reset the
+     * stream cache before returning the value, to ensure the content can be read by the Camel end user and would be
+     * re-readable next time.
      *
      * @param  name the name of the variable
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name

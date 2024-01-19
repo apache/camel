@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
@@ -39,7 +40,12 @@ public final class GlobalVariableRepository extends ServiceSupport implements Br
 
     @Override
     public Object getVariable(String name) {
-        return variables.get(name);
+        Object answer = variables.get(name);
+        if (answer instanceof StreamCache sc) {
+            // reset so the cache is ready to be used as a variable
+            sc.reset();
+        }
+        return answer;
     }
 
     @Override
