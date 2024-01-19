@@ -59,7 +59,6 @@ import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.CertificateType;
 import org.eclipse.californium.scandium.dtls.cipher.CipherSuite;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
-import org.eclipse.californium.scandium.dtls.x509.CertificateConfigurationHelper;
 import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
 import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
@@ -371,16 +370,18 @@ public class CoAPEndpoint extends DefaultEndpoint {
     public boolean isClientAuthenticationRequired() {
         CertificateAuthenticationMode clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
-            clientAuth = CertificateAuthenticationMode.valueOf(sslContextParameters.getServerParameters().getClientAuthentication());
+            clientAuth = CertificateAuthenticationMode
+                    .valueOf(sslContextParameters.getServerParameters().getClientAuthentication());
         }
 
-        return clientAuth != null && ClientAuthentication.valueOf(String.valueOf(clientAuth)) == ClientAuthentication.REQUIRE;
+        return clientAuth == CertificateAuthenticationMode.NEEDED;
     }
 
     public boolean isClientAuthenticationWanted() {
         CertificateAuthenticationMode clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
-            clientAuth = CertificateAuthenticationMode.valueOf(sslContextParameters.getServerParameters().getClientAuthentication());
+            clientAuth = CertificateAuthenticationMode
+                    .valueOf(sslContextParameters.getServerParameters().getClientAuthentication());
         }
 
         return clientAuth != null && ClientAuthentication.valueOf(String.valueOf(clientAuth)) == ClientAuthentication.WANT;

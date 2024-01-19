@@ -256,7 +256,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                             .transform(body().prepend("Hello "));
 
                     fromF(getProtocol()
-                          + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&advancedCertificateVerifier=#advancedCertificateVerifier",
+                          + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=NEEDED&advancedCertificateVerifier=#advancedCertificateVerifier",
                             PORT6).transform(body().prepend("Hello "));
 
                     from("direct:rpk")

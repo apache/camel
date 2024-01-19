@@ -47,7 +47,6 @@ import org.eclipse.californium.elements.config.TcpConfig;
 import org.eclipse.californium.elements.tcp.netty.TcpServerConnector;
 import org.eclipse.californium.elements.tcp.netty.TlsServerConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
-import org.eclipse.californium.scandium.config.DtlsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
