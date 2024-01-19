@@ -51,6 +51,9 @@ public class SetDataOperation extends ZooKeeperOperation<byte[]> {
                 }
             }
             return new OperationResult<>(data, statistics);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return new OperationResult<>(e);
         } catch (Exception e) {
             return new OperationResult<>(e);
         }

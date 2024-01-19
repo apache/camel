@@ -44,6 +44,9 @@ public class GetDataOperation extends ZooKeeperOperation<byte[]> {
                 }
             }
             return new OperationResult<>(connection.getData(node, true, statistics), statistics);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return new OperationResult<>(e);
         } catch (Exception e) {
             return new OperationResult<>(e);
         }
