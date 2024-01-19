@@ -60,7 +60,7 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
         KeyStore trustStore = truststoreParameters.createKeyStore();
         X509Certificate[] certs
                 = new X509Certificate[] { (X509Certificate) trustStore.getCertificate(trustStore.aliases().nextElement()) };
-        
+
         NewAdvancedCertificateVerifier trust = StaticNewAdvancedCertificateVerifier
                 .builder()
                 .setTrustedCertificates(certs)
