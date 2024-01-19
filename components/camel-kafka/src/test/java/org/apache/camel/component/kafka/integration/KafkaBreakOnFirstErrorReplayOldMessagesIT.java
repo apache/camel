@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Tags({ @Tag("breakOnFirstError") })
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch_64", "s390x" },
+             architectures = { "amd64", "aarch64", "s390x" },
              disabledReason = "This test does not run reliably on ppc64le")
 class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseEmbeddedKafkaTestSupport {
 
