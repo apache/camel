@@ -146,6 +146,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
             closables.putFirst(closeable);
         } catch (final InterruptedException e) {
             hasFailedWith(e);
+            Thread.currentThread().interrupt();
         }
     }
 
