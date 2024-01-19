@@ -71,10 +71,11 @@ public class Sns2Component extends HealthCheckComponent {
         setProperties(endpoint, nonTransientParameters);
 
         if (!epConfiguration.isUseDefaultCredentialsProvider() && !epConfiguration.isUseProfileCredentialsProvider()
+                && !epConfiguration.isUseSessionCredentials()
                 && epConfiguration.getAmazonSNSClient() == null
                 && (epConfiguration.getAccessKey() == null || epConfiguration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, AmazonSNSClient or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, useSessionCredentials is set to false, AmazonSNSClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;

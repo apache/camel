@@ -69,6 +69,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "subject": getOrCreateConfiguration(target).setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": getOrCreateConfiguration(target).setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
@@ -80,6 +82,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": getOrCreateConfiguration(target).setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": getOrCreateConfiguration(target).setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -133,6 +137,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": return java.lang.String.class;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": return boolean.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "subject": return java.lang.String.class;
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": return boolean.class;
@@ -144,6 +150,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         default: return null;
         }
     }
@@ -193,6 +201,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
+        case "sessiontoken":
+        case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
         case "subject": return getOrCreateConfiguration(target).getSubject();
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": return getOrCreateConfiguration(target).isSubscribeSNStoSQS();
@@ -204,6 +214,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return getOrCreateConfiguration(target).isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return getOrCreateConfiguration(target).isUseSessionCredentials();
         default: return null;
         }
     }
