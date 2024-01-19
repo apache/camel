@@ -43,6 +43,7 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.elements.config.CertificateAuthenticationMode;
 import org.eclipse.californium.elements.config.Configuration;
+import org.eclipse.californium.elements.config.TcpConfig;
 import org.eclipse.californium.elements.tcp.netty.TcpServerConnector;
 import org.eclipse.californium.elements.tcp.netty.TlsServerConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
@@ -84,11 +85,11 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
                 if (endpoint.getUri().getScheme().startsWith("coaps")) {
                     SSLContext sslContext = endpoint.getSslContextParameters().createSSLContext(getCamelContext());
                     if (endpoint.isClientAuthenticationRequired()) {
-                        config.set(DtlsConfig.DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NEEDED);
+                        config.set(TcpConfig.TLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NEEDED);
                     } else if (endpoint.isClientAuthenticationWanted()) {
-                        config.set(DtlsConfig.DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.WANTED);
+                        config.set(TcpConfig.TLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.WANTED);
                     } else {
-                        config.set(DtlsConfig.DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NONE);
+                        config.set(TcpConfig.TLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NONE);
                     }
                     tcpConnector = new TlsServerConnector(
                             sslContext, address, config);
