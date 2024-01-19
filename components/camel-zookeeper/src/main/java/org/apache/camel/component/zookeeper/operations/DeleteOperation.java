@@ -47,6 +47,9 @@ public class DeleteOperation extends ZooKeeperOperation<Boolean> {
                 }
             }
             return new OperationResult<>(true, null, true);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return new OperationResult<>(e);
         } catch (Exception e) {
             return new OperationResult<>(e);
         }

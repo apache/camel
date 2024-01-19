@@ -51,6 +51,8 @@ public class AnyOfOperations extends ZooKeeperOperation implements WatchedEventP
                     operationProvidingResult = op;
                     return result;
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
             }
         }

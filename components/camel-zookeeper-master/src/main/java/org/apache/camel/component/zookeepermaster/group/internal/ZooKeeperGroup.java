@@ -182,6 +182,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             try {
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw (IOException) new InterruptedIOException().initCause(e);
             }
             try {

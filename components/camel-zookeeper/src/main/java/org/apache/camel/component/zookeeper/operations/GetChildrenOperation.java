@@ -47,6 +47,9 @@ public class GetChildrenOperation extends ZooKeeperOperation<List<String>> {
                 }
             }
             return new OperationResult<>(children, statistics);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return new OperationResult<>(e);
         } catch (Exception e) {
             return new OperationResult<>(e);
         }

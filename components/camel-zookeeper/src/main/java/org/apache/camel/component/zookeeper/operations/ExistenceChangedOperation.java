@@ -45,6 +45,9 @@ public class ExistenceChangedOperation extends FutureEventDrivenOperation<String
             String path = getNode();
             Stat statistics = connection.exists(path, true);
             return new OperationResult<>(path, statistics);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return new OperationResult<>(e);
         } catch (Exception e) {
             return new OperationResult<>(e);
         }
