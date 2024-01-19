@@ -194,6 +194,7 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
                     // wait for a key to be available
                     key = watcher.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
 
