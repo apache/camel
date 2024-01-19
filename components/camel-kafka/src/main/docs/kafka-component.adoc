@@ -493,4 +493,44 @@ static {
     KafkaComponent.setKerberosConfigLocation("path/to/config/file");
 }
 ----
+
+=== Batching Consumer
+
+To use a Kafka batching consumer with Camel, an application has to set the configuration `batching` to `true` and use manual commits.
+
+The received records are stored in a list in the exchange used in the pipeline. As such, it is possible to commit individually
+every record or the whole batch at once by committing the last exchange on the list.
+
+When working with batch processing, it's up to the application to commit the records, and handle the outcome of potentially invalid records.
+
+The size of the batch is controlled by the option `maxPollRecords`.
+
+In order to avoid blocking for too long, waiting for the a whole set of records to fill the batch, it is is possible to use the `pollTimeoutMs` option to set a timeout for the polling. In this case, the batch may contain less messages than set in the `maxPollRecords`.
+
+[source,java]
+----
+    from("kafka:topic?batching=true&maxPollRecords=100&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory")
+    .process(e -> {
+        // The received records are stored as exchanges in a list. This gets the list of those exchanges
+        final List<?> exchanges = e.getMessage().getBody(List.class);
+
+        // Ensure we are actually receiving what we are asking for
+        if (exchanges == null || exchanges.isEmpty()) {
+            return;
+        }
+
+        /*
+        Every exchange in that list should contain a reference to the manual commit object. We use the reference
+        for the last exchange in the list to commit the whole batch
+         */
+        final Object tmp = exchanges.getLast();
+        if (tmp instanceof Exchange exchange) {
+            KafkaManualCommit manual =
+                    exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+            LOG.debug("Performing manual commit");
+            manual.commit();
+            LOG.debug("Done performing manual commit");
+        }
+    });
+----
 include::spring-boot:partial$starter.adoc[]
