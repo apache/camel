@@ -169,3 +169,279 @@ as shown below:
 ----
 camel.variable.user-template = resource:file:/etc/user.json
 ----
+
+== Using Variables with EIPs
+
+The most commonly used EIPs for sending and receiving messages (`from`, `to`, `toD`, `enrich` and `pollEnrich`) have
+first class support for using variables with the message body.
+
+The intention is to make it more convenient and easy to _gather data_ from other systems without any ceremony to keep
+existing data by using techniques such as storing the data temporary using headers or exchange properties,
+or with the xref:components:eips:claimCheck-eip.adoc[Claim Check] EIP.
+
+It is **important** to understand that the variables only use the message **body** and does not have support for anything else such
+as message headers. This is on purpose to keep it simpler and only work with the message body as the user data. If you have need
+to use variables with both message body and headers, then you can use `setVariable` and `getVariable`.
+
+=== Using variable to store a copy of the incoming message body
+
+You can configure the `from` to store a copy of the message body into a variable. This makes it easy to have quick access
+to the original incoming message body via the variable.
+
+The following example from a unit test shows how to do this. Notice how Java DSL uses `fromV` to make it possible to specify
+the name of the variable. In XML and YAML DSL you specify this using the `variableReceive` parameter.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+fromV("direct:start", "myKey")
+    .transform().simple("Bye ${body}")
+    .to("mock:foo")
+    .setBody(simple("${variable:myKey}"))
+    .to("mock:result");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start" variableReceive="myKey"/>
+  <transform><simple>Bye ${body}</simple></transform>
+  <to uri="mock:foo"/>
+  <setBody>
+    <simple>${variable:myKey}</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+from:
+  uri: "direct:start"
+  variableReceive: "myKey"
+  steps:
+    - transform:
+        simple: "Bye ${body}"
+    - to: "mock:foo"
+    - setBody:
+        simple: "${variable:myKey}"
+    - to: "mock:result"
+----
+====
+
+=== Using variables when sending and receiving messages to an endpoint
+
+You can configure the `to` to use variables for any of the following (or both) when sending and receiving:
+
+- variableSend - name of variable that contains the message body to send instead of the current message body on the `Exchange`.
+- variableReceive - name of variable that should store the returned message payload (will not change the message body on the `Exchange`).
+
+For example, you can use the `variableSend` to tell Camel to use the variable as the message body when sending to an endpoint.
+If the `variableReceive` is also configured, then the reply message will be stored in the variable instead of the `Exchange` message body.
+
+IMPORTANT: This is only the message body. Message headers keep acting as usual.
+
+In the following example, we use a variable named `hello` as the message body when sending to the `direct:foo` endpoint:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:send")
+    .setVariable("hello", simple("Camel"))
+    .to("mock:before")
+    .toV("direct:foo", "hello", null)
+    .to("mock:result");
+
+from("direct:foo")
+    .transform().simple("Bye ${body}");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <setVariable name="hello">
+    <simple>Camel</simple>
+  </setVariable>
+  <to uri="mock:before"/>
+  <to uri="direct:foo" variableSend="hello"/>
+  <to uri="mock:result"/>
+</route>
+<route>
+  <from uri="direct:foo"/>
+  <transform>
+    <simple>Bye ${body}</simple>
+  </transform>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - setVariable:
+            name: hello
+            simple:
+              expression: Camel
+        - to:
+            uri: mock:before
+        - to:
+            uri: direct:foo
+            variableSend: hello
+        - to:
+            uri: mock:result
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - transform:
+            simple:
+              expression: "Bye ${body}"
+----
+====
+
+If you only want to store the result in a variable instead of the current `Exchange` message body, then you should use `variableReceive`
+as shown in the following:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:receive")
+    .toV("direct:foo", null, "bye")
+    .to("mock:after")
+    .setBody(simple("${variable:bye}"))
+    .to("mock:result");
+
+from("direct:foo")
+    .transform().simple("Bye ${body}");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:receive"/>
+  <to uri="direct:foo" variableReceive="bye"/>
+  <to uri="mock:after"/>
+  <setBody>
+    <simple>${variable:bye}</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+<route>
+  <from uri="direct:foo"/>
+  <transform>
+    <simple>Bye ${body}</simple>
+  </transform>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:receive
+      steps:
+        - to:
+            uri: direct:foo
+            variableReceive: bye
+        - to:
+            uri: mock:after
+        - setBody:
+            simple:
+              expression: "${variable:bye}"
+        - to:
+            uri: mock:result
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - transform:
+            simple:
+              expression: "Bye ${body}"
+----
+====
+
+And you can also use both of them together which means you are using variables for both what to send, and to store the result in a variable.
+This means the current `Exchange` message body is not in use at all.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:sendAndReceive")
+    .setVariable("hello", simple("Camel"))
+    .to("mock:before")
+    .toV("direct:foo", "hello", "bye")
+    .to("mock:result");
+
+from("direct:foo")
+    .transform().simple("Bye ${body}");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:sendAndReceive"/>
+  <setVariable name="hello">
+    <simple>Camel</simple>
+  </setVariable>
+  <to uri="mock:before"/>
+  <to uri="direct:foo" variableSend="hello" variableReceive="bye"/>
+  <to uri="mock:result"/>
+</route>
+<route>
+  <from uri="direct:foo"/>
+  <transform>
+    <simple>Bye ${body}</simple>
+  </transform>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sendAndReceive
+      steps:
+        - setVariable:
+            name: hello
+            simple:
+              expression: Camel
+        - to:
+            uri: mock:before
+        - to:
+            uri: direct:foo
+            variableReceive: bye
+            variableSend: hello
+        - to:
+            uri: mock:result
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - transform:
+            simple:
+              expression: "Bye ${body}"
+----
+====
