@@ -6096,6 +6096,16 @@ Sets the URI of the endpoint to use.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="variable" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a variable to store a copy of the incoming message body (only body, not headers). This is handy for easy access
+to the incoming message body via variables.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
