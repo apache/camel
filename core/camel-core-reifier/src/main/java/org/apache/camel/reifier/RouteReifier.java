@@ -51,6 +51,7 @@ import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -434,7 +435,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         @Override
         public Object before(Exchange exchange) throws Exception {
             Object body = exchange.getMessage().getBody();
-            exchange.setVariable(name, body);
+            ExchangeHelper.setVariable(exchange, name, body);
             return null;
         }
 

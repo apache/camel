@@ -1100,4 +1100,49 @@ public final class ExchangeHelper {
             exchange.setVariable(name, value);
         }
     }
+
+    /**
+     * Gets the variable
+     *
+     * @param  exchange the exchange
+     * @param  name     the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *                  repository. If no repo-id is provided, then the variable is set on the exchange
+     * @return          the variable
+     */
+    public static Object getVariable(Exchange exchange, String name) {
+        Object answer;
+        String id = StringHelper.before(name, ":");
+        if (id != null) {
+            VariableRepositoryFactory factory
+                    = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+            VariableRepository repo = factory.getVariableRepository(id);
+            if (repo != null) {
+                name = StringHelper.after(name, ":");
+                answer = repo.getVariable(name);
+            } else {
+                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
+            }
+        } else {
+            answer = exchange.getVariable(name);
+        }
+        return answer;
+    }
+
+    /**
+     * Gets the variable, converted to the given type
+     *
+     * @param  exchange the exchange
+     * @param  name     the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *                  repository. If no repo-id is provided, then the variable is set on the exchange
+     * @param  type     the type to convert to
+     * @return          the variable
+     */
+    public static <T> T getVariable(Exchange exchange, String name, Class<T> type) {
+        Object answer = getVariable(exchange, name);
+        if (answer != null) {
+            return exchange.getContext().getTypeConverter().convertTo(type, exchange, answer);
+        }
+        return null;
+    }
+
 }

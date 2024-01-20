@@ -103,13 +103,12 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     }
 
     /**
-     * To use a variable as the source for the message body to send.
-     * This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.
+     * To use a variable as the source for the message body to send. This makes it handy to use variables for user data
+     * and to easily control what data to use for sending and receiving.
      *
-     * Important: When using send variable then the message body
-     * is taken from this variable instead of the current {@link Message}, however
-     * the headers from the {@link Message} will still be used as well. In other words,
-     * the variable is used instead of the message body, but everything else is as usual.
+     * Important: When using send variable then the message body is taken from this variable instead of the current
+     * {@link Message}, however the headers from the {@link Message} will still be used as well. In other words, the
+     * variable is used instead of the message body, but everything else is as usual.
      */
     public void setVariableSend(String variableSend) {
         this.variableSend = variableSend;
@@ -120,11 +119,11 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     }
 
     /**
-     * To use a variable to store the received message body (only body, not headers).
-     * This is handy for easy access to the received message body via variables.
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
      *
-     * Important: When using receive variable then the received body is stored
-     * only in this variable and <b>not</b> on the current {@link org.apache.camel.Message}.
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
      */
     public void setVariableReceive(String variableReceive) {
         this.variableReceive = variableReceive;

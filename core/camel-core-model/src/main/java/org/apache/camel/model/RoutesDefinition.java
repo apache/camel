@@ -197,12 +197,12 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not headers).
-     * This is handy for easy access to the received message body via variables.
+     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not
+     * headers). This is handy for easy access to the received message body via variables.
      *
-     * @param uri             the from uri
-     * @param variableReceive the name of the variable
-     * @return                the builder
+     * @param  uri             the from uri
+     * @param  variableReceive the name of the variable
+     * @return                 the builder
      */
     public RouteDefinition fromV(@AsEndpointUri String uri, String variableReceive) {
         RouteDefinition route = createRoute();
@@ -235,12 +235,12 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not headers).
-     * This is handy for easy access to the received message body via variables.
+     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not
+     * headers). This is handy for easy access to the received message body via variables.
      *
-     * @param  endpoint       the from endpoint
-     * @param variableReceive the name of the variable
-     * @return                the builder
+     * @param  endpoint        the from endpoint
+     * @param  variableReceive the name of the variable
+     * @return                 the builder
      */
     public RouteDefinition fromV(EndpointConsumerBuilder endpoint, String variableReceive) {
         RouteDefinition route = createRoute();
