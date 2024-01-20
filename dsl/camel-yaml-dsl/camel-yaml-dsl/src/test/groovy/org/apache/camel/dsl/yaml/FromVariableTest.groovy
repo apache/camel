@@ -26,7 +26,7 @@ class FromVariableTest extends YamlTestSupport {
             loadRoutes '''
                 - from:
                     uri: "direct:start"
-                    variable: "myKey"
+                    variableReceive: "myKey"
                     steps:
                       - transform:
                           simple: "Bye ${body}"

@@ -1365,7 +1365,7 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("variable", def.getVariable());
+        doWriteAttribute("variableReceive", def.getVariableReceive());
         doWriteAttribute("uri", def.getUri());
         endElement(name);
     }

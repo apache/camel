@@ -28,7 +28,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>
     <route>
-      <from uri="direct:start" variable="myKey"/>
+      <from uri="direct:start" variableReceive="myKey"/>
       <transform><simple>Bye ${body}</simple></transform>
       <to uri="mock:foo"/>
       <setBody>

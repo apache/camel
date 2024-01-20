@@ -218,31 +218,31 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * Creates an input to the route, and use a variable to store a copy of the incoming message body (only body, not headers).
-     * This is handy for easy access to the incoming message body via variables.
+     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not headers).
+     * This is handy for easy access to the received message body via variables.
      *
-     * @param  uri the from uri
-     * @param variable the name of the variable
-     * @return     the builder
+     * @param  uri            the from uri
+     * @param variableReceive the name of the variable
+     * @return                the builder
      */
-    public RouteDefinition fromV(@AsEndpointUri String uri, String variable) {
+    public RouteDefinition fromV(@AsEndpointUri String uri, String variableReceive) {
         FromDefinition from = new FromDefinition(uri);
-        from.setVariable(variable);
+        from.setVariableReceive(variableReceive);
         setInput(from);
         return this;
     }
 
     /**
-     * Creates an input to the route, and use a variable to store a copy of the incoming message body (only body, not headers).
-     * This is handy for easy access to the incoming message body via variables.
+     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not headers).
+     * This is handy for easy access to the received message body via variables.
      *
-     * @param  endpoint the from endpoint
-     * @param variable the name of the variable
-     * @return          the builder
+     * @param  endpoint       the from endpoint
+     * @param variableReceive the name of the variable
+     * @return                the builder
      */
-    public RouteDefinition fromV(EndpointConsumerBuilder endpoint, String variable) {
+    public RouteDefinition fromV(EndpointConsumerBuilder endpoint, String variableReceive) {
         FromDefinition from = new FromDefinition(endpoint);
-        from.setVariable(variable);
+        from.setVariableReceive(variableReceive);
         setInput(from);
         return this;
     }

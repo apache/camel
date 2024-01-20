@@ -478,7 +478,7 @@ public class ModelParser extends BaseParser {
         return doParse(new FromDefinition(), (def, key, val) -> {
             switch (key) {
                 case "uri": def.setUri(val); break;
-                case "variable": def.setVariable(val); break;
+                case "variableReceive": def.setVariableReceive(val); break;
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

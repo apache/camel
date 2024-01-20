@@ -314,7 +314,7 @@
           "uri" : {
             "type" : "string"
           },
-          "variable" : {
+          "variableReceive" : {
             "type" : "string"
           }
         },
@@ -343,7 +343,7 @@
           "uri" : {
             "type" : "string"
           },
-          "variable" : {
+          "variableReceive" : {
             "type" : "string"
           }
         },
@@ -1968,7 +1968,7 @@
           "uri" : {
             "type" : "string"
           },
-          "variable" : {
+          "variableReceive" : {
             "type" : "string"
           }
         },

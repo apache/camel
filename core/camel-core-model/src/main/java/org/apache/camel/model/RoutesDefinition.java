@@ -197,16 +197,16 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates an input to the route, and use a variable to store a copy of the incoming message body (only body, not headers).
-     * This is handy for easy access to the incoming message body via variables.
+     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not headers).
+     * This is handy for easy access to the received message body via variables.
      *
-     * @param uri the from uri
-     * @param variable the name of the variable
-     * @return     the builder
+     * @param uri             the from uri
+     * @param variableReceive the name of the variable
+     * @return                the builder
      */
-    public RouteDefinition fromV(@AsEndpointUri String uri, String variable) {
+    public RouteDefinition fromV(@AsEndpointUri String uri, String variableReceive) {
         RouteDefinition route = createRoute();
-        route.fromV(uri, variable);
+        route.fromV(uri, variableReceive);
         return route(route);
     }
 
@@ -235,16 +235,16 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates an input to the route, and use a variable to store a copy of the incoming message body (only body, not headers).
-     * This is handy for easy access to the incoming message body via variables.
+     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not headers).
+     * This is handy for easy access to the received message body via variables.
      *
-     * @param  endpoint the from endpoint
-     * @param variable the name of the variable
-     * @return          the builder
+     * @param  endpoint       the from endpoint
+     * @param variableReceive the name of the variable
+     * @return                the builder
      */
-    public RouteDefinition fromV(EndpointConsumerBuilder endpoint, String variable) {
+    public RouteDefinition fromV(EndpointConsumerBuilder endpoint, String variableReceive) {
         RouteDefinition route = createRoute();
-        route.fromV(endpoint, variable);
+        route.fromV(endpoint, variableReceive);
         return route(route);
     }
 
