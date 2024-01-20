@@ -6849,6 +6849,12 @@
               "type" : "string",
               "title" : "Uri",
               "description" : "Sets the uri of the endpoint to send to."
+            },
+            "variableReceive" : {
+              "type" : "string"
+            },
+            "variableSend" : {
+              "type" : "string"
             }
           }
         } ],

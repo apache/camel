@@ -256,6 +256,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Sends the exchange to the given endpoint
+     *
+     * @param  uri the endpoint to send to
+     * @param variableSend to use a variable as the source for the message body to send.
+     * @param variableReceive to use a variable to store the received message body (only body, not headers).
+     * @return     the builder
+     */
+    public Type toV(@AsEndpointUri String uri, String variableSend, String variableReceive) {
+        ToDefinition to = new ToDefinition(uri);
+        to.setVariableSend(variableSend);
+        to.setVariableReceive(variableReceive);
+        addOutput(to);
+        return asType();
+    }
+
+    /**
      * Sends the exchange to the given dynamic endpoint
      *
      * @return the builder

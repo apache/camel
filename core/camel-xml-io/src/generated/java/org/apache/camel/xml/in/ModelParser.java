@@ -1528,11 +1528,13 @@ public class ModelParser extends BaseParser {
     }
     protected ToDefinition doParseToDefinition() throws IOException, XmlPullParserException {
         return doParse(new ToDefinition(), (def, key, val) -> {
-            if ("pattern".equals(key)) {
-                def.setPattern(val);
-                return true;
+            switch (key) {
+                case "pattern": def.setPattern(val); break;
+                case "variableReceive": def.setVariableReceive(val); break;
+                case "variableSend": def.setVariableSend(val); break;
+                default: return sendDefinitionAttributeHandler().accept(def, key, val);
             }
-            return sendDefinitionAttributeHandler().accept(def, key, val);
+            return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected <T extends SendDefinition> AttributeHandler<T> sendDefinitionAttributeHandler() {

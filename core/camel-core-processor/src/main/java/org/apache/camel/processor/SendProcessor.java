@@ -56,6 +56,8 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     protected ProducerCache producerCache;
     protected AsyncProducer producer;
     protected final Endpoint destination;
+    protected String variableSend;
+    protected String variableReceive;
     protected ExchangePattern destinationExchangePattern;
     protected String id;
     protected String routeId;
@@ -199,6 +201,22 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                         cb.done(doneSync);
                     }));
         }
+    }
+
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     public Endpoint getDestination() {
