@@ -14,13 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.kotlin
+package org.apache.camel.kotlin.model
 
-import org.apache.camel.model.ModelCamelContext
+import org.apache.camel.Predicate
+import org.apache.camel.kotlin.CamelDslMarker
+import org.apache.camel.kotlin.StepsDsl
+import org.apache.camel.model.InterceptDefinition
 
-@DslMarker
-annotation class CamelDslMarker
+@CamelDslMarker
+class InterceptDsl(
+    val def: InterceptDefinition
+) {
 
-fun camel(camelContext: ModelCamelContext, i: RootDsl.() -> Unit) {
-    RootDsl(camelContext).apply(i).build()
+    fun onWhen(onWhen: Predicate) {
+        def.`when`(onWhen)
+    }
+
+    fun outputs(i: StepsDsl.() -> Unit) {
+        StepsDsl(def).apply(i)
+    }
 }

@@ -19,6 +19,7 @@ package org.apache.camel.kotlin
 import org.apache.camel.ErrorHandlerFactory
 import org.apache.camel.ShutdownRoute
 import org.apache.camel.ShutdownRunningTask
+import org.apache.camel.kotlin.model.OnExceptionDsl
 import org.apache.camel.model.RouteDefinition
 import org.apache.camel.spi.RoutePolicy
 import kotlin.reflect.KClass
@@ -36,6 +37,12 @@ class RouteDsl(
 
     fun steps(i: StepsDsl.() -> Unit) {
         StepsDsl(def).apply(i)
+    }
+
+    fun onException(vararg exceptions: KClass<out Throwable>, i: OnExceptionDsl.() -> Unit) {
+        val onExceptionDef = def.onException(*exceptions.map { it.java }.toTypedArray())
+        OnExceptionDsl(onExceptionDef).apply(i)
+        onExceptionDef.end()
     }
 
     fun id(id: String) {

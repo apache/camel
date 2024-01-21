@@ -25,11 +25,13 @@ import org.apache.camel.kotlin.components.`netty-http`
 import org.apache.camel.kotlin.dataformats.csv
 import org.junit.jupiter.api.*
 import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
-class BasicTests {
+class EipsTests {
 
     private lateinit var ctx: DefaultCamelContext
 
@@ -44,34 +46,28 @@ class BasicTests {
     }
 
     @Test
-    fun testBeanDefinition() {
+    fun testOnException() {
+        val producer = ctx.createProducerTemplate()
+        val handled = AtomicBoolean(false)
+
         camel(ctx) {
+            onException(Exception::class) {
+                handled(true)
+                outputs {
+                    process { handled.set(true) }
+                }
+            }
             route {
-                from {
-                    `netty-http` {
-                        protocol("http")
-                        host("localhost")
-                        port(8080)
-                        path("/")
-                        bossGroup("#nioELG")
-                    }
-                }
+                from { direct { name("input") } }
                 steps {
-                    to {
-                        mock {
-                            name("end")
-                        }
-                    }
+                    throwException(Exception("some"))
                 }
             }
-            bean {
-                name("nioELG")
-                type("io.netty.channel.nio.NioEventLoopGroup")
-            }
         }
-        assertDoesNotThrow {
-            ctx.start()
-        }
+        ctx.start()
+
+        producer.sendBody("direct:input", null)
+        assertTrue(handled.get())
     }
 
     @Test
@@ -99,7 +95,6 @@ class BasicTests {
         ctx.start()
         producer.sendBody("direct:first", "some")
         assertEquals("some", exchange.get().message.body)
-        ctx.stop()
     }
 
     @Test
@@ -118,7 +113,6 @@ class BasicTests {
         ctx.start()
         producer.sendBody("direct:first", "1,2,3,4")
         assertEquals("[[1, 2, 3, 4]]", exchange.get().message.body.toString())
-        ctx.stop()
     }
 
     @Test
@@ -142,7 +136,6 @@ class BasicTests {
         ctx.start()
         producer.sendBody("direct:first", null)
         assertEquals(3, exchanges.size)
-        ctx.stop()
     }
 
     @Test
@@ -164,6 +157,5 @@ class BasicTests {
         assertThrows<CamelExecutionException> {
             producer.sendBody("direct:first", false)
         }
-        ctx.stop()
     }
 }

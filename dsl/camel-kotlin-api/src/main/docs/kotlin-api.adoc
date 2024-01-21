@@ -245,6 +245,63 @@ route {
 
 == Defining beans
 
+=== Direct object binding
+
+You can just provide instance of any type for Camel context:
+
+[source,kotlin]
+----
+val map = mapOf<String, String>()
+
+camel(ctx) {
+    bean("myMap", map)
+}
+----
+
+Or use supplier-function:
+
+[source,kotlin]
+----
+camel(ctx) {
+    bean("myMap") {
+        mapOf<String, String>()
+    }
+}
+----
+
+Or construct bean using builder:
+
+[source,kotlin]
+----
+camel(ctx) {
+    bean<MyClass>("myBean") {
+        myField = "value"
+    }
+}
+----
+
+=== Runtime object binding
+
+Use other way is to use declarative approach of defining beans, without referencing beans at compile-time:
+
+[source,kotlin]
+----
+class Example {
+    lateinit var map: MutableMap<String, String>
+}
+
+camel(ctx) {
+    bean("map", mutableMapOf(Pair("key", "value")))
+    bean {
+        name("test")
+        type("org.apache.camel.kotlin.Example")
+        property("map", "#map")
+    }
+}
+----
+
+When you cross-reference beans like in example (bean `test` reference `map`) be sure you declare beans in the dependency order: first dependencies, last dependents.
+
 == Using languages, expressions and predicates
 
 There are a number of functions that provides Camel languages like `constant` or `simple` and a number of helper functions for building predicates/expressions like `body` or `header`. All of them are in the package `org.apache.camel.kotlin`.
@@ -261,7 +318,7 @@ body().which().isInstanceOf(String::class)
 
 == Fallback to Java API
 
-For each block except `camel` there is `def` field which provides common Java API. It can be used if some functionality is missing. Example:
+For `camel` block there is `routeBuilder` field which can help to define any Camel entity using Java API. For each other block there is `def` field present. It can be used if some functionality is missing. Example:
 
 [source,kotlin]
 ----

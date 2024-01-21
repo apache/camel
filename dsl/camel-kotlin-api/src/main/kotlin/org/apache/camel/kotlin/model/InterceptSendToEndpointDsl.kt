@@ -14,28 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.kotlin
+package org.apache.camel.kotlin.model
 
-import org.apache.camel.model.app.RegistryBeanDefinition
+import org.apache.camel.Predicate
+import org.apache.camel.kotlin.CamelDslMarker
+import org.apache.camel.kotlin.StepsDsl
+import org.apache.camel.model.InterceptSendToEndpointDefinition
 
 @CamelDslMarker
-class RegistryBeanDsl(
-    val def: RegistryBeanDefinition
+class InterceptSendToEndpointDsl(
+    val def: InterceptSendToEndpointDefinition
 ) {
 
-    init {
-        def.properties = mutableMapOf()
+    fun outputs(i: StepsDsl.() -> Unit) {
+        StepsDsl(def).apply(i)
     }
 
-    fun name(name: String) {
-        def.name = name
+    fun onWhen(onWhen: Predicate) {
+        def.`when`(onWhen)
     }
 
-    fun type(type: String) {
-        def.type = type
+    fun skipSendToOriginalEndpoint(skipSendToOriginalEndpoint: Boolean) {
+        def.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint.toString()
     }
 
-    fun property(property: String, value: Any) {
-        def.properties[property] = value
+    fun skipSendToOriginalEndpoint(skipSendToOriginalEndpoint: String) {
+        def.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint.toString()
+    }
+
+    fun afterUri(afterUri: String) {
+        def.afterUri(afterUri)
     }
 }

@@ -16,23 +16,36 @@
  */
 package org.apache.camel.kotlin
 
+import org.apache.camel.kotlin.model.InterceptDsl
+import org.apache.camel.kotlin.model.InterceptFromDsl
+import org.apache.camel.kotlin.model.InterceptSendToEndpointDsl
+import org.apache.camel.kotlin.model.OnExceptionDsl
 import org.apache.camel.kotlin.model.rest.RestDsl
 import org.apache.camel.model.ModelCamelContext
-import org.apache.camel.model.RouteDefinition
 import org.apache.camel.model.app.RegistryBeanDefinition
 import org.apache.camel.model.rest.RestConfigurationDefinition
-import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.support.PropertyBindingSupport
+import kotlin.reflect.KClass
 
 @CamelDslMarker
 class RootDsl(
     val ctx: ModelCamelContext
 ) {
 
+    val routeBuilder = RouteBuilderImpl(ctx)
+
+    internal fun build() {
+        routeBuilder.addRoutesToCamelContext(ctx)
+    }
+
     fun route(i: RouteDsl.() -> Unit) {
-        val def = RouteDefinition()
+        val def = routeBuilder.routeCollection.route()
         RouteDsl(def).apply(i)
         ctx.addRouteDefinition(def)
+    }
+
+    fun bean(bean: String, value: Any) {
+        ctx.registry.bind(bean, value)
     }
 
     inline fun <reified T> bean(bean: String, i: T.() -> Unit) {
@@ -57,21 +70,31 @@ class RootDsl(
     }
 
     fun restConfiguration(i: RestConfigurationDefinition.() -> Unit) {
-        val def = RestConfigurationDefinition()
-        def.apply(i)
-        def.asRestConfiguration(ctx, ctx.restConfiguration)
-        if (def.apiContextPath != null) {
-            val apiDef = RestDefinition.asRouteApiDefinition(ctx, ctx.restConfiguration)
-            ctx.addRouteDefinition(apiDef)
-        }
+        routeBuilder.restConfiguration().apply(i)
     }
 
     fun rest(rest: String? = null, i: RestDsl.() -> Unit) {
-        val restDef = RestDefinition()
-        restDef.path = rest
+        val restDef = routeBuilder.rest(rest)
         RestDsl(restDef).apply(i)
-        ctx.restDefinitions.add(restDef)
-        val routeDef = restDef.asRouteDefinition(ctx)
-        ctx.addRouteDefinitions(routeDef)
+    }
+
+    fun onException(vararg exceptions: KClass<out Throwable>, i: OnExceptionDsl.() -> Unit) {
+        val def = routeBuilder.onException(*exceptions.map { it.java }.toTypedArray())
+        OnExceptionDsl(def).apply(i)
+    }
+
+    fun intercept(i: InterceptDsl.() -> Unit) {
+        val def = routeBuilder.intercept()
+        InterceptDsl(def).apply(i)
+    }
+
+    fun interceptFrom(i: InterceptFromDsl.() -> Unit) {
+        val def = routeBuilder.interceptFrom()
+        InterceptFromDsl(def).apply(i)
+    }
+
+    fun interceptSendToEndpoint(uri: String, i: InterceptSendToEndpointDsl.() -> Unit) {
+        val def = routeBuilder.interceptSendToEndpoint(uri)
+        InterceptSendToEndpointDsl(def).apply(i)
     }
 }
