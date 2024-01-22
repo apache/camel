@@ -1315,19 +1315,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ExecComponentBuilderFactory.exec();
     }
     /**
-     * Facebook (camel-facebook)
-     * Send requests to Facebook APIs supported by Facebook4J.
-     * 
-     * Category: social
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-facebook
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.FacebookComponentBuilderFactory.FacebookComponentBuilder facebook() {
-        return org.apache.camel.builder.component.dsl.FacebookComponentBuilderFactory.facebook();
-    }
-    /**
      * FHIR (camel-fhir)
      * Exchange information in the healthcare domain using the FHIR (Fast
      * Healthcare Interoperability Resources) standard.
