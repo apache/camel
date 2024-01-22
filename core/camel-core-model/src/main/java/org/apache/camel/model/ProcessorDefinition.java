@@ -2079,12 +2079,46 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * each processor and destination gets a copy of the original message to avoid the processors interfering with each
      * other using {@link ExchangePattern#InOnly}.
      *
+     * @param  endpoint     the endpoint to wiretap to
+     * @param  variableSend to use a variable as the source for the message body to send.
+     * @return              the builder
+     */
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri EndpointProducerBuilder endpoint, String variableSend) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setEndpointProducerBuilder(endpoint);
+        answer.setVariableSend(variableSend);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends messages to all its child outputs; so that
+     * each processor and destination gets a copy of the original message to avoid the processors interfering with each
+     * other using {@link ExchangePattern#InOnly}.
+     *
      * @param  uri the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @return     the builder
      */
     public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends messages to all its child outputs; so that
+     * each processor and destination gets a copy of the original message to avoid the processors interfering with each
+     * other using {@link ExchangePattern#InOnly}.
+     *
+     * @param  uri          the dynamic endpoint to wiretap to (resolved using simple language by default)
+     * @param  variableSend to use a variable as the source for the message body to send.
+     * @return              the builder
+     */
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, String variableSend) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
+        answer.setVariableSend(variableSend);
         addOutput(answer);
         return answer;
     }
