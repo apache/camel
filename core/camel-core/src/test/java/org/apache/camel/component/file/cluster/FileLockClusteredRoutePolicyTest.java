@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -93,7 +95,9 @@ public final class FileLockClusteredRoutePolicyTest {
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500));
+            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+                    .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
+
             context.start();
 
             contextLatch.await();
