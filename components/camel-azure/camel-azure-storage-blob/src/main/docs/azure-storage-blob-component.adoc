@@ -535,6 +535,50 @@ from("direct:copyBlob")
 
 In this way the file.txt in the container containerblob1 of the account 'account', will be copied to the container containerblob2 of the same account.
 
+=== SAS Token generation example
+
+SAS Blob Container tokens can be generated programmatically or via Azure UI. In order to generate the token with java code, the following can be done:
+
+[source,java]
+--------------------------------------------------------------------------------
+
+BlobContainerClient blobClient = new BlobContainerClientBuilder()
+            .endpoint(String.format("https://%s.blob.core.windows.net/%s", accountName, accessKey))
+            .containerName(containerName)
+            .credential(new StorageSharedKeyCredential(accountName, accessKey))
+            .buildClient();
+
+        // Create a SAS token that's valid for 1 day, as an example
+        OffsetDateTime expiryTime = OffsetDateTime.now().plusDays(1);
+
+        // Assign permissions to the SAS token
+        BlobContainerSasPermission blobContainerSasPermission = new BlobContainerSasPermission()
+            .setWritePermission(true)
+            .setListPermission(true)
+            .setCreatePermission(true)
+            .setDeletePermission(true)
+            .setAddPermission(true)
+            .setReadPermission(true);
+
+        BlobServiceSasSignatureValues sasSignatureValues = new BlobServiceSasSignatureValues(expiryTime, blobContainerSasPermission);
+
+        return blobClient.generateSas(sasSignatureValues);
+--------------------------------------------------------------------------------
+
+The generated SAS token can be then stored to an application.properties file so that it can be loaded by the camel route, example:
+
+[source,properties]
+--------------------------------------------------------------------------------
+
+camel.component.azure-storage-blob.sas-token=MY_TOKEN_HERE
+--------------------------------------------------------------------------------
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:copyBlob")
+  .to("azure-storage-blob://account/containerblob2?operation=uploadBlockBlob&credentialType=AZURE_SAS")
+--------------------------------------------------------------------------------
 
 === Development Notes (Important)
 
