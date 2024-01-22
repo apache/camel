@@ -2437,6 +2437,8 @@ public class ModelWriter extends BaseWriter {
             ToDynamicDefinition def)
             throws IOException {
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("variableSend", def.getVariableSend());
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());
         doWriteAttribute("autoStartComponents", def.getAutoStartComponents());

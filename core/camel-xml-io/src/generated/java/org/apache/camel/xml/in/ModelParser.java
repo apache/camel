@@ -1555,6 +1555,8 @@ public class ModelParser extends BaseParser {
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); break;
                 case "pattern": def.setPattern(val); break;
                 case "uri": def.setUri(val); break;
+                case "variableReceive": def.setVariableReceive(val); break;
+                case "variableSend": def.setVariableSend(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

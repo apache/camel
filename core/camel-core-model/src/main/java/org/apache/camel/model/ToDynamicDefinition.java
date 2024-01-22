@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
@@ -41,6 +42,10 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     @XmlAttribute
     @Metadata(required = true)
     private String uri;
+    @XmlAttribute
+    private String variableSend;
+    @XmlAttribute
+    private String variableReceive;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
     private String pattern;
@@ -98,6 +103,31 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      */
     public ToDynamicDefinition uri(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder) {
         setEndpointProducerBuilder(endpointProducerBuilder);
+        return this;
+    }
+
+    /**
+     * To use a variable as the source for the message body to send. This makes it handy to use variables for user data
+     * and to easily control what data to use for sending and receiving.
+     *
+     * Important: When using send variable then the message body is taken from this variable instead of the current
+     * {@link Message}, however the headers from the {@link Message} will still be used as well. In other words, the
+     * variable is used instead of the message body, but everything else is as usual.
+     */
+    public ToDynamicDefinition variableReceive(String variableReceive) {
+        setVariableReceive(variableReceive);
+        return this;
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public ToDynamicDefinition variableSend(String variableSend) {
+        setVariableSend(variableSend);
         return this;
     }
 
@@ -228,6 +258,22 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     public void setEndpointProducerBuilder(EndpointProducerBuilder endpointProducerBuilder) {
         this.endpointProducerBuilder = endpointProducerBuilder;
+    }
+
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     public String getPattern() {

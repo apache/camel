@@ -58,6 +58,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     protected CamelContext camelContext;
     protected final String uri;
     protected final Expression expression;
+    protected String variableSend;
+    protected String variableReceive;
     protected ExchangePattern pattern;
     protected ProducerCache producerCache;
     protected String id;
@@ -99,6 +101,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
+        // TODO: variables
+
         if (!isStarted()) {
             exchange.setException(new IllegalStateException("SendProcessor has not been started: " + this));
             callback.done(true);
@@ -172,6 +176,20 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             return true;
         }
 
+        // if we should store the received message body in a variable,
+        // then we need to preserve the original message body
+        Object body = null;
+        if (variableReceive != null) {
+            try {
+                body = exchange.getMessage().getBody();
+            } catch (Exception throwable) {
+                exchange.setException(throwable);
+                callback.done(true);
+                return true;
+            }
+        }
+        final Object originalBody = body;
+
         // send the exchange to the destination using the producer cache
         final Processor preProcessor = preAwareProcessor;
         final Processor postProcessor = postAwareProcessor;
@@ -183,6 +201,12 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             try {
                 if (preProcessor != null) {
                     preProcessor.process(target);
+                }
+                // replace message body with variable
+                if (variableSend != null) {
+                    // it may be a global variable
+                    Object value = ExchangeHelper.getVariable(exchange, variableSend);
+                    exchange.getMessage().setBody(value);
                 }
             } catch (Exception t) {
                 e.setException(t);
@@ -207,6 +231,12 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                     // stop endpoint if prototype as it was only used once
                     if (stopEndpoint) {
                         ServiceHelper.stopAndShutdownService(endpoint);
+                    }
+                    // result should be stored in variable instead of message body
+                    if (variableReceive != null) {
+                        Object value = exchange.getMessage().getBody();
+                        ExchangeHelper.setVariable(exchange, variableReceive, value);
+                        exchange.getMessage().setBody(originalBody);
                     }
                     // signal we are done
                     c.done(doneSync);
@@ -408,6 +438,22 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
 
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
+    }
+
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     public boolean isIgnoreInvalidEndpoint() {

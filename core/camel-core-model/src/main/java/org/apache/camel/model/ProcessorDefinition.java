@@ -298,12 +298,46 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
+     * @param  uri             the dynamic endpoint to send to (resolved using simple language by default)
+     * @param  variableSend    to use a variable as the source for the message body to send.
+     * @param  variableReceive to use a variable to store the received message body (only body, not headers).
+     * @return                 the builder
+     */
+    public Type toD(@AsEndpointUri String uri, String variableSend, String variableReceive) {
+        ToDynamicDefinition answer = new ToDynamicDefinition(uri);
+        answer.setVariableSend(variableSend);
+        answer.setVariableReceive(variableReceive);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
      * @param  endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
      * @return                         the builder
      */
     public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @param  endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
+     * @param  variableSend            to use a variable as the source for the message body to send.
+     * @param  variableReceive         to use a variable to store the received message body (only body, not headers).
+     * @return                         the builder
+     */
+    public Type toD(
+            @AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, String variableSend, String variableReceive) {
+        ToDynamicDefinition answer = new ToDynamicDefinition();
+        answer.setEndpointProducerBuilder(endpointProducerBuilder);
+        answer.setVariableSend(variableSend);
+        answer.setVariableReceive(variableReceive);
         addOutput(answer);
         return asType();
     }
