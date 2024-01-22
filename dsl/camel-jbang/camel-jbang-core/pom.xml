@@ -90,7 +90,7 @@
         <!-- jolokia -->
         <dependency>
             <groupId>org.jolokia</groupId>
-            <artifactId>jolokia-jvm</artifactId>
+            <artifactId>jolokia-agent-jvm</artifactId>
             <version>${jolokia-version}</version>
         </dependency>
         <!-- servlet for launching hawtio -->

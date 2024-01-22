@@ -18,8 +18,11 @@ package org.apache.camel.component.platform.http.main;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,13 +34,21 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import javax.management.RuntimeMBeanException;
+
+import io.netty.buffer.ByteBufInputStream;
 import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.impl.Arguments;
 import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.impl.BlockingHandlerDecorator;
+import io.vertx.ext.web.impl.Utils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -46,6 +57,7 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.platform.http.HttpEndpointModel;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.platform.http.main.jolokia.JolokiaHttpRequestHandlerSupport;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
@@ -65,6 +77,9 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.jolokia.server.core.http.HttpRequestHandler;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +96,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     private VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
+    private boolean jolokiaEnabled;
     private boolean metricsEnabled;
     private boolean uploadEnabled;
     private String uploadSourceDir;
@@ -118,11 +134,22 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         return healthCheckEnabled;
     }
 
+    public boolean isJolokiaEnabled() {
+        return jolokiaEnabled;
+    }
+
     /**
      * Whether health-check is enabled (q/health)
      */
     public void setHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
+    }
+
+    /**
+     * Whether jolokia is enabled (q/jolokia)
+     */
+    public void setJolokiaEnabled(boolean jolokiaEnabledEnabled) {
+        this.jolokiaEnabled = jolokiaEnabledEnabled;
     }
 
     public boolean isMetricsEnabled() {
@@ -246,6 +273,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         }
         if (healthCheckEnabled) {
             setupHealthCheckConsole();
+        }
+        if (jolokiaEnabled) {
+            setupJolokia();
         }
         if (uploadEnabled) {
             if (uploadSourceDir == null) {
@@ -385,6 +415,84 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         ready.handler(new BlockingHandlerDecorator(handler, true));
 
         platformHttpComponent.addHttpEndpoint("/q/health", null, null);
+    }
+
+    protected void setupJolokia() {
+        Route jolokia = router.route("/q/jolokia/*");
+        jolokia.method(HttpMethod.GET);
+        jolokia.method(HttpMethod.POST);
+
+        Handler<RoutingContext> handler = routingContext -> {
+
+            HttpServerRequest req = routingContext.request();
+            String remainingPath = Utils.pathOffset(req.path(), routingContext);
+
+            HttpRequestHandler requestHandler = getHttpRequestHandler();
+
+            JSONAware json = null;
+            try {
+                requestHandler.checkAccess(req.remoteAddress().host(), req.remoteAddress().host(), getOriginOrReferer(req));
+                if (req.method() == HttpMethod.GET) {
+                    json = requestHandler.handleGetRequest(req.uri(), remainingPath, getParams(req.params()));
+                } else {
+                    Arguments.require(routingContext.body() != null, "Missing body");
+                    InputStream inputStream = new ByteBufInputStream(routingContext.body().buffer().getByteBuf());
+                    json = requestHandler.handlePostRequest(req.uri(), inputStream, StandardCharsets.UTF_8.name(),
+                            getParams(req.params()));
+                }
+            } catch (Throwable exp) {
+                json = requestHandler.handleThrowable(
+                        exp instanceof RuntimeMBeanException ? ((RuntimeMBeanException) exp).getTargetException() : exp);
+            } finally {
+                if (json == null)
+                    json = requestHandler.handleThrowable(new Exception("Internal error while handling an exception"));
+
+                routingContext.response()
+                        .setStatusCode(getStatusCode(json))
+                        .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .end(json.toJSONString());
+            }
+        };
+
+        jolokia.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpEndpoint("/q/jolokia", null, null);
+    }
+
+    private HttpRequestHandler getHttpRequestHandler() {
+        //TODO: make jolokiaService more pluggable
+        //JolokiaHttpRequestHandlerSupport jolokiaService = camelContext.getCamelContextExtension().getContextPlugin(JolokiaHttpRequestHandlerSupport.class);
+        HttpRequestHandler requestHandler;
+        try (JolokiaHttpRequestHandlerSupport jolokiaService = new JolokiaHttpRequestHandlerSupport()) {
+            jolokiaService.start();
+            requestHandler = jolokiaService.getHttpRequestHandler();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return requestHandler;
+    }
+
+    private Map<String, String[]> getParams(MultiMap params) {
+        Map<String, String[]> response = new HashMap<>();
+        for (String name : params.names()) {
+            response.put(name, params.getAll(name).toArray(new String[0]));
+        }
+        return response;
+    }
+
+    private String getOriginOrReferer(HttpServerRequest req) {
+        String origin = req.getHeader(HttpHeaders.ORIGIN);
+        if (origin == null) {
+            origin = req.getHeader(HttpHeaders.REFERER);
+        }
+        return origin != null ? origin.replaceAll("[\\n\\r]*", "") : null;
+    }
+
+    protected int getStatusCode(JSONAware json) {
+        if (json instanceof JSONObject && ((JSONObject) json).get("status") instanceof Integer) {
+            return (Integer) ((JSONObject) json).get("status");
+        }
+        return 200;
     }
 
     @Override
