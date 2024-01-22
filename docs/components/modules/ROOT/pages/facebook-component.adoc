@@ -1,1 +1,0 @@
-../../../../../components/camel-facebook/src/main/docs/facebook-component.adoc
