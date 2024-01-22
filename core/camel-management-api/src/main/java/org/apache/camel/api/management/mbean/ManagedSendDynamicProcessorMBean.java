@@ -27,6 +27,12 @@ public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean,
                       mask = true)
     String getUri();
 
+    @ManagedAttribute(description = "Variable as the source for the message body to send")
+    String getVariableSend();
+
+    @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
+    String getVariableReceive();
+
     @ManagedAttribute(description = "Message Exchange Pattern")
     String getMessageExchangePattern();
 
