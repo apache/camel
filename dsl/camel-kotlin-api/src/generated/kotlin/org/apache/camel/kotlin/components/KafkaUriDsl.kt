@@ -106,6 +106,14 @@ public class KafkaUriDsl(
     it.property("autoOffsetReset", autoOffsetReset)
   }
 
+  public fun batching(batching: String) {
+    it.property("batching", batching)
+  }
+
+  public fun batching(batching: Boolean) {
+    it.property("batching", batching.toString())
+  }
+
   public fun breakOnFirstError(breakOnFirstError: String) {
     it.property("breakOnFirstError", breakOnFirstError)
   }

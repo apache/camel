@@ -20,6 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -159,7 +162,9 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         String dslClassName = pascalCaseName + "DataFormatDsl";
         Class<?> clazz;
         try {
-            clazz = Class.forName(model.getModelJavaType());
+            ClassLoader classLoader = constructClassLoaderForCamelProjects(
+                    "core/camel-core-model", "core/camel-api");
+            clazz = classLoader.loadClass(model.getModelJavaType());
         } catch (ClassNotFoundException e) {
             throw new MojoFailureException("Error while discovering class", e);
         }
@@ -455,5 +460,19 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
             getLog().error(ex);
             throw ex;
         }
+    }
+
+    private ClassLoader constructClassLoaderForCamelProjects(String... projectPaths) throws MojoFailureException {
+        URL[] urls = new URL[projectPaths.length];
+        for (int i = 0; i < urls.length; ++i) {
+            String projectPath = projectPaths[i];
+            File buildDirectory = Path.of(baseDir.toPath().toString(), "../../", projectPath, "target/classes").toFile();
+            try {
+                urls[i] = buildDirectory.toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Error while resolving build directory of project " + projectPath, e);
+            }
+        }
+        return new URLClassLoader(urls);
     }
 }
