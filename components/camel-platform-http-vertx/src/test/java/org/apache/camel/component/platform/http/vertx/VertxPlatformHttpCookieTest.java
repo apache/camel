@@ -131,7 +131,7 @@ public class VertxPlatformHttpCookieTest {
                     from("platform-http:/get?cookieHandlerCreator=#cookieHandlerCreator")
                             .process(exchange -> {
                                 cookieToHeader(exchange,
-                                                getCookieHandler(exchange).getCookie("foo"));
+                                        getCookieHandler(exchange).getCookie("foo"));
                             })
                             .setBody().constant("get");
                 }

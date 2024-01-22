@@ -19,7 +19,6 @@ package org.apache.camel.component.platform.http.cookie;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 
-
 /**
  * Allows components to add, retrieve, and expire cookies.
  *

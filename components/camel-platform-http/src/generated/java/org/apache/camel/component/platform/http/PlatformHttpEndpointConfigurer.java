@@ -24,6 +24,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookiehandlercreator":
+        case "cookieHandlerCreator": target.setCookieHandlerCreator(property(camelContext, org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandlerCreator.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -53,6 +55,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "consumes": return java.lang.String.class;
+        case "cookiehandlercreator":
+        case "cookieHandlerCreator": return org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandlerCreator.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -83,6 +87,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumes": return target.getConsumes();
+        case "cookiehandlercreator":
+        case "cookieHandlerCreator": return target.getCookieHandlerCreator();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

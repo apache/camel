@@ -22,6 +22,7 @@ public final class PlatformHttpConstants {
     public static final String PLATFORM_HTTP_ENGINE_NAME = "platform-http-engine";
     public static final String PLATFORM_HTTP_ENGINE_FACTORY = "platform-http-engine";
     public static final String COOKIE_HANDLER = "cookie-handler";
+
     private PlatformHttpConstants() {
     }
 }

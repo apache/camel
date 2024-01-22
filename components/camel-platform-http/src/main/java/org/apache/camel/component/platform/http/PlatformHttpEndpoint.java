@@ -74,8 +74,8 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
               description = "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
     private boolean useStreaming;
     @UriParam(label = "consumer",
-            description = "Creates cookie handler instances for adding, retrieving and expiring HTTP cookies "
-                          + "(Currently only supported by camel-platform-http-vertx).")
+              description = "Creates cookie handler instances for adding, retrieving and expiring HTTP cookies "
+                            + "(Currently only supported by camel-platform-http-vertx).")
     private PlatformHttpCookieHandlerCreator cookieHandlerCreator;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {

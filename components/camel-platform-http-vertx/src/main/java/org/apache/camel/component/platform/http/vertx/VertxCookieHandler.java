@@ -19,7 +19,6 @@ package org.apache.camel.component.platform.http.vertx;
 import io.vertx.core.http.Cookie;
 import org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandler;
 
-
 /**
  * Class for adding, retrieving, and expiring Vertx cookies.
  */

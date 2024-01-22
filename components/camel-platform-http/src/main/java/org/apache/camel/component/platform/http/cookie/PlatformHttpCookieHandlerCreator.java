@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.platform.http.cookie;
 
-
 /**
  * Creates a handler for adding, retrieving, and expiring cookies.
  */
@@ -25,7 +24,7 @@ public interface PlatformHttpCookieHandlerCreator {
     /**
      * Configuration used when creating cookies.
      */
-     PlatformHttpCookieConfiguration getCookieConfiguration();
+    PlatformHttpCookieConfiguration getCookieConfiguration();
 
     /**
      * Gets a {@code PlatformHttpCookieHandler} instance that can be used to add, retrieve, and expire cookies.
@@ -33,5 +32,5 @@ public interface PlatformHttpCookieHandlerCreator {
      * @param  delegate a {@link PlatformHttpCookieHandler} implementation
      * @return          the configured Cookie Handler
      */
-     PlatformHttpCookieHandler createCookieHandler(PlatformHttpCookieHandler delegate);
+    PlatformHttpCookieHandler createCookieHandler(PlatformHttpCookieHandler delegate);
 }

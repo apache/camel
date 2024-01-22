@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.platform.http.cookie;
 
-
 /**
  * Cookie attributes.
  */

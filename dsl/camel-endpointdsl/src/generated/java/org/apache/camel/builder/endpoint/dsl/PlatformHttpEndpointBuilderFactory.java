@@ -61,6 +61,40 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Creates cookie handler instances for adding, retrieving and expiring
+         * HTTP cookies (Currently only supported by camel-platform-http-vertx).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandlerCreator&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param cookieHandlerCreator the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieHandlerCreator(
+                org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandlerCreator cookieHandlerCreator) {
+            doSetProperty("cookieHandlerCreator", cookieHandlerCreator);
+            return this;
+        }
+        /**
+         * Creates cookie handler instances for adding, retrieving and expiring
+         * HTTP cookies (Currently only supported by camel-platform-http-vertx).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandlerCreator&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param cookieHandlerCreator the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieHandlerCreator(
+                String cookieHandlerCreator) {
+            doSetProperty("cookieHandlerCreator", cookieHandlerCreator);
+            return this;
+        }
+        /**
          * A comma separated list of HTTP methods to serve, e.g. GET,POST . If
          * no methods are specified, all methods will be served.
          * 
