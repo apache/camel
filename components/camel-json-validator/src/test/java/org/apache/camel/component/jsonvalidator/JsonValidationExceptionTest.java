@@ -26,15 +26,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonValidationExceptionTest {
+    private int errorId = 0;
 
     @Test
     void testErrorsInfoInMessage() {
         Set<ValidationMessage> errors = new LinkedHashSet<>();
         errors.add(createError("name: is missing but it is required"));
         errors.add(createError("id: string found, integer expected"));
+        final JsonValidationException jsonValidationException = new JsonValidationException(null, null, errors);
+
         assertEquals(
                 "JSON validation error with 2 errors:\nname: is missing but it is required\nid: string found, integer expected",
-                new JsonValidationException(null, null, errors).getMessage());
+                jsonValidationException.getMessage());
     }
 
     @Test
@@ -43,6 +46,8 @@ public class JsonValidationExceptionTest {
     }
 
     private ValidationMessage createError(String msg) {
-        return new ValidationMessage.Builder().format(new MessageFormat(msg)).build();
+        return new ValidationMessage.Builder()
+                .messageKey(String.valueOf(errorId++))
+                .format(new MessageFormat(msg)).build();
     }
 }
