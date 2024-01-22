@@ -172,7 +172,7 @@ camel.variable.user-template = resource:file:/etc/user.json
 
 == Using Variables with EIPs
 
-The most commonly used EIPs for sending and receiving messages (`from`, `to`, `toD`, `enrich` and `pollEnrich`) have
+The most commonly used EIPs for sending and receiving messages (`from`, `to`, `toD`, `enrich`, `pollEnrich`, and `wireTap`) have
 first class support for using variables with the message body.
 
 The intention is to make it more convenient and easy to _gather data_ from other systems without any ceremony to keep

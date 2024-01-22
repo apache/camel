@@ -38,6 +38,8 @@ import org.apache.camel.spi.Metadata;
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition
         implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
 
+    // TODO: variables due to extending ToDynamic
+
     @XmlTransient
     private ExecutorService executorServiceBean;
     @XmlTransient

@@ -13573,6 +13573,29 @@ org.apache.camel.language.simple.SimpleLanguage expression.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="variableSend" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a variable to store the received message body (only body, not headers). This is handy for easy access to the
+received message body via variables. Important: When using receive variable then the received body is stored only in
+this variable and not on the current org.apache.camel.Message .
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="variableReceive" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to
+easily control what data to use for sending and receiving. Important: When using send variable then the message body is
+taken from this variable instead of the current Message , however the headers from the Message will still be used as
+well. In other words, the variable is used instead of the message body, but everything else is as usual.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="pattern" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
