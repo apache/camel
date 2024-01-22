@@ -27,8 +27,6 @@ sed -i -e 's/xref:manual::polling-consumer/xref:{eip-vc}:eips:manual::polling-co
 sed -i -e 's/xref:manual::enterprise-integration-patterns/xref:{eip-vc}:eips:manual::enterprise-integration-patterns/g' `find . -name "dataset-component.adoc"`
 #version: latest component: components file: undefined path modules/ROOT/pages/dataset-test-component.adoc"` lineno: undefined message: Unresolved page ID manual::enterprise-integration-patterns
 sed -i -e 's/xref:manual::enterprise-integration-patterns/xref:{eip-vc}:eips:manual::enterprise-integration-patterns/g' `find . -name "dataset-test-component.adoc"`
-#version: latest component: components file: undefined path modules/ROOT/pages/facebook-component.adoc"` lineno: undefined message: Unresolved page ID manual::polling-consumer
-sed -i -e 's/xref:manual::polling-consumer/xref:{eip-vc}:eips:manual::polling-consumer/g' `find . -name "facebook-component.adoc"`
 #version: latest component: components file: undefined path modules/ROOT/pages/jms-component.adoc"` lineno: undefined message: Unresolved page ID manual::dead-letter-channel
 sed -i -e 's/xref:manual::dead-letter-channel/xref:{eip-vc}:eips:manual::dead-letter-channel/g' `find . -name "jms-component.adoc"`
 #version: latest component: components file: undefined path modules/ROOT/pages/mock-component.adoc"` lineno: undefined message: Unresolved page ID manual::enterprise-integration-patterns
