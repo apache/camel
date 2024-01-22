@@ -14,14 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.platform.http;
+package org.apache.camel.component.platform.http.cookie;
 
-public final class PlatformHttpConstants {
 
-    public static final String PLATFORM_HTTP_COMPONENT_NAME = "platform-http";
-    public static final String PLATFORM_HTTP_ENGINE_NAME = "platform-http-engine";
-    public static final String PLATFORM_HTTP_ENGINE_FACTORY = "platform-http-engine";
-    public static final String COOKIE_HANDLER = "cookie-handler";
-    private PlatformHttpConstants() {
+/**
+ * Cookie SameSite values.
+ */
+public enum CookieSameSite {
+
+    /**
+     * Prevents cookies from being sent to the target site in all cross-site browsing contexts.
+     */
+    STRICT("Strict"),
+
+    /**
+     * Cookies are sent in a first-party context, also when following a link to the origin site.
+     */
+    LAX("Lax"),
+
+    /**
+     * Cookies are set in all first-party and cross-origin contexts.
+     */
+    NONE("None");
+
+    CookieSameSite(String value) {
+        this.value = value;
+    }
+
+    private final String value;
+
+    public String getValue() {
+        return value;
     }
 }

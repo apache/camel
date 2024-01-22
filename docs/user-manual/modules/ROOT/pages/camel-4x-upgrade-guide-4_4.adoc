@@ -156,3 +156,7 @@ Other properties include `sessionCookieName`, `sessionCookiePath`, `sessionTimeo
 `cookieSameSite` and `storeType`.
 The session `storeType` defaults to the Vert.x `LocalSessionStore` and `cookieSameSite` to `Strict`. The remainder
 of the properties are configured with Vert.x defaults if not set.
+
+=== camel-platform-http-vertx
+
+Added a Cookie Handler implementation allowing the platform-http-vertx component to add, retrieve, and expire cookies.

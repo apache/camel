@@ -17,6 +17,7 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import java.io.File;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +31,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.Cookie;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
@@ -46,6 +48,11 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
+import org.apache.camel.component.platform.http.PlatformHttpConstants;
+import org.apache.camel.component.platform.http.cookie.PlatformHttpCookieConfiguration;
+import org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandler;
+import org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandlerCreator;
+import org.apache.camel.component.platform.http.cookie.CookieSameSite;
 import org.apache.camel.component.platform.http.spi.Method;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
@@ -75,6 +82,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
     private Route route;
     private VertxPlatformHttpRouter router;
     private HttpRequestBodyHandler httpRequestBodyHandler;
+    private PlatformHttpCookieHandlerCreator cookieHandlerCreator;
 
     public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint,
                                      Processor processor,
@@ -102,6 +110,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
         } else {
             httpRequestBodyHandler = new DefaultHttpRequestBodyHandler(router.bodyHandler());
+        }
+        if (getEndpoint().getCookieHandlerCreator() != null) {
+            cookieHandlerCreator = getEndpoint().getCookieHandlerCreator();
         }
     }
 
@@ -270,6 +281,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             in.setHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, user);
         }
 
+        if (cookieHandlerCreator != null) {
+            in.setHeader(PlatformHttpConstants.COOKIE_HANDLER,
+                    cookieHandlerCreator.createCookieHandler(
+                            new InternalCookieHandler(ctx, cookieHandlerCreator.getCookieConfiguration())));
+        }
         return populateCamelMessage(ctx, exchange, in);
     }
 
@@ -333,6 +349,46 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
                         "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
                         fileName, fileNameExtWhitelist);
             }
+        }
+    }
+
+    class InternalCookieHandler implements PlatformHttpCookieHandler<Cookie> {
+        private static EnumMap<CookieSameSite, io.vertx.core.http.CookieSameSite> sameSiteMap
+                = new EnumMap<>(CookieSameSite.class);
+        private RoutingContext routingContext;
+        private PlatformHttpCookieConfiguration cookieConfig;
+
+        static {
+            sameSiteMap.put(CookieSameSite.STRICT, io.vertx.core.http.CookieSameSite.STRICT);
+            sameSiteMap.put(CookieSameSite.LAX, io.vertx.core.http.CookieSameSite.LAX);
+            sameSiteMap.put(CookieSameSite.NONE, io.vertx.core.http.CookieSameSite.NONE);
+        }
+
+        InternalCookieHandler(RoutingContext routingContext, PlatformHttpCookieConfiguration cookieConfig) {
+            this.routingContext = routingContext;
+            this.cookieConfig = cookieConfig;
+        }
+
+        @Override
+        public void addCookie(String name, String value) {
+            Cookie cookie = Cookie.cookie(name, value)
+                    .setPath(cookieConfig.getPath())
+                    .setDomain(cookieConfig.getDomain())
+                    .setSecure(cookieConfig.isSecure())
+                    .setHttpOnly(cookieConfig.isHttpOnly())
+                    .setMaxAge(cookieConfig.getMaxAge())
+                    .setSameSite(sameSiteMap.get(cookieConfig.getSameSite()));
+            routingContext.response().addCookie(cookie);
+        }
+
+        @Override
+        public Cookie removeCookie(String name) {
+            return routingContext.response().removeCookie(name);
+        }
+
+        @Override
+        public Cookie getCookie(String name) {
+            return routingContext.request().getCookie(name);
         }
     }
 }

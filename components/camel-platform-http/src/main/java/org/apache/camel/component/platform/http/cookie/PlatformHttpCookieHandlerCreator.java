@@ -14,14 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.platform.http;
+package org.apache.camel.component.platform.http.cookie;
 
-public final class PlatformHttpConstants {
 
-    public static final String PLATFORM_HTTP_COMPONENT_NAME = "platform-http";
-    public static final String PLATFORM_HTTP_ENGINE_NAME = "platform-http-engine";
-    public static final String PLATFORM_HTTP_ENGINE_FACTORY = "platform-http-engine";
-    public static final String COOKIE_HANDLER = "cookie-handler";
-    private PlatformHttpConstants() {
-    }
+/**
+ * Creates a handler for adding, retrieving, and expiring cookies.
+ */
+public interface PlatformHttpCookieHandlerCreator {
+
+    /**
+     * Configuration used when creating cookies.
+     */
+     PlatformHttpCookieConfiguration getCookieConfiguration();
+
+    /**
+     * Gets a {@code PlatformHttpCookieHandler} instance that can be used to add, retrieve, and expire cookies.
+     *
+     * @param  delegate a {@link PlatformHttpCookieHandler} implementation
+     * @return          the configured Cookie Handler
+     */
+     PlatformHttpCookieHandler createCookieHandler(PlatformHttpCookieHandler delegate);
 }

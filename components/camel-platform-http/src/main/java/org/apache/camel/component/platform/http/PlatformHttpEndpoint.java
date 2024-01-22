@@ -22,6 +22,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.platform.http.cookie.PlatformHttpCookieHandlerCreator;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -72,6 +73,10 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     @UriParam(label = "consumer",
               description = "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
     private boolean useStreaming;
+    @UriParam(label = "consumer",
+            description = "Creates cookie handler instances for adding, retrieving and expiring HTTP cookies "
+                          + "(Currently only supported by camel-platform-http-vertx).")
+    private PlatformHttpCookieHandlerCreator cookieHandlerCreator;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -177,6 +182,14 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
+    }
+
+    public PlatformHttpCookieHandlerCreator getCookieHandlerCreator() {
+        return cookieHandlerCreator;
+    }
+
+    public void setCookieHandlerCreator(PlatformHttpCookieHandlerCreator cookieHandlerCreator) {
+        this.cookieHandlerCreator = cookieHandlerCreator;
     }
 
     PlatformHttpEngine getOrCreateEngine() {
