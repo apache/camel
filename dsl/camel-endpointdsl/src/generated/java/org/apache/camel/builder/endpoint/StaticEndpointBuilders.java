@@ -4505,49 +4505,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Facebook (camel-facebook)
-     * Send requests to Facebook APIs supported by Facebook4J.
-     * 
-     * Category: social
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-facebook
-     * 
-     * Syntax: <code>facebook:methodName</code>
-     * 
-     * Path parameter: methodName (required)
-     * What operation to perform
-     * 
-     * @param path methodName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.FacebookEndpointBuilder facebook(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.endpointBuilder("facebook", path);
-    }
-    /**
-     * Facebook (camel-facebook)
-     * Send requests to Facebook APIs supported by Facebook4J.
-     * 
-     * Category: social
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-facebook
-     * 
-     * Syntax: <code>facebook:methodName</code>
-     * 
-     * Path parameter: methodName (required)
-     * What operation to perform
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path methodName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.FacebookEndpointBuilder facebook(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * FHIR (camel-fhir)
      * Exchange information in the healthcare domain using the FHIR (Fast
      * Healthcare Interoperability Resources) standard.
