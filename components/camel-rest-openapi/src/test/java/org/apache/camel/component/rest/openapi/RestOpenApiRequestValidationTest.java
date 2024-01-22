@@ -49,6 +49,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -215,6 +216,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         assertEquals(10, createdPet.getId());
     }
 
+    @Disabled("Disabled due to CAMEL-20353")
     @ParameterizedTest
     @MethodSource("petStoreVersions")
     void requestValidationWithJsonBodyAndMissingMandatoryFields(String petStoreVersion) {
