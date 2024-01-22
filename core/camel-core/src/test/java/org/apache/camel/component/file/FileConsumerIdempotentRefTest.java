@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Registry;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,8 +77,9 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         Files.move(testFile("done/report.txt"), testFile("report.txt"));
 
         // should NOT consume the file again, let a bit time go
-        Thread.sleep(100);
-        assertMockEndpointsSatisfied();
+        Awaitility.await().pollDelay(100, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+            assertMockEndpointsSatisfied();
+        });
 
         assertTrue(invoked, "MyIdempotentRepository should have been invoked");
     }

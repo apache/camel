@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSupport {
@@ -44,11 +45,10 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
 
         // wait a bit to allow the consumer to poll once and see a non-changed
         // file
-        Thread.sleep(250);
-
-        template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");
-
-        assertMockEndpointsSatisfied();
+        Awaitility.await().pollDelay(250, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+            template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");
+            assertMockEndpointsSatisfied();
+        });
     }
 
     @Override
