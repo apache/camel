@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.aws2.ses.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.ses.Ses2Configuration;
 import org.apache.camel.component.aws2.ses.client.Ses2InternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
@@ -32,8 +33,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.SesClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS SES client for all users to use. This implementation is for local instances to use a static and solid
@@ -72,7 +71,8 @@ public class Ses2ClientSessionTokenImpl implements Ses2InternalClient {
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsSessionCredentials cred = AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(), configuration.getSessionToken());
+            AwsSessionCredentials cred = AwsSessionCredentials.create(configuration.getAccessKey(),
+                    configuration.getSecretKey(), configuration.getSessionToken());
             if (isClientConfigFound) {
                 clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
                         .credentialsProvider(StaticCredentialsProvider.create(cred));

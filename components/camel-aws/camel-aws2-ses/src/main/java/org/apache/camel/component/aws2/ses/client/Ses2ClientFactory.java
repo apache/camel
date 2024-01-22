@@ -43,7 +43,7 @@ public final class Ses2ClientFactory {
             return new Ses2ClientProfileOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
             return new Ses2ClientSessionTokenImpl(configuration);
-        }else {
+        } else {
             return new Ses2ClientStandardImpl(configuration);
         }
     }

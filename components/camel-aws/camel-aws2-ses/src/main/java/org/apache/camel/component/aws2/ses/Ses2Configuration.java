@@ -323,8 +323,8 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the SES client should expect to use Session Credentials. This is useful in situation in which the user
-     * needs to assume a IAM role for doing operations in SES.
+     * Set whether the SES client should expect to use Session Credentials. This is useful in situation in which the
+     * user needs to assume a IAM role for doing operations in SES.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
