@@ -55,8 +55,11 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private static final Integer CHMOD_WRITE_MASK = 02;
     private static final Integer CHMOD_READ_MASK = 04;
     private static final Integer CHMOD_EXECUTE_MASK = 01;
+    private static final String PARAM_OPERATIONS = "operations";
+    public static final String PARAM_FILE = "file";
 
     private final FileOperations operations = new FileOperations(this);
+
 
     @UriPath(name = "directoryName")
     @Metadata(required = true)
@@ -95,7 +98,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     @Override
     public FileConsumer createConsumer(Processor processor) throws Exception {
-        ObjectHelper.notNull(operations, "operations");
+        ObjectHelper.notNull(operations, PARAM_OPERATIONS);
         ObjectHelper.notNull(file, "file");
 
         // auto create starting directory if needed
@@ -157,8 +160,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        ObjectHelper.notNull(operations, "operations");
-        ObjectHelper.notNull(file, "file");
+        ObjectHelper.notNull(operations, PARAM_OPERATIONS);
+        ObjectHelper.notNull(file, PARAM_FILE);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
@@ -176,7 +179,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     @Override
     public GenericFileProducer<File> createProducer() throws Exception {
-        ObjectHelper.notNull(operations, "operations");
+        ObjectHelper.notNull(operations, PARAM_OPERATIONS);
 
         // you cannot use temp file and file exists append
         if (getFileExist() == GenericFileExist.Append && (getTempPrefix() != null || getTempFileName() != null)) {

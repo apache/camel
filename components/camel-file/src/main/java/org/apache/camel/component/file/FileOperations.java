@@ -330,16 +330,7 @@ public class FileOperations implements GenericFileOperations<File> {
                             // do so
                             keepLastModified(exchange, file);
                             // set permissions if the chmod option was set
-                            if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
-                                Set<PosixFilePermission> permissions = endpoint.getPermissions();
-                                if (!permissions.isEmpty()) {
-                                    if (LOG.isTraceEnabled()) {
-                                        LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions),
-                                                file);
-                                    }
-                                    Files.setPosixFilePermissions(file.toPath(), permissions);
-                                }
-                            }
+                            setPermissions(file);
                             // clear header as we have renamed the file
                             exchange.getIn().setHeader(FileConstants.FILE_LOCAL_WORK_PATH, null);
                             // return as the operation is complete, we just renamed
@@ -356,15 +347,7 @@ public class FileOperations implements GenericFileOperations<File> {
                     // so
                     keepLastModified(exchange, file);
                     // set permissions if the chmod option was set
-                    if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
-                        Set<PosixFilePermission> permissions = endpoint.getPermissions();
-                        if (!permissions.isEmpty()) {
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions), file);
-                            }
-                            Files.setPosixFilePermissions(file.toPath(), permissions);
-                        }
-                    }
+                    setPermissions(file);
                     return true;
                 }
             }
@@ -396,19 +379,24 @@ public class FileOperations implements GenericFileOperations<File> {
             // try to keep last modified timestamp if configured to do so
             keepLastModified(exchange, file);
             // set permissions if the chmod option was set
-            if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
-                Set<PosixFilePermission> permissions = endpoint.getPermissions();
-                if (!permissions.isEmpty()) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions), file);
-                    }
-                    Files.setPosixFilePermissions(file.toPath(), permissions);
-                }
-            }
+            setPermissions(file);
 
             return true;
         } catch (InvalidPayloadException | IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
+        }
+    }
+
+    private void setPermissions(File file) throws IOException {
+        if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
+            Set<PosixFilePermission> permissions = endpoint.getPermissions();
+            if (!permissions.isEmpty()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions),
+                            file);
+                }
+                Files.setPosixFilePermissions(file.toPath(), permissions);
+            }
         }
     }
 
