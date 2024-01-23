@@ -67,8 +67,8 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     protected volatile String scheme;
     private String id;
     private String routeId;
-    private AggregationStrategy aggregationStrategy;
     private String variableReceive;
+    private AggregationStrategy aggregationStrategy;
     private final Expression expression;
     private final String uri;
     private long timeout;

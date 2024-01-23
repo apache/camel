@@ -5041,7 +5041,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreInvalidEndpoint", type = "boolean", description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint", displayName = "Ignore Invalid Endpoint"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "shareUnitOfWork", type = "boolean", description = "Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.", displayName = "Share Unit Of Work")
+                    @YamlProperty(name = "shareUnitOfWork", type = "boolean", description = "Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.", displayName = "Share Unit Of Work"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send")
             }
     )
     public static class EnrichDefinitionDeserializer extends YamlDeserializerBase<EnrichDefinition> {
@@ -5117,6 +5119,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "shareUnitOfWork": {
                     String val = asText(node);
                     target.setShareUnitOfWork(val);
+                    break;
+                }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
+                    break;
+                }
+                case "variableSend": {
+                    String val = asText(node);
+                    target.setVariableSend(val);
                     break;
                 }
                 case "id": {

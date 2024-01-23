@@ -54,6 +54,8 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     private String routeId;
     private final Expression expression;
     private final String uri;
+    private String variableSend;
+    private String variableReceive;
     private AggregationStrategy aggregationStrategy;
     private boolean aggregateOnException;
     private boolean shareUnitOfWork;
@@ -105,6 +107,22 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
         return sendDynamicProcessor.getEndpointUtilizationStatistics();
+    }
+
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
@@ -166,6 +184,21 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
+
+        // if we should store the received message body in a variable,
+        // then we need to preserve the original message body
+        Object body = null;
+        if (variableReceive != null) {
+            try {
+                body = exchange.getMessage().getBody();
+            } catch (Exception throwable) {
+                exchange.setException(throwable);
+                callback.done(true);
+                return true;
+            }
+        }
+        final Object originalBody = body;
+
         return sendDynamicProcessor.process(resourceExchange, new AsyncCallback() {
             @Override
             public void done(boolean doneSync) {
@@ -181,6 +214,12 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
 
                         Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                         if (aggregatedExchange != null) {
+                            if (variableReceive != null) {
+                                // result should be stored in variable instead of message body
+                                Object value = aggregatedExchange.getMessage().getBody();
+                                ExchangeHelper.setVariable(exchange, variableReceive, value);
+                                aggregatedExchange.getMessage().setBody(originalBody);
+                            }
                             // copy aggregation result onto original exchange (preserving pattern)
                             copyResultsWithoutCorrelationId(exchange, aggregatedExchange);
                             // handover any synchronization (if unit of work is not shared)
@@ -248,6 +287,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         this.sendDynamicProcessor.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
         this.sendDynamicProcessor.setAllowOptimisedComponents(allowOptimisedComponents);
         this.sendDynamicProcessor.setAutoStartupComponents(autoStartupComponents);
+        this.sendDynamicProcessor.setVariableSend(variableSend);
 
         // create a per processor exchange factory
         this.processorExchangeFactory = getCamelContext().getCamelContextExtension()

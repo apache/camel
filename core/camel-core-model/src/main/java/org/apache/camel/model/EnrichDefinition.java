@@ -40,6 +40,10 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
     private AggregationStrategy aggregationStrategyBean;
 
     @XmlAttribute
+    private String variableSend;
+    @XmlAttribute
+    private String variableReceive;
+    @XmlAttribute
     @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
     @XmlAttribute
@@ -92,6 +96,30 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public EnrichDefinition variableReceive(String variableReceive) {
+        setVariableReceive(variableReceive);
+        return this;
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public EnrichDefinition variableSend(String variableSend) {
+        setVariableSend(variableSend);
+        return this;
+    }
 
     /**
      * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
@@ -294,6 +322,22 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
 
     public void setAggregateOnException(String aggregateOnException) {
         this.aggregateOnException = aggregateOnException;
+    }
+
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     public String getShareUnitOfWork() {

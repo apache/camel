@@ -1250,6 +1250,8 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("variableSend", def.getVariableSend());
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());

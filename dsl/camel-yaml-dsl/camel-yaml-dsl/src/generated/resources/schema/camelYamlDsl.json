@@ -1324,6 +1324,16 @@
             "title" : "Share Unit Of Work",
             "description" : "Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work."
           },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
