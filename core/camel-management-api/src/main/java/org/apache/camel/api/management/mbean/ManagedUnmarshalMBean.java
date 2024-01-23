@@ -23,4 +23,13 @@ public interface ManagedUnmarshalMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "The name of the DataFormat to use for unmarshal")
     String getDataFormatName();
 
+    @ManagedAttribute(description = "Variable as the source for the message body to send")
+    String getVariableSend();
+
+    @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
+    String getVariableReceive();
+
+    @ManagedAttribute(description = "Whether null is allowed as value of a body to unmarshall")
+    boolean isAllowNullBody();
+
 }

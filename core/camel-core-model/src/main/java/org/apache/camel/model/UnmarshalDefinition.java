@@ -116,6 +116,10 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
     @XmlAttribute
+    private String variableSend;
+    @XmlAttribute
+    private String variableReceive;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String allowNullBody;
 
@@ -162,6 +166,22 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         this.dataFormatType = dataFormatType;
     }
 
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
+    }
+
     public String getAllowNullBody() {
         return allowNullBody;
     }
@@ -175,6 +195,30 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public UnmarshalDefinition variableReceive(String variableReceive) {
+        setVariableReceive(variableReceive);
+        return this;
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public UnmarshalDefinition variableSend(String variableSend) {
+        setVariableSend(variableSend);
+        return this;
+    }
 
     /**
      * Indicates whether {@code null} is allowed as value of a body to unmarshall.
