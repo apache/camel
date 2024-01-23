@@ -172,16 +172,137 @@ camel.variable.user-template = resource:file:/etc/user.json
 
 == Using Variables with EIPs
 
-The most commonly used EIPs for sending and receiving messages (`from`, `to`, `toD`, `enrich`, `pollEnrich`, and `wireTap`) have
-first class support for using variables with the message body.
+The following commonly used EIPs for sending and receiving, and transforming messages, have
+first class support for using variables with the message body:
+
+- from
+- to
+- toD
+- enrich
+- pollEnrich
+- wireTap
+- unmarshal
+- marshal
 
 The intention is to make it more convenient and easy to _gather data_ from other systems without any ceremony to keep
 existing data by using techniques such as storing the data temporary using headers or exchange properties,
 or with the xref:components:eips:claimCheck-eip.adoc[Claim Check] EIP.
 
+=== Important concept when using variables and EIPs
+
 It is **important** to understand that the variables only use the message **body** and does not have support for anything else such
 as message headers. This is on purpose to keep it simpler and only work with the message body as the user data. If you have need
 to use variables with both message body and headers, then you can use `setVariable` and `getVariable`.
+
+The EIPs listed above have support for using variables when sending and receiving data. This is done by using the `variableSend` and `variableReceive` options
+to specify the name of the variable. When the EIP uses variables then the _data_ itself (i.e. message body) is only what is
+different from 'standard' Camel.
+
+For example given the following `Message` containing:
+
+[source,properties]
+----
+header.foo=123
+header.bar=456
+body=Hello World
+----
+
+And a remote service is called via the route below, and this service returns a new header and body:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:service")
+  .to("http:myservice")
+  .to("log:after");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:service"/>
+  <to uri="http:myservice"/>
+  <to uri="log:after"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+from:
+  uri: "direct:service"
+  steps:
+    - to: "http:myservice"
+    - to: "log:after"
+----
+====
+
+Then calling this route, then the `Message` is updated:
+
+[source,properties]
+----
+header.foo=123
+header.bar=456
+header.level=gold
+body=Bye World
+----
+
+However, if you use a variable (_myVar_) as the _sink_ to store the returned data from calling the remote service as shown:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:service")
+  .toV("http:myservice", null, "myVar")
+  .to("log:after");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:service"/>
+  <to uri="http:myservice" variableReceive="myVar"/>
+  <to uri="log:after"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+from:
+  uri: "direct:service"
+  steps:
+    - to:
+        uri: http:myservice
+        variableReceive: myVar
+    - to: "log:after"
+----
+====
+
+Then the `Message` body is not changed, but everything else is changed as without using variables:
+
+[source,properties]
+----
+header.foo=123
+header.bar=456
+header.level=gold
+body=Hello World
+----
+
+And the variable contains the data:
+
+[source,properties]
+----
+myVar=Bye World
+----
 
 === Using variable to store a copy of the incoming message body
 
@@ -200,7 +321,7 @@ Java::
 fromV("direct:start", "myKey")
     .transform().simple("Bye ${body}")
     .to("mock:foo")
-    .setBody(simple("${variable:myKey}"))
+    .setBody(variable("myKey"))
     .to("mock:result");
 ----
 XML::
@@ -209,10 +330,12 @@ XML::
 ----
 <route>
   <from uri="direct:start" variableReceive="myKey"/>
-  <transform><simple>Bye ${body}</simple></transform>
+  <transform>
+    <simple>Bye ${body}</simple>
+  </transform>
   <to uri="mock:foo"/>
   <setBody>
-    <simple>${variable:myKey}</simple>
+    <variable>myKey</variable>
   </setBody>
   <to uri="mock:result"/>
 </route>
@@ -229,7 +352,7 @@ from:
         simple: "Bye ${body}"
     - to: "mock:foo"
     - setBody:
-        simple: "${variable:myKey}"
+        variable: "myKey"
     - to: "mock:result"
 ----
 ====
@@ -364,8 +487,7 @@ YAML::
         - to:
             uri: mock:after
         - setBody:
-            simple:
-              expression: "${variable:bye}"
+            variable: bye
         - to:
             uri: mock:result
 - route:
