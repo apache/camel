@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.microprofile.config;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.function.Predicate;
 
+import io.smallrye.config.SmallRyeConfig;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.eclipse.microprofile.config.Config;
@@ -35,6 +38,20 @@ import org.slf4j.LoggerFactory;
 public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelMicroProfilePropertiesSource.class);
+    private List<String> profiles = Collections.emptyList();
+
+    public CamelMicroProfilePropertiesSource() {
+        try {
+            this.profiles = ConfigProvider.getConfig()
+                    .unwrap(SmallRyeConfig.class)
+                    .getProfiles();
+        } catch (IllegalArgumentException e) {
+            // Handle unlikely event that the config could not be unwrapped
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Failed to discover active configuration profiles", e);
+            }
+        }
+    }
 
     @Override
     public String getName() {
@@ -52,7 +69,9 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
         final Config config = ConfigProvider.getConfig();
         for (String name : config.getPropertyNames()) {
             try {
-                answer.put(name, config.getValue(name, String.class));
+                if (isValidForActiveProfiles(name)) {
+                    answer.put(name, config.getValue(name, String.class));
+                }
             } catch (NoSuchElementException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Failed to resolve property {} due to {}", name, e.getMessage());
@@ -69,7 +88,7 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
         final Config config = ConfigProvider.getConfig();
 
         for (String name : config.getPropertyNames()) {
-            if (filter.test(name)) {
+            if (isValidForActiveProfiles(name) && filter.test(name)) {
                 try {
                     config.getOptionalValue(name, String.class).ifPresent(value -> answer.put(name, value));
                 } catch (NoSuchElementException e) {
@@ -91,5 +110,17 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
     @Override
     public String toString() {
         return "camel-microprofile-config";
+    }
+
+    private boolean isValidForActiveProfiles(String name) {
+        if (!profiles.isEmpty() && name.startsWith("%")) {
+            for (String profile : profiles) {
+                if (name.startsWith(profile + ".", 1)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
     }
 }
