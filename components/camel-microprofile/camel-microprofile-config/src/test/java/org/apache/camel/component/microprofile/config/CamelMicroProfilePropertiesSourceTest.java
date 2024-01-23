@@ -34,6 +34,8 @@ import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
     private Config config;
@@ -46,10 +48,17 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         prop.put("hi", "World");
         prop.put("my-mock", "result");
         prop.put("empty", "");
+        prop.put("%non-active-profile.test-non-active-profile", "should not see this");
+        prop.put("%profileA.test-profile-a", "Profile A");
+        prop.put("%profileB.test-profile-b", "Profile B");
 
         // create PMC config source and register it so we can use it for testing
         PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
-        config = new SmallRyeConfigBuilder().withSources(pcs).build();
+        config = new SmallRyeConfigBuilder()
+                .withProfile("profileA")
+                .withProfile("profileB")
+                .withSources(pcs)
+                .build();
 
         ConfigProviderResolver.instance().registerConfig(config, CamelMicroProfilePropertiesSourceTest.class.getClassLoader());
 
@@ -90,16 +99,22 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         Assertions.assertThat(properties.get("hi")).isEqualTo("World");
         Assertions.assertThat(properties.get("my-mock")).isEqualTo("result");
         Assertions.assertThat(properties.get("empty")).isNull();
+        Assertions.assertThat(properties.get("test-non-active-profile")).isNull();
+        Assertions.assertThat(properties.get("test-profile-a")).isEqualTo("Profile A");
+        Assertions.assertThat(properties.get("test-profile-b")).isEqualTo("Profile B");
     }
 
     @Test
     public void testLoadFiltered() {
         PropertiesComponent pc = context.getPropertiesComponent();
-        Properties properties = pc.loadProperties(k -> k.length() > 2);
+        Properties properties = pc.loadProperties(k -> k.matches("^start$|.*mock$|.*-profile.*"));
 
-        Assertions.assertThat(properties).hasSize(2);
+        Assertions.assertThat(properties).hasSize(4);
         Assertions.assertThat(properties.get("start")).isEqualTo("direct:start");
         Assertions.assertThat(properties.get("my-mock")).isEqualTo("result");
+        Assertions.assertThat(properties.get("test-non-active-profile")).isNull();
+        Assertions.assertThat(properties.get("test-profile-a")).isEqualTo("Profile A");
+        Assertions.assertThat(properties.get("test-profile-b")).isEqualTo("Profile B");
     }
 
     @Test
@@ -109,6 +124,24 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{hi}} from {{who}}"));
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testActiveConfigProfiles() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Profile A :: Profile B");
+
+        template.sendBody("direct:start", context.resolvePropertyPlaceholders("{{test-profile-a}} :: {{test-profile-b}}"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInactiveConfigProfiles() throws Exception {
+        assertThatThrownBy(() -> {
+            template.sendBody("direct:start", context.resolvePropertyPlaceholders("{{test-non-active-profile}}"));
+        })
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Property with key [test-non-active-profile] not found");
     }
 
     @Override
