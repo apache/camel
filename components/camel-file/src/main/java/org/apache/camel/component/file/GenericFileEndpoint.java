@@ -1586,7 +1586,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String configureMoveOrPreMoveExpression(String expression) {
         // if the expression already have ${ } placeholders then pass it
         // unmodified
-        if (StringHelper.hasStartToken(expression, "simple")) {
+        if (isSimpleLanguage(expression)) {
             return expression;
         }
 
@@ -1702,7 +1702,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         pattern = pattern.replaceFirst("\\$simple\\{file:name.noext\\}", FileUtil.stripExt(onlyName, true));
 
         // must be able to resolve all placeholders supported
-        if (StringHelper.hasStartToken(pattern, "simple")) {
+        if (isSimpleLanguage(pattern)) {
             throw new ExpressionIllegalSyntaxException(fileName + ". Cannot resolve reminder: " + pattern);
         }
 
@@ -1732,7 +1732,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         String pattern = getDoneFileName();
         StringHelper.notEmpty(pattern, "doneFileName", pattern);
 
-        if (!StringHelper.hasStartToken(pattern, "simple")) {
+        if (!isSimpleLanguage(pattern)) {
             // no tokens, so just match names directly
             return pattern.equals(fileName);
         }
@@ -1749,7 +1749,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         pattern = pattern.replaceFirst("\\$simple\\{file:name.noext\\}", "");
 
         // must be able to resolve all placeholders supported
-        if (StringHelper.hasStartToken(pattern, "simple")) {
+        if (isSimpleLanguage(pattern)) {
             throw new ExpressionIllegalSyntaxException(fileName + ". Cannot resolve reminder: " + pattern);
         }
 
@@ -1758,6 +1758,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         } else {
             return fileName.endsWith(pattern);
         }
+    }
+
+    private static boolean isSimpleLanguage(String pattern) {
+        return StringHelper.hasStartToken(pattern, "simple");
     }
 
     @Override

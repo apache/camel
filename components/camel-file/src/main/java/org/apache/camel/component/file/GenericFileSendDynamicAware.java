@@ -25,6 +25,14 @@ import org.apache.camel.util.URISupport;
 
 public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSupport {
 
+    public static final String PROP_FILE_NAME = "fileName";
+    public static final String PROP_TEMP_FILE_NAME = "tempFileName";
+    public static final String PROP_IDEMPOTENT_KEY = "idempotentKey";
+    public static final String PROP_MOVE = "move";
+    public static final String PROP_MOVE_FAILED = "moveFailed";
+    public static final String PROP_PRE_MOVE = "preMove";
+    public static final String PROP_MOVE_EXISTING = "moveExisting";
+
     @Override
     public boolean isLenientProperties() {
         return false;
@@ -43,13 +51,13 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
         // which should then be reversed
         uri = uri.replace("\t", "\\\\t");
 
-        boolean fileName = entry.getProperties().containsKey("fileName");
-        boolean tempFileName = entry.getProperties().containsKey("tempFileName");
-        boolean idempotentKey = entry.getProperties().containsKey("idempotentKey");
-        boolean move = entry.getProperties().containsKey("move");
-        boolean moveFailed = entry.getProperties().containsKey("moveFailed");
-        boolean preMove = entry.getProperties().containsKey("preMove");
-        boolean moveExisting = entry.getProperties().containsKey("moveExisting");
+        boolean fileName = entry.getProperties().containsKey(PROP_FILE_NAME);
+        boolean tempFileName = entry.getProperties().containsKey(PROP_TEMP_FILE_NAME);
+        boolean idempotentKey = entry.getProperties().containsKey(PROP_IDEMPOTENT_KEY);
+        boolean move = entry.getProperties().containsKey(PROP_MOVE);
+        boolean moveFailed = entry.getProperties().containsKey(PROP_MOVE_FAILED);
+        boolean preMove = entry.getProperties().containsKey(PROP_PRE_MOVE);
+        boolean moveExisting = entry.getProperties().containsKey(PROP_MOVE_EXISTING);
         // if any of the above are in use, then they should not be pre evaluated
         // and we need to rebuild a new uri with them as-is
         if (fileName || tempFileName || idempotentKey || move || moveFailed || preMove || moveExisting) {
@@ -57,45 +65,45 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
 
             Map<String, Object> originalParams = URISupport.parseQuery(URISupport.extractQuery(entry.getOriginalUri()));
             if (fileName) {
-                Object val = originalParams.get("fileName");
+                Object val = originalParams.get(PROP_FILE_NAME);
                 if (val != null) {
-                    params.put("fileName", val.toString());
+                    params.put(PROP_FILE_NAME, val.toString());
                 }
             }
             if (tempFileName) {
-                Object val = originalParams.get("tempFileName");
+                Object val = originalParams.get(PROP_TEMP_FILE_NAME);
                 if (val != null) {
-                    params.put("tempFileName", val.toString());
+                    params.put(PROP_TEMP_FILE_NAME, val.toString());
                 }
             }
             if (idempotentKey) {
-                Object val = originalParams.get("idempotentKey");
+                Object val = originalParams.get(PROP_IDEMPOTENT_KEY);
                 if (val != null) {
-                    params.put("idempotentKey", val.toString());
+                    params.put(PROP_IDEMPOTENT_KEY, val.toString());
                 }
             }
             if (move) {
-                Object val = originalParams.get("move");
+                Object val = originalParams.get(PROP_MOVE);
                 if (val != null) {
-                    params.put("move", val.toString());
+                    params.put(PROP_MOVE, val.toString());
                 }
             }
             if (moveFailed) {
-                Object val = originalParams.get("moveFailed");
+                Object val = originalParams.get(PROP_MOVE_FAILED);
                 if (val != null) {
-                    params.put("moveFailed", val.toString());
+                    params.put(PROP_MOVE_FAILED, val.toString());
                 }
             }
             if (preMove) {
-                Object val = originalParams.get("preMove");
+                Object val = originalParams.get(PROP_PRE_MOVE);
                 if (val != null) {
-                    params.put("preMove", val.toString());
+                    params.put(PROP_PRE_MOVE, val.toString());
                 }
             }
             if (moveExisting) {
-                Object val = originalParams.get("moveExisting");
+                Object val = originalParams.get(PROP_MOVE_EXISTING);
                 if (val != null) {
-                    params.put("moveExisting", val.toString());
+                    params.put(PROP_MOVE_EXISTING, val.toString());
                 }
             }
 
