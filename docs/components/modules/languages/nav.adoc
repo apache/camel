@@ -23,6 +23,7 @@
 ** xref:simple-language.adoc[Simple]
 ** xref:spel-language.adoc[SpEL]
 ** xref:tokenize-language.adoc[Tokenize]
+** xref:variable-language.adoc[Variable]
 ** xref:xtokenize-language.adoc[XML Tokenize]
 ** xref:xpath-language.adoc[XPath]
 ** xref:xquery-language.adoc[XQuery]
