@@ -111,7 +111,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         route.setErrorHandlerFactory(definition.getErrorHandlerFactory());
 
         // configure variable
-        String variable = definition.getInput().getVariableReceive();
+        String variable = parseString(definition.getInput().getVariableReceive());
         if (variable != null) {
             // when using variable we need to turn on original message
             route.setAllowUseOriginalMessage(true);

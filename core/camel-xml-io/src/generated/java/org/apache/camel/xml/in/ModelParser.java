@@ -763,6 +763,7 @@ public class ModelParser extends BaseParser {
                 case "cacheSize": def.setCacheSize(val); break;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); break;
                 case "timeout": def.setTimeout(val); break;
+                case "variableReceive": def.setVariableReceive(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

@@ -11115,6 +11115,17 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
+        <xs:attribute name="variableReceive" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a variable to store the received message body (only body, not headers). This is handy for easy access to the
+received message body via variables. Important: When using receive variable then the received body is stored only in
+this variable and not on the current org.apache.camel.Message .
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="aggregationStrategy" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

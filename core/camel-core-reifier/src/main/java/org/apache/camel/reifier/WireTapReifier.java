@@ -84,8 +84,8 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
             Endpoint endpoint = CamelContextHelper.resolveEndpoint(camelContext, uri, null);
             LineNumberAware.trySetLineNumberAware(endpoint, definition);
             sendProcessor = new SendProcessor(endpoint);
-            sendProcessor.setVariableSend(definition.getVariableSend());
-            sendProcessor.setVariableReceive(definition.getVariableReceive());
+            sendProcessor.setVariableSend(parseString(definition.getVariableSend()));
+            sendProcessor.setVariableReceive(parseString(definition.getVariableReceive()));
         }
 
         // create error handler we need to use for processing the wire tapped
