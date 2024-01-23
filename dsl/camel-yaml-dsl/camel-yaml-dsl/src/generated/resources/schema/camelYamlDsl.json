@@ -3075,6 +3075,16 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
           "asn1" : { },
           "avro" : { },
           "barcode" : { },
@@ -7175,6 +7185,16 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
           },
           "asn1" : { },
           "avro" : { },
