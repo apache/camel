@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -111,7 +112,7 @@ abstract class BatchingProcessingITSupport extends BaseEmbeddedKafkaTestSupport 
         final Object body = message.getBody();
         final List<?> list = assertInstanceOf(List.class, body, "The body should be a list");
 
-        //        assertEquals(expectedCount, list.size(), "The should be 5 messages on the list");
+        assertEquals(expectedCount, list.size(), "It should have received " + expectedCount + " instead of " + list.size());
 
         for (var object : list) {
             final Exchange exchange = assertInstanceOf(Exchange.class, object, "The list content should be an exchange");

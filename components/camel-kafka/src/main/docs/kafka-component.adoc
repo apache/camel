@@ -496,16 +496,94 @@ static {
 
 === Batching Consumer
 
-To use a Kafka batching consumer with Camel, an application has to set the configuration `batching` to `true` and use manual commits.
+To use a Kafka batching consumer with Camel, an application has to set the configuration `batching` to `true`.
+
 
 The received records are stored in a list in the exchange used in the pipeline. As such, it is possible to commit individually
 every record or the whole batch at once by committing the last exchange on the list.
 
-When working with batch processing, it's up to the application to commit the records, and handle the outcome of potentially invalid records.
-
 The size of the batch is controlled by the option `maxPollRecords`.
 
 In order to avoid blocking for too long, waiting for the a whole set of records to fill the batch, it is is possible to use the `pollTimeoutMs` option to set a timeout for the polling. In this case, the batch may contain less messages than set in the `maxPollRecords`.
+
+==== Automatic Commits
+
+By default, Camel uses automatic commits when using batch processing. In this case, Camel automatically commits the records after they have been successfully processed by the application.
+
+In case of failures, the records will not be processed.
+
+The code below provides an example of this approach:
+[source,java]
+----
+    from(from).process(e -> {
+        // The received records are stored as exchanges in a list. This gets the list of those exchanges
+        final List<?> exchanges = e.getMessage().getBody(List.class);
+
+        // Ensure we are actually receiving what we are asking for
+        if (exchanges == null || exchanges.isEmpty()) {
+            return;
+        }
+
+        // The records from the batch are stored in a list of exchanges in the original exchange. To process, we iterate over that list
+        for (Object obj : exchanges) {
+            if (obj instanceof Exchange exchange) {
+                LOG.info("Processing exchange with body {}", exchange.getMessage().getBody(String.class));
+            }
+        }
+    }).to(KafkaTestUtil.MOCK_RESULT);
+----
+
+===== Handling Errors with Automatic Commits
+
+When using automatic commits, Camel will not commit records if there is a failure in processing. Because of this, there is a risk that records could be reprocessed multiple times.
+
+It is recommended to implement appropriate error handling mechanisms and patterns (i.e.; such as dead-letter queues) to prevent failed records from blocking processing progress.
+
+The code below provides an example of handling errors with automatic commits:
+
+[source,java]
+----
+public void configure() {
+    /*
+     We want to use continued here, so that Camel auto-commits the batch even though part of it has failed. In a
+     production scenario, applications should probably send these records to a separate topic or fix the condition
+     that lead to the failure
+     */
+    onException(IllegalArgumentException.class).process(exchange -> {
+        LOG.warn("Failed to process batch {}", exchange.getMessage().getBody());
+        LOG.warn("Failed to process due to {}", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class).getMessage());
+    }).continued(true);
+
+    from(from).routeId("batching").process(e -> {
+        // The received records are stored as exchanges in a list. This gets the list of those exchanges
+        final List<?> exchanges = e.getMessage().getBody(List.class);
+
+        // Ensure we are actually receiving what we are asking for
+        if (exchanges == null || exchanges.isEmpty()) {
+            return;
+        }
+
+        // The records from the batch are stored in a list of exchanges in the original exchange.
+        int i = 0;
+        for (Object o : exchanges) {
+            if (o instanceof Exchange exchange) {
+                i++;
+                LOG.info("Processing exchange with body {}", exchange.getMessage().getBody(String.class));
+
+                if (i == 4) {
+                    throw new IllegalArgumentException("Failed to process record");
+                }
+            }
+        }
+    }).to(KafkaTestUtil.MOCK_RESULT);
+}
+----
+
+==== Manual Commits
+
+When working with batch processing with manual commits, it's up to the application to commit the records, and handle the outcome of potentially invalid records.
+
+The code below provides an example of this approach:
 
 [source,java]
 ----

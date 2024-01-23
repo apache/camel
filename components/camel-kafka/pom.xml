@@ -212,7 +212,7 @@
                                     <skipITs>${skipITs}</skipITs>
                                     <forkCount>1</forkCount>
                                     <reuseForks>true</reuseForks>
-                                    <excludedGroups>health,idempotent,breakOnFirstError</excludedGroups>
+                                    <excludedGroups>health,idempotent,breakOnFirstError,batching</excludedGroups>
                                 </configuration>
                             </execution>
                             <execution>
@@ -222,7 +222,7 @@
                                 </goals>
                                 <configuration>
                                     <reuseForks>false</reuseForks>
-                                    <groups>health,idempotent,breakOnFirstError</groups>
+                                    <groups>health,idempotent,breakOnFirstError,batching</groups>
                                     <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
                                 </configuration>
                             </execution>
