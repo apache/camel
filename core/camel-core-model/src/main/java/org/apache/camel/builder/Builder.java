@@ -28,6 +28,7 @@ import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.language.VariableExpression;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -272,6 +273,14 @@ public final class Builder {
     public static <T> ValueBuilder bodyAs(Class<T> type) {
         ObjectHelper.notNull(type, "type");
         Expression exp = new SimpleExpression(String.format("${bodyAs(%s)}", type.getCanonicalName()));
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a predicate and value builder for variable
+     */
+    public static ValueBuilder variable(String name) {
+        Expression exp = new VariableExpression(name);
         return new ValueBuilder(exp);
     }
 

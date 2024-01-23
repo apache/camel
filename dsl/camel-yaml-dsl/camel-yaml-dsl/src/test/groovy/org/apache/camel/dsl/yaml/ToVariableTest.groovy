@@ -49,8 +49,7 @@ class ToVariableTest extends YamlTestSupport {
                         - to:
                             uri: mock:after
                         - setBody:
-                            simple:
-                              expression: "${variable:bye}"
+                            variable: bye
                         - to:
                             uri: mock:result
                 - route:
@@ -127,8 +126,7 @@ class ToVariableTest extends YamlTestSupport {
                         - to:
                             uri: mock:after
                         - setBody:
-                            simple:
-                              expression: "${variable:bye}"
+                            variable: bye
                         - to:
                             uri: mock:result
                 - route:
@@ -204,8 +202,7 @@ class ToVariableTest extends YamlTestSupport {
                         - to:
                             uri: mock:after
                         - setBody:
-                            simple:
-                              expression: "${variable:bye}"
+                            variable: bye
                         - to:
                             uri: mock:result
                 - route:

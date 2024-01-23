@@ -202,6 +202,7 @@ import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.model.language.VariableExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -19736,6 +19737,72 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "variable",
+            inline = true,
+            types = org.apache.camel.model.language.VariableExpression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Variable",
+            description = "Gets a variable",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+            }
+    )
+    public static class VariableExpressionDeserializer extends YamlDeserializerBase<VariableExpression> {
+        public VariableExpressionDeserializer() {
+            super(VariableExpression.class);
+        }
+
+        @Override
+        protected VariableExpression newInstance() {
+            return new VariableExpression();
+        }
+
+        @Override
+        protected VariableExpression newInstance(String value) {
+            return new VariableExpression(value);
+        }
+
+        @Override
+        protected boolean setProperty(VariableExpression target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;

@@ -1,0 +1,52 @@
+= Variable Language
+:doctitle: Variable
+:shortname: variable
+:artifactid: camel-core-languages
+:description: Gets a variable
+:since: 4.4
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: core
+:starter-artifactid: camel-core-starter
+
+*Since Camel {since}*
+
+The Variable Expression Language allows you to extract values of named
+variables.
+
+== Variable Options
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END
+
+== Example usage
+
+The `recipientList` EIP can utilize a variable:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:a" />
+  <recipientList>
+    <variable>myVar</variable>
+  </recipientList>
+</route>
+----
+
+In this case, the list of recipients are contained in the variable
+'myVar'.
+
+And the same example in Java DSL:
+
+[source,java]
+----
+from("direct:a").recipientList(variable("myVar"));
+----
+
+== Dependencies
+
+The Header language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

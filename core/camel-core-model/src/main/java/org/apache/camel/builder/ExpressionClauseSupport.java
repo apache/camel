@@ -44,6 +44,7 @@ import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.model.language.VariableExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -198,6 +199,13 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T exchangeProperties() {
         return expression(ExpressionBuilder.exchangePropertiesExpression());
+    }
+
+    /**
+     * An expression of a variable with the given name
+     */
+    public T variable(String name) {
+        return expression(new VariableExpression(name));
     }
 
     // Languages

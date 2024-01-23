@@ -2999,6 +2999,10 @@ public class ModelParser extends BaseParser {
             return true;
         };
     }
+    protected VariableExpression doParseVariableExpression() throws IOException, XmlPullParserException {
+        return doParse(new VariableExpression(),
+            expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected XMLTokenizerExpression doParseXMLTokenizerExpression() throws IOException, XmlPullParserException {
         return doParse(new XMLTokenizerExpression(), (def, key, val) -> {
             switch (key) {
@@ -3576,6 +3580,7 @@ public class ModelParser extends BaseParser {
             case "simple": return doParseSimpleExpression();
             case "spel": return doParseSpELExpression();
             case "tokenize": return doParseTokenizerExpression();
+            case "variable": return doParseVariableExpression();
             case "xtokenize": return doParseXMLTokenizerExpression();
             case "xpath": return doParseXPathExpression();
             case "xquery": return doParseXQueryExpression();

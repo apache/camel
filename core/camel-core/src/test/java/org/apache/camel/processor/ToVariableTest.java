@@ -72,7 +72,7 @@ public class ToVariableTest extends ContextTestSupport {
                 from("direct:receive")
                         .toV("direct:foo", null, "bye")
                         .to("mock:after")
-                        .setBody(simple("${variable:bye}"))
+                        .setBody(variable("bye"))
                         .to("mock:result");
 
                 from("direct:sendAndReceive")

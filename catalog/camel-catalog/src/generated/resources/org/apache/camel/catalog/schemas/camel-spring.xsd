@@ -2157,6 +2157,15 @@ A single value
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="variable" type="tns:variableExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Gets a variable
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="weighted" type="tns:weightedLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3833,6 +3842,7 @@ complete all those exchanges before its stopped, when stopping CamelContext or t
       <xs:element ref="tns:simple"/>
       <xs:element ref="tns:spel"/>
       <xs:element ref="tns:tokenize"/>
+      <xs:element ref="tns:variable"/>
       <xs:element ref="tns:xtokenize"/>
       <xs:element ref="tns:xpath"/>
       <xs:element ref="tns:xquery"/>
@@ -4159,6 +4169,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -5167,6 +5178,7 @@ To use a specific charset when converting.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -5228,6 +5240,7 @@ To use a custom Thread Pool if asyncDelay has been enabled.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -5296,6 +5309,7 @@ reduce memory usage to avoid storing too many non frequent used producers.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -5935,6 +5949,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -6184,6 +6199,7 @@ Global option value.
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -6959,6 +6975,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -11155,6 +11172,7 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -11311,6 +11329,7 @@ type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassTy
       <xs:element ref="tns:simple"/>
       <xs:element ref="tns:spel"/>
       <xs:element ref="tns:tokenize"/>
+      <xs:element ref="tns:variable"/>
       <xs:element ref="tns:xtokenize"/>
       <xs:element ref="tns:xpath"/>
       <xs:element ref="tns:xquery"/>
@@ -11351,6 +11370,7 @@ Property key.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -11660,6 +11680,7 @@ Name of variable to remove.
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -12343,6 +12364,7 @@ Description of the parameter.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12612,6 +12634,7 @@ Sets the sample message count which only a single Exchange will pass through aft
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12645,6 +12668,7 @@ Sets the sample message count which only a single Exchange will pass through aft
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12694,6 +12718,7 @@ Sets the new exchange pattern of the Exchange to be used from this point forward
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12746,6 +12771,7 @@ be used. Otherwise a constant name will be used.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12789,6 +12815,7 @@ property name to be used. Otherwise a constant name will be used.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12832,6 +12859,7 @@ used. Otherwise a constant name will be used.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12875,6 +12903,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -13485,6 +13514,7 @@ handler. Is by default true. Default value: true
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -13822,6 +13852,7 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -14034,6 +14065,7 @@ Indicates whether null is allowed as value of a body to unmarshall. Default valu
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -14783,6 +14815,7 @@ Set the base path to store in ZK.
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -15451,6 +15484,11 @@ To skip the very first element. Default value: false
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="variableExpression">
+    <xs:simpleContent>
+      <xs:extension base="tns:expression"/>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="xmlTokenizerExpression">
@@ -16942,6 +16980,7 @@ To configure a special tag for the operations within this rest definition.
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>

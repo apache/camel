@@ -41,7 +41,7 @@
       <to uri="direct:foo" variableReceive="bye"/>
       <to uri="mock:after"/>
       <setBody>
-        <simple>${variable:bye}</simple>
+        <variable>bye</variable>
       </setBody>
       <to uri="mock:result"/>
     </route>

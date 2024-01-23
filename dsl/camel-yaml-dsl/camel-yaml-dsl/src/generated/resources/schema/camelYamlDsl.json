@@ -979,6 +979,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -1050,6 +1052,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1110,6 +1113,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -1183,6 +1188,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1243,6 +1249,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -1355,6 +1363,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1492,6 +1501,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -1662,6 +1673,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "variable" ],
+            "properties" : {
+              "variable" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.VariableExpression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -1708,6 +1727,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
@@ -1854,6 +1874,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -1921,6 +1943,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -2074,6 +2097,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -2161,6 +2186,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -2564,6 +2590,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -2641,6 +2669,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -3703,6 +3732,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -3805,6 +3836,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -3914,6 +3946,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -3960,6 +3994,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4021,6 +4056,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -4155,6 +4192,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4531,6 +4569,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -4619,6 +4659,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5202,6 +5243,8 @@
                 }, {
                   "required" : [ "tokenize" ]
                 }, {
+                  "required" : [ "variable" ]
+                }, {
                   "required" : [ "xpath" ]
                 }, {
                   "required" : [ "xquery" ]
@@ -5274,6 +5317,7 @@
             "simple" : { },
             "spel" : { },
             "tokenize" : { },
+            "variable" : { },
             "xpath" : { },
             "xquery" : { },
             "xtokenize" : { },
@@ -5471,6 +5515,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -5527,6 +5573,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5588,6 +5635,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -5644,6 +5693,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5738,6 +5788,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -5799,6 +5851,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5890,6 +5943,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -5951,6 +6006,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6013,6 +6069,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -6074,6 +6132,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6136,6 +6195,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -6197,6 +6258,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6257,6 +6319,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -6387,6 +6451,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6712,6 +6777,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -6793,6 +6860,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7050,6 +7118,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -7116,6 +7186,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7700,6 +7771,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -7761,6 +7834,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7839,6 +7913,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -7901,6 +7977,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7961,6 +8038,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -8024,6 +8103,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -12656,6 +12736,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "variable" ],
+            "properties" : {
+              "variable" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.VariableExpression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -12702,6 +12790,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
@@ -13406,6 +13495,34 @@
           }
         } ],
         "required" : [ "token" ]
+      },
+      "org.apache.camel.model.language.VariableExpression" : {
+        "title" : "Variable",
+        "description" : "Gets a variable",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "expression" : {
+              "type" : "string",
+              "title" : "Expression",
+              "description" : "The expression value in your chosen language syntax"
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "Sets the id of this node"
+            },
+            "trim" : {
+              "type" : "boolean",
+              "title" : "Trim",
+              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
         "title" : "XML Tokenize",
