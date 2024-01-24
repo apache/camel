@@ -122,8 +122,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // exchange property
         remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
         if (remainder != null) {
-            // remove leading character (dot or ?)
-            if (remainder.startsWith(".") || remainder.startsWith("?")) {
+            // remove leading character (dot, colon or ?)
+            if (remainder.startsWith(".") || remainder.startsWith(":") || remainder.startsWith("?")) {
                 remainder = remainder.substring(1);
             }
             // remove starting and ending brackets

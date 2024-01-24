@@ -280,6 +280,7 @@ public class SimpleTest extends LanguageTestSupport {
     public void testSimpleExchangePropertyExpressions() throws Exception {
         exchange.setProperty("medal", "gold");
         assertExpression("${exchangeProperty.medal}", "gold");
+        assertExpression("${exchangeProperty:medal}", "gold");
     }
 
     @Test
