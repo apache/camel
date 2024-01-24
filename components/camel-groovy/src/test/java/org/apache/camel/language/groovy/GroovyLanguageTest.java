@@ -28,6 +28,18 @@ public class GroovyLanguageTest extends LanguageTestSupport {
         assertExpression("headers.foo", "abc");
     }
 
+    @Test
+    public void testGroovyExchangeProperty() {
+        exchange.setProperty("myProp1", "myValue");
+        exchange.setProperty("myProp2", 123);
+
+        assertExpression("exchange.properties.myProp1", "myValue");
+        assertExpression("exchange.properties.myProp2", 123);
+
+        assertExpression("exchangeProperties.myProp1", "myValue");
+        assertExpression("exchangeProperties.myProp2", 123);
+    }
+
     @Override
     protected String getLanguageName() {
         return "groovy";
