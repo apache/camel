@@ -107,7 +107,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 exchange.getIn().getHeaders();
             }
 
-            String correlationId = message.getJMSCorrelationID();
+            String correlationId = JmsMessageHelper.getJMSCorrelationID(message);
             if (correlationId != null) {
                 LOG.debug("Received Message has JMSCorrelationID [{}]", correlationId);
             }
@@ -378,11 +378,12 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
      */
     protected String determineCorrelationId(final Message message) throws JMSException {
         final String messageId = message.getJMSMessageID();
-        final String correlationId = message.getJMSCorrelationID();
-
         if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
             return messageId;
-        } else if (ObjectHelper.isEmpty(correlationId)) {
+        }
+
+        final String correlationId = JmsMessageHelper.getJMSCorrelationID(message);
+        if (ObjectHelper.isEmpty(correlationId)) {
             // correlation id is empty so fallback to message id
             return messageId;
         } else {
