@@ -43,25 +43,31 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
  * Transform messages using a Thymeleaf template.
  */
 @UriEndpoint(firstVersion = "4.1.0", scheme = "thymeleaf", title = "Thymeleaf", syntax = "thymeleaf:resourceUri",
-             remote = false, producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = ThymeleafConstants.class)
+             remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
+             headersClass = ThymeleafConstants.class)
 public class ThymeleafEndpoint extends ResourceEndpoint {
 
     private TemplateEngine templateEngine;
     private String template;
     private JakartaServletWebApplication jakartaServletWebApplication;
 
-    @UriParam(label = "advanced", defaultValue = "CLASS_LOADER", description = "The type of resolver to be used by the template engine.",
+    @UriParam(label = "advanced", defaultValue = "CLASS_LOADER",
+              description = "The type of resolver to be used by the template engine.",
               javaType = "org.apache.camel.component.thymeleaf.ThymeleafResolverType")
     private ThymeleafResolverType resolver = ThymeleafResolverType.CLASS_LOADER;
-    @UriParam(description = "The template mode to be applied to templates.", defaultValue = "HTML", enums = "HTML,XML,TEXT,JAVASCRIPT,CSS,RAW")
+    @UriParam(description = "The template mode to be applied to templates.", defaultValue = "HTML",
+              enums = "HTML,XML,TEXT,JAVASCRIPT,CSS,RAW")
     private String templateMode;
-    @UriParam(label = "advanced", description = "An optional prefix added to template names to convert them into resource names.")
+    @UriParam(label = "advanced",
+              description = "An optional prefix added to template names to convert them into resource names.")
     private String prefix;
-    @UriParam(label = "advanced", description = "An optional suffix added to template names to convert them into resource names.")
+    @UriParam(label = "advanced",
+              description = "An optional suffix added to template names to convert them into resource names.")
     private String suffix;
     @UriParam(label = "advanced", description = "The character encoding to be used for reading template resources.")
     private String encoding;
-    @UriParam(label = "advanced", description = "The order in which this template will be resolved as part of the resolver chain.")
+    @UriParam(label = "advanced",
+              description = "The order in which this template will be resolved as part of the resolver chain.")
     private Integer order;
     @UriParam(description = "Whether a template resources will be checked for existence before being returned.")
     private Boolean checkExistence;
@@ -192,8 +198,8 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * Sets whether template resources will be checked for existence before being returned or not.
-     * Default value is {@code FALSE}.
+     * Sets whether template resources will be checked for existence before being returned or not. Default value is
+     * {@code FALSE}.
      *
      * @param checkExistence {@code true} if resource existence should be checked, {@code false} if not
      */
