@@ -275,7 +275,7 @@ public class JmsProducer extends DefaultAsyncProducer {
         final String correlationProperty = configuration.getCorrelationProperty();
 
         final String messageId = message.getJMSMessageID();
-        final String correlationId = message.getJMSCorrelationID();
+        final String correlationId = JmsMessageHelper.getJMSCorrelationID(message);
         final String correlationPropertyValue;
         if (correlationProperty == null) {
             correlationPropertyValue = null;
