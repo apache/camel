@@ -58,7 +58,7 @@ public final class LoggerHelper {
                     // classname so let us only grab the name
                     int pos = name.lastIndexOf('.');
                     if (pos > 0) {
-                        name = name.substring(pos + 1);
+                        name = name.substring(0, pos);
                     }
                 }
                 if (line != -1) {
