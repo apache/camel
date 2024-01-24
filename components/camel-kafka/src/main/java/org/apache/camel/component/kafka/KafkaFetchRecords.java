@@ -297,7 +297,7 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     protected void startPolling() {
-        
+
         try {
             /*
              * We lock the processing of the record to avoid raising a WakeUpException as a result to a call
@@ -307,7 +307,7 @@ public class KafkaFetchRecords implements Runnable {
 
             long pollTimeoutMs = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
-            
+
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Polling {} from {} with timeout: {}", threadId, getPrintableTopic(), pollTimeoutMs);
             }
@@ -325,7 +325,7 @@ public class KafkaFetchRecords implements Runnable {
 
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
                 updateTaskState();
-                
+
                 // when breakOnFirstError we want to unsubscribe from Kafka 
                 if (result != null && result.isBreakOnErrorHit() && !this.state.equals(State.PAUSED)) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
