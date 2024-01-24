@@ -481,6 +481,7 @@ public final class ExchangeHelper {
             map.put("in", in);
             map.put("request", in);
             map.put("exchange", exchange);
+            map.put("exchangeProperties", exchange.getAllProperties());
             if (isOutCapable(exchange)) {
                 // if we are out capable then set out and response as well
                 // however only grab OUT if it exists, otherwise reuse IN

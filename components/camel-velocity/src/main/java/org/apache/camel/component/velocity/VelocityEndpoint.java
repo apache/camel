@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
  * Transform messages using a Velocity template.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri",
-             remote = false, producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = VelocityConstants.class)
+             remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
+             headersClass = VelocityConstants.class)
 public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;

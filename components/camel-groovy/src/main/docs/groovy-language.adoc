@@ -54,6 +54,33 @@ And in XML DSL:
 </route>
 ----
 
+== Groovy Context
+
+Camel will provide exchange information in the Groovy context (just
+a `Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchangeProperties` |The `Exchange` properties.
+
+|`variables` |The variables
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
+
+
 == How to get the result from multiple statements script
 
 As the Groovy script engine evaluate method just return a `Null` if it runs a
