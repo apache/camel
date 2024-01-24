@@ -1393,6 +1393,23 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the JMS consumer should include JMSCorrelationIDAsBytes as a
+         * header on the Camel Message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param includeCorrelationIDAsBytes the value to set
+         * @return the dsl builder
+         */
+        default JmsComponentBuilder includeCorrelationIDAsBytes(
+                boolean includeCorrelationIDAsBytes) {
+            doSetProperty("includeCorrelationIDAsBytes", includeCorrelationIDAsBytes);
+            return this;
+        }
+        /**
          * Pluggable strategy for encoding and decoding JMS keys so they can be
          * compliant with the JMS specification. Camel provides two
          * implementations out of the box: default and passthrough. The default
@@ -2037,6 +2054,7 @@ public interface JmsComponentBuilderFactory {
             case "idleConsumerLimit": getOrCreateConfiguration((JmsComponent) component).setIdleConsumerLimit((int) value); return true;
             case "idleTaskExecutionLimit": getOrCreateConfiguration((JmsComponent) component).setIdleTaskExecutionLimit((int) value); return true;
             case "includeAllJMSXProperties": getOrCreateConfiguration((JmsComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "includeCorrelationIDAsBytes": ((JmsComponent) component).setIncludeCorrelationIDAsBytes((boolean) value); return true;
             case "jmsKeyFormatStrategy": getOrCreateConfiguration((JmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
             case "mapJmsMessage": getOrCreateConfiguration((JmsComponent) component).setMapJmsMessage((boolean) value); return true;
             case "maxMessagesPerTask": getOrCreateConfiguration((JmsComponent) component).setMaxMessagesPerTask((int) value); return true;

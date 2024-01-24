@@ -124,8 +124,7 @@ The component has been removed after deprecation in 4.3.0
 
 === camel-jms
 
-The header with key `JMSCorrelationIDAsBytes` has been removed from the Camel `Message` in the consumer.
-The correlation ID is already stored via the `JMSCorrelationID` header.
+The header with key `JMSCorrelationIDAsBytes` has changed value from `String` to `byte[]`.
 
 === camel-jsonata
 

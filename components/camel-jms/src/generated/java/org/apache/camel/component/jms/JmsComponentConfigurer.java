@@ -119,6 +119,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "idleTaskExecutionLimit": getOrCreateConfiguration(target).setIdleTaskExecutionLimit(property(camelContext, int.class, value)); return true;
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": getOrCreateConfiguration(target).setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
+        case "includecorrelationidasbytes":
+        case "includeCorrelationIDAsBytes": target.setIncludeCorrelationIDAsBytes(property(camelContext, boolean.class, value)); return true;
         case "includesentjmsmessageid":
         case "includeSentJMSMessageID": getOrCreateConfiguration(target).setIncludeSentJMSMessageID(property(camelContext, boolean.class, value)); return true;
         case "jmskeyformatstrategy":
@@ -317,6 +319,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "idleTaskExecutionLimit": return int.class;
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": return boolean.class;
+        case "includecorrelationidasbytes":
+        case "includeCorrelationIDAsBytes": return boolean.class;
         case "includesentjmsmessageid":
         case "includeSentJMSMessageID": return boolean.class;
         case "jmskeyformatstrategy":
@@ -516,6 +520,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "idleTaskExecutionLimit": return getOrCreateConfiguration(target).getIdleTaskExecutionLimit();
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": return getOrCreateConfiguration(target).isIncludeAllJMSXProperties();
+        case "includecorrelationidasbytes":
+        case "includeCorrelationIDAsBytes": return target.isIncludeCorrelationIDAsBytes();
         case "includesentjmsmessageid":
         case "includeSentJMSMessageID": return getOrCreateConfiguration(target).isIncludeSentJMSMessageID();
         case "jmskeyformatstrategy":

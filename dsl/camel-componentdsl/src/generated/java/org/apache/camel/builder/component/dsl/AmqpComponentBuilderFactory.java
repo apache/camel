@@ -1412,6 +1412,23 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the JMS consumer should include JMSCorrelationIDAsBytes as a
+         * header on the Camel Message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param includeCorrelationIDAsBytes the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder includeCorrelationIDAsBytes(
+                boolean includeCorrelationIDAsBytes) {
+            doSetProperty("includeCorrelationIDAsBytes", includeCorrelationIDAsBytes);
+            return this;
+        }
+        /**
          * Pluggable strategy for encoding and decoding JMS keys so they can be
          * compliant with the JMS specification. Camel provides two
          * implementations out of the box: default and passthrough. The default
@@ -2057,6 +2074,7 @@ public interface AmqpComponentBuilderFactory {
             case "idleConsumerLimit": getOrCreateConfiguration((AMQPComponent) component).setIdleConsumerLimit((int) value); return true;
             case "idleTaskExecutionLimit": getOrCreateConfiguration((AMQPComponent) component).setIdleTaskExecutionLimit((int) value); return true;
             case "includeAllJMSXProperties": getOrCreateConfiguration((AMQPComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "includeCorrelationIDAsBytes": ((AMQPComponent) component).setIncludeCorrelationIDAsBytes((boolean) value); return true;
             case "jmsKeyFormatStrategy": getOrCreateConfiguration((AMQPComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
             case "mapJmsMessage": getOrCreateConfiguration((AMQPComponent) component).setMapJmsMessage((boolean) value); return true;
             case "maxMessagesPerTask": getOrCreateConfiguration((AMQPComponent) component).setMaxMessagesPerTask((int) value); return true;

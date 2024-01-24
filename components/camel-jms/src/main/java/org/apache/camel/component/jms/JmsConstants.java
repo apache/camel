@@ -33,8 +33,7 @@ public final class JmsConstants {
     public static final String JMS_HEADER_MESSAGE_ID = "JMSMessageID";
     @Metadata(description = "The JMS correlation ID.", javaType = "String")
     public static final String JMS_HEADER_CORRELATION_ID = "JMSCorrelationID";
-    @Deprecated
-    @Metadata(description = "The JMS correlation ID as bytes. (deprecated, not in use)", javaType = "String")
+    @Metadata(description = "The JMS correlation ID as bytes.", javaType = "byte[]")
     public static final String JMS_HEADER_CORRELATION_ID_AS_BYTES = "JMSCorrelationIDAsBytes";
     @Metadata(description = "The JMS delivery mode.", javaType = "int")
     public static final String JMS_HEADER_DELIVERY_MODE = "JMSDeliveryMode";

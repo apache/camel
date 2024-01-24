@@ -451,8 +451,7 @@ public final class JmsMessageHelper {
      * @param  message the message
      * @return         the JMSCorrelationIDAsBytes, or <tt>null</tt> if not able to get
      */
-    @Deprecated
-    public static String getJMSCorrelationIDAsBytes(Message message) {
+    public static byte[] getJMSCorrelationIDAsBytes(Message message) {
         try {
             byte[] bytes = message.getJMSCorrelationIDAsBytes();
             boolean isNull = true;
@@ -464,7 +463,7 @@ public final class JmsMessageHelper {
                     }
                 }
             }
-            return isNull ? null : new String(bytes);
+            return isNull ? null : bytes;
         } catch (Exception e) {
             // ignore if JMS broker do not support this
         }

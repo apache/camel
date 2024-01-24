@@ -1463,6 +1463,23 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the JMS consumer should include JMSCorrelationIDAsBytes as a
+         * header on the Camel Message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param includeCorrelationIDAsBytes the value to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder includeCorrelationIDAsBytes(
+                boolean includeCorrelationIDAsBytes) {
+            doSetProperty("includeCorrelationIDAsBytes", includeCorrelationIDAsBytes);
+            return this;
+        }
+        /**
          * Pluggable strategy for encoding and decoding JMS keys so they can be
          * compliant with the JMS specification. Camel provides two
          * implementations out of the box: default and passthrough. The default
@@ -2134,6 +2151,7 @@ public interface ActivemqComponentBuilderFactory {
             case "idleConsumerLimit": getOrCreateConfiguration((ActiveMQComponent) component).setIdleConsumerLimit((int) value); return true;
             case "idleTaskExecutionLimit": getOrCreateConfiguration((ActiveMQComponent) component).setIdleTaskExecutionLimit((int) value); return true;
             case "includeAllJMSXProperties": getOrCreateConfiguration((ActiveMQComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "includeCorrelationIDAsBytes": ((ActiveMQComponent) component).setIncludeCorrelationIDAsBytes((boolean) value); return true;
             case "jmsKeyFormatStrategy": getOrCreateConfiguration((ActiveMQComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
             case "mapJmsMessage": getOrCreateConfiguration((ActiveMQComponent) component).setMapJmsMessage((boolean) value); return true;
             case "maxMessagesPerTask": getOrCreateConfiguration((ActiveMQComponent) component).setMaxMessagesPerTask((int) value); return true;
