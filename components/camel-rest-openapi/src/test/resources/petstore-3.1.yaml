@@ -111,15 +111,11 @@ paths:
               $ref: '#/components/schemas/Pet'
               writeOnly: true
               description: A Pet in JSON Format
-              required:
-                - id
           application/xml:
             schema:
               $ref: '#/components/schemas/Pet'
               writeOnly: true
               description: A Pet in XML Format
-              required:
-                - id
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Pet'
