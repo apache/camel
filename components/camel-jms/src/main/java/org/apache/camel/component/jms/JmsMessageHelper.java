@@ -469,4 +469,19 @@ public final class JmsMessageHelper {
         }
         return null;
     }
+
+    /**
+     * Gets the JMSCorrelationID from the message.
+     *
+     * @param  message the message
+     * @return         the JMSCorrelationID, or <tt>null</tt> if not able to get
+     */
+    public static String getJMSCorrelationID(Message message) {
+        try {
+            return message.getJMSCorrelationID();
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
+        }
+        return null;
+    }
 }
