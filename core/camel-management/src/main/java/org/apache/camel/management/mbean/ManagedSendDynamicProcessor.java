@@ -82,6 +82,16 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
     }
 
     @Override
+    public String getVariableSend() {
+        return processor.getVariableSend();
+    }
+
+    @Override
+    public String getVariableReceive() {
+        return processor.getVariableReceive();
+    }
+
+    @Override
     public String getMessageExchangePattern() {
         if (processor.getPattern() != null) {
             return processor.getPattern().name();

@@ -202,6 +202,7 @@ import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.model.language.VariableExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -5041,7 +5042,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreInvalidEndpoint", type = "boolean", description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint", displayName = "Ignore Invalid Endpoint"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "shareUnitOfWork", type = "boolean", description = "Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.", displayName = "Share Unit Of Work")
+                    @YamlProperty(name = "shareUnitOfWork", type = "boolean", description = "Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.", displayName = "Share Unit Of Work"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send")
             }
     )
     public static class EnrichDefinitionDeserializer extends YamlDeserializerBase<EnrichDefinition> {
@@ -5117,6 +5120,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "shareUnitOfWork": {
                     String val = asText(node);
                     target.setShareUnitOfWork(val);
+                    break;
+                }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
+                    break;
+                }
+                case "variableSend": {
+                    String val = asText(node);
+                    target.setVariableSend(val);
                     break;
                 }
                 case "id": {
@@ -9046,6 +9059,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send"),
                     @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", oneOf = "dataFormatType"),
@@ -9280,6 +9295,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inheritErrorHandler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
+                    break;
+                }
+                case "variableSend": {
+                    String val = asText(node);
+                    target.setVariableSend(val);
                     break;
                 }
                 case "id": {
@@ -11283,7 +11308,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreInvalidEndpoint", type = "boolean", description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint", displayName = "Ignore Invalid Endpoint"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "timeout", type = "string", defaultValue = "-1", description = "Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a timeout value", displayName = "Timeout")
+                    @YamlProperty(name = "timeout", type = "string", defaultValue = "-1", description = "Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a timeout value", displayName = "Timeout"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive")
             }
     )
     public static class PollEnrichDefinitionDeserializer extends YamlDeserializerBase<PollEnrichDefinition> {
@@ -11354,6 +11380,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeout": {
                     String val = asText(node);
                     target.setTimeout(val);
+                    break;
+                }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
                     break;
                 }
                 case "id": {
@@ -18050,7 +18081,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
                     @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", description = "Sets the optional ExchangePattern used to invoke this endpoint", displayName = "Pattern"),
-                    @YamlProperty(name = "uri", type = "string", required = true, description = "Sets the uri of the endpoint to send to.", displayName = "Uri")
+                    @YamlProperty(name = "uri", type = "string", required = true, description = "Sets the uri of the endpoint to send to.", displayName = "Uri"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Send")
             }
     )
     public static class ToDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<ToDefinition> {
@@ -18099,6 +18132,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
+                    break;
+                }
+                case "variableSend": {
+                    String val = asText(node);
+                    target.setVariableSend(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
@@ -18139,7 +18182,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
                     @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", description = "Sets the optional ExchangePattern used to invoke this endpoint", displayName = "Pattern"),
-                    @YamlProperty(name = "uri", type = "string", required = true, description = "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.", displayName = "Uri")
+                    @YamlProperty(name = "uri", type = "string", required = true, description = "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.", displayName = "Uri"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send")
             }
     )
     public static class ToDynamicDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<ToDynamicDefinition> {
@@ -18206,6 +18251,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri": {
                     String val = asText(node);
                     target.setUri(val);
+                    break;
+                }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
+                    break;
+                }
+                case "variableSend": {
+                    String val = asText(node);
+                    target.setVariableSend(val);
                     break;
                 }
                 case "id": {
@@ -19224,6 +19279,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send"),
                     @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", oneOf = "dataFormatType"),
@@ -19465,6 +19522,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
+                    break;
+                }
+                case "variableSend": {
+                    String val = asText(node);
+                    target.setVariableSend(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
@@ -19670,6 +19737,72 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "variable",
+            inline = true,
+            types = org.apache.camel.model.language.VariableExpression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Variable",
+            description = "Gets a variable",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+            }
+    )
+    public static class VariableExpressionDeserializer extends YamlDeserializerBase<VariableExpression> {
+        public VariableExpressionDeserializer() {
+            super(VariableExpression.class);
+        }
+
+        @Override
+        protected VariableExpression newInstance() {
+            return new VariableExpression();
+        }
+
+        @Override
+        protected VariableExpression newInstance(String value) {
+            return new VariableExpression(value);
+        }
+
+        @Override
+        protected boolean setProperty(VariableExpression target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -19917,7 +20050,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "onPrepare", type = "string", description = "Uses the Processor when preparing the org.apache.camel.Exchange to be sent. This can be used to deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.", displayName = "On Prepare"),
                     @YamlProperty(name = "parameters", type = "object"),
                     @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", description = "Sets the optional ExchangePattern used to invoke this endpoint", displayName = "Pattern"),
-                    @YamlProperty(name = "uri", type = "string", required = true, description = "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.", displayName = "Uri")
+                    @YamlProperty(name = "uri", type = "string", required = true, description = "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.", displayName = "Uri"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send")
             }
     )
     public static class WireTapDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<WireTapDefinition> {
@@ -19999,6 +20134,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri": {
                     String val = asText(node);
                     target.setUri(val);
+                    break;
+                }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
+                    break;
+                }
+                case "variableSend": {
+                    String val = asText(node);
+                    target.setVariableSend(val);
                     break;
                 }
                 case "id": {

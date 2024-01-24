@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
 
@@ -34,6 +35,10 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {
 
+    @XmlAttribute
+    private String variableSend;
+    @XmlAttribute
+    private String variableReceive;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
     private String pattern;
@@ -93,4 +98,34 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         this.pattern = pattern;
     }
 
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    /**
+     * To use a variable as the source for the message body to send. This makes it handy to use variables for user data
+     * and to easily control what data to use for sending and receiving.
+     *
+     * Important: When using send variable then the message body is taken from this variable instead of the current
+     * {@link Message}, however the headers from the {@link Message} will still be used as well. In other words, the
+     * variable is used instead of the message body, but everything else is as usual.
+     */
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
+    }
 }

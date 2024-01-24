@@ -36,6 +36,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "uri", type = "string", required = true),
+                  @YamlProperty(name = "variableReceive", type = "string"),
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
                   @YamlProperty(name = "parameters", type = "object"),
@@ -69,6 +70,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
         String uri = null;
         String id = null;
         String desc = null;
+        String variableReceive = null;
         Map<String, Object> parameters = null;
 
         for (NodeTuple tuple : node.getValue()) {
@@ -87,6 +89,9 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                     break;
                 case "uri":
                     uri = asText(val);
+                    break;
+                case "variableReceive":
+                    variableReceive = asText(val);
                     break;
                 case "parameters":
                     parameters = parseParameters(tuple);
@@ -113,6 +118,9 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
             }
             if (desc != null) {
                 from.setDescription(desc);
+            }
+            if (variableReceive != null) {
+                from.setVariableReceive(variableReceive);
             }
             target.setDelegate(from);
         }

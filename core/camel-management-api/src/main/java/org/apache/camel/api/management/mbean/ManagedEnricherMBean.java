@@ -30,6 +30,12 @@ public interface ManagedEnricherMBean extends ManagedProcessorMBean, ManagedExte
                       mask = true)
     String getExpression();
 
+    @ManagedAttribute(description = "Variable as the source for the message body to send")
+    String getVariableSend();
+
+    @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
+    String getVariableReceive();
+
     @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
     Integer getCacheSize();
 

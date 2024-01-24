@@ -21,6 +21,7 @@ RefExpression
 SimpleExpression
 SpELExpression
 TokenizerExpression
+VariableExpression
 XMLTokenizerExpression
 XPathExpression
 XQueryExpression

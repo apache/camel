@@ -894,6 +894,11 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteTokenizerExpression("tokenize", def);
     }
+    public void writeVariableExpression(
+            VariableExpression def)
+            throws IOException {
+        doWriteVariableExpression("variable", def);
+    }
     public void writeXMLTokenizerExpression(
             XMLTokenizerExpression def)
             throws IOException {
@@ -1250,6 +1255,8 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("variableSend", def.getVariableSend());
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());
@@ -1365,6 +1372,7 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
         doWriteAttribute("uri", def.getUri());
         endElement(name);
     }
@@ -1537,6 +1545,8 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("variableSend", def.getVariableSend());
         doWriteElement(null, def.getDataFormatType(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "ASN1DataFormat" -> doWriteASN1DataFormat("asn1", (ASN1DataFormat) def.getDataFormatType());
@@ -1761,6 +1771,7 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());
@@ -2427,6 +2438,8 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteSendDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("variableSend", def.getVariableSend());
         doWriteAttribute("pattern", def.getPattern());
         endElement(name);
     }
@@ -2434,6 +2447,8 @@ public class ModelWriter extends BaseWriter {
             ToDynamicDefinition def)
             throws IOException {
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("variableSend", def.getVariableSend());
         doWriteAttribute("cacheSize", def.getCacheSize());
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint());
         doWriteAttribute("autoStartComponents", def.getAutoStartComponents());
@@ -2485,6 +2500,8 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("variableSend", def.getVariableSend());
         doWriteAttribute("allowNullBody", def.getAllowNullBody());
         doWriteElement(null, def.getDataFormatType(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
@@ -4172,6 +4189,15 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteVariableExpression(
+            String name,
+            VariableExpression def)
+            throws IOException {
+        startElement(name);
+        doWriteExpressionDefinitionAttributes(def);
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
     protected void doWriteXMLTokenizerExpression(
             String name,
             XMLTokenizerExpression def)
@@ -5081,6 +5107,7 @@ public class ModelWriter extends BaseWriter {
                 case "SimpleExpression" -> doWriteSimpleExpression("simple", (SimpleExpression) v);
                 case "SpELExpression" -> doWriteSpELExpression("spel", (SpELExpression) v);
                 case "TokenizerExpression" -> doWriteTokenizerExpression("tokenize", (TokenizerExpression) v);
+                case "VariableExpression" -> doWriteVariableExpression("variable", (VariableExpression) v);
                 case "XMLTokenizerExpression" -> doWriteXMLTokenizerExpression("xtokenize", (XMLTokenizerExpression) v);
                 case "XPathExpression" -> doWriteXPathExpression("xpath", (XPathExpression) v);
                 case "XQueryExpression" -> doWriteXQueryExpression("xquery", (XQueryExpression) v);

@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -114,6 +115,10 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
+    @XmlAttribute
+    private String variableSend;
+    @XmlAttribute
+    private String variableReceive;
 
     public MarshalDefinition() {
     }
@@ -152,6 +157,49 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
     @Override
     public void setDataFormatType(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
+    }
+
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
+    }
+
+    // Fluent API
+    // -------------------------------------------------------------------------
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public MarshalDefinition variableReceive(String variableReceive) {
+        setVariableReceive(variableReceive);
+        return this;
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public MarshalDefinition variableSend(String variableSend) {
+        setVariableSend(variableSend);
+        return this;
     }
 
 }

@@ -313,6 +313,9 @@
           },
           "uri" : {
             "type" : "string"
+          },
+          "variableReceive" : {
+            "type" : "string"
           }
         },
         "required" : [ "steps", "uri" ]
@@ -338,6 +341,9 @@
             }
           },
           "uri" : {
+            "type" : "string"
+          },
+          "variableReceive" : {
             "type" : "string"
           }
         },
@@ -973,6 +979,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -1044,6 +1052,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1104,6 +1113,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -1177,6 +1188,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1237,6 +1249,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -1318,6 +1332,16 @@
             "title" : "Share Unit Of Work",
             "description" : "Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work."
           },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -1339,6 +1363,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1476,6 +1501,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -1646,6 +1673,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "variable" ],
+            "properties" : {
+              "variable" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.VariableExpression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -1692,6 +1727,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
@@ -1838,6 +1874,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -1905,6 +1943,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1960,6 +1999,9 @@
             }
           },
           "uri" : {
+            "type" : "string"
+          },
+          "variableReceive" : {
             "type" : "string"
           }
         },
@@ -2055,6 +2097,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -2142,6 +2186,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -2545,6 +2590,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -2622,6 +2669,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -3055,6 +3103,16 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
           },
           "asn1" : { },
           "avro" : { },
@@ -3674,6 +3732,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -3750,6 +3810,11 @@
             "description" : "Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a timeout value",
             "default" : "-1"
           },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -3771,6 +3836,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -3880,6 +3946,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -3926,6 +3994,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -3987,6 +4056,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -4121,6 +4192,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4497,6 +4569,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -4585,6 +4659,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5168,6 +5243,8 @@
                 }, {
                   "required" : [ "tokenize" ]
                 }, {
+                  "required" : [ "variable" ]
+                }, {
                   "required" : [ "xpath" ]
                 }, {
                   "required" : [ "xquery" ]
@@ -5240,6 +5317,7 @@
             "simple" : { },
             "spel" : { },
             "tokenize" : { },
+            "variable" : { },
             "xpath" : { },
             "xquery" : { },
             "xtokenize" : { },
@@ -5437,6 +5515,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -5493,6 +5573,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5554,6 +5635,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -5610,6 +5693,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5704,6 +5788,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -5765,6 +5851,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5856,6 +5943,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -5917,6 +6006,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5979,6 +6069,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -6040,6 +6132,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6102,6 +6195,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -6163,6 +6258,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6223,6 +6319,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -6353,6 +6451,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6678,6 +6777,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -6759,6 +6860,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6840,6 +6942,16 @@
               "type" : "string",
               "title" : "Uri",
               "description" : "Sets the uri of the endpoint to send to."
+            },
+            "variableReceive" : {
+              "type" : "string",
+              "title" : "Variable Receive",
+              "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            },
+            "variableSend" : {
+              "type" : "string",
+              "title" : "Variable Send",
+              "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
             }
           }
         } ],
@@ -6902,6 +7014,16 @@
               "type" : "string",
               "title" : "Uri",
               "description" : "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression."
+            },
+            "variableReceive" : {
+              "type" : "string",
+              "title" : "Variable Receive",
+              "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+            },
+            "variableSend" : {
+              "type" : "string",
+              "title" : "Variable Send",
+              "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
             }
           }
         } ],
@@ -6996,6 +7118,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -7062,6 +7186,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7131,6 +7256,16 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
           },
           "asn1" : { },
           "avro" : { },
@@ -7636,6 +7771,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -7697,6 +7834,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7775,6 +7913,8 @@
               }, {
                 "required" : [ "tokenize" ]
               }, {
+                "required" : [ "variable" ]
+              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -7837,6 +7977,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7897,6 +8038,8 @@
                 "required" : [ "spel" ]
               }, {
                 "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -7960,6 +8103,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -8040,6 +8184,16 @@
             "type" : "string",
             "title" : "Uri",
             "description" : "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression."
+          },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
           }
         },
         "required" : [ "uri" ]
@@ -12582,6 +12736,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "variable" ],
+            "properties" : {
+              "variable" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.VariableExpression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -12628,6 +12790,7 @@
           "simple" : { },
           "spel" : { },
           "tokenize" : { },
+          "variable" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
@@ -13332,6 +13495,34 @@
           }
         } ],
         "required" : [ "token" ]
+      },
+      "org.apache.camel.model.language.VariableExpression" : {
+        "title" : "Variable",
+        "description" : "Gets a variable",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "expression" : {
+              "type" : "string",
+              "title" : "Expression",
+              "description" : "The expression value in your chosen language syntax"
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "Sets the id of this node"
+            },
+            "trim" : {
+              "type" : "boolean",
+              "title" : "Trim",
+              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
         "title" : "XML Tokenize",

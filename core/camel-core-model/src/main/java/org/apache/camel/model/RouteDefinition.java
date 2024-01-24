@@ -218,6 +218,36 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
+     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not
+     * headers). This is handy for easy access to the received message body via variables.
+     *
+     * @param  uri             the from uri
+     * @param  variableReceive the name of the variable
+     * @return                 the builder
+     */
+    public RouteDefinition fromV(@AsEndpointUri String uri, String variableReceive) {
+        FromDefinition from = new FromDefinition(uri);
+        from.setVariableReceive(variableReceive);
+        setInput(from);
+        return this;
+    }
+
+    /**
+     * Creates an input to the route, and uses a variable to store a copy of the received message body (only body, not
+     * headers). This is handy for easy access to the received message body via variables.
+     *
+     * @param  endpoint        the from endpoint
+     * @param  variableReceive the name of the variable
+     * @return                 the builder
+     */
+    public RouteDefinition fromV(EndpointConsumerBuilder endpoint, String variableReceive) {
+        FromDefinition from = new FromDefinition(endpoint);
+        from.setVariableReceive(variableReceive);
+        setInput(from);
+        return this;
+    }
+
+    /**
      * The route configuration id or pattern this route should use for configuration. Multiple id/pattern can be
      * separated by comma.
      *

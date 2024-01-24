@@ -67,6 +67,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     protected volatile String scheme;
     private String id;
     private String routeId;
+    private String variableReceive;
     private AggregationStrategy aggregationStrategy;
     private final Expression expression;
     private final String uri;
@@ -150,6 +151,14 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
      */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     public long getTimeout() {
@@ -308,6 +317,19 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             cause = resourceExchange.getException();
         }
 
+        // if we should store the received message body in a variable,
+        // then we need to preserve the original message body
+        Object originalBody = null;
+        if (variableReceive != null) {
+            try {
+                originalBody = exchange.getMessage().getBody();
+            } catch (Exception throwable) {
+                exchange.setException(throwable);
+                callback.done(true);
+                return true;
+            }
+        }
+
         try {
             if (!isAggregateOnException() && resourceExchange != null && resourceExchange.isFailed()) {
                 // copy resource exchange onto original exchange (preserving pattern)
@@ -321,6 +343,12 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // must catch any exception from aggregation
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                 if (aggregatedExchange != null) {
+                    if (variableReceive != null) {
+                        // result should be stored in variable instead of message body
+                        Object value = aggregatedExchange.getMessage().getBody();
+                        ExchangeHelper.setVariable(exchange, variableReceive, value);
+                        aggregatedExchange.getMessage().setBody(originalBody);
+                    }
                     // copy aggregation result onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, aggregatedExchange);
                     // handover any synchronization

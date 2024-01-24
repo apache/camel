@@ -27,6 +27,7 @@ import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.language.VariableExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.support.builder.Namespaces;
@@ -85,6 +86,14 @@ public abstract class BuilderSupport implements CamelContextAware {
      */
     public <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
+    }
+
+    /**
+     * Returns a value builder for the given variable
+     */
+    public ValueBuilder variable(String name) {
+        Expression exp = new VariableExpression(name);
+        return new ValueBuilder(exp);
     }
 
     /**

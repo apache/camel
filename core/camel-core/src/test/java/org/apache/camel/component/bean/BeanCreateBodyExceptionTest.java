@@ -118,14 +118,14 @@ public class BeanCreateBodyExceptionTest extends ContextTestSupport {
         fail.set(true);
 
         Exception e = assertThrows(Exception.class,
-                () -> consumer.receiveBody("seda:empty", 10000),
+                () -> consumer.receiveBody("seda:empty", 1000),
                 "Should throw exception");
 
         assertIsInstanceOf(IllegalArgumentException.class, e);
         assertEquals("Forced internal error", e.getMessage());
 
         fail.set(false);
-        assertDoesNotThrow(() -> consumer.receiveBody("seda:empty", 10000), "");
+        assertDoesNotThrow(() -> consumer.receiveBody("seda:empty", 1000), "");
     }
 
     @Override

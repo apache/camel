@@ -25,6 +25,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
 
@@ -257,6 +258,30 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      */
     public WireTapDefinition<Type> ignoreInvalidEndpoint() {
         setIgnoreInvalidEndpoint(Boolean.toString(true));
+        return this;
+    }
+
+    /**
+     * To use a variable as the source for the message body to send. This makes it handy to use variables for user data
+     * and to easily control what data to use for sending and receiving.
+     *
+     * Important: When using send variable then the message body is taken from this variable instead of the current
+     * {@link Message}, however the headers from the {@link Message} will still be used as well. In other words, the
+     * variable is used instead of the message body, but everything else is as usual.
+     */
+    public WireTapDefinition<Type> variableReceive(String variableReceive) {
+        throw new IllegalArgumentException("WireTap does not support variableReceive");
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public WireTapDefinition<Type> variableSend(String variableSend) {
+        setVariableSend(variableSend);
         return this;
     }
 

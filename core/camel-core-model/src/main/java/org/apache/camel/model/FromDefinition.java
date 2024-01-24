@@ -45,6 +45,8 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     @XmlAttribute
     @Metadata(required = true)
     private String uri;
+    @XmlAttribute
+    private String variableReceive;
 
     public FromDefinition() {
     }
@@ -117,6 +119,18 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     public void setUri(String uri) {
         clear();
         this.uri = uri;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    /**
+     * To use a variable to store a copy of the received message body (only body, not headers). This is handy for easy
+     * access to the received message body via variables.
+     */
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     /**

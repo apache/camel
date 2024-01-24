@@ -40,6 +40,8 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
     private AggregationStrategy aggregationStrategyBean;
 
     @XmlAttribute
+    private String variableReceive;
+    @XmlAttribute
     @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
     @XmlAttribute
@@ -127,6 +129,18 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
      */
     public PollEnrichDefinition timeout(String timeout) {
         setTimeout(timeout);
+        return this;
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public PollEnrichDefinition variableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
         return this;
     }
 
@@ -275,6 +289,14 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
 
     public void setTimeout(String timeout) {
         this.timeout = timeout;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     public String getAggregationStrategy() {

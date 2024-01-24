@@ -90,6 +90,16 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     }
 
     @Override
+    public String getVariableSend() {
+        return processor.getVariableSend();
+    }
+
+    @Override
+    public String getVariableReceive() {
+        return processor.getVariableReceive();
+    }
+
+    @Override
     public Integer getCacheSize() {
         return processor.getCacheSize();
     }

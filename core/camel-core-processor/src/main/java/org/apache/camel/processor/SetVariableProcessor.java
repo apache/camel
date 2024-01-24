@@ -24,11 +24,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.spi.VariableRepository;
-import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 /**
  * A processor which sets the variable with an {@link Expression}
@@ -40,7 +38,6 @@ public class SetVariableProcessor extends AsyncProcessorSupport implements Trace
     private String routeId;
     private final Expression variableName;
     private final Expression expression;
-    private VariableRepositoryFactory factory;
 
     public SetVariableProcessor(Expression variableName, Expression expression) {
         this.variableName = variableName;
@@ -71,31 +68,13 @@ public class SetVariableProcessor extends AsyncProcessorSupport implements Trace
             }
 
             String key = variableName.evaluate(exchange, String.class);
-            String id = StringHelper.before(key, ":");
-            if (id != null) {
-                VariableRepository repo = factory.getVariableRepository(id);
-                if (repo != null) {
-                    key = StringHelper.after(key, ":");
-                    repo.setVariable(key, newVariable);
-                } else {
-                    exchange.setException(
-                            new IllegalArgumentException("VariableRepository with id: " + id + " does not exist"));
-                }
-            } else {
-                exchange.setVariable(key, newVariable);
-            }
+            ExchangeHelper.setVariable(exchange, key, newVariable);
         } catch (Exception e) {
             exchange.setException(e);
         }
 
         callback.done(true);
         return true;
-    }
-
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-        factory = getCamelContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
     }
 
     @Override

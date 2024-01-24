@@ -46,6 +46,10 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
     @Override
     public Processor createProcessor() throws Exception {
+        if (definition.getVariableReceive() != null) {
+            throw new IllegalArgumentException("WireTap does not support variableReceive");
+        }
+
         // must use InOnly for WireTap
         definition.setPattern(ExchangePattern.InOnly.name());
 
@@ -80,6 +84,8 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
             Endpoint endpoint = CamelContextHelper.resolveEndpoint(camelContext, uri, null);
             LineNumberAware.trySetLineNumberAware(endpoint, definition);
             sendProcessor = new SendProcessor(endpoint);
+            sendProcessor.setVariableSend(parseString(definition.getVariableSend()));
+            sendProcessor.setVariableReceive(parseString(definition.getVariableReceive()));
         }
 
         // create error handler we need to use for processing the wire tapped

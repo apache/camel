@@ -30,6 +30,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -44,6 +45,8 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
     private CamelContext camelContext;
     private final DataFormat dataFormat;
     private final boolean allowNullBody;
+    private String variableSend;
+    private String variableReceive;
 
     public UnmarshalProcessor(DataFormat dataFormat) {
         this(dataFormat, false);
@@ -62,17 +65,20 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
         Object result = null;
         try {
             final Message in = exchange.getIn();
+            final Object originalBody = in.getBody();
+            Object body = originalBody;
+            if (variableSend != null) {
+                // it may be a global variable
+                body = ExchangeHelper.getVariable(exchange, variableSend);
+            }
             final Message out;
-            if (allowNullBody && in.getBody() == null) {
+            if (allowNullBody && body == null) {
                 // The body is null, and it is an allowed value so let's skip the unmarshalling
                 out = exchange.getOut();
             } else {
-                Object body = in.getBody();
-
                 // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
                 out = exchange.getOut();
                 out.copyFrom(in);
-
                 result = dataFormat.unmarshal(exchange, body);
             }
             if (result instanceof Exchange) {
@@ -82,11 +88,22 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
                             "The returned exchange " + result + " is not the same as " + exchange
                                                     + " provided to the DataFormat");
                 }
-            } else if (result instanceof Message) {
-                // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
-                exchange.setOut((Message) result);
+            } else if (result instanceof Message msg) {
+                // result should be stored in variable instead of message body
+                if (variableReceive != null) {
+                    Object value = msg.getBody();
+                    ExchangeHelper.setVariable(exchange, variableReceive, value);
+                } else {
+                    // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
+                    exchange.setOut(msg);
+                }
             } else {
-                out.setBody(result);
+                // result should be stored in variable instead of message body
+                if (variableReceive != null) {
+                    ExchangeHelper.setVariable(exchange, variableReceive, result);
+                } else {
+                    out.setBody(result);
+                }
             }
         } catch (Exception e) {
             // remove OUT message, as an exception occurred
@@ -140,6 +157,26 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     @Override

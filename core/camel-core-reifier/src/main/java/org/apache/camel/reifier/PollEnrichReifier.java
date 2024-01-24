@@ -67,6 +67,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         if (num != null) {
             enricher.setCacheSize(num);
         }
+        enricher.setVariableReceive(parseString(definition.getVariableReceive()));
         enricher.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
         enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         if (definition.getAutoStartComponents() != null) {

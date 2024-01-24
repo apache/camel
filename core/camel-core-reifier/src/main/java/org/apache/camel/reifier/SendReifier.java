@@ -22,20 +22,22 @@ import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.support.CamelContextHelper;
 
-public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
+public class SendReifier extends ProcessorReifier<ToDefinition> {
 
     public SendReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (SendDefinition) definition);
+        super(route, (ToDefinition) definition);
     }
 
     @Override
     public Processor createProcessor() throws Exception {
-        Endpoint endpoint = resolveEndpoint();
-        return new SendProcessor(endpoint, parse(ExchangePattern.class, definition.getPattern()));
+        SendProcessor answer = new SendProcessor(resolveEndpoint(), parse(ExchangePattern.class, definition.getPattern()));
+        answer.setVariableSend(parseString(definition.getVariableSend()));
+        answer.setVariableReceive(parseString(definition.getVariableReceive()));
+        return answer;
     }
 
     public Endpoint resolveEndpoint() {

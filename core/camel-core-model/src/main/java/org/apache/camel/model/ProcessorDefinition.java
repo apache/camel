@@ -256,6 +256,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Sends the exchange to the given endpoint
+     *
+     * @param  uri             the endpoint to send to
+     * @param  variableSend    to use a variable as the source for the message body to send.
+     * @param  variableReceive to use a variable to store the received message body (only body, not headers).
+     * @return                 the builder
+     */
+    public Type toV(@AsEndpointUri String uri, String variableSend, String variableReceive) {
+        ToDefinition to = new ToDefinition(uri);
+        to.setVariableSend(variableSend);
+        to.setVariableReceive(variableReceive);
+        addOutput(to);
+        return asType();
+    }
+
+    /**
      * Sends the exchange to the given dynamic endpoint
      *
      * @return the builder
@@ -282,12 +298,46 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
+     * @param  uri             the dynamic endpoint to send to (resolved using simple language by default)
+     * @param  variableSend    to use a variable as the source for the message body to send.
+     * @param  variableReceive to use a variable to store the received message body (only body, not headers).
+     * @return                 the builder
+     */
+    public Type toD(@AsEndpointUri String uri, String variableSend, String variableReceive) {
+        ToDynamicDefinition answer = new ToDynamicDefinition(uri);
+        answer.setVariableSend(variableSend);
+        answer.setVariableReceive(variableReceive);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
      * @param  endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
      * @return                         the builder
      */
     public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @param  endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
+     * @param  variableSend            to use a variable as the source for the message body to send.
+     * @param  variableReceive         to use a variable to store the received message body (only body, not headers).
+     * @return                         the builder
+     */
+    public Type toD(
+            @AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, String variableSend, String variableReceive) {
+        ToDynamicDefinition answer = new ToDynamicDefinition();
+        answer.setEndpointProducerBuilder(endpointProducerBuilder);
+        answer.setVariableSend(variableSend);
+        answer.setVariableReceive(variableReceive);
         addOutput(answer);
         return asType();
     }
@@ -2029,12 +2079,46 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * each processor and destination gets a copy of the original message to avoid the processors interfering with each
      * other using {@link ExchangePattern#InOnly}.
      *
+     * @param  endpoint     the endpoint to wiretap to
+     * @param  variableSend to use a variable as the source for the message body to send.
+     * @return              the builder
+     */
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri EndpointProducerBuilder endpoint, String variableSend) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setEndpointProducerBuilder(endpoint);
+        answer.setVariableSend(variableSend);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends messages to all its child outputs; so that
+     * each processor and destination gets a copy of the original message to avoid the processors interfering with each
+     * other using {@link ExchangePattern#InOnly}.
+     *
      * @param  uri the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @return     the builder
      */
     public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends messages to all its child outputs; so that
+     * each processor and destination gets a copy of the original message to avoid the processors interfering with each
+     * other using {@link ExchangePattern#InOnly}.
+     *
+     * @param  uri          the dynamic endpoint to wiretap to (resolved using simple language by default)
+     * @param  variableSend to use a variable as the source for the message body to send.
+     * @return              the builder
+     */
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, String variableSend) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
+        answer.setVariableSend(variableSend);
         addOutput(answer);
         return answer;
     }
