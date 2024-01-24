@@ -515,7 +515,8 @@ In case of failures, the records will not be processed.
 The code below provides an example of this approach:
 [source,java]
 ----
-    from(from).process(e -> {
+public void configure() {
+    from("kafka:topic?groupId=myGroup&pollTimeoutMs=1000&batching=true&maxPollRecords=10&autoOffsetReset=earliest").process(e -> {
         // The received records are stored as exchanges in a list. This gets the list of those exchanges
         final List<?> exchanges = e.getMessage().getBody(List.class);
 
@@ -531,6 +532,7 @@ The code below provides an example of this approach:
             }
         }
     }).to(KafkaTestUtil.MOCK_RESULT);
+}
 ----
 
 ===== Handling Errors with Automatic Commits
@@ -554,7 +556,7 @@ public void configure() {
         LOG.warn("Failed to process due to {}", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class).getMessage());
     }).continued(true);
 
-    from(from).routeId("batching").process(e -> {
+    from("kafka:topic?groupId=myGroup&pollTimeoutMs=1000&batching=true&maxPollRecords=10&autoOffsetReset=earliest").process(e -> {
         // The received records are stored as exchanges in a list. This gets the list of those exchanges
         final List<?> exchanges = e.getMessage().getBody(List.class);
 
@@ -587,7 +589,8 @@ The code below provides an example of this approach:
 
 [source,java]
 ----
-    from("kafka:topic?batching=true&maxPollRecords=100&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory")
+public void configure() {
+    from("kafka:topic?batching=true&allowManualCommit=true&maxPollRecords=100&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory")
     .process(e -> {
         // The received records are stored as exchanges in a list. This gets the list of those exchanges
         final List<?> exchanges = e.getMessage().getBody(List.class);
@@ -610,5 +613,6 @@ The code below provides an example of this approach:
             LOG.debug("Done performing manual commit");
         }
     });
+}
 ----
 include::spring-boot:partial$starter.adoc[]

@@ -25,13 +25,10 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Tags({ @Tag("batching") })
 public class KafkaBatchingProcessingManualCommitIT extends BatchingProcessingITSupport {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBatchingProcessingManualCommitIT.class);
 
@@ -47,7 +44,7 @@ public class KafkaBatchingProcessingManualCommitIT extends BatchingProcessingITS
     protected RouteBuilder createRouteBuilder() {
         // allowManualCommit=true&autoOffsetReset=earliest
         String from = "kafka:" + TOPIC
-                      + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true"
+                      + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true&allowManualCommit=true"
                       + "&maxPollRecords=10&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
 
         return new RouteBuilder() {
