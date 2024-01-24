@@ -1261,7 +1261,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
      * @param  parameters an optional, component specific, set of parameters
      * @return            the path as the actual destination
      */
-
     protected String convertPathToActualDestination(String path, Map<String, Object> parameters) {
         return path;
     }
