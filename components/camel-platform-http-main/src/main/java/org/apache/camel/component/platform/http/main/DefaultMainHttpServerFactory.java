@@ -53,6 +53,7 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         server.setUseGlobalSslContextParameters(configuration.isUseGlobalSslContextParameters());
         server.setDevConsoleEnabled(configuration.isDevConsoleEnabled());
         server.setHealthCheckEnabled(configuration.isHealthCheckEnabled());
+        server.setJolokiaEnabled(configuration.isJolokiaEnabled());
         server.setMetricsEnabled(configuration.isMetricsEnabled());
         server.setUploadEnabled(configuration.isUploadEnabled());
         server.setUploadSourceDir(configuration.getUploadSourceDir());
