@@ -145,11 +145,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         try {
             if (correlationProperty == null) {
-                correlationID = message.getJMSCorrelationID();
+                correlationID = JmsMessageHelper.getJMSCorrelationID(message);
             } else {
                 correlationID = message.getStringProperty(correlationProperty);
             }
-        } catch (JMSException e) {
+        } catch (Exception e) {
             // ignore
         }
 
