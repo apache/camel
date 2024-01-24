@@ -26,4 +26,9 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # Quarkus related
+      - dependency-name: "io.vertx:*"
+      # Spring Boot Dependencies related
+      - dependency-name: "org.apache.logging.log4j:*"
     open-pull-requests-limit: 20
