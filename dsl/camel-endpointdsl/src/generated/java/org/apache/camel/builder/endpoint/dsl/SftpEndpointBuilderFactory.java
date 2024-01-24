@@ -2138,6 +2138,43 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * If knownHostFile does not exist, then attempt to auto-create the path
+         * and file (beware that the file will be created by the current user of
+         * the running Java process, which may not have file permission).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param autoCreateKnownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder autoCreateKnownHostsFile(
+                boolean autoCreateKnownHostsFile) {
+            doSetProperty("autoCreateKnownHostsFile", autoCreateKnownHostsFile);
+            return this;
+        }
+        /**
+         * If knownHostFile does not exist, then attempt to auto-create the path
+         * and file (beware that the file will be created by the current user of
+         * the running Java process, which may not have file permission).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param autoCreateKnownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder autoCreateKnownHostsFile(
+                String autoCreateKnownHostsFile) {
+            doSetProperty("autoCreateKnownHostsFile", autoCreateKnownHostsFile);
+            return this;
+        }
+        /**
          * Set a comma separated list of ciphers that will be used in order of
          * preference. Possible cipher names are defined by JCraft JSCH. Some
          * examples include:
@@ -3421,6 +3458,44 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * The logging level used for various human intended log messages from
+         * the FTP server. This can be used during troubleshooting to raise the
+         * logging level and inspect the logs received from the FTP server.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: DEBUG
+         * Group: advanced
+         * 
+         * @param serverMessageLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointConsumerBuilder serverMessageLoggingLevel(
+                org.apache.camel.LoggingLevel serverMessageLoggingLevel) {
+            doSetProperty("serverMessageLoggingLevel", serverMessageLoggingLevel);
+            return this;
+        }
+        /**
+         * The logging level used for various human intended log messages from
+         * the FTP server. This can be used during troubleshooting to raise the
+         * logging level and inspect the logs received from the FTP server.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: DEBUG
+         * Group: advanced
+         * 
+         * @param serverMessageLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointConsumerBuilder serverMessageLoggingLevel(
+                String serverMessageLoggingLevel) {
+            doSetProperty("serverMessageLoggingLevel", serverMessageLoggingLevel);
+            return this;
+        }
+        /**
          * Sets the so timeout FTP and FTPS Is the SocketOptions.SO_TIMEOUT
          * value in millis. Recommended option is to set this to 300000 so as
          * not have a hanged connection. On SFTP this option is set as timeout
@@ -4049,6 +4124,43 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder tempPrefix(String tempPrefix) {
             doSetProperty("tempPrefix", tempPrefix);
+            return this;
+        }
+        /**
+         * If knownHostFile does not exist, then attempt to auto-create the path
+         * and file (beware that the file will be created by the current user of
+         * the running Java process, which may not have file permission).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param autoCreateKnownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder autoCreateKnownHostsFile(
+                boolean autoCreateKnownHostsFile) {
+            doSetProperty("autoCreateKnownHostsFile", autoCreateKnownHostsFile);
+            return this;
+        }
+        /**
+         * If knownHostFile does not exist, then attempt to auto-create the path
+         * and file (beware that the file will be created by the current user of
+         * the running Java process, which may not have file permission).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param autoCreateKnownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder autoCreateKnownHostsFile(
+                String autoCreateKnownHostsFile) {
+            doSetProperty("autoCreateKnownHostsFile", autoCreateKnownHostsFile);
             return this;
         }
         /**
@@ -5170,6 +5282,44 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * The logging level used for various human intended log messages from
+         * the FTP server. This can be used during troubleshooting to raise the
+         * logging level and inspect the logs received from the FTP server.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: DEBUG
+         * Group: advanced
+         * 
+         * @param serverMessageLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointProducerBuilder serverMessageLoggingLevel(
+                org.apache.camel.LoggingLevel serverMessageLoggingLevel) {
+            doSetProperty("serverMessageLoggingLevel", serverMessageLoggingLevel);
+            return this;
+        }
+        /**
+         * The logging level used for various human intended log messages from
+         * the FTP server. This can be used during troubleshooting to raise the
+         * logging level and inspect the logs received from the FTP server.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: DEBUG
+         * Group: advanced
+         * 
+         * @param serverMessageLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointProducerBuilder serverMessageLoggingLevel(
+                String serverMessageLoggingLevel) {
+            doSetProperty("serverMessageLoggingLevel", serverMessageLoggingLevel);
+            return this;
+        }
+        /**
          * Sets the so timeout FTP and FTPS Is the SocketOptions.SO_TIMEOUT
          * value in millis. Recommended option is to set this to 300000 so as
          * not have a hanged connection. On SFTP this option is set as timeout
@@ -5575,6 +5725,43 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder separator(String separator) {
             doSetProperty("separator", separator);
+            return this;
+        }
+        /**
+         * If knownHostFile does not exist, then attempt to auto-create the path
+         * and file (beware that the file will be created by the current user of
+         * the running Java process, which may not have file permission).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param autoCreateKnownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder autoCreateKnownHostsFile(
+                boolean autoCreateKnownHostsFile) {
+            doSetProperty("autoCreateKnownHostsFile", autoCreateKnownHostsFile);
+            return this;
+        }
+        /**
+         * If knownHostFile does not exist, then attempt to auto-create the path
+         * and file (beware that the file will be created by the current user of
+         * the running Java process, which may not have file permission).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param autoCreateKnownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder autoCreateKnownHostsFile(
+                String autoCreateKnownHostsFile) {
+            doSetProperty("autoCreateKnownHostsFile", autoCreateKnownHostsFile);
             return this;
         }
         /**
@@ -6346,6 +6533,44 @@ public interface SftpEndpointBuilderFactory {
         default AdvancedSftpEndpointBuilder serverAliveInterval(
                 String serverAliveInterval) {
             doSetProperty("serverAliveInterval", serverAliveInterval);
+            return this;
+        }
+        /**
+         * The logging level used for various human intended log messages from
+         * the FTP server. This can be used during troubleshooting to raise the
+         * logging level and inspect the logs received from the FTP server.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: DEBUG
+         * Group: advanced
+         * 
+         * @param serverMessageLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointBuilder serverMessageLoggingLevel(
+                org.apache.camel.LoggingLevel serverMessageLoggingLevel) {
+            doSetProperty("serverMessageLoggingLevel", serverMessageLoggingLevel);
+            return this;
+        }
+        /**
+         * The logging level used for various human intended log messages from
+         * the FTP server. This can be used during troubleshooting to raise the
+         * logging level and inspect the logs received from the FTP server.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: DEBUG
+         * Group: advanced
+         * 
+         * @param serverMessageLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointBuilder serverMessageLoggingLevel(
+                String serverMessageLoggingLevel) {
+            doSetProperty("serverMessageLoggingLevel", serverMessageLoggingLevel);
             return this;
         }
         /**

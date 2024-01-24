@@ -31,6 +31,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "antInclude": target.setAntInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreate":
         case "autoCreate": target.setAutoCreate(property(camelContext, boolean.class, value)); return true;
+        case "autocreateknownhostsfile":
+        case "autoCreateKnownHostsFile": target.getConfiguration().setAutoCreateKnownHostsFile(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -219,6 +221,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverAliveInterval": target.getConfiguration().setServerAliveInterval(property(camelContext, int.class, value)); return true;
         case "serverhostkeys":
         case "serverHostKeys": target.getConfiguration().setServerHostKeys(property(camelContext, java.lang.String.class, value)); return true;
+        case "servermessagelogginglevel":
+        case "serverMessageLoggingLevel": target.getConfiguration().setServerMessageLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
         case "sotimeout":
         case "soTimeout": target.getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
@@ -265,6 +269,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "antInclude": return java.lang.String.class;
         case "autocreate":
         case "autoCreate": return boolean.class;
+        case "autocreateknownhostsfile":
+        case "autoCreateKnownHostsFile": return boolean.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -453,6 +459,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverAliveInterval": return int.class;
         case "serverhostkeys":
         case "serverHostKeys": return java.lang.String.class;
+        case "servermessagelogginglevel":
+        case "serverMessageLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "shuffle": return boolean.class;
         case "sotimeout":
         case "soTimeout": return int.class;
@@ -500,6 +508,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "antInclude": return target.getAntInclude();
         case "autocreate":
         case "autoCreate": return target.isAutoCreate();
+        case "autocreateknownhostsfile":
+        case "autoCreateKnownHostsFile": return target.getConfiguration().isAutoCreateKnownHostsFile();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
@@ -688,6 +698,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverAliveInterval": return target.getConfiguration().getServerAliveInterval();
         case "serverhostkeys":
         case "serverHostKeys": return target.getConfiguration().getServerHostKeys();
+        case "servermessagelogginglevel":
+        case "serverMessageLoggingLevel": return target.getConfiguration().getServerMessageLoggingLevel();
         case "shuffle": return target.isShuffle();
         case "sotimeout":
         case "soTimeout": return target.getConfiguration().getSoTimeout();
