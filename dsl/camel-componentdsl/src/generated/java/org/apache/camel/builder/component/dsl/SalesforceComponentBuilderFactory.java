@@ -1110,6 +1110,54 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Name of Platform Event, Change Data Capture Event, custom event, etc.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param eventName the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder eventName(java.lang.String eventName) {
+            doSetProperty("eventName", eventName);
+            return this;
+        }
+        /**
+         * EXPANDED: Apache Avro format but doesnt strictly adhere to the record
+         * complex type. COMPACT: Apache Avro, adheres to the specification for
+         * the record complex type. This parameter is available in API version
+         * 43.0 and later.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param eventSchemaFormat the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder eventSchemaFormat(
+                org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum eventSchemaFormat) {
+            doSetProperty("eventSchemaFormat", eventSchemaFormat);
+            return this;
+        }
+        /**
+         * The ID of the event schema.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param eventSchemaId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder eventSchemaId(
+                java.lang.String eventSchemaId) {
+            doSetProperty("eventSchemaId", eventSchemaId);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1756,6 +1804,9 @@ public interface SalesforceComponentBuilderFactory {
             case "allOrNone": getOrCreateConfiguration((SalesforceComponent) component).setAllOrNone((boolean) value); return true;
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
             case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
+            case "eventName": getOrCreateConfiguration((SalesforceComponent) component).setEventName((java.lang.String) value); return true;
+            case "eventSchemaFormat": getOrCreateConfiguration((SalesforceComponent) component).setEventSchemaFormat((org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum) value); return true;
+            case "eventSchemaId": getOrCreateConfiguration((SalesforceComponent) component).setEventSchemaId((java.lang.String) value); return true;
             case "lazyStartProducer": ((SalesforceComponent) component).setLazyStartProducer((boolean) value); return true;
             case "rawHttpHeaders": getOrCreateConfiguration((SalesforceComponent) component).setRawHttpHeaders((java.lang.String) value); return true;
             case "rawMethod": getOrCreateConfiguration((SalesforceComponent) component).setRawMethod((java.lang.String) value); return true;

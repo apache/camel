@@ -1240,7 +1240,7 @@ public interface ComponentsBuilderFactory {
      * message routing.
      * 
      * Category: messaging
-     * Since: 4.3
+     * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-dynamic-router
      * 
      * @return the dsl builder
@@ -3485,7 +3485,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Robot Framework (camel-robotframework)
-     * Pass camel exchanges to acceptence test written in Robot DSL.
+     * Pass camel exchanges to acceptance test written in Robot DSL.
      * 
      * Category: testing
      * Since: 3.0

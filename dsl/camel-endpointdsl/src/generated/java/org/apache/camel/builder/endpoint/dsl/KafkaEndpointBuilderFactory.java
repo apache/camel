@@ -369,6 +369,39 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to use batching for processing or streaming. The default is
+         * false, which uses streaming.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param batching the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder batching(boolean batching) {
+            doSetProperty("batching", batching);
+            return this;
+        }
+        /**
+         * Whether to use batching for processing or streaming. The default is
+         * false, which uses streaming.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param batching the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder batching(String batching) {
+            doSetProperty("batching", batching);
+            return this;
+        }
+        /**
          * This options controls what happens when a consumer is processing an
          * exchange and it fails. If the option is false then the consumer
          * continues to the next message and processes it. If the option is true

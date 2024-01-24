@@ -6962,7 +6962,7 @@ public interface ActiveMQEndpointBuilderFactory {
         /**
          * The JMS correlation ID as bytes.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code byte[]} type.
          * 
          * Group: common
          * 
