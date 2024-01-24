@@ -72,14 +72,20 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
                 throw new UnsupportedOperationException("You can't extract when sending a message");
             case SPAN_KIND_SERVER:
                 RequestReplyReceiverContext<Object, Message> replyReceiverContext
-                        = new RequestReplyReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
+                        = new RequestReplyReceiverContext<>((carrier, key) -> {
+                            Object val = adapter.get(key);
+                            return val != null ? val.toString() : null;
+                        });
                 replyReceiverContext.setResponse(exchange.getMessage());
                 replyReceiverContext.setCarrier(exchange.getIn());
                 return replyReceiverContext;
             case CONSUMER:
             case SPAN_KIND_CLIENT:
                 ReceiverContext<Message> receiverContext
-                        = new ReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
+                        = new ReceiverContext<>((carrier, key) -> {
+                            Object val = adapter.get(key);
+                            return val != null ? val.toString() : null;
+                        });
                 receiverContext.setCarrier(exchange.getIn());
                 return receiverContext;
             default:
@@ -144,8 +150,10 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
                 // Because Camel allows to close scopes multiple times
                 TracingObservationHandler.TracingContext tracingContext
                         = parentObservation.getContextView().get(TracingObservationHandler.TracingContext.class);
-                Span parentSpan = tracingContext.getSpan();
-                scope = tracer.withSpan(parentSpan);
+                if (tracingContext != null) {
+                    Span parentSpan = tracingContext.getSpan();
+                    scope = tracer.withSpan(parentSpan);
+                }
             }
             if (parentObservation != null) {
                 observation.parentObservation(parentObservation);
