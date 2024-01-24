@@ -39,7 +39,7 @@ public interface DynamicRouterControlComponentBuilderFactory {
      * message routing.
      * 
      * Category: messaging
-     * Since: 4.3
+     * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-dynamic-router
      * 
      * @return the dsl builder

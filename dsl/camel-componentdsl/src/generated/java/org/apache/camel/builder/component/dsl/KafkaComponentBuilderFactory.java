@@ -247,6 +247,22 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to use batching for processing or streaming. The default is
+         * false, which uses streaming.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param batching the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder batching(boolean batching) {
+            doSetProperty("batching", batching);
+            return this;
+        }
+        /**
          * This options controls what happens when a consumer is processing an
          * exchange and it fails. If the option is false then the consumer
          * continues to the next message and processes it. If the option is true
@@ -2243,6 +2259,7 @@ public interface KafkaComponentBuilderFactory {
             case "autoCommitEnable": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitEnable((boolean) value); return true;
             case "autoCommitIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitIntervalMs((java.lang.Integer) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((KafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
+            case "batching": getOrCreateConfiguration((KafkaComponent) component).setBatching((boolean) value); return true;
             case "breakOnFirstError": getOrCreateConfiguration((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
             case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "checkCrcs": getOrCreateConfiguration((KafkaComponent) component).setCheckCrcs((java.lang.Boolean) value); return true;
