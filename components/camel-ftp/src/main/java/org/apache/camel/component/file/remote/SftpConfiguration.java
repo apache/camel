@@ -36,6 +36,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String knownHostsFile;
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
+    @UriParam(label = "security", defaultValue = "false")
+    private boolean autoCreateKnownHostsFile;
     @UriParam(label = "security", secret = true)
     @Metadata(supportFileReference = true)
     private String knownHostsUri;
@@ -86,6 +88,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String publicKeyAcceptedAlgorithms;
     @UriParam(label = "advanced")
     private String filenameEncoding;
+    @UriParam(label = "advanced", defaultValue = "DEBUG")
+    private LoggingLevel serverMessageLoggingLevel = LoggingLevel.DEBUG;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -125,6 +129,18 @@ public class SftpConfiguration extends RemoteFileConfiguration {
      */
     public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
         this.useUserKnownHostsFile = useUserKnownHostsFile;
+    }
+
+    public boolean isAutoCreateKnownHostsFile() {
+        return autoCreateKnownHostsFile;
+    }
+
+    /**
+     * If knownHostFile does not exist, then attempt to auto-create the path and file (beware that the file will be
+     * created by the current user of the running Java process, which may not have file permission).
+     */
+    public void setAutoCreateKnownHostsFile(boolean autoCreateKnownHostsFile) {
+        this.autoCreateKnownHostsFile = autoCreateKnownHostsFile;
     }
 
     /**
@@ -407,5 +423,19 @@ public class SftpConfiguration extends RemoteFileConfiguration {
      */
     public void setFilenameEncoding(String filenameEncoding) {
         this.filenameEncoding = filenameEncoding;
+    }
+
+    public LoggingLevel getServerMessageLoggingLevel() {
+        return serverMessageLoggingLevel;
+    }
+
+    /**
+     * The logging level used for various human intended log messages from the FTP server.
+     *
+     * This can be used during troubleshooting to raise the logging level and inspect the logs received from the FTP
+     * server.
+     */
+    public void setServerMessageLoggingLevel(LoggingLevel serverMessageLoggingLevel) {
+        this.serverMessageLoggingLevel = serverMessageLoggingLevel;
     }
 }

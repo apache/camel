@@ -54,6 +54,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
@@ -351,6 +352,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         // set user information
         session.setUserInfo(new ExtendedUserInfo() {
+
+            private final CamelLogger messageLogger
+                    = new CamelLogger(LOG, ((SftpConfiguration) configuration).getServerMessageLoggingLevel());
+
             public String getPassphrase() {
                 return null;
             }
@@ -368,14 +373,21 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
 
             public boolean promptYesNo(String s) {
-                LOG.warn("Server asks for confirmation (yes|no): {}. Camel will answer no.", s);
-                // Return 'false' indicating modification of the hosts file is
-                // disabled.
-                return false;
+                // are we prompted because the known host files does not exist, and asked whether to auto-create the file
+                boolean knownHostFile = s != null && s.endsWith("Are you sure you want to create it?");
+                if (knownHostFile && ((SftpConfiguration) configuration).isAutoCreateKnownHostsFile()) {
+                    LOG.warn("Server asks for confirmation (yes|no): {}. Camel will answer yes.", s);
+                    return true;
+                } else {
+                    LOG.warn("Server asks for confirmation (yes|no): {}. Camel will answer no.", s);
+                    // Return 'false' indicating modification of the hosts file is
+                    // disabled.
+                    return false;
+                }
             }
 
             public void showMessage(String s) {
-                LOG.trace("Message received from Server: {}", s);
+                messageLogger.log("FTP Server: " + s);
             }
 
             public String[] promptKeyboardInteractive(
