@@ -464,7 +464,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         if (body instanceof InputStream && configuration.isDisableStreamCache()) {
             response = new OutboundStreamHttpResponse(
-                    (InputStream) body, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code), false));
+                    (InputStream) body, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code), true));
             response.headers().set(TRANSFER_ENCODING, CHUNKED);
         }
 
@@ -493,7 +493,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
 
             if (buffer != null) {
-                response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code), buffer, false);
+                response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code), buffer, true);
                 // We just need to reset the readerIndex this time
                 if (buffer.readerIndex() == buffer.writerIndex()) {
                     buffer.setIndex(0, buffer.writerIndex());
