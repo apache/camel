@@ -179,8 +179,6 @@ public class JmsBinding {
             // lets populate the standard JMS message headers
             try {
                 map.put(JmsConstants.JMS_HEADER_CORRELATION_ID, JmsMessageHelper.getJMSCorrelationID(jmsMessage));
-                map.put(JmsConstants.JMS_HEADER_CORRELATION_ID_AS_BYTES,
-                        JmsMessageHelper.getJMSCorrelationIDAsBytes(jmsMessage));
                 map.put(JmsConstants.JMS_HEADER_DELIVERY_MODE, jmsMessage.getJMSDeliveryMode());
                 map.put(JmsConstants.JMS_HEADER_DESTINATION, jmsMessage.getJMSDestination());
                 map.put(JmsConstants.JMS_HEADER_EXPIRATION, jmsMessage.getJMSExpiration());

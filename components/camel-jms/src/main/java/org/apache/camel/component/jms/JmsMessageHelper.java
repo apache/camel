@@ -451,6 +451,7 @@ public final class JmsMessageHelper {
      * @param  message the message
      * @return         the JMSCorrelationIDAsBytes, or <tt>null</tt> if not able to get
      */
+    @Deprecated
     public static String getJMSCorrelationIDAsBytes(Message message) {
         try {
             byte[] bytes = message.getJMSCorrelationIDAsBytes();
