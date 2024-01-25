@@ -173,7 +173,7 @@ In Camel 4.4 onwards we changed the order to let Camel be first as shown below:
 </dependencyManagement>
 ----
 
-In previous versions, then we would have `spring-boot-dependencies` before `camel-spring-boot-bom`. However to better
+In previous versions, then we would have `spring-boot-dependencies` before `camel-spring-boot-bom`. However, to better
 align and ensure Camel starters are using supported dependencies, then it's recommended to let Camel be first.
 
 === Auto Configuration
