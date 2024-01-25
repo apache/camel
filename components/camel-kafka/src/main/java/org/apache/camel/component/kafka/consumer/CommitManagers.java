@@ -54,6 +54,11 @@ public final class CommitManagers {
                 LOG.debug("Using a commit-to-offset manager for commit management");
                 return new CommitToOffsetManager(consumer, kafkaConsumer, threadId, printableTopic);
             }
+
+            if (configuration.isBatching()) {
+                LOG.debug("Using an async commit manager for auto commit management with batch processing");
+                return new AsyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
+            }
         }
 
         LOG.debug("Using a NO-OP commit manager with auto-commit enabled on the Kafka consumer");

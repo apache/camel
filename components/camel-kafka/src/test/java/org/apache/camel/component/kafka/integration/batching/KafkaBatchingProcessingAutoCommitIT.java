@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.batching;
 
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -29,11 +28,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KafkaBatchingProcessingIT extends BatchingProcessingITSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaBatchingProcessingIT.class);
+public class KafkaBatchingProcessingAutoCommitIT extends BatchingProcessingITSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBatchingProcessingManualCommitIT.class);
 
-    public static final String TOPIC = "testManualCommitSyncTest";
-    private volatile boolean invalidExchange = false;
+    public static final String TOPIC = "testBatchingProcessingAutoCommit";
     private volatile boolean invalidExchangeFormat = false;
 
     @AfterEach
@@ -45,8 +43,7 @@ public class KafkaBatchingProcessingIT extends BatchingProcessingITSupport {
     protected RouteBuilder createRouteBuilder() {
         // allowManualCommit=true&autoOffsetReset=earliest
         String from = "kafka:" + TOPIC
-                      + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true"
-                      + "&maxPollRecords=10&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
+                      + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true&maxPollRecords=10&autoOffsetReset=earliest";
 
         return new RouteBuilder() {
 
@@ -58,35 +55,24 @@ public class KafkaBatchingProcessingIT extends BatchingProcessingITSupport {
 
                     // Ensure we are actually receiving what we are asking for
                     if (exchanges == null || exchanges.isEmpty()) {
-                        invalidExchange = true;
                         return;
                     }
 
-                    /*
-                    Every exchange in that list should contain a reference to the manual commit object. We use the reference
-                    for the last exchange in the list to commit the whole batch
-                     */
-                    final Object tmp = exchanges.get(exchanges.size() - 1);
-                    if (tmp instanceof Exchange exchange) {
-                        KafkaManualCommit manual
-                                = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-                        LOG.debug("Performing manual commit");
-                        manual.commit();
-                        LOG.debug("Done performing manual commit");
-                    } else {
-                        invalidExchangeFormat = true;
+                    // The records from the batch are stored in a list of exchanges in the original exchange.
+                    for (Object o : exchanges) {
+                        if (o instanceof Exchange exchange) {
+                            LOG.info("Processing exchange with body {}", exchange.getMessage().getBody(String.class));
+                        }
                     }
-
                 }).to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
 
     @Test
-    public void kafkaManualCommit() throws Exception {
+    public void kafkaAutoCommit() throws Exception {
         kafkaManualCommitTest(TOPIC);
 
         Assertions.assertFalse(invalidExchangeFormat, "The exchange list should be composed of exchanges");
     }
-
 }

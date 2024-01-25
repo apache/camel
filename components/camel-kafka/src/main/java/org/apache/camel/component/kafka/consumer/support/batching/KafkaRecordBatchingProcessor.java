@@ -30,6 +30,7 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.Synchronization;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
@@ -42,6 +43,44 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     private final KafkaConfiguration configuration;
     private final Processor processor;
     private final CommitManager commitManager;
+
+    private final class CommitSynchronization implements Synchronization {
+        private final ExceptionHandler exceptionHandler;
+        private ProcessingResult result;
+
+        public CommitSynchronization(ExceptionHandler exceptionHandler) {
+            this.exceptionHandler = exceptionHandler;
+        }
+
+        @Override
+        public void onComplete(Exchange exchange) {
+            final List<?> exchanges = exchange.getMessage().getBody(List.class);
+
+            // Ensure we are actually receiving what we are asked for
+            if (exchanges == null || exchanges.isEmpty()) {
+                LOG.warn("The exchange is {}", exchanges == null ? "not of the expected type (null)" : "empty");
+                return;
+            }
+
+            LOG.debug("Calling commit on {} exchanges using {}", exchanges.size(), commitManager.getClass().getSimpleName());
+            commitManager.commit();
+            result = new ProcessingResult(false, false);
+        }
+
+        @Override
+        public void onFailure(Exchange exchange) {
+            Exception cause = exchange.getException();
+            if (cause != null) {
+                exceptionHandler.handleException(
+                        "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
+            } else {
+                LOG.warn(
+                        "Skipping auto-commit on the batch because processing the exchanged has failed and the error was not correctly handled");
+            }
+
+            result = new ProcessingResult(false, true);
+        }
+    }
 
     public KafkaRecordBatchingProcessor(KafkaConfiguration configuration, Processor processor, CommitManager commitManager) {
         this.configuration = configuration;
@@ -58,18 +97,20 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
         propagateHeaders(configuration, consumerRecord, exchange);
 
-        // Batching is always in manual commit mode
-        KafkaManualCommit manual = commitManager.getManualCommit(exchange, topicPartition, consumerRecord);
+        if (configuration.isAllowManualCommit()) {
+            KafkaManualCommit manual = commitManager.getManualCommit(exchange, topicPartition, consumerRecord);
 
-        message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
+            message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
+        }
 
         return exchange;
     }
 
     public ProcessingResult processExchange(KafkaConsumer camelKafkaConsumer, ConsumerRecords<Object, Object> consumerRecords) {
-
+        // Aggregate all consumer records in a single exchange
         List<Exchange> exchangeList = new ArrayList<>(consumerRecords.count());
 
+        // Create an inner exchange for every consumer record retrieved
         for (ConsumerRecord<Object, Object> consumerRecord : consumerRecords) {
             TopicPartition tp = new TopicPartition(consumerRecord.topic(), consumerRecord.partition());
             Exchange exchange = toExchange(camelKafkaConsumer, tp, consumerRecord);
@@ -77,10 +118,44 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             exchangeList.add(exchange);
         }
 
+        // Create the bundle exchange
         final Exchange exchange = camelKafkaConsumer.createExchange(false);
         final Message message = exchange.getMessage();
         message.setBody(exchangeList);
 
+        try {
+            if (configuration.isAllowManualCommit()) {
+                return manualCommitResultProcessing(camelKafkaConsumer, exchange);
+            } else {
+                return autoCommitResultProcessing(camelKafkaConsumer, exchange);
+            }
+        } finally {
+            // Release the exchange
+            camelKafkaConsumer.releaseExchange(exchange, false);
+        }
+    }
+
+    /*
+     * The flow to execute when using auto-commit
+     */
+    private ProcessingResult autoCommitResultProcessing(KafkaConsumer camelKafkaConsumer, Exchange exchange) {
+        final ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
+        final CommitSynchronization commitSynchronization = new CommitSynchronization(exceptionHandler);
+        exchange.getExchangeExtension().addOnCompletion(commitSynchronization);
+
+        try {
+            processor.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        return commitSynchronization.result;
+    }
+
+    /*
+     * The flow to execute when the integrations perform manual commit on their own
+     */
+    private ProcessingResult manualCommitResultProcessing(KafkaConsumer camelKafkaConsumer, Exchange exchange) {
         try {
             processor.process(exchange);
         } catch (Exception e) {
@@ -90,7 +165,6 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         ProcessingResult result;
         if (exchange.getException() != null) {
             LOG.debug("An exception was thrown for batch records");
-
             final ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
             boolean handled = processException(exchange, exceptionHandler);
             result = new ProcessingResult(false, handled);
@@ -98,16 +172,12 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             result = new ProcessingResult(false, false);
         }
 
-        // Release the exchange
-        camelKafkaConsumer.releaseExchange(exchange, false);
-
         return result;
     }
 
     private boolean processException(Exchange exchange, ExceptionHandler exceptionHandler) {
         // will handle/log the exception and then continue to next
         exceptionHandler.handleException("Error during processing", exchange, exchange.getException());
-
         return true;
     }
 }
