@@ -373,6 +373,7 @@
         <optaplanner-version>9.44.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.1</os-maven-plugin-version>
         <paho-version>1.2.5</paho-version>
+        <parson-version>1.1.5</parson-version>
         <parquet-common-version>1.13.1</parquet-common-version>
         <parquet-avro-version>1.13.1</parquet-avro-version>
         <pdfbox-version>3.0.1</pdfbox-version>
@@ -458,7 +459,7 @@
         <vysper-version>0.7</vysper-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
-        <wildfly-elytron>1.20.4.Final</wildfly-elytron>
+        <wildfly-elytron>2.2.2.Final</wildfly-elytron>
         <wiremock-version>3.0.1</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>6.6.0</woodstox-core-version>
