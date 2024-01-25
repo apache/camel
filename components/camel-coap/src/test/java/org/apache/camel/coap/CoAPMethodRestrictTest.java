@@ -19,10 +19,10 @@ package org.apache.camel.coap;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.californium.elements.config.Configuration;
+import org.eclipse.californium.elements.util.Bytes;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
@@ -58,7 +58,7 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
             if (methodRestrict.contains(method)) {
                 assertEquals(expectedResponse, result);
             } else {
-                assertNull(result);
+                assertArrayEquals(Bytes.EMPTY, result.getBytes());
             }
         }
     }

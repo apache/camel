@@ -208,10 +208,6 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                         PORT2)
                         .transform(body().prepend("Hello "));
 
-                //                fromF(getProtocol()
-                //                      + "://localhost:%d/TestResource?sslContextParameters=#clientAuthServiceSSLContextParameters", PORT3)
-                //                        .transform(body().prepend("Hello "));
-
                 fromF(getProtocol()
                       + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
                         PORT4)
@@ -405,17 +401,8 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         PrivateKey privateKey = (PrivateKey) keyStore.getKey("service", "security".toCharArray());
         PublicKey publicKey = keyStore.getCertificate("service").getPublicKey();
 
-        //        TrustedRpkStore trustedRpkStore = id -> {
-        //            return true;
-        //        };
-        //        TrustedRpkStore failedTrustedRpkStore = id -> {
-        //            return false;
-        //        };
-
         NewAdvancedCertificateVerifier advancedCertificateVerifier = StaticNewAdvancedCertificateVerifier.builder()
                 .setTrustAllRPKs().setTrustAllCertificates().build();
-        //        NewAdvancedCertificateVerifier advancedCertificateVerifier = StaticNewAdvancedCertificateVerifier.builder()
-        //                .setTrustedRPKs(new RawPublicKeyIdentity(publicKey)).build();
 
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         AdvancedPskStore advancedPskStore
@@ -434,7 +421,6 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         context.getRegistry().bind("publicKey", publicKey);
 
         context.getRegistry().bind("advancedCertificateVerifier", advancedCertificateVerifier);
-        //        context.getRegistry().bind("failedAdvancedCertificateVerifier", failedAdvancedCertificateVerifier);
         context.getRegistry().bind("advancedPskStore", advancedPskStore);
     }
 
