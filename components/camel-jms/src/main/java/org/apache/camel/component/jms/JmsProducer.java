@@ -49,6 +49,7 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.support.JmsUtils;
 
 import static java.util.Optional.ofNullable;
+import static org.apache.camel.component.jms.JmsMessageHelper.getDestinationName;
 import static org.apache.camel.component.jms.JmsMessageHelper.isQueuePrefix;
 import static org.apache.camel.component.jms.JmsMessageHelper.isTopicPrefix;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
@@ -217,11 +218,12 @@ public class JmsProducer extends DefaultAsyncProducer {
             in.setHeader(correlationPropertyToUse, GENERATED_CORRELATION_ID_PREFIX + getUuidGenerator().generateUuid());
         }
 
+        final String to = destinationName != null ? destinationName : getDestinationName(destination);
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
 
-                Destination replyTo = null;
+                Destination replyTo;
                 String replyToOverride = configuration.getReplyToOverride();
                 if (replyToOverride != null) {
                     replyTo = resolveOrCreateDestination(replyToOverride, session);
@@ -253,6 +255,11 @@ public class JmsProducer extends DefaultAsyncProducer {
         };
 
         doSend(true, destinationName, destination, messageCreator, messageSentCallback);
+
+        // record where we sent the message
+        if (to != null) {
+            exchange.getMessage().setHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED, to);
+        }
 
         // continue routing asynchronously (reply will be processed async when its received)
         return false;
@@ -316,7 +323,7 @@ public class JmsProducer extends DefaultAsyncProducer {
             // prefer to use destination over destination name
             destinationName = null;
         }
-        final String to = destinationName != null ? destinationName : String.valueOf(destination);
+        final String to = destinationName != null ? destinationName : getDestinationName(destination);
         MessageSentCallback messageSentCallback = getEndpoint().getConfiguration().isIncludeSentJMSMessageID()
                 ? new InOnlyMessageSentCallback(exchange) : null;
 
@@ -393,6 +400,10 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         // after sending then set the OUT message id to the JMSMessageID so its identical
         setMessageId(exchange);
+        // record where we sent the message
+        if (to != null) {
+            exchange.getMessage().setHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED, to);
+        }
 
         // we are synchronous so return true
         callback.done(true);

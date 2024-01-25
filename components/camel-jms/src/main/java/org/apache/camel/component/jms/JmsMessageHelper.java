@@ -25,6 +25,8 @@ import jakarta.jms.DeliveryMode;
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
+import jakarta.jms.Queue;
+import jakarta.jms.Topic;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -481,6 +483,25 @@ public final class JmsMessageHelper {
             return message.getJMSCorrelationID();
         } catch (Exception e) {
             // ignore if JMS broker do not support this
+        }
+        return null;
+    }
+
+    /**
+     * Gets the queue or topic name.
+     *
+     * @param  destination the JMS destination
+     * @return             the name, or <tt>null</tt> if not possible to get the name
+     */
+    public static String getDestinationName(Destination destination) {
+        try {
+            if (destination instanceof Queue q) {
+                return q.getQueueName();
+            } else if (destination instanceof Topic t) {
+                return t.getTopicName();
+            }
+        } catch (JMSException e) {
+            // ignore
         }
         return null;
     }
