@@ -62,6 +62,8 @@ import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
 import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
 import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CERTIFICATE_TYPES;
 import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CIPHER_SUITES;
@@ -74,6 +76,7 @@ import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDE
 @UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri",
              category = { Category.IOT }, headersClass = CoAPConstants.class)
 public class CoAPEndpoint extends DefaultEndpoint {
+    final static Logger LOGGER = LoggerFactory.getLogger(CoAPEndpoint.class);
     @UriPath
     private URI uri;
     @UriParam(label = "consumer", enums = "DELETE,GET,POST,PUT")
@@ -509,7 +512,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
         }
 
         if (getConfiguredCipherSuites() != null) {
-            System.out.println("There are configured cipher suites: " + getConfiguredCipherSuites());
+            LOGGER.debug("There are configured cipher suites: " + getConfiguredCipherSuites());
             builder.set(DTLS_CIPHER_SUITES, CipherSuite.getTypesByNames(getConfiguredCipherSuites()));
         }
 
