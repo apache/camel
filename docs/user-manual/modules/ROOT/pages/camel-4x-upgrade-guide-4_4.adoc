@@ -144,6 +144,38 @@ The component now has support for batch processing.
 
 == Camel Spring Boot
 
+=== Ordering of BOM imports
+
+When using Camel on Spring Boot, it's recommended to use BOMs to import Camel and Spring dependencies.
+In Camel 4.4 onwards we changed the order to let Camel be first as shown below:
+
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        <!-- Camel BOM -->
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-spring-boot-bom</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Spring Boot BOM -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring-boot-version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
+
+In previous versions, then we would have `spring-boot-dependencies` before `camel-spring-boot-bom`. However to better
+align and ensure Camel starters are using supported dependencies, then it's recommended to let Camel be first.
+
 === Auto Configuration
 
 The route controller configuration has been moved from general main to its own group.
