@@ -157,7 +157,7 @@ In Camel 4.4 onwards we changed the order to let Camel be first as shown below:
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-spring-boot-bom</artifactId>
-            <version>${project.version}</version>
+            <version>${camel-version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
