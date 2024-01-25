@@ -275,7 +275,6 @@ public final class FileUtil {
 
     /**
      * Compacts a path by stacking it and reducing <tt>..</tt>, and uses the given separator.
-     *
      */
     public static String compactPath(String path, char separator) {
         return compactPath(path, String.valueOf(separator));

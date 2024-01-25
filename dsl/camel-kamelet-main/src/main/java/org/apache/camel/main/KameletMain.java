@@ -526,6 +526,9 @@ public class KameletMain extends MainCommandLineSupport {
             }
         }
 
+        // source-dir
+        String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
+
         try {
             // dependencies from CLI
             Object dependencies = getInitialProperties().get("camel.jbang.dependencies");
@@ -561,7 +564,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
                     new DependencyDownloaderUriFactoryResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
-                    new DependencyDownloaderResourceLoader(answer));
+                    new DependencyDownloaderResourceLoader(answer, sourceDir));
 
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stubPattern, silent));
             Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
@@ -574,7 +577,6 @@ public class KameletMain extends MainCommandLineSupport {
                     new DownloadModelineParser(answer));
 
             // reloader
-            String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
             if (sourceDir != null) {
                 if (console || health) {
                     // allow to upload source via http when HTTP console enabled

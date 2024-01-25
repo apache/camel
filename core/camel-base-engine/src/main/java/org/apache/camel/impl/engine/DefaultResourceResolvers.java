@@ -176,6 +176,10 @@ public final class DefaultResourceResolvers {
         }
 
         private String getPath(String location) {
+            // skip leading double slashes
+            if (location.startsWith("//")) {
+                location = location.substring(2);
+            }
             String uri = tryDecodeUri(location);
             return FileUtil.compactPath(uri, '/');
         }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main.download;
 
+import java.io.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultResourceLoader;
 import org.apache.camel.spi.Resource;
@@ -24,9 +26,11 @@ import org.apache.camel.util.StringHelper;
 public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
 
     private final DependencyDownloader downloader;
+    private final String sourceDir;
 
-    public DependencyDownloaderResourceLoader(CamelContext camelContext) {
+    public DependencyDownloaderResourceLoader(CamelContext camelContext, String sourceDir) {
         super(camelContext);
+        this.sourceDir = sourceDir;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
@@ -45,7 +49,23 @@ public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
                 }
             }
         }
-        return super.resolveResource(uri);
+        Resource answer = super.resolveResource(uri);
+        if (sourceDir != null) {
+            boolean exists = answer != null && answer.exists();
+            // if not found then we need to look again inside the source-dir which we can do
+            // for file and classpath resources
+            if (!exists && ("classpath".equals(scheme) || "file".equals(scheme))) {
+                String path = StringHelper.after(uri, ":");
+                // strip leading double slash
+                if (path.startsWith("//")) {
+                    path = path.substring(2);
+                }
+                // force to load from file system when using source-dir
+                uri = "file" + ":" + sourceDir + File.separator + path;
+                answer = super.resolveResource(uri);
+            }
+        }
+        return answer;
     }
 
 }
