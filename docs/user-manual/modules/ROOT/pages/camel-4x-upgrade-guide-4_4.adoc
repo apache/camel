@@ -151,6 +151,11 @@ All keys started with `camel.springboot.routesController` should be renamed to `
 `camel.springboot.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
 And the option `camel.springboot.routeControllerSuperviseEnabled` has been renamed to `camel.routecontroller.enabled`.
 
+=== Routes Collector
+
+Camel Spring Boot will not honor the `camel.springboot.includeNonSingletons` option (default false). This means
+that only singleton `RouteBuilder` beans is added by default. Previously then prototype scoped beans would be added as well.
+
 === camel-platform-http-vertx
 
 Added configuration to enable Vert.x session handling.
