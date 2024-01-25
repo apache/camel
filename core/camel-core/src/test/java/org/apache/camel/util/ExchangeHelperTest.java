@@ -137,7 +137,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         Map<String, Object> map = new HashMap<>();
         ExchangeHelper.populateVariableMap(exchange, map, true);
 
-        assertEquals(9, map.size());
+        assertEquals(10, map.size());
         assertSame(exchange, map.get("exchange"));
         assertSame(exchange.getIn(), map.get("in"));
         assertSame(exchange.getIn(), map.get("request"));
@@ -157,7 +157,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
 
         Map<?, ?> map = ExchangeHelper.createVariableMap(exchange, true);
 
-        assertEquals(9, map.size());
+        assertEquals(10, map.size());
         assertSame(exchange, map.get("exchange"));
         assertSame(exchange.getIn(), map.get("in"));
         assertSame(exchange.getIn(), map.get("request"));
@@ -177,8 +177,8 @@ public class ExchangeHelperTest extends ContextTestSupport {
 
         Map<?, ?> map = ExchangeHelper.createVariableMap(exchange, true);
 
-        // there should still be 9 in the map
-        assertEquals(9, map.size());
+        // there should still be 10 in the map
+        assertEquals(10, map.size());
         assertSame(exchange, map.get("exchange"));
         assertSame(exchange.getIn(), map.get("in"));
         assertSame(exchange.getIn(), map.get("request"));
