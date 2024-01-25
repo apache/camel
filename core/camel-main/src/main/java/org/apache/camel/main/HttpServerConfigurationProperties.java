@@ -156,8 +156,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path:
-     * /q/jolokia
+     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia
      */
     public void setJolokiaEnabled(boolean jolokiaEnabled) {
         this.jolokiaEnabled = jolokiaEnabled;
@@ -268,8 +267,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path:
-     * /q/jolokia
+     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia
      */
     public HttpServerConfigurationProperties withJolokiaEnabled(boolean jolokiaEnabled) {
         this.jolokiaEnabled = jolokiaEnabled;
