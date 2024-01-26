@@ -1,0 +1,26 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "beanio",
+    "title": "BeanIO",
+    "description": "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).",
+    "deprecated": false,
+    "firstVersion": "2.10.0",
+    "label": "dataformat,transformation,csv",
+    "javaType": "org.apache.camel.model.dataformat.BeanioDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "mapping": { "index": 1, "kind": "attribute", "displayName": "Mapping", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file." },
+    "streamName": { "index": 2, "kind": "attribute", "displayName": "Stream Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the stream to use." },
+    "ignoreUnidentifiedRecords": { "index": 3, "kind": "attribute", "displayName": "Ignore Unidentified Records", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to ignore unidentified records." },
+    "ignoreUnexpectedRecords": { "index": 4, "kind": "attribute", "displayName": "Ignore Unexpected Records", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to ignore unexpected records." },
+    "ignoreInvalidRecords": { "index": 5, "kind": "attribute", "displayName": "Ignore Invalid Records", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to ignore invalid records." },
+    "encoding": { "index": 6, "kind": "attribute", "displayName": "Encoding", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The charset to use. Is by default the JVM platform default charset." },
+    "beanReaderErrorHandlerType": { "index": 7, "kind": "attribute", "displayName": "Bean Reader Error Handler Type", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when you use a custom error handler." },
+    "unmarshalSingleObject": { "index": 8, "kind": "attribute", "displayName": "Unmarshal Single Object", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a single POJO bean." }
+  }
+}

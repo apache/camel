@@ -1,0 +1,1 @@
+../../../../../components/camel-beanio/src/main/docs/beanio-dataformat.adoc

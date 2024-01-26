@@ -631,6 +631,9 @@ public class ModelWriter extends BaseWriter {
     public void writeBase64DataFormat(Base64DataFormat def) throws IOException {
         doWriteBase64DataFormat("base64", def);
     }
+    public void writeBeanioDataFormat(BeanioDataFormat def) throws IOException {
+        doWriteBeanioDataFormat("beanio", def);
+    }
     public void writeBindyDataFormat(BindyDataFormat def) throws IOException {
         doWriteBindyDataFormat("bindy", def);
     }
@@ -1556,6 +1559,7 @@ public class ModelWriter extends BaseWriter {
                 case "AvroDataFormat" -> doWriteAvroDataFormat("avro", (AvroDataFormat) def.getDataFormatType());
                 case "BarcodeDataFormat" -> doWriteBarcodeDataFormat("barcode", (BarcodeDataFormat) def.getDataFormatType());
                 case "Base64DataFormat" -> doWriteBase64DataFormat("base64", (Base64DataFormat) def.getDataFormatType());
+                case "BeanioDataFormat" -> doWriteBeanioDataFormat("beanio", (BeanioDataFormat) def.getDataFormatType());
                 case "BindyDataFormat" -> doWriteBindyDataFormat("bindy", (BindyDataFormat) def.getDataFormatType());
                 case "CBORDataFormat" -> doWriteCBORDataFormat("cbor", (CBORDataFormat) def.getDataFormatType());
                 case "CryptoDataFormat" -> doWriteCryptoDataFormat("crypto", (CryptoDataFormat) def.getDataFormatType());
@@ -2512,6 +2516,7 @@ public class ModelWriter extends BaseWriter {
                 case "AvroDataFormat" -> doWriteAvroDataFormat("avro", (AvroDataFormat) def.getDataFormatType());
                 case "BarcodeDataFormat" -> doWriteBarcodeDataFormat("barcode", (BarcodeDataFormat) def.getDataFormatType());
                 case "Base64DataFormat" -> doWriteBase64DataFormat("base64", (Base64DataFormat) def.getDataFormatType());
+                case "BeanioDataFormat" -> doWriteBeanioDataFormat("beanio", (BeanioDataFormat) def.getDataFormatType());
                 case "BindyDataFormat" -> doWriteBindyDataFormat("bindy", (BindyDataFormat) def.getDataFormatType());
                 case "CBORDataFormat" -> doWriteCBORDataFormat("cbor", (CBORDataFormat) def.getDataFormatType());
                 case "CryptoDataFormat" -> doWriteCryptoDataFormat("crypto", (CryptoDataFormat) def.getDataFormatType());
@@ -3145,6 +3150,22 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("lineLength", def.getLineLength());
         endElement(name);
     }
+    protected void doWriteBeanioDataFormat(
+            String name,
+            BeanioDataFormat def)
+            throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("mapping", def.getMapping());
+        doWriteAttribute("ignoreUnexpectedRecords", def.getIgnoreUnexpectedRecords());
+        doWriteAttribute("ignoreUnidentifiedRecords", def.getIgnoreUnidentifiedRecords());
+        doWriteAttribute("beanReaderErrorHandlerType", def.getBeanReaderErrorHandlerType());
+        doWriteAttribute("unmarshalSingleObject", def.getUnmarshalSingleObject());
+        doWriteAttribute("encoding", def.getEncoding());
+        doWriteAttribute("streamName", def.getStreamName());
+        doWriteAttribute("ignoreInvalidRecords", def.getIgnoreInvalidRecords());
+        endElement(name);
+    }
     protected void doWriteBindyDataFormat(
             String name,
             BindyDataFormat def)
@@ -3250,6 +3271,7 @@ public class ModelWriter extends BaseWriter {
                 case "AvroDataFormat" -> doWriteAvroDataFormat("avro", (AvroDataFormat) v);
                 case "BarcodeDataFormat" -> doWriteBarcodeDataFormat("barcode", (BarcodeDataFormat) v);
                 case "Base64DataFormat" -> doWriteBase64DataFormat("base64", (Base64DataFormat) v);
+                case "BeanioDataFormat" -> doWriteBeanioDataFormat("beanio", (BeanioDataFormat) v);
                 case "BindyDataFormat" -> doWriteBindyDataFormat("bindy", (BindyDataFormat) v);
                 case "CBORDataFormat" -> doWriteCBORDataFormat("cbor", (CBORDataFormat) v);
                 case "CryptoDataFormat" -> doWriteCryptoDataFormat("crypto", (CryptoDataFormat) v);
@@ -4668,6 +4690,7 @@ public class ModelWriter extends BaseWriter {
                 case "AvroDataFormat" -> doWriteAvroDataFormat("avro", (AvroDataFormat) def.getDataFormatType());
                 case "BarcodeDataFormat" -> doWriteBarcodeDataFormat("barcode", (BarcodeDataFormat) def.getDataFormatType());
                 case "Base64DataFormat" -> doWriteBase64DataFormat("base64", (Base64DataFormat) def.getDataFormatType());
+                case "BeanioDataFormat" -> doWriteBeanioDataFormat("beanio", (BeanioDataFormat) def.getDataFormatType());
                 case "BindyDataFormat" -> doWriteBindyDataFormat("bindy", (BindyDataFormat) def.getDataFormatType());
                 case "CBORDataFormat" -> doWriteCBORDataFormat("cbor", (CBORDataFormat) def.getDataFormatType());
                 case "CryptoDataFormat" -> doWriteCryptoDataFormat("crypto", (CryptoDataFormat) def.getDataFormatType());

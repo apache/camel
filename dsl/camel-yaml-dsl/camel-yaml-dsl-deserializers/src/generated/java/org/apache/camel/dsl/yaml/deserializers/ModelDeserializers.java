@@ -135,6 +135,7 @@ import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
+import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
@@ -1238,6 +1239,93 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "value": {
                     String val = asText(node);
                     target.setValue(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "beanio",
+            types = org.apache.camel.model.dataformat.BeanioDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "BeanIO",
+            description = "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "beanReaderErrorHandlerType", type = "string", description = "To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when you use a custom error handler.", displayName = "Bean Reader Error Handler Type"),
+                    @YamlProperty(name = "encoding", type = "string", description = "The charset to use. Is by default the JVM platform default charset.", displayName = "Encoding"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "ignoreInvalidRecords", type = "boolean", description = "Whether to ignore invalid records.", displayName = "Ignore Invalid Records"),
+                    @YamlProperty(name = "ignoreUnexpectedRecords", type = "boolean", description = "Whether to ignore unexpected records.", displayName = "Ignore Unexpected Records"),
+                    @YamlProperty(name = "ignoreUnidentifiedRecords", type = "boolean", description = "Whether to ignore unidentified records.", displayName = "Ignore Unidentified Records"),
+                    @YamlProperty(name = "mapping", type = "string", required = true, description = "The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file.", displayName = "Mapping"),
+                    @YamlProperty(name = "streamName", type = "string", required = true, description = "The name of the stream to use.", displayName = "Stream Name"),
+                    @YamlProperty(name = "unmarshalSingleObject", type = "boolean", description = "This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a single POJO bean.", displayName = "Unmarshal Single Object")
+            }
+    )
+    public static class BeanioDataFormatDeserializer extends YamlDeserializerBase<BeanioDataFormat> {
+        public BeanioDataFormatDeserializer() {
+            super(BeanioDataFormat.class);
+        }
+
+        @Override
+        protected BeanioDataFormat newInstance() {
+            return new BeanioDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(BeanioDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "beanReaderErrorHandlerType": {
+                    String val = asText(node);
+                    target.setBeanReaderErrorHandlerType(val);
+                    break;
+                }
+                case "encoding": {
+                    String val = asText(node);
+                    target.setEncoding(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "ignoreInvalidRecords": {
+                    String val = asText(node);
+                    target.setIgnoreInvalidRecords(val);
+                    break;
+                }
+                case "ignoreUnexpectedRecords": {
+                    String val = asText(node);
+                    target.setIgnoreUnexpectedRecords(val);
+                    break;
+                }
+                case "ignoreUnidentifiedRecords": {
+                    String val = asText(node);
+                    target.setIgnoreUnidentifiedRecords(val);
+                    break;
+                }
+                case "mapping": {
+                    String val = asText(node);
+                    target.setMapping(val);
+                    break;
+                }
+                case "streamName": {
+                    String val = asText(node);
+                    target.setStreamName(val);
+                    break;
+                }
+                case "unmarshalSingleObject": {
+                    String val = asText(node);
+                    target.setUnmarshalSingleObject(val);
                     break;
                 }
                 default: {
@@ -3370,6 +3458,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "base64", type = "object:org.apache.camel.model.dataformat.Base64DataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "beanio", type = "object:org.apache.camel.model.dataformat.BeanioDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "bindy", type = "object:org.apache.camel.model.dataformat.BindyDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "cbor", type = "object:org.apache.camel.model.dataformat.CBORDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "crypto", type = "object:org.apache.camel.model.dataformat.CryptoDataFormat", oneOf = "dataFormatType"),
@@ -3449,6 +3538,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "base64": {
                     org.apache.camel.model.dataformat.Base64DataFormat val = asType(node, org.apache.camel.model.dataformat.Base64DataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "beanio": {
+                    org.apache.camel.model.dataformat.BeanioDataFormat val = asType(node, org.apache.camel.model.dataformat.BeanioDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3675,6 +3769,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
                     @YamlProperty(name = "base64", type = "object:org.apache.camel.model.dataformat.Base64DataFormat"),
+                    @YamlProperty(name = "beanio", type = "object:org.apache.camel.model.dataformat.BeanioDataFormat"),
                     @YamlProperty(name = "bindy", type = "object:org.apache.camel.model.dataformat.BindyDataFormat"),
                     @YamlProperty(name = "cbor", type = "object:org.apache.camel.model.dataformat.CBORDataFormat"),
                     @YamlProperty(name = "crypto", type = "object:org.apache.camel.model.dataformat.CryptoDataFormat"),
@@ -3765,6 +3860,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "base64": {
                     org.apache.camel.model.dataformat.Base64DataFormat val = asType(node, org.apache.camel.model.dataformat.Base64DataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "beanio": {
+                    org.apache.camel.model.dataformat.BeanioDataFormat val = asType(node, org.apache.camel.model.dataformat.BeanioDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -9024,6 +9129,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "base64", type = "object:org.apache.camel.model.dataformat.Base64DataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "beanio", type = "object:org.apache.camel.model.dataformat.BeanioDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "bindy", type = "object:org.apache.camel.model.dataformat.BindyDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "cbor", type = "object:org.apache.camel.model.dataformat.CBORDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "crypto", type = "object:org.apache.camel.model.dataformat.CryptoDataFormat", oneOf = "dataFormatType"),
@@ -9105,6 +9211,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "base64": {
                     org.apache.camel.model.dataformat.Base64DataFormat val = asType(node, org.apache.camel.model.dataformat.Base64DataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "beanio": {
+                    org.apache.camel.model.dataformat.BeanioDataFormat val = asType(node, org.apache.camel.model.dataformat.BeanioDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -19244,6 +19355,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "base64", type = "object:org.apache.camel.model.dataformat.Base64DataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "beanio", type = "object:org.apache.camel.model.dataformat.BeanioDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "bindy", type = "object:org.apache.camel.model.dataformat.BindyDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "cbor", type = "object:org.apache.camel.model.dataformat.CBORDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "crypto", type = "object:org.apache.camel.model.dataformat.CryptoDataFormat", oneOf = "dataFormatType"),
@@ -19330,6 +19442,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "base64": {
                     org.apache.camel.model.dataformat.Base64DataFormat val = asType(node, org.apache.camel.model.dataformat.Base64DataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "beanio": {
+                    org.apache.camel.model.dataformat.BeanioDataFormat val = asType(node, org.apache.camel.model.dataformat.BeanioDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

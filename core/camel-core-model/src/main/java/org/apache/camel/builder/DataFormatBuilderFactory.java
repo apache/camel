@@ -20,6 +20,7 @@ import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
+import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
@@ -88,6 +89,13 @@ public final class DataFormatBuilderFactory {
      */
     public Base64DataFormat.Builder base64() {
         return new Base64DataFormat.Builder();
+    }
+
+    /**
+     * Uses the BeanIO data format
+     */
+    public BeanioDataFormat.Builder beanio() {
+        return new BeanioDataFormat.Builder();
     }
 
     /**

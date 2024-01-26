@@ -2730,6 +2730,8 @@
               }, {
                 "required" : [ "base64" ]
               }, {
+                "required" : [ "beanio" ]
+              }, {
                 "required" : [ "bindy" ]
               }, {
                 "required" : [ "cbor" ]
@@ -2825,6 +2827,14 @@
             "properties" : {
               "base64" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Base64DataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "beanio" ],
+            "properties" : {
+              "beanio" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BeanioDataFormat"
               }
             }
           }, {
@@ -3147,6 +3157,7 @@
           "avro" : { },
           "barcode" : { },
           "base64" : { },
+          "beanio" : { },
           "bindy" : { },
           "cbor" : { },
           "crypto" : { },
@@ -7342,6 +7353,7 @@
           "avro" : { },
           "barcode" : { },
           "base64" : { },
+          "beanio" : { },
           "bindy" : { },
           "cbor" : { },
           "crypto" : { },
@@ -7398,6 +7410,8 @@
                 "required" : [ "barcode" ]
               }, {
                 "required" : [ "base64" ]
+              }, {
+                "required" : [ "beanio" ]
               }, {
                 "required" : [ "bindy" ]
               }, {
@@ -7494,6 +7508,14 @@
             "properties" : {
               "base64" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Base64DataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "beanio" ],
+            "properties" : {
+              "beanio" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BeanioDataFormat"
               }
             }
           }, {
@@ -9876,6 +9898,60 @@
           }
         }
       },
+      "org.apache.camel.model.dataformat.BeanioDataFormat" : {
+        "title" : "BeanIO",
+        "description" : "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "beanReaderErrorHandlerType" : {
+            "type" : "string",
+            "title" : "Bean Reader Error Handler Type",
+            "description" : "To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when you use a custom error handler."
+          },
+          "encoding" : {
+            "type" : "string",
+            "title" : "Encoding",
+            "description" : "The charset to use. Is by default the JVM platform default charset."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "ignoreInvalidRecords" : {
+            "type" : "boolean",
+            "title" : "Ignore Invalid Records",
+            "description" : "Whether to ignore invalid records."
+          },
+          "ignoreUnexpectedRecords" : {
+            "type" : "boolean",
+            "title" : "Ignore Unexpected Records",
+            "description" : "Whether to ignore unexpected records."
+          },
+          "ignoreUnidentifiedRecords" : {
+            "type" : "boolean",
+            "title" : "Ignore Unidentified Records",
+            "description" : "Whether to ignore unidentified records."
+          },
+          "mapping" : {
+            "type" : "string",
+            "title" : "Mapping",
+            "description" : "The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file."
+          },
+          "streamName" : {
+            "type" : "string",
+            "title" : "Stream Name",
+            "description" : "The name of the stream to use."
+          },
+          "unmarshalSingleObject" : {
+            "type" : "boolean",
+            "title" : "Unmarshal Single Object",
+            "description" : "This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a single POJO bean."
+          }
+        },
+        "required" : [ "mapping", "streamName" ]
+      },
       "org.apache.camel.model.dataformat.BindyDataFormat" : {
         "title" : "Bindy",
         "description" : "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
@@ -10246,6 +10322,9 @@
           },
           "base64" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Base64DataFormat"
+          },
+          "beanio" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BeanioDataFormat"
           },
           "bindy" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BindyDataFormat"
@@ -15531,6 +15610,8 @@
               }, {
                 "required" : [ "base64" ]
               }, {
+                "required" : [ "beanio" ]
+              }, {
                 "required" : [ "bindy" ]
               }, {
                 "required" : [ "cbor" ]
@@ -15626,6 +15707,14 @@
             "properties" : {
               "base64" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Base64DataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "beanio" ],
+            "properties" : {
+              "beanio" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BeanioDataFormat"
               }
             }
           }, {
@@ -15935,6 +16024,7 @@
           "avro" : { },
           "barcode" : { },
           "base64" : { },
+          "beanio" : { },
           "bindy" : { },
           "cbor" : { },
           "crypto" : { },

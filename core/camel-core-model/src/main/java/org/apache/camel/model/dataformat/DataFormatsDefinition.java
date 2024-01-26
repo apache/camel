@@ -43,6 +43,7 @@ public class DataFormatsDefinition {
             @XmlElement(name = "avro", type = AvroDataFormat.class),
             @XmlElement(name = "barcode", type = BarcodeDataFormat.class),
             @XmlElement(name = "base64", type = Base64DataFormat.class),
+            @XmlElement(name = "beanio", type = BeanioDataFormat.class),
             @XmlElement(name = "bindy", type = BindyDataFormat.class),
             @XmlElement(name = "cbor", type = CBORDataFormat.class),
             @XmlElement(name = "crypto", type = CryptoDataFormat.class),

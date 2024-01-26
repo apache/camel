@@ -89,6 +89,7 @@
         <module>camel-barcode</module>
         <module>camel-base64</module>
         <module>camel-bean-validator</module>
+        <module>camel-beanio</module>
         <module>camel-bindy</module>
         <module>camel-bonita</module>
         <module>camel-box</module>

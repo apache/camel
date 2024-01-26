@@ -89,6 +89,15 @@ Spring specific DefaultCamelBeanPostProcessor which uses Spring BeanPostProcesso
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="beanio" type="tns:beanioDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="bearerToken" type="tns:bearerTokenDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -7112,6 +7121,7 @@ down. Default value: false
             <xs:element ref="tns:avro"/>
             <xs:element ref="tns:barcode"/>
             <xs:element ref="tns:base64"/>
+            <xs:element ref="tns:beanio"/>
             <xs:element ref="tns:bindy"/>
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
@@ -7473,6 +7483,90 @@ The line separators to use. Uses new line characters (CRLF) by default.
 <![CDATA[
 Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding
 seamlessly handles both modes. Is by default false. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="beanioDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="mapping" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to
+denote from where to load the mapping file.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="streamName" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The name of the stream to use.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ignoreUnidentifiedRecords" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to ignore unidentified records. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ignoreUnexpectedRecords" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to ignore unexpected records. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ignoreInvalidRecords" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to ignore invalid records. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="encoding" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The charset to use. Is by default the JVM platform default charset.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="beanReaderErrorHandlerType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure the
+fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords,
+and ignoreInvalidRecords may not be in use when you use a custom error handler.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="unmarshalSingleObject" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default
+mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a single POJO bean.
+Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13998,6 +14092,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:avro"/>
             <xs:element ref="tns:barcode"/>
             <xs:element ref="tns:base64"/>
+            <xs:element ref="tns:beanio"/>
             <xs:element ref="tns:bindy"/>
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
@@ -15019,6 +15114,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:avro"/>
         <xs:element ref="tns:barcode"/>
         <xs:element ref="tns:base64"/>
+        <xs:element ref="tns:beanio"/>
         <xs:element ref="tns:bindy"/>
         <xs:element ref="tns:cbor"/>
         <xs:element ref="tns:crypto"/>
@@ -16912,6 +17008,7 @@ To configure a special tag for the operations within this rest definition.
             <xs:element ref="tns:avro"/>
             <xs:element ref="tns:barcode"/>
             <xs:element ref="tns:base64"/>
+            <xs:element ref="tns:beanio"/>
             <xs:element ref="tns:bindy"/>
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
