@@ -46,10 +46,11 @@ public class CloudtrailComponent extends HealthCheckComponent {
         CloudtrailEndpoint endpoint = new CloudtrailEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         if (!configuration.isUseDefaultCredentialsProvider() && !configuration.isUseProfileCredentialsProvider()
+                && !configuration.isUseSessionCredentials()
                 && configuration.getCloudTrailClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, cloudTrailClient or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, useSessionCredentials is set to false, cloudTrailClient or accessKey and secretKey must be specified");
         }
         return endpoint;
     }

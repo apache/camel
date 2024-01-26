@@ -21,7 +21,7 @@ public class CloudtrailEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(37);
         props.add("accessKey");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -50,6 +50,7 @@ public class CloudtrailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("schedulerProperties");
         props.add("secretKey");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("sessionToken");
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("trustAllCertificates");
@@ -57,10 +58,12 @@ public class CloudtrailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("useDefaultCredentialsProvider");
         props.add("useFixedDelay");
         props.add("useProfileCredentialsProvider");
+        props.add("useSessionCredentials");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
         secretProps.add("accessKey");
         secretProps.add("secretKey");
+        secretProps.add("sessionToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);
         prefixes.add("scheduler.");
