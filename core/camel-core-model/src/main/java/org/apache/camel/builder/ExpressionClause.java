@@ -1150,6 +1150,29 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Evaluates a <a href="http://camel.apache.org/wasm.html">Wasm expression</a>
+     *
+     * @param  functionName the name of the Wasm function to be evaluated
+     * @param  module       the Wasm module providing the expression function
+     * @return              the builder to continue processing the DSL
+     */
+    public T wasm(String functionName, String module) {
+        return delegate.wasm(functionName, module);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/wasm.html">Wasm expression</a>
+     *
+     * @param  functionName the name of the Wasm function to be evaluated
+     * @param  module       the Wasm module providing the expression function
+     * @param  resultType   the return type expected by the expression
+     * @return              the builder to continue processing the DSL
+     */
+    public T wasm(String functionName, String module, Class<?> resultType) {
+        return delegate.wasm(functionName, module, resultType);
+    }
+
+    /**
      * Evaluates a given language name with the expression text
      *
      * @param  language   the name of the language

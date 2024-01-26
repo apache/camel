@@ -44,6 +44,7 @@ import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.VariableExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
@@ -1368,6 +1369,31 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         expression.setNamespaces(namespaces);
         expression(expression);
         return result;
+    }
+
+    /**
+     * Evaluates <a href="http://camel.apache.org/wasm.html">Wasm expression</a>
+     *
+     * @param  functionName the name of the Wasm function to be evaluated
+     * @param  module       the Wasm module providing the expression function
+     * @return              the builder to continue processing the DSL
+     */
+    public T wasm(String functionName, String module) {
+        return expression(new WasmExpression(functionName, module));
+    }
+
+    /**
+     * Evaluates <a href="http://camel.apache.org/wasm.html">Wasm expression</a>
+     *
+     * @param  functionName the name of the Wasm function to be evaluated
+     * @param  module       the Wasm module providing the expression function
+     * @param  resultType   the return type expected by the expression
+     * @return              the builder to continue processing the DSL
+     */
+    public T wasm(String functionName, String module, Class<?> resultType) {
+        WasmExpression exp = new WasmExpression(functionName, module);
+        exp.setResultType(resultType);
+        return expression(exp);
     }
 
     /**

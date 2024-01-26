@@ -324,6 +324,8 @@
                                     <exclude>**/test-kerb5.conf</exclude>
                                     <exclude>**/yarn.lock</exclude>
                                     <exclude>**/zkserver*.conf</exclude>
+                                    <exclude>**/*.wasm</exclude>
+                                    <exclude>**/*.lock</exclude>
                                     <exclude>.mvn/**</exclude>
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>KEYS</exclude>
@@ -368,6 +370,7 @@
                             <proto>SLASHSTAR_STYLE</proto>
                             <qf.cfg>CAMEL_PROPERTIES_STYLE</qf.cfg>
                             <robot>SCRIPT_STYLE</robot>
+                            <rs>DOUBLESLASH_STYLE</rs>
                             <sch>XML_STYLE</sch>
                             <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
                             <spring.handlers>CAMEL_PROPERTIES_STYLE</spring.handlers>
@@ -375,6 +378,7 @@
                             <spring.schemas>CAMEL_PROPERTIES_STYLE</spring.schemas>
                             <sql>DOUBLEDASHES_STYLE</sql>
                             <thrift>JAVADOC_STYLE</thrift>
+                            <toml>SCRIPT_STYLE</toml>
                             <unrealircd.conf>SLASHSTAR_STYLE</unrealircd.conf>
                             <vm>CAMEL_PROPERTIES_STYLE</vm>
                         </mapping>
@@ -405,7 +409,7 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
+                    <artifactId>maves-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin-version}</version>
                 </plugin>
                 <plugin>
