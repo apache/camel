@@ -18,6 +18,7 @@ public class ICalDataFormatConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         ICalDataFormat dataformat = (ICalDataFormat) target;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "validating": dataformat.setValidating(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

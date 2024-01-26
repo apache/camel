@@ -18,6 +18,8 @@ public class LZFDataFormatConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         LZFDataFormat dataformat = (LZFDataFormat) target;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "usingparallelcompression":
+        case "usingParallelCompression": dataformat.setUsingParallelCompression(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
