@@ -262,7 +262,7 @@ public class URISupportTest {
 
     @Test
     public void testSanitizeAuthorizationToken() throws Exception {
-        String out1 = URISupport.sanitizeUri("telegram:bots?authorizationToken=1234567890:AABBCOhEaqprrk6qqQtsSPFYS3Njgv2ljW2");
+        String out1 = URISupport.sanitizeUri("telegram:bots?authorizationToken=1234567890:XXAuthTokenHereXX");
         assertEquals("telegram:bots?authorizationToken=xxxxxx", out1);
     }
 
