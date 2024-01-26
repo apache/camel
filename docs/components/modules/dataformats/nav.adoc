@@ -7,6 +7,7 @@
 ** xref:avroJackson-dataformat.adoc[Avro Jackson]
 ** xref:barcode-dataformat.adoc[Barcode]
 ** xref:base64-dataformat.adoc[Base64]
+** xref:beanio-dataformat.adoc[BeanIO]
 ** xref:bindy-dataformat.adoc[Bindy]
 ** xref:cbor-dataformat.adoc[CBOR]
 ** xref:crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)]

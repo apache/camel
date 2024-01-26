@@ -28,6 +28,7 @@ import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
+import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.ContentTypeHeaderAware;
@@ -183,6 +184,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new BarcodeDataFormatReifier(camelContext, definition);
         } else if (definition instanceof Base64DataFormat) {
             return new Base64DataFormatReifier(camelContext, definition);
+        } else if (definition instanceof BeanioDataFormat) {
+            return new BeanioDataFormatReifier(camelContext, definition);
         } else if (definition instanceof BindyDataFormat) {
             return new BindyDataFormatReifier(camelContext, definition);
         } else if (definition instanceof CBORDataFormat) {
