@@ -317,6 +317,7 @@
 ** xref:vertx-component.adoc[Vert.x]
 ** xref:vertx-http-component.adoc[Vert.x HTTP Client]
 ** xref:vertx-websocket-component.adoc[Vert.x WebSocket]
+** xref:wasm-component.adoc[Wasm]
 ** xref:weather-component.adoc[Weather]
 ** xref:web3j-component.adoc[Web3j Ethereum Blockchain]
 ** xref:webhook-component.adoc[Webhook]
