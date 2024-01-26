@@ -29,7 +29,7 @@
 
     <artifactId>camel-elasticsearch</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: ElasticSearch Java API Client</name>
+    <name>Camel :: ElasticSearch Java API Client (deprecated)</name>
     <description>Camel ElasticSearch Java API Client support</description>
 
     <properties>
