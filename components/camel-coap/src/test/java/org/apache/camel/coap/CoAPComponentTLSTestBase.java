@@ -291,7 +291,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
                     from("direct:pskciphersuite")
                             .toF(getProtocol()
-                                 + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256&advancedCertificateVerifier=#advancedCertificateVerifier",
+                                 + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256",
                                     PORT7)
                             .to("mock:result");
 
