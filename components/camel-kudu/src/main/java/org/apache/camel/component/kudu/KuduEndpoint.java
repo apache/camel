@@ -86,7 +86,7 @@ public class KuduEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         try {
-            LOG.info("doStop()");
+            LOG.debug("Shutting down kudu client");
             getKuduClient().shutdown();
         } catch (Exception e) {
             LOG.error("Unable to shutdown kudu client", e);
