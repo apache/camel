@@ -557,7 +557,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public static class CamelJmsTemplate extends JmsTemplate {
-        private JmsConfiguration config;
+        private final JmsConfiguration config;
 
         public CamelJmsTemplate(JmsConfiguration config, ConnectionFactory connectionFactory) {
             super(connectionFactory);
@@ -1621,7 +1621,7 @@ public class JmsConfiguration implements Cloneable {
             }
         }
 
-        if (endpoint.getSelector() != null && endpoint.getSelector().length() != 0) {
+        if (endpoint.getSelector() != null && !endpoint.getSelector().isEmpty()) {
             container.setMessageSelector(endpoint.getSelector());
         }
 
