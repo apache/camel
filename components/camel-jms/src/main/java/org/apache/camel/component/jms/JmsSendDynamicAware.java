@@ -90,7 +90,7 @@ public class JmsSendDynamicAware extends ServiceSupport implements SendDynamicAw
         final String destinationName = parseDestinationName(entry.getUri());
         return new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(JmsConstants.JMS_DESTINATION_NAME, destinationName);
             }
         };

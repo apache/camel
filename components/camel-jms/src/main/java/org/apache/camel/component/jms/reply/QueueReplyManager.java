@@ -41,7 +41,6 @@ import org.springframework.jms.support.destination.DestinationResolver;
 public class QueueReplyManager extends ReplyManagerSupport {
 
     private String replyToSelectorValue;
-    private MessageSelectorCreator dynamicMessageSelector;
 
     public QueueReplyManager(CamelContext camelContext) {
         super(camelContext);
@@ -238,7 +237,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
                         endpoint.getReplyTo(), fixedMessageSelector, answer);
             } else {
                 // use a dynamic message selector which will select the message we want to receive as reply
-                dynamicMessageSelector = new MessageSelectorCreator(correlation);
+                MessageSelectorCreator dynamicMessageSelector = new MessageSelectorCreator(correlation);
                 answer = new SharedQueueMessageListenerContainer(endpoint, dynamicMessageSelector);
                 log.debug("Using shared queue: {} with dynamic message selector as reply listener: {}", endpoint.getReplyTo(),
                         answer);
