@@ -97,25 +97,33 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
         TaskExecutor answer;
 
         if (endpoint.getDefaultTaskExecutorType() == DefaultTaskExecutorType.ThreadPool) {
-            ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-            executor.setBeanName(beanName);
-            executor.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
-            executor.setCorePoolSize(endpoint.getConcurrentConsumers());
-            // Direct hand-off mode. Do not queue up tasks: assign it to a thread immediately.
-            // We set no upper-bound on the thread pool (no maxPoolSize) as it's already implicitly constrained by
-            // maxConcurrentConsumers on the DMLC itself (i.e. DMLC will only grow up to a level of concurrency as
-            // defined by maxConcurrentConsumers).
-            executor.setQueueCapacity(0);
-            executor.initialize();
-            answer = executor;
+            answer = createThreadPoolExecutor(beanName, pattern);
         } else {
-            SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor(beanName);
-            executor.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
-            answer = executor;
+            answer = createAsyncTaskExecutor(beanName, pattern);
         }
 
         taskExecutor = answer;
         return answer;
+    }
+
+    private static TaskExecutor createAsyncTaskExecutor(String beanName, String pattern) {
+        SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor(beanName);
+        executor.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+        return executor;
+    }
+
+    private TaskExecutor createThreadPoolExecutor(String beanName, String pattern) {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setBeanName(beanName);
+        executor.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+        executor.setCorePoolSize(endpoint.getConcurrentConsumers());
+        // Direct hand-off mode. Do not queue up tasks: assign it to a thread immediately.
+        // We set no upper-bound on the thread pool (no maxPoolSize) as it's already implicitly constrained by
+        // maxConcurrentConsumers on the DMLC itself (i.e. DMLC will only grow up to a level of concurrency as
+        // defined by maxConcurrentConsumers).
+        executor.setQueueCapacity(0);
+        executor.initialize();
+        return executor;
     }
 
     @Override
