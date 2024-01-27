@@ -4226,6 +4226,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.VertxWebsocketComponentBuilderFactory.vertxWebsocket();
     }
     /**
+     * Wasm (camel-wasm)
+     * Invoke Wasm functions.
+     * 
+     * Category: core,script
+     * Since: 4.4
+     * Maven coordinates: org.apache.camel:camel-wasm
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.WasmComponentBuilderFactory.WasmComponentBuilder wasm() {
+        return org.apache.camel.builder.component.dsl.WasmComponentBuilderFactory.wasm();
+    }
+    /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
      * 

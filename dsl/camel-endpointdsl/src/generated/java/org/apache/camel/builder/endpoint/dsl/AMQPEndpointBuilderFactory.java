@@ -6848,6 +6848,19 @@ public interface AMQPEndpointBuilderFactory {
         }
 
         /**
+         * The name of the queue or topic the message was sent to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSDestinationProduced}.
+         */
+        public String jMSDestinationProduced() {
+            return "CamelJMSDestinationProduced";
+        }
+
+        /**
          * The JMS group ID.
          * 
          * The option is a: {@code String} type.

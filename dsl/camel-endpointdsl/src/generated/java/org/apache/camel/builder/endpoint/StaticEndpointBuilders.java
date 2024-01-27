@@ -15058,6 +15058,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Wasm (camel-wasm)
+     * Invoke Wasm functions.
+     * 
+     * Category: core,script
+     * Since: 4.4
+     * Maven coordinates: org.apache.camel:camel-wasm
+     * 
+     * Syntax: <code>wasm:functionName</code>
+     * 
+     * Path parameter: functionName (required)
+     * The Function Name
+     * 
+     * @param path functionName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.WasmEndpointBuilderFactory.WasmEndpointBuilder wasm(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.WasmEndpointBuilderFactory.endpointBuilder("wasm", path);
+    }
+    /**
+     * Wasm (camel-wasm)
+     * Invoke Wasm functions.
+     * 
+     * Category: core,script
+     * Since: 4.4
+     * Maven coordinates: org.apache.camel:camel-wasm
+     * 
+     * Syntax: <code>wasm:functionName</code>
+     * 
+     * Path parameter: functionName (required)
+     * The Function Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path functionName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.WasmEndpointBuilderFactory.WasmEndpointBuilder wasm(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.WasmEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
      * 
@@ -15792,7 +15835,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 371 enums and the value can be one of:
+     * There are 373 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -15847,16 +15890,17 @@ public class StaticEndpointBuilders {
      * GET_CATEGORY, GET_CATEGORY_TRANSLATIONS, GET_CCD_TICKETS_COUNT_FOR_USER,
      * GET_COMPLIANCE_DELETION_STATUSES, GET_CONTENT_TAG, GET_CONTENT_TAGS,
      * GET_CONTENT_TAGS_1, GET_CONTENT_TAGS_2, GET_CURRENT_USER,
-     * GET_CUSTOM_AGENT_ROLES, GET_DELETED_TICKETS, GET_DELETED_TICKETS_1,
-     * GET_DYNAMIC_CONTENT_ITEM, GET_DYNAMIC_CONTENT_ITEM_VARIANT,
-     * GET_DYNAMIC_CONTENT_ITEM_VARIANTS, GET_DYNAMIC_CONTENT_ITEMS, GET_FORUM,
-     * GET_FORUMS, GET_FORUMS_1, GET_GROUP, GET_GROUP_MEMBERSHIP,
-     * GET_GROUP_MEMBERSHIP_1, GET_GROUP_MEMBERSHIP_BY_USER,
-     * GET_GROUP_MEMBERSHIPS, GET_GROUP_MEMBERSHIPS_1, GET_GROUP_ORGANIZATION,
-     * GET_GROUP_USERS, GET_GROUPS, GET_HELP_CENTER_LOCALES,
-     * GET_HOLIDAYS_FOR_SCHEDULE, GET_HOLIDAYS_FOR_SCHEDULE_1,
-     * GET_INCREMENTAL_TICKETS_RESULT, GET_JOB_STATUS, GET_JOB_STATUS_ASYNC,
-     * GET_JOB_STATUSES, GET_JOB_STATUSES_ASYNC, GET_MACRO, GET_MACROS,
+     * GET_CUSTOM_AGENT_ROLES, GET_CUSTOM_TICKET_STATUSES, GET_DELETED_TICKETS,
+     * GET_DELETED_TICKETS_1, GET_DYNAMIC_CONTENT_ITEM,
+     * GET_DYNAMIC_CONTENT_ITEM_VARIANT, GET_DYNAMIC_CONTENT_ITEM_VARIANTS,
+     * GET_DYNAMIC_CONTENT_ITEMS, GET_FORUM, GET_FORUMS, GET_FORUMS_1,
+     * GET_GROUP, GET_GROUP_MEMBERSHIP, GET_GROUP_MEMBERSHIP_1,
+     * GET_GROUP_MEMBERSHIP_BY_USER, GET_GROUP_MEMBERSHIPS,
+     * GET_GROUP_MEMBERSHIPS_1, GET_GROUP_ORGANIZATION, GET_GROUP_USERS,
+     * GET_GROUPS, GET_HELP_CENTER_LOCALES, GET_HOLIDAYS_FOR_SCHEDULE,
+     * GET_HOLIDAYS_FOR_SCHEDULE_1, GET_INCREMENTAL_TICKETS_RESULT,
+     * GET_JOB_STATUS, GET_JOB_STATUS_ASYNC, GET_JOB_STATUSES,
+     * GET_JOB_STATUSES_ASYNC, GET_LOCALES, GET_MACRO, GET_MACROS,
      * GET_OPEN_REQUESTS, GET_ORGANIZATION, GET_ORGANIZATION_FIELDS,
      * GET_ORGANIZATION_MEMBERSHIP, GET_ORGANIZATION_MEMBERSHIP_BY_USER,
      * GET_ORGANIZATION_MEMBERSHIP_FOR_USER, GET_ORGANIZATION_MEMBERSHIPS,
@@ -15944,7 +15988,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 371 enums and the value can be one of:
+     * There are 373 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -15999,16 +16043,17 @@ public class StaticEndpointBuilders {
      * GET_CATEGORY, GET_CATEGORY_TRANSLATIONS, GET_CCD_TICKETS_COUNT_FOR_USER,
      * GET_COMPLIANCE_DELETION_STATUSES, GET_CONTENT_TAG, GET_CONTENT_TAGS,
      * GET_CONTENT_TAGS_1, GET_CONTENT_TAGS_2, GET_CURRENT_USER,
-     * GET_CUSTOM_AGENT_ROLES, GET_DELETED_TICKETS, GET_DELETED_TICKETS_1,
-     * GET_DYNAMIC_CONTENT_ITEM, GET_DYNAMIC_CONTENT_ITEM_VARIANT,
-     * GET_DYNAMIC_CONTENT_ITEM_VARIANTS, GET_DYNAMIC_CONTENT_ITEMS, GET_FORUM,
-     * GET_FORUMS, GET_FORUMS_1, GET_GROUP, GET_GROUP_MEMBERSHIP,
-     * GET_GROUP_MEMBERSHIP_1, GET_GROUP_MEMBERSHIP_BY_USER,
-     * GET_GROUP_MEMBERSHIPS, GET_GROUP_MEMBERSHIPS_1, GET_GROUP_ORGANIZATION,
-     * GET_GROUP_USERS, GET_GROUPS, GET_HELP_CENTER_LOCALES,
-     * GET_HOLIDAYS_FOR_SCHEDULE, GET_HOLIDAYS_FOR_SCHEDULE_1,
-     * GET_INCREMENTAL_TICKETS_RESULT, GET_JOB_STATUS, GET_JOB_STATUS_ASYNC,
-     * GET_JOB_STATUSES, GET_JOB_STATUSES_ASYNC, GET_MACRO, GET_MACROS,
+     * GET_CUSTOM_AGENT_ROLES, GET_CUSTOM_TICKET_STATUSES, GET_DELETED_TICKETS,
+     * GET_DELETED_TICKETS_1, GET_DYNAMIC_CONTENT_ITEM,
+     * GET_DYNAMIC_CONTENT_ITEM_VARIANT, GET_DYNAMIC_CONTENT_ITEM_VARIANTS,
+     * GET_DYNAMIC_CONTENT_ITEMS, GET_FORUM, GET_FORUMS, GET_FORUMS_1,
+     * GET_GROUP, GET_GROUP_MEMBERSHIP, GET_GROUP_MEMBERSHIP_1,
+     * GET_GROUP_MEMBERSHIP_BY_USER, GET_GROUP_MEMBERSHIPS,
+     * GET_GROUP_MEMBERSHIPS_1, GET_GROUP_ORGANIZATION, GET_GROUP_USERS,
+     * GET_GROUPS, GET_HELP_CENTER_LOCALES, GET_HOLIDAYS_FOR_SCHEDULE,
+     * GET_HOLIDAYS_FOR_SCHEDULE_1, GET_INCREMENTAL_TICKETS_RESULT,
+     * GET_JOB_STATUS, GET_JOB_STATUS_ASYNC, GET_JOB_STATUSES,
+     * GET_JOB_STATUSES_ASYNC, GET_LOCALES, GET_MACRO, GET_MACROS,
      * GET_OPEN_REQUESTS, GET_ORGANIZATION, GET_ORGANIZATION_FIELDS,
      * GET_ORGANIZATION_MEMBERSHIP, GET_ORGANIZATION_MEMBERSHIP_BY_USER,
      * GET_ORGANIZATION_MEMBERSHIP_FOR_USER, GET_ORGANIZATION_MEMBERSHIPS,
