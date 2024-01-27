@@ -142,6 +142,12 @@ The component was removed without deprecation. The library supporting this compo
 
 The component now has support for batch processing.
 
+=== camel-json-validator
+
+Removed deprecated `org.apache.camel.component.jsonvalidator.DefaultJsonSchemaLoader`,
+use `org.apache.camel.component.jsonvalidator.DefaultJsonUriSchemaLoader` instead.
+
+
 == Camel Spring Boot
 
 === Ordering of BOM imports
