@@ -707,7 +707,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getAssignableGroupMemberships"),
 
     GET_ASSIGNABLE_GROUP_MEMBERSHIPS_1(
-        java.util.List.class,
+        Iterable.class,
         "getAssignableGroupMemberships",
         arg("group_id", long.class)),
 
@@ -754,7 +754,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getAutomations"),
 
     GET_BRANDS(
-        java.util.List.class,
+        Iterable.class,
         "getBrands"),
 
     GET_CC_REQUESTS(
@@ -812,6 +812,10 @@ public enum ZendeskApiMethod implements ApiMethod {
     GET_CUSTOM_AGENT_ROLES(
         Iterable.class,
         "getCustomAgentRoles"),
+
+    GET_CUSTOM_TICKET_STATUSES(
+        Iterable.class,
+        "getCustomTicketStatuses"),
 
     GET_DELETED_TICKETS(
         Iterable.class,
@@ -874,7 +878,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("group_membership_id", long.class)),
 
     GET_GROUP_MEMBERSHIP_BY_USER(
-        java.util.List.class,
+        Iterable.class,
         "getGroupMembershipByUser",
         arg("user_id", long.class)),
 
@@ -883,7 +887,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getGroupMemberships"),
 
     GET_GROUP_MEMBERSHIPS_1(
-        java.util.List.class,
+        Iterable.class,
         "getGroupMemberships",
         arg("group_id", long.class)),
 
@@ -941,6 +945,10 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getJobStatusesAsync",
         arg("statuses", java.util.List.class)),
 
+    GET_LOCALES(
+        Iterable.class,
+        "getLocales"),
+
     GET_MACRO(
         org.zendesk.client.v2.model.Macro.class,
         "getMacro",
@@ -969,7 +977,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("id", long.class)),
 
     GET_ORGANIZATION_MEMBERSHIP_BY_USER(
-        java.util.List.class,
+        Iterable.class,
         "getOrganizationMembershipByUser",
         arg("user_id", long.class)),
 
@@ -1211,7 +1219,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("id", long.class)),
 
     GET_TICKET_FIELDS(
-        java.util.List.class,
+        Iterable.class,
         "getTicketFields"),
 
     GET_TICKET_FORM(
@@ -1224,7 +1232,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getTicketForms"),
 
     GET_TICKET_INCIDENTS(
-        java.util.List.class,
+        Iterable.class,
         "getTicketIncidents",
         arg("id", long.class)),
 
