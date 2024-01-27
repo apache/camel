@@ -198,6 +198,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--logging-json" }, description = "Use JSON logging (ECS Layout)")
     boolean loggingJson;
 
+    @Option(names = { "--logging-config-path" }, description = "Path to file with custom logging configuration")
+    String loggingConfigPath;
+
     @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
     int maxMessages;
 
@@ -1209,7 +1212,7 @@ public class Run extends CamelCommand {
         if (silentRun) {
             // do not configure logging
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, scriptRun, false);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, scriptRun, false, loggingConfigPath);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
@@ -1220,7 +1223,7 @@ public class Run extends CamelCommand {
                 logFile.deleteOnExit();
             }
         } else {
-            RuntimeUtil.configureLog("off", false, false, false, false);
+            RuntimeUtil.configureLog("off", false, false, false, false, null);
             writeSettings("loggingLevel", "off");
         }
     }

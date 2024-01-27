@@ -53,7 +53,7 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     protected void configureLoggingOff() {
-        RuntimeUtil.configureLog("off", false, false, false, false);
+        RuntimeUtil.configureLog("off", false, false, false, false, null);
     }
 
     protected boolean disarrangeLogging() {

@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -38,12 +39,14 @@ public final class RuntimeUtil {
     }
 
     public static void configureLog(
-            String level, boolean color, boolean json, boolean script, boolean export) {
+            String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath) {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", Long.toString(pid));
 
-            if (export) {
+            if (loggingConfigPath != null) {
+                Configurator.initialize("CamelJBang", "file://" + Path.of(loggingConfigPath).toAbsolutePath());
+            } else if (export) {
                 Configurator.initialize("CamelJBang", "log4j2-export.properties");
             } else if (script) {
                 Configurator.initialize("CamelJBang", "log4j2-script.properties");
