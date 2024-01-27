@@ -140,7 +140,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "3.2.0")
+                        defaultValue = "3.2.2")
     protected String springBootVersion;
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
@@ -155,7 +155,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.6.4")
+                        defaultValue = "3.6.7")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
