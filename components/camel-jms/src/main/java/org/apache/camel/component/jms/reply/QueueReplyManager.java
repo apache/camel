@@ -29,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.ConsumerType;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
-import org.apache.camel.component.jms.MessageListenerContainerFactory;
 import org.apache.camel.component.jms.ReplyToType;
 import org.apache.camel.component.jms.SimpleJmsMessageListenerContainer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -130,12 +129,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         } else if (endpoint.getConfiguration().getReplyToConsumerType() == ConsumerType.Simple) {
             return createSimpleListenerContainer();
         } else {
-            MessageListenerContainerFactory factory = endpoint.getConfiguration().getMessageListenerContainerFactory();
-            if (factory != null) {
-                return factory.createMessageListenerContainer(endpoint);
-            }
-            throw new IllegalArgumentException(
-                    "ReplyToConsumerType.Custom requires that a MessageListenerContainerFactory has been configured");
+            return getAbstractMessageListenerContainer(endpoint);
         }
     }
 
@@ -194,16 +188,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         answer.setSessionTransacted(false);
 
         // other optional properties
-        if (endpoint.getExceptionListener() != null) {
-            answer.setExceptionListener(endpoint.getExceptionListener());
-        }
-        if (endpoint.getErrorHandler() != null) {
-            answer.setErrorHandler(endpoint.getErrorHandler());
-        } else {
-            answer.setErrorHandler(new DefaultSpringErrorHandler(
-                    endpoint.getCamelContext(), QueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(),
-                    endpoint.isErrorHandlerLogStackTrace()));
-        }
+        setOptionalProperties(answer);
         // set task executor
         if (endpoint.getTaskExecutor() != null) {
             log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
@@ -302,16 +287,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         answer.setSessionTransacted(false);
 
         // other optional properties
-        if (endpoint.getExceptionListener() != null) {
-            answer.setExceptionListener(endpoint.getExceptionListener());
-        }
-        if (endpoint.getErrorHandler() != null) {
-            answer.setErrorHandler(endpoint.getErrorHandler());
-        } else {
-            answer.setErrorHandler(new DefaultSpringErrorHandler(
-                    endpoint.getCamelContext(), QueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(),
-                    endpoint.isErrorHandlerLogStackTrace()));
-        }
+        setOptionalProperties(answer);
         if (endpoint.getReceiveTimeout() >= 0) {
             answer.setReceiveTimeout(endpoint.getReceiveTimeout());
         }
@@ -343,5 +319,18 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
 
         return answer;
+    }
+
+    private <T extends AbstractMessageListenerContainer> void setOptionalProperties(T answer) {
+        if (endpoint.getExceptionListener() != null) {
+            answer.setExceptionListener(endpoint.getExceptionListener());
+        }
+        if (endpoint.getErrorHandler() != null) {
+            answer.setErrorHandler(endpoint.getErrorHandler());
+        } else {
+            answer.setErrorHandler(new DefaultSpringErrorHandler(
+                    endpoint.getCamelContext(), QueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(),
+                    endpoint.isErrorHandlerLogStackTrace()));
+        }
     }
 }
