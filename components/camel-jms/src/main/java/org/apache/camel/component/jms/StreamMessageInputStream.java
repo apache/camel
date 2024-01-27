@@ -46,6 +46,10 @@ public class StreamMessageInputStream extends InputStream {
 
     @Override
     public int read(byte[] array) throws IOException {
+        return doRead(array);
+    }
+
+    private int doRead(byte[] array) throws IOException {
         try {
             int num = message.readBytes(array);
             if (num < 0) {
@@ -66,21 +70,7 @@ public class StreamMessageInputStream extends InputStream {
     @Override
     public int read(byte[] array, int off, int len) throws IOException {
         // we cannot honor off and len, but assuming off is always 0
-        try {
-            int num = message.readBytes(array);
-            if (num < 0) {
-                //the first 128K(FileUtil.BUFFER_SIZE/128K is used when sending JMS StreamMessage)
-                //buffer reached, give a chance to see if there is the next 128K buffer
-                num = message.readBytes(array);
-            }
-            eof = num < 0;
-            return num;
-        } catch (MessageEOFException e) {
-            eof = true;
-            return -1;
-        } catch (JMSException e) {
-            throw new IOException(e);
-        }
+        return doRead(array);
     }
 
     @Override

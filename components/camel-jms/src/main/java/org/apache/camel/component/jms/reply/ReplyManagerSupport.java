@@ -35,6 +35,7 @@ import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
+import org.apache.camel.component.jms.MessageListenerContainerFactory;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -312,5 +313,14 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             clientId += ".CamelReplyManager";
             answer.setClientId(clientId);
         }
+    }
+
+    protected static AbstractMessageListenerContainer getAbstractMessageListenerContainer(JmsEndpoint endpoint) {
+        MessageListenerContainerFactory factory = endpoint.getConfiguration().getMessageListenerContainerFactory();
+        if (factory != null) {
+            return factory.createMessageListenerContainer(endpoint);
+        }
+        throw new IllegalArgumentException(
+                "ReplyToConsumerType.Custom requires that a MessageListenerContainerFactory has been configured");
     }
 }
