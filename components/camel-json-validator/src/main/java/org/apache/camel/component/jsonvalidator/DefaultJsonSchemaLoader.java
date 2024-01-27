@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
 import org.apache.camel.CamelContext;
 
 /**
@@ -31,7 +32,7 @@ public class DefaultJsonSchemaLoader implements JsonSchemaLoader {
     @Override
     @Deprecated
     public JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) throws Exception {
-        JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4);
         return factory.getSchema(inputStream);
     }
 

@@ -60,7 +60,7 @@ public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
         } else {
             uri = URI.create("classpath:" + schemaUri);
         }
-        return factory.getSchema(uri, config);
+        return factory.getSchema(uri, node, config);
     }
 
 }
