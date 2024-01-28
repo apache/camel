@@ -87,7 +87,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
 
         @Override
-        public Destination createTemporaryDestination(Session session, boolean topic) throws JMSException {
+        public Destination createTemporaryDestination(Session session, boolean topic) {
             return null;
         }
     }
