@@ -78,7 +78,7 @@ pipeline {
             emailext(
                 subject: '${DEFAULT_SUBJECT}',
                 body: '${DEFAULT_CONTENT}',
-                recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']]
             )
         }
     }
