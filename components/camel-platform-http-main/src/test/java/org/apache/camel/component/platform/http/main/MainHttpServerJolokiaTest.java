@@ -69,7 +69,7 @@ class MainHttpServerJolokiaTest {
 
         assertEquals(200, response.statusCode());
         assertEquals("version", type);
-        assertEquals("2.0.0", agentVersion);
+        assertEquals("2.0.1", agentVersion);
     }
 
 }
