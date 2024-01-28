@@ -93,13 +93,13 @@ public class GenerateMojo extends AbstractExecMojo {
     protected File resourceDir;
 
     /**
-     * Whether to include Java files to be validated for invalid Camel endpoints
+     * Whether to include Java files
      */
     @Parameter(property = "camel.includeJava", defaultValue = "true")
     private boolean includeJava;
 
     /**
-     * Whether to include XML files to be validated for invalid Camel endpoints
+     * Whether to include XML files
      */
     @Parameter(property = "camel.includeXml", defaultValue = "true")
     private boolean includeXml;

@@ -2,7 +2,7 @@
 
 The Camel Compile Simple Maven Plugin supports the following goals
 
- - camel-report:generate - To generate source code for csimple language
+ - camel-csimple:generate - To generate source code for csimple language
 
 == camel:generate
 
@@ -39,5 +39,12 @@ The maven plugin *generate* goal supports the following options which can be con
 
 |===
 | Parameter | Default Value | Description
+| outputDir | src/generated/java | The output directory for generated source files
+| outputResourceDir | src/generated/resources | The output directory for generated resources files
+| includeJava | true | Whether to include Java files
+| includeXml | true | Whether to include XML files
+| includeTest | false | Whether to include test source code
+| includes | | To filter the names of java and xml files to only include files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
+| excludes | | To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
 |===
 
