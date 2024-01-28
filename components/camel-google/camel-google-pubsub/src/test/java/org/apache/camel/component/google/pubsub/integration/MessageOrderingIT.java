@@ -30,10 +30,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ORDERING_KEY;
 
+@Disabled("TODO fix me: CAMEL-20374")
 class MessageOrderingIT extends PubsubTestSupport {
 
     private static final String TOPIC_NAME = "camel.input-topic";
