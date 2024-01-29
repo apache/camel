@@ -16,11 +16,11 @@
  */
 package org.apache.camel.language;
 
+import java.util.Map;
+
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.variable.VariableLanguage;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
