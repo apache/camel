@@ -126,25 +126,12 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
 
     protected boolean processInOut(Exchange exchange, AsyncCallback callback) {
         // header take precedence over endpoint
-        String exchangeName = (String) exchange.getMessage().removeHeader(SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
-        if (exchangeName == null) {
-            exchangeName = getEndpoint().getExchangeName();
-        }
-        exchangeName = SpringRabbitMQHelper.isDefaultExchange(exchangeName) ? "" : exchangeName;
+        final String exchangeName = getExchangeName(exchange);
 
-        String routingKey = (String) exchange.getMessage().removeHeader(SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY);
-        if (routingKey == null) {
-            routingKey = getEndpoint().getRoutingKey();
-        }
+        final String routingKey
+                = getValue(exchange, SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY, getEndpoint().getRoutingKey());
 
-        Object body = exchange.getMessage().getBody();
-        Message msg;
-        if (body instanceof Message) {
-            msg = (Message) body;
-        } else {
-            MessageProperties mp = getEndpoint().getMessagePropertiesConverter().toMessageProperties(exchange);
-            msg = getEndpoint().getMessageConverter().toMessage(body, mp);
-        }
+        final Message msg = getMessage(exchange);
 
         try {
             // will use RabbitMQ direct reply-to
@@ -180,19 +167,7 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
         return true;
     }
 
-    protected boolean processInOnly(Exchange exchange, AsyncCallback callback) {
-        // header take precedence over endpoint
-        String exchangeName = (String) exchange.getMessage().removeHeader(SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
-        if (exchangeName == null) {
-            exchangeName = getEndpoint().getExchangeName();
-        }
-        exchangeName = SpringRabbitMQHelper.isDefaultExchange(exchangeName) ? "" : exchangeName;
-
-        String routingKey = (String) exchange.getMessage().removeHeader(SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY);
-        if (routingKey == null) {
-            routingKey = getEndpoint().getRoutingKey();
-        }
-
+    private Message getMessage(Exchange exchange) {
         Object body = exchange.getMessage().getBody();
         Message msg;
         if (body instanceof Message) {
@@ -201,6 +176,17 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
             MessageProperties mp = getEndpoint().getMessagePropertiesConverter().toMessageProperties(exchange);
             msg = getEndpoint().getMessageConverter().toMessage(body, mp);
         }
+        return msg;
+    }
+
+    protected boolean processInOnly(Exchange exchange, AsyncCallback callback) {
+        // header take precedence over endpoint
+        final String exchangeName = getExchangeName(exchange);
+
+        final String routingKey
+                = getValue(exchange, SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY, getEndpoint().getRoutingKey());
+
+        final Message msg = getMessage(exchange);
 
         final String ex = exchangeName;
         final String rk = routingKey;
@@ -231,6 +217,20 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
 
         callback.done(true);
         return true;
+    }
+
+    private String getValue(Exchange exchange, String routingOverrideKey, String defaultValue) {
+        String routingKey = (String) exchange.getMessage().removeHeader(routingOverrideKey);
+        if (routingKey == null) {
+            return defaultValue;
+        }
+        return routingKey;
+    }
+
+    private String getExchangeName(Exchange exchange) {
+        String exchangeName
+                = getValue(exchange, SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME, getEndpoint().getExchangeName());
+        return SpringRabbitMQHelper.isDefaultExchange(exchangeName) ? "" : exchangeName;
     }
 
     /**
