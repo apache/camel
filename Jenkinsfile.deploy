@@ -60,10 +60,8 @@ pipeline {
                 anyOf {
                     branch 'main'
                     branch 'camel-4.0.x'
-                    branch 'camel-3.x'
                     branch 'camel-3.21.x'
-                    branch 'camel-3.20.x'
-                    branch 'camel-3.14.x'
+                    branch 'camel-3.22.x'
                 }
             }
             steps {
