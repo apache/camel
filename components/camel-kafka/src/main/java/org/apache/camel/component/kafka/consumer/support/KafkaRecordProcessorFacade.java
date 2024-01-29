@@ -56,7 +56,7 @@ public class KafkaRecordProcessorFacade {
 
     public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
         logRecords(allRecords);
-        
+
         ProcessingResult result = ProcessingResult.newUnprocessed();
 
         Set<TopicPartition> partitions = allRecords.partitions();
@@ -128,7 +128,7 @@ public class KafkaRecordProcessorFacade {
 
         ProcessingResult result = kafkaRecordProcessor.processExchange(exchange, partition, partitionHasNext,
                 recordHasNext, record, camelKafkaConsumer.getExceptionHandler());
-        
+
         // success so release the exchange
         camelKafkaConsumer.releaseExchange(exchange, false);
 

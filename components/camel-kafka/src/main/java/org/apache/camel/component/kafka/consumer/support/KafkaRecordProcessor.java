@@ -112,7 +112,7 @@ public class KafkaRecordProcessor {
         } catch (Exception e) {
             exchange.setException(e);
         }
-        
+
         ProcessingResult result = ProcessingResult.newUnprocessed();
         if (exchange.getException() != null) {
             LOG.debug("An exception was thrown for record at partition {} and offset {}",
@@ -123,7 +123,7 @@ public class KafkaRecordProcessor {
         } else {
             result = new ProcessingResult(false, exchange.getException() != null);
         }
-        
+
         if (!result.isBreakOnErrorHit()) {
             commitManager.recordOffset(topicPartition, record.offset());
         }
