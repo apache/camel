@@ -20,6 +20,10 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.variable.VariableLanguage;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VariableTest extends LanguageTestSupport {
@@ -37,6 +41,22 @@ public class VariableTest extends LanguageTestSupport {
 
         exchange.setVariable("varLocalFoo", false);
         assertPredicate("varLocal", false);
+    }
+
+    @Test
+    public void testVariableHeaders() throws Exception {
+        exchange.setVariable("myKey.header.foo", "abc");
+        exchange.setVariable("myKey.header.bar", 123);
+        exchange.setVariable("myOtherKey", "Hello Again");
+
+        assertExpression("myKey.header.foo", "abc");
+        assertExpression("myKey.header.bar", 123);
+
+        Map map = exchange.getVariable("myKey.headers", Map.class);
+        assertNotNull(map);
+        assertEquals(2, map.size());
+        assertEquals("abc", map.get("foo"));
+        assertEquals(123, map.get("bar"));
     }
 
     @Test

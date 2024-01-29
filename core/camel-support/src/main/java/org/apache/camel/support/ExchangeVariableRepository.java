@@ -26,6 +26,8 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.CaseInsensitiveMap;
+import org.apache.camel.util.StringHelper;
 
 /**
  * {@link VariableRepository} which is local per {@link Exchange} to hold request-scoped variables.
@@ -42,6 +44,19 @@ class ExchangeVariableRepository extends ServiceSupport implements BrowsableVari
     @Override
     public Object getVariable(String name) {
         Object answer = variables.get(name);
+        if (answer == null && name.endsWith(".headers")) {
+            String prefix = name.substring(0, name.length() - 1) + "."; // xxx.headers -> xxx.header.
+            // we want all headers for a given variable
+            Map<String, Object> map = new CaseInsensitiveMap();
+            for (Map.Entry<String, Object> entry : variables.entrySet()) {
+                String key = entry.getKey();
+                if (key.startsWith(prefix)) {
+                    key = StringHelper.after(key, prefix);
+                    map.put(key, entry.getValue());
+                }
+            }
+            return map;
+        }
         if (answer instanceof StreamCache sc) {
             // reset so the cache is ready to be used as a variable
             sc.reset();
