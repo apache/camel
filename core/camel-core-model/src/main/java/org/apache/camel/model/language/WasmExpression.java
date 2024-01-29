@@ -21,6 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -41,7 +42,6 @@ public class WasmExpression extends TypedExpressionDefinition {
     public WasmExpression(String expression) {
         super(expression);
     }
-
 
     public WasmExpression(String expression, String module) {
         super(expression);

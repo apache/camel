@@ -21,6 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
@@ -183,8 +184,8 @@ public class BeanioDataFormat extends DataFormatDefinition {
         private String unmarshalSingleObject;
 
         /**
-         * The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath:
-         * to denote from where to load the mapping file.
+         * The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or
+         * classpath: to denote from where to load the mapping file.
          */
         public BeanioDataFormat.Builder mapping(String mapping) {
             this.mapping = mapping;
@@ -258,8 +259,8 @@ public class BeanioDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure
-         * the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords,
+         * To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing.
+         * Configure the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords,
          * ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when you use a custom error handler.
          */
         public BeanioDataFormat.Builder beanReaderErrorHandlerType(String beanReaderErrorHandlerType) {

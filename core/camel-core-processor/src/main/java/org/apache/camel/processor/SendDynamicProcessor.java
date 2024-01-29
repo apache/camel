@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -29,6 +31,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
@@ -43,8 +46,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * Processor for forwarding exchanges to a dynamic endpoint destination.
@@ -64,6 +65,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     protected String variableReceive;
     protected ExchangePattern pattern;
     protected ProducerCache producerCache;
+    protected HeadersMapFactory headersMapFactory;
     protected String id;
     protected String routeId;
     protected boolean ignoreInvalidEndpoint;
@@ -183,7 +185,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         if (variableReceive != null) {
             try {
                 body = exchange.getMessage().getBody();
-                headers = exchange.getMessage().getHeaders();
+                // do a defensive copy of the headers
+                headers = headersMapFactory.newMap(exchange.getMessage().getHeaders());
             } catch (Exception throwable) {
                 exchange.setException(throwable);
                 callback.done(true);
@@ -379,6 +382,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             }
         }
         ServiceHelper.initService(dynamicAware);
+
+        headersMapFactory = camelContext.getCamelContextExtension().getHeadersMapFactory();
     }
 
     @Override

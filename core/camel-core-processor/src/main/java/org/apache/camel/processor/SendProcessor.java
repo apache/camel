@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
@@ -57,6 +58,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
     protected AsyncProducer producer;
+    protected HeadersMapFactory headersMapFactory;
     protected final Endpoint destination;
     protected String variableSend;
     protected String variableReceive;
@@ -136,7 +138,8 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         if (variableReceive != null) {
             try {
                 body = exchange.getMessage().getBody();
-                headers = exchange.getMessage().getHeaders();
+                // do a defensive copy of the headers
+                headers = headersMapFactory.newMap(exchange.getMessage().getHeaders());
             } catch (Exception throwable) {
                 exchange.setException(throwable);
                 callback.done(true);
@@ -294,6 +297,8 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             producerCache = new DefaultProducerCache(this, camelContext, 0);
             // do not add as service as we do not want to manage the producer cache
         }
+
+        headersMapFactory = camelContext.getCamelContextExtension().getHeadersMapFactory();
     }
 
     @Override

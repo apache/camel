@@ -1117,7 +1117,8 @@ public final class ExchangeHelper {
         }
         Object body = exchange.getMessage().getBody();
         // do a defensive copy of the headers
-        Map<String, Object> map = exchange.getContext().getCamelContextExtension().getHeadersMapFactory().newMap(exchange.getMessage().getHeaders());
+        Map<String, Object> map = exchange.getContext().getCamelContextExtension().getHeadersMapFactory()
+                .newMap(exchange.getMessage().getHeaders());
         if (repo != null) {
             repo.setVariable(name, body);
             repo.setVariable(name + ".headers", map);
