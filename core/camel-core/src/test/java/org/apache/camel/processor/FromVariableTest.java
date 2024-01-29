@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 public class FromVariableTest extends ContextTestSupport {
 
@@ -32,12 +35,33 @@ public class FromVariableTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testOriginalHeaders() throws Exception {
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:foo").expectedHeaderReceived("foo", 456);
+        getMockEndpoint("mock:foo").whenAnyExchangeReceived(e -> {
+            Map m = e.getVariable("myKey.headers", Map.class);
+            Assertions.assertNotNull(m);
+            Assertions.assertEquals(1, m.size());
+            Assertions.assertEquals(123, m.get("foo"));
+        });
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("World");
+        getMockEndpoint("mock:result").expectedHeaderReceived("foo", 456);
+
+        template.sendBodyAndHeader("direct:start", "World", "foo", 123);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 fromV("direct:start", "myKey")
+                        .setHeader("foo", constant(456))
+                        .setHeader("bar", constant("Murphy"))
                         .transform().simple("Bye ${body}")
                         .to("mock:foo")
                         .setBody(simple("${variable:myKey}"))

@@ -45,6 +45,7 @@ import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.ErrorHandlerAware;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
@@ -331,7 +332,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // wrap with variable
         if (variable != null) {
-            internal.addAdvice(new VariableAdvice(variable));
+            internal.addAdvice(new VariableAdvice(camelContext, variable));
         }
 
         // and create the route that wraps all of this
@@ -426,9 +427,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      */
     private static class VariableAdvice implements CamelInternalProcessorAdvice<Object> {
 
+        private final HeadersMapFactory factory;
         private final String name;
 
-        public VariableAdvice(String name) {
+        public VariableAdvice(CamelContext camelContext, String name) {
+            this.factory = camelContext.getCamelContextExtension().getHeadersMapFactory();
             this.name = name;
         }
 
@@ -436,6 +439,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         public Object before(Exchange exchange) throws Exception {
             Object body = exchange.getMessage().getBody();
             ExchangeHelper.setVariable(exchange, name, body);
+            ExchangeHelper.setVariable(exchange, name + ".headers", factory.newMap(exchange.getMessage().getHeaders()));
             return null;
         }
 
