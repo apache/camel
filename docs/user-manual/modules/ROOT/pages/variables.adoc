@@ -173,7 +173,7 @@ camel.variable.user-template = resource:file:/etc/user.json
 == Using Variables with EIPs
 
 The following commonly used EIPs for sending and receiving, and transforming messages, have
-first class support for using variables with the message body:
+special support for choosing to use variables over the current `Exchange`:
 
 - from
 - to
@@ -185,19 +185,32 @@ first class support for using variables with the message body:
 - marshal
 
 The intention is to make it more convenient and easy to _gather data_ from other systems without any ceremony to keep
-existing data by using techniques such as storing the data temporary using headers or exchange properties,
+existing data by using techniques such as storing the data temporary using headers, exchange properties,
 or with the xref:components:eips:claimCheck-eip.adoc[Claim Check] EIP.
 
 === Important concept when using variables and EIPs
 
-It is **important** to understand that the variables only use the message **body** and does not have support for anything else such
-as message headers. This is on purpose to keep it simpler and only work with the message body as the user data. If you have need
-to use variables with both message body and headers, then you can use `setVariable` and `getVariable`.
+It is **important** to understand that the variables focuses the use of the message **body** only, and makes using **headers** optional.
+This is on purpose to keep it simpler and primary work with the message body as the user data.
+
+The following table summarises what the EIP supports with variables:
+
+|===
+|*EIP* | *VariableSend* | *VariableReceive*
+| From | | yes
+| To | yes | yes
+| ToD | yes | yes
+| Enrich | yes | yes
+| PollEnrich | | yes
+| WireTap | yes |
+| Unmarshal | yes | yes
+| Marshal | yes | yes
+|===
 
 The EIPs listed above have support for using variables when sending and receiving data. This is done by using the `variableSend` and `variableReceive` options
-to specify the name of the variable. When the EIP uses variables then the _data_ itself (i.e. message body) is only what is
-different from 'standard' Camel.
+to specify the name of the variable.
 
+When the EIP is using variables, then the `Message` on the `Exchange` is not in use, but the body and headers will be from the variable.
 For example given the following `Message` containing:
 
 [source,properties]
@@ -207,7 +220,7 @@ header.bar=456
 body=Hello World
 ----
 
-And a remote service is called via the route below, and this service returns a new header and body:
+And a remote service is called via the route below, and this service returns a new header (`level`) and body:
 
 [tabs]
 ====
@@ -287,22 +300,23 @@ from:
 ----
 ====
 
-Then the `Message` body is not changed, but everything else is changed as without using variables:
+Then the `Message` is not changed:
 
 [source,properties]
 ----
 header.foo=123
 header.bar=456
-header.level=gold
 body=Hello World
 ----
 
-And the variable contains the data:
+And the variable contains all the data received from the remote HTTP service separated into two variables:
 
 [source,properties]
 ----
 myVar=Bye World
+myVar.headers.level=gold
 ----
+
 
 === Using variable to store a copy of the incoming message body
 
