@@ -67,8 +67,8 @@ public class VertxPlatformHttpAuthenticationTest {
 
     @Test
     public void testDefaultAuthenticationConfig() throws Exception {
-        CamelContext context = createCamelContext(sessionConfig -> {
-            sessionConfig.setEnabled(true);
+        CamelContext context = createCamelContext(authenticationConfig -> {
+            authenticationConfig.setEnabled(true);
         });
 
         context.addRoutes(new RouteBuilder() {
@@ -104,9 +104,9 @@ public class VertxPlatformHttpAuthenticationTest {
 
     @Test
     public void testAuthenticateSpecificPathOnly() throws Exception {
-        CamelContext context = createCamelContext(sessionConfig -> {
-            sessionConfig.setEnabled(true);
-            sessionConfig.getEntries().get(0).setPath("/specific/path");
+        CamelContext context = createCamelContext(authenticationConfig -> {
+            authenticationConfig.setEnabled(true);
+            authenticationConfig.getEntries().get(0).setPath("/specific/path");
         });
 
         context.addRoutes(new RouteBuilder() {
@@ -152,15 +152,15 @@ public class VertxPlatformHttpAuthenticationTest {
 
     @Test
     public void testAddingCustomAuthenticationProvider() throws Exception {
-        CamelContext context = createCamelContext(sessionConfig -> {
-            sessionConfig.setEnabled(true);
+        CamelContext context = createCamelContext(authenticationConfig -> {
+            authenticationConfig.setEnabled(true);
             AuthenticationProviderFactory provider = createCustomProvider("CustomUser", "CustomPass");
             AuthenticationHandlerFactory handler = BasicAuthHandler::create;
             AuthenticationConfigEntry customEntry = new AuthenticationConfigEntry();
             customEntry.setPath("/custom/provider");
             customEntry.setAuthenticationProviderFactory(provider);
             customEntry.setAuthenticationHandlerFactory(handler);
-            sessionConfig.getEntries().add(customEntry);
+            authenticationConfig.getEntries().add(customEntry);
         });
 
         context.addRoutes(new RouteBuilder() {
@@ -214,15 +214,15 @@ public class VertxPlatformHttpAuthenticationTest {
 
     @Test
     public void testAuthenticateSpecificPathWithCustomAuthenticationProvider() throws Exception {
-        CamelContext context = createCamelContext(sessionConfig -> {
-            sessionConfig.setEnabled(true);
+        CamelContext context = createCamelContext(authenticationConfig -> {
+            authenticationConfig.setEnabled(true);
             AuthenticationProviderFactory provider = createCustomProvider("CustomUser", "CustomPass");
             AuthenticationHandlerFactory handler = BasicAuthHandler::create;
             AuthenticationConfigEntry customEntry = new AuthenticationConfigEntry();
             customEntry.setPath("/customProvider");
             customEntry.setAuthenticationProviderFactory(provider);
             customEntry.setAuthenticationHandlerFactory(handler);
-            sessionConfig.getEntries().add(customEntry);
+            authenticationConfig.getEntries().add(customEntry);
         });
 
         context.addRoutes(new RouteBuilder() {

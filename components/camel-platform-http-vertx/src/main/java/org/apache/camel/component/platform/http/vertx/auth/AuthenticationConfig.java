@@ -30,7 +30,7 @@ import io.vertx.ext.web.handler.BasicAuthHandler;
 public class AuthenticationConfig {
     public static final String DEFAULT_VERTX_PROPERTIES_FILE = "camel-platform-http-vertx-auth.properties";
     private boolean authenticationEnabled;
-    private List<AuthenticationConfigEntry> entries;
+    private final List<AuthenticationConfigEntry> entries;
 
     public AuthenticationConfig() {
         AuthenticationConfigEntry defaultAuthConfig = new AuthenticationConfigEntry();
@@ -42,12 +42,12 @@ public class AuthenticationConfig {
         this.entries.add(defaultAuthConfig);
     }
 
-    public List<AuthenticationConfigEntry> getEntries() {
-        return entries;
+    public AuthenticationConfig(List<AuthenticationConfigEntry> authenticationConfigEntries) {
+        this.entries = authenticationConfigEntries;
     }
 
-    public void setEntries(List<AuthenticationConfigEntry> entries) {
-        this.entries = entries;
+    public List<AuthenticationConfigEntry> getEntries() {
+        return entries;
     }
 
     public boolean isEnabled() {
