@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -26,6 +28,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
@@ -63,6 +66,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     private boolean ignoreInvalidEndpoint;
     private boolean allowOptimisedComponents = true;
     private boolean autoStartupComponents = true;
+    private HeadersMapFactory headersMapFactory;
     private ProcessorExchangeFactory processorExchangeFactory;
     private SendDynamicProcessor sendDynamicProcessor;
 
@@ -188,9 +192,12 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         // if we should store the received message body in a variable,
         // then we need to preserve the original message body
         Object body = null;
+        Map<String, Object> headers = null;
         if (variableReceive != null) {
             try {
                 body = exchange.getMessage().getBody();
+                // do a defensive copy of the headers
+                headers = headersMapFactory.newMap(exchange.getMessage().getHeaders());
             } catch (Exception throwable) {
                 exchange.setException(throwable);
                 callback.done(true);
@@ -198,6 +205,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             }
         }
         final Object originalBody = body;
+        final Map<String, Object> originalHeaders = headers;
 
         return sendDynamicProcessor.process(resourceExchange, new AsyncCallback() {
             @Override
@@ -216,9 +224,9 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                         if (aggregatedExchange != null) {
                             if (variableReceive != null) {
                                 // result should be stored in variable instead of message body
-                                Object value = aggregatedExchange.getMessage().getBody();
-                                ExchangeHelper.setVariable(exchange, variableReceive, value);
-                                aggregatedExchange.getMessage().setBody(originalBody);
+                                ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
+                                exchange.getMessage().setBody(originalBody);
+                                exchange.getMessage().setHeaders(originalHeaders);
                             }
                             // copy aggregation result onto original exchange (preserving pattern)
                             copyResultsWithoutCorrelationId(exchange, aggregatedExchange);
@@ -300,6 +308,11 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         }
         CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         ServiceHelper.buildService(processorExchangeFactory, sendDynamicProcessor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        headersMapFactory = camelContext.getCamelContextExtension().getHeadersMapFactory();
     }
 
     @Override

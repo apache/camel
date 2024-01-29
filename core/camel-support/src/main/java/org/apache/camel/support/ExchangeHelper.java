@@ -1094,8 +1094,7 @@ public final class ExchangeHelper {
                 name = StringHelper.after(name, ":");
                 repo.setVariable(name, value);
             } else {
-                exchange.setException(
-                        new IllegalArgumentException("VariableRepository with id: " + id + " does not exist"));
+                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
             }
         } else {
             exchange.setVariable(name, value);
@@ -1110,8 +1109,7 @@ public final class ExchangeHelper {
                     = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
             repo = factory.getVariableRepository(id);
             if (repo == null) {
-                exchange.setException(
-                        new IllegalArgumentException("VariableRepository with id: " + id + " does not exist"));
+                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
             }
             name = StringHelper.after(name, ":");
         }

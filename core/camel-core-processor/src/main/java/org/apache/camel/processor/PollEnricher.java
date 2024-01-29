@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -32,6 +34,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RouteIdAware;
@@ -64,7 +67,8 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
     private CamelContext camelContext;
     private ConsumerCache consumerCache;
-    protected volatile String scheme;
+    private HeadersMapFactory headersMapFactory;
+    private volatile String scheme;
     private String id;
     private String routeId;
     private String variableReceive;
@@ -320,9 +324,12 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         // if we should store the received message body in a variable,
         // then we need to preserve the original message body
         Object originalBody = null;
+        Map<String, Object> originalHeaders = null;
         if (variableReceive != null) {
             try {
                 originalBody = exchange.getMessage().getBody();
+                // do a defensive copy of the headers
+                originalHeaders = headersMapFactory.newMap(exchange.getMessage().getHeaders());
             } catch (Exception throwable) {
                 exchange.setException(throwable);
                 callback.done(true);
@@ -345,9 +352,9 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 if (aggregatedExchange != null) {
                     if (variableReceive != null) {
                         // result should be stored in variable instead of message body
-                        Object value = aggregatedExchange.getMessage().getBody();
-                        ExchangeHelper.setVariable(exchange, variableReceive, value);
-                        aggregatedExchange.getMessage().setBody(originalBody);
+                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
+                        exchange.getMessage().setBody(originalBody);
+                        exchange.getMessage().setHeaders(originalHeaders);
                     }
                     // copy aggregation result onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, aggregatedExchange);
@@ -484,6 +491,8 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             // find out which component it is
             scheme = ExchangeHelper.resolveScheme(u);
         }
+
+        headersMapFactory = camelContext.getCamelContextExtension().getHeadersMapFactory();
 
         ServiceHelper.initService(consumerCache, aggregationStrategy);
     }
