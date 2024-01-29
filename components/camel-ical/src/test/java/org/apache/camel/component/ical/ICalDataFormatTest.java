@@ -103,7 +103,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:unmarshal")
-                        .unmarshal("ical")
+                        .unmarshal().ical(true)
                         .to("mock:result");
                 from("direct:marshal")
                         .marshal("ical")

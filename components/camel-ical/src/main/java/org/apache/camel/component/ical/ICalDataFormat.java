@@ -66,12 +66,12 @@ public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFo
         // noop
     }
 
-    public void setValidating(boolean validate) {
-        outputer.setValidating(validate);
+    public void setValidating(boolean validating) {
+        this.validating = validating;
     }
 
     public boolean isValidating() {
-        return outputer.isValidating();
+        return validating;
     }
 
 }
