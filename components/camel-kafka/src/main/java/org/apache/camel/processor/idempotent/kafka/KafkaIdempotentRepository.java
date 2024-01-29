@@ -369,7 +369,6 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         Map<TopicPartition, Long> endOffsets = consumer.endOffsets(partitions);
         log.debug("Consuming records from partitions {} till end offsets {}", partitions, endOffsets);
         while (!KafkaConsumerUtil.isReachedOffsets(consumer, endOffsets)) {
-            // TODO Cache population timeout?
             ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(pollDurationMs));
             for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
                 addToCache(consumerRecord);
