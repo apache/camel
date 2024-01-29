@@ -75,7 +75,10 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
 
         AmqpTemplate template = new RabbitTemplate(cf);
         Message out = template.receive("myqueue");
-        Assertions.assertEquals("Hello World", new String(out.getBody()));
+
+        byte[] body = out.getBody();
+        Assertions.assertNotNull(body, "The body should not be null");
+        Assertions.assertEquals("Hello World", new String(body));
         Assertions.assertEquals("gouda", out.getMessageProperties().getHeader("cheese"));
     }
 
@@ -130,15 +133,17 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         AmqpTemplate template = new RabbitTemplate(cf);
         Message out = template.receive("myqueue");
 
-        String encoding = out.getMessageProperties().getContentEncoding();
+        final MessageProperties messageProperties = out.getMessageProperties();
+        Assertions.assertNotNull(messageProperties, "The message properties should not be null");
+        String encoding = messageProperties.getContentEncoding();
         Assertions.assertEquals(Charset.defaultCharset().name(), encoding);
         Assertions.assertEquals("<price>123</price>", new String(out.getBody(), encoding));
-        Assertions.assertEquals(MessageDeliveryMode.PERSISTENT, out.getMessageProperties().getReceivedDeliveryMode());
-        Assertions.assertEquals("price", out.getMessageProperties().getType());
-        Assertions.assertEquals("application/xml", out.getMessageProperties().getContentType());
-        Assertions.assertEquals("0fe9c142-f9c1-426f-9237-f5a4c988a8ae", out.getMessageProperties().getMessageId());
-        Assertions.assertEquals(1, out.getMessageProperties().getPriority());
-        Assertions.assertEquals(0, out.getMessageProperties().getHeaders().size());
+        Assertions.assertEquals(MessageDeliveryMode.PERSISTENT, messageProperties.getReceivedDeliveryMode());
+        Assertions.assertEquals("price", messageProperties.getType());
+        Assertions.assertEquals("application/xml", messageProperties.getContentType());
+        Assertions.assertEquals("0fe9c142-f9c1-426f-9237-f5a4c988a8ae", messageProperties.getMessageId());
+        Assertions.assertEquals(1, messageProperties.getPriority());
+        Assertions.assertEquals(0, messageProperties.getHeaders().size());
     }
 
     @Override

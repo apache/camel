@@ -17,6 +17,7 @@
 package org.apache.camel.component.springrabbit.integration;
 
 import com.rabbitmq.client.ShutdownSignalException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -27,8 +28,6 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-
-import static org.junit.Assert.fail;
 
 public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
 
@@ -49,12 +48,9 @@ public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
         admin.declareExchange(t);
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should fail");
-        } catch (Exception e) {
-            Assertions.assertInstanceOf(ShutdownSignalException.class, e.getCause());
-        }
+        final CamelExecutionException exception = Assertions.assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"));
+        Assertions.assertInstanceOf(ShutdownSignalException.class, exception.getCause());
     }
 
     @Override
