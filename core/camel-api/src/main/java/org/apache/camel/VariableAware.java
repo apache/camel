@@ -14,27 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
-
-import org.apache.camel.StaticService;
-import org.apache.camel.VariableAware;
+package org.apache.camel;
 
 /**
- * Repository for storing and accessing variables.
+ * An interface to represent an object that supports variables.
  */
-public interface VariableRepository extends StaticService, VariableAware {
-
-    /**
-     * The id of this repository.
-     */
-    String getId();
+public interface VariableAware {
 
     /**
      * Returns a variable by name.
-     *
-     * If the variable is of type {@link org.apache.camel.StreamCache} then the repository should ensure to reset the
-     * stream cache before returning the value, to ensure the content can be read by the Camel end user and would be
-     * re-readable next time.
      *
      * @param  name the name of the variable
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
@@ -42,11 +30,11 @@ public interface VariableRepository extends StaticService, VariableAware {
     Object getVariable(String name);
 
     /**
-     * Removes the given variable
+     * Sets a variable
      *
-     * @param  name of the variable
-     * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
+     * @param name  of the variable
+     * @param value the value of the variable
      */
-    Object removeVariable(String name);
+    void setVariable(String name, Object value);
 
 }

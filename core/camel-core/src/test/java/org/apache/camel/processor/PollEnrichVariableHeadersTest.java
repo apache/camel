@@ -16,11 +16,8 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Map;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class PollEnrichVariableHeadersTest extends ContextTestSupport {
@@ -33,13 +30,8 @@ public class PollEnrichVariableHeadersTest extends ContextTestSupport {
         getMockEndpoint("mock:after").expectedVariableReceived("bye", "Bye World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedVariableReceived("bye", "Bye World");
+        getMockEndpoint("mock:result").expectedVariableReceived("bye.header.echo", "CamelCamel");
         getMockEndpoint("mock:result").message(0).header("echo").isNull();
-        getMockEndpoint("mock:result").whenAnyExchangeReceived(e -> {
-            Map m = e.getVariable("bye.headers", Map.class);
-            Assertions.assertNotNull(m);
-            Assertions.assertEquals(1, m.size());
-            Assertions.assertEquals("CamelCamel", m.get("echo"));
-        });
 
         template.sendBody("direct:receive", "World");
 

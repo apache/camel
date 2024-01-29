@@ -314,9 +314,11 @@ And the variable contains all the data received from the remote HTTP service sep
 [source,properties]
 ----
 myVar=Bye World
-myVar.headers.level=gold
+myVar.header.level=gold
 ----
 
+IMPORTANT: Notice the headers are stored with the syntax `variable.header.key`. In the example above the variable name is `myVar`,
+and the header key is `level`, which gives: `myVar.header.level`.
 
 === Using variable to store a copy of the incoming message body
 

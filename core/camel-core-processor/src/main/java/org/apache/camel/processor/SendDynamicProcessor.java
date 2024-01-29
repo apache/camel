@@ -238,7 +238,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 }
                 // result should be stored in variable instead of message body
                 if (variableReceive != null) {
-                    ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
+                    ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive, exchange.getMessage());
                     exchange.getMessage().setBody(originalBody);
                     exchange.getMessage().setHeaders(originalHeaders);
                 }

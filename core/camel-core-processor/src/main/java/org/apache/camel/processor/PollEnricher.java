@@ -352,7 +352,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 if (aggregatedExchange != null) {
                     if (variableReceive != null) {
                         // result should be stored in variable instead of message body
-                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
+                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive, exchange.getMessage());
                         exchange.getMessage().setBody(originalBody);
                         exchange.getMessage().setHeaders(originalHeaders);
                     }

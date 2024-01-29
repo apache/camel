@@ -131,11 +131,10 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
         final ExchangePattern existingPattern = exchange.getPattern();
 
-        // if we should store the received message body in a variable,
-        // then we need to preserve the original message body
+        // when using variables then we need to remember original data
         Object body = null;
         Map<String, Object> headers = null;
-        if (variableReceive != null) {
+        if (variableSend != null || variableReceive != null) {
             try {
                 body = exchange.getMessage().getBody();
                 // do a defensive copy of the headers
@@ -181,7 +180,8 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                     try {
                         // result should be stored in variable instead of message body/headers
                         if (variableReceive != null) {
-                            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
+                            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
+                                    exchange.getMessage());
                             exchange.getMessage().setBody(originalBody);
                             exchange.getMessage().setHeaders(originalHeaders);
                         }
@@ -202,6 +202,8 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 if (variableSend != null) {
                     Object value = ExchangeHelper.getVariable(exchange, variableSend);
                     exchange.getMessage().setBody(value);
+                    // TODO: empty headers or
+
                 }
 
                 LOG.debug(">>>> {} {}", destination, exchange);
@@ -239,7 +241,8 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                         exchange.setPattern(existingPattern);
                         // result should be stored in variable instead of message body/headers
                         if (variableReceive != null) {
-                            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
+                            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
+                                    exchange.getMessage());
                             exchange.getMessage().setBody(originalBody);
                             exchange.getMessage().setHeaders(originalHeaders);
                         }

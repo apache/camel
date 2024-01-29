@@ -224,7 +224,8 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                         if (aggregatedExchange != null) {
                             if (variableReceive != null) {
                                 // result should be stored in variable instead of message body
-                                ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
+                                ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
+                                        exchange.getMessage());
                                 exchange.getMessage().setBody(originalBody);
                                 exchange.getMessage().setHeaders(originalHeaders);
                             }
