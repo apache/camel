@@ -21,11 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
@@ -64,12 +60,9 @@ import org.slf4j.LoggerFactory;
  * partitions (it is designed to consume from all at the same time), or replication factor of the topic. Each repository
  * instance that uses the topic (e.g. typically on different machines running in parallel) controls its own consumer
  * group, so in a cluster of 10 Camel processes using the same topic each will control its own offset. On startup, the
- * instance subscribes to the topic and rewinds the offset to the beginning, rebuilding the cache to the latest state.
- * The cache will not be considered warmed up until one poll of {@link #pollDurationMs} in length returns 0 records.
- * Startup will not be completed until either the cache has warmed up, or 30 seconds go by; if the latter happens the
- * idempotent repository may be in an inconsistent state until its consumer catches up to the end of the topic. To use,
- * this repository must be placed in the Camel registry, either manually or by registration as a bean in
- * Spring/Blueprint, as it is CamelContext aware.
+ * instance consumes the full content of the topic, rebuilding the cache to the latest state. To use, this repository
+ * must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is
+ * CamelContext aware.
  */
 @ManagedResource(description = "Kafka IdempotentRepository")
 public class KafkaIdempotentRepository extends ServiceSupport implements IdempotentRepository, CamelContextAware {
@@ -93,11 +86,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     private Map<String, Object> cache;
     private Consumer<String, String> consumer;
     private Producer<String, String> producer;
-    private TopicPoller topicPoller;
 
     private CamelContext camelContext;
-    private ExecutorService executorService;
-    private CountDownLatch cacheReadyLatch;
 
     enum CacheAction {
         add,
@@ -325,7 +315,6 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "camelContext");
         StringHelper.notEmpty(topic, "topic");
@@ -361,43 +350,61 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         producerConfig.putIfAbsent(ProducerConfig.BATCH_SIZE_CONFIG, "0");
         producer = new KafkaProducer<>(producerConfig);
 
-        cacheReadyLatch = new CountDownLatch(1);
-        topicPoller = new TopicPoller(consumer, cacheReadyLatch, pollDurationMs);
+        populateCache();
+    }
 
-        // warm up the cache
-        executorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "KafkaIdempotentRepository");
-        executorService.submit(topicPoller);
-        log.info("Warming up cache from topic {}", topic);
-        try {
-            if (cacheReadyLatch.await(30, TimeUnit.SECONDS)) {
-                log.info("Cache OK");
-            } else {
-                log.warn("Timeout waiting for cache warm-up from topic {}. Proceeding anyway. "
-                         + "Duplicate records may not be detected.",
-                        topic);
+    private void populateCache() {
+        log.debug("Getting partitions of topic {}", topic);
+        List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
+        Collection<TopicPartition> partitions = partitionInfos.stream()
+                .map(pi -> new TopicPartition(pi.topic(), pi.partition()))
+                .collect(Collectors.toUnmodifiableList());
+
+        log.debug("Assigning consumer to partitions {}", partitions);
+        consumer.assign(partitions);
+
+        log.debug("Seeking consumer to beginning of partitions {}", partitions);
+        consumer.seekToBeginning(partitions);
+
+        Map<TopicPartition, Long> endOffsets = consumer.endOffsets(partitions);
+        log.debug("Consuming records from partitions {} till end offsets {}", partitions, endOffsets);
+        while (!KafkaConsumerUtil.isReachedOffsets(consumer, endOffsets)) {
+            // TODO Cache population timeout?
+            ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(pollDurationMs));
+            for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+                addToCache(consumerRecord);
             }
-        } catch (InterruptedException e) {
-            log.warn("Interrupted while warming up cache.", e);
-            Thread.currentThread().interrupt();
+        }
+
+    }
+
+    private void addToCache(ConsumerRecord<String, String> consumerRecord) {
+        CacheAction action = null;
+        try {
+            action = CacheAction.valueOf(consumerRecord.value());
+        } catch (IllegalArgumentException iax) {
+            log.error(
+                    "Unexpected action value:\"{}\" received on [topic:{}, partition:{}, offset:{}]. Shutting down.",
+                    consumerRecord.key(), consumerRecord.topic(),
+                    consumerRecord.partition(), consumerRecord.offset());
+        }
+        String messageId = consumerRecord.key();
+        if (action == CacheAction.add) {
+            log.debug("Adding to cache messageId:{}", messageId);
+            cache.put(messageId, messageId);
+        } else if (action == CacheAction.remove) {
+            log.debug("Removing from cache messageId:{}", messageId);
+            cache.remove(messageId);
+        } else if (action == CacheAction.clear) {
+            cache.clear();
+        } else {
+            // this should never happen
+            throw new RuntimeException("Illegal action " + action + " for key " + consumerRecord.key());
         }
     }
 
     @Override
     protected void doStop() {
-        // stop the thread
-        topicPoller.setRunning(false);
-        try {
-            if (topicPoller.getShutdownLatch().await(30, TimeUnit.SECONDS)) {
-                log.info("Cache from topic {} shutdown successfully", topic);
-            } else {
-                log.warn("Timeout waiting for cache to shutdown from topic {}. Proceeding anyway.", topic);
-            }
-        } catch (InterruptedException e) {
-            log.warn("Interrupted waiting on shutting down cache due {}.", e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-        camelContext.getExecutorServiceManager().shutdown(executorService);
-
         IOHelper.close(consumer, "consumer", log);
         IOHelper.close(producer, "producer", log);
     }
@@ -457,109 +464,4 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     public void clear() {
         broadcastAction(null, CacheAction.clear);
     }
-
-    @ManagedOperation(description = "Number of times duplicate messages have been detected")
-    public boolean isPollerRunning() {
-        return topicPoller.isRunning();
-    }
-
-    public boolean isCacheReady() {
-        return cacheReadyLatch.getCount() == 0;
-    }
-
-    private class TopicPoller implements Runnable {
-
-        private final Logger log = LoggerFactory.getLogger(this.getClass());
-        private final Consumer<String, String> consumer;
-        private final CountDownLatch cacheReadyLatch;
-        private final int pollDurationMs;
-
-        private final CountDownLatch shutdownLatch = new CountDownLatch(1);
-        private final AtomicBoolean running = new AtomicBoolean(true);
-
-        TopicPoller(Consumer<String, String> consumer, CountDownLatch cacheReadyLatch, int pollDurationMs) {
-            this.consumer = consumer;
-            this.cacheReadyLatch = cacheReadyLatch;
-            this.pollDurationMs = pollDurationMs;
-        }
-
-        @Override
-        public void run() {
-            log.debug("Getting partitions of topic {}", topic);
-            List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
-            Collection<TopicPartition> partitions = partitionInfos.stream()
-                    .map(pi -> new TopicPartition(pi.topic(), pi.partition()))
-                    .collect(Collectors.toUnmodifiableList());
-
-            log.debug("Assigning consumer to partitions {}", partitions);
-            consumer.assign(partitions);
-
-            log.debug("Seeking consumer to beginning of partitions {}", partitions);
-            consumer.seekToBeginning(partitions);
-
-            POLL_LOOP: while (running.get()) {
-                log.trace("Polling");
-                ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(pollDurationMs));
-                if (consumerRecords.isEmpty()) {
-                    // the first time this happens, we can assume that we have
-                    // consumed all
-                    // messages up to this point
-                    log.trace("0 messages fetched on poll");
-                    if (cacheReadyLatch.getCount() > 0) {
-                        log.debug("Cache warmed up");
-                        cacheReadyLatch.countDown();
-                    }
-                }
-                for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-                    CacheAction action;
-                    try {
-                        action = CacheAction.valueOf(consumerRecord.value());
-                    } catch (IllegalArgumentException iax) {
-                        log.error(
-                                "Unexpected action value:\"{}\" received on [topic:{}, partition:{}, offset:{}]. Shutting down.",
-                                consumerRecord.key(), consumerRecord.topic(),
-                                consumerRecord.partition(), consumerRecord.offset());
-                        setRunning(false);
-                        continue POLL_LOOP;
-                    }
-                    String messageId = consumerRecord.key();
-                    if (action == CacheAction.add) {
-                        log.debug("Adding to cache messageId:{}", messageId);
-                        cache.put(messageId, messageId);
-                    } else if (action == CacheAction.remove) {
-                        log.debug("Removing from cache messageId:{}", messageId);
-                        cache.remove(messageId);
-                    } else if (action == CacheAction.clear) {
-                        cache.clear();
-                    } else {
-                        // this should never happen
-                        log.warn("No idea how to {} a record. Shutting down.", action);
-                        setRunning(false);
-                        continue POLL_LOOP;
-                    }
-                }
-                consumer.commitSync();
-            }
-            log.debug("TopicPoller finished - triggering shutdown latch");
-            shutdownLatch.countDown();
-        }
-
-        CountDownLatch getShutdownLatch() {
-            return shutdownLatch;
-        }
-
-        void setRunning(boolean running) {
-            this.running.set(running);
-        }
-
-        boolean isRunning() {
-            return running.get();
-        }
-
-        @Override
-        public String toString() {
-            return "TopicPoller[" + topic + "]";
-        }
-    }
-
 }
