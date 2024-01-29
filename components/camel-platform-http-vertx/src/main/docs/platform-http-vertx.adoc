@@ -108,3 +108,46 @@ from("platform-http:/upload?httpMethodRestrict=POST&useStreaming=true")
     .log("Processing large request body...")
     .to("file:/uploads?fileName=uploaded.txt")
 ----
+
+== Setting up http authentication
+
+Http authentication is disabled by default. In can be enabled by calling `setEnabled(true)` of `AuthenticationConfig`.
+Default http authentication takes http-basic credentials and compares them with those provided in camel-platform-http-vertx-auth.properties file.
+To be more specific, default http authentication uses https://vertx.io/docs/apidocs/io/vertx/ext/web/handler/BasicAuthHandler.html[BasicAuthHandler] and https://vertx.io/docs/vertx-auth-properties/java/[PropertyFileAuthentication].
+
+To set up custom authentication, you need to create custom `AuthenticationConfigEntries`, as shown in example below.
+Mind that in Vert.x order of adding `AuthenticationHandlers` matters, so `AuthenticationConfigEntries` with more specific url path are applied first.
+
+[source,java]
+----
+final int port = AvailablePortFinder.getNextAvailable();
+final CamelContext context = new DefaultCamelContext();
+
+VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+conf.setBindPort(port);
+
+//creating custom auth settings
+AuthenticationConfigEntry customEntry = new AuthenticationConfigEntry();
+AuthenticationProviderFactory provider = vertx -> PropertyFileAuthentication.create(vertx, "myPropFile.properties");
+AuthenticationHandlerFactory handler = BasicAuthHandler::create;
+customEntry.setPath("/path/that/will/be/protected");
+customEntry.setAuthenticationProviderFactory(provider);
+customEntry.setAuthenticationHandlerFactory(handler);
+
+AuthenticationConfig authenticationConfig = new AuthenticationConfig(List.of(customEntry));
+authenticationConfig.setEnabled(true);
+
+conf.setAuthenticationConfig(authenticationConfig);
+
+context.addService(new VertxPlatformHttpServer(conf));
+context.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("platform-http:/test")
+            .routeId("get")
+            .setBody().constant("Hello from Camel's PlatformHttp service");
+    }
+});
+
+context.start();
+----

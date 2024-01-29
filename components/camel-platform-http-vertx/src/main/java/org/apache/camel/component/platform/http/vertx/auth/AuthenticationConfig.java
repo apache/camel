@@ -54,8 +54,8 @@ public class AuthenticationConfig {
         return authenticationEnabled;
     }
 
-    public void setEnabled(boolean securityEnabled) {
-        this.authenticationEnabled = securityEnabled;
+    public void setEnabled(boolean authenticationEnabled) {
+        this.authenticationEnabled = authenticationEnabled;
     }
 
     public interface AuthenticationProviderFactory {
