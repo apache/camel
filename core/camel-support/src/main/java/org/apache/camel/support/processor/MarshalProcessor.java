@@ -59,7 +59,6 @@ public class MarshalProcessor extends AsyncProcessorSupport implements Traceable
         final Object originalBody = in.getBody();
         Object body = originalBody;
         if (variableSend != null) {
-            // it may be a global variable
             body = ExchangeHelper.getVariable(exchange, variableSend);
         }
 

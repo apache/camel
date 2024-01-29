@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
@@ -131,9 +132,11 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         // if we should store the received message body in a variable,
         // then we need to preserve the original message body
         Object body = null;
+        Map<String, Object> headers = null;
         if (variableReceive != null) {
             try {
                 body = exchange.getMessage().getBody();
+                headers = exchange.getMessage().getHeaders();
             } catch (Exception throwable) {
                 exchange.setException(throwable);
                 callback.done(true);
@@ -141,6 +144,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             }
         }
         final Object originalBody = body;
+        final Map<String, Object> originalHeaders = headers;
 
         if (extendedStatistics) {
             counter.incrementAndGet();
@@ -172,11 +176,11 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             if (newCallback) {
                 ac = doneSync -> {
                     try {
-                        // result should be stored in variable instead of message body
+                        // result should be stored in variable instead of message body/headers
                         if (variableReceive != null) {
-                            Object value = exchange.getMessage().getBody();
-                            ExchangeHelper.setVariable(exchange, variableReceive, value);
+                            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
                             exchange.getMessage().setBody(originalBody);
+                            exchange.getMessage().setHeaders(originalHeaders);
                         }
                         // restore previous MEP
                         target.setPattern(existingPattern);
@@ -193,7 +197,6 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             try {
                 // replace message body with variable
                 if (variableSend != null) {
-                    // it may be a global variable
                     Object value = ExchangeHelper.getVariable(exchange, variableSend);
                     exchange.getMessage().setBody(value);
                 }
@@ -220,7 +223,6 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
             // replace message body with variable
             if (variableSend != null) {
-                // it may be a global variable
                 Object value = ExchangeHelper.getVariable(exchange, variableSend);
                 exchange.getMessage().setBody(value);
             }
@@ -232,11 +234,11 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                     (producer, ex, cb) -> producer.process(ex, doneSync -> {
                         // restore previous MEP
                         exchange.setPattern(existingPattern);
-                        // result should be stored in variable instead of message body
+                        // result should be stored in variable instead of message body/headers
                         if (variableReceive != null) {
-                            Object value = exchange.getMessage().getBody();
-                            ExchangeHelper.setVariable(exchange, variableReceive, value);
+                            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive);
                             exchange.getMessage().setBody(originalBody);
+                            exchange.getMessage().setHeaders(originalHeaders);
                         }
                         // signal we are done
                         cb.done(doneSync);

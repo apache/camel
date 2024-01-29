@@ -1102,6 +1102,31 @@ public final class ExchangeHelper {
         }
     }
 
+    public static void setVariableFromMessageBodyAndHeaders(Exchange exchange, String name) {
+        VariableRepository repo = null;
+        String id = StringHelper.before(name, ":");
+        if (id != null) {
+            VariableRepositoryFactory factory
+                    = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+            repo = factory.getVariableRepository(id);
+            if (repo == null) {
+                exchange.setException(
+                        new IllegalArgumentException("VariableRepository with id: " + id + " does not exist"));
+            }
+            name = StringHelper.after(name, ":");
+        }
+        Object body = exchange.getMessage().getBody();
+        // do a defensive copy of the headers
+        Map<String, Object> map = exchange.getContext().getCamelContextExtension().getHeadersMapFactory().newMap(exchange.getMessage().getHeaders());
+        if (repo != null) {
+            repo.setVariable(name, body);
+            repo.setVariable(name + ".headers", map);
+        } else {
+            exchange.setVariable(name, body);
+            exchange.setVariable(name + ".headers", map);
+        }
+    }
+
     /**
      * Gets the variable
      *
