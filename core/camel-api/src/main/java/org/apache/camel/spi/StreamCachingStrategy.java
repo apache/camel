@@ -282,4 +282,12 @@ public interface StreamCachingStrategy extends StaticService {
      */
     StreamCache cache(Message message);
 
+    /**
+     * Caches the value aas a {@link StreamCache}.
+     *
+     * @param  value the value
+     * @return       the value cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
+     */
+    StreamCache cache(Object value);
+
 }

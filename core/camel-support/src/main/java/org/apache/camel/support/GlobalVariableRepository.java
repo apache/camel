@@ -17,75 +17,17 @@
 package org.apache.camel.support;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Stream;
 
-import org.apache.camel.StreamCache;
-import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepository;
-import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Global {@link VariableRepository} which stores variables in-memory in a {@link Map}.
  */
-public final class GlobalVariableRepository extends ServiceSupport implements BrowsableVariableRepository {
-
-    private final ConcurrentMap<String, Object> variables = new ConcurrentHashMap<>();
+public final class GlobalVariableRepository extends AbstractVariableRepository {
 
     @Override
     public String getId() {
         return "global";
     }
 
-    @Override
-    public Object getVariable(String name) {
-        Object answer = variables.get(name);
-        if (answer instanceof StreamCache sc) {
-            // reset so the cache is ready to be used as a variable
-            sc.reset();
-        }
-        return answer;
-    }
-
-    @Override
-    public void setVariable(String name, Object value) {
-        if (value != null) {
-            // avoid the NullPointException
-            variables.put(name, value);
-        } else {
-            // if the value is null, we just remove the key from the map
-            variables.remove(name);
-        }
-    }
-
-    @Override
-    public Object removeVariable(String name) {
-        return variables.remove(name);
-    }
-
-    @Override
-    public boolean hasVariables() {
-        return !variables.isEmpty();
-    }
-
-    @Override
-    public int size() {
-        return variables.size();
-    }
-
-    @Override
-    public Stream<String> names() {
-        return variables.keySet().stream();
-    }
-
-    @Override
-    public Map<String, Object> getVariables() {
-        return variables;
-    }
-
-    @Override
-    public void clear() {
-        variables.clear();
-    }
 }

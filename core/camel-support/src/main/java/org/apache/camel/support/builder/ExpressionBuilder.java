@@ -1142,13 +1142,13 @@ public class ExpressionBuilder {
     }
 
     /**
-     * @param variableName  the name of the variable from which the input data must be extracted if not empty.
+     * @param  variableName the name of the variable from which the input data must be extracted if not empty.
      * @param  headerName   the name of the header from which the input data must be extracted if not empty.
      * @param  propertyName the name of the property from which the input data must be extracted if not empty and
      *                      {@code headerName} is empty.
-     * @return              a variable expression if {@code variableName} is not empty,
-     *                      a header expression if {@code headerName} is not empty, otherwise a property expression if
-     *                      {@code propertyName} is not empty or finally a body expression.
+     * @return              a variable expression if {@code variableName} is not empty, a header expression if
+     *                      {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is
+     *                      not empty or finally a body expression.
      */
     public static Expression singleInputExpression(String variableName, String headerName, String propertyName) {
         final Expression exp;

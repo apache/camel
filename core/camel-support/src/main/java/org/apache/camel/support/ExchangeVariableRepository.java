@@ -17,31 +17,24 @@
 package org.apache.camel.support;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.NonManagedService;
 import org.apache.camel.StreamCache;
-import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepository;
-import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.StringHelper;
 
 /**
  * {@link VariableRepository} which is local per {@link Exchange} to hold request-scoped variables.
  */
-class ExchangeVariableRepository extends ServiceSupport implements BrowsableVariableRepository, NonManagedService {
-
-    private final Map<String, Object> variables = new ConcurrentHashMap<>(8);
-    private final CamelContext camelContext;
+final class ExchangeVariableRepository extends AbstractVariableRepository {
 
     public ExchangeVariableRepository(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        setCamelContext(camelContext);
+        // ensure its started
+        ServiceHelper.startService(this);
     }
 
     @Override
@@ -51,12 +44,12 @@ class ExchangeVariableRepository extends ServiceSupport implements BrowsableVari
 
     @Override
     public Object getVariable(String name) {
-        Object answer = variables.get(name);
+        Object answer = super.getVariable(name);
         if (answer == null && name.endsWith(".headers")) {
             String prefix = name.substring(0, name.length() - 1) + "."; // xxx.headers -> xxx.header.
             // we want all headers for a given variable
             Map<String, Object> map = new CaseInsensitiveMap();
-            for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            for (Map.Entry<String, Object> entry : getVariables().entrySet()) {
                 String key = entry.getKey();
                 if (key.startsWith(prefix)) {
                     key = StringHelper.after(key, prefix);
@@ -72,57 +65,4 @@ class ExchangeVariableRepository extends ServiceSupport implements BrowsableVari
         return answer;
     }
 
-    @Override
-    public void setVariable(String name, Object value) {
-        // special for some values that are CachedOutputStream which we want to be re-readable and therefore
-        // convert this to StreamCache
-        // TODO: Do something like StreamCachingHelper
-        // TODO: support base class that has stream caching stuff for set/getVariable
-        if (camelContext.isStreamCaching())
-            return StreamCachingHelper.convertToStreamCache(strategy, exchange, exchange.getIn());
-            Object cache = camelContext.getTypeConverter().tryConvertTo(StreamCache.class, value);
-            if (cache != null) {
-                value = cache;
-            }
-        }
-        if (value != null) {
-            // avoid the NullPointException
-            variables.put(name, value);
-        } else {
-            // if the value is null, we just remove the key from the map
-            variables.remove(name);
-        }
-    }
-
-    public boolean hasVariables() {
-        return !variables.isEmpty();
-    }
-
-    public int size() {
-        return variables.size();
-    }
-
-    public Stream<String> names() {
-        return variables.keySet().stream();
-    }
-
-    public Map<String, Object> getVariables() {
-        return variables;
-    }
-
-    public void setVariables(Map<String, Object> map) {
-        variables.putAll(map);
-    }
-
-    public void clear() {
-        variables.clear();
-    }
-
-    @Override
-    public Object removeVariable(String name) {
-        if (!hasVariables()) {
-            return null;
-        }
-        return variables.remove(name);
-    }
 }
