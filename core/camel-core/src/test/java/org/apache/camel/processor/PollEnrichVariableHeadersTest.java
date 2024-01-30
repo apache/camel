@@ -30,7 +30,7 @@ public class PollEnrichVariableHeadersTest extends ContextTestSupport {
         getMockEndpoint("mock:after").expectedVariableReceived("bye", "Bye World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedVariableReceived("bye", "Bye World");
-        getMockEndpoint("mock:result").expectedVariableReceived("bye.header.echo", "CamelCamel");
+        getMockEndpoint("mock:result").expectedVariableReceived("header:bye.echo", "CamelCamel");
         getMockEndpoint("mock:result").message(0).header("echo").isNull();
 
         template.sendBody("direct:receive", "World");

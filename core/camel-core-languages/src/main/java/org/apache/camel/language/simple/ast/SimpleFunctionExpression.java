@@ -522,6 +522,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${jq(exp)} was: " + function, token.getIndex());
             }
             exp = StringHelper.removeQuotes(exp);
+            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
+                    || exp.startsWith("variable:")) {
+                String input = StringHelper.before(exp, ",");
+                exp = StringHelper.after(exp, ",");
+                return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
+            }
             return ExpressionBuilder.languageExpression("jq", exp);
         }
         // jsonpath
@@ -532,6 +538,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${jsonpath(exp)} was: " + function, token.getIndex());
             }
             exp = StringHelper.removeQuotes(exp);
+            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
+                    || exp.startsWith("variable:")) {
+                String input = StringHelper.before(exp, ",");
+                exp = StringHelper.after(exp, ",");
+                return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
+            }
             return ExpressionBuilder.languageExpression("jsonpath", exp);
         }
         remainder = ifStartsWithReturnRemainder("xpath(", function);
@@ -541,6 +553,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${xpath(exp)} was: " + function, token.getIndex());
             }
             exp = StringHelper.removeQuotes(exp);
+            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
+                    || exp.startsWith("variable:")) {
+                String input = StringHelper.before(exp, ",");
+                exp = StringHelper.after(exp, ",");
+                return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
+            }
             return ExpressionBuilder.languageExpression("xpath", exp);
         }
 

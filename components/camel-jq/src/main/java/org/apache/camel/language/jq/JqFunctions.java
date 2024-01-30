@@ -181,7 +181,7 @@ public final class JqFunctions {
      *
      * <pre>
      * {@code
-     * .name = proeprty(\"CommitterName\")"
+     * .name = property(\"CommitterName\")"
      * }
      * </pre>
      *

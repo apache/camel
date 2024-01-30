@@ -128,8 +128,7 @@ abstract class AbstractExchange implements Exchange {
             if (this.variableRepository == null) {
                 this.variableRepository = new ExchangeVariableRepository(getContext());
             }
-            this.variableRepository.setVariables(parent.getVariables());
-
+            this.variableRepository.copyFrom(parent.variableRepository);
         }
         if (parent.hasProperties()) {
             this.properties = safeCopyProperties(parent.properties);

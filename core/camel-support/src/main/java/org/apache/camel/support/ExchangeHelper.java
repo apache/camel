@@ -1088,6 +1088,10 @@ public final class ExchangeHelper {
     public static void setVariable(Exchange exchange, String name, Object value) {
         VariableRepository repo = null;
         String id = StringHelper.before(name, ":");
+        // header and exchange is reserved
+        if ("header".equals(id) || "exchange".equals(id)) {
+            id = null;
+        }
         if (id != null) {
             VariableRepositoryFactory factory
                     = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
@@ -1113,6 +1117,10 @@ public final class ExchangeHelper {
     public static void setVariableFromMessageBodyAndHeaders(Exchange exchange, String name, Message message) {
         VariableRepository repo = null;
         String id = StringHelper.before(name, ":");
+        // header and exchange is reserved
+        if ("header".equals(id) || "exchange".equals(id)) {
+            id = null;
+        }
         if (id != null) {
             VariableRepositoryFactory factory
                     = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
@@ -1128,7 +1136,7 @@ public final class ExchangeHelper {
         Object body = message.getBody();
         va.setVariable(name, body);
         for (Map.Entry<String, Object> header : message.getHeaders().entrySet()) {
-            String key = name + ".header." + header.getKey();
+            String key = "header:" + name + "." + header.getKey();
             Object value = header.getValue();
             va.setVariable(key, value);
         }
@@ -1145,6 +1153,10 @@ public final class ExchangeHelper {
     public static Object getVariable(Exchange exchange, String name) {
         VariableRepository repo = null;
         String id = StringHelper.before(name, ":");
+        // header and exchange is reserved
+        if ("header".equals(id) || "exchange".equals(id)) {
+            id = null;
+        }
         if (id != null) {
             VariableRepositoryFactory factory
                     = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);

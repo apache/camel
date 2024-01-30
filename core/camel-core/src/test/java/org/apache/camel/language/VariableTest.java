@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.variable.VariableLanguage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,18 +46,23 @@ public class VariableTest extends LanguageTestSupport {
 
     @Test
     public void testVariableHeaders() throws Exception {
-        exchange.setVariable("myKey.header.foo", "abc");
-        exchange.setVariable("myKey.header.bar", 123);
+        exchange.setVariable("header:myKey.foo", "abc");
+        exchange.setVariable("header:myKey.bar", 123);
         exchange.setVariable("myOtherKey", "Hello Again");
 
-        assertExpression("myKey.header.foo", "abc");
-        assertExpression("myKey.header.bar", 123);
+        assertEquals("abc", exchange.getVariable("header:myKey.foo"));
+        assertEquals(123, exchange.getVariable("header:myKey.bar"));
 
-        Map map = exchange.getVariable("myKey.headers", Map.class);
+        Map map = exchange.getVariable("header:myKey", Map.class);
         assertNotNull(map);
         assertEquals(2, map.size());
         assertEquals("abc", map.get("foo"));
         assertEquals(123, map.get("bar"));
+    }
+
+    @Test
+    public void testInvalidHeaderKey() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> exchange.getVariable("header:"));
     }
 
     @Test
