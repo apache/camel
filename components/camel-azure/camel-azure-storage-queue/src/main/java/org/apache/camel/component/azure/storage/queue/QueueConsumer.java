@@ -164,8 +164,9 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
 
     private Exchange createExchange(final QueueMessageItem messageItem) {
         final Exchange exchange = createExchange(true);
+        final Message message = exchange.getIn();
+
         BinaryData data = messageItem.getBody();
-        Message message = exchange.getIn();
         message.setBody(data == null ? null : data.toStream());
         message.setHeaders(
                 QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
