@@ -12,3 +12,10 @@ To run tests use the dedicated Maven profile `jbang-it-test` activated by the sa
 ----
 mvn verify -Djbang-it-test
 ----
+
+== Configuration
+
+Camel CLI infra configuration is defined in link:../../../test-infra/camel-test-infra-cli/README.adoc[README.adoc]
+
+- `jbang.it.assert.wait.timeout` : timeout in seconds for log assertions, default `60`
+

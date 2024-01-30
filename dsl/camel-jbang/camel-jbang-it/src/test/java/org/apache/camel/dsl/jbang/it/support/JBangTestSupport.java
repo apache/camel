@@ -51,6 +51,9 @@ public abstract class JBangTestSupport {
 
     private static final String DATA_FOLDER = System.getProperty(CliProperties.DATA_FOLDER);
 
+    protected static final int ASSERTION_WAIT_SECONDS
+            = Integer.parseInt(System.getProperty("jbang.it.assert.wait.timeout", "60"));
+
     protected static final String DEFAULT_ROUTE_FOLDER = "/home/jbang";
 
     public static final String DEFAULT_MSG = "Hello Camel from";
@@ -138,7 +141,7 @@ public abstract class JBangTestSupport {
     }
 
     protected void checkLogContainsAllOf(String... contains) {
-        checkLogContainsAllOf(60, contains);
+        checkLogContainsAllOf(ASSERTION_WAIT_SECONDS, contains);
     }
 
     protected void checkLogContainsAllOf(int waitForSeconds, String... contains) {
@@ -149,11 +152,11 @@ public abstract class JBangTestSupport {
     }
 
     protected void checkLogContains(String contains) {
-        checkLogContains(contains, 60);
+        checkLogContains(contains, ASSERTION_WAIT_SECONDS);
     }
 
     protected void checkLogContains(String route, String contains) {
-        checkLogContains(route, contains, 60);
+        checkLogContains(route, contains, ASSERTION_WAIT_SECONDS);
     }
 
     protected void checkLogContains(String contains, int waitForSeconds) {
@@ -169,11 +172,11 @@ public abstract class JBangTestSupport {
     }
 
     protected void checkLogContainsPattern(String contains) {
-        checkLogContainsPattern(contains, 60);
+        checkLogContainsPattern(contains, ASSERTION_WAIT_SECONDS);
     }
 
     protected void checkLogContainsPattern(String route, String contains) {
-        checkLogContainsPattern(route, contains, 60);
+        checkLogContainsPattern(route, contains, ASSERTION_WAIT_SECONDS);
     }
 
     protected void checkLogContainsPattern(String contains, int waitForSeconds) {

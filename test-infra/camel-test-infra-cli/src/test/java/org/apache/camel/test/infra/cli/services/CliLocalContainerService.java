@@ -18,7 +18,10 @@ package org.apache.camel.test.infra.cli.services;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.test.infra.cli.common.CliProperties;
@@ -37,15 +40,20 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     private String forceToRunVersion;
 
+    private String mavenRepos;
+
     public CliLocalContainerService() {
         this(System.getProperty(CliProperties.VERSION, "main"), true, System.getProperty(CliProperties.DATA_FOLDER),
-             System.getProperty(CliProperties.SSH_PASSWORD, "jbang"), System.getProperty(CliProperties.FORCE_RUN_VERSION, ""));
+             System.getProperty(CliProperties.SSH_PASSWORD, "jbang"), System.getProperty(CliProperties.FORCE_RUN_VERSION, ""),
+             System.getProperty(CliProperties.MVN_REPOS), getHostsMap(), getCertPaths());
     }
 
     protected CliLocalContainerService(String camelRef, Boolean keepRunning, String dataFolder, String sshPassword,
-                                       String forceToRunVersion) {
-        container = new CliBuiltContainer(camelRef, keepRunning, dataFolder, sshPassword);
+                                       String forceToRunVersion, String mavenRepos, Map<String, String> extraHosts,
+                                       List<String> trustedCertPaths) {
+        container = new CliBuiltContainer(camelRef, keepRunning, dataFolder, sshPassword, extraHosts, trustedCertPaths);
         this.forceToRunVersion = forceToRunVersion;
+        this.mavenRepos = mavenRepos;
     }
 
     @Override
@@ -64,6 +72,10 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
             if (StringUtils.isNotBlank(forceToRunVersion)) {
                 LOG.info("force to use version {}", forceToRunVersion);
                 execute("version set " + forceToRunVersion);
+            }
+            if (StringUtils.isNotBlank(mavenRepos)) {
+                LOG.info("set repositories {}", mavenRepos);
+                execute(String.format("config set repos=%s", mavenRepos));
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Camel JBang version {}", version());
@@ -179,5 +191,20 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     @Override
     public String getSshPassword() {
         return container.getSshPassword();
+    }
+
+    private static Map<String, String> getHostsMap() {
+        return Optional.ofNullable(System.getProperty(CliProperties.EXTRA_HOSTS))
+                .map(p -> p.split(","))
+                .stream().flatMap(strings -> Arrays.asList(strings).stream())
+                .map(s -> s.split("="))
+                .collect(Collectors.toMap(entry -> entry[0], entry -> entry[1]));
+    }
+
+    private static List<String> getCertPaths() {
+        return Optional.ofNullable(System.getProperty(CliProperties.TRUSTED_CERT_PATHS))
+                .map(p -> p.split(","))
+                .stream().flatMap(strings -> Arrays.asList(strings).stream())
+                .collect(Collectors.toList());
     }
 }
