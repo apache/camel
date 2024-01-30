@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.azure.storage.queue;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +36,6 @@ import org.apache.camel.component.azure.storage.queue.operations.QueueOperations
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,11 +138,13 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
                     exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, popReceipt);
                     exchange.getIn().setHeader(QueueConstants.TIMEOUT, timeout);
 
+                    doneUoW(exchange);
                     processCommit(exchange);
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
+                    doneUoW(exchange);
                     processRollback(exchange);
                 }
             });
@@ -155,6 +152,11 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
             LOG.trace("Processing exchange [{}]...", exchange);
             // use default consumer callback
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            try {
+                createUoW(exchange);
+            } catch (Exception e) {
+                getExceptionHandler().handleException(e);
+            }
             getAsyncProcessor().process(exchange, cb);
         }
         return total;
@@ -163,28 +165,12 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     private Exchange createExchange(final QueueMessageItem messageItem) {
         final Exchange exchange = createExchange(true);
         BinaryData data = messageItem.getBody();
-        try {
-            createUoW(exchange);
-            Message message = exchange.getIn();
-            message.setBody(data == null ? null : new String(toBytes(data), StandardCharsets.UTF_8));
-            message.setHeaders(
-                    QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
-        } catch (Exception e) {
-            getExceptionHandler().handleException(e);
-        } finally {
-            doneUoW(exchange);
-            releaseExchange(exchange, false);
-        }
+        Message message = exchange.getIn();
+        message.setBody(data == null ? null : data.toStream());
+        message.setHeaders(
+                QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
 
         return exchange;
-    }
-
-    private byte[] toBytes(BinaryData data) throws IOException {
-        try (InputStream is = data.toStream()) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            IOHelper.copy(is, bos);
-            return bos.toByteArray();
-        }
     }
 
     /**
