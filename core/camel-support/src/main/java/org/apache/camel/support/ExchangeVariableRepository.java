@@ -20,9 +20,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.StreamCache;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
@@ -35,6 +38,11 @@ import org.apache.camel.util.StringHelper;
 class ExchangeVariableRepository extends ServiceSupport implements BrowsableVariableRepository, NonManagedService {
 
     private final Map<String, Object> variables = new ConcurrentHashMap<>(8);
+    private final CamelContext camelContext;
+
+    public ExchangeVariableRepository(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public String getId() {
@@ -66,6 +74,17 @@ class ExchangeVariableRepository extends ServiceSupport implements BrowsableVari
 
     @Override
     public void setVariable(String name, Object value) {
+        // special for some values that are CachedOutputStream which we want to be re-readable and therefore
+        // convert this to StreamCache
+        // TODO: Do something like StreamCachingHelper
+        // TODO: support base class that has stream caching stuff for set/getVariable
+        if (camelContext.isStreamCaching())
+            return StreamCachingHelper.convertToStreamCache(strategy, exchange, exchange.getIn());
+            Object cache = camelContext.getTypeConverter().tryConvertTo(StreamCache.class, value);
+            if (cache != null) {
+                value = cache;
+            }
+        }
         if (value != null) {
             // avoid the NullPointException
             variables.put(name, value);

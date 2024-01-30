@@ -126,7 +126,7 @@ abstract class AbstractExchange implements Exchange {
 
         if (parent.hasVariables()) {
             if (this.variableRepository == null) {
-                this.variableRepository = new ExchangeVariableRepository();
+                this.variableRepository = new ExchangeVariableRepository(getContext());
             }
             this.variableRepository.setVariables(parent.getVariables());
 
@@ -403,7 +403,7 @@ abstract class AbstractExchange implements Exchange {
     @Override
     public void setVariable(String name, Object value) {
         if (variableRepository == null) {
-            variableRepository = new ExchangeVariableRepository();
+            variableRepository = new ExchangeVariableRepository(getContext());
         }
         variableRepository.setVariable(name, value);
     }
@@ -424,7 +424,7 @@ abstract class AbstractExchange implements Exchange {
     public Map<String, Object> getVariables() {
         if (variableRepository == null) {
             // force creating variables
-            variableRepository = new ExchangeVariableRepository();
+            variableRepository = new ExchangeVariableRepository(getContext());
         }
         return variableRepository.getVariables();
     }

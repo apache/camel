@@ -102,9 +102,10 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
         answer.setSuppressExceptions(suppressExceptions);
         answer.setAllowSimple(allowSimple);
         answer.setAllowEasyPredicate(allowEasyPredicate);
-        answer.setHeaderName(getHeaderName());
         answer.setWriteAsString(writeAsString);
         answer.setUnpackArray(unpackArray);
+        answer.setVariableName(getVariableName());
+        answer.setHeaderName(getHeaderName());
         answer.setPropertyName(getPropertyName());
         answer.setOptions(options);
         answer.init(getCamelContext());
@@ -137,6 +138,7 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
             answer.setOptions(list.toArray(new Option[0]));
         }
         answer.setPropertyName(property(String.class, properties, 8, getPropertyName()));
+        answer.setVariableName(property(String.class, properties, 9, getVariableName()));
         answer.init(getCamelContext());
         return answer;
     }
@@ -177,6 +179,10 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
             case "alloweasypredicate":
             case "allowEasyPredicate":
                 setAllowEasyPredicate(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
+                return true;
+            case "variablename":
+            case "variableName":
+                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "headername":
             case "headerName":

@@ -25,16 +25,22 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  */
 public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSupport {
 
-    /**
-     * Name of header to use as input, instead of the message body
-     */
+    private String variableName;
     private String headerName;
-    /**
-     * Name of property to use as input, instead of the message body.
-     * <p>
-     * It has a lower precedent than the name of header if both are set.
-     */
     private String propertyName;
+
+    public String getVariableName() {
+        return variableName;
+    }
+
+    /**
+     * Name of variable to use as input, instead of the message body
+     * </p>
+     * It has as higher precedent if other are set.
+     */
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
 
     public String getHeaderName() {
         return headerName;
@@ -63,9 +69,10 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
     @Override
     public Expression createExpression(String expression, Object[] properties) {
         Class<?> type = property(Class.class, properties, 0, getResultType());
-        String header = property(String.class, properties, 1, getHeaderName());
-        String property = property(String.class, properties, 2, getPropertyName());
-        Expression source = ExpressionBuilder.singleInputExpression(header, property);
+        String variable = property(String.class, properties, 1, getVariableName());
+        String header = property(String.class, properties, 2, getHeaderName());
+        String property = property(String.class, properties, 3, getPropertyName());
+        Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
         if (type == null || type == Object.class) {
             return createExpression(source, expression, properties);
         }

@@ -23,16 +23,20 @@ import org.apache.camel.spi.Language;
  */
 public abstract class SingleInputLanguageSupport extends LanguageSupport {
 
-    /**
-     * Name of header to use as input, instead of the message body
-     */
+    private String variableName;
     private String headerName;
-    /**
-     * Name of property to use as input, instead of the message body.
-     * <p>
-     * It has a lower precedent than the name of header if both are set.
-     */
     private String propertyName;
+
+    public String getVariableName() {
+        return variableName;
+    }
+
+    /**
+     * Name of variable to use as input, instead of the message body
+     */
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
 
     public String getHeaderName() {
         return headerName;

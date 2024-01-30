@@ -133,7 +133,7 @@ public class TokenizeLanguage extends SingleInputLanguageSupport implements Prop
 
         if (answer == null) {
             // use the regular tokenizer
-            final Expression exp = ExpressionBuilder.singleInputExpression(getHeaderName(), getPropertyName());
+            final Expression exp = ExpressionBuilder.singleInputExpression(getVariableName(), getHeaderName(), getPropertyName());
             if (regex) {
                 answer = ExpressionBuilder.regexTokenizeExpression(exp, token);
             } else {

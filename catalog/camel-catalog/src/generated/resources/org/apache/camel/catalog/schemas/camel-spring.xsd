@@ -15242,6 +15242,15 @@ The String representation of the MediaType to output.
   <xs:complexType abstract="true" name="singleInputTypedExpressionDefinition">
     <xs:simpleContent>
       <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="variableName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Name of variable to use as input, instead of the message body It has as higher precedent if other are set.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="headerName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
