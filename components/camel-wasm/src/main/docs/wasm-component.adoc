@@ -4,7 +4,7 @@
 :artifactid: camel-wasm
 :description: Invoke Wasm functions.
 :since: 4.4
-:supportlevel: Preview
+:supportlevel: Experimental
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:

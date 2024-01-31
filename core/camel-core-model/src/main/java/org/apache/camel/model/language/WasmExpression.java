@@ -25,9 +25,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Wasm TODO.
+ * Call a wasm (web assembly) function.
  */
-@Metadata(firstVersion = "4.5.0", label = "language,core", title = "Wasm")
+@Metadata(firstVersion = "4.5.0", label = "language", title = "Wasm")
 @XmlRootElement(name = "wasm")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WasmExpression extends TypedExpressionDefinition {
@@ -45,13 +45,11 @@ public class WasmExpression extends TypedExpressionDefinition {
 
     public WasmExpression(String expression, String module) {
         super(expression);
-
         this.module = module;
     }
 
     private WasmExpression(Builder builder) {
         super(builder);
-
         this.module = builder.module;
     }
 

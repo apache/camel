@@ -34,6 +34,7 @@
 
     <properties>
         <camel.surefire.fork.additional-vmargs>-Dwasm.resources.path=${project.basedir}/src/test/resources</camel.surefire.fork.additional-vmargs>
+        <supportLevel>Experimental</supportLevel>
     </properties>
 
     <dependencies>

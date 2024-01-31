@@ -2179,7 +2179,7 @@ Gets a variable
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Wasm TODO.
+Call a wasm (web assembly) function.
 ]]>
       </xs:documentation>
     </xs:annotation>
