@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.azure.storage.queue.integration;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -44,7 +43,7 @@ class StorageQueueConsumerIT extends StorageQueueBase {
     }
 
     @Test
-    public void testPollingMessages() throws InterruptedException, IOException {
+    public void testPollingMessages() throws InterruptedException {
         result.expectedMessageCount(3);
         result.assertIsSatisfied();
 
