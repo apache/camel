@@ -47,7 +47,6 @@
         <trimStackTrace>false</trimStackTrace>
         <sourcecheckExcludes />
         <sourcecheckExcludesComma />
-        <skip.integration.tests>true</skip.integration.tests>
 
         <!-- dependency versions -->
         <activemq-version>5.18.3</activemq-version>

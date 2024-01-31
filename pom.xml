@@ -927,6 +927,8 @@
         </profile>
         <profile>
             <id>integration-test</id>
+            <!-- This profile can be used to run integration tests all by themselves without running the unit tests. -->
+            <!-- Use the command "mvn verify -Pintegration-test -Dquickly=true" to run the integration tests. -->
             <build>
                 <plugins>
                     <plugin>
