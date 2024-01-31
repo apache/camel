@@ -25,6 +25,7 @@ import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.sstore.ClusteredSessionStore;
 import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.sstore.SessionStore;
+import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
@@ -46,6 +47,7 @@ public class VertxPlatformHttpServerConfiguration {
     private BodyHandler bodyHandler = new BodyHandler();
     private Cors cors = new Cors();
     private SessionConfig sessionConfig = new SessionConfig();
+    private AuthenticationConfig authenticationConfig = new AuthenticationConfig();
 
     public int getPort() {
         return getBindPort();
@@ -133,6 +135,14 @@ public class VertxPlatformHttpServerConfiguration {
 
     public void setBodyHandler(BodyHandler bodyHandler) {
         this.bodyHandler = bodyHandler;
+    }
+
+    public AuthenticationConfig getAuthenticationConfig() {
+        return authenticationConfig;
+    }
+
+    public void setAuthenticationConfig(AuthenticationConfig authenticationConfig) {
+        this.authenticationConfig = authenticationConfig;
     }
 
     public static class SessionConfig {
