@@ -175,6 +175,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.exchangeOgnlExpression(remainder);
         }
 
+        // pretty
+        remainder = ifStartsWithReturnRemainder("pretty(", function);
+        if (remainder != null) {
+            String exp = StringHelper.beforeLast(remainder, ")");
+            if (exp == null) {
+                throw new SimpleParserException("Valid syntax: ${pretty(exp)} was: " + function, token.getIndex());
+            }
+            exp = StringHelper.removeQuotes(exp);
+            Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
+            return ExpressionBuilder.prettyExpression(inlined);
+        }
+
         // file: prefix
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {

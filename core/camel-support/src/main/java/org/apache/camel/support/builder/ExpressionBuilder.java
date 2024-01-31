@@ -2375,6 +2375,32 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression as pretty formatted string
+     */
+    public static Expression prettyExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = expression.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                } else if (body.startsWith("{") && body.endsWith("}") || body.startsWith("[") && body.endsWith("]")) {
+                    return Jsoner.prettyPrint(body); //json
+                } else if (body.startsWith("<") && body.endsWith(">")) {
+                    return ExpressionBuilder.prettyXml(body); //xml
+                }
+
+                return body;
+            }
+
+            @Override
+            public String toString() {
+                return "pretty(" + expression + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the message body as pretty formatted string
      */
     public static Expression prettyBodyExpression() {
