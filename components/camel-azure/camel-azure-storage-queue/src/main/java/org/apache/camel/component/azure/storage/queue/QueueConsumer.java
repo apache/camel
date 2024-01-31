@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.storage.queue;
 
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,9 @@ import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
 import org.apache.camel.component.azure.storage.queue.operations.QueueOperations;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,8 +163,16 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
         final Message message = exchange.getIn();
 
         BinaryData data = messageItem.getBody();
-        message.setBody(data == null ? null : data.toString());
+        InputStream is = data == null ? null : data.toStream();
+        message.setBody(is);
         message.setHeaders(QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
+
+        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                IOHelper.close(is);
+            }
+        });
 
         return exchange;
     }
