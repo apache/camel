@@ -214,17 +214,19 @@ The EIPs works in two modes where *variableSend* and *variableReceive* is a litt
 
 |===
 | *VariableSend*       | *VariableReceive*
-| *Headers:* Message   | *Headers:* Variable
-| *Body:* Variable     | *Body:* Variable
+| *Sending Headers:* Message   | *Received Headers:* Variable
+| *Sending Body:* Variable     | *Received Body:* Variable
 |===
 
-The *VariableSend* is intended for sending as regular Camel where the headers are from the current `Message` and the body is
-the variable. In other words it's only the message body that is taken from the variable instead of the current `Message` body.
+The *VariableSend* is intended for sending as regular Camel where the sending headers are from the current `Message` and the body is
+from the variable. In other words it's only the message body that is taken from the variable instead of the current `Message` body.
 
 The *VariableReceive* works in a different mode. The idea is that all the received data is stored as variables. This means the current `Message`
-is not changed at all. The body is stored in the variable, and the received headers (transport headers etc.) are stored as read-only
+is not changed at all. The received body is stored in the variable, and the received headers (transport headers etc.) are stored as read-only
 headers as variables as well. The names of the variable is `header:variableName.headerName`. For example if the variable is `myVar` and the header is `Content-Type`
-then the header is stored as `header:myVar.Content-Type`.
+then the header is stored as a variable with the full name `header:myVar.Content-Type`.
+
+=== Example using VariableReceive
 
 When the EIP is using *VariableReceive*, then the `Message` on the `Exchange` is not in use, but the body and headers will be from the variable.
 For example given the following `Message` containing:
@@ -280,7 +282,8 @@ header.level=gold
 body=Bye World
 ----
 
-However, if you use a variable (_myVar_) as the _sink_ to store the returned data from calling the remote service as shown:
+However, if you use *VariableReceive=myVar* to store the returned data from calling the remote service, into a variable, then
+the dynamics changes as follows:
 
 [tabs]
 ====
@@ -316,7 +319,7 @@ from:
 ----
 ====
 
-Then the `Message` is not changed:
+Then the `Message` on the current `Exchange` is not changed:
 
 [source,properties]
 ----
@@ -330,11 +333,12 @@ And the variable contains all the data received from the remote HTTP service sep
 [source,properties]
 ----
 myVar=Bye World
-myVar.header.level=gold
+header:myVar.level=gold
 ----
 
-IMPORTANT: Notice the headers are stored with the syntax `variable.header.key`. In the example above the variable name is `myVar`,
-and the header key is `level`, which gives: `myVar.header.level`.
+IMPORTANT: Notice the headers are stored with the syntax `header:variable.key`. In the example above the variable name is `myVar`,
+and the header key is `level`, which gives: `header:myVar.level`.
+
 
 === Using variable to store incoming message body
 
@@ -392,213 +396,3 @@ from:
 NOTE: In the examples above the transform `Bye $\{body}` will result as `Bye ` because the `Message` has no message body, as the incoming
 message body is stored in the variable `myKey` instead.
 
-=== Using variables when sending and receiving messages to an endpoint
-
-You can configure the `to` to use variables for any of the following (or both) when sending and receiving:
-
-- variableSend - name of variable that contains the message body to send instead of the current message body on the `Exchange`.
-- variableReceive - name of variable that should store the returned message payload (will not change the message body on the `Exchange`).
-
-For example, you can use the `variableSend` to tell Camel to use the variable as the message body when sending to an endpoint.
-If the `variableReceive` is also configured, then the reply message will be stored in the variable instead of the `Exchange` message body.
-
-IMPORTANT: This is only the message body. Message headers keep acting as usual.
-
-In the following example, we use a variable named `hello` as the message body when sending to the `direct:foo` endpoint:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:send")
-    .setVariable("hello", simple("Camel"))
-    .to("mock:before")
-    .toV("direct:foo", "hello", null)
-    .to("mock:result");
-
-from("direct:foo")
-    .transform().simple("Bye ${body}");
-----
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="direct:send"/>
-  <setVariable name="hello">
-    <simple>Camel</simple>
-  </setVariable>
-  <to uri="mock:before"/>
-  <to uri="direct:foo" variableSend="hello"/>
-  <to uri="mock:result"/>
-</route>
-<route>
-  <from uri="direct:foo"/>
-  <transform>
-    <simple>Bye ${body}</simple>
-  </transform>
-</route>
-----
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:send
-      steps:
-        - setVariable:
-            name: hello
-            simple:
-              expression: Camel
-        - to:
-            uri: mock:before
-        - to:
-            uri: direct:foo
-            variableSend: hello
-        - to:
-            uri: mock:result
-- route:
-    from:
-      uri: direct:foo
-      steps:
-        - transform:
-            simple:
-              expression: "Bye ${body}"
-----
-====
-
-If you only want to store the result in a variable instead of the current `Exchange` message body, then you should use `variableReceive`
-as shown in the following:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:receive")
-    .toV("direct:foo", null, "bye")
-    .to("mock:after")
-    .setBody(simple("${variable:bye}"))
-    .to("mock:result");
-
-from("direct:foo")
-    .transform().simple("Bye ${body}");
-----
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="direct:receive"/>
-  <to uri="direct:foo" variableReceive="bye"/>
-  <to uri="mock:after"/>
-  <setBody>
-    <simple>${variable:bye}</simple>
-  </setBody>
-  <to uri="mock:result"/>
-</route>
-<route>
-  <from uri="direct:foo"/>
-  <transform>
-    <simple>Bye ${body}</simple>
-  </transform>
-</route>
-----
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:receive
-      steps:
-        - to:
-            uri: direct:foo
-            variableReceive: bye
-        - to:
-            uri: mock:after
-        - setBody:
-            variable: bye
-        - to:
-            uri: mock:result
-- route:
-    from:
-      uri: direct:foo
-      steps:
-        - transform:
-            simple:
-              expression: "Bye ${body}"
-----
-====
-
-And you can also use both of them together which means you are using variables for both what to send, and to store the result in a variable.
-This means the current `Exchange` message body is not in use at all.
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:sendAndReceive")
-    .setVariable("hello", simple("Camel"))
-    .to("mock:before")
-    .toV("direct:foo", "hello", "bye")
-    .to("mock:result");
-
-from("direct:foo")
-    .transform().simple("Bye ${body}");
-----
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="direct:sendAndReceive"/>
-  <setVariable name="hello">
-    <simple>Camel</simple>
-  </setVariable>
-  <to uri="mock:before"/>
-  <to uri="direct:foo" variableSend="hello" variableReceive="bye"/>
-  <to uri="mock:result"/>
-</route>
-<route>
-  <from uri="direct:foo"/>
-  <transform>
-    <simple>Bye ${body}</simple>
-  </transform>
-</route>
-----
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:sendAndReceive
-      steps:
-        - setVariable:
-            name: hello
-            simple:
-              expression: Camel
-        - to:
-            uri: mock:before
-        - to:
-            uri: direct:foo
-            variableReceive: bye
-            variableSend: hello
-        - to:
-            uri: mock:result
-- route:
-    from:
-      uri: direct:foo
-      steps:
-        - transform:
-            simple:
-              expression: "Bye ${body}"
-----
-====
