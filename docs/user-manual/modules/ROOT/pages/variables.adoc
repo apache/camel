@@ -190,7 +190,7 @@ or with the xref:components:eips:claimCheck-eip.adoc[Claim Check] EIP.
 
 === Important concept when using variables and EIPs
 
-It is **important** to understand that the variables focuses the use of the message **body** only, and makes using **headers** optional.
+It is **important** to understand that the variables focuses the use of the message **body** only.
 This is on purpose to keep it simpler and primary work with the message body as the user data.
 
 The following table summarises what the EIP supports with variables:
@@ -210,7 +210,23 @@ The following table summarises what the EIP supports with variables:
 The EIPs listed above have support for using variables when sending and receiving data. This is done by using the `variableSend` and `variableReceive` options
 to specify the name of the variable.
 
-When the EIP is using variables, then the `Message` on the `Exchange` is not in use, but the body and headers will be from the variable.
+The EIPs works in two modes where *variableSend* and *variableReceive* is a little bit different, so pay attention to the following table:
+
+|===
+| *VariableSend*       | *VariableReceive*
+| *Headers:* Message   | *Headers:* Variable
+| *Body:* Variable     | *Body:* Variable
+|===
+
+The *VariableSend* is intended for sending as regular Camel where the headers are from the current `Message` and the body is
+the variable. In other words it's only the message body that is taken from the variable instead of the current `Message` body.
+
+The *VariableReceive* works in a different mode. The idea is that all the received data is stored as variables. This means the current `Message`
+is not changed at all. The body is stored in the variable, and the received headers (transport headers etc.) are stored as read-only
+headers as variables as well. The names of the variable is `header:variableName.headerName`. For example if the variable is `myVar` and the header is `Content-Type`
+then the header is stored as `header:myVar.Content-Type`.
+
+When the EIP is using *VariableReceive*, then the `Message` on the `Exchange` is not in use, but the body and headers will be from the variable.
 For example given the following `Message` containing:
 
 [source,properties]
