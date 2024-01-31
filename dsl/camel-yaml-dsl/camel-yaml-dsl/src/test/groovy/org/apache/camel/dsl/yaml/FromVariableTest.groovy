@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.junit.jupiter.api.Assertions
 
 class FromVariableTest extends YamlTestSupport {
 
@@ -28,6 +29,12 @@ class FromVariableTest extends YamlTestSupport {
                     uri: "direct:start"
                     variableReceive: "myKey"
                     steps:
+                      - setHeader:
+                          name: foo
+                          constant: "456"
+                      - setHeader:
+                          name: bar
+                          constant: "Murphy"
                       - transform:
                           simple: "Bye ${body}"
                       - to: "mock:foo"
@@ -37,7 +44,13 @@ class FromVariableTest extends YamlTestSupport {
             '''
 
             withMock('mock:foo') {
-                expectedBodiesReceived 'Bye World'
+                expectedBodiesReceived 'Bye '
+                whenAnyExchangeReceived { e -> {
+                    Map m = e.getVariable("header:myKey", Map.class)
+                    Assertions.assertNotNull(m)
+                    Assertions.assertEquals(1, m.size())
+                    Assertions.assertEquals(123, m.get("foo"))
+                }}
             }
             withMock('mock:result') {
                 expectedBodiesReceived 'World'
@@ -47,7 +60,7 @@ class FromVariableTest extends YamlTestSupport {
             context.start()
 
             withTemplate {
-                to('direct:start').withBody('World').send()
+                to('direct:start').withBody('World').withHeader("foo", 123).send()
             }
 
         then:

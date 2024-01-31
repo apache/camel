@@ -2179,7 +2179,7 @@ Gets a variable
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Wasm TODO.
+Call a wasm (web assembly) function.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -15242,6 +15242,15 @@ The String representation of the MediaType to output.
   <xs:complexType abstract="true" name="singleInputTypedExpressionDefinition">
     <xs:simpleContent>
       <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="variableName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Name of variable to use as input, instead of the message body It has as higher precedent if other are set.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="headerName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -15475,6 +15484,15 @@ Whether to validate the bean has the configured method. Default value: true
   <xs:complexType abstract="true" name="singleInputExpressionDefinition">
     <xs:simpleContent>
       <xs:extension base="tns:expression">
+        <xs:attribute name="variableName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Name of variable to use as input, instead of the message body.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="headerName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

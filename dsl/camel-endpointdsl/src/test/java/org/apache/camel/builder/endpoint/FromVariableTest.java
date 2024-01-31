@@ -24,7 +24,7 @@ public class FromVariableTest extends BaseEndpointDslTest {
 
     @Test
     public void testOriginalBody() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye ");
         getMockEndpoint("mock:result").expectedBodiesReceived("World");
 
         template.sendBody("direct:start", "World");

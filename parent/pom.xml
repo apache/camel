@@ -51,7 +51,7 @@
 
         <!-- dependency versions -->
         <activemq-version>5.18.3</activemq-version>
-        <activemq-artemis-version>2.31.2</activemq-artemis-version>
+        <activemq-artemis-version>2.32.0</activemq-artemis-version>
         <angus-mail-version>2.0.2</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-drill-version>1.21.1</apache-drill-version>
@@ -69,11 +69,11 @@
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.23.12</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.23.14</aws-java-sdk2-version>
         <aws-xray-version>2.15.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.20</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
-        <beanio-version>3.0.0.M3</beanio-version>
+        <beanio-version>3.0.0</beanio-version>
         <bouncycastle-version>1.77</bouncycastle-version>
         <box-java-sdk-version>4.7.0</box-java-sdk-version>
         <braintree-gateway-version>3.32.0</braintree-gateway-version>
@@ -123,7 +123,7 @@
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.5.2-jakarta4</datasonnet-mapper-version>
-        <debezium-version>2.5.0.Final</debezium-version>
+        <debezium-version>2.5.1.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.33</debezium-mysql-connector-version>
         <derby-version>10.16.1.1</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
@@ -143,7 +143,7 @@
         <elasticsearch-java-client-sniffer-version>8.12.0</elasticsearch-java-client-sniffer-version>
         <elytron-web>4.0.0.Final</elytron-web>
         <exec-maven-plugin-version>3.1.1</exec-maven-plugin-version>
-        <fastjson-version>2.0.45</fastjson-version>
+        <fastjson-version>2.0.46</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
@@ -171,7 +171,7 @@
         <jakarta-jws-api-version>3.0.0</jakarta-jws-api-version>
         <gmavenplus-plugin-version>3.0.2</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.22.0</google-auth-library-oauth2-http-version>
-        <google-api-client-version>2.2.0</google-api-client-version>
+        <google-api-client-version>2.3.0</google-api-client-version>
         <google-api-services-drive-version>v3-rev20240123-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20240111-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20230815-2.0.0</google-api-services-sheets-version>
@@ -218,7 +218,7 @@
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
         <infinispan-version>14.0.22.Final</infinispan-version>
         <influx-java-driver-version>2.24</influx-java-driver-version>
-        <influx-client-java-driver-version>6.12.0</influx-client-java-driver-version>
+        <influx-client-java-driver-version>7.0.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.2</ivy-version>
@@ -312,7 +312,7 @@
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.21.1</log4j2-version>
         <logback-version>1.4.14</logback-version>
-        <lucene-version>9.9.1</lucene-version>
+        <lucene-version>9.9.2</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.1.1</littleproxy-version>
         <mapstruct-version>1.5.5.Final</mapstruct-version>
@@ -483,7 +483,7 @@
         <zeebe.version>8.4.1</zeebe.version>
         <zendesk-client-version>0.24.2</zendesk-client-version>
         <zookeeper-version>3.9.1</zookeeper-version>
-        <zxing-version>3.5.2</zxing-version>
+        <zxing-version>3.5.3</zxing-version>
     </properties>
 
     <dependencyManagement>

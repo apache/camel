@@ -91,7 +91,6 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
     @Test
     @DisplayName("Checks that half of the messages pass and duplicates are blocked")
     public void testFirstPassFiltersAsExpected() {
-        await().until(() -> kafkaIdempotentRepository.isCacheReady());
         int count = 10;
         sendMessages(count);
 

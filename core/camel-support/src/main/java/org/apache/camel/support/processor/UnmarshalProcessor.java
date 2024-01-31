@@ -68,7 +68,6 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
             final Object originalBody = in.getBody();
             Object body = originalBody;
             if (variableSend != null) {
-                // it may be a global variable
                 body = ExchangeHelper.getVariable(exchange, variableSend);
             }
             final Message out;

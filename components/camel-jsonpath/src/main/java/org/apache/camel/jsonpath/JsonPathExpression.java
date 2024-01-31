@@ -43,6 +43,7 @@ public class JsonPathExpression extends ExpressionAdapter {
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
     private boolean unpackArray;
+    private String variableName;
     private String headerName;
     private String propertyName;
     private Option[] options;
@@ -127,6 +128,17 @@ public class JsonPathExpression extends ExpressionAdapter {
      */
     public void setUnpackArray(boolean unpackArray) {
         this.unpackArray = unpackArray;
+    }
+
+    public String getVariableName() {
+        return variableName;
+    }
+
+    /**
+     * Name of variable to use as input, instead of the message body
+     */
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
     }
 
     public String getHeaderName() {

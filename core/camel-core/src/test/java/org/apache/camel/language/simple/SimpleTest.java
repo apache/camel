@@ -2328,6 +2328,15 @@ public class SimpleTest extends LanguageTestSupport {
         assertThrows(IllegalArgumentException.class, () -> evaluateExpression("${empty(unknownType)}", null));
     }
 
+    @Test
+    public void testPretty() {
+        assertExpression(exchange, "${pretty('Hello')}", "Hello");
+        assertExpression(exchange, "${pretty(${body})}", "<hello id=\"m123\">\n</hello>");
+
+        exchange.getMessage().setBody("{\"name\": \"Jack\", \"id\": 123}");
+        assertExpression(exchange, "${pretty(${body})}", "{\n\t\"name\": \"Jack\",\n\t\"id\": 123\n}\n");
+    }
+
     private void assertExpressionCreateNewEmpty(
             String type, Class<?> expectedClass, java.util.function.Predicate<Object> isEmptyAssertion) {
         Object value = evaluateExpression("${empty(%s)}".formatted(type), null);

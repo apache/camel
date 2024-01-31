@@ -76,6 +76,10 @@ public class TokenizeLanguage extends SingleInputLanguageSupport implements Prop
             case "propertyName":
                 setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
+            case "variablename":
+            case "variableName":
+                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
             case "regex":
                 setRegex(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
                 return true;
@@ -133,7 +137,8 @@ public class TokenizeLanguage extends SingleInputLanguageSupport implements Prop
 
         if (answer == null) {
             // use the regular tokenizer
-            final Expression exp = ExpressionBuilder.singleInputExpression(getHeaderName(), getPropertyName());
+            final Expression exp
+                    = ExpressionBuilder.singleInputExpression(getVariableName(), getHeaderName(), getPropertyName());
             if (regex) {
                 answer = ExpressionBuilder.regexTokenizeExpression(exp, token);
             } else {
@@ -189,6 +194,7 @@ public class TokenizeLanguage extends SingleInputLanguageSupport implements Prop
         answer.setGroup(property(String.class, properties, 8, group));
         answer.setSkipFirst(property(boolean.class, properties, 9, skipFirst));
         answer.setPropertyName(property(String.class, properties, 10, getPropertyName()));
+        answer.setVariableName(property(String.class, properties, 11, getVariableName()));
         return answer.createExpression(expression);
     }
 

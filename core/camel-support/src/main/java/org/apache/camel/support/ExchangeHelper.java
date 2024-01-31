@@ -47,6 +47,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.VariableAware;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.UnitOfWork;
@@ -1085,20 +1086,59 @@ public final class ExchangeHelper {
      * @param value    the value of the variable
      */
     public static void setVariable(Exchange exchange, String name, Object value) {
+        VariableRepository repo = null;
         String id = StringHelper.before(name, ":");
+        // header and exchange is reserved
+        if ("header".equals(id) || "exchange".equals(id)) {
+            id = null;
+        }
         if (id != null) {
             VariableRepositoryFactory factory
                     = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
-            VariableRepository repo = factory.getVariableRepository(id);
+            repo = factory.getVariableRepository(id);
             if (repo != null) {
                 name = StringHelper.after(name, ":");
-                repo.setVariable(name, value);
             } else {
-                exchange.setException(
-                        new IllegalArgumentException("VariableRepository with id: " + id + " does not exist"));
+                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
             }
-        } else {
-            exchange.setVariable(name, value);
+        }
+        VariableAware va = repo != null ? repo : exchange;
+        va.setVariable(name, value);
+    }
+
+    /**
+     * Sets the variable from the given message body and headers
+     *
+     * @param exchange the exchange
+     * @param name     the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *                 repository. If no repo-id is provided, then the variable is set on the exchange
+     * @param message  the message with the body and headers as source values
+     */
+    public static void setVariableFromMessageBodyAndHeaders(Exchange exchange, String name, Message message) {
+        VariableRepository repo = null;
+        String id = StringHelper.before(name, ":");
+        // header and exchange is reserved
+        if ("header".equals(id) || "exchange".equals(id)) {
+            id = null;
+        }
+        if (id != null) {
+            VariableRepositoryFactory factory
+                    = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+            repo = factory.getVariableRepository(id);
+            if (repo == null) {
+                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
+            }
+            name = StringHelper.after(name, ":");
+        }
+        VariableAware va = repo != null ? repo : exchange;
+
+        // set body and headers as variables
+        Object body = message.getBody();
+        va.setVariable(name, body);
+        for (Map.Entry<String, Object> header : message.getHeaders().entrySet()) {
+            String key = "header:" + name + "." + header.getKey();
+            Object value = header.getValue();
+            va.setVariable(key, value);
         }
     }
 
@@ -1111,22 +1151,24 @@ public final class ExchangeHelper {
      * @return          the variable
      */
     public static Object getVariable(Exchange exchange, String name) {
-        Object answer;
+        VariableRepository repo = null;
         String id = StringHelper.before(name, ":");
+        // header and exchange is reserved
+        if ("header".equals(id) || "exchange".equals(id)) {
+            id = null;
+        }
         if (id != null) {
             VariableRepositoryFactory factory
                     = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
-            VariableRepository repo = factory.getVariableRepository(id);
+            repo = factory.getVariableRepository(id);
             if (repo != null) {
                 name = StringHelper.after(name, ":");
-                answer = repo.getVariable(name);
             } else {
                 throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
             }
-        } else {
-            answer = exchange.getVariable(name);
         }
-        return answer;
+        VariableAware va = repo != null ? repo : exchange;
+        return va.getVariable(name);
     }
 
     /**

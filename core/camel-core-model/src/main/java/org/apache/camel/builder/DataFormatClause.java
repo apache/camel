@@ -186,8 +186,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the beanio data format
      */
-    public T beanio(String mapping, String streamName, String encoding, boolean ignoreUnidentifiedRecords,
-                    boolean ignoreUnexpectedRecords, boolean ignoreInvalidRecords) {
+    public T beanio(
+            String mapping, String streamName, String encoding, boolean ignoreUnidentifiedRecords,
+            boolean ignoreUnexpectedRecords, boolean ignoreInvalidRecords) {
         BeanioDataFormat dataFormat = new BeanioDataFormat();
         dataFormat.setMapping(mapping);
         dataFormat.setStreamName(streamName);

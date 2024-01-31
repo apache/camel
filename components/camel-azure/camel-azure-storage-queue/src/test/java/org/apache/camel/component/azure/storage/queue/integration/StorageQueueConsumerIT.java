@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.storage.queue.integration;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.apache.camel.EndpointInject;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class StorageQueueConsumerIT extends StorageQueueBase {
 
@@ -52,9 +54,15 @@ class StorageQueueConsumerIT extends StorageQueueBase {
         result.message(2).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(2);
         result.expectedPropertyReceived(Exchange.BATCH_SIZE, 3);
 
-        assertEquals("test-message-1", exchanges.get(0).getMessage().getBody());
-        assertEquals("test-message-2", exchanges.get(1).getMessage().getBody());
-        assertEquals("test-message-3", exchanges.get(2).getMessage().getBody());
+        assertEquals("test-message-1", convertToString(exchanges.get(0)));
+        assertEquals("test-message-2", convertToString(exchanges.get(1)));
+        assertEquals("test-message-3", convertToString(exchanges.get(2)));
+    }
+
+    private String convertToString(Exchange exchange) {
+        InputStream is = exchange.getMessage().getBody(InputStream.class);
+        assertNotNull(is);
+        return exchange.getContext().getTypeConverter().convertTo(String.class, is);
     }
 
     @Override

@@ -64,7 +64,7 @@ import org.apache.camel.spi.annotations.ConstantProvider;
  * details.
  */
 @ConstantProvider("org.apache.camel.ExchangeConstantProvider")
-public interface Exchange {
+public interface Exchange extends VariableAware {
 
     String AUTHENTICATION = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";

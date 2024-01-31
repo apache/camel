@@ -2,9 +2,9 @@
 :doctitle: Wasm
 :shortname: wasm
 :artifactid: camel-wasm
-:description: Wasm TODO.
+:description: Call a wasm (web assembly) function.
 :since: 4.5
-:supportlevel: Preview
+:supportlevel: Experimental
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: wasm

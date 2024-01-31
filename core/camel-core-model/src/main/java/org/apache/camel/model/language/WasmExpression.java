@@ -21,12 +21,13 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.spi.Metadata;
 
 /**
- * Wasm TODO.
+ * Call a wasm (web assembly) function.
  */
-@Metadata(firstVersion = "4.5.0", label = "language,core", title = "Wasm")
+@Metadata(firstVersion = "4.5.0", label = "language", title = "Wasm")
 @XmlRootElement(name = "wasm")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WasmExpression extends TypedExpressionDefinition {
@@ -42,16 +43,13 @@ public class WasmExpression extends TypedExpressionDefinition {
         super(expression);
     }
 
-
     public WasmExpression(String expression, String module) {
         super(expression);
-
         this.module = module;
     }
 
     private WasmExpression(Builder builder) {
         super(builder);
-
         this.module = builder.module;
     }
 
