@@ -13714,7 +13714,7 @@
       },
       "org.apache.camel.model.language.WasmExpression" : {
         "title" : "Wasm",
-        "description" : "Wasm TODO.",
+        "description" : "Call a wasm (web assembly) function.",
         "oneOf" : [ {
           "type" : "string"
         }, {
