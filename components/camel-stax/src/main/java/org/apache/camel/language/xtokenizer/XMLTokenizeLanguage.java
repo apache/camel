@@ -123,6 +123,7 @@ public class XMLTokenizeLanguage extends SingleInputLanguageSupport implements P
         }
         String path = expression != null ? expression : this.path;
         answer.setPropertyName(property(String.class, properties, 4, getPropertyName()));
+        answer.setVariableName(property(String.class, properties, 5, getVariableName()));
         return answer.createExpression(path);
     }
 
@@ -171,6 +172,10 @@ public class XMLTokenizeLanguage extends SingleInputLanguageSupport implements P
             case "propertyname":
             case "propertyName":
                 setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "variablename":
+            case "variableName":
+                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "mode":
                 setMode(PropertyConfigurerSupport.property(camelContext, char.class, value));

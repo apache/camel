@@ -59,6 +59,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     protected int group;
     protected String headerName;
     protected String propertyName;
+    protected String variableName;
     protected Map<String, String> nsmap;
 
     public XMLTokenExpressionIterator(String path, char mode) {
@@ -116,6 +117,14 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.propertyName = propertyName;
     }
 
+    public String getVariableName() {
+        return variableName;
+    }
+
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+
     protected Iterator<?> createIterator(InputStream in, String charset)
             throws XMLStreamException, UnsupportedEncodingException {
         return createIterator(new InputStreamReader(in, charset));
@@ -159,6 +168,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 reader = new StringReader(val);
             } else if (propertyName != null) {
                 String val = exchange.getProperty(propertyName, String.class);
+                reader = new StringReader(val);
+            } else if (variableName != null) {
+                String val = exchange.getVariable(variableName, String.class);
                 reader = new StringReader(val);
             } else {
                 InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);

@@ -15484,6 +15484,15 @@ Whether to validate the bean has the configured method. Default value: true
   <xs:complexType abstract="true" name="singleInputExpressionDefinition">
     <xs:simpleContent>
       <xs:extension base="tns:expression">
+        <xs:attribute name="variableName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Name of variable to use as input, instead of the message body.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="headerName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

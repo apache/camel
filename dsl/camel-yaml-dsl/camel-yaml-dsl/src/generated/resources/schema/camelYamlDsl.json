@@ -13670,6 +13670,11 @@
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
             },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body"
+            },
             "xml" : {
               "type" : "boolean",
               "title" : "Xml",
@@ -13798,6 +13803,11 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13886,6 +13896,11 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13947,6 +13962,11 @@
               "type" : "string",
               "title" : "Type",
               "description" : "Sets the class name of the result type (type from output) The default result type is NodeSet"
+            },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],

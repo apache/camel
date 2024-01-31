@@ -31,7 +31,7 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
     }
 
     protected Object[] createProperties() {
-        Object[] properties = new Object[11];
+        Object[] properties = new Object[12];
         // special for new line tokens, if defined from XML then its 2
         // characters, so we replace that back to a single char
         String token = definition.getToken();
@@ -49,6 +49,7 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
         properties[8] = parseString(definition.getGroup());
         properties[9] = parseBoolean(definition.getSkipFirst());
         properties[10] = parseString(definition.getPropertyName());
+        properties[11] = parseString(definition.getVariableName());
         return properties;
     }
 

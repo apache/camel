@@ -101,12 +101,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private ModuleURIResolver moduleURIResolver;
     private boolean allowStAX;
     private String headerName;
-    /**
-     * Name of property to use as input, instead of the message body.
-     * <p>
-     * It has a lower precedent than the name of header if both are set.
-     */
     private String propertyName;
+    private String variableName;
 
     @Override
     public String toString() {
@@ -546,6 +542,17 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         this.propertyName = propertyName;
     }
 
+    public String getVariableName() {
+        return variableName;
+    }
+
+    /**
+     * Name of variable to use as input, instead of the message body
+     */
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+
     public boolean isAllowStAX() {
         return allowStAX;
     }
@@ -576,6 +583,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             item = in.getHeader(getHeaderName(), Item.class);
         } else if (ObjectHelper.isNotEmpty(getPropertyName())) {
             item = exchange.getProperty(getPropertyName(), Item.class);
+        } else if (ObjectHelper.isNotEmpty(getVariableName())) {
+            item = exchange.getVariable(getVariableName(), Item.class);
         } else {
             item = in.getBody(Item.class);
         }
@@ -587,6 +596,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                 body = in.getHeader(getHeaderName());
             } else if (ObjectHelper.isNotEmpty(getPropertyName())) {
                 body = exchange.getProperty(getPropertyName());
+            } else if (ObjectHelper.isNotEmpty(getVariableName())) {
+                body = exchange.getVariable(getVariableName());
             } else {
                 body = in.getBody();
             }
@@ -601,6 +612,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                         is = exchange.getIn().getHeader(getHeaderName(), InputStream.class);
                     } else if (ObjectHelper.isNotEmpty(getPropertyName())) {
                         is = exchange.getProperty(getPropertyName(), InputStream.class);
+                    } else if (ObjectHelper.isNotEmpty(getVariableName())) {
+                        is = exchange.getVariable(getVariableName(), InputStream.class);
                     } else {
                         is = exchange.getIn().getBody(InputStream.class);
                     }
