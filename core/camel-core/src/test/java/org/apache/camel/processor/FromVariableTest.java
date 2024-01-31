@@ -27,7 +27,7 @@ public class FromVariableTest extends ContextTestSupport {
 
     @Test
     public void testOriginalBody() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye ");
         getMockEndpoint("mock:result").expectedBodiesReceived("World");
 
         template.sendBody("direct:start", "World");
@@ -37,10 +37,10 @@ public class FromVariableTest extends ContextTestSupport {
 
     @Test
     public void testOriginalHeaders() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye ");
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", 456);
         getMockEndpoint("mock:foo").whenAnyExchangeReceived(e -> {
-            Map m = e.getVariable("myKey.headers", Map.class);
+            Map m = e.getVariable("header:myKey", Map.class);
             Assertions.assertNotNull(m);
             Assertions.assertEquals(1, m.size());
             Assertions.assertEquals(123, m.get("foo"));

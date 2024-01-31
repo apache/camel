@@ -44,9 +44,9 @@ class FromVariableTest extends YamlTestSupport {
             '''
 
             withMock('mock:foo') {
-                expectedBodiesReceived 'Bye World'
+                expectedBodiesReceived 'Bye '
                 whenAnyExchangeReceived { e -> {
-                    Map m = e.getVariable("myKey.headers", Map.class)
+                    Map m = e.getVariable("header:myKey", Map.class)
                     Assertions.assertNotNull(m)
                     Assertions.assertEquals(1, m.size())
                     Assertions.assertEquals(123, m.get("foo"))

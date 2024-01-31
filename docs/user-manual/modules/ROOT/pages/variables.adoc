@@ -336,10 +336,10 @@ myVar.header.level=gold
 IMPORTANT: Notice the headers are stored with the syntax `variable.header.key`. In the example above the variable name is `myVar`,
 and the header key is `level`, which gives: `myVar.header.level`.
 
-=== Using variable to store a copy of the incoming message body
+=== Using variable to store incoming message body
 
-You can configure the `from` to store a copy of the message body into a variable. This makes it easy to have quick access
-to the original incoming message body via the variable.
+You can configure the `from` to store the message body into a variable, instead of the `Message`. This makes it easy to have quick access
+to the original incoming message body via the variable. Notice that the body on the `Message` will be `null`.
 
 The following example from a unit test shows how to do this. Notice how Java DSL uses `fromV` to make it possible to specify
 the name of the variable. In XML and YAML DSL you specify this using the `variableReceive` parameter.
@@ -388,6 +388,9 @@ from:
     - to: "mock:result"
 ----
 ====
+
+NOTE: In the examples above the transform `Bye $\{body}` will result as `Bye ` because the `Message` has no message body, as the incoming
+message body is stored in the variable `myKey` instead.
 
 === Using variables when sending and receiving messages to an endpoint
 

@@ -45,7 +45,6 @@ import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.ErrorHandlerAware;
-import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
@@ -332,7 +331,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // wrap with variable
         if (variable != null) {
-            internal.addAdvice(new VariableAdvice(camelContext, variable));
+            internal.addAdvice(new VariableAdvice(variable));
         }
 
         // and create the route that wraps all of this
@@ -423,23 +422,21 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     }
 
     /**
-     * Advice for copying the message body into a variable
+     * Advice for moving message body into a variable when using variableReceive mode
      */
     private static class VariableAdvice implements CamelInternalProcessorAdvice<Object> {
 
-        private final HeadersMapFactory factory;
         private final String name;
 
-        public VariableAdvice(CamelContext camelContext, String name) {
-            this.factory = camelContext.getCamelContextExtension().getHeadersMapFactory();
+        public VariableAdvice(String name) {
             this.name = name;
         }
 
         @Override
         public Object before(Exchange exchange) throws Exception {
-            Object body = exchange.getMessage().getBody();
-            ExchangeHelper.setVariable(exchange, name, body);
-            ExchangeHelper.setVariable(exchange, name + ".headers", factory.newMap(exchange.getMessage().getHeaders()));
+            // move body to variable
+            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, name, exchange.getMessage());
+            exchange.getMessage().setBody(null);
             return null;
         }
 
