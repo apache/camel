@@ -47,6 +47,7 @@
         <trimStackTrace>false</trimStackTrace>
         <sourcecheckExcludes />
         <sourcecheckExcludesComma />
+        <skip.integration.tests>true</skip.integration.tests>
 
         <!-- dependency versions -->
         <activemq-version>5.18.3</activemq-version>
@@ -260,7 +261,7 @@
         <jedis-client-version>5.1.0</jedis-client-version>
         <jetcd-version>0.7.7</jetcd-version>
         <jetty-version>12.0.5</jetty-version>
-        <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
+        <jetty-maven-plugin-version>11.0.19</jetty-maven-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
         <jgit-version>6.8.0.202311291450-r</jgit-version>
@@ -3197,7 +3198,7 @@
                 <plugin>
                     <groupId>${jetty-runner-groupId}</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>${jetty-plugin-version}</version>
+                    <version>${jetty-maven-plugin-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.owasp</groupId>
@@ -3486,6 +3487,7 @@
                                 <include>**/*Test.java</include>
                             </includes>
                             <excludes>
+                                <exclude>**/*IT.java</exclude>
                                 <exclude>**/*IntegrationTest.java</exclude>
                                 <exclude>**/*XXXTest.*</exclude>
                             </excludes>

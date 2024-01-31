@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>camel-itest</artifactId>
-    <name>Camel :: Integration Tests</name>
+    <name>Camel :: Integration Tests :: Cross Component</name>
     <description>Performs cross component integration tests</description>
 
     <properties>
