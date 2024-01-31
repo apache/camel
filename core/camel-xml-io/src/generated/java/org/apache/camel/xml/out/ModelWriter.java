@@ -4145,6 +4145,7 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteExpressionDefinitionAttributes(def);
         doWriteAttribute("headerName", def.getHeaderName());
+        doWriteAttribute("variableName", def.getVariableName());
         doWriteAttribute("propertyName", def.getPropertyName());
     }
     protected void doWriteSingleInputExpressionDefinition(

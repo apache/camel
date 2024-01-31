@@ -3011,6 +3011,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "headerName": def.setHeaderName(val); break;
                 case "propertyName": def.setPropertyName(val); break;
+                case "variableName": def.setVariableName(val); break;
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

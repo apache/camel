@@ -18432,6 +18432,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "skipFirst", type = "boolean", description = "To skip the very first element", displayName = "Skip First"),
                     @YamlProperty(name = "token", type = "string", required = true, description = "The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as the token to support dynamic tokens.", displayName = "Token"),
                     @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name"),
                     @YamlProperty(name = "xml", type = "boolean", description = "Whether the input is XML messages. This option must be set to true if working with XML payloads.", displayName = "Xml")
             }
     )
@@ -18513,6 +18514,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
+                    break;
+                }
+                case "variableName": {
+                    String val = asText(node);
+                    target.setVariableName(val);
                     break;
                 }
                 case "xml": {
@@ -20508,7 +20514,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mode", type = "enum:i,w,u,t", defaultValue = "i", description = "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default) w - wrapping the extracted token in its ancestor context u - unwrapping the extracted token to its child content t - extracting the text content of the specified element", displayName = "Mode"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix - uri mappings", displayName = "Namespace"),
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
-                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name")
             }
     )
     public static class XMLTokenizerExpressionDeserializer extends YamlDeserializerBase<XMLTokenizerExpression> {
@@ -20571,6 +20578,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTrim(val);
                     break;
                 }
+                case "variableName": {
+                    String val = asText(node);
+                    target.setVariableName(val);
+                    break;
+                }
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
@@ -20610,7 +20622,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "resultType", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE", defaultValue = "NODESET", description = "Sets the class name of the result type (type from output) The default result type is NodeSet", displayName = "Result Type"),
                     @YamlProperty(name = "saxon", type = "boolean", description = "Whether to use Saxon.", displayName = "Saxon"),
                     @YamlProperty(name = "threadSafety", type = "boolean", description = "Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type, and the returned set has multiple elements. In this situation there can be thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode. This option prevents concurrency issues by doing defensive copies of the nodes. It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has thread-safety issues which can be prevented by turning this option on.", displayName = "Thread Safety"),
-                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name")
             }
     )
     public static class XPathExpressionDeserializer extends YamlDeserializerBase<XPathExpression> {
@@ -20703,6 +20716,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTrim(val);
                     break;
                 }
+                case "variableName": {
+                    String val = asText(node);
+                    target.setVariableName(val);
+                    break;
+                }
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
@@ -20737,7 +20755,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
-                    @YamlProperty(name = "type", type = "string", description = "Sets the class name of the result type (type from output) The default result type is NodeSet", displayName = "Type")
+                    @YamlProperty(name = "type", type = "string", description = "Sets the class name of the result type (type from output) The default result type is NodeSet", displayName = "Type"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name")
             }
     )
     public static class XQueryExpressionDeserializer extends YamlDeserializerBase<XQueryExpression> {
@@ -20803,6 +20822,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
+                    break;
+                }
+                case "variableName": {
+                    String val = asText(node);
+                    target.setVariableName(val);
                     break;
                 }
                 default: {

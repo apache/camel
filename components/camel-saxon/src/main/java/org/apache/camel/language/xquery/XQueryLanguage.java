@@ -76,6 +76,10 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
         if (str != null) {
             builder.setPropertyName(str);
         }
+        str = property(String.class, properties, 3, getVariableName());
+        if (str != null) {
+            builder.setVariableName(str);
+        }
         if (configuration != null) {
             builder.setConfiguration(configuration);
         }
@@ -98,6 +102,10 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
             case "propertyname":
             case "propertyName":
                 setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "variablename":
+            case "variableName":
+                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "configuration":
             case "Configuration":
