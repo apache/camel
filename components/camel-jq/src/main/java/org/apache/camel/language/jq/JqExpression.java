@@ -32,9 +32,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderOrPropertyException;
+import org.apache.camel.NoSuchVariableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ExpressionResultTypeAware;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
 
@@ -48,6 +50,7 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
     private JsonQuery query;
     private TypeConverter typeConverter;
 
+    private String variableName;
     private String headerName;
     private String propertyName;
 
@@ -115,6 +118,17 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
 
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;
+    }
+
+    public String getVariableName() {
+        return variableName;
+    }
+
+    /**
+     * Name of the variable to use as input instead of the message body.
+     */
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
     }
 
     public String getHeaderName() {
@@ -206,7 +220,7 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
     private JsonNode getPayload(Exchange exchange) throws Exception {
         JsonNode payload = null;
 
-        if (headerName == null && propertyName == null) {
+        if (variableName == null && headerName == null && propertyName == null) {
             payload = exchange.getMessage().getBody(JsonNode.class);
             if (payload == null) {
                 throw new InvalidPayloadException(exchange, JsonNode.class);
@@ -214,7 +228,13 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
             // if body is stream cached then reset, so we can re-read it again
             MessageHelper.resetStreamCache(exchange.getMessage());
         } else {
-            if (headerName != null) {
+            if (variableName != null) {
+                payload = ExchangeHelper.getVariable(exchange, variableName, JsonNode.class);
+                if (payload == null) {
+                    throw new NoSuchVariableException(exchange, variableName, JsonNode.class);
+                }
+            }
+            if (payload == null && headerName != null) {
                 payload = exchange.getMessage().getHeader(headerName, JsonNode.class);
             }
             if (payload == null && propertyName != null) {

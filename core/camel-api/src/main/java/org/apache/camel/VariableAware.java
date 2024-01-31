@@ -14,20 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
-
-import java.util.Map;
-
-import org.apache.camel.spi.VariableRepository;
+package org.apache.camel;
 
 /**
- * Global {@link VariableRepository} which stores variables in-memory in a {@link Map}.
+ * An interface to represent an object that supports variables.
  */
-public final class GlobalVariableRepository extends AbstractVariableRepository {
+public interface VariableAware {
 
-    @Override
-    public String getId() {
-        return "global";
-    }
+    /**
+     * Returns a variable by name.
+     *
+     * @param  name the name of the variable
+     * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
+     */
+    Object getVariable(String name);
+
+    /**
+     * Sets a variable
+     *
+     * @param name  of the variable
+     * @param value the value of the variable
+     */
+    void setVariable(String name, Object value);
 
 }

@@ -28,6 +28,8 @@ import org.apache.camel.spi.Metadata;
 public abstract class SingleInputTypedExpressionDefinition extends TypedExpressionDefinition {
 
     @XmlAttribute
+    private String variableName;
+    @XmlAttribute
     @Metadata(label = "advanced")
     private String headerName;
     @XmlAttribute
@@ -47,8 +49,22 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
 
     protected SingleInputTypedExpressionDefinition(AbstractBuilder<?, ?> builder) {
         super(builder);
+        this.variableName = builder.variableName;
         this.headerName = builder.headerName;
         this.propertyName = builder.propertyName;
+    }
+
+    public String getVariableName() {
+        return variableName;
+    }
+
+    /**
+     * Name of variable to use as input, instead of the message body
+     * </p>
+     * It has as higher precedent if other are set.
+     */
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
     }
 
     public String getHeaderName() {
@@ -86,8 +102,19 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
             T extends AbstractBuilder<T, E>, E extends SingleInputTypedExpressionDefinition>
             extends TypedExpressionDefinition.AbstractBuilder<T, E> {
 
+        private String variableName;
         private String headerName;
         private String propertyName;
+
+        /**
+         * Name of variable to use as input, instead of the message body
+         * </p>
+         * It has as higher precedent if other are set.
+         */
+        public T variableName(String variableName) {
+            this.variableName = variableName;
+            return (T) this;
+        }
 
         /**
          * Name of header to use as input, instead of the message body

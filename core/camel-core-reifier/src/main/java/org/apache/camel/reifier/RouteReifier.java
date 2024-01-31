@@ -422,7 +422,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     }
 
     /**
-     * Advice for copying the message body into a variable
+     * Advice for moving message body into a variable when using variableReceive mode
      */
     private static class VariableAdvice implements CamelInternalProcessorAdvice<Object> {
 
@@ -434,8 +434,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         @Override
         public Object before(Exchange exchange) throws Exception {
-            Object body = exchange.getMessage().getBody();
-            ExchangeHelper.setVariable(exchange, name, body);
+            // move body to variable
+            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, name, exchange.getMessage());
+            exchange.getMessage().setBody(null);
             return null;
         }
 

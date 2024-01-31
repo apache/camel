@@ -53,6 +53,7 @@ import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.GroupTokenIterator;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -958,6 +959,70 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for evaluating the expression/predicate using the given language
+     *
+     * @param  expression the expression or predicate
+     * @param  input      input to use instead of message body
+     * @return            an expression object which will evaluate the expression/predicate using the given language
+     */
+    public static Expression singleInputLanguageExpression(final String language, final String expression, final String input) {
+        return new ExpressionAdapter() {
+            private Expression expr;
+            private Predicate pred;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return expr.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public boolean matches(Exchange exchange) {
+                return pred.matches(exchange);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                Language lan = context.resolveLanguage(language);
+                if (lan != null) {
+                    if (input != null && lan instanceof SingleInputTypedLanguageSupport sil) {
+                        String prefix = StringHelper.before(input, ":");
+                        String source = StringHelper.after(input, ":");
+                        if (prefix != null) {
+                            prefix = prefix.trim();
+                        }
+                        if (source != null) {
+                            source = source.trim();
+                        }
+                        if ("header".equals(prefix)) {
+                            sil.setHeaderName(source);
+                        } else if ("property".equals(prefix) || "exchangeProperty".equals(prefix)) {
+                            sil.setPropertyName(source);
+                        } else if ("variable".equals(prefix)) {
+                            sil.setVariableName(source);
+                        } else {
+                            throw new IllegalArgumentException(
+                                    "Invalid input source for language. Should either be header:key, exchangeProperty:key, or variable:key, was: "
+                                                               + input);
+                        }
+                    }
+                    pred = lan.createPredicate(expression);
+                    pred.init(context);
+                    expr = lan.createExpression(expression);
+                    expr.init(context);
+                } else {
+                    throw new NoSuchLanguageException(language);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "language[" + language + ":" + expression + "]";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message body
      */
     public static Expression bodyExpression() {
@@ -1142,15 +1207,19 @@ public class ExpressionBuilder {
     }
 
     /**
+     * @param  variableName the name of the variable from which the input data must be extracted if not empty.
      * @param  headerName   the name of the header from which the input data must be extracted if not empty.
      * @param  propertyName the name of the property from which the input data must be extracted if not empty and
      *                      {@code headerName} is empty.
-     * @return              a header expression if {@code headerName} is not empty, otherwise a property expression if
-     *                      {@code propertyName} is not empty or finally a body expression.
+     * @return              a variable expression if {@code variableName} is not empty, a header expression if
+     *                      {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is
+     *                      not empty or finally a body expression.
      */
-    public static Expression singleInputExpression(String headerName, String propertyName) {
+    public static Expression singleInputExpression(String variableName, String headerName, String propertyName) {
         final Expression exp;
-        if (ObjectHelper.isNotEmpty(headerName)) {
+        if (ObjectHelper.isNotEmpty(variableName)) {
+            exp = variableExpression(variableName);
+        } else if (ObjectHelper.isNotEmpty(headerName)) {
             exp = headerExpression(headerName);
         } else if (ObjectHelper.isNotEmpty(propertyName)) {
             exp = exchangePropertyExpression(propertyName);
@@ -1163,7 +1232,6 @@ public class ExpressionBuilder {
     /**
      * Returns the expression for the current thread id
      */
-
     public static Expression threadIdExpression() {
         return new ExpressionAdapter() {
             @Override
@@ -2302,6 +2370,32 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "bodyOneLine()";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression as pretty formatted string
+     */
+    public static Expression prettyExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = expression.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                } else if (body.startsWith("{") && body.endsWith("}") || body.startsWith("[") && body.endsWith("]")) {
+                    return Jsoner.prettyPrint(body); //json
+                } else if (body.startsWith("<") && body.endsWith(">")) {
+                    return ExpressionBuilder.prettyXml(body); //xml
+                }
+
+                return body;
+            }
+
+            @Override
+            public String toString() {
+                return "pretty(" + expression + ")";
             }
         };
     }

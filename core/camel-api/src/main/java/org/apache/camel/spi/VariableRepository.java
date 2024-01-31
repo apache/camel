@@ -17,11 +17,12 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.StaticService;
+import org.apache.camel.VariableAware;
 
 /**
  * Repository for storing and accessing variables.
  */
-public interface VariableRepository extends StaticService {
+public interface VariableRepository extends StaticService, VariableAware {
 
     /**
      * The id of this repository.
@@ -39,14 +40,6 @@ public interface VariableRepository extends StaticService {
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
      */
     Object getVariable(String name);
-
-    /**
-     * Sets a variable
-     *
-     * @param name  of the variable
-     * @param value the value of the variable
-     */
-    void setVariable(String name, Object value);
 
     /**
      * Removes the given variable

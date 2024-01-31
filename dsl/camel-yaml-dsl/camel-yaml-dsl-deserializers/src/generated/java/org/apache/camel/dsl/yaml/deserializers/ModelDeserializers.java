@@ -6871,7 +6871,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body It has as higher precedent if other are set.", displayName = "Variable Name")
             }
     )
     public static class Hl7TerserExpressionDeserializer extends YamlDeserializerBase<Hl7TerserExpression> {
@@ -6922,6 +6923,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
+                    break;
+                }
+                case "variableName": {
+                    String val = asText(node);
+                    target.setVariableName(val);
                     break;
                 }
                 default: {
@@ -7939,7 +7945,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body It has as higher precedent if other are set.", displayName = "Variable Name")
             }
     )
     public static class JqExpressionDeserializer extends YamlDeserializerBase<JqExpression> {
@@ -7990,6 +7997,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
+                    break;
+                }
+                case "variableName": {
+                    String val = asText(node);
+                    target.setVariableName(val);
                     break;
                 }
                 default: {
@@ -8253,6 +8265,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "suppressExceptions", type = "boolean", description = "Whether to suppress exceptions such as PathNotFoundException.", displayName = "Suppress Exceptions"),
                     @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
                     @YamlProperty(name = "unpackArray", type = "boolean", description = "Whether to unpack a single element json-array into an object.", displayName = "Unpack Array"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body It has as higher precedent if other are set.", displayName = "Variable Name"),
                     @YamlProperty(name = "writeAsString", type = "boolean", description = "Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.", displayName = "Write As String")
             }
     )
@@ -8329,6 +8342,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "unpackArray": {
                     String val = asText(node);
                     target.setUnpackArray(val);
+                    break;
+                }
+                case "variableName": {
+                    String val = asText(node);
+                    target.setVariableName(val);
                     break;
                 }
                 case "writeAsString": {

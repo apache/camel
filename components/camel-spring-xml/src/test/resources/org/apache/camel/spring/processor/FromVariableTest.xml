@@ -29,6 +29,8 @@
     <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:start" variableReceive="myKey"/>
+      <setHeader name="foo"><constant>456</constant></setHeader>
+      <setHeader name="bar"><constant>Murphy</constant></setHeader>
       <transform><simple>Bye ${body}</simple></transform>
       <to uri="mock:foo"/>
       <setBody>

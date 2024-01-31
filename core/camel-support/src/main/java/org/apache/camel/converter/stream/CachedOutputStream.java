@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.stream.FileInputStreamCache.TempFileManager;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.util.IOHelper;
 
 /**
  * This output stream will store the content into a File if the stream context size is exceed the THRESHOLD value. The
@@ -165,9 +166,10 @@ public class CachedOutputStream extends OutputStream {
     }
 
     // This class will close the CachedOutputStream when it is closed
-    private static class WrappedInputStream extends InputStream {
+    private static class WrappedInputStream extends InputStream implements StreamCache {
         private final CachedOutputStream cachedOutputStream;
         private final InputStream inputStream;
+        private long pos;
 
         WrappedInputStream(CachedOutputStream cos, InputStream is) {
             cachedOutputStream = cos;
@@ -176,6 +178,7 @@ public class CachedOutputStream extends OutputStream {
 
         @Override
         public int read() throws IOException {
+            pos++;
             return inputStream.read();
         }
 
@@ -185,8 +188,37 @@ public class CachedOutputStream extends OutputStream {
         }
 
         @Override
-        public synchronized void reset() throws IOException {
-            inputStream.reset();
+        public synchronized void reset() {
+            try {
+                inputStream.reset();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        @Override
+        public void writeTo(OutputStream os) throws IOException {
+            IOHelper.copy(this, os);
+        }
+
+        @Override
+        public StreamCache copy(Exchange exchange) throws IOException {
+            return cachedOutputStream.newStreamCache();
+        }
+
+        @Override
+        public boolean inMemory() {
+            return cachedOutputStream.inMemory;
+        }
+
+        @Override
+        public long length() {
+            return cachedOutputStream.totalLength;
+        }
+
+        @Override
+        public long position() {
+            return pos;
         }
 
         @Override

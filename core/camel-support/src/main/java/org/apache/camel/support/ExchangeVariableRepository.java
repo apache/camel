@@ -18,77 +18,95 @@ package org.apache.camel.support;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.NonManagedService;
-import org.apache.camel.StreamCache;
-import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepository;
-import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.CaseInsensitiveMap;
+import org.apache.camel.util.StringHelper;
 
 /**
  * {@link VariableRepository} which is local per {@link Exchange} to hold request-scoped variables.
  */
-class ExchangeVariableRepository extends ServiceSupport implements BrowsableVariableRepository, NonManagedService {
+final class ExchangeVariableRepository extends AbstractVariableRepository {
 
-    private final Map<String, Object> variables = new ConcurrentHashMap<>(8);
+    private final Map<String, Object> headers = new ConcurrentHashMap<>(8);
+
+    public ExchangeVariableRepository(CamelContext camelContext) {
+        setCamelContext(camelContext);
+        // ensure its started
+        ServiceHelper.startService(this);
+    }
+
+    void copyFrom(ExchangeVariableRepository source) {
+        setVariables(source.getVariables());
+        this.headers.putAll(source.headers);
+    }
+
+    @Override
+    public Object getVariable(String name) {
+        String id = StringHelper.before(name, ":");
+        if ("header".equals(id)) {
+            String prefix = StringHelper.after(name, ":");
+            if (prefix == null || prefix.isBlank()) {
+                throw new IllegalArgumentException("Variable " + name + " must have header key");
+            }
+            if (!prefix.contains(".")) {
+                prefix = prefix + ".";
+                // we want all headers for a given variable
+                Map<String, Object> map = new CaseInsensitiveMap();
+                for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                    String key = entry.getKey();
+                    if (key.startsWith(prefix)) {
+                        key = StringHelper.after(key, prefix);
+                        map.put(key, entry.getValue());
+                    }
+                }
+                return map;
+            } else {
+                return headers.get(prefix);
+            }
+        }
+        return super.getVariable(name);
+    }
+
+    @Override
+    public void setVariable(String name, Object value) {
+        String id = StringHelper.before(name, ":");
+        if ("header".equals(id)) {
+            name = StringHelper.after(name, ":");
+            if (value != null) {
+                // avoid the NullPointException
+                headers.put(name, value);
+            } else {
+                // if the value is null, we just remove the key from the map
+                headers.remove(name);
+            }
+        } else {
+            super.setVariable(name, value);
+        }
+    }
+
+    @Override
+    public Object removeVariable(String name) {
+        String id = StringHelper.before(name, ":");
+        if ("header".equals(id)) {
+            name = StringHelper.after(name, ":");
+            return headers.remove(name);
+        }
+        return super.removeVariable(name);
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        headers.clear();
+    }
 
     @Override
     public String getId() {
         return "exchange";
     }
 
-    @Override
-    public Object getVariable(String name) {
-        Object answer = variables.get(name);
-        if (answer instanceof StreamCache sc) {
-            // reset so the cache is ready to be used as a variable
-            sc.reset();
-        }
-        return answer;
-    }
-
-    @Override
-    public void setVariable(String name, Object value) {
-        if (value != null) {
-            // avoid the NullPointException
-            variables.put(name, value);
-        } else {
-            // if the value is null, we just remove the key from the map
-            variables.remove(name);
-        }
-    }
-
-    public boolean hasVariables() {
-        return !variables.isEmpty();
-    }
-
-    public int size() {
-        return variables.size();
-    }
-
-    public Stream<String> names() {
-        return variables.keySet().stream();
-    }
-
-    public Map<String, Object> getVariables() {
-        return variables;
-    }
-
-    public void setVariables(Map<String, Object> map) {
-        variables.putAll(map);
-    }
-
-    public void clear() {
-        variables.clear();
-    }
-
-    @Override
-    public Object removeVariable(String name) {
-        if (!hasVariables()) {
-            return null;
-        }
-        return variables.remove(name);
-    }
 }

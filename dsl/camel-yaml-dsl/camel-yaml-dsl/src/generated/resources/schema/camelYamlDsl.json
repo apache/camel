@@ -13063,6 +13063,11 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body It has as higher precedent if other are set."
             }
           }
         } ],
@@ -13226,6 +13231,11 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body It has as higher precedent if other are set."
             }
           }
         } ],
@@ -13295,6 +13305,11 @@
               "type" : "boolean",
               "title" : "Unpack Array",
               "description" : "Whether to unpack a single element json-array into an object."
+            },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body It has as higher precedent if other are set."
             },
             "writeAsString" : {
               "type" : "boolean",
