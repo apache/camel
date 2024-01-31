@@ -30,6 +30,8 @@ For example, you can build a custom repository that stores the variables in a da
 
 Each repository must have its own unique id. However, it's also possible to replace the default `global` repository with another.
 
+IMPORTANT: The id `exchange` and `header` is reserved by Camel internally and should not be used as id for custom repositories.
+
 == Getting and setting variables from Java API
 
 To get a local variable from the current exchange, you can do this via Java API:
