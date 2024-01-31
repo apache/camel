@@ -16,6 +16,9 @@
 # limitations under the License.
 #
 
+#upated trusted certificates
+su - root -c "update-ca-trust"
+
 if [ "$KEEP_RUNNING" == "true" ]; then
     echo "keep container running"
     su - root -c "/usr/sbin/sshd -D"

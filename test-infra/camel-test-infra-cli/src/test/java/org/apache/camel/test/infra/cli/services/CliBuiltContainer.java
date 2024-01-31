@@ -16,12 +16,19 @@
  */
 package org.apache.camel.test.infra.cli.services;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.camel.test.infra.common.TestUtils;
 import org.junit.platform.commons.util.StringUtils;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
+import org.testcontainers.utility.MountableFile;
 
 public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
 
@@ -33,11 +40,13 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
     protected static final int DEV_CONSOLE_PORT = 8080;
     protected static final int SSH_PORT = 22;
+    protected static final String TRUSTED_CERT_FOLDER = "/etc/pki/ca-trust/source/anchors";
 
     private final String sshPassword;
 
     public CliBuiltContainer(final String camelRef, final Boolean keepContainerRunning, final String dataFolder,
-                             final String sshPassword) {
+                             final String sshPassword, final Map<String, String> extraHosts,
+                             final List<String> trustedCertPaths) {
         super(new ImageFromDockerfile("localhost/camel-cli:" + camelRef + (keepContainerRunning ? "-R" : ""), false)
                 .withFileFromClasspath("Dockerfile",
                         "org/apache/camel/test/infra/cli/services/Dockerfile")
@@ -57,6 +66,16 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
             waitingFor(Wait.forLogMessage(".*keep container running.*", 1));
         }
         withExposedPorts(DEV_CONSOLE_PORT, SSH_PORT);
+        if (Objects.nonNull(extraHosts)) {
+            extraHosts.forEach((host, ip) -> withExtraHost(host, ip));
+        }
+        if (Objects.nonNull(trustedCertPaths)) {
+            trustedCertPaths.forEach(t -> {
+                final Path path = Paths.get(t);
+                withCopyToContainer(MountableFile.forHostPath(path),
+                        String.format("%s/%s", TRUSTED_CERT_FOLDER, path.getFileName()));
+            });
+        }
     }
 
     public String getMountPoint() {

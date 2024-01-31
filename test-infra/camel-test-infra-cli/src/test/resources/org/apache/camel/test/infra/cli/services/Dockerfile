@@ -25,7 +25,7 @@ ARG SSH_PASSWORD=jbang
 
 #update os and install tools
 RUN dnf update -y \
-    && dnf install java-17-openjdk openssh-server xauth -y
+    && dnf install java-17-openjdk-devel openssh-server xauth -y
 
 RUN ssh-keygen -A
 
@@ -43,6 +43,8 @@ RUN usermod -a -G wheel jbang
 USER jbang
 ENV HOME=/home/jbang
 WORKDIR $HOME
+
+ENV JAVA_HOME=/usr/lib/jvm/java
 
 RUN curl -Ls https://sh.jbang.dev | bash -s - app setup \
     && source ~/.bashrc \
