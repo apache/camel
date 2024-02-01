@@ -31,7 +31,7 @@ public class RestOpenApiValidationException extends Exception {
 
     @Override
     public String getMessage() {
-        return "Detected %d REST OpenAPI validation errors:\n%s"
+        return "Detected %d REST OpenAPI validation errors:%n%s"
                 .formatted(validationErrors.size(), String.join("\n", validationErrors));
     }
 }

@@ -1000,27 +1000,27 @@ public class Run extends CamelCommand {
 
         // use custom distribution of camel
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("//DEPS org.apache.camel:camel-bom:%s@pom\n", camelVersion));
-        sb.append(String.format("//DEPS org.apache.camel:camel-core:%s\n", camelVersion));
-        sb.append(String.format("//DEPS org.apache.camel:camel-core-engine:%s\n", camelVersion));
-        sb.append(String.format("//DEPS org.apache.camel:camel-main:%s\n", camelVersion));
-        sb.append(String.format("//DEPS org.apache.camel:camel-java-joor-dsl:%s\n", camelVersion));
-        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet:%s\n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-bom:%s@pom%n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-core:%s%n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-core-engine:%s%n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-main:%s%n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-java-joor-dsl:%s%n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet:%s%n", camelVersion));
         content = content.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
         // use apache distribution of camel-jbang
         String v = camelVersion.substring(0, camelVersion.lastIndexOf('.'));
         sb = new StringBuilder();
-        sb.append(String.format("//DEPS org.apache.camel:camel-jbang-core:%s\n", v));
-        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet-main:%s\n", v));
-        sb.append(String.format("//DEPS org.apache.camel:camel-resourceresolver-github:%s\n", v));
+        sb.append(String.format("//DEPS org.apache.camel:camel-jbang-core:%s%n", v));
+        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet-main:%s%n", v));
+        sb.append(String.format("//DEPS org.apache.camel:camel-resourceresolver-github:%s%n", v));
         if (VersionHelper.isGE(v, "3.19.0")) {
-            sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s\n", v));
+            sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", v));
         }
         content = content.replaceFirst("\\{\\{ \\.CamelJBangDependencies }}", sb.toString());
 
         sb = new StringBuilder();
-        sb.append(String.format("//DEPS org.apache.camel.kamelets:camel-kamelets:%s\n", kameletsVersion));
+        sb.append(String.format("//DEPS org.apache.camel.kamelets:camel-kamelets:%s%n", kameletsVersion));
         content = content.replaceFirst("\\{\\{ \\.CamelKameletsDependencies }}", sb.toString());
 
         String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java";
