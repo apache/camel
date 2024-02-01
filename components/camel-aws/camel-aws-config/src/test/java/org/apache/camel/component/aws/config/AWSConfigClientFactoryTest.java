@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.config;
 import org.apache.camel.component.aws.config.client.AWSConfigClientFactory;
 import org.apache.camel.component.aws.config.client.AWSConfigInternalClient;
 import org.apache.camel.component.aws.config.client.impl.AWSConfigClientIAMOptimizedImpl;
+import org.apache.camel.component.aws.config.client.impl.AWSConfigClientSessionTokenImpl;
 import org.apache.camel.component.aws.config.client.impl.AWSConfigClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class AWSConfigClientFactoryTest {
         configConfiguration.setUseDefaultCredentialsProvider(true);
         AWSConfigInternalClient configClient = AWSConfigClientFactory.getConfigClient(configConfiguration);
         assertTrue(configClient instanceof AWSConfigClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenConfigClient() {
+        AWSConfigConfiguration configConfiguration = new AWSConfigConfiguration();
+        configConfiguration.setUseSessionCredentials(true);
+        AWSConfigInternalClient configClient = AWSConfigClientFactory.getConfigClient(configConfiguration);
+        assertTrue(configClient instanceof AWSConfigClientSessionTokenImpl);
     }
 }

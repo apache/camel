@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.config.client;
 import org.apache.camel.component.aws.config.AWSConfigConfiguration;
 import org.apache.camel.component.aws.config.client.impl.AWSConfigClientIAMOptimizedImpl;
 import org.apache.camel.component.aws.config.client.impl.AWSConfigClientIAMProfileOptimizedImpl;
+import org.apache.camel.component.aws.config.client.impl.AWSConfigClientSessionTokenImpl;
 import org.apache.camel.component.aws.config.client.impl.AWSConfigClientStandardImpl;
 
 /**
@@ -40,6 +41,8 @@ public final class AWSConfigClientFactory {
             return new AWSConfigClientIAMOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
             return new AWSConfigClientIAMProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new AWSConfigClientSessionTokenImpl(configuration);
         } else {
             return new AWSConfigClientStandardImpl(configuration);
         }
