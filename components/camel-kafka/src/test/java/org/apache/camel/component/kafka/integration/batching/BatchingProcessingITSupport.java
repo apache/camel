@@ -92,6 +92,7 @@ abstract class BatchingProcessingITSupport extends BaseEmbeddedKafkaTestSupport 
 
         // Fourth step: We start again our route, since we have been committing the offsets from the first step,
         // we will expect to consume from the latest committed offset (e.g.: from offset 5()
+        LOG.debug("Starting the fourth step");
         contextExtension.getContext().getRouteController().startRoute("batching");
         setupPostExecutionExpectations();
 

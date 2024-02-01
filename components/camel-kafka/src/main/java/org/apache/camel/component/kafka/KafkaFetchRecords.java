@@ -352,7 +352,8 @@ public class KafkaFetchRecords implements Runnable {
 
             safeUnsubscribe();
         } catch (InterruptException e) {
-            kafkaConsumer.getExceptionHandler().handleException("Interrupted while consuming " + threadId + " from kafka topic",
+            kafkaConsumer.getExceptionHandler().handleException(
+                    "Thread " + threadId + " interrupted while consuming from kafka topic",
                     e);
             commitManager.commit();
 
@@ -512,8 +513,10 @@ public class KafkaFetchRecords implements Runnable {
             }
 
             // As advised in the KAFKA-1894 ticket, calling this wakeup method breaks the infinite loop
+            LOG.trace("Waking up Kafka consumer");
             consumer.wakeup();
         } catch (InterruptedException e) {
+            LOG.trace("Interrupted while waiting for processing to finish: waking up Kafka consumer");
             consumer.wakeup();
             Thread.currentThread().interrupt();
         } finally {
