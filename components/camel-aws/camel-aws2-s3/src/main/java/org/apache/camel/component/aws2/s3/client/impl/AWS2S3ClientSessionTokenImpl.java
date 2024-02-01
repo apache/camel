@@ -70,7 +70,8 @@ public class AWS2S3ClientSessionTokenImpl implements AWS2CamelS3InternalClient {
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
         }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null
+                && configuration.getSessionToken() != null) {
             AwsSessionCredentials cred = AwsSessionCredentials.create(configuration.getAccessKey(),
                     configuration.getSecretKey(), configuration.getSessionToken());
             if (isClientConfigFound) {
