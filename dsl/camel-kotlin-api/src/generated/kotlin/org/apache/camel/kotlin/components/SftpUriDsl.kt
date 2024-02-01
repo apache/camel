@@ -405,6 +405,10 @@ public class SftpUriDsl(
     it.property("serverAliveInterval", serverAliveInterval.toString())
   }
 
+  public fun serverMessageLoggingLevel(serverMessageLoggingLevel: String) {
+    it.property("serverMessageLoggingLevel", serverMessageLoggingLevel)
+  }
+
   public fun soTimeout(soTimeout: String) {
     it.property("soTimeout", soTimeout)
   }
@@ -723,6 +727,14 @@ public class SftpUriDsl(
 
   public fun useFixedDelay(useFixedDelay: Boolean) {
     it.property("useFixedDelay", useFixedDelay.toString())
+  }
+
+  public fun autoCreateKnownHostsFile(autoCreateKnownHostsFile: String) {
+    it.property("autoCreateKnownHostsFile", autoCreateKnownHostsFile)
+  }
+
+  public fun autoCreateKnownHostsFile(autoCreateKnownHostsFile: Boolean) {
+    it.property("autoCreateKnownHostsFile", autoCreateKnownHostsFile.toString())
   }
 
   public fun ciphers(ciphers: String) {
