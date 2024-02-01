@@ -57,7 +57,7 @@ public class SshUtils {
             Class<S> type,
             Collection<NamedFactory<S>> factories, String[] names) {
         List<NamedFactory<S>> list = new ArrayList<>();
-        LOGGER.trace("List of available " + type.getSimpleName().toLowerCase() + "algorithms : {}",
+        LOGGER.trace("List of available {} algorithms : {}", type.getSimpleName().toLowerCase(),
                 factories.stream().map(NamedResource::getName).collect(joining(",")));
         for (String name : names) {
             name = name.trim();
@@ -70,8 +70,7 @@ public class SshUtils {
                 }
             }
             if (!found) {
-                LOGGER.warn("Configured " + type.getSimpleName().toLowerCase()
-                            + " '" + name + "' not available");
+                LOGGER.warn("Configured {} '{}' not available", type.getSimpleName().toLowerCase(), name);
             }
         }
         return list;
@@ -93,7 +92,7 @@ public class SshUtils {
                 }
             }
             if (!found) {
-                LOGGER.warn("Configured KeyExchangeFactory '" + name + "' not available");
+                LOGGER.warn("Configured KeyExchangeFactory '{}' not available", name);
             }
         }
         return list;

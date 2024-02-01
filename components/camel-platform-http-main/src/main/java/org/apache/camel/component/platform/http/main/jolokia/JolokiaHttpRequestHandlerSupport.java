@@ -58,7 +58,7 @@ public class JolokiaHttpRequestHandlerSupport extends ServiceSupport implements 
         serviceManager.addService(new JolokiaSerializer());
         serviceManager.addService(new LocalRequestHandler(1));
 
-        LOG.info("Creating JolokiaHttpRequestHandlerSupport with restrictor " + restrictor);
+        LOG.info("Creating JolokiaHttpRequestHandlerSupport with restrictor {}", restrictor);
     }
 
     @Override

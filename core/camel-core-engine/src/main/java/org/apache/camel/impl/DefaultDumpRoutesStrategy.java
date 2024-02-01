@@ -591,7 +591,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             loc = extractLocationName(resource.getLocation());
         }
         if (loc != null) {
-            sbLog.append(String.format("\nSource: %s%n%s%n%s%n", loc, DIVIDER, dump));
+            sbLog.append(String.format("%nSource: %s%n%s%n%s%n", loc, DIVIDER, dump));
         } else {
             sbLog.append(String.format("%n%n%s%n", dump));
         }

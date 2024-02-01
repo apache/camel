@@ -91,8 +91,8 @@ public class JavaJoorClassLoader extends ClassLoader {
                 fos.write(byteCode);
                 IOHelper.close(fos);
             } catch (Exception e) {
-                LOG.warn("Error writing compiled class: " + name + " as bytecode to file: " + target + " due to "
-                         + e.getMessage() + ". This exception is ignored.");
+                LOG.warn("Error writing compiled class: {} as bytecode to file: {} due to {}. This exception is ignored.",
+                        name, target, e.getMessage());
             }
         }
     }
