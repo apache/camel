@@ -509,6 +509,10 @@ abstract class SingleInputTypedExpressionDsl(
     fun propertyName(propertyName: String) {
         def.propertyName = propertyName
     }
+
+    fun variableName(variableName: String) {
+        def.variableName = variableName
+    }
 }
 
 @CamelDslMarker
