@@ -24,8 +24,7 @@ The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` 
 ==== Languages
 
 The way languages are created and configured by Camel has been refactored to be aligned and avoid a thread-safety issues
-when using Java DSL. All the setter/getter on the `Language` classes has been removed (such as `TokenizeLanguage`) as the options are configured in the DSL
-in a consistent and thread-safe manner.
+when using Java DSL. The setter/getter on the `Language` classes for options that are not general has been removed (such as in `TokenizeLanguage`).
 
 ==== WireTap EIP
 
