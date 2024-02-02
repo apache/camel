@@ -113,7 +113,6 @@ public class TokenizeLanguage extends LanguageSupport {
             answer.init(getCamelContext());
         }
         return answer;
-
     }
 
 }
