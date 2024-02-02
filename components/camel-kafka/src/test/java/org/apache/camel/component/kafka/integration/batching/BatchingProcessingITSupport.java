@@ -81,9 +81,10 @@ abstract class BatchingProcessingITSupport extends BaseEmbeddedKafkaTestSupport 
         // Second step: We shut down our route, we expect nothing will be recovered by our route
         contextExtension.getContext().getRouteController().stopRoute("batching");
 
-        // Third step: While our route is stopped, we send 3 records more to a Kafka test topic
+        // Third step: While our route is stopped, we send 3 records more to a Kafka test topic.
+        // We should receive NO messages
         LOG.debug("Starting the third step");
-        to.expectedMessageCount(1);
+        to.expectedMessageCount(0);
         sendRecords(5, 8, topic);
 
         to.assertIsSatisfied(3000);
