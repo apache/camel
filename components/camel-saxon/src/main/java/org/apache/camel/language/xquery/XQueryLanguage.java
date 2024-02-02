@@ -35,6 +35,9 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
         return configuration;
     }
 
+    /**
+     * To use an existing Saxon configuration, instead of default settings.
+     */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
