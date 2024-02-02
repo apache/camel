@@ -21,125 +21,63 @@ import java.util.List;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 @Language("jsonpath")
-public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
-
-    private boolean suppressExceptions;
-    private boolean allowSimple = true;
-    private boolean allowEasyPredicate = true;
-    private boolean writeAsString;
-    private boolean unpackArray;
-    private Option[] options;
-
-    public boolean isSuppressExceptions() {
-        return suppressExceptions;
-    }
-
-    public void setSuppressExceptions(boolean suppressExceptions) {
-        this.suppressExceptions = suppressExceptions;
-    }
-
-    public boolean isAllowSimple() {
-        return allowSimple;
-    }
-
-    public void setAllowSimple(boolean allowSimple) {
-        this.allowSimple = allowSimple;
-    }
-
-    public boolean isAllowEasyPredicate() {
-        return allowEasyPredicate;
-    }
-
-    public void setAllowEasyPredicate(boolean allowEasyPredicate) {
-        this.allowEasyPredicate = allowEasyPredicate;
-    }
-
-    public boolean isWriteAsString() {
-        return writeAsString;
-    }
-
-    public void setWriteAsString(boolean writeAsString) {
-        this.writeAsString = writeAsString;
-    }
-
-    public boolean isUnpackArray() {
-        return unpackArray;
-    }
-
-    public void setUnpackArray(boolean unpackArray) {
-        this.unpackArray = unpackArray;
-    }
-
-    public Option[] getOptions() {
-        return options;
-    }
-
-    public void setOptions(Option... options) {
-        this.options = options;
-    }
+public class JsonPathLanguage extends SingleInputTypedLanguageSupport {
 
     @Override
     public Predicate createPredicate(String expression) {
-        JsonPathExpression answer = (JsonPathExpression) createExpression(expression);
-        answer.setPredicate(true);
-        return answer;
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
     @Override
     public Expression createExpression(String expression) {
-        JsonPathExpression answer = new JsonPathExpression(expression);
-        answer.setResultType(getResultType());
-        answer.setSuppressExceptions(suppressExceptions);
-        answer.setAllowSimple(allowSimple);
-        answer.setAllowEasyPredicate(allowEasyPredicate);
-        answer.setWriteAsString(writeAsString);
-        answer.setUnpackArray(unpackArray);
-        answer.setVariableName(getVariableName());
-        answer.setHeaderName(getHeaderName());
-        answer.setPropertyName(getPropertyName());
-        answer.setOptions(options);
-        answer.init(getCamelContext());
-        return answer;
+        return createExpression(expression, null);
     }
 
     @Override
     public Predicate createPredicate(String expression, Object[] properties) {
-        JsonPathExpression json = (JsonPathExpression) createExpression(expression, properties);
-        json.setPredicate(true);
-        return json;
+        return ExpressionToPredicateAdapter.toPredicate(doCreateJsonPathExpression(expression, properties, true));
     }
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
+        return doCreateJsonPathExpression(expression, properties, false);
+    }
+
+    protected Expression doCreateJsonPathExpression(String expression, Object[] properties, boolean predicate) {
         JsonPathExpression answer = new JsonPathExpression(expression);
+        answer.setPredicate(predicate);
         answer.setResultType(property(Class.class, properties, 0, getResultType()));
-        answer.setSuppressExceptions(property(boolean.class, properties, 1, suppressExceptions));
-        answer.setAllowSimple(property(boolean.class, properties, 2, allowSimple));
-        answer.setAllowEasyPredicate(property(boolean.class, properties, 3, allowEasyPredicate));
-        answer.setWriteAsString(property(boolean.class, properties, 4, writeAsString));
-        answer.setUnpackArray(property(boolean.class, properties, 5, unpackArray));
+        answer.setSuppressExceptions(property(boolean.class, properties, 1, false));
+        answer.setAllowSimple(property(boolean.class, properties, 2, true));
+        answer.setAllowEasyPredicate(property(boolean.class, properties, 3, true));
+        answer.setWriteAsString(property(boolean.class, properties, 4, false));
+        answer.setUnpackArray(property(boolean.class, properties, 5, false));
         answer.setHeaderName(property(String.class, properties, 6, getHeaderName()));
-        String option = (String) properties[7];
+        Object option = property(Object.class, properties, 7, null);
         if (option != null) {
             List<Option> list = new ArrayList<>();
-            for (String s : option.split(",")) {
-                list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
+            if (option instanceof String str) {
+                for (String s : str.split(",")) {
+                    list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
+                }
+            } else if (option instanceof Option opt) {
+                list.add(opt);
             }
             answer.setOptions(list.toArray(new Option[0]));
         }
         answer.setPropertyName(property(String.class, properties, 8, getPropertyName()));
         answer.setVariableName(property(String.class, properties, 9, getVariableName()));
-        answer.init(getCamelContext());
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
     }
 
@@ -157,54 +95,4 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
         return true;
     }
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resulttype":
-            case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
-            case "suppressexceptions":
-            case "suppressExceptions":
-                setSuppressExceptions(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
-                return true;
-            case "allowsimple":
-            case "allowSimple":
-                setAllowSimple(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
-                return true;
-            case "alloweasypredicate":
-            case "allowEasyPredicate":
-                setAllowEasyPredicate(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
-                return true;
-            case "variablename":
-            case "variableName":
-                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "propertyname":
-            case "propertyName":
-                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "writeasstring":
-            case "writeAsString":
-                setWriteAsString(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
-                return true;
-            case "unpackarray":
-            case "unpackArray":
-                setUnpackArray(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
-                return true;
-            case "options":
-                setOptions(PropertyConfigurerSupport.property(camelContext, Option[].class, value));
-                return true;
-            default:
-                return false;
-        }
-    }
 }
