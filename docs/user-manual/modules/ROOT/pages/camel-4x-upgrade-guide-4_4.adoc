@@ -21,6 +21,12 @@ Durations and some time-related information were consolidated in a new internal 
 
 The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` now has a 2nd parameter for the default value.
 
+==== Languages
+
+The way languages are created and configured by Camel has been refactored to be aligned and avoid a thread-safety issues
+when using Java DSL. All the setter/getter on the `Language` classes has been removed (such as `TokenizeLanguage`) as the options are configured in the DSL
+in a consistent and thread-safe manner.
+
 ==== WireTap EIP
 
 The copied exchange is no longer having exchange property CORRELATION_ID set that links to the original exchange.
