@@ -75,23 +75,26 @@ public class XMLTokenizeLanguage extends SingleInputLanguageSupport {
         String propertyName = property(String.class, properties, 4, null);
         String variableName = property(String.class, properties, 5, null);
 
-        XMLTokenExpressionIterator tokenizer = new XMLTokenExpressionIterator(expression, mode);
+        XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(expression, mode);
         if (headerName != null) {
-            tokenizer.setHeaderName(headerName);
+            answer.setHeaderName(headerName);
         }
         if (group != null) {
-            tokenizer.setGroup(group);
+            answer.setGroup(group);
         }
         if (ns != null) {
-            tokenizer.setNamespaces(ns.getNamespaces());
+            answer.setNamespaces(ns.getNamespaces());
         }
         if (propertyName != null) {
-            tokenizer.setPropertyName(propertyName);
+            answer.setPropertyName(propertyName);
         }
         if (variableName != null) {
-            tokenizer.setVariableName(variableName);
+            answer.setVariableName(variableName);
         }
-        return tokenizer;
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
+        return answer;
     }
 
 }
