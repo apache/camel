@@ -16,15 +16,15 @@
  */
 package org.apache.camel.tracing.propagation;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.tracing.ExtractAdapter;
+import org.apache.camel.util.CaseInsensitiveMap;
 
 public final class CamelHeadersExtractAdapter implements ExtractAdapter {
-    private final Map<String, String> map = new HashMap<>();
+    private final Map<String, Object> map = new CaseInsensitiveMap();
 
     public CamelHeadersExtractAdapter(final Map<String, Object> map) {
         // Extract string valued map entries
@@ -33,7 +33,7 @@ public final class CamelHeadersExtractAdapter implements ExtractAdapter {
     }
 
     @Override
-    public Iterator<Map.Entry<String, String>> iterator() {
+    public Iterator<Map.Entry<String, Object>> iterator() {
         return map.entrySet().iterator();
     }
 
