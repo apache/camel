@@ -29,16 +29,15 @@ import net.thisptr.jackson.jq.Versions;
 import net.thisptr.jackson.jq.exception.JsonQueryException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.NoSuchHeaderOrPropertyException;
-import org.apache.camel.NoSuchVariableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ExpressionResultTypeAware;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.builder.ExpressionBuilder;
 
 public class JqExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
 
@@ -49,10 +48,7 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
     private Class<?> resultType;
     private JsonQuery query;
     private TypeConverter typeConverter;
-
-    private String variableName;
-    private String headerName;
-    private String propertyName;
+    private Expression source;
 
     public JqExpression(String expression) {
         this(null, expression);
@@ -88,6 +84,9 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
                 resultType = JsonNode.class;
             }
         }
+        if (this.source == null) {
+            source = ExpressionBuilder.bodyExpression();
+        }
     }
 
     public Scope getScope() {
@@ -120,41 +119,12 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
         this.resultTypeName = resultTypeName;
     }
 
-    public String getVariableName() {
-        return variableName;
+    public Expression getSource() {
+        return source;
     }
 
-    /**
-     * Name of the variable to use as input instead of the message body.
-     */
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of the header to use as input instead of the message body.
-     * </p>
-     * It has higher precedence than the propertyName if both are set.
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * Name of the property to use as input instead of the message body.
-     * </p>
-     * It has lower precedence than the headerName if both are set.
-     */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setSource(Expression source) {
+        this.source = source;
     }
 
     @Override
@@ -218,33 +188,12 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
      * @return          the {@link JsonNode} to be processed by the expression
      */
     private JsonNode getPayload(Exchange exchange) throws Exception {
-        JsonNode payload = null;
-
-        if (variableName == null && headerName == null && propertyName == null) {
-            payload = exchange.getMessage().getBody(JsonNode.class);
-            if (payload == null) {
-                throw new InvalidPayloadException(exchange, JsonNode.class);
-            }
-            // if body is stream cached then reset, so we can re-read it again
-            MessageHelper.resetStreamCache(exchange.getMessage());
-        } else {
-            if (variableName != null) {
-                payload = ExchangeHelper.getVariable(exchange, variableName, JsonNode.class);
-                if (payload == null) {
-                    throw new NoSuchVariableException(exchange, variableName, JsonNode.class);
-                }
-            }
-            if (payload == null && headerName != null) {
-                payload = exchange.getMessage().getHeader(headerName, JsonNode.class);
-            }
-            if (payload == null && propertyName != null) {
-                payload = exchange.getProperty(propertyName, JsonNode.class);
-            }
-            if (payload == null) {
-                throw new NoSuchHeaderOrPropertyException(exchange, headerName, propertyName, JsonNode.class);
-            }
+        JsonNode payload = source.evaluate(exchange, JsonNode.class);
+        // if body is stream cached then reset, so we can re-read it again
+        MessageHelper.resetStreamCache(exchange.getMessage());
+        if (payload == null) {
+            throw new InvalidPayloadException(exchange, JsonNode.class);
         }
-
         return payload;
     }
 }

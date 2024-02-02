@@ -73,15 +73,14 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
     }
 
     @Override
-    public Expression createExpression(String expression, Object[] properties) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         JqExpression answer = new JqExpression(Scope.newChildScope(rootScope), expression);
         answer.setResultType(property(Class.class, properties, 0, getResultType()));
-        answer.setVariableName(property(String.class, properties, 1, getVariableName()));
-        answer.setHeaderName(property(String.class, properties, 2, getHeaderName()));
-        answer.setPropertyName(property(String.class, properties, 3, getPropertyName()));
+        answer.setSource(source);
         if (getCamelContext() != null) {
             answer.init(getCamelContext());
         }
         return answer;
     }
+
 }

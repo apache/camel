@@ -987,29 +987,38 @@ public class ExpressionBuilder {
                 if (lan != null) {
                     if (input != null && lan instanceof SingleInputTypedLanguageSupport sil) {
                         String prefix = StringHelper.before(input, ":");
-                        String source = StringHelper.after(input, ":");
+                        String name = StringHelper.after(input, ":");
                         if (prefix != null) {
                             prefix = prefix.trim();
                         }
-                        if (source != null) {
-                            source = source.trim();
+                        if (name != null) {
+                            name = name.trim();
                         }
+                        String header = null;
+                        String property = null;
+                        String variable = null;
                         if ("header".equals(prefix)) {
-                            sil.setHeaderName(source);
+                            header = name;
                         } else if ("property".equals(prefix) || "exchangeProperty".equals(prefix)) {
-                            sil.setPropertyName(source);
+                            property = name;
                         } else if ("variable".equals(prefix)) {
-                            sil.setVariableName(source);
+                            variable = name;
                         } else {
                             throw new IllegalArgumentException(
                                     "Invalid input source for language. Should either be header:key, exchangeProperty:key, or variable:key, was: "
                                                                + input);
                         }
+                        Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
+                        expr = sil.createExpression(source, expression, null);
+                        expr.init(context);
+                        pred = PredicateBuilder.toPredicate(expr);
+                        pred.init(context);
+                    } else {
+                        pred = lan.createPredicate(expression);
+                        pred.init(context);
+                        expr = lan.createExpression(expression);
+                        expr.init(context);
                     }
-                    pred = lan.createPredicate(expression);
-                    pred.init(context);
-                    expr = lan.createExpression(expression);
-                    expr.init(context);
                 } else {
                     throw new NoSuchLanguageException(language);
                 }

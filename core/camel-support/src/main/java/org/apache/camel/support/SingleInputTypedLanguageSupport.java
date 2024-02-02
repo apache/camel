@@ -25,53 +25,12 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  */
 public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSupport {
 
-    private String variableName;
-    private String headerName;
-    private String propertyName;
-
-    public String getVariableName() {
-        return variableName;
-    }
-
-    /**
-     * Name of variable to use as input, instead of the message body
-     * </p>
-     * It has as higher precedent if other are set.
-     */
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to use as input, instead of the message body
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * Name of property to use as input, instead of the message body.
-     * <p>
-     * It has a lower precedent than the name of header if both are set.
-     */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
     @Override
     public Expression createExpression(String expression, Object[] properties) {
         Class<?> type = property(Class.class, properties, 0, getResultType());
-        String variable = property(String.class, properties, 1, getVariableName());
-        String header = property(String.class, properties, 2, getHeaderName());
-        String property = property(String.class, properties, 3, getPropertyName());
+        String variable = property(String.class, properties, 1, null);
+        String header = property(String.class, properties, 2, null);
+        String property = property(String.class, properties, 3, null);
         Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
         if (type == null || type == Object.class) {
             return createExpression(source, expression, properties);
@@ -87,7 +46,7 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
      * @param  properties configuration properties (optimized as object array with hardcoded positions for properties)
      * @return            the created expression
      */
-    protected Expression createExpression(Expression source, String expression, Object[] properties) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         throw new UnsupportedOperationException();
     }
 }
