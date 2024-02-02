@@ -97,16 +97,6 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         this.xpathFactory = xpathFactory;
     }
 
-    @Deprecated
-    public void setUseSaxon(Boolean useSaxon) {
-        setSaxon(useSaxon);
-    }
-
-    @Deprecated
-    public Boolean getUseSaxon() {
-        return getSaxon();
-    }
-
     public Boolean getSaxon() {
         return saxon;
     }
@@ -221,10 +211,6 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
             case "xpathfactory":
             case "xpathFactory":
                 setXpathFactory(PropertyConfigurerSupport.property(camelContext, XPathFactory.class, value));
-                return true;
-            case "usesaxon":
-            case "useSaxon":
-                setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
                 return true;
             case "saxon":
                 setSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));

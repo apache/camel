@@ -63,19 +63,13 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
     }
 
     @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
+    public Expression createExpression(String expression) {
+        return createExpression(expression, null);
     }
 
     @Override
-    public Expression createExpression(String expression) {
-        JqExpression answer = new JqExpression(Scope.newChildScope(rootScope), expression);
-        answer.setResultType(getResultType());
-        answer.setVariableName(getVariableName());
-        answer.setHeaderName(getHeaderName());
-        answer.setPropertyName(getPropertyName());
-        answer.init(getCamelContext());
-        return answer;
+    public Predicate createPredicate(String expression, Object[] properties) {
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
@@ -85,7 +79,9 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
         answer.setVariableName(property(String.class, properties, 1, getVariableName()));
         answer.setHeaderName(property(String.class, properties, 2, getHeaderName()));
         answer.setPropertyName(property(String.class, properties, 3, getPropertyName()));
-        answer.init(getCamelContext());
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
     }
 }

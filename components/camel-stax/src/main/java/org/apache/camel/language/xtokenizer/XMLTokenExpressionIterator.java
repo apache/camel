@@ -39,6 +39,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.NamespaceAware;
@@ -72,6 +73,13 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.propertyName = propertyName;
         this.path = path;
         this.mode = mode;
+        this.group = group;
+    }
+
+    @Override
+    public void init(CamelContext context) {
+        super.init(context);
+        // group must be 1 or higher
         this.group = Math.max(group, 1);
     }
 

@@ -18,16 +18,12 @@ package org.apache.camel.language.xtokenizer;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.SingleInputLanguageSupport;
 import org.apache.camel.support.builder.Namespaces;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A language for tokenizer expressions.
@@ -41,60 +37,16 @@ import org.apache.camel.util.ObjectHelper;
  * </ul>
  */
 @Language("xtokenize")
-public class XMLTokenizeLanguage extends SingleInputLanguageSupport implements PropertyConfigurer {
-
-    private String path;
-    private char mode;
-    private int group;
-    private Namespaces namespaces;
-
-    @Deprecated
-    public static Expression tokenize(String path) {
-        return tokenize(null, path, 'i');
-    }
-
-    @Deprecated
-    public static Expression tokenize(String path, char mode) {
-        return tokenize(null, path, mode);
-    }
-
-    @Deprecated
-    public static Expression tokenize(String headerName, String path) {
-        return tokenize(headerName, path, 'i');
-    }
-
-    @Deprecated
-    public static Expression tokenize(String headerName, String path, char mode) {
-        return tokenize(headerName, path, mode, 1, null);
-    }
-
-    @Deprecated
-    public static Expression tokenize(String headerName, String path, char mode, int group, Namespaces namespaces) {
-        XMLTokenizeLanguage language = new XMLTokenizeLanguage();
-        language.setHeaderName(headerName);
-        language.setMode(mode);
-        language.setGroup(group);
-        language.setNamespaces(namespaces);
-        return language.createExpression(path);
-    }
+public class XMLTokenizeLanguage extends SingleInputLanguageSupport {
 
     @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
-    /**
-     * Creates a tokenize expression.
-     */
     @Override
     public Expression createExpression(String expression) {
-        String path = expression != null ? expression : this.path;
-        ObjectHelper.notNull(path, "path");
-        XMLTokenExpressionIterator expr = new XMLTokenExpressionIterator(path, mode, group, getHeaderName(), getPropertyName());
-        if (namespaces != null) {
-            expr.setNamespaces(namespaces.getNamespaces());
-        }
-        return expr;
+        return createExpression(expression, null);
     }
 
     @Override
@@ -104,90 +56,31 @@ public class XMLTokenizeLanguage extends SingleInputLanguageSupport implements P
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        XMLTokenizeLanguage answer = new XMLTokenizeLanguage();
+        Character mode = property(Character.class, properties, 1, "i");
+
+        XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(expression, mode);
         answer.setHeaderName(property(String.class, properties, 0, getHeaderName()));
-        answer.setMode(property(Character.class, properties, 1, "i"));
-        answer.setGroup(property(Integer.class, properties, 2, group));
+        answer.setGroup(property(int.class, properties, 2, 1));
         Object obj = properties[3];
         if (obj != null) {
+            Namespaces ns;
             if (obj instanceof Namespaces) {
-                answer.setNamespaces((Namespaces) obj);
+                ns = (Namespaces) obj;
             } else if (obj instanceof Map) {
-                Namespaces ns = new Namespaces();
+                ns = new Namespaces();
                 ((Map<String, String>) obj).forEach(ns::add);
-                answer.setNamespaces(ns);
             } else {
                 throw new IllegalArgumentException(
                         "Namespaces is not instance of java.util.Map or " + Namespaces.class.getName());
             }
+            answer.setNamespaces(ns.getNamespaces());
         }
-        String path = expression != null ? expression : this.path;
-        answer.setPropertyName(property(String.class, properties, 4, getPropertyName()));
-        answer.setVariableName(property(String.class, properties, 5, getVariableName()));
-        return answer.createExpression(path);
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public char getMode() {
-        return mode;
-    }
-
-    public void setMode(char mode) {
-        this.mode = mode;
-    }
-
-    public int getGroup() {
-        return group;
-    }
-
-    public void setGroup(int group) {
-        this.group = group;
-    }
-
-    public Namespaces getNamespaces() {
-        return namespaces;
-    }
-
-    public void setNamespaces(Namespaces namespaces) {
-        this.namespaces = namespaces;
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
+        answer.setPropertyName(property(String.class, properties, 4, null));
+        answer.setVariableName(property(String.class, properties, 5, null));
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
         }
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "propertyname":
-            case "propertyName":
-                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "variablename":
-            case "variableName":
-                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "mode":
-                setMode(PropertyConfigurerSupport.property(camelContext, char.class, value));
-                return true;
-            case "group":
-                setGroup(PropertyConfigurerSupport.property(camelContext, int.class, value));
-                return true;
-            case "namespaces":
-                setNamespaces(PropertyConfigurerSupport.property(camelContext, Namespaces.class, value));
-                return true;
-            default:
-                return false;
-        }
+        return answer;
     }
+
 }

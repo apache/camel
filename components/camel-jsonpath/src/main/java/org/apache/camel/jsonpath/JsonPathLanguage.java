@@ -27,6 +27,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -90,56 +91,53 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
 
     @Override
     public Predicate createPredicate(String expression) {
-        JsonPathExpression answer = (JsonPathExpression) createExpression(expression);
-        answer.setPredicate(true);
-        return answer;
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
     @Override
     public Expression createExpression(String expression) {
-        JsonPathExpression answer = new JsonPathExpression(expression);
-        answer.setResultType(getResultType());
-        answer.setSuppressExceptions(suppressExceptions);
-        answer.setAllowSimple(allowSimple);
-        answer.setAllowEasyPredicate(allowEasyPredicate);
-        answer.setWriteAsString(writeAsString);
-        answer.setUnpackArray(unpackArray);
-        answer.setVariableName(getVariableName());
-        answer.setHeaderName(getHeaderName());
-        answer.setPropertyName(getPropertyName());
-        answer.setOptions(options);
-        answer.init(getCamelContext());
-        return answer;
+        return createExpression(expression, null);
     }
 
     @Override
     public Predicate createPredicate(String expression, Object[] properties) {
-        JsonPathExpression json = (JsonPathExpression) createExpression(expression, properties);
-        json.setPredicate(true);
-        return json;
+        return ExpressionToPredicateAdapter.toPredicate(doCreateJsonPathExpression(expression, properties, true));
     }
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
+        return doCreateJsonPathExpression(expression, properties, false);
+    }
+
+    protected Expression doCreateJsonPathExpression(String expression, Object[] properties, boolean predicate) {
         JsonPathExpression answer = new JsonPathExpression(expression);
+        answer.setPredicate(predicate);
         answer.setResultType(property(Class.class, properties, 0, getResultType()));
-        answer.setSuppressExceptions(property(boolean.class, properties, 1, suppressExceptions));
-        answer.setAllowSimple(property(boolean.class, properties, 2, allowSimple));
-        answer.setAllowEasyPredicate(property(boolean.class, properties, 3, allowEasyPredicate));
-        answer.setWriteAsString(property(boolean.class, properties, 4, writeAsString));
-        answer.setUnpackArray(property(boolean.class, properties, 5, unpackArray));
+        answer.setSuppressExceptions(property(boolean.class, properties, 1, isSuppressExceptions()));
+        answer.setAllowSimple(property(boolean.class, properties, 2, isAllowSimple()));
+        answer.setAllowEasyPredicate(property(boolean.class, properties, 3, isAllowEasyPredicate()));
+        answer.setWriteAsString(property(boolean.class, properties, 4, isWriteAsString()));
+        answer.setUnpackArray(property(boolean.class, properties, 5, isUnpackArray()));
         answer.setHeaderName(property(String.class, properties, 6, getHeaderName()));
-        String option = (String) properties[7];
+        Object option = property(Object.class, properties, 7, null);
         if (option != null) {
             List<Option> list = new ArrayList<>();
-            for (String s : option.split(",")) {
-                list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
+            if (option instanceof String str) {
+                for (String s : str.split(",")) {
+                    list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
+                }
+            } else if (option instanceof Option opt) {
+                list.add(opt);
             }
             answer.setOptions(list.toArray(new Option[0]));
+        } else if (options != null) {
+            answer.setOptions(options);
         }
         answer.setPropertyName(property(String.class, properties, 8, getPropertyName()));
         answer.setVariableName(property(String.class, properties, 9, getVariableName()));
-        answer.init(getCamelContext());
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
     }
 
@@ -179,10 +177,6 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
             case "alloweasypredicate":
             case "allowEasyPredicate":
                 setAllowEasyPredicate(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
-                return true;
-            case "variablename":
-            case "variableName":
-                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "headername":
             case "headerName":

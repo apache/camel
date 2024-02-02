@@ -21,6 +21,7 @@ import org.apache.camel.spi.Language;
 /**
  * Base class for {@link Language} implementations that support different sources of input data.
  */
+@Deprecated
 public abstract class SingleInputLanguageSupport extends LanguageSupport {
 
     private String variableName;

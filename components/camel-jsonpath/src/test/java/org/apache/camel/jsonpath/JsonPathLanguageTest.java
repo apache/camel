@@ -129,9 +129,9 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
 
         JsonPathLanguage lan = (JsonPathLanguage) context.resolveLanguage("jsonpath");
-        lan.setOptions(Option.SUPPRESS_EXCEPTIONS);
 
-        Expression exp = lan.createExpression("$.foo");
+        Expression exp = lan.createExpression("$.foo",
+                new Object[] { null, null, null, null, null, null, null, Option.SUPPRESS_EXCEPTIONS });
         String nofoo = exp.evaluate(exchange, String.class);
 
         assertNull(nofoo);
@@ -143,10 +143,9 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
 
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
-        language.setUnpackArray(true);
-        language.setResultType(String.class);
 
-        JsonPathExpression expression = (JsonPathExpression) language.createExpression("$.store.book");
+        JsonPathExpression expression = (JsonPathExpression) language.createExpression("$.store.book",
+                new Object[] { String.class, null, null, null, null, true });
         String json = (String) expression.evaluate(exchange);
 
         // check that a single json object is returned, not an array
@@ -159,10 +158,9 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
 
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
-        language.setUnpackArray(false);
-        language.setResultType(String.class);
 
-        JsonPathExpression expression = (JsonPathExpression) language.createExpression("$.store.book");
+        JsonPathExpression expression = (JsonPathExpression) language.createExpression("$.store.book",
+                new Object[] { String.class, null, null, null, false });
         String json = (String) expression.evaluate(exchange);
 
         // check that an array is returned, not a single object

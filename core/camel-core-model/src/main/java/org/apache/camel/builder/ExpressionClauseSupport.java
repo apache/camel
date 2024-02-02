@@ -546,7 +546,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpath(String text, boolean suppressExceptions) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
         return expression(expression);
     }
 
@@ -560,8 +562,12 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
-        expression.setAllowSimple(Boolean.toString(allowSimple));
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
+        if (allowSimple) {
+            expression.setAllowSimple("true");
+        }
         return expression(expression);
     }
 
@@ -589,7 +595,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpath(String text, boolean suppressExceptions, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
         expression.setResultType(resultType);
         expression(expression);
         return result;
@@ -606,8 +614,12 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
-        expression.setAllowSimple(Boolean.toString(allowSimple));
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
+        if (allowSimple) {
+            expression.setAllowSimple("true");
+        }
         expression.setResultType(resultType);
         expression(expression);
         return result;
@@ -625,8 +637,12 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple, Class<?> resultType, String headerName) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
-        expression.setAllowSimple(Boolean.toString(allowSimple));
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
+        if (allowSimple) {
+            expression.setAllowSimple("true");
+        }
         expression.setResultType(resultType);
         expression.setHeaderName(headerName);
         expression(expression);
@@ -663,8 +679,10 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setWriteAsString(Boolean.toString(true));
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setWriteAsString("true");
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
         return expression(expression);
     }
 
@@ -678,8 +696,10 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setWriteAsString(Boolean.toString(true));
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setWriteAsString("true");
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
         expression.setResultType(resultType);
         return expression(expression);
     }
@@ -694,9 +714,13 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions, boolean allowSimple) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setWriteAsString(Boolean.toString(true));
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
-        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setWriteAsString("true");
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
+        if (allowSimple) {
+            expression.setAllowSimple("true");
+        }
         return expression(expression);
     }
 
@@ -711,9 +735,13 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions, boolean allowSimple, String headerName) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setWriteAsString(Boolean.toString(true));
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
-        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setWriteAsString("true");
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
+        if (allowSimple) {
+            expression.setAllowSimple("true");
+        }
         expression.setHeaderName(headerName);
         return expression(expression);
     }
@@ -731,9 +759,13 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T jsonpathWriteAsString(
             String text, boolean suppressExceptions, boolean allowSimple, String headerName, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setWriteAsString(Boolean.toString(true));
-        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
-        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setWriteAsString("true");
+        if (suppressExceptions) {
+            expression.setSuppressExceptions("true");
+        }
+        if (allowSimple) {
+            expression.setAllowSimple("true");
+        }
         expression.setHeaderName(headerName);
         expression.setResultType(resultType);
         return expression(expression);
@@ -749,7 +781,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T jsonpathUnpack(String text, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setUnpackArray(Boolean.toString(true));
+        expression.setUnpackArray("true");
         expression.setResultType(resultType);
         return expression(expression);
     }
