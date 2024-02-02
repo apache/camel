@@ -56,12 +56,14 @@ public class XMLTokenizeLanguage extends SingleInputLanguageSupport {
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        String headerName = property(String.class, properties, 0, getHeaderName());
         Character mode = property(Character.class, properties, 1, "i");
-        Integer group = property(Integer.class, properties, 2, null);
+
+        XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(expression, mode);
+        answer.setHeaderName(property(String.class, properties, 0, getHeaderName()));
+        answer.setGroup(property(int.class, properties, 2, 1));
         Object obj = properties[3];
-        Namespaces ns = null;
         if (obj != null) {
+            Namespaces ns;
             if (obj instanceof Namespaces) {
                 ns = (Namespaces) obj;
             } else if (obj instanceof Map) {
@@ -71,26 +73,10 @@ public class XMLTokenizeLanguage extends SingleInputLanguageSupport {
                 throw new IllegalArgumentException(
                         "Namespaces is not instance of java.util.Map or " + Namespaces.class.getName());
             }
-        }
-        String propertyName = property(String.class, properties, 4, null);
-        String variableName = property(String.class, properties, 5, null);
-
-        XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(expression, mode);
-        if (headerName != null) {
-            answer.setHeaderName(headerName);
-        }
-        if (group != null) {
-            answer.setGroup(group);
-        }
-        if (ns != null) {
             answer.setNamespaces(ns.getNamespaces());
         }
-        if (propertyName != null) {
-            answer.setPropertyName(propertyName);
-        }
-        if (variableName != null) {
-            answer.setVariableName(variableName);
-        }
+        answer.setPropertyName(property(String.class, properties, 4, null));
+        answer.setVariableName(property(String.class, properties, 5, null));
         if (getCamelContext() != null) {
             answer.init(getCamelContext());
         }
