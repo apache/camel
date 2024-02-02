@@ -148,7 +148,9 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
         answer.setBeanComponent(beanComponent);
         answer.setParameterMappingStrategy(parameterMappingStrategy);
         answer.setSimple(simple);
-        answer.init(getCamelContext());
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
     }
 
