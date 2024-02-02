@@ -277,15 +277,10 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
     }
 
     @Override
-    public void init() {
+    public void start() {
         beanComponent = getCamelContext().getComponent("bean", BeanComponent.class);
         parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
         simple = getCamelContext().resolveLanguage("simple");
-    }
-
-    @Override
-    public void start() {
-        // noop
     }
 
     @Override
