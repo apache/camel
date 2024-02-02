@@ -36,7 +36,7 @@ public class WasmExpressionReifier extends TypedExpressionReifier<WasmExpression
     protected Object[] createProperties() {
         Object[] properties = new Object[2];
         properties[0] = definition.getResultType();
-        properties[1] = definition.getModule();
+        properties[1] = parseString(definition.getModule());
         return properties;
     }
 }

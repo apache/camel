@@ -36,7 +36,7 @@ public class MethodCallExpressionReifier extends TypedExpressionReifier<MethodCa
         properties[2] = definition.getBeanType();
         properties[3] = parseString(definition.getRef());
         properties[4] = parseString(definition.getScope());
-        properties[5] = definition.getValidate();
+        properties[5] = parseString(definition.getValidate());
         properties[6] = definition.getResultType();
         return properties;
     }
