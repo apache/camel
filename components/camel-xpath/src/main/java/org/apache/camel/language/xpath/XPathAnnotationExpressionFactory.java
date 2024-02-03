@@ -20,10 +20,10 @@ import java.lang.annotation.Annotation;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.support.language.NamespacePrefix;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Factory for the XPath expression annotations.
@@ -51,14 +51,12 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
             }
         }
 
-        // Set the header name that we want the XPathBuilder to apply the XPath expression to
+        String variableName = getVariableName(annotation);
         String headerName = getHeaderName(annotation);
-        if (ObjectHelper.isNotEmpty(headerName)) {
-            builder.setHeaderName(headerName);
-        }
         String propertyName = getPropertyName(annotation);
-        if (ObjectHelper.isNotEmpty(propertyName)) {
-            builder.setPropertyName(propertyName);
+        if (variableName != null || headerName != null || propertyName != null) {
+            Expression source = ExpressionBuilder.singleInputExpression(variableName, headerName, propertyName);
+            builder.setSource(source);
         }
 
         return builder;
@@ -80,13 +78,16 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
      *         expression to. Otherwise, null will be returned
      */
     protected String getHeaderName(Annotation annotation) {
-        String headerValue = null;
+        String answer = null;
         try {
-            headerValue = (String) getAnnotationObjectValue(annotation, "headerName");
+            answer = (String) getAnnotationObjectValue(annotation, "headerName");
         } catch (Exception e) {
             // Do Nothing
         }
-        return headerValue;
+        if (answer != null && answer.isBlank()) {
+            return null;
+        }
+        return answer;
     }
 
     /**
@@ -97,13 +98,36 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
      *         expression to. Otherwise, null will be returned
      */
     protected String getPropertyName(Annotation annotation) {
-        String propertyValue = null;
+        String answer = null;
         try {
-            propertyValue = (String) getAnnotationObjectValue(annotation, "propertyName");
+            answer = (String) getAnnotationObjectValue(annotation, "propertyName");
         } catch (Exception e) {
             // Do Nothing
         }
-        return propertyValue;
+        if (answer != null && answer.isBlank()) {
+            return null;
+        }
+        return answer;
+    }
+
+    /**
+     * Extracts the value of the property method in the Annotation. For backwards compatibility this method will return
+     * null if the annotation's method is not found.
+     *
+     * @return If the annotation has the method 'variableName' then the name of the property we want to apply the XPath
+     *         expression to. Otherwise, null will be returned
+     */
+    protected String getVariableName(Annotation annotation) {
+        String answer = null;
+        try {
+            answer = (String) getAnnotationObjectValue(annotation, "variableName");
+        } catch (Exception e) {
+            // Do Nothing
+        }
+        if (answer != null && answer.isBlank()) {
+            return null;
+        }
+        return answer;
     }
 
     protected boolean isLogNamespaces(Annotation annotation) {
