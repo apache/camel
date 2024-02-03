@@ -39,7 +39,7 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        Class<?> type = property(Class.class, properties, 0, getResultType());
+        Class<?> type = property(Class.class, properties, 0, null);
         String variable = property(String.class, properties, 1, null);
         String header = property(String.class, properties, 2, null);
         String property = property(String.class, properties, 3, null);
@@ -52,7 +52,7 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
 
     @Override
     public Predicate createPredicate(String expression, Object[] properties) {
-        Class<?> type = property(Class.class, properties, 0, getResultType());
+        Class<?> type = property(Class.class, properties, 0, null);
         String variable = property(String.class, properties, 1, null);
         String header = property(String.class, properties, 2, null);
         String property = property(String.class, properties, 3, null);
