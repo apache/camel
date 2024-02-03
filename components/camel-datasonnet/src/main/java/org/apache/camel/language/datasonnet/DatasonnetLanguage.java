@@ -27,19 +27,16 @@ import com.datasonnet.Mapper;
 import com.datasonnet.document.MediaType;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.TypedLanguageSupport;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("datasonnet")
-public class DatasonnetLanguage extends TypedLanguageSupport implements PropertyConfigurer {
+public class DatasonnetLanguage extends TypedLanguageSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DatasonnetLanguage.class);
 
     private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
@@ -84,7 +81,7 @@ public class DatasonnetLanguage extends TypedLanguageSupport implements Property
         expression = loadResource(expression);
 
         DatasonnetExpression answer = new DatasonnetExpression(expression);
-        answer.setResultType(property(Class.class, properties, 0, getResultType()));
+        answer.setResultType(property(Class.class, properties, 0, null));
         String mediaType = property(String.class, properties, 1, null);
         if (mediaType != null) {
             answer.setBodyMediaType(MediaType.valueOf(mediaType));
@@ -109,22 +106,6 @@ public class DatasonnetLanguage extends TypedLanguageSupport implements Property
 
     public Map<String, String> getClasspathImports() {
         return CLASSPATH_IMPORTS;
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resultType":
-            case "resulttype":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
-            default:
-                return false;
-        }
     }
 
 }

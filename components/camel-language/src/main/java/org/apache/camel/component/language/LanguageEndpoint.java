@@ -48,7 +48,8 @@ import org.apache.camel.util.IOHelper;
  * defined as well.
  */
 @UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri",
-             remote = false, producerOnly = true, category = { Category.CORE, Category.SCRIPT }, headersClass = LanguageConstants.class)
+             remote = false, producerOnly = true, category = { Category.CORE, Category.SCRIPT },
+             headersClass = LanguageConstants.class)
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
@@ -93,16 +94,21 @@ public class LanguageEndpoint extends ResourceEndpoint {
         if (language == null && languageName != null) {
             language = getCamelContext().resolveLanguage(languageName);
         }
+        Object[] arr = null;
         if (language instanceof TypedLanguageSupport && resultType != null) {
             Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(resultType);
-            ((TypedLanguageSupport) language).setResultType(clazz);
+            arr = new Object[] { clazz };
         }
         if (cacheScript && expression == null && script != null) {
             boolean external = script.startsWith("file:") || script.startsWith("http:");
             if (!external) {
                 // we can pre optimize this as the script can be loaded from classpath or registry etc
                 script = resolveScript(script);
-                expression = language.createExpression(script);
+                if (arr != null) {
+                    expression = language.createExpression(script, arr);
+                } else {
+                    expression = language.createExpression(script);
+                }
             }
         }
         if (expression != null) {
