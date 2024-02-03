@@ -2299,7 +2299,7 @@ public class ExpressionBuilder {
             public void init(CamelContext context) {
                 super.init(context);
                 final Language language = context.resolveLanguage("bean");
-                this.exp = language.createExpression(null, new Object[] { bean, method });
+                this.exp = language.createExpression(null, new Object[] { null, bean, method });
                 this.exp.init(context);
             }
 
@@ -2316,7 +2316,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object bean = expression.evaluate(exchange, Object.class);
-                Expression exp = language.createExpression(null, new Object[] { bean, method });
+                Expression exp = language.createExpression(null, new Object[] { null, bean, method });
                 exp.init(exchange.getContext());
                 return exp.evaluate(exchange, Object.class);
             }
