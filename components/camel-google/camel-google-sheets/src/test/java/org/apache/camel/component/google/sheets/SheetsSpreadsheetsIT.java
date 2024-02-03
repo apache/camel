@@ -32,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsApiMethod;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,8 @@ public class SheetsSpreadsheetsIT {
     private static final String PATH_PREFIX
             = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
 
-    public static class CreateTest extends AbstractGoogleSheetsTestSupport {
+    @Nested
+    class CreateIT extends AbstractGoogleSheetsTestSupport {
         private String title = "camel-sheets-" + new SecureRandom().nextInt(Integer.MAX_VALUE);
 
         @Test
@@ -85,7 +87,8 @@ public class SheetsSpreadsheetsIT {
         }
     }
 
-    public static class GetTest extends AbstractGoogleSheetsTestSupport {
+    @Nested
+    class GetIT extends AbstractGoogleSheetsTestSupport {
         private Spreadsheet testSheet = getSpreadsheet();
 
         @Test
@@ -115,7 +118,8 @@ public class SheetsSpreadsheetsIT {
         }
     }
 
-    public static class BatchUpdateTest extends AbstractGoogleSheetsTestSupport {
+    @Nested
+    class BatchUpdateIT extends AbstractGoogleSheetsTestSupport {
         private Spreadsheet testSheet = getSpreadsheet();
         private String updateTitle = "updated-" + testSheet.getProperties().getTitle();
 
