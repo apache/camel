@@ -19,8 +19,11 @@ package org.apache.camel.component.google.mail.stream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-public class GoogleMailStreamConsumerIntegrationTest extends AbstractGoogleMailStreamTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
+           disabledReason = "Google Mail credentials were not provided")
+public class GoogleMailStreamConsumerIT extends AbstractGoogleMailStreamTestSupport {
 
     @Test
     public void testConsumePrefixedMessages() throws Exception {
