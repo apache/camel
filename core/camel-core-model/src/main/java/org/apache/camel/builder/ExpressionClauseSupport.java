@@ -458,14 +458,13 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates <a href="http://camel.apache.org/jq.html">JQ expression</a>
      *
-     * @param  text                 the expression to be evaluated
-     * @param  headerOrPropertyName the name of the header or the property to apply the expression to
-     * @return                      the builder to continue processing the DSL
+     * @param  text       the expression to be evaluated
+     * @param  headerName the name of the header to apply the expression to
+     * @return            the builder to continue processing the DSL
      */
-    public T jq(String text, String headerOrPropertyName) {
+    public T jq(String text, String headerName) {
         JqExpression exp = new JqExpression(text);
-        exp.setHeaderName(headerOrPropertyName);
-        exp.setPropertyName(headerOrPropertyName);
+        exp.setHeaderName(headerName);
         return expression(exp);
     }
 
@@ -487,16 +486,15 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates <a href="http://camel.apache.org/jq.html">JQ expression</a>
      *
-     * @param  text                 the expression to be evaluated
-     * @param  resultType           the return type expected by the expression
-     * @param  headerOrPropertyName the name of the header or the property to apply the expression to
-     * @return                      the builder to continue processing the DSL
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @param  headerName the name of the header or the property to apply the expression to
+     * @return            the builder to continue processing the DSL
      */
-    public T jq(String text, Class<?> resultType, String headerOrPropertyName) {
+    public T jq(String text, Class<?> resultType, String headerName) {
         JqExpression exp = new JqExpression(text);
         exp.setResultType(resultType);
-        exp.setHeaderName(headerOrPropertyName);
-        exp.setPropertyName(headerOrPropertyName);
+        exp.setHeaderName(headerName);
         return expression(exp);
     }
 

@@ -22,7 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.SingleInputLanguageSupport;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.builder.Namespaces;
 
 /**
@@ -37,7 +37,7 @@ import org.apache.camel.support.builder.Namespaces;
  * </ul>
  */
 @Language("xtokenize")
-public class XMLTokenizeLanguage extends SingleInputLanguageSupport {
+public class XMLTokenizeLanguage extends LanguageSupport {
 
     @Override
     public Predicate createPredicate(String expression) {
@@ -59,7 +59,7 @@ public class XMLTokenizeLanguage extends SingleInputLanguageSupport {
         Character mode = property(Character.class, properties, 1, "i");
 
         XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(expression, mode);
-        answer.setHeaderName(property(String.class, properties, 0, getHeaderName()));
+        answer.setHeaderName(property(String.class, properties, 0, null));
         answer.setGroup(property(int.class, properties, 2, 1));
         Object obj = properties[3];
         if (obj != null) {

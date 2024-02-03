@@ -81,6 +81,8 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "variablename":
+        case "variableName": target.setVariableName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -148,6 +150,8 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "variablename":
+        case "variableName": return java.lang.String.class;
         default: return null;
         }
     }
@@ -216,6 +220,8 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "variablename":
+        case "variableName": return target.getVariableName();
         default: return null;
         }
     }

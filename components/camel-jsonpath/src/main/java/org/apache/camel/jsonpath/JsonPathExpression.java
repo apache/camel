@@ -22,6 +22,7 @@ import java.util.List;
 import com.jayway.jsonpath.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
@@ -43,9 +44,7 @@ public class JsonPathExpression extends ExpressionAdapter {
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
     private boolean unpackArray;
-    private String variableName;
-    private String headerName;
-    private String propertyName;
+    private Expression source;
     private Option[] options;
 
     public JsonPathExpression(String expression) {
@@ -130,39 +129,12 @@ public class JsonPathExpression extends ExpressionAdapter {
         this.unpackArray = unpackArray;
     }
 
-    public String getVariableName() {
-        return variableName;
+    public Expression getSource() {
+        return source;
     }
 
-    /**
-     * Name of variable to use as input, instead of the message body
-     */
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to use as input, instead of the message body
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * Name of property to use as input, instead of the message body.
-     * <p>
-     * It has a lower precedent than the name of header if both are set.
-     */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setSource(Expression source) {
+        this.source = source;
     }
 
     public Option[] getOptions() {
@@ -217,7 +189,7 @@ public class JsonPathExpression extends ExpressionAdapter {
         LOG.debug("Initializing {} using: {}", predicate ? "predicate" : "expression", exp);
         try {
             engine = new JsonPathEngine(
-                    exp, writeAsString, suppressExceptions, allowSimple, headerName, propertyName, options, context);
+                    exp, source, writeAsString, suppressExceptions, allowSimple, options, context);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(exp, e);
         }

@@ -1455,10 +1455,10 @@ public abstract class AbstractCamelCatalog {
                     } else {
                         instance.getClass().getMethod("validateExpression", String.class).invoke(instance, text);
                     }
+                    return answer;
                 } catch (NoSuchMethodException e) {
-                    // ignore
+                     // ignore
                 }
-                // optional validate
                 if (predicate) {
                     instance.getClass().getMethod("createPredicate", String.class).invoke(instance, text);
                 } else {

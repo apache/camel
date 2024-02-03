@@ -19,7 +19,6 @@ package org.apache.camel.language.xquery;
 import net.sf.saxon.Configuration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
@@ -43,45 +42,20 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
     }
 
     @Override
-    public Predicate createPredicate(String expression) {
-        return (Predicate) createExpression(expression, null);
-    }
-
-    @Override
-    public Expression createExpression(String expression) {
-        return createExpression(expression, null);
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return (Predicate) createExpression(expression, properties);
-    }
-
-    @Override
-    public Expression createExpression(String expression, Object[] properties) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         expression = loadResource(expression);
 
         XQueryBuilder builder = XQueryBuilder.xquery(expression);
-        configureBuilder(builder, properties);
+        configureBuilder(builder, properties, source);
         return builder;
     }
 
-    protected void configureBuilder(XQueryBuilder builder, Object[] properties) {
+    protected void configureBuilder(XQueryBuilder builder, Object[] properties, Expression source) {
+        builder.setSource(source);
+
         Class<?> clazz = property(Class.class, properties, 0, getResultType());
         if (clazz != null) {
             builder.setResultType(clazz);
-        }
-        String str = property(String.class, properties, 1, getHeaderName());
-        if (str != null) {
-            builder.setHeaderName(str);
-        }
-        str = property(String.class, properties, 2, getPropertyName());
-        if (str != null) {
-            builder.setPropertyName(str);
-        }
-        str = property(String.class, properties, 3, getVariableName());
-        if (str != null) {
-            builder.setVariableName(str);
         }
         if (configuration != null) {
             builder.setConfiguration(configuration);
@@ -97,18 +71,6 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
             case "resulttype":
             case "resultType":
                 setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "propertyname":
-            case "propertyName":
-                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "variablename":
-            case "variableName":
-                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "configuration":
             case "Configuration":

@@ -24,7 +24,9 @@ public class JqSimpleTransformVariableTest extends JqTestSupport {
 
     private static String EXPECTED = """
             {
+              "roll": 123,
               "country": "se",
+              "fullname": "scott"
             }""";
 
     @Override
@@ -36,7 +38,9 @@ public class JqSimpleTransformVariableTest extends JqTestSupport {
                         .setVariable("place", constant("{ \"name\": \"sweden\", \"iso\": \"se\" }"))
                         .transform().simple("""
                                 {
+                                  "roll": ${jq(.id)},
                                   "country": "${jq(variable:place,.iso)}",
+                                  "fullname": "${jq(.name)}"
                                 }""")
                         .to("mock:result");
             }

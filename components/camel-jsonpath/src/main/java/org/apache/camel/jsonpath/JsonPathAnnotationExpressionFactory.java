@@ -21,6 +21,7 @@ import java.lang.annotation.Annotation;
 import com.jayway.jsonpath.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.util.ObjectHelper;
@@ -48,12 +49,23 @@ public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpres
 
             answer.setSuppressExceptions(jsonPathAnnotation.suppressExceptions());
             answer.setAllowSimple(jsonPathAnnotation.allowSimple());
+
+            String variableName = null;
+            String headerName = null;
+            String propertyName = null;
+            if (ObjectHelper.isNotEmpty(jsonPathAnnotation.variableName())) {
+                variableName = jsonPathAnnotation.variableName();
+            }
             if (ObjectHelper.isNotEmpty(jsonPathAnnotation.headerName())) {
-                answer.setHeaderName(jsonPathAnnotation.headerName());
+                headerName = jsonPathAnnotation.headerName();
             }
             if (ObjectHelper.isNotEmpty(jsonPathAnnotation.propertyName())) {
-                answer.setPropertyName(jsonPathAnnotation.propertyName());
+                propertyName = jsonPathAnnotation.propertyName();
             }
+            if (variableName != null || headerName != null || propertyName != null) {
+                answer.setSource(ExpressionBuilder.singleInputExpression(variableName, headerName, propertyName));
+            }
+
             Option[] options = jsonPathAnnotation.options();
             answer.setOptions(options);
         }

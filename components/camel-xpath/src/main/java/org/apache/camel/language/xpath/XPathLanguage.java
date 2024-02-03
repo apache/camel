@@ -16,7 +16,10 @@
  */
 package org.apache.camel.language.xpath;
 
+import java.util.Map;
+
 import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.CamelContext;
@@ -42,34 +45,21 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
     private Boolean preCompile;
 
     @Override
-    public Predicate createPredicate(String expression) {
+    public Predicate createPredicate(Expression source, String expression, Object[] properties) {
         expression = loadResource(expression);
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
-        configureBuilder(builder, null);
+        configureBuilder(builder, properties, source);
+        builder.setResultQName(XPathConstants.BOOLEAN); // use boolean for predicate mode
         return builder;
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         expression = loadResource(expression);
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
-        configureBuilder(builder, null);
-        return builder;
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return (Predicate) createExpression(expression, properties);
-    }
-
-    @Override
-    public Expression createExpression(String expression, Object[] properties) {
-        expression = loadResource(expression);
-
-        XPathBuilder builder = XPathBuilder.xpath(expression);
-        configureBuilder(builder, properties);
+        configureBuilder(builder, properties, source);
         return builder;
     }
 
@@ -137,20 +127,22 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         this.preCompile = preCompile;
     }
 
-    protected void configureBuilder(XPathBuilder builder, Object[] properties) {
-        Class<?> clazz = property(Class.class, properties, 0, documentType);
+    protected void configureBuilder(XPathBuilder builder, Object[] properties, Expression source) {
+        builder.setSource(source);
+
+        Class<?> clazz = property(Class.class, properties, 4, documentType);
         if (clazz != null) {
             builder.setDocumentType(clazz);
         }
-        QName qname = property(QName.class, properties, 1, resultQName);
+        QName qname = property(QName.class, properties, 5, resultQName);
         if (qname != null) {
             builder.setResultQName(qname);
         }
-        clazz = property(Class.class, properties, 2, getResultType());
+        clazz = property(Class.class, properties, 0, getResultType());
         if (clazz != null) {
             builder.setResultType(clazz);
         }
-        Boolean bool = property(Boolean.class, properties, 3, saxon);
+        Boolean bool = property(Boolean.class, properties, 6, saxon);
         if (bool != null) {
             builder.setUseSaxon(bool);
             if (bool) {
@@ -159,34 +151,30 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         }
         if (!builder.isUseSaxon()) {
             // xpath factory can only be set if not saxon is enabled as saxon has its own factory and object model
-            XPathFactory fac = property(XPathFactory.class, properties, 4, xpathFactory);
+            XPathFactory fac = property(XPathFactory.class, properties, 7, xpathFactory);
             if (fac != null) {
                 builder.setXPathFactory(fac);
             }
-            String str = property(String.class, properties, 5, objectModelUri);
+            String str = property(String.class, properties, 8, objectModelUri);
             if (str != null) {
                 builder.setObjectModelUri(str);
             }
         }
-        bool = property(Boolean.class, properties, 6, threadSafety);
+        bool = property(Boolean.class, properties, 9, threadSafety);
         if (bool != null) {
             builder.setThreadSafety(bool);
         }
-        bool = property(Boolean.class, properties, 7, preCompile);
+        bool = property(Boolean.class, properties, 10, preCompile);
         if (bool != null) {
             builder.setPreCompile(bool);
         }
-        bool = property(Boolean.class, properties, 8, logNamespaces);
+        bool = property(Boolean.class, properties, 11, logNamespaces);
         if (bool != null) {
             builder.setLogNamespaces(bool);
         }
-        String str = property(String.class, properties, 9, getHeaderName());
-        if (str != null) {
-            builder.setHeaderName(str);
-        }
-        str = property(String.class, properties, 10, getPropertyName());
-        if (str != null) {
-            builder.setPropertyName(str);
+        Map<String, String> ns = property(Map.class, properties, 12, null);
+        if (ns != null && !ns.isEmpty()) {
+            builder.setNamespaces(ns);
         }
     }
 
@@ -226,14 +214,6 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
             case "lognamespaces":
             case "logNamespaces":
                 setLogNamespaces(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
-                return true;
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "propertyname":
-            case "propertyName":
-                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "preCompile":
             case "precompile":

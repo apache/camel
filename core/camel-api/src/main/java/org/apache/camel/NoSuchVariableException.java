@@ -16,6 +16,9 @@
  */
 package org.apache.camel;
 
+/**
+ * An exception caused when a mandatory variable is not available
+ */
 public class NoSuchVariableException extends CamelExchangeException {
 
     private final String variableName;
