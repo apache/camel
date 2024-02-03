@@ -20,13 +20,8 @@ import org.apache.camel.language.bean.BeanLanguage
 camel {
 
     languages {
-        bean {
-            beanType = String.class
-            method = "toUpperCase"
-        }
         myBean(BeanLanguage) {
-            beanType = String.class
-            method = "toLowerCase"
+            validate = false;
         }
     }
 }
