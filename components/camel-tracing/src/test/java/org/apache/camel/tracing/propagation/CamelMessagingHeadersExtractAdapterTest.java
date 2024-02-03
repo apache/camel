@@ -39,7 +39,7 @@ public class CamelMessagingHeadersExtractAdapterTest {
     @Test
     public void noProperties() {
         CamelMessagingHeadersExtractAdapter adapter = new CamelMessagingHeadersExtractAdapter(map, true);
-        Iterator<Map.Entry<String, String>> iterator = adapter.iterator();
+        Iterator<Map.Entry<String, Object>> iterator = adapter.iterator();
         assertFalse(iterator.hasNext());
     }
 
@@ -47,8 +47,8 @@ public class CamelMessagingHeadersExtractAdapterTest {
     public void oneProperty() {
         map.put("key", "value");
         CamelMessagingHeadersExtractAdapter adapter = new CamelMessagingHeadersExtractAdapter(map, true);
-        Iterator<Map.Entry<String, String>> iterator = adapter.iterator();
-        Map.Entry<String, String> entry = iterator.next();
+        Iterator<Map.Entry<String, Object>> iterator = adapter.iterator();
+        Map.Entry<String, Object> entry = iterator.next();
         assertEquals("key", entry.getKey());
         assertEquals("value", entry.getValue());
     }
@@ -57,8 +57,8 @@ public class CamelMessagingHeadersExtractAdapterTest {
     public void propertyWithDash() {
         map.put(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH, "value1");
         CamelMessagingHeadersExtractAdapter adapter = new CamelMessagingHeadersExtractAdapter(map, true);
-        Iterator<Map.Entry<String, String>> iterator = adapter.iterator();
-        Map.Entry<String, String> entry = iterator.next();
+        Iterator<Map.Entry<String, Object>> iterator = adapter.iterator();
+        Map.Entry<String, Object> entry = iterator.next();
         assertEquals("-key-1-", entry.getKey());
         assertEquals("value1", entry.getValue());
     }
@@ -67,8 +67,15 @@ public class CamelMessagingHeadersExtractAdapterTest {
     public void propertyWithoutDashEncoding() {
         map.put(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH, "value1");
         CamelMessagingHeadersExtractAdapter adapter = new CamelMessagingHeadersExtractAdapter(map, false);
-        Iterator<Map.Entry<String, String>> iterator = adapter.iterator();
-        Map.Entry<String, String> entry = iterator.next();
+        Iterator<Map.Entry<String, Object>> iterator = adapter.iterator();
+        Map.Entry<String, Object> entry = iterator.next();
         assertEquals(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH, entry.getKey());
+    }
+
+    @Test
+    public void keyWithDifferentCase() {
+        map.put("key", "value");
+        CamelMessagingHeadersExtractAdapter adapter = new CamelMessagingHeadersExtractAdapter(map, true);
+        assertEquals("value", adapter.get("KeY"));
     }
 }
