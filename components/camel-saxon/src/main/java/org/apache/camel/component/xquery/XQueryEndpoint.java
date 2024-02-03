@@ -32,6 +32,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,8 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     private ModuleURIResolver moduleURIResolver;
     @UriParam
     private boolean allowStAX;
+    @UriParam
+    private String variableName;
     @UriParam
     private String headerName;
     @UriParam
@@ -213,6 +216,17 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.allowStAX = allowStAX;
     }
 
+    public String getVariableName() {
+        return variableName;
+    }
+
+    /**
+     * To use a variable as the input source instead of Message body.
+     */
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+
     public String getHeaderName() {
         return headerName;
     }
@@ -230,8 +244,6 @@ public class XQueryEndpoint extends ProcessorEndpoint {
 
     /**
      * To use a Camel Exchange property as the input source instead of Message body.
-     * <p>
-     * It has a lower precedent than the name of header if both are set.
      */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
@@ -269,9 +281,8 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.xquery.setResultType(getResultType());
         this.xquery.setStripsAllWhiteSpace(isStripsAllWhiteSpace());
         this.xquery.setAllowStAX(isAllowStAX());
-        this.xquery.setHeaderName(getHeaderName());
-        this.xquery.setPropertyName(getPropertyName());
         this.xquery.setModuleURIResolver(getModuleURIResolver());
+        this.xquery.setSource(ExpressionBuilder.singleInputExpression(getVariableName(), getHeaderName(), getPropertyName()));
         this.xquery.init(getCamelContext());
 
         setProcessor(xquery);

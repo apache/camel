@@ -19,10 +19,8 @@ package org.apache.camel.language.jq;
 import net.thisptr.jackson.jq.Scope;
 import net.thisptr.jackson.jq.module.loaders.BuiltinModuleLoader;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -55,21 +53,6 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
     @Override
     public void stop() {
         // noop
-    }
-
-    @Override
-    public Predicate createPredicate(String expression) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
-    }
-
-    @Override
-    public Expression createExpression(String expression) {
-        return createExpression(expression, null);
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
