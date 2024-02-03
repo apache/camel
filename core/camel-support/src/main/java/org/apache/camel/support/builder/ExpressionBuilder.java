@@ -90,7 +90,7 @@ public class ExpressionBuilder {
      * @return            an expression object which will return the header value
      */
     public static Expression headerExpression(final String headerName, boolean mandatory) {
-        return headerExpression(simpleExpression(headerName));
+        return headerExpression(simpleExpression(headerName), mandatory);
     }
 
     /**
