@@ -19,6 +19,7 @@ package org.apache.camel.language.xpath;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.CamelContext;
@@ -26,7 +27,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -45,18 +45,13 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
     private Boolean preCompile;
 
     @Override
-    public Predicate createPredicate(String expression) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
-    }
+    public Predicate createPredicate(Expression source, String expression, Object[] properties) {
+        expression = loadResource(expression);
 
-    @Override
-    public Expression createExpression(String expression) {
-        return createExpression(expression, null);
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
+        XPathBuilder builder = XPathBuilder.xpath(expression);
+        configureBuilder(builder, properties, source);
+        builder.setResultQName(XPathConstants.BOOLEAN); // use boolean for predicate mode
+        return builder;
     }
 
     @Override

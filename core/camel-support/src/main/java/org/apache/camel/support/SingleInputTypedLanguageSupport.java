@@ -17,13 +17,25 @@
 package org.apache.camel.support;
 
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.builder.PredicateBuilder;
 
 /**
  * Base class for {@link Language} implementations that support a result type and different sources of input data.
  */
 public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSupport {
+
+    @Override
+    public Predicate createPredicate(String expression) {
+        return createPredicate(expression, null);
+    }
+
+    @Override
+    public Expression createExpression(String expression) {
+        return createExpression(expression, null);
+    }
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
@@ -38,6 +50,16 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
         return ExpressionBuilder.convertToExpression(createExpression(source, expression, properties), type);
     }
 
+    @Override
+    public Predicate createPredicate(String expression, Object[] properties) {
+        Class<?> type = property(Class.class, properties, 0, getResultType());
+        String variable = property(String.class, properties, 1, null);
+        String header = property(String.class, properties, 2, null);
+        String property = property(String.class, properties, 3, null);
+        Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
+        return createPredicate(source, expression, properties);
+    }
+
     /**
      * Creates an expression based on the input with properties.
      *
@@ -48,5 +70,17 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
      */
     public Expression createExpression(Expression source, String expression, Object[] properties) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a predicate based on the input with properties.
+     *
+     * @param  source     the expression allowing to retrieve the input data of the main expression.
+     * @param  expression the main expression to evaluate as predicate.
+     * @param  properties configuration properties (optimized as object array with hardcoded positions for properties)
+     * @return            the created predicate
+     */
+    public Predicate createPredicate(Expression source, String expression, Object[] properties) {
+        return PredicateBuilder.toPredicate(createExpression(source, expression, properties));
     }
 }
