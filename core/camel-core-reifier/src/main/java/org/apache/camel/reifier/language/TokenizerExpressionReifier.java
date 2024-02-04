@@ -31,25 +31,26 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
     }
 
     protected Object[] createProperties() {
-        Object[] properties = new Object[12];
+        Object[] properties = new Object[13];
+        properties[0] = definition.getResultType();
+        properties[1] = parseString(definition.getVariableName());
+        properties[2] = parseString(definition.getHeaderName());
+        properties[3] = parseString(definition.getPropertyName());
         // special for new line tokens, if defined from XML then its 2
         // characters, so we replace that back to a single char
         String token = definition.getToken();
         if (token.startsWith("\\n")) {
             token = '\n' + token.substring(2);
         }
-        properties[0] = parseString(token);
-        properties[1] = parseString(definition.getEndToken());
-        properties[2] = parseString(definition.getInheritNamespaceTagName());
-        properties[3] = parseString(definition.getHeaderName());
-        properties[4] = parseString(definition.getGroupDelimiter());
-        properties[5] = parseBoolean(definition.getRegex());
-        properties[6] = parseBoolean(definition.getXml());
-        properties[7] = parseBoolean(definition.getIncludeTokens());
-        properties[8] = parseString(definition.getGroup());
-        properties[9] = parseBoolean(definition.getSkipFirst());
-        properties[10] = parseString(definition.getPropertyName());
-        properties[11] = parseString(definition.getVariableName());
+        properties[4] = parseString(token);
+        properties[5] = parseString(definition.getEndToken());
+        properties[6] = parseString(definition.getInheritNamespaceTagName());
+        properties[7] = parseString(definition.getGroupDelimiter());
+        properties[8] = parseBoolean(definition.getRegex());
+        properties[9] = parseBoolean(definition.getXml());
+        properties[10] = parseBoolean(definition.getIncludeTokens());
+        properties[11] = parseString(definition.getGroup());
+        properties[12] = parseBoolean(definition.getSkipFirst());
         return properties;
     }
 

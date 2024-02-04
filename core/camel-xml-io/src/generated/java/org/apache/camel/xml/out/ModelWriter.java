@@ -4188,7 +4188,7 @@ public class ModelWriter extends BaseWriter {
             TokenizerExpression def)
             throws IOException {
         startElement(name);
-        doWriteSingleInputExpressionDefinitionAttributes(def);
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("regex", def.getRegex());
         doWriteAttribute("endToken", def.getEndToken());
         doWriteAttribute("includeTokens", def.getIncludeTokens());

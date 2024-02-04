@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TokenizerExpression extends SingleInputExpressionDefinition {
+public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute(required = true)
     private String token;
@@ -191,7 +191,6 @@ public class TokenizerExpression extends SingleInputExpressionDefinition {
         this.skipFirst = skipFirst;
     }
 
-    @Override
     public String toString() {
         if (endToken != null) {
             return "tokenize{body() using tokens: " + token + "..." + endToken + "}";

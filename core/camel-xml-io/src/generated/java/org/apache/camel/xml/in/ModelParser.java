@@ -3001,21 +3001,10 @@ public class ModelParser extends BaseParser {
                 case "skipFirst": def.setSkipFirst(val); break;
                 case "token": def.setToken(val); break;
                 case "xml": def.setXml(val); break;
-                default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), expressionDefinitionValueHandler());
-    }
-    protected <T extends SingleInputExpressionDefinition> AttributeHandler<T> singleInputExpressionDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "headerName": def.setHeaderName(val); break;
-                case "propertyName": def.setPropertyName(val); break;
-                case "variableName": def.setVariableName(val); break;
-                default: return expressionDefinitionAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        };
     }
     protected VariableExpression doParseVariableExpression() throws IOException, XmlPullParserException {
         return doParse(new VariableExpression(),
@@ -3047,6 +3036,17 @@ public class ModelParser extends BaseParser {
                 return true;
             }
             return false;
+        };
+    }
+    protected <T extends SingleInputExpressionDefinition> AttributeHandler<T> singleInputExpressionDefinitionAttributeHandler() {
+        return (def, key, val) -> {
+            switch (key) {
+                case "headerName": def.setHeaderName(val); break;
+                case "propertyName": def.setPropertyName(val); break;
+                case "variableName": def.setVariableName(val); break;
+                default: return expressionDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
         };
     }
     protected XPathExpression doParseXPathExpression() throws IOException, XmlPullParserException {
