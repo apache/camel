@@ -25,6 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Expression for which the source of the input (body, header or property) can be provided.
  */
+@Deprecated
 public abstract class SingleInputExpressionDefinition extends ExpressionDefinition {
 
     @XmlAttribute

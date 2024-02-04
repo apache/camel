@@ -18429,10 +18429,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inheritNamespaceTagName", type = "string", description = "To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name to support dynamic names.", displayName = "Inherit Namespace Tag Name"),
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
                     @YamlProperty(name = "regex", type = "boolean", description = "If the token is a regular expression pattern. The default value is false", displayName = "Regex"),
+                    @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "skipFirst", type = "boolean", description = "To skip the very first element", displayName = "Skip First"),
                     @YamlProperty(name = "token", type = "string", required = true, description = "The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as the token to support dynamic tokens.", displayName = "Token"),
                     @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
-                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body It has as higher precedent if other are set.", displayName = "Variable Name"),
                     @YamlProperty(name = "xml", type = "boolean", description = "Whether the input is XML messages. This option must be set to true if working with XML payloads.", displayName = "Xml")
             }
     )
@@ -18499,6 +18500,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "regex": {
                     String val = asText(node);
                     target.setRegex(val);
+                    break;
+                }
+                case "resultType": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "skipFirst": {
@@ -20514,6 +20520,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mode", type = "enum:i,w,u,t", defaultValue = "i", description = "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default) w - wrapping the extracted token in its ancestor context u - unwrapping the extracted token to its child content t - extracting the text content of the specified element", displayName = "Mode"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix - uri mappings", displayName = "Namespace"),
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
+                    @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
                     @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name")
             }
@@ -20571,6 +20578,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "propertyName": {
                     String val = asText(node);
                     target.setPropertyName(val);
+                    break;
+                }
+                case "resultType": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {

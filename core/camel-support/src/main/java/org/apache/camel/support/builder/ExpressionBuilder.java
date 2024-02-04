@@ -2450,7 +2450,8 @@ public class ExpressionBuilder {
             public void init(CamelContext context) {
                 super.init(context);
                 final Language language = context.resolveLanguage("xtokenize");
-                this.exp = language.createExpression(path, new Object[] { headerName, mode, group, namespaces });
+                this.exp = language.createExpression(path,
+                        new Object[] { null, null, headerName, null, mode, group, namespaces });
                 this.exp.init(context);
             }
 

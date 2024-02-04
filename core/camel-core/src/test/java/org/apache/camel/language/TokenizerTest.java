@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +55,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     Expression tokenizeXML(String tagName, String inheritNamespaceTagName) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
-        return language.createExpression(null, new Object[] { null, null, null, null, tagName, null, inheritNamespaceTagName, null, null, true });
+        return language.createExpression(null,
+                new Object[] { null, null, null, null, tagName, null, inheritNamespaceTagName, null, null, true });
     }
 
     @Override

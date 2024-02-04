@@ -33,6 +33,10 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {
 
+    @XmlTransient
+    private Class<?> resultType;
+    @XmlAttribute(name = "resultType")
+    private String resultTypeName;
     @XmlAttribute
     @Metadata(defaultValue = "i", enums = "i,w,u,t")
     private String mode;
@@ -53,6 +57,8 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
 
     private XMLTokenizerExpression(Builder builder) {
         super(builder);
+        this.resultTypeName = builder.resultTypeName;
+        this.resultType = builder.resultType;
         this.mode = builder.mode;
         this.group = builder.group;
     }
@@ -60,6 +66,30 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @Override
     public String getLanguage() {
         return "xtokenize";
+    }
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    /**
+     * Sets the class of the result type (type from output).
+     * <p/>
+     * The default result type is NodeSet
+     */
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
+    }
+
+    public String getResultTypeName() {
+        return resultTypeName;
+    }
+
+    /**
+     * Sets the class of the result type (type from output)
+     */
+    public void setResultTypeName(String resultTypeName) {
+        this.resultTypeName = resultTypeName;
     }
 
     public String getMode() {
@@ -96,8 +126,28 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @XmlTransient
     public static class Builder extends AbstractNamespaceAwareBuilder<Builder, XMLTokenizerExpression> {
 
+        private String resultTypeName;
+        private Class<?> resultType;
         private String mode;
         private String group;
+
+        /**
+         * Sets the class of the result type (type from output)
+         */
+        public Builder resultTypeName(String resultTypeName) {
+            this.resultTypeName = resultTypeName;
+            return this;
+        }
+
+        /**
+         * Sets the class of the result type (type from output).
+         * <p/>
+         * The default result type is NodeSet
+         */
+        public Builder resultType(Class<?> resultType) {
+            this.resultType = resultType;
+            return this;
+        }
 
         /**
          * The extraction mode. The available extraction modes are:

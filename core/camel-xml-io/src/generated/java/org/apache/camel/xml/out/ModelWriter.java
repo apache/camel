@@ -4242,6 +4242,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteSingleInputExpressionDefinitionAttributes(def);
         doWriteAttribute("mode", def.getMode());
+        doWriteAttribute("resultType", def.getResultTypeName());
         doWriteAttribute("group", def.getGroup());
         doWriteNamespaces(def);
         doWriteValue(def.getExpression());

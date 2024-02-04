@@ -19,10 +19,8 @@ package org.apache.camel.language.xtokenizer;
 import java.util.Map;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.builder.Namespaces;
 
 /**
@@ -37,31 +35,14 @@ import org.apache.camel.support.builder.Namespaces;
  * </ul>
  */
 @Language("xtokenize")
-public class XMLTokenizeLanguage extends LanguageSupport {
+public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
 
     @Override
-    public Predicate createPredicate(String expression) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
-    }
-
-    @Override
-    public Expression createExpression(String expression) {
-        return createExpression(expression, null);
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
-    }
-
-    @Override
-    public Expression createExpression(String expression, Object[] properties) {
-        Character mode = property(Character.class, properties, 1, "i");
-
-        XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(expression, mode);
-        answer.setHeaderName(property(String.class, properties, 0, null));
-        answer.setGroup(property(int.class, properties, 2, 1));
-        Object obj = properties[3];
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
+        Character mode = property(Character.class, properties, 4, "i");
+        XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(source, expression, mode);
+        answer.setGroup(property(int.class, properties, 5, 1));
+        Object obj = properties[6];
         if (obj != null) {
             Namespaces ns;
             if (obj instanceof Namespaces) {
@@ -75,8 +56,6 @@ public class XMLTokenizeLanguage extends LanguageSupport {
             }
             answer.setNamespaces(ns.getNamespaces());
         }
-        answer.setPropertyName(property(String.class, properties, 4, null));
-        answer.setVariableName(property(String.class, properties, 5, null));
         if (getCamelContext() != null) {
             answer.init(getCamelContext());
         }

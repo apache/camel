@@ -15543,7 +15543,7 @@ set.
   </xs:complexType>
   <xs:complexType name="tokenizerExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:singleInputExpressionDefinition">
+      <xs:extension base="tns:singleInputTypedExpressionDefinition">
         <xs:attribute name="token" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -15657,6 +15657,15 @@ expression function.
   <xs:complexType name="xmlTokenizerExpression">
     <xs:simpleContent>
       <xs:extension base="tns:namespaceAwareExpression">
+        <xs:attribute name="resultType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the class of the result type (type from output).
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="mode" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

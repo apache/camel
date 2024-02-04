@@ -58,10 +58,6 @@ public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
             throw new IllegalArgumentException("The option includeTokens requires endToken to be specified.");
         }
 
-        if (type != null && type != Object.class) {
-            source = ExpressionBuilder.convertToExpression(source, type);
-        }
-
         Expression answer = null;
         if (xml) {
             answer = ExpressionBuilder.tokenizeXMLExpression(source, token, inheritNamespaceTagName);
@@ -80,6 +76,10 @@ public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
                 // wrap in skip first (if group then it has its own skip first logic)
                 answer = ExpressionBuilder.skipFirstExpression(answer);
             }
+        }
+
+        if (type != null && type != Object.class) {
+            answer = ExpressionBuilder.convertToExpression(answer, type);
         }
 
         // if group then wrap answer in group expression

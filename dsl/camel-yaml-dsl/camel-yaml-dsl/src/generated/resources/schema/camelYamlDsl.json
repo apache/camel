@@ -13655,6 +13655,11 @@
               "title" : "Regex",
               "description" : "If the token is a regular expression pattern. The default value is false"
             },
+            "resultType" : {
+              "type" : "string",
+              "title" : "Result Type",
+              "description" : "Sets the class of the result type (type from output)"
+            },
             "skipFirst" : {
               "type" : "boolean",
               "title" : "Skip First",
@@ -13673,7 +13678,7 @@
             "variableName" : {
               "type" : "string",
               "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
+              "description" : "Name of variable to use as input, instead of the message body It has as higher precedent if other are set."
             },
             "xml" : {
               "type" : "boolean",
@@ -13798,6 +13803,11 @@
               "type" : "string",
               "title" : "Property Name",
               "description" : "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set."
+            },
+            "resultType" : {
+              "type" : "string",
+              "title" : "Result Type",
+              "description" : "Sets the class of the result type (type from output)"
             },
             "trim" : {
               "type" : "boolean",

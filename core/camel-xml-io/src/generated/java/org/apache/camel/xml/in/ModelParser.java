@@ -3024,6 +3024,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "group": def.setGroup(val); break;
                 case "mode": def.setMode(val); break;
+                case "resultType": def.setResultTypeName(val); break;
                 default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
