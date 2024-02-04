@@ -35,7 +35,7 @@ import org.apache.camel.support.builder.Namespaces;
  * {@link XQueryExpression}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class NamespaceAwareExpression extends SingleInputExpressionDefinition implements NamespaceAware {
+public abstract class NamespaceAwareExpression extends SingleInputTypedExpressionDefinition implements NamespaceAware {
 
     @XmlElement(name = "namespace")
     @Metadata(label = "common")

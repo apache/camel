@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
-// TODO: camel4
+// TODO: camel4 (need jakarta api)
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Expression;
@@ -38,8 +38,6 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @XmlTransient
     private Class<?> documentType;
-    @XmlTransient
-    private Class<?> resultType;
     @XmlTransient
     private XPathFactory xpathFactory;
 
@@ -82,7 +80,6 @@ public class XPathExpression extends NamespaceAwareExpression {
     private XPathExpression(Builder builder) {
         super(builder);
         this.documentType = builder.documentType;
-        this.resultType = builder.resultType;
         this.xpathFactory = builder.xpathFactory;
         this.documentTypeName = builder.documentTypeName;
         this.resultTypeName = builder.resultTypeName;
@@ -123,19 +120,6 @@ public class XPathExpression extends NamespaceAwareExpression {
      */
     public void setDocumentTypeName(String documentTypeName) {
         this.documentTypeName = documentTypeName;
-    }
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    /**
-     * Sets the class of the result type (type from output).
-     * <p/>
-     * The default result type is NodeSet
-     */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
     }
 
     public String getResultTypeName() {
@@ -243,7 +227,6 @@ public class XPathExpression extends NamespaceAwareExpression {
     public static class Builder extends AbstractNamespaceAwareBuilder<Builder, XPathExpression> {
 
         private Class<?> documentType;
-        private Class<?> resultType;
         private XPathFactory xpathFactory;
         private String documentTypeName;
         private String resultTypeName;
@@ -261,16 +244,6 @@ public class XPathExpression extends NamespaceAwareExpression {
          */
         public Builder documentType(Class<?> documentType) {
             this.documentType = documentType;
-            return this;
-        }
-
-        /**
-         * Sets the class of the result type (type from output).
-         * <p/>
-         * The default result type is NodeSet
-         */
-        public Builder resultType(Class<?> resultType) {
-            this.resultType = resultType;
             return this;
         }
 

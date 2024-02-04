@@ -184,7 +184,7 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resulttype":
+            case "resultqname":
             case "resultQName":
                 setResultQName(PropertyConfigurerSupport.property(camelContext, QName.class, value));
                 return true;

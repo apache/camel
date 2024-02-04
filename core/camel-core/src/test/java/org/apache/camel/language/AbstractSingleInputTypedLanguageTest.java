@@ -18,7 +18,6 @@ package org.apache.camel.language;
 
 import java.util.function.Function;
 
-import org.apache.camel.Message;
 import org.apache.camel.builder.LanguageBuilderFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,6 +35,7 @@ public abstract class AbstractSingleInputTypedLanguageTest<
         T extends SingleInputTypedExpressionDefinition.AbstractBuilder<T, E>,
         E extends SingleInputTypedExpressionDefinition>
         extends AbstractTypedLanguageTest<T, E> {
+
     protected AbstractSingleInputTypedLanguageTest(String expression, Function<LanguageBuilderFactory, T> factory) {
         super(expression, factory);
     }
@@ -149,41 +149,6 @@ public abstract class AbstractSingleInputTypedLanguageTest<
         mockEndpoint.expectedBodiesReceived(testContext.getBodyReceived());
 
         template.sendBodyAndProperty("direct:property-and-type", "foo", "someProperty", testContext.getContentToSend());
-
-        assertMockEndpointsSatisfied();
-        assertIsInstanceOf(testContext.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
-    }
-
-    @Test
-    void testAll() throws Exception {
-        TestContext testContext = testWithTypeContext();
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:all")
-                    .setBody()
-                    .expression(
-                        expression(
-                            factory.apply(expression())
-                                .expression(expression)
-                                .headerName("someHeader")
-                                .propertyName("someProperty")
-                                .resultType(testContext.getBodyReceivedType())
-                                .end()
-                        )
-                    ).to("mock:all");
-            }
-        });
-        context.start();
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:all");
-        mockEndpoint.expectedBodiesReceived(testContext.getBodyReceived());
-
-        template.send("direct:all", exchange -> {
-            Message message = exchange.getIn();
-            message.setBody("foo");
-            message.setHeader("someHeader", testContext.getContentToSend());
-            exchange.setProperty("someProperty", "bar");
-        });
 
         assertMockEndpointsSatisfied();
         assertIsInstanceOf(testContext.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());

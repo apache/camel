@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
  * @param <T> the type of the builder used to build the language
  * @param <E> the type of the target expression
  */
+@Deprecated
 public abstract class AbstractSingleInputLanguageTest<
         T extends SingleInputExpressionDefinition.AbstractBuilder<T, E>, E extends SingleInputExpressionDefinition>
         extends ContextTestSupport {

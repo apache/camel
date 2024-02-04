@@ -3024,8 +3024,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "group": def.setGroup(val); break;
                 case "mode": def.setMode(val); break;
-                case "resultType": def.setResultTypeName(val); break;
-                default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
@@ -3039,17 +3038,6 @@ public class ModelParser extends BaseParser {
             return false;
         };
     }
-    protected <T extends SingleInputExpressionDefinition> AttributeHandler<T> singleInputExpressionDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "headerName": def.setHeaderName(val); break;
-                case "propertyName": def.setPropertyName(val); break;
-                case "variableName": def.setVariableName(val); break;
-                default: return expressionDefinitionAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        };
-    }
     protected XPathExpression doParseXPathExpression() throws IOException, XmlPullParserException {
         return doParse(new XPathExpression(), (def, key, val) -> {
             switch (key) {
@@ -3061,7 +3049,7 @@ public class ModelParser extends BaseParser {
                 case "resultType": def.setResultTypeName(val); break;
                 case "saxon": def.setSaxon(val); break;
                 case "threadSafety": def.setThreadSafety(val); break;
-                default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
@@ -3070,9 +3058,8 @@ public class ModelParser extends BaseParser {
         return doParse(new XQueryExpression(), (def, key, val) -> {
             switch (key) {
                 case "configurationRef": def.setConfigurationRef(val); break;
-                case "resultType": def.setResultTypeName(val); break;
                 case "type": def.setType(val); break;
-                default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());

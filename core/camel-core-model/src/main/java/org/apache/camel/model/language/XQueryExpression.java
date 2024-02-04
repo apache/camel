@@ -33,10 +33,6 @@ import org.apache.camel.spi.Metadata;
 public class XQueryExpression extends NamespaceAwareExpression {
 
     @XmlTransient
-    private Class<?> resultType;
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
     private Object configuration;
 
     @XmlAttribute
@@ -54,8 +50,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
 
     private XQueryExpression(Builder builder) {
         super(builder);
-        this.resultTypeName = builder.resultTypeName;
-        this.resultType = builder.resultType;
         this.configuration = builder.configuration;
         this.type = builder.type;
         this.configurationRef = builder.configurationRef;
@@ -77,30 +71,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
      */
     public void setType(String type) {
         this.type = type;
-    }
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    /**
-     * Sets the class of the result type (type from output).
-     * <p/>
-     * The default result type is NodeSet
-     */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
-
-    public String getResultTypeName() {
-        return resultTypeName;
-    }
-
-    /**
-     * Sets the class of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
     }
 
     public String getConfigurationRef() {
@@ -134,29 +104,9 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @XmlTransient
     public static class Builder extends AbstractNamespaceAwareBuilder<Builder, XQueryExpression> {
 
-        private String resultTypeName;
-        private Class<?> resultType;
         private Object configuration;
         private String type;
         private String configurationRef;
-
-        /**
-         * Sets the class of the result type (type from output)
-         */
-        public Builder resultTypeName(String resultTypeName) {
-            this.resultTypeName = resultTypeName;
-            return this;
-        }
-
-        /**
-         * Sets the class of the result type (type from output).
-         * <p/>
-         * The default result type is NodeSet
-         */
-        public Builder resultType(Class<?> resultType) {
-            this.resultType = resultType;
-            return this;
-        }
 
         /**
          * Custom saxon configuration (requires camel-saxon). This may be needed to add custom functions to a saxon
