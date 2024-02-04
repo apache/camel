@@ -26,7 +26,7 @@ The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` 
 The way languages are created and configured by Camel has been refactored to be aligned and avoid a thread-safety issues
 when using Java DSL. The setter/getter on the `Language` classes for options that are not general has been removed (such as in `TokenizeLanguage`).
 
-In XML and YAML DSL the `type` option in `<xpath>` has been renamed to `resultType` to be aligned with the other languages.
+In XML and YAML DSL the `type` option in `<xquery>` has been renamed to `resultType` to be aligned with the other languages.
 
 ==== WireTap EIP
 

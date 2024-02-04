@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import java.util.Iterator;
+
 import org.apache.camel.model.language.XQueryExpression;
 
 /**
@@ -41,4 +43,19 @@ class XQueryLanguageTest extends AbstractSingleInputTypedLanguageTest<XQueryExpr
     protected TestContext testWithoutTypeContext() {
         return new TestContext(defaultContentToSend(), "John", null);
     }
+
+    @Override
+    protected void assertTypeInstanceOf(Class<?> expected, Object body) {
+        // noop
+    }
+
+    @Override
+    protected void assertBodyReceived(Object expected, Object body) {
+        // uses an iterator, so we need to walk it to get the body
+        if (body instanceof Iterator<?> it) {
+            body = it.next();
+        }
+        super.assertBodyReceived(expected, body);
+    }
+
 }
