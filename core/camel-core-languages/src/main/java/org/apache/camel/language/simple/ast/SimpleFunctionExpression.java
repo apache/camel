@@ -265,11 +265,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
 
             // there are parameters then map them into properties
-            Object[] properties = new Object[5];
-            properties[2] = type;
-            properties[3] = ref;
-            properties[1] = method;
-            properties[4] = scope;
+            Object[] properties = new Object[7];
+            properties[3] = type;
+            properties[4] = ref;
+            properties[2] = method;
+            properties[5] = scope;
             return bean.createExpression(null, properties);
         }
 

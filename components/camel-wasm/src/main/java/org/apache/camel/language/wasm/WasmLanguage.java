@@ -49,10 +49,6 @@ public class WasmLanguage extends TypedLanguageSupport implements PropertyConfig
         }
 
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resulttype":
-            case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
             case "module":
                 setModule(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
@@ -79,7 +75,7 @@ public class WasmLanguage extends TypedLanguageSupport implements PropertyConfig
     @Override
     public Expression createExpression(String expression, Object[] properties) {
         WasmExpression answer = new WasmExpression(expression);
-        answer.setResultType(property(Class.class, properties, 0, getResultType()));
+        answer.setResultType(property(Class.class, properties, 0, null));
         answer.setModule(property(String.class, properties, 1, getModule()));
         if (getCamelContext() != null) {
             answer.init(getCamelContext());

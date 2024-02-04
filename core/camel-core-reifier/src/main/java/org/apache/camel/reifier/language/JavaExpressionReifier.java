@@ -29,8 +29,8 @@ public class JavaExpressionReifier extends TypedExpressionReifier<JavaExpression
     @Override
     protected Object[] createProperties() {
         Object[] properties = new Object[3];
-        properties[0] = parseBoolean(definition.getPreCompile());
-        properties[1] = definition.getResultType();
+        properties[0] = definition.getResultType();
+        properties[1] = parseBoolean(definition.getPreCompile());
         properties[2] = parseBoolean(definition.getSingleQuotes());
         return properties;
     }

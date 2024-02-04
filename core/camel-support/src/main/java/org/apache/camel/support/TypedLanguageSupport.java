@@ -25,19 +25,9 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  */
 public abstract class TypedLanguageSupport extends LanguageSupport {
 
-    private Class<?> resultType;
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
-
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        Class<?> type = property(Class.class, properties, 0, getResultType());
+        Class<?> type = property(Class.class, properties, 0, null);
         if (type == null || type == Object.class) {
             return createExpression(expression);
         }

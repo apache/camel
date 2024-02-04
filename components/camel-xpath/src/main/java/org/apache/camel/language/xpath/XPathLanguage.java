@@ -130,17 +130,17 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
     protected void configureBuilder(XPathBuilder builder, Object[] properties, Expression source) {
         builder.setSource(source);
 
-        Class<?> clazz = property(Class.class, properties, 4, documentType);
+        Class<?> clazz = property(Class.class, properties, 0, null);
+        if (clazz != null) {
+            builder.setResultType(clazz);
+        }
+        clazz = property(Class.class, properties, 4, documentType);
         if (clazz != null) {
             builder.setDocumentType(clazz);
         }
         QName qname = property(QName.class, properties, 5, resultQName);
         if (qname != null) {
             builder.setResultQName(qname);
-        }
-        clazz = property(Class.class, properties, 0, getResultType());
-        if (clazz != null) {
-            builder.setResultType(clazz);
         }
         Boolean bool = property(Boolean.class, properties, 6, saxon);
         if (bool != null) {
@@ -185,10 +185,6 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
             case "resulttype":
-            case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
-            case "resultqname":
             case "resultQName":
                 setResultQName(PropertyConfigurerSupport.property(camelContext, QName.class, value));
                 return true;

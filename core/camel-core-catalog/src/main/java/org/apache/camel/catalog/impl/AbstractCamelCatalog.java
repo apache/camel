@@ -1457,7 +1457,7 @@ public abstract class AbstractCamelCatalog {
                     }
                     return answer;
                 } catch (NoSuchMethodException e) {
-                     // ignore
+                    // ignore
                 }
                 if (predicate) {
                     instance.getClass().getMethod("createPredicate", String.class).invoke(instance, text);

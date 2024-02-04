@@ -104,7 +104,7 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
         JsonPathExpression answer = new JsonPathExpression(expression);
         answer.setSource(source);
         answer.setPredicate(predicate);
-        answer.setResultType(property(Class.class, properties, 0, getResultType()));
+        answer.setResultType(property(Class.class, properties, 0, null));
         answer.setSuppressExceptions(property(boolean.class, properties, 4, isSuppressExceptions()));
         answer.setAllowSimple(property(boolean.class, properties, 5, isAllowSimple()));
         answer.setAllowEasyPredicate(property(boolean.class, properties, 6, isAllowEasyPredicate()));
@@ -151,10 +151,6 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
         }
 
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resulttype":
-            case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
             case "suppressexceptions":
             case "suppressExceptions":
                 setSuppressExceptions(PropertyConfigurerSupport.property(camelContext, boolean.class, value));

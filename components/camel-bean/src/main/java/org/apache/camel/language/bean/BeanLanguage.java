@@ -86,10 +86,6 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
             case "validate":
                 setValidate(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
                 return true;
-            case "resultType":
-            case "resulttype":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
             default:
                 return false;
         }
@@ -114,19 +110,19 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
     public Expression createExpression(String expression, Object[] properties) {
         BeanExpression answer = null;
 
-        String method = property(String.class, properties, 1, null);
-        Object bean = property(Object.class, properties, 0, null);
+        Object bean = property(Object.class, properties, 1, null);
+        String method = property(String.class, properties, 2, null);
         if (bean != null) {
             answer = new BeanExpression(bean, method);
         }
         if (answer == null) {
-            Class<?> beanType = property(Class.class, properties, 2, null);
+            Class<?> beanType = property(Class.class, properties, 3, null);
             if (beanType != null) {
                 answer = new BeanExpression(beanType, method);
             }
         }
         if (answer == null) {
-            String ref = property(String.class, properties, 3, null);
+            String ref = property(String.class, properties, 4, null);
             if (ref != null) {
                 answer = new BeanExpression(ref, method);
             }
@@ -137,14 +133,14 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
         if (answer == null) {
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
-        Object scope = property(Object.class, properties, 4, null);
+        Object scope = property(Object.class, properties, 5, null);
         if (scope instanceof BeanScope) {
             answer.setScope((BeanScope) scope);
         } else if (scope != null) {
             answer.setScope(BeanScope.valueOf(scope.toString()));
         }
-        answer.setValidate(property(boolean.class, properties, 5, isValidate()));
-        answer.setResultType(property(Class.class, properties, 6, getResultType()));
+        answer.setValidate(property(boolean.class, properties, 6, isValidate()));
+        answer.setResultType(property(Class.class, properties, 0, null));
         answer.setBeanComponent(beanComponent);
         answer.setParameterMappingStrategy(parameterMappingStrategy);
         answer.setSimple(simple);

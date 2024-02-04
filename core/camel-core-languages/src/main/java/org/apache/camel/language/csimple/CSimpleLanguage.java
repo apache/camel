@@ -150,7 +150,7 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        Class<?> resultType = property(Class.class, properties, 0, getResultType());
+        Class<?> resultType = property(Class.class, properties, 0, null);
         if (Boolean.class == resultType || boolean.class == resultType) {
             // we want it compiled as a predicate
             return (Expression) createPredicate(expression);

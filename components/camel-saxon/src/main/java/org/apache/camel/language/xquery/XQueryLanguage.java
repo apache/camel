@@ -53,7 +53,7 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
     protected void configureBuilder(XQueryBuilder builder, Object[] properties, Expression source) {
         builder.setSource(source);
 
-        Class<?> clazz = property(Class.class, properties, 0, getResultType());
+        Class<?> clazz = property(Class.class, properties, 0, null);
         if (clazz != null) {
             builder.setResultType(clazz);
         }
@@ -68,10 +68,6 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resulttype":
-            case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
             case "configuration":
             case "Configuration":
                 setConfiguration(PropertyConfigurerSupport.property(camelContext, Configuration.class, value));

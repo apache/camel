@@ -129,8 +129,8 @@ public class JavaLanguage extends TypedLanguageSupport implements ScriptingLangu
     public Expression createExpression(String expression, Object[] properties) {
         JoorExpression answer = new JoorExpression(expression);
         answer.setCompiler(compiler);
-        answer.setPreCompile(property(boolean.class, properties, 0, preCompile));
-        answer.setResultType(property(Class.class, properties, 1, getResultType()));
+        answer.setResultType(property(Class.class, properties, 0, null));
+        answer.setPreCompile(property(boolean.class, properties, 1, preCompile));
         answer.setSingleQuotes(property(boolean.class, properties, 2, singleQuotes));
         if (getCamelContext() != null) {
             answer.init(getCamelContext());
