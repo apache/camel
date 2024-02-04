@@ -37,7 +37,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -74,6 +73,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private boolean contentCache;
     @UriParam
     private String resultType;
+    private volatile Class<?> resultTypeClass;
 
     public LanguageEndpoint() {
         // enable cache by default
@@ -94,21 +94,15 @@ public class LanguageEndpoint extends ResourceEndpoint {
         if (language == null && languageName != null) {
             language = getCamelContext().resolveLanguage(languageName);
         }
-        Object[] arr = null;
-        if (language instanceof TypedLanguageSupport && resultType != null) {
-            Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(resultType);
-            arr = new Object[] { clazz };
+        if (resultTypeClass == null && resultType != null) {
+            resultTypeClass = getCamelContext().getClassResolver().resolveMandatoryClass(resultType);
         }
         if (cacheScript && expression == null && script != null) {
             boolean external = script.startsWith("file:") || script.startsWith("http:");
             if (!external) {
                 // we can pre optimize this as the script can be loaded from classpath or registry etc
                 script = resolveScript(script);
-                if (arr != null) {
-                    expression = language.createExpression(script, arr);
-                } else {
-                    expression = language.createExpression(script);
-                }
+                expression = language.createExpression(script, new Object[] { resultTypeClass });
             }
         }
         if (expression != null) {
@@ -120,7 +114,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     public Producer createProducer() throws Exception {
         if (cacheScript && expression == null && script != null) {
             script = resolveScript(script);
-            expression = language.createExpression(script);
+            expression = language.createExpression(script, new Object[] { resultTypeClass });
             expression.init(getCamelContext());
         }
 

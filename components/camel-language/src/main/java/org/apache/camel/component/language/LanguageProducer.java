@@ -97,7 +97,8 @@ public class LanguageProducer extends DefaultProducer {
         // if we have a text based script then use and evaluate it
         if (script != null) {
             // create the expression from the script
-            exp = getEndpoint().getLanguage().createExpression(script);
+            Class<?> type = resultType != Object.class ? resultType : null;
+            exp = getEndpoint().getLanguage().createExpression(script, new Object[] { type });
             exp.init(getEndpoint().getCamelContext());
             // expression was resolved from resource
             getEndpoint().setContentResolvedFromResource(true);
