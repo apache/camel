@@ -60,8 +60,6 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
 
     /**
      * Name of variable to use as input, instead of the message body
-     * </p>
-     * It has as higher precedent if other are set.
      */
     public void setVariableName(String variableName) {
         this.variableName = variableName;
@@ -73,8 +71,6 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
 
     /**
      * Name of header to use as input, instead of the message body
-     * </p>
-     * It has as higher precedent than the propertyName if both are set.
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
@@ -86,8 +82,6 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
 
     /**
      * Name of property to use as input, instead of the message body.
-     * </p>
-     * It has a lower precedent than the headerName if both are set.
      */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
@@ -108,8 +102,6 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
 
         /**
          * Name of variable to use as input, instead of the message body
-         * </p>
-         * It has as higher precedent if other are set.
          */
         public T variableName(String variableName) {
             this.variableName = variableName;
@@ -118,8 +110,6 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
 
         /**
          * Name of header to use as input, instead of the message body
-         * </p>
-         * It has as higher precedent than the propertyName if both are set.
          */
         public T headerName(String headerName) {
             this.headerName = headerName;
@@ -128,8 +118,6 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
 
         /**
          * Name of property to use as input, instead of the message body.
-         * </p>
-         * It has a lower precedent than the headerName if both are set.
          */
         public T propertyName(String propertyName) {
             this.propertyName = propertyName;
