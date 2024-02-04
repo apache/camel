@@ -38,6 +38,12 @@ import org.apache.camel.support.builder.Namespaces;
 public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
 
     @Override
+    protected boolean supportResultType() {
+        // result type is handled specially in tokenizer
+        return false;
+    }
+
+    @Override
     public Expression createExpression(Expression source, String expression, Object[] properties) {
         Character mode = property(Character.class, properties, 4, "i");
         XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(source, expression, mode);

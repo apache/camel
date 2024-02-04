@@ -29,7 +29,7 @@ public class DatasonnetExpressionReifier extends TypedExpressionReifier<Datasonn
     @Override
     protected Object[] createProperties() {
         Object[] properties = new Object[3];
-        properties[0] = definition.getResultType();
+        properties[0] = asResultType();
         properties[1] = parseString(definition.getBodyMediaType());
         properties[2] = parseString(definition.getOutputMediaType());
         return properties;

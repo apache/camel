@@ -4241,9 +4241,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("logNamespaces", def.getLogNamespaces());
         doWriteAttribute("threadSafety", def.getThreadSafety());
         doWriteAttribute("factoryRef", def.getFactoryRef());
+        doWriteAttribute("resultQName", def.getResultQName());
         doWriteAttribute("saxon", def.getSaxon());
         doWriteAttribute("documentType", def.getDocumentTypeName());
-        doWriteAttribute("resultType", def.getResultTypeName());
         doWriteNamespaces(def);
         doWriteValue(def.getExpression());
         endElement(name);
@@ -4255,7 +4255,6 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("configurationRef", def.getConfigurationRef());
-        doWriteAttribute("type", def.getType());
         doWriteNamespaces(def);
         doWriteValue(def.getExpression());
         endElement(name);

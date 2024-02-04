@@ -73,7 +73,7 @@ And in XML DSL:
 <route>
   <from uri="direct:start"/>
   <recipientList>
-    <xquery type="java.lang.String">concat('mock:foo.', /person/@city</xquery>
+    <xquery resultType="java.lang.String">concat('mock:foo.', /person/@city</xquery>
   </recipientList>
 </route>
 -----------------------------------------------------------------------------

@@ -24,7 +24,7 @@ import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 
-public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpression> {
+public class TokenizerExpressionReifier extends TypedExpressionReifier<TokenizerExpression> {
 
     public TokenizerExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (TokenizerExpression) definition);
@@ -32,7 +32,7 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
 
     protected Object[] createProperties() {
         Object[] properties = new Object[13];
-        properties[0] = definition.getResultType();
+        properties[0] = asResultType();
         properties[1] = parseString(definition.getVariableName());
         properties[2] = parseString(definition.getHeaderName());
         properties[3] = parseString(definition.getPropertyName());

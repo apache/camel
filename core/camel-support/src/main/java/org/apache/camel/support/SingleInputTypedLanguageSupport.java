@@ -37,6 +37,13 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
         return createExpression(expression, null);
     }
 
+    /**
+     * Whether using result type is supported
+     */
+    protected boolean supportResultType() {
+        return true;
+    }
+
     @Override
     public Expression createExpression(String expression, Object[] properties) {
         Class<?> type = property(Class.class, properties, 0, null);
@@ -44,7 +51,10 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
         String header = property(String.class, properties, 2, null);
         String property = property(String.class, properties, 3, null);
         Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
-        if (type == null || type == Object.class) {
+        if (getCamelContext() != null) {
+            source.init(getCamelContext());
+        }
+        if (type == null || type == Object.class || !supportResultType()) {
             return createExpression(source, expression, properties);
         }
         return ExpressionBuilder.convertToExpression(createExpression(source, expression, properties), type);
@@ -57,6 +67,9 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
         String header = property(String.class, properties, 2, null);
         String property = property(String.class, properties, 3, null);
         Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
+        if (getCamelContext() != null) {
+            source.init(getCamelContext());
+        }
         return createPredicate(source, expression, properties);
     }
 

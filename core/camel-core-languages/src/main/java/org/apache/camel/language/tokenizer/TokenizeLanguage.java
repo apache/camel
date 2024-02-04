@@ -36,6 +36,12 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
 
     @Override
+    protected boolean supportResultType() {
+        // result type is handled specially in tokenizer
+        return false;
+    }
+
+    @Override
     public Expression createExpression(Expression source, String expression, Object[] properties) {
         Class<?> type = property(Class.class, properties, 0, null);
         String token = property(String.class, properties, 4, expression);

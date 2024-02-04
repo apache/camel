@@ -31,7 +31,7 @@ public class MethodCallExpressionReifier extends TypedExpressionReifier<MethodCa
     @Override
     protected Object[] createProperties() {
         Object[] properties = new Object[7];
-        properties[0] = definition.getResultType();
+        properties[0] = asResultType();
         properties[1] = definition.getInstance();
         properties[2] = parseString(definition.getMethod());
         properties[3] = definition.getBeanType();

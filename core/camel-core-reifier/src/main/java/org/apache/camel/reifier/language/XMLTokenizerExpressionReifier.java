@@ -25,7 +25,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 
-public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenizerExpression> {
+public class XMLTokenizerExpressionReifier extends TypedExpressionReifier<XMLTokenizerExpression> {
 
     public XMLTokenizerExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (XMLTokenizerExpression) definition);
@@ -66,7 +66,7 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
 
     protected Object[] createProperties() {
         Object[] properties = new Object[7];
-        properties[0] = definition.getResultType();
+        properties[0] = asResultType();
         properties[1] = parseString(definition.getVariableName());
         properties[2] = parseString(definition.getHeaderName());
         properties[3] = parseString(definition.getPropertyName());

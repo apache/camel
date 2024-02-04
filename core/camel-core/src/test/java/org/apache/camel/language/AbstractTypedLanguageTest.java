@@ -23,6 +23,7 @@ import org.apache.camel.builder.LanguageBuilderFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.TypedExpressionDefinition;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -50,12 +51,29 @@ public abstract class AbstractTypedLanguageTest<
 
     protected void assertResult(String uriSuffix, TestContext context) throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint(String.format("mock:%s", uriSuffix));
-        mockEndpoint.expectedBodiesReceived(context.getBodyReceived());
-
+        mockEndpoint.expectedMessageCount(1);
         template.sendBody(String.format("direct:%s", uriSuffix), context.getContentToSend());
-
         assertMockEndpointsSatisfied();
-        assertIsInstanceOf(context.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+
+        assertTypeInstanceOf(context.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+        assertBodyReceived(context.getBodyReceived(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+    }
+
+    protected void assertTypeInstanceOf(Class<?> expected, Object body) {
+        if (expected != null) {
+            assertIsInstanceOf(expected, body);
+        }
+    }
+
+    protected void assertBodyReceived(Object expected, Object body) {
+        if (expected != null) {
+            if (expected instanceof Integer && body instanceof Integer) {
+                // java objects for number crap
+                Assertions.assertEquals((int) expected, (int) body);
+            } else {
+                Assertions.assertEquals(expected, body);
+            }
+        }
     }
 
     protected Object defaultContentToSend() {

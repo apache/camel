@@ -44,9 +44,9 @@ public class XPathExpression extends NamespaceAwareExpression {
     @XmlAttribute(name = "documentType")
     @Metadata(label = "advanced")
     private String documentTypeName;
-    @XmlAttribute(name = "resultType")
+    @XmlAttribute(name = "resultQName")
     @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
-    private String resultTypeName;
+    private String resultQName;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String saxon;
@@ -82,7 +82,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         this.documentType = builder.documentType;
         this.xpathFactory = builder.xpathFactory;
         this.documentTypeName = builder.documentTypeName;
-        this.resultTypeName = builder.resultTypeName;
+        this.resultQName = builder.resultQName;
         this.saxon = builder.saxon;
         this.factoryRef = builder.factoryRef;
         this.objectModel = builder.objectModel;
@@ -122,17 +122,15 @@ public class XPathExpression extends NamespaceAwareExpression {
         this.documentTypeName = documentTypeName;
     }
 
-    public String getResultTypeName() {
-        return resultTypeName;
+    public String getResultQName() {
+        return resultQName;
     }
 
     /**
-     * Sets the class name of the result type (type from output)
-     * <p/>
-     * The default result type is NodeSet
+     * Sets the output type supported by XPath.
      */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
+    public void setResultQName(String resultQName) {
+        this.resultQName = resultQName;
     }
 
     /**
@@ -229,7 +227,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         private Class<?> documentType;
         private XPathFactory xpathFactory;
         private String documentTypeName;
-        private String resultTypeName;
+        private String resultQName;
         private String saxon;
         private String factoryRef;
         private String objectModel;
@@ -267,8 +265,8 @@ public class XPathExpression extends NamespaceAwareExpression {
          * <p/>
          * The default result type is NodeSet
          */
-        public Builder resultTypeName(String resultTypeName) {
-            this.resultTypeName = resultTypeName;
+        public Builder resultQName(String resultTypeName) {
+            this.resultQName = resultQName;
             return this;
         }
 

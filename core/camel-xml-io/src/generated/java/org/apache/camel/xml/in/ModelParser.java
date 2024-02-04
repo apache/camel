@@ -3046,7 +3046,7 @@ public class ModelParser extends BaseParser {
                 case "logNamespaces": def.setLogNamespaces(val); break;
                 case "objectModel": def.setObjectModel(val); break;
                 case "preCompile": def.setPreCompile(val); break;
-                case "resultType": def.setResultTypeName(val); break;
+                case "resultQName": def.setResultQName(val); break;
                 case "saxon": def.setSaxon(val); break;
                 case "threadSafety": def.setThreadSafety(val); break;
                 default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
@@ -3056,12 +3056,11 @@ public class ModelParser extends BaseParser {
     }
     protected XQueryExpression doParseXQueryExpression() throws IOException, XmlPullParserException {
         return doParse(new XQueryExpression(), (def, key, val) -> {
-            switch (key) {
-                case "configurationRef": def.setConfigurationRef(val); break;
-                case "type": def.setType(val); break;
-                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            if ("configurationRef".equals(key)) {
+                def.setConfigurationRef(val);
+                return true;
             }
-            return true;
+            return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
         }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected CustomLoadBalancerDefinition doParseCustomLoadBalancerDefinition() throws IOException, XmlPullParserException {

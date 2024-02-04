@@ -24,7 +24,7 @@ import org.apache.camel.model.language.XPathExpression;
 class XPathLanguageTest extends AbstractSingleInputTypedLanguageTest<XPathExpression.Builder, XPathExpression> {
 
     XPathLanguageTest() {
-        super("/foo/text()", factory -> factory.xpath().resultType(String.class));
+        super("/foo/text()", factory -> factory.xpath().resultType(Integer.class));
     }
 
     @Override
@@ -34,7 +34,11 @@ class XPathLanguageTest extends AbstractSingleInputTypedLanguageTest<XPathExpres
 
     @Override
     protected TestContext testWithTypeContext() {
-        return new TestContext(defaultContentToSend(), 1, String.class);
+        return new TestContext(defaultContentToSend(), 1, Integer.class);
     }
 
+    @Override
+    protected TestContext testWithoutTypeContext() {
+        return new TestContext(defaultContentToSend(), 1, Integer.class);
+    }
 }

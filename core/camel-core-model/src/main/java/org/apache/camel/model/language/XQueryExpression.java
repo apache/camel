@@ -34,9 +34,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
 
     @XmlTransient
     private Object configuration;
-
-    @XmlAttribute
-    private String type;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String configurationRef;
@@ -51,26 +48,12 @@ public class XQueryExpression extends NamespaceAwareExpression {
     private XQueryExpression(Builder builder) {
         super(builder);
         this.configuration = builder.configuration;
-        this.type = builder.type;
         this.configurationRef = builder.configurationRef;
     }
 
     @Override
     public String getLanguage() {
         return "xquery";
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the class name of the result type (type from output)
-     * <p/>
-     * The default result type is NodeSet
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getConfigurationRef() {
@@ -105,7 +88,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
     public static class Builder extends AbstractNamespaceAwareBuilder<Builder, XQueryExpression> {
 
         private Object configuration;
-        private String type;
         private String configurationRef;
 
         /**
@@ -114,16 +96,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
          */
         public Builder configuration(Object configuration) {
             this.configuration = configuration;
-            return this;
-        }
-
-        /**
-         * Sets the class name of the result type (type from output)
-         * <p/>
-         * The default result type is NodeSet
-         */
-        public Builder type(String type) {
-            this.type = type;
             return this;
         }
 

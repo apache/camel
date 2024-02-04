@@ -58,18 +58,22 @@ public abstract class AbstractSingleInputTypedLanguageTest<
             }
         });
         context.start();
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:header-only");
+
         TestContext context = testWithoutTypeContext();
-        mockEndpoint.expectedBodiesReceived(context.getBodyReceived());
 
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:header-only");
+        mockEndpoint.expectedMessageCount(1);
         template.sendBodyAndHeader("direct:header-only", "foo", "someHeader", context.getContentToSend());
-
         assertMockEndpointsSatisfied();
-        assertIsInstanceOf(context.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+
+        assertBodyReceived(context.getBodyReceived(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+        assertTypeInstanceOf(context.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
     }
 
     @Test
     void testPropertyOnly() throws Exception {
+        TestContext testContext = testWithoutTypeContext();
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -85,19 +89,20 @@ public abstract class AbstractSingleInputTypedLanguageTest<
             }
         });
         context.start();
+
         MockEndpoint mockEndpoint = getMockEndpoint("mock:property-only");
-        TestContext context = testWithoutTypeContext();
-        mockEndpoint.expectedBodiesReceived(context.getBodyReceived());
-
-        template.sendBodyAndProperty("direct:property-only", "foo", "someProperty", context.getContentToSend());
-
+        mockEndpoint.expectedMessageCount(1);
+        template.sendBodyAndProperty("direct:property-only", "foo", "someProperty", testContext.getContentToSend());
         assertMockEndpointsSatisfied();
-        assertIsInstanceOf(context.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+
+        assertBodyReceived(testContext.getBodyReceived(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+        assertTypeInstanceOf(testContext.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
     }
 
     @Test
     void testHeaderAndType() throws Exception {
         TestContext testContext = testWithTypeContext();
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -115,14 +120,13 @@ public abstract class AbstractSingleInputTypedLanguageTest<
             }
         });
         context.start();
+
         MockEndpoint mockEndpoint = getMockEndpoint("mock:header-and-type");
-        mockEndpoint.expectedBodiesReceived(testContext.getBodyReceived());
-
+        mockEndpoint.expectedMessageCount(1);
         template.sendBodyAndHeader("direct:header-and-type", "foo", "someHeader", testContext.getContentToSend());
-
         assertMockEndpointsSatisfied();
-        assertIsInstanceOf(testContext.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
 
+        assertTypeInstanceOf(testContext.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
     }
 
     @Test
@@ -145,13 +149,14 @@ public abstract class AbstractSingleInputTypedLanguageTest<
             }
         });
         context.start();
+
         MockEndpoint mockEndpoint = getMockEndpoint("mock:property-and-type");
-        mockEndpoint.expectedBodiesReceived(testContext.getBodyReceived());
-
+        mockEndpoint.expectedMessageCount(1);
         template.sendBodyAndProperty("direct:property-and-type", "foo", "someProperty", testContext.getContentToSend());
-
         assertMockEndpointsSatisfied();
-        assertIsInstanceOf(testContext.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+
+        assertBodyReceived(testContext.getBodyReceived(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+        assertTypeInstanceOf(testContext.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
     }
 
 }

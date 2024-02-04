@@ -20522,7 +20522,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
-                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name")
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body It has as higher precedent if other are set.", displayName = "Variable Name")
             }
     )
     public static class XMLTokenizerExpressionDeserializer extends YamlDeserializerBase<XMLTokenizerExpression> {
@@ -20631,11 +20631,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "objectModel", type = "string", description = "The XPath object model to use", displayName = "Object Model"),
                     @YamlProperty(name = "preCompile", type = "boolean", description = "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default. This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such as if the application is ahead of time compiled (for example with camel-quarkus) which would then load the xpath factory of the built operating system, and not a JVM runtime.", displayName = "Pre Compile"),
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
-                    @YamlProperty(name = "resultType", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE", defaultValue = "NODESET", description = "Sets the class name of the result type (type from output) The default result type is NodeSet", displayName = "Result Type"),
+                    @YamlProperty(name = "resultQName", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE", defaultValue = "NODESET", description = "Sets the output type supported by XPath.", displayName = "Result QName"),
+                    @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "saxon", type = "boolean", description = "Whether to use Saxon.", displayName = "Saxon"),
                     @YamlProperty(name = "threadSafety", type = "boolean", description = "Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type, and the returned set has multiple elements. In this situation there can be thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode. This option prevents concurrency issues by doing defensive copies of the nodes. It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has thread-safety issues which can be prevented by turning this option on.", displayName = "Thread Safety"),
                     @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
-                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name")
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body It has as higher precedent if other are set.", displayName = "Variable Name")
             }
     )
     public static class XPathExpressionDeserializer extends YamlDeserializerBase<XPathExpression> {
@@ -20708,6 +20709,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setPropertyName(val);
                     break;
                 }
+                case "resultQName": {
+                    String val = asText(node);
+                    target.setResultQName(val);
+                    break;
+                }
                 case "resultType": {
                     String val = asText(node);
                     target.setResultTypeName(val);
@@ -20767,8 +20773,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set.", displayName = "Property Name"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
-                    @YamlProperty(name = "type", type = "string", description = "Sets the class name of the result type (type from output) The default result type is NodeSet", displayName = "Type"),
-                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name")
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body It has as higher precedent if other are set.", displayName = "Variable Name")
             }
     )
     public static class XQueryExpressionDeserializer extends YamlDeserializerBase<XQueryExpression> {
@@ -20829,11 +20834,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
-                    break;
-                }
-                case "type": {
-                    String val = asText(node);
-                    target.setType(val);
                     break;
                 }
                 case "variableName": {
