@@ -156,11 +156,16 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
             this.query.apply(scope, payload, outputs::add);
 
             if (outputs.size() == 1) {
-                // no need to convert output
-                if (resultType == JsonNode.class) {
-                    return outputs.get(0);
+                JsonNode out = outputs.get(0);
+                // special if null
+                if (out.isNull()) {
+                    return null;
                 }
 
+                // no need to convert output
+                if (resultType == JsonNode.class) {
+                    return out;
+                }
                 return this.typeConverter.convertTo(resultType, exchange, outputs.get(0));
             } else if (outputs.size() > 1) {
                 // no need to convert outputs
@@ -169,6 +174,7 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
                 }
 
                 return outputs.stream()
+                        .filter(o -> !o.isNull()) // skip null
                         .map(item -> this.typeConverter.convertTo(resultType, exchange, item))
                         .collect(Collectors.toList());
             }
