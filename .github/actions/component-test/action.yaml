@@ -35,7 +35,6 @@ runs:
   steps:
     - id: install-mvnd
       uses: ./.github/actions/install-mvnd
-      if: ${{ inputs.author-association == 'MEMBER' }}
     - name: maven build
       shell: bash
       run: ${{ github.action_path }}/component-test.sh
