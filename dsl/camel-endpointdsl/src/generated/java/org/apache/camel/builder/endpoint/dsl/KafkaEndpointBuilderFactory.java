@@ -5338,11 +5338,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code
-         * org.apache.kafka.clients.producer.RecordMetadata}.
+         * @return the name of the header {@code kafka.RECORDMETA}.
          */
-        public String orgApacheKafkaClientsProducerRecordmetadata() {
-            return "org.apache.kafka.clients.producer.RecordMetadata";
+        public String kafkaRecordmeta() {
+            return "kafka.RECORDMETA";
         }
 
         /**
