@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.ec2;
 import org.apache.camel.component.aws2.ec2.client.AWS2EC2ClientFactory;
 import org.apache.camel.component.aws2.ec2.client.AWS2EC2InternalClient;
 import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class AWS2EC2ClientFactoryTest {
         ec2Configuration.setUseDefaultCredentialsProvider(true);
         AWS2EC2InternalClient ec2Client = AWS2EC2ClientFactory.getEc2Client(ec2Configuration);
         assertTrue(ec2Client instanceof AWS2EC2ClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenEC2Client() {
+        AWS2EC2Configuration ec2Configuration = new AWS2EC2Configuration();
+        ec2Configuration.setUseSessionCredentials(true);
+        AWS2EC2InternalClient ec2Client = AWS2EC2ClientFactory.getEc2Client(ec2Configuration);
+        assertTrue(ec2Client instanceof AWS2EC2ClientSessionTokenImpl);
     }
 }
