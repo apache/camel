@@ -15,10 +15,13 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "resourceTables", 
            description = "",
-           apiMethods = {@ApiMethod(methodName = "analytics", signatures={"void analytics(Boolean skipAggregate, Boolean skipEvents, Integer lastYears, Integer interval)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "analytics", signatures={"void analytics(Boolean skipAggregate, Boolean skipEvents, Integer lastYears, Integer interval, Boolean async)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class Dhis2ResourceTablesEndpointConfiguration extends Dhis2Configuration {
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "analytics")})
+    private Boolean async;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "analytics")})
     private Integer interval;
@@ -31,6 +34,14 @@ public final class Dhis2ResourceTablesEndpointConfiguration extends Dhis2Configu
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "analytics")})
     private Boolean skipEvents;
+
+    public Boolean getAsync() {
+        return async;
+    }
+
+    public void setAsync(Boolean async) {
+        this.async = async;
+    }
 
     public Integer getInterval() {
         return interval;

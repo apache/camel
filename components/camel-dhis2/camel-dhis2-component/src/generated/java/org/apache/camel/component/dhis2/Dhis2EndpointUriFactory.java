@@ -21,9 +21,10 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(39);
+        Set<String> props = new HashSet<>(41);
         props.add("apiName");
         props.add("arrayName");
+        props.add("async");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -44,6 +45,7 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("methodName");
         props.add("paging");
         props.add("password");
+        props.add("pat");
         props.add("path");
         props.add("pollStrategy");
         props.add("queryParams");
@@ -62,8 +64,9 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
         secretProps.add("password");
+        secretProps.add("pat");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);

@@ -25,10 +25,11 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         map.put("BaseApiUrl", java.lang.String.class);
         map.put("Client", org.hisp.dhis.integration.sdk.api.Dhis2Client.class);
         map.put("Fields", java.lang.String.class);
-        map.put("Filter", java.lang.String.class);
+        map.put("Filter", java.util.List.class);
         map.put("MethodName", java.lang.String.class);
         map.put("Paging", java.lang.Boolean.class);
         map.put("Password", java.lang.String.class);
+        map.put("Pat", java.lang.String.class);
         map.put("Path", java.lang.String.class);
         map.put("QueryParams", java.util.Map.class);
         map.put("RootJunction", org.apache.camel.component.dhis2.api.RootJunctionEnum.class);
@@ -51,13 +52,15 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "fields":
         case "Fields": target.setFields(property(camelContext, java.lang.String.class, value)); return true;
         case "filter":
-        case "Filter": target.setFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "Filter": target.setFilter(property(camelContext, java.util.List.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "paging":
         case "Paging": target.setPaging(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pat":
+        case "Pat": target.setPat(property(camelContext, java.lang.String.class, value)); return true;
         case "path":
         case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "queryparams":
@@ -89,13 +92,15 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "fields":
         case "Fields": return java.lang.String.class;
         case "filter":
-        case "Filter": return java.lang.String.class;
+        case "Filter": return java.util.List.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "paging":
         case "Paging": return java.lang.Boolean.class;
         case "password":
         case "Password": return java.lang.String.class;
+        case "pat":
+        case "Pat": return java.lang.String.class;
         case "path":
         case "Path": return java.lang.String.class;
         case "queryparams":
@@ -130,6 +135,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Paging": return target.getPaging();
         case "password":
         case "Password": return target.getPassword();
+        case "pat":
+        case "Pat": return target.getPat();
         case "path":
         case "Path": return target.getPath();
         case "queryparams":
@@ -145,6 +152,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "filter":
+        case "Filter": return java.lang.String.class;
         case "queryparams":
         case "QueryParams": return java.lang.Object.class;
         default: return null;

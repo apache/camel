@@ -27,6 +27,7 @@ public class Dhis2ComponentConfigurer extends PropertyConfigurerSupport implemen
         map.put("client", org.hisp.dhis.integration.sdk.api.Dhis2Client.class);
         map.put("configuration", org.apache.camel.component.dhis2.Dhis2Configuration.class);
         map.put("password", java.lang.String.class);
+        map.put("pat", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -53,6 +54,7 @@ public class Dhis2ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pat": getOrCreateConfiguration(target).setPat(property(camelContext, java.lang.String.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -77,6 +79,7 @@ public class Dhis2ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "password": return java.lang.String.class;
+        case "pat": return java.lang.String.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -97,6 +100,7 @@ public class Dhis2ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "password": return getOrCreateConfiguration(target).getPassword();
+        case "pat": return getOrCreateConfiguration(target).getPat();
         case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }

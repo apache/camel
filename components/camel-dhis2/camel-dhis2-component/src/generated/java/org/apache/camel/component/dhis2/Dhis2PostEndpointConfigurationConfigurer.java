@@ -25,6 +25,7 @@ public class Dhis2PostEndpointConfigurationConfigurer extends org.apache.camel.s
         map.put("Client", org.hisp.dhis.integration.sdk.api.Dhis2Client.class);
         map.put("MethodName", java.lang.String.class);
         map.put("Password", java.lang.String.class);
+        map.put("Pat", java.lang.String.class);
         map.put("Path", java.lang.String.class);
         map.put("QueryParams", java.util.Map.class);
         map.put("Resource", java.lang.Object.class);
@@ -46,6 +47,8 @@ public class Dhis2PostEndpointConfigurationConfigurer extends org.apache.camel.s
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pat":
+        case "Pat": target.setPat(property(camelContext, java.lang.String.class, value)); return true;
         case "path":
         case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "queryparams":
@@ -76,6 +79,8 @@ public class Dhis2PostEndpointConfigurationConfigurer extends org.apache.camel.s
         case "MethodName": return java.lang.String.class;
         case "password":
         case "Password": return java.lang.String.class;
+        case "pat":
+        case "Pat": return java.lang.String.class;
         case "path":
         case "Path": return java.lang.String.class;
         case "queryparams":
@@ -102,6 +107,8 @@ public class Dhis2PostEndpointConfigurationConfigurer extends org.apache.camel.s
         case "MethodName": return target.getMethodName();
         case "password":
         case "Password": return target.getPassword();
+        case "pat":
+        case "Pat": return target.getPat();
         case "path":
         case "Path": return target.getPath();
         case "queryparams":
