@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.cw.client;
 import org.apache.camel.component.aws2.cw.Cw2Configuration;
 import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientIAMProfileOptimizedImpl;
+import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientStandardImpl;
 
 /**
@@ -40,6 +41,8 @@ public final class Cw2ClientFactory {
             return new Cw2ClientIAMOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
             return new Cw2ClientIAMProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new Cw2ClientSessionTokenImpl(configuration);
         } else {
             return new Cw2ClientStandardImpl(configuration);
         }

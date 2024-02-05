@@ -41,6 +41,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": target.getConfiguration().setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "timestamp": target.getConfiguration().setTimestamp(property(camelContext, java.time.Instant.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
@@ -51,6 +53,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": target.getConfiguration().setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Double.class, value)); return true;
         default: return false;
         }
@@ -84,6 +88,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "timestamp": return java.time.Instant.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
@@ -94,6 +100,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         case "value": return java.lang.Double.class;
         default: return null;
         }
@@ -123,6 +131,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "region": return target.getConfiguration().getRegion();
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
+        case "sessiontoken":
+        case "sessionToken": return target.getConfiguration().getSessionToken();
         case "timestamp": return target.getConfiguration().getTimestamp();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
@@ -133,6 +143,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return target.getConfiguration().isUseSessionCredentials();
         case "value": return target.getConfiguration().getValue();
         default: return null;
         }
