@@ -21,7 +21,7 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(33);
         props.add("accessKey");
         props.add("amazonAthenaClient");
         props.add("clientRequestToken");
@@ -49,14 +49,17 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
         props.add("resetWaitTimeoutOnRetry");
         props.add("retry");
         props.add("secretKey");
+        props.add("sessionToken");
         props.add("useDefaultCredentialsProvider");
         props.add("useProfileCredentialsProvider");
+        props.add("useSessionCredentials");
         props.add("waitTimeout");
         props.add("workGroup");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
         secretProps.add("accessKey");
         secretProps.add("secretKey");
+        secretProps.add("sessionToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
