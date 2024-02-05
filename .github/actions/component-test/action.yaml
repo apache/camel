@@ -30,11 +30,15 @@ inputs:
   comment-body:
     description: 'Body of the comment to process'
     required: true
+  author-association:
+    description: 'The comment author's association with the organization'
+    required: true
 runs:
   using: "composite"
   steps:
     - id: install-mvnd
       uses: ./.github/actions/install-mvnd
+      if: ${{ inputs.author-association == 'MEMBER' }}
     - name: maven build
       shell: bash
       run: ${{ github.action_path }}/component-test.sh
@@ -43,12 +47,14 @@ runs:
         COMMENT_BODY: ${{ inputs.comment-body }}
         FAST_BUILD: "true"
         LOG_FILE: build.log
+      if: ${{ inputs.author-association == 'MEMBER' }}
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
       with:
         name: build.log
         path: build.log
+      if: ${{ inputs.author-association == 'MEMBER' }}
     - name: maven test
       shell: bash
       run: ${{ github.action_path }}/component-test.sh
@@ -57,14 +63,16 @@ runs:
         COMMENT_BODY: ${{ inputs.comment-body }}
         FAST_BUILD: "false"
         LOG_FILE: tests.log
+      if: ${{ inputs.author-association == 'MEMBER' }}
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
       with:
         name: tests.log
         path: tests.log
+      if: ${{ inputs.author-association == 'MEMBER' }}
     - name: Success comment
-      if: success()
+      if: success() && ${{ inputs.author-association == 'MEMBER' }}
       uses: ./.github/actions/create-or-update-comment
       with:
         comment-id: ${{ inputs.comment-id }}
@@ -74,7 +82,7 @@ runs:
 
           **Result** :white_check_mark: The tests passed successfully
     - name: Failure comment
-      if: failure()
+      if: failure() && ${{ inputs.author-association == 'MEMBER' }}
       uses: ./.github/actions/create-or-update-comment
       with:
         comment-id: ${{ inputs.comment-id }}
