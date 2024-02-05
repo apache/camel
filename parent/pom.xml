@@ -352,7 +352,7 @@
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.14.2</msal4j-version>
         <mustache-java-version>0.9.11</mustache-java-version>
-        <mvel-version>2.5.1.Final</mvel-version>
+        <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.15</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
