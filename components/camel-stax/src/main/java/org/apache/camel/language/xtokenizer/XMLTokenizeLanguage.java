@@ -16,10 +16,15 @@
  */
 package org.apache.camel.language.xtokenizer;
 
+import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.annotations.Language;
+import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.IteratorConvertTo;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.builder.Namespaces;
 
@@ -45,9 +50,11 @@ public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
 
     @Override
     public Expression createExpression(Expression source, String expression, Object[] properties) {
+        Class<?> type = property(Class.class, properties, 0, null);
         Character mode = property(Character.class, properties, 4, "i");
-        XMLTokenExpressionIterator answer = new XMLTokenExpressionIterator(source, expression, mode);
-        answer.setGroup(property(int.class, properties, 5, 1));
+
+        XMLTokenExpressionIterator xml = new XMLTokenExpressionIterator(source, expression, mode);
+        xml.setGroup(property(int.class, properties, 5, 1));
         Object obj = properties[6];
         if (obj != null) {
             Namespaces ns;
@@ -60,8 +67,36 @@ public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
                 throw new IllegalArgumentException(
                         "Namespaces is not instance of java.util.Map or " + Namespaces.class.getName());
             }
-            answer.setNamespaces(ns.getNamespaces());
+            xml.setNamespaces(ns.getNamespaces());
         }
+        Expression answer = xml;
+
+        if (type != null && type != Object.class) {
+            // wrap iterator in a converter
+            final Expression delegate = xml;
+            answer = new ExpressionAdapter() {
+                @Override
+                public Object evaluate(Exchange exchange) {
+                    Object value = delegate.evaluate(exchange, Object.class);
+                    if (value instanceof Iterator<?> it) {
+                        value = new IteratorConvertTo(exchange, it, type);
+                    }
+                    return value;
+                }
+
+                @Override
+                public void init(CamelContext context) {
+                    super.init(context);
+                    delegate.init(context);
+                }
+
+                @Override
+                public String toString() {
+                    return delegate.toString();
+                }
+            };
+        }
+
         if (getCamelContext() != null) {
             answer.init(getCamelContext());
         }

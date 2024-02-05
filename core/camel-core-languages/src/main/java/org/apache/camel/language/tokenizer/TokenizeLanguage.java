@@ -16,7 +16,13 @@
  */
 package org.apache.camel.language.tokenizer;
 
+import java.util.Iterator;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.IteratorConvertTo;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -92,6 +98,32 @@ public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
                 String delim = groupDelimiter != null ? groupDelimiter : token;
                 answer = ExpressionBuilder.groupIteratorExpression(answer, delim, group, skipFirst);
             }
+        }
+
+        if (type != null && type != Object.class) {
+            // wrap iterator in a converter
+            final Expression delegate = answer;
+            answer = new ExpressionAdapter() {
+                @Override
+                public Object evaluate(Exchange exchange) {
+                    Object value = delegate.evaluate(exchange, Object.class);
+                    if (value instanceof Iterator<?> it) {
+                        value = new IteratorConvertTo(exchange, it, type);
+                    }
+                    return value;
+                }
+
+                @Override
+                public void init(CamelContext context) {
+                    super.init(context);
+                    delegate.init(context);
+                }
+
+                @Override
+                public String toString() {
+                    return delegate.toString();
+                }
+            };
         }
 
         if (getCamelContext() != null) {
