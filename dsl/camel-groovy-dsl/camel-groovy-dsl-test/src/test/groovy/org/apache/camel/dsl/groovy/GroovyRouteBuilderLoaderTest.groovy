@@ -147,8 +147,13 @@ class GroovyRouteBuilderLoaderTest extends Specification {
             loadRoute('/routes/routes-with-languages-configuration.groovy')
 
         then:
+            context.start()
+
+            with(context.resolveLanguage('bean'), BeanLanguage) {
+                (!validate)
+            }
             with(context.resolveLanguage('myBean'), BeanLanguage) {
-                (!isValidate());
+                validate
             }
     }
 

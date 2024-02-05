@@ -34,7 +34,6 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy
 import org.apache.camel.support.PluginHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class KotlinRoutesBuilderLoaderTest {
@@ -152,18 +151,19 @@ class KotlinRoutesBuilderLoaderTest {
     }
 
     @Test
-    @Disabled
     fun `load integration with languages configuration`() {
         val ctx = DefaultCamelContext()
         val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-languages-configuration.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
+        ctx.start()
+
         val bean = ctx.resolveLanguage("bean") as BeanLanguage
-        assertThat(bean.isValidate).isTrue()
+        assertThat(bean.isValidate).isFalse()
 
         val mybean = ctx.resolveLanguage("my-bean") as BeanLanguage
-        assertThat(mybean.isValidate).isFalse()
+        assertThat(mybean.isValidate).isTrue()
     }
 
     @Test

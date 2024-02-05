@@ -20,8 +20,11 @@ import org.apache.camel.language.bean.BeanLanguage
 camel {
 
     languages {
+        bean(BeanLanguage) {
+            validate = false
+        }
         myBean(BeanLanguage) {
-            validate = false;
+            validate = true
         }
     }
 }
