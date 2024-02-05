@@ -121,10 +121,10 @@ public class JqExpressionTest {
             exchange.getMessage().setBody(node);
             exchange.getMessage().setHeader("CommitterName", "Andrea");
 
-            assertThat(Jq.expression(context, "has(\"baz\")").matches(exchange)).isTrue();
-            assertThat(Jq.expression(context, "has(\"bar\")").matches(exchange)).isFalse();
-            assertThat(Jq.expression(context, "header(\"CommitterName\") == \"Andrea\"").matches(exchange)).isTrue();
-            assertThat(Jq.expression(context, "header(\"CommitterName\") != \"Andrea\"").matches(exchange)).isFalse();
+            assertThat(jq(context, "has(\"baz\")").matches(exchange)).isTrue();
+            assertThat(jq(context, "has(\"bar\")").matches(exchange)).isFalse();
+            assertThat(jq(context, "header(\"CommitterName\") == \"Andrea\"").matches(exchange)).isTrue();
+            assertThat(jq(context, "header(\"CommitterName\") != \"Andrea\"").matches(exchange)).isFalse();
         }
     }
 
@@ -260,6 +260,12 @@ public class JqExpressionTest {
             assertThat(expression.getScope().getParentScope()).isNull();
             assertThat(expression.getScope().getLocalFunctions()).doesNotContainKeys("header/1", "header/2");
         }
+    }
+
+    private static JqExpression jq(CamelContext context, String expression) {
+        JqExpression answer = new JqExpression(expression);
+        answer.init(context);
+        return answer;
     }
 
 }

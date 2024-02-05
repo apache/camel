@@ -16,21 +16,42 @@
  */
 package org.apache.camel.language.jq;
 
-import org.apache.camel.CamelContext;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public final class Jq {
+import org.apache.camel.support.language.LanguageAnnotation;
 
-    private Jq() {
-    }
+/**
+ * An annotation used to inject a JQ expression into a method parameter when using Bean Integration.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@LanguageAnnotation(language = "jq", factory = JqAnnotationExpressionFactory.class)
+public @interface Jq {
 
-    public static JqExpression expression(String expression) {
-        return new JqExpression(expression);
-    }
+    String value();
 
-    public static JqExpression expression(CamelContext context, String expression) {
-        JqExpression answer = new JqExpression(expression);
-        answer.init(context);
-        return answer;
-    }
+    /**
+     * The desired return type.
+     */
+    Class<?> resultType() default Object.class;
 
+    /**
+     * The name of the variable we want to apply the expression to.
+     */
+    String variableName() default "";
+
+    /**
+     * The name of the header we want to apply the expression to.
+     */
+    String headerName() default "";
+
+    /**
+     * The name of the exchange property we want to apply the expression to.
+     */
+    String propertyName() default "";
 }
