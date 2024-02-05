@@ -165,5 +165,5 @@ The HDFS component has been deprecated, and planned to be removed in 4.4 (see CA
 
 === camel-kafka
 
-The `KAFKA_RECORDMETA` header name for the `List<RecordMetadata>` metadata has changed from
-`org.apache.kafka.clients.producer.RecordMetadata` to `kafka.RECORDMETA`.
+The header name for the `List<RecordMetadata>` metadata has changed from
+`KAFKA_RECORDMETA = org.apache.kafka.clients.producer.RecordMetadata` to `KAFKA_RECORD_META = kafka.RECORD_META`.
