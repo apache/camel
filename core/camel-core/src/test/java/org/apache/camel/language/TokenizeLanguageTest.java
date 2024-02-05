@@ -17,6 +17,7 @@
 package org.apache.camel.language;
 
 import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.util.Scanner;
 
 /**
  * Ensures that the "tokenize" language is compliant with the single input expectations.
@@ -35,6 +36,20 @@ class TokenizeLanguageTest extends AbstractSingleInputTypedLanguageTest<Tokenize
     @Override
     protected TestContext testWithoutTypeContext() {
         return new TestContext("1\n", "1", null);
+    }
+
+    @Override
+    protected void assertTypeInstanceOf(Class<?> expected, Object body) {
+        // noop
+    }
+
+    @Override
+    protected void assertBodyReceived(Object expected, Object body) {
+        // uses an scanner, so we need to walk it to get the body
+        if (body instanceof Scanner it) {
+            body = it.next();
+        }
+        super.assertBodyReceived(expected, body);
     }
 
 }

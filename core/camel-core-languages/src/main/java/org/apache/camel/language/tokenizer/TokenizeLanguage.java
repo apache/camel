@@ -84,10 +84,6 @@ public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
             }
         }
 
-        if (type != null && type != Object.class) {
-            answer = ExpressionBuilder.convertToExpression(answer, type);
-        }
-
         // if group then wrap answer in group expression
         if (group != null) {
             if (xml) {
