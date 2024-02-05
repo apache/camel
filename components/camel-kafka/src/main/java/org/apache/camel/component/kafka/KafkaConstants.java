@@ -65,7 +65,7 @@ public final class KafkaConstants {
     @Metadata(label = "producer",
               description = "The metadata (only configured if `recordMetadata` endpoint parameter is `true`)",
               javaType = "List<RecordMetadata>")
-    public static final String KAFKA_RECORDMETA = "org.apache.kafka.clients.producer.RecordMetadata";
+    public static final String KAFKA_RECORD_META = "kafka.RECORD_META";
     @Metadata(label = "consumer", description = "Can be used for forcing manual offset commit when using Kafka consumer.",
               javaType = "org.apache.camel.component.kafka.consumer.KafkaManualCommit")
     public static final String MANUAL_COMMIT = "CamelKafkaManualCommit";

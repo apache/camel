@@ -162,3 +162,9 @@ This option is only intended for the Load Balancer EIP. This makes the YAML sche
 === camel-hdfs
 
 The HDFS component has been deprecated, and planned to be removed in 4.4 (see CAMEL-20196).
+
+=== camel-kafka
+
+The header name for the `List<RecordMetadata>` metadata has changed from
+`org.apache.kafka.clients.producer.RecordMetadata` to `kafka.RECORD_META`,
+and the header constant from `KAFKA_RECORDMETA` to `KAFKA_RECORD_META`.

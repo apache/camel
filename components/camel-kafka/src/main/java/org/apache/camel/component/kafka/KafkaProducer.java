@@ -416,7 +416,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         // This sets an empty metadata for the very first message on the batch
         List<RecordMetadata> recordMetadata = new ArrayList<>();
         if (configuration.isRecordMetadata()) {
-            exchange.getMessage().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadata);
+            exchange.getMessage().setHeader(KafkaConstants.KAFKA_RECORD_META, recordMetadata);
         }
 
         while (recordIterable.hasNext()) {
