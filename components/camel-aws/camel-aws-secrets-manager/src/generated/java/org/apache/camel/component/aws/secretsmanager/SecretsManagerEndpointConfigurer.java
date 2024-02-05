@@ -45,6 +45,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secretsmanagerclient":
         case "secretsManagerClient": target.getConfiguration().setSecretsManagerClient(property(camelContext, software.amazon.awssdk.services.secretsmanager.SecretsManagerClient.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": target.getConfiguration().setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -53,6 +55,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": target.getConfiguration().setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -89,6 +93,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         case "secretKey": return java.lang.String.class;
         case "secretsmanagerclient":
         case "secretsManagerClient": return software.amazon.awssdk.services.secretsmanager.SecretsManagerClient.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -97,6 +103,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         default: return null;
         }
     }
@@ -129,6 +137,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "secretsmanagerclient":
         case "secretsManagerClient": return target.getConfiguration().getSecretsManagerClient();
+        case "sessiontoken":
+        case "sessionToken": return target.getConfiguration().getSessionToken();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "uriendpointoverride":
@@ -137,6 +147,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return target.getConfiguration().isUseSessionCredentials();
         default: return null;
         }
     }
