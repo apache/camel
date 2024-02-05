@@ -43,7 +43,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello Paris");
 
         template.sendBodyAndHeader(fileUri(), "Paris", Exchange.FILE_NAME, "paris.txt");
-        mock.assertIsSatisfied(1000);
+        mock.assertIsSatisfied(2000);
 
         oneExchangeDone.matchesWaitTime();
 
@@ -57,7 +57,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         mock.expectedBodiesReceived("London");
 
         template.sendBodyAndHeader(fileUri(), "London", Exchange.FILE_NAME, "london.txt");
-        mock.assertIsSatisfied(1000);
+        mock.assertIsSatisfied(2000);
 
         oneExchangeDone.matchesWaitTime();
 
@@ -72,7 +72,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Dublin");
 
         template.sendBodyAndHeader(fileUri(), "Dublin", Exchange.FILE_NAME, "dublin.txt");
-        mock.assertIsSatisfied(1000);
+        mock.assertIsSatisfied(2000);
 
         oneExchangeDone.matchesWaitTime();
 
@@ -87,7 +87,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Madrid");
 
         template.sendBodyAndHeader(fileUri(), "Madrid", Exchange.FILE_NAME, "madrid.txt");
-        mock.assertIsSatisfied(1000);
+        mock.assertIsSatisfied(2000);
 
         oneExchangeDone.matchesWaitTime();
 

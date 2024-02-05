@@ -3001,21 +3001,10 @@ public class ModelParser extends BaseParser {
                 case "skipFirst": def.setSkipFirst(val); break;
                 case "token": def.setToken(val); break;
                 case "xml": def.setXml(val); break;
-                default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), expressionDefinitionValueHandler());
-    }
-    protected <T extends SingleInputExpressionDefinition> AttributeHandler<T> singleInputExpressionDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "headerName": def.setHeaderName(val); break;
-                case "propertyName": def.setPropertyName(val); break;
-                case "variableName": def.setVariableName(val); break;
-                default: return expressionDefinitionAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        };
     }
     protected VariableExpression doParseVariableExpression() throws IOException, XmlPullParserException {
         return doParse(new VariableExpression(),
@@ -3035,7 +3024,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "group": def.setGroup(val); break;
                 case "mode": def.setMode(val); break;
-                default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
@@ -3057,23 +3046,21 @@ public class ModelParser extends BaseParser {
                 case "logNamespaces": def.setLogNamespaces(val); break;
                 case "objectModel": def.setObjectModel(val); break;
                 case "preCompile": def.setPreCompile(val); break;
-                case "resultType": def.setResultTypeName(val); break;
+                case "resultQName": def.setResultQName(val); break;
                 case "saxon": def.setSaxon(val); break;
                 case "threadSafety": def.setThreadSafety(val); break;
-                default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected XQueryExpression doParseXQueryExpression() throws IOException, XmlPullParserException {
         return doParse(new XQueryExpression(), (def, key, val) -> {
-            switch (key) {
-                case "configurationRef": def.setConfigurationRef(val); break;
-                case "resultType": def.setResultTypeName(val); break;
-                case "type": def.setType(val); break;
-                default: return singleInputExpressionDefinitionAttributeHandler().accept(def, key, val);
+            if ("configurationRef".equals(key)) {
+                def.setConfigurationRef(val);
+                return true;
             }
-            return true;
+            return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
         }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected CustomLoadBalancerDefinition doParseCustomLoadBalancerDefinition() throws IOException, XmlPullParserException {

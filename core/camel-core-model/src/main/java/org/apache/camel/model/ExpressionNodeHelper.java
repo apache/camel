@@ -49,7 +49,7 @@ public final class ExpressionNodeHelper {
             // accepts an expression
             XPathExpression answer = new XPathExpression(expression);
             answer.setExpression(aware.getExpressionText());
-            answer.setResultType(answer.getResultType());
+            answer.setResultType(aware.getResultType());
             return answer;
         } else if (expression instanceof ValueBuilder) {
             // ValueBuilder wraps the actual expression so unwrap
@@ -81,7 +81,7 @@ public final class ExpressionNodeHelper {
             // accepts an expression
             XPathExpression answer = new XPathExpression(expression);
             answer.setExpression(aware.getExpressionText());
-            answer.setResultType(answer.getResultType());
+            answer.setResultType(aware.getResultType());
             return answer;
         } else if (predicate instanceof ValueBuilder) {
             // ValueBuilder wraps the actual predicate so unwrap

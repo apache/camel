@@ -25,6 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Expression for which the source of the input (body, header or property) can be provided.
  */
+@Deprecated
 public abstract class SingleInputExpressionDefinition extends ExpressionDefinition {
 
     @XmlAttribute
@@ -71,8 +72,6 @@ public abstract class SingleInputExpressionDefinition extends ExpressionDefiniti
 
     /**
      * Name of header to use as input, instead of the message body
-     * </p>
-     * It has as higher precedent than the propertyName if both are set.
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
@@ -114,8 +113,6 @@ public abstract class SingleInputExpressionDefinition extends ExpressionDefiniti
 
         /**
          * Name of header to use as input, instead of the message body
-         * </p>
-         * It has as higher precedent than the propertyName if both are set.
          */
         public T headerName(String headerName) {
             this.headerName = headerName;

@@ -2403,11 +2403,24 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an {@link TokenPairExpressionIterator} expression
+     */
+    public static Expression tokenizePairExpression(
+            Expression source, String startToken, String endToken, boolean includeTokens) {
+        return new TokenPairExpressionIterator(startToken, endToken, includeTokens);
+    }
+
+    /**
      * Returns an {@link TokenXMLExpressionIterator} expression
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
         StringHelper.notEmpty(tagName, "tagName");
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
+    }
+
+    public static Expression tokenizeXMLExpression(Expression source, String tagName, String inheritNamespaceTagName) {
+        StringHelper.notEmpty(tagName, "tagName");
+        return new TokenXMLExpressionIterator(source, tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode) {
@@ -2437,7 +2450,8 @@ public class ExpressionBuilder {
             public void init(CamelContext context) {
                 super.init(context);
                 final Language language = context.resolveLanguage("xtokenize");
-                this.exp = language.createExpression(path, new Object[] { headerName, mode, group, namespaces });
+                this.exp = language.createExpression(path,
+                        new Object[] { null, null, headerName, null, mode, group, namespaces });
                 this.exp.init(context);
             }
 

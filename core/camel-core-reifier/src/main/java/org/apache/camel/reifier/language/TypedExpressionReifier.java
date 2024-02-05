@@ -37,24 +37,6 @@ class TypedExpressionReifier<T extends TypedExpressionDefinition> extends Expres
     }
 
     @Override
-    protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-                definition.setResultType(clazz);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-    }
-
-    protected Object[] createProperties() {
-        Object[] properties = new Object[1];
-        properties[0] = definition.getResultType();
-        return properties;
-    }
-
-    @Override
     protected Expression createExpression(Language language, String exp) {
         return language.createExpression(exp, createProperties());
     }
@@ -62,5 +44,27 @@ class TypedExpressionReifier<T extends TypedExpressionDefinition> extends Expres
     @Override
     protected Predicate createPredicate(Language language, String exp) {
         return language.createPredicate(exp, createProperties());
+    }
+
+    protected Object[] createProperties() {
+        Object[] properties = new Object[1];
+        properties[0] = asResultType();
+        return properties;
+    }
+
+    protected Class<?> asResultType() {
+        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
+            try {
+                return camelContext.getClassResolver().resolveMandatoryClass(parseString(definition.getResultTypeName()));
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+        return definition.getResultType();
+    }
+
+    @Override
+    protected void configureLanguage(Language language) {
+        asResultType();
     }
 }

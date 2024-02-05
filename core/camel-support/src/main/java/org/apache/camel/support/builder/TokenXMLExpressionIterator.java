@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -62,12 +63,18 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
     protected final String tagToken;
     protected final String inheritNamespaceToken;
+    protected Expression source;
 
     public TokenXMLExpressionIterator(String tagToken, String inheritNamespaceToken) {
+        this(null, tagToken, inheritNamespaceToken);
+    }
+
+    public TokenXMLExpressionIterator(Expression source, String tagToken, String inheritNamespaceToken) {
         StringHelper.notEmpty(tagToken, "tagToken");
         this.tagToken = tagToken;
         // namespace token is optional
         this.inheritNamespaceToken = inheritNamespaceToken;
+        this.source = source;
     }
 
     protected Iterator<?> createIterator(Exchange exchange, InputStream in, String charset) {
@@ -135,7 +142,14 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
     protected Object doEvaluate(Exchange exchange, boolean closeStream) {
         InputStream in = null;
         try {
-            in = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (source != null) {
+                in = source.evaluate(exchange, InputStream.class);
+            } else {
+                in = exchange.getIn().getBody(InputStream.class);
+            }
+            if (in == null) {
+                throw new InvalidPayloadException(exchange, InputStream.class);
+            }
             // we may read from a file, and want to support custom charset defined on the exchange
             String charset = ExchangeHelper.getCharsetName(exchange);
             return createIterator(exchange, in, charset);

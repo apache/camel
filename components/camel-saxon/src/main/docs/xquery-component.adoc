@@ -112,7 +112,7 @@ attribute:
 
 [source,xml]
 -------------------------------------------------------------------------------
-<xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
+<xquery resultType="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
 -------------------------------------------------------------------------------
 
 

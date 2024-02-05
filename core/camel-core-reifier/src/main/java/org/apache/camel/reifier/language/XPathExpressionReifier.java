@@ -28,7 +28,7 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 
-public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
+public class XPathExpressionReifier extends TypedExpressionReifier<XPathExpression> {
 
     public XPathExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (XPathExpression) definition);
@@ -63,19 +63,12 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
 
     protected Object[] createProperties() {
         Object[] properties = new Object[13];
-        // resultType can either point to a QName or it can be a regular class that influence the qname
-        // so we need this special logic to set resultQName and resultType accordingly
-        Object qname = asQName(definition.getResultTypeName());
-        if (definition.getResultType() == null && qname == null && definition.getResultTypeName() != null) {
-            properties[0] = definition.getResultTypeName();
-        } else {
-            properties[0] = definition.getResultType();
-        }
+        properties[0] = asResultType();
         properties[1] = parseString(definition.getVariableName());
         properties[2] = parseString(definition.getHeaderName());
         properties[3] = parseString(definition.getPropertyName());
         properties[4] = definition.getDocumentType();
-        properties[5] = qname;
+        properties[5] = asQName(parseString(definition.getResultQName()));
         properties[6] = parseBoolean(definition.getSaxon());
         properties[7] = definition.getXPathFactory();
         properties[8] = parseString(definition.getObjectModel());

@@ -36,30 +36,27 @@ public class TokenizerTest extends ExchangeTestSupport {
     Expression tokenize(String token, boolean regex) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
-        return language.createExpression(null, new Object[] { token, null, null, null, null, regex });
+        return language.createExpression(null, new Object[] { null, null, null, null, token, null, null, null, regex });
     }
 
     Expression tokenize(String headerName, String token) {
-        return tokenize(headerName, token, false);
-    }
-
-    Expression tokenize(String headerName, String token, boolean regex) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
-        return language.createExpression(null, new Object[] { token, null, null, headerName });
+        return language.createExpression(null, new Object[] { null, null, headerName, null, token });
     }
 
     Expression tokenizePair(String startToken, String endToken, boolean includeTokens) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
         return language.createExpression(null,
-                new Object[] { startToken, endToken, null, null, null, null, null, includeTokens });
+                new Object[] { null, null, null, null, startToken, endToken, null, null, null, null, includeTokens });
     }
 
     Expression tokenizeXML(String tagName, String inheritNamespaceTagName) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
-        return language.createExpression(null, new Object[] { tagName, null, inheritNamespaceTagName, null, null, null, true });
+        return language.createExpression(null,
+                new Object[] { null, null, null, null, tagName, null, inheritNamespaceTagName, null, null, true });
     }
 
     @Override
@@ -122,7 +119,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
     @Test
     public void testTokenizeHeaderRegEx() throws Exception {
-        Expression exp = tokenize("quote", "(\\W+)\\s*", true);
+        Expression exp = tokenize("quote", "(\\W+)\\s*");
         exp.init(context);
 
         exchange.getIn().setHeader("quote", "Camel rocks");
@@ -138,7 +135,7 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeManualConfiguration() throws Exception {
         TokenizeLanguage lan = new TokenizeLanguage();
         lan.setCamelContext(context);
-        Expression exp = lan.createExpression(null, new Object[] { ",", null, null, "names" });
+        Expression exp = lan.createExpression(null, new Object[] { null, null, "names", null, "," });
         exp.init(context);
 
         List<?> names = exp.evaluate(exchange, List.class);

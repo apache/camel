@@ -47,15 +47,21 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     protected final String startToken;
     protected final String endToken;
     protected final boolean includeTokens;
+    private final Expression source;
     private Expression startExp;
     private Expression endExp;
 
     public TokenPairExpressionIterator(String startToken, String endToken, boolean includeTokens) {
+        this(null, startToken, endToken, includeTokens);
+    }
+
+    public TokenPairExpressionIterator(Expression source, String startToken, String endToken, boolean includeTokens) {
         StringHelper.notEmpty(startToken, "startToken");
         StringHelper.notEmpty(endToken, "endToken");
         this.startToken = startToken;
         this.endToken = endToken;
         this.includeTokens = includeTokens;
+        this.source = source;
     }
 
     @Override
@@ -94,7 +100,14 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     protected Object doEvaluate(Exchange exchange, boolean closeStream) {
         InputStream in = null;
         try {
-            in = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (source != null) {
+                in = source.evaluate(exchange, InputStream.class);
+            } else {
+                in = exchange.getIn().getBody(InputStream.class);
+            }
+            if (in == null) {
+                throw new InvalidPayloadException(exchange, InputStream.class);
+            }
             // we may read from a file, and want to support custom charset defined on the exchange
             String charset = ExchangeHelper.getCharsetName(exchange);
             return createIterator(exchange, in, charset);

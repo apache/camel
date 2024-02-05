@@ -4087,7 +4087,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteNamespaceAwareExpressionAttributes(
             NamespaceAwareExpression def)
             throws IOException {
-        doWriteSingleInputExpressionDefinitionAttributes(def);
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
     }
     protected void doWriteNamespaceAwareExpressionElements(
             NamespaceAwareExpression def)
@@ -4140,23 +4140,6 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
-    protected void doWriteSingleInputExpressionDefinitionAttributes(
-            SingleInputExpressionDefinition def)
-            throws IOException {
-        doWriteExpressionDefinitionAttributes(def);
-        doWriteAttribute("headerName", def.getHeaderName());
-        doWriteAttribute("variableName", def.getVariableName());
-        doWriteAttribute("propertyName", def.getPropertyName());
-    }
-    protected void doWriteSingleInputExpressionDefinition(
-            String name,
-            SingleInputExpressionDefinition def)
-            throws IOException {
-        startElement(name);
-        doWriteSingleInputExpressionDefinitionAttributes(def);
-        doWriteValue(def.getExpression());
-        endElement(name);
-    }
     protected void doWriteSingleInputTypedExpressionDefinitionAttributes(
             SingleInputTypedExpressionDefinition def)
             throws IOException {
@@ -4188,7 +4171,7 @@ public class ModelWriter extends BaseWriter {
             TokenizerExpression def)
             throws IOException {
         startElement(name);
-        doWriteSingleInputExpressionDefinitionAttributes(def);
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("regex", def.getRegex());
         doWriteAttribute("endToken", def.getEndToken());
         doWriteAttribute("includeTokens", def.getIncludeTokens());
@@ -4240,7 +4223,7 @@ public class ModelWriter extends BaseWriter {
             XMLTokenizerExpression def)
             throws IOException {
         startElement(name);
-        doWriteSingleInputExpressionDefinitionAttributes(def);
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("mode", def.getMode());
         doWriteAttribute("group", def.getGroup());
         doWriteNamespaces(def);
@@ -4252,15 +4235,15 @@ public class ModelWriter extends BaseWriter {
             XPathExpression def)
             throws IOException {
         startElement(name);
-        doWriteSingleInputExpressionDefinitionAttributes(def);
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("preCompile", def.getPreCompile());
         doWriteAttribute("objectModel", def.getObjectModel());
         doWriteAttribute("logNamespaces", def.getLogNamespaces());
         doWriteAttribute("threadSafety", def.getThreadSafety());
         doWriteAttribute("factoryRef", def.getFactoryRef());
+        doWriteAttribute("resultQName", def.getResultQName());
         doWriteAttribute("saxon", def.getSaxon());
         doWriteAttribute("documentType", def.getDocumentTypeName());
-        doWriteAttribute("resultType", def.getResultTypeName());
         doWriteNamespaces(def);
         doWriteValue(def.getExpression());
         endElement(name);
@@ -4270,10 +4253,8 @@ public class ModelWriter extends BaseWriter {
             XQueryExpression def)
             throws IOException {
         startElement(name);
-        doWriteSingleInputExpressionDefinitionAttributes(def);
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("configurationRef", def.getConfigurationRef());
-        doWriteAttribute("type", def.getType());
-        doWriteAttribute("resultType", def.getResultTypeName());
         doWriteNamespaces(def);
         doWriteValue(def.getExpression());
         endElement(name);

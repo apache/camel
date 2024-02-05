@@ -17,9 +17,7 @@
 package org.apache.camel.language.tokenizer;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
@@ -35,37 +33,26 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * <tt>token</tt> and <tt>endToken</tt>. And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
  */
 @org.apache.camel.spi.annotations.Language("tokenize")
-public class TokenizeLanguage extends LanguageSupport {
+public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
 
     @Override
-    public Predicate createPredicate(String expression) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
+    protected boolean supportResultType() {
+        // result type is handled specially in tokenizer
+        return false;
     }
 
     @Override
-    public Expression createExpression(String expression) {
-        return createExpression(expression, null);
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
-    }
-
-    @Override
-    public Expression createExpression(String expression, Object[] properties) {
-        String token = property(String.class, properties, 0, expression);
-        String endToken = property(String.class, properties, 1, null);
-        String inheritNamespaceTagName = property(String.class, properties, 2, null);
-        String headerName = property(String.class, properties, 3, null);
-        String groupDelimiter = property(String.class, properties, 4, null);
-        boolean regex = property(boolean.class, properties, 5, false);
-        boolean xml = property(boolean.class, properties, 6, false);
-        boolean includeTokens = property(boolean.class, properties, 7, false);
-        String group = property(String.class, properties, 8, null);
-        boolean skipFirst = property(boolean.class, properties, 9, false);
-        String propertyName = property(String.class, properties, 10, null);
-        String variableName = property(String.class, properties, 11, null);
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
+        Class<?> type = property(Class.class, properties, 0, null);
+        String token = property(String.class, properties, 4, expression);
+        String endToken = property(String.class, properties, 5, null);
+        String inheritNamespaceTagName = property(String.class, properties, 6, null);
+        String groupDelimiter = property(String.class, properties, 7, null);
+        boolean regex = property(boolean.class, properties, 8, false);
+        boolean xml = property(boolean.class, properties, 9, false);
+        boolean includeTokens = property(boolean.class, properties, 10, false);
+        String group = property(String.class, properties, 11, null);
+        boolean skipFirst = property(boolean.class, properties, 12, false);
 
         if (endToken != null && inheritNamespaceTagName != null) {
             throw new IllegalArgumentException("Cannot have both xml and pair tokenizer enabled.");
@@ -79,19 +66,17 @@ public class TokenizeLanguage extends LanguageSupport {
 
         Expression answer = null;
         if (xml) {
-            answer = ExpressionBuilder.tokenizeXMLExpression(token, inheritNamespaceTagName);
+            answer = ExpressionBuilder.tokenizeXMLExpression(source, token, inheritNamespaceTagName);
         } else if (endToken != null) {
             answer = ExpressionBuilder.tokenizePairExpression(token, endToken, includeTokens);
         }
 
         if (answer == null) {
             // use the regular tokenizer
-            final Expression exp
-                    = ExpressionBuilder.singleInputExpression(variableName, headerName, propertyName);
             if (regex) {
-                answer = ExpressionBuilder.regexTokenizeExpression(exp, token);
+                answer = ExpressionBuilder.regexTokenizeExpression(source, token);
             } else {
-                answer = ExpressionBuilder.tokenizeExpression(exp, token);
+                answer = ExpressionBuilder.tokenizeExpression(source, token);
             }
             if (group == null && skipFirst) {
                 // wrap in skip first (if group then it has its own skip first logic)

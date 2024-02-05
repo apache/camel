@@ -36,7 +36,7 @@ class SingleInputTypedExpressionReifier<T extends SingleInputTypedExpressionDefi
     @Override
     protected Object[] createProperties() {
         Object[] properties = new Object[4];
-        properties[0] = definition.getResultType();
+        properties[0] = asResultType();
         properties[1] = parseString(definition.getVariableName());
         properties[2] = parseString(definition.getHeaderName());
         properties[3] = parseString(definition.getPropertyName());
