@@ -49,11 +49,12 @@ public class Athena2Component extends HealthCheckComponent {
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configurationClone.isUseDefaultCredentialsProvider())
                 && Boolean.FALSE.equals(configurationClone.isUseProfileCredentialsProvider())
+                && Boolean.FALSE.equals(configurationClone.isUseSessionCredentials())
                 && configurationClone.getAmazonAthenaClient() == null
                 && (configurationClone.getAccessKey() == null
                         || configurationClone.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false,accessKey/secretKey or amazonAthenaClient must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, useSessionCredentials is set to false, accessKey/secretKey or amazonAthenaClient must be specified");
         }
         return endpoint;
     }
