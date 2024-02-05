@@ -12670,6 +12670,11 @@
               "title" : "Expression",
               "description" : "The expression value in your chosen language syntax"
             },
+            "headerName" : {
+              "type" : "string",
+              "title" : "Header Name",
+              "description" : "Name of header to use as input, instead of the message body"
+            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -12680,6 +12685,11 @@
               "title" : "Output Media Type",
               "description" : "The String representation of the MediaType to output"
             },
+            "propertyName" : {
+              "type" : "string",
+              "title" : "Property Name",
+              "description" : "Name of property to use as input, instead of the message body."
+            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
@@ -12689,6 +12699,11 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],

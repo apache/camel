@@ -4257,10 +4257,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "bodyMediaType", type = "string", description = "The String representation of the message's body MediaType", displayName = "Body Media Type"),
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
+                    @YamlProperty(name = "headerName", type = "string", description = "Name of header to use as input, instead of the message body", displayName = "Header Name"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "outputMediaType", type = "string", description = "The String representation of the MediaType to output", displayName = "Output Media Type"),
+                    @YamlProperty(name = "propertyName", type = "string", description = "Name of property to use as input, instead of the message body.", displayName = "Property Name"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "variableName", type = "string", description = "Name of variable to use as input, instead of the message body", displayName = "Variable Name")
             }
     )
     public static class DatasonnetExpressionDeserializer extends YamlDeserializerBase<DatasonnetExpression> {
@@ -4293,6 +4296,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setExpression(val);
                     break;
                 }
+                case "headerName": {
+                    String val = asText(node);
+                    target.setHeaderName(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
@@ -4303,6 +4311,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setOutputMediaType(val);
                     break;
                 }
+                case "propertyName": {
+                    String val = asText(node);
+                    target.setPropertyName(val);
+                    break;
+                }
                 case "resultType": {
                     String val = asText(node);
                     target.setResultTypeName(val);
@@ -4311,6 +4324,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
+                    break;
+                }
+                case "variableName": {
+                    String val = asText(node);
+                    target.setVariableName(val);
                     break;
                 }
                 default: {

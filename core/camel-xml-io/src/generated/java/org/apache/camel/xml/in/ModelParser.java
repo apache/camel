@@ -2869,10 +2869,21 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "bodyMediaType": def.setBodyMediaType(val); break;
                 case "outputMediaType": def.setOutputMediaType(val); break;
-                default: return typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: return singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), expressionDefinitionValueHandler());
+    }
+    protected <T extends SingleInputTypedExpressionDefinition> AttributeHandler<T> singleInputTypedExpressionDefinitionAttributeHandler() {
+        return (def, key, val) -> {
+            switch (key) {
+                case "headerName": def.setHeaderName(val); break;
+                case "propertyName": def.setPropertyName(val); break;
+                case "variableName": def.setVariableName(val); break;
+                default: return typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        };
     }
     protected ExchangePropertyExpression doParseExchangePropertyExpression() throws IOException, XmlPullParserException {
         return doParse(new ExchangePropertyExpression(),
@@ -2889,17 +2900,6 @@ public class ModelParser extends BaseParser {
     protected Hl7TerserExpression doParseHl7TerserExpression() throws IOException, XmlPullParserException {
         return doParse(new Hl7TerserExpression(),
             singleInputTypedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
-    }
-    protected <T extends SingleInputTypedExpressionDefinition> AttributeHandler<T> singleInputTypedExpressionDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "headerName": def.setHeaderName(val); break;
-                case "propertyName": def.setPropertyName(val); break;
-                case "variableName": def.setVariableName(val); break;
-                default: return typedExpressionDefinitionAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        };
     }
     protected JavaExpression doParseJavaExpression() throws IOException, XmlPullParserException {
         return doParse(new JavaExpression(), (def, key, val) -> {

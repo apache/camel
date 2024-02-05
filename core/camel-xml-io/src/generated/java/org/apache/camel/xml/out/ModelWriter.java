@@ -3939,7 +3939,7 @@ public class ModelWriter extends BaseWriter {
             DatasonnetExpression def)
             throws IOException {
         startElement(name);
-        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("outputMediaType", def.getOutputMediaType());
         doWriteAttribute("bodyMediaType", def.getBodyMediaType());
         doWriteValue(def.getExpression());

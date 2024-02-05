@@ -40,11 +40,11 @@ import com.datasonnet.header.Header;
 import com.datasonnet.spi.Library;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.MessageHelper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +53,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
     private static final Logger LOG = LoggerFactory.getLogger(DatasonnetExpression.class);
 
     private final String expression;
+    private Expression source;
     private MediaType bodyMediaType;
     private MediaType outputMediaType;
     private Class<?> resultType;
@@ -63,10 +64,12 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         this.expression = expression;
     }
 
+    @Deprecated
     public static DatasonnetExpression builder(String expression) {
         return new DatasonnetExpression(expression);
     }
 
+    @Deprecated
     public static DatasonnetExpression builder(String expression, Class<?> resultType) {
         DatasonnetExpression answer = new DatasonnetExpression(expression);
         answer.setResultType(resultType);
@@ -112,19 +115,22 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
             }
         }
 
-        Document<?> body;
-
-        String bodyAsString = MessageHelper.extractBodyAsString(exchange.getMessage());
-
-        if (exchange.getMessage().getBody() instanceof Document) {
-            body = (Document<?>) exchange.getMessage().getBody();
-        } else if (exchange.getMessage().getBody() == null || "".equals(bodyAsString)) {
-            //Empty body, force type to be application/java
-            body = new DefaultDocument<>("", MediaTypes.APPLICATION_JAVA);
-        } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMT) || bodyMT == null) {
-            body = new DefaultDocument<>(exchange.getMessage().getBody());
-        } else {
-            body = new DefaultDocument<>(bodyAsString, bodyMT);
+        Object payload = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+        Document<?> doc = null;
+        if (payload != null) {
+            doc = exchange.getContext().getTypeConverter().tryConvertTo(Document.class, exchange, payload);
+        }
+        if (doc == null) {
+            String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, payload);
+            if (exchange.getMessage().getBody() == null || "".equals(text)) {
+                //Empty body, force type to be application/java
+                doc = new DefaultDocument<>("", MediaTypes.APPLICATION_JAVA);
+            } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMT) || bodyMT == null) {
+                doc = new DefaultDocument<>(payload);
+            } else {
+                // force using string value
+                doc = new DefaultDocument<>(text, bodyMT);
+            }
         }
 
         // the mapper is pre initialized
@@ -143,11 +149,11 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
             }
         }
 
-        Map<String, Document<?>> inputs = Collections.singletonMap("body", body);
+        Map<String, Document<?>> inputs = Collections.singletonMap("body", doc);
         if (resultType == null || resultType.equals(Document.class)) {
-            return mapper.transform(body, inputs, outMT, Object.class);
+            return mapper.transform(doc, inputs, outMT, Object.class);
         } else {
-            return mapper.transform(body, inputs, outMT, resultType);
+            return mapper.transform(doc, inputs, outMT, resultType);
         }
     }
 
@@ -208,6 +214,14 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
     // Getter/Setter methods
     // -------------------------------------------------------------------------
 
+    public Expression getSource() {
+        return source;
+    }
+
+    public void setSource(Expression source) {
+        this.source = source;
+    }
+
     public MediaType getBodyMediaType() {
         return bodyMediaType;
     }
@@ -262,11 +276,14 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
     // Fluent builder methods
     // -------------------------------------------------------------------------
+
+    @Deprecated
     public DatasonnetExpression bodyMediaType(MediaType bodyMediaType) {
         setBodyMediaType(bodyMediaType);
         return this;
     }
 
+    @Deprecated
     public DatasonnetExpression outputMediaType(MediaType outputMediaType) {
         setOutputMediaType(outputMediaType);
         return this;

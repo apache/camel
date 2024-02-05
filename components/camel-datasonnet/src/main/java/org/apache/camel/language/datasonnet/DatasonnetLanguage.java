@@ -31,12 +31,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.TypedLanguageSupport;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("datasonnet")
-public class DatasonnetLanguage extends TypedLanguageSupport {
+public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DatasonnetLanguage.class);
 
     private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
@@ -77,16 +77,17 @@ public class DatasonnetLanguage extends TypedLanguageSupport {
     }
 
     @Override
-    public Expression createExpression(String expression, Object[] properties) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         expression = loadResource(expression);
 
         DatasonnetExpression answer = new DatasonnetExpression(expression);
+        answer.setSource(source);
         answer.setResultType(property(Class.class, properties, 0, null));
-        String mediaType = property(String.class, properties, 1, null);
+        String mediaType = property(String.class, properties, 4, null);
         if (mediaType != null) {
             answer.setBodyMediaType(MediaType.valueOf(mediaType));
         }
-        mediaType = property(String.class, properties, 2, null);
+        mediaType = property(String.class, properties, 5, null);
         if (mediaType != null) {
             answer.setOutputMediaType(MediaType.valueOf(mediaType));
         }
