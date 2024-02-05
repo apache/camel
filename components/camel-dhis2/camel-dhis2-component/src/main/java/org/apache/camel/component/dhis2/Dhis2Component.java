@@ -79,7 +79,7 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
                 if (endpointConfiguration.getBaseApiUrl() != null || endpointConfiguration.getPersonalAccessToken() != null
                         || endpointConfiguration.getUsername() != null || endpointConfiguration.getPassword() != null) {
                     throw new RuntimeCamelException(
-                            "Bad DHIS2 endpoint configuration: client option is mutually exclusive to baseApiUrl, username, password, and pat. Either set `client`, or `baseApiUrl` and `username` and `password`, or `baseApiUrl` and `personalAccessToken`");
+                            "Bad DHIS2 endpoint configuration: client option is mutually exclusive to baseApiUrl, username, password, and personalAccessToken. Either set `client`, or `baseApiUrl` and `username` and `password`, or `baseApiUrl` and `personalAccessToken`");
                 }
 
                 return endpointConfiguration.getClient();
@@ -87,7 +87,7 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
                 if (endpointConfiguration.getPersonalAccessToken() != null
                         && (endpointConfiguration.getUsername() != null || endpointConfiguration.getPassword() != null)) {
                     throw new RuntimeCamelException(
-                            "Bad DHIS2 authentication configuration: Personal access token authentication and basic authentication are mutually exclusive. Either set `pat` or both `username` and `password`");
+                            "Bad DHIS2 authentication configuration: Personal access token authentication and basic authentication are mutually exclusive. Either set `personalAccessToken` or both `username` and `password`");
                 }
 
                 if (endpointConfiguration.getPersonalAccessToken() != null) {
