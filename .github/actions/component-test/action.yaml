@@ -30,9 +30,6 @@ inputs:
   comment-body:
     description: 'Body of the comment to process'
     required: true
-  author-association:
-    description: 'The comment author's association with the organization'
-    required: true
 runs:
   using: "composite"
   steps:
