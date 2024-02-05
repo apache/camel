@@ -26,6 +26,7 @@ public class Dhis2PostEndpointConfigurationConfigurer extends org.apache.camel.s
         map.put("MethodName", java.lang.String.class);
         map.put("Password", java.lang.String.class);
         map.put("Path", java.lang.String.class);
+        map.put("PersonalAccessToken", java.lang.String.class);
         map.put("QueryParams", java.util.Map.class);
         map.put("Resource", java.lang.Object.class);
         map.put("Username", java.lang.String.class);
@@ -48,6 +49,8 @@ public class Dhis2PostEndpointConfigurationConfigurer extends org.apache.camel.s
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "path":
         case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "personalaccesstoken":
+        case "PersonalAccessToken": target.setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "queryparams":
         case "QueryParams": target.setQueryParams(property(camelContext, java.util.Map.class, value)); return true;
         case "resource":
@@ -78,6 +81,8 @@ public class Dhis2PostEndpointConfigurationConfigurer extends org.apache.camel.s
         case "Password": return java.lang.String.class;
         case "path":
         case "Path": return java.lang.String.class;
+        case "personalaccesstoken":
+        case "PersonalAccessToken": return java.lang.String.class;
         case "queryparams":
         case "QueryParams": return java.util.Map.class;
         case "resource":
@@ -104,6 +109,8 @@ public class Dhis2PostEndpointConfigurationConfigurer extends org.apache.camel.s
         case "Password": return target.getPassword();
         case "path":
         case "Path": return target.getPath();
+        case "personalaccesstoken":
+        case "PersonalAccessToken": return target.getPersonalAccessToken();
         case "queryparams":
         case "QueryParams": return target.getQueryParams();
         case "resource":

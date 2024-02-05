@@ -72,6 +72,11 @@ public class Dhis2GetTestCase {
             public void close() {
 
             }
+
+            @Override
+            public String getUrl() {
+                return "";
+            }
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
@@ -96,6 +101,11 @@ public class Dhis2GetTestCase {
             @Override
             public void close() {
 
+            }
+
+            @Override
+            public String getUrl() {
+                return "";
             }
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
@@ -122,6 +132,11 @@ public class Dhis2GetTestCase {
             public void close() {
 
             }
+
+            @Override
+            public String getUrl() {
+                return "";
+            }
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
@@ -147,6 +162,11 @@ public class Dhis2GetTestCase {
             public void close() {
 
             }
+
+            @Override
+            public String getUrl() {
+                return "";
+            }
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
@@ -160,7 +180,7 @@ public class Dhis2GetTestCase {
         Dhis2Response dhis2Response = new Dhis2Response() {
             @Override
             public <T> T returnAs(Class<T> responseType) {
-                Page page = new Page();
+                Page page = new Page(1, 50);
                 page.setAdditionalProperty("bunnies", new ArrayList<>());
 
                 return (T) page;
@@ -175,6 +195,11 @@ public class Dhis2GetTestCase {
             public void close()
                     throws IOException {
 
+            }
+
+            @Override
+            public String getUrl() {
+                return "";
             }
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
@@ -207,6 +232,11 @@ public class Dhis2GetTestCase {
                     throws IOException {
 
             }
+
+            @Override
+            public String getUrl() {
+                return "";
+            }
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
@@ -236,6 +266,11 @@ public class Dhis2GetTestCase {
             @Override
             public void close() {
 
+            }
+
+            @Override
+            public String getUrl() {
+                return "";
             }
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
@@ -267,6 +302,11 @@ public class Dhis2GetTestCase {
             public void close() {
 
             }
+
+            @Override
+            public String getUrl() {
+                return "";
+            }
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
@@ -277,4 +317,40 @@ public class Dhis2GetTestCase {
         dhis2Get.collection("bunnies", "bunnies", null, null, null, RootJunctionEnum.AND, null);
         verify(getOperation, times(1)).withAndRootJunction();
     }
+
+    @Test
+    public void testCollectionGivenMultipleFilters() {
+        Dhis2Response dhis2Response = new Dhis2Response() {
+            public <T> T returnAs(Class<T> responseType) {
+                return (T) Map.of("bunnies", new ArrayList<>());
+            }
+
+            @Override
+            public InputStream read() {
+                return new ByteArrayInputStream(new byte[] {});
+            }
+
+            @Override
+            public void close() {
+
+            }
+
+            @Override
+            public String getUrl() {
+                return "";
+            }
+        };
+        when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
+        when(getOperation.transfer()).thenReturn(dhis2Response);
+        when(getOperation.withoutPaging()).thenReturn(
+                new DefaultSimpleCollectOperation(
+                        "https://play.dhis2.org/2.39.0.1", "", null,
+                        new JacksonConverterFactory(), getOperation));
+
+        Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
+        dhis2Get.collection("bunnies", "bunnies", null, null, List.of("id:in:[id1,id2]", "code:eq:code1"), null, null);
+        verify(getOperation, times(1)).withFilter("id:in:[id1,id2]");
+        verify(getOperation, times(1)).withFilter("code:eq:code1");
+    }
+
 }

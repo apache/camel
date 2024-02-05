@@ -60,6 +60,11 @@ public class Dhis2DeleteTestCase {
             public void close() {
 
             }
+
+            @Override
+            public String getUrl() {
+                return "";
+            }
         });
     }
 

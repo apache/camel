@@ -63,6 +63,7 @@ public final class SensitiveUtils {
                     "passcode",
                     "passphrase",
                     "password",
+                    "personalaccesstoken",
                     "privatekey",
                     "privatekeyfile",
                     "privatekeyname",
@@ -140,6 +141,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qpasscode\\E"
                                                     + "|\\Qpassphrase\\E"
                                                     + "|\\Qpassword\\E"
+                                                    + "|\\Qpersonalaccesstoken\\E"
                                                     + "|\\Qprivatekey\\E"
                                                     + "|\\Qprivatekeyfile\\E"
                                                     + "|\\Qprivatekeyname\\E"

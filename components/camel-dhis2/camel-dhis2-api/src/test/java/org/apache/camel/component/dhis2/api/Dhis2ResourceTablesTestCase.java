@@ -18,14 +18,16 @@ package org.apache.camel.component.dhis2.api;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.Dhis2Response;
-import org.hisp.dhis.integration.sdk.api.operation.PutOperation;
+import org.hisp.dhis.integration.sdk.api.operation.PostOperation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,26 +36,27 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class Dhis2PutTestCase {
+public class Dhis2ResourceTablesTestCase {
+
     @Mock
     private Dhis2Client dhis2Client;
 
     @Mock
-    private PutOperation putOperation;
+    private PostOperation postOperation;
 
     @BeforeEach
     public void beforeEach() {
-        when(dhis2Client.put(any())).thenReturn(putOperation);
-        when(putOperation.withParameter(any(), any())).thenReturn(putOperation);
-        when(putOperation.transfer()).thenReturn(new Dhis2Response() {
+        when(dhis2Client.post(any())).thenReturn(postOperation);
+        when(postOperation.withParameter(any(), any())).thenReturn(postOperation);
+        when(postOperation.transfer()).thenReturn(new Dhis2Response() {
             @Override
             public <T> T returnAs(Class<T> responseType) {
-                return null;
+                return (T) Map.of("response", Map.of("id", UUID.randomUUID().toString()));
             }
 
             @Override
             public InputStream read() {
-                return new ByteArrayInputStream(new byte[] {});
+                return new ByteArrayInputStream(new byte[]{});
             }
 
             @Override
@@ -69,14 +72,10 @@ public class Dhis2PutTestCase {
     }
 
     @Test
-    public void testResourceGivenMapOfListsQueryParams() {
-        Dhis2Put dhis2Put = new Dhis2Put(dhis2Client);
-        dhis2Put.resource(null, null, Map.of("foo", List.of("bar")));
-    }
-
-    @Test
-    public void testResourceGivenMapOfStringsQueryParams() {
-        Dhis2Put dhis2Put = new Dhis2Put(dhis2Client);
-        dhis2Put.resource(null, null, Map.of("foo", "bar"));
+    @Timeout(5)
+    public void testAnalyticsDoesNotBlockGivenAsyncIsTrue() {
+        Dhis2ResourceTables dhis2ResourceTables = new Dhis2ResourceTables(dhis2Client);
+        dhis2ResourceTables.analytics(ThreadLocalRandom.current().nextBoolean(), ThreadLocalRandom.current().nextBoolean(),
+                ThreadLocalRandom.current().nextInt(), ThreadLocalRandom.current().nextInt(), true);
     }
 }

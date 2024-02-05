@@ -33,7 +33,7 @@ public class Dhis2Get {
     }
 
     public InputStream resource(
-            String path, String fields, String filter, RootJunctionEnum rootJunction,
+            String path, String fields, List<String> filter, RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);
 
@@ -41,15 +41,17 @@ public class Dhis2Get {
     }
 
     protected GetOperation newGetOperation(
-            String path, String fields, String filter, RootJunctionEnum rootJunction,
+            String path, String fields, List<String> filters, RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = dhis2Client.get(path);
         if (fields != null) {
             getOperation.withFields(fields);
         }
 
-        if (filter != null) {
-            getOperation.withFilter(filter);
+        if (filters != null) {
+            for (String filter : filters) {
+                getOperation.withFilter(filter);
+            }
         }
 
         if (rootJunction != null) {
@@ -76,7 +78,7 @@ public class Dhis2Get {
     }
 
     public Iterator<Dhis2Resource> collection(
-            String path, String arrayName, Boolean paging, String fields, String filter,
+            String path, String arrayName, Boolean paging, String fields, List<String> filter,
             RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);

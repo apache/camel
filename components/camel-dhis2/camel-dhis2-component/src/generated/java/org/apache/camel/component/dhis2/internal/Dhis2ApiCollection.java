@@ -40,7 +40,7 @@ public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2C
         apiMethods.put(Dhis2PostApiMethod.class, Dhis2ApiName.POST);
 
         aliases.clear();
-        nullableArgs = Arrays.asList("skipEvents", "skipAggregate", "lastYears", "interval");
+        nullableArgs = Arrays.asList("skipEvents", "skipAggregate", "lastYears", "interval", "async");
         apiHelpers.put(Dhis2ApiName.RESOURCE_TABLES, new ApiMethodHelper<>(Dhis2ResourceTablesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(Dhis2ResourceTablesApiMethod.class, Dhis2ApiName.RESOURCE_TABLES);
 
