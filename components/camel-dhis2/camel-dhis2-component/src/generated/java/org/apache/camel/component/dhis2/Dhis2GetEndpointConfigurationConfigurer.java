@@ -29,8 +29,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         map.put("MethodName", java.lang.String.class);
         map.put("Paging", java.lang.Boolean.class);
         map.put("Password", java.lang.String.class);
-        map.put("Pat", java.lang.String.class);
         map.put("Path", java.lang.String.class);
+        map.put("PersonalAccessToken", java.lang.String.class);
         map.put("QueryParams", java.util.Map.class);
         map.put("RootJunction", org.apache.camel.component.dhis2.api.RootJunctionEnum.class);
         map.put("Username", java.lang.String.class);
@@ -59,10 +59,10 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Paging": target.setPaging(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "pat":
-        case "Pat": target.setPat(property(camelContext, java.lang.String.class, value)); return true;
         case "path":
         case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "personalaccesstoken":
+        case "PersonalAccessToken": target.setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "queryparams":
         case "QueryParams": target.setQueryParams(property(camelContext, java.util.Map.class, value)); return true;
         case "rootjunction":
@@ -99,10 +99,10 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Paging": return java.lang.Boolean.class;
         case "password":
         case "Password": return java.lang.String.class;
-        case "pat":
-        case "Pat": return java.lang.String.class;
         case "path":
         case "Path": return java.lang.String.class;
+        case "personalaccesstoken":
+        case "PersonalAccessToken": return java.lang.String.class;
         case "queryparams":
         case "QueryParams": return java.util.Map.class;
         case "rootjunction":
@@ -135,10 +135,10 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Paging": return target.getPaging();
         case "password":
         case "Password": return target.getPassword();
-        case "pat":
-        case "Pat": return target.getPat();
         case "path":
         case "Path": return target.getPath();
+        case "personalaccesstoken":
+        case "PersonalAccessToken": return target.getPersonalAccessToken();
         case "queryparams":
         case "QueryParams": return target.getQueryParams();
         case "rootjunction":

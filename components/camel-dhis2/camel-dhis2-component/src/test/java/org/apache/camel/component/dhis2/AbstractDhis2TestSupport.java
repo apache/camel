@@ -46,7 +46,7 @@ abstract class AbstractDhis2TestSupport extends CamelTestSupport {
             configuration.setUsername(username);
             configuration.setPassword(password);
         } else {
-            configuration.setPat(Environment.PAT);
+            configuration.setPersonalAccessToken(Environment.PERSONAL_ACCESS_TOKEN);
         }
 
         // add Dhis2Component to Camel context

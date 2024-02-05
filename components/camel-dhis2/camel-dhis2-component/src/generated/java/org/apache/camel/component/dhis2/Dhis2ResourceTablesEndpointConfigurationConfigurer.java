@@ -28,7 +28,7 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
         map.put("LastYears", java.lang.Integer.class);
         map.put("MethodName", java.lang.String.class);
         map.put("Password", java.lang.String.class);
-        map.put("Pat", java.lang.String.class);
+        map.put("PersonalAccessToken", java.lang.String.class);
         map.put("SkipAggregate", java.lang.Boolean.class);
         map.put("SkipEvents", java.lang.Boolean.class);
         map.put("Username", java.lang.String.class);
@@ -55,8 +55,8 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "pat":
-        case "Pat": target.setPat(property(camelContext, java.lang.String.class, value)); return true;
+        case "personalaccesstoken":
+        case "PersonalAccessToken": target.setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "skipaggregate":
         case "SkipAggregate": target.setSkipAggregate(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "skipevents":
@@ -91,8 +91,8 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
         case "MethodName": return java.lang.String.class;
         case "password":
         case "Password": return java.lang.String.class;
-        case "pat":
-        case "Pat": return java.lang.String.class;
+        case "personalaccesstoken":
+        case "PersonalAccessToken": return java.lang.String.class;
         case "skipaggregate":
         case "SkipAggregate": return java.lang.Boolean.class;
         case "skipevents":
@@ -123,8 +123,8 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
         case "MethodName": return target.getMethodName();
         case "password":
         case "Password": return target.getPassword();
-        case "pat":
-        case "Pat": return target.getPat();
+        case "personalaccesstoken":
+        case "PersonalAccessToken": return target.getPersonalAccessToken();
         case "skipaggregate":
         case "SkipAggregate": return target.getSkipAggregate();
         case "skipevents":

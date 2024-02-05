@@ -76,23 +76,23 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
             return this.dhis2Client;
         } else {
             if (endpointConfiguration.getClient() != null) {
-                if (endpointConfiguration.getBaseApiUrl() != null || endpointConfiguration.getPat() != null
+                if (endpointConfiguration.getBaseApiUrl() != null || endpointConfiguration.getPersonalAccessToken() != null
                         || endpointConfiguration.getUsername() != null || endpointConfiguration.getPassword() != null) {
                     throw new RuntimeCamelException(
-                            "Bad DHIS2 endpoint configuration: client option is mutually exclusive to baseApiUrl, username, password, and pat. Either set `client`, or `baseApiUrl` and `username` and `password`, or `baseApiUrl` and `pat`");
+                            "Bad DHIS2 endpoint configuration: client option is mutually exclusive to baseApiUrl, username, password, and pat. Either set `client`, or `baseApiUrl` and `username` and `password`, or `baseApiUrl` and `personalAccessToken`");
                 }
 
                 return endpointConfiguration.getClient();
             } else {
-                if (endpointConfiguration.getPat() != null
+                if (endpointConfiguration.getPersonalAccessToken() != null
                         && (endpointConfiguration.getUsername() != null || endpointConfiguration.getPassword() != null)) {
                     throw new RuntimeCamelException(
-                            "Bad DHIS2 authentication configuration: PAT authentication and basic authentication are mutually exclusive. Either set `pat` or both `username` and `password`");
+                            "Bad DHIS2 authentication configuration: Personal access token authentication and basic authentication are mutually exclusive. Either set `pat` or both `username` and `password`");
                 }
 
-                if (endpointConfiguration.getPat() != null) {
+                if (endpointConfiguration.getPersonalAccessToken() != null) {
                     return Dhis2ClientBuilder.newClient(endpointConfiguration.getBaseApiUrl(),
-                            endpointConfiguration.getPat()).build();
+                            endpointConfiguration.getPersonalAccessToken()).build();
                 } else {
                     return Dhis2ClientBuilder.newClient(endpointConfiguration.getBaseApiUrl(),
                             endpointConfiguration.getUsername(), endpointConfiguration.getPassword()).build();

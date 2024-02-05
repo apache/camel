@@ -45,8 +45,8 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("methodName");
         props.add("paging");
         props.add("password");
-        props.add("pat");
         props.add("path");
+        props.add("personalAccessToken");
         props.add("pollStrategy");
         props.add("queryParams");
         props.add("repeatCount");
@@ -66,7 +66,7 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
         secretProps.add("password");
-        secretProps.add("pat");
+        secretProps.add("personalAccessToken");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);

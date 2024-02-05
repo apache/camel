@@ -38,7 +38,7 @@ public final class Environment {
 
     public static final Dhis2Client DHIS2_CLIENT;
 
-    public static final String PAT;
+    public static final String PERSONAL_ACCESS_TOKEN;
 
     public static final String ORG_UNIT_ID_UNDER_TEST;
 
@@ -82,10 +82,10 @@ public final class Environment {
         ORG_UNIT_ID_UNDER_TEST = createOrgUnit("Acme");
         createOrgUnitLevel();
         addOrgUnitToUser(ORG_UNIT_ID_UNDER_TEST);
-        PAT = createPat();
+        PERSONAL_ACCESS_TOKEN = createPersonalAccessToken();
     }
 
-    private static String createPat() {
+    private static String createPersonalAccessToken() {
         return DHIS2_CLIENT
                 .post("apiToken")
                 .withResource(
