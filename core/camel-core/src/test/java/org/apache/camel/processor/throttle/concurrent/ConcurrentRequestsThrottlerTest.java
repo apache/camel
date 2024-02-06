@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.throttle.concurrent;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.ThrottlerRejectedExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -199,7 +200,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
 
                 onException(ThrottlerRejectedExecutionException.class).handled(true).to("mock:error");
 
-                from("direct:a").throttle(CONCURRENT_REQUESTS)
+                from("direct:a").throttle(CONCURRENT_REQUESTS).concurrentRequestsMode()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:a' too many requests");
                         })
@@ -209,7 +210,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:expressionConstant").throttle(constant(CONCURRENT_REQUESTS))
+                from("direct:expressionConstant").throttle(constant(CONCURRENT_REQUESTS)).concurrentRequestsMode()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:expressionConstant' too many requests");
                         })
@@ -219,7 +220,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:expressionHeader").throttle(header("throttleValue"))
+                from("direct:expressionHeader").throttle(header("throttleValue")).concurrentRequestsMode()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:expressionHeader' too many requests");
                         })
@@ -229,9 +230,10 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:start").throttle(2).rejectExecution(true).delay(1000).to("log:result", "mock:result");
+                from("direct:start").throttle(2).concurrentRequestsMode().rejectExecution(true).delay(1000).to("log:result",
+                        "mock:result");
 
-                from("direct:fifo").throttle(1).delay(100).to("mock:result");
+                from("direct:fifo").throttle(1).concurrentRequestsMode().delay(100).to("mock:result");
 
                 from("direct:release").errorHandler(deadLetterChannel("mock:error")).throttle(1).delay(100)
                         .process(exchange -> {

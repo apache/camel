@@ -73,11 +73,6 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteClaimCheckDefinition("claimCheck", def);
     }
-    public void writeConcurrentRequestsThrottleDefinition(
-            ConcurrentRequestsThrottleDefinition def)
-            throws IOException {
-        doWriteConcurrentRequestsThrottleDefinition("throttle", def);
-    }
     public void writeContextScanDefinition(
             ContextScanDefinition def)
             throws IOException {
@@ -455,6 +450,11 @@ public class ModelWriter extends BaseWriter {
     }
     public void writeThreadsDefinition(ThreadsDefinition def) throws IOException {
         doWriteThreadsDefinition("threads", def);
+    }
+    public void writeThrottleDefinition(
+            ThrottleDefinition def)
+            throws IOException {
+        doWriteThrottleDefinition("throttle", def);
     }
     public void writeThrowExceptionDefinition(
             ThrowExceptionDefinition def)
@@ -1169,20 +1169,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName());
         doWriteAttribute("operation", def.getOperation());
         doWriteAttribute("key", def.getKey());
-        endElement(name);
-    }
-    protected void doWriteConcurrentRequestsThrottleDefinition(
-            String name,
-            ConcurrentRequestsThrottleDefinition def)
-            throws IOException {
-        startElement(name);
-        doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("rejectExecution", def.getRejectExecution());
-        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected());
-        doWriteAttribute("executorService", def.getExecutorService());
-        doWriteAttribute("asyncDelayed", def.getAsyncDelayed());
-        doWriteExpressionNodeElements(def);
-        doWriteElement("correlationExpression", def.getCorrelationExpression(), this::doWriteExpressionSubElementDefinition);
         endElement(name);
     }
     protected void doWriteContextScanDefinition(
@@ -2426,6 +2412,22 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("threadName", def.getThreadName());
         doWriteAttribute("rejectedPolicy", def.getRejectedPolicy());
         doWriteAttribute("timeUnit", def.getTimeUnit());
+        endElement(name);
+    }
+    protected void doWriteThrottleDefinition(
+            String name,
+            ThrottleDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("mode", def.getMode());
+        doWriteAttribute("timePeriodMillis", def.getTimePeriodMillis());
+        doWriteAttribute("rejectExecution", def.getRejectExecution());
+        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected());
+        doWriteAttribute("executorService", def.getExecutorService());
+        doWriteAttribute("asyncDelayed", def.getAsyncDelayed());
+        doWriteExpressionNodeElements(def);
+        doWriteElement("correlationExpression", def.getCorrelationExpression(), this::doWriteExpressionSubElementDefinition);
         endElement(name);
     }
     protected void doWriteThrowExceptionDefinition(
@@ -4853,7 +4855,6 @@ public class ModelWriter extends BaseWriter {
                 case "ChoiceDefinition" -> doWriteChoiceDefinition("choice", (ChoiceDefinition) v);
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
                 case "ClaimCheckDefinition" -> doWriteClaimCheckDefinition("claimCheck", (ClaimCheckDefinition) v);
-                case "ConcurrentRequestsThrottleDefinition" -> doWriteConcurrentRequestsThrottleDefinition("throttle", (ConcurrentRequestsThrottleDefinition) v);
                 case "ConvertBodyDefinition" -> doWriteConvertBodyDefinition("convertBodyTo", (ConvertBodyDefinition) v);
                 case "ConvertHeaderDefinition" -> doWriteConvertHeaderDefinition("convertHeaderTo", (ConvertHeaderDefinition) v);
                 case "ConvertVariableDefinition" -> doWriteConvertVariableDefinition("convertVariableTo", (ConvertVariableDefinition) v);
@@ -4916,6 +4917,7 @@ public class ModelWriter extends BaseWriter {
                 case "TemplatedRoutesDefinition" -> doWriteTemplatedRoutesDefinition("templatedRoutes", (TemplatedRoutesDefinition) v);
                 case "ThreadPoolProfileDefinition" -> doWriteThreadPoolProfileDefinition("threadPoolProfile", (ThreadPoolProfileDefinition) v);
                 case "ThreadsDefinition" -> doWriteThreadsDefinition("threads", (ThreadsDefinition) v);
+                case "ThrottleDefinition" -> doWriteThrottleDefinition("throttle", (ThrottleDefinition) v);
                 case "ThrowExceptionDefinition" -> doWriteThrowExceptionDefinition("throwException", (ThrowExceptionDefinition) v);
                 case "ToDefinition" -> doWriteToDefinition("to", (ToDefinition) v);
                 case "ToDynamicDefinition" -> doWriteToDynamicDefinition("toD", (ToDynamicDefinition) v);
@@ -4961,7 +4963,6 @@ public class ModelWriter extends BaseWriter {
                 case "ChoiceDefinition" -> doWriteChoiceDefinition("choice", (ChoiceDefinition) v);
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
                 case "ClaimCheckDefinition" -> doWriteClaimCheckDefinition("claimCheck", (ClaimCheckDefinition) v);
-                case "ConcurrentRequestsThrottleDefinition" -> doWriteConcurrentRequestsThrottleDefinition("throttle", (ConcurrentRequestsThrottleDefinition) v);
                 case "ConvertBodyDefinition" -> doWriteConvertBodyDefinition("convertBodyTo", (ConvertBodyDefinition) v);
                 case "ConvertHeaderDefinition" -> doWriteConvertHeaderDefinition("convertHeaderTo", (ConvertHeaderDefinition) v);
                 case "ConvertVariableDefinition" -> doWriteConvertVariableDefinition("convertVariableTo", (ConvertVariableDefinition) v);
@@ -5014,6 +5015,7 @@ public class ModelWriter extends BaseWriter {
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);
                 case "StopDefinition" -> doWriteStopDefinition("stop", (StopDefinition) v);
                 case "ThreadsDefinition" -> doWriteThreadsDefinition("threads", (ThreadsDefinition) v);
+                case "ThrottleDefinition" -> doWriteThrottleDefinition("throttle", (ThrottleDefinition) v);
                 case "ThrowExceptionDefinition" -> doWriteThrowExceptionDefinition("throwException", (ThrowExceptionDefinition) v);
                 case "ToDefinition" -> doWriteToDefinition("to", (ToDefinition) v);
                 case "ToDynamicDefinition" -> doWriteToDynamicDefinition("toD", (ToDynamicDefinition) v);

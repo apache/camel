@@ -38,12 +38,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "expression", "correlationExpression" })
-public class ConcurrentRequestsThrottleDefinition
-        extends ExpressionNode implements ExecutorServiceAwareDefinition<ConcurrentRequestsThrottleDefinition> {
+public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
 
     @XmlTransient
     private ExecutorService executorServiceBean;
 
+    @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.model.ThrottlingMode", defaultValue = "TotalRequests",
+              enums = "TotalRequests,ConcurrentRequests")
+    private String mode;
     @XmlElement(name = "correlationExpression")
     private ExpressionSubElementDefinition correlationExpression;
     @XmlAttribute
@@ -58,29 +61,55 @@ public class ConcurrentRequestsThrottleDefinition
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String rejectExecution;
+    @XmlAttribute
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    private String timePeriodMillis;
 
-    public ConcurrentRequestsThrottleDefinition() {
+    public ThrottleDefinition() {
+        totalRequestsMode();
     }
 
-    public ConcurrentRequestsThrottleDefinition(Expression maximumConcurrentRequests) {
-        super(maximumConcurrentRequests);
+    public ThrottleDefinition(Expression maximumRequestsPerPeriod) {
+        super(maximumRequestsPerPeriod);
+
+        totalRequestsMode();
     }
 
-    public ConcurrentRequestsThrottleDefinition(Expression maximumConcurrentRequests, Expression correlationExpression) {
-        this(ExpressionNodeHelper.toExpressionDefinition(maximumConcurrentRequests), correlationExpression);
+    public ThrottleDefinition(Expression maximumRequestsPerPeriod, Expression correlationExpression) {
+        this(ExpressionNodeHelper.toExpressionDefinition(maximumRequestsPerPeriod), correlationExpression);
     }
 
-    private ConcurrentRequestsThrottleDefinition(ExpressionDefinition maximumConcurrentRequests, Expression correlationExpression) {
-        super(maximumConcurrentRequests);
+    private ThrottleDefinition(ExpressionDefinition maximumRequestsPerPeriod, Expression correlationExpression) {
+        super(maximumRequestsPerPeriod);
 
         ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
         cor.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
         setCorrelationExpression(cor);
+
+        totalRequestsMode();
+    }
+
+    public ThrottleDefinition totalRequestsMode() {
+        this.mode = ThrottlingMode.TotalRequests.name();
+        return this;
+    }
+
+    public ThrottleDefinition concurrentRequestsMode() {
+        this.mode = ThrottlingMode.ConcurrentRequests.name();
+        return this;
     }
 
     @Override
     public String toString() {
-        return "Throttle[" + getExpression() + "]";
+        return "Throttle[" + description() + "]";
+    }
+
+    protected String description() {
+        if (mode.equals(ThrottlingMode.TotalRequests.name())) {
+            return getExpression() + " request per " + getTimePeriodMillis() + " millis";
+        } else {
+            return getExpression() + " maximum concurrent requests";
+        }
     }
 
     @Override
@@ -90,33 +119,93 @@ public class ConcurrentRequestsThrottleDefinition
 
     @Override
     public String getLabel() {
-        return "throttle[" + getExpression() + "]";
+        return "throttle[" + description() + "]";
     }
 
     // Fluent API
     // -------------------------------------------------------------------------
     /**
-     * Sets the maximum number of concurrent requests
+     * Sets the time period during which the maximum request count is valid for
      *
-     * @param  maximumConcurrentRequests the maximum number of concurrent requests
+     * @param  timePeriodMillis period in millis
+     * @return                  the builder
+     */
+    public ThrottleDefinition timePeriodMillis(long timePeriodMillis) {
+        return timePeriodMillis(Long.toString(timePeriodMillis));
+    }
+
+    /**
+     * Sets the time period during which the maximum request count is valid for
+     *
+     * @param  timePeriodMillis period in millis
+     * @return                  the builder
+     */
+    public ThrottleDefinition timePeriodMillis(String timePeriodMillis) {
+        setTimePeriodMillis(timePeriodMillis);
+        return this;
+    }
+
+    /**
+     * Sets the maximum number of requests
+     *
+     * @param  maximumConcurrentRequests the maximum number of requests (according to the mode in use - either
+     *                                   concurrent or by time period)
      * @return                           the builder
      */
-    public ConcurrentRequestsThrottleDefinition maximumConcurrentRequests(long maximumConcurrentRequests) {
+    public ThrottleDefinition maximumRequests(long maximumConcurrentRequests) {
         setExpression(
                 ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
         return this;
     }
 
     /**
-     * Sets the number of concurrent requests
+     * Sets the maximum number of requests
      *
-     * @param  maximumConcurrentRequests the maximum number of concurrent requests
+     * @param  maximumConcurrentRequests the maximum number of requests (according to the mode in use - either
+     *                                   concurrent or by time period)
      * @return                           the builder
      */
-    public ConcurrentRequestsThrottleDefinition maximumConcurrentRequests(String maximumConcurrentRequests) {
+    public ThrottleDefinition maximumRequests(String maximumConcurrentRequests) {
         setExpression(
-                ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.simpleExpression(maximumConcurrentRequests)));
+                ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
         return this;
+    }
+
+    /**
+     * Sets the time period during which the maximum request count per period
+     *
+     * @param      maximumRequestsPerPeriod the maximum request count number per time period
+     * @deprecated                          Use {@link #maximumRequests(long)}
+     * @return                              the builder
+     */
+    @Deprecated(since = "4.4.0")
+    public ThrottleDefinition maximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
+        if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
+            setExpression(
+                    ExpressionNodeHelper.toExpressionDefinition(
+                            ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
+            return this;
+        } else {
+            throw new IllegalArgumentException("Maximum requests per period can only be set when using total requests mode");
+        }
+    }
+
+    /**
+     * Sets the time period during which the maximum request count per period
+     *
+     * @param      maximumRequestsPerPeriod the maximum request count number per time period
+     * @deprecated                          Use {@link #maximumRequests(long)}
+     * @return                              the builder
+     */
+    @Deprecated(since = "4.4.0")
+    public ThrottleDefinition maximumRequestsPerPeriod(String maximumRequestsPerPeriod) {
+        if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
+            setExpression(
+                    ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.simpleExpression(maximumRequestsPerPeriod)));
+            return this;
+        } else {
+            throw new IllegalArgumentException("Maximum requests per period can only be set when using total requests mode");
+        }
     }
 
     /**
@@ -126,7 +215,7 @@ public class ConcurrentRequestsThrottleDefinition
      *                               overall throttling
      * @return                       the builder
      */
-    public ConcurrentRequestsThrottleDefinition correlationExpression(long correlationExpression) {
+    public ThrottleDefinition correlationExpression(long correlationExpression) {
         return correlationExpression(ExpressionBuilder.constantExpression(correlationExpression));
     }
 
@@ -137,7 +226,7 @@ public class ConcurrentRequestsThrottleDefinition
      *                               overall throttling
      * @return                       the builder
      */
-    public ConcurrentRequestsThrottleDefinition correlationExpression(Expression correlationExpression) {
+    public ThrottleDefinition correlationExpression(Expression correlationExpression) {
         ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
         cor.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
         setCorrelationExpression(cor);
@@ -152,7 +241,7 @@ public class ConcurrentRequestsThrottleDefinition
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
      */
-    public ConcurrentRequestsThrottleDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
+    public ThrottleDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
         return callerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
     }
 
@@ -164,7 +253,7 @@ public class ConcurrentRequestsThrottleDefinition
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
      */
-    public ConcurrentRequestsThrottleDefinition callerRunsWhenRejected(String callerRunsWhenRejected) {
+    public ThrottleDefinition callerRunsWhenRejected(String callerRunsWhenRejected) {
         setCallerRunsWhenRejected(callerRunsWhenRejected);
         return this;
     }
@@ -174,7 +263,7 @@ public class ConcurrentRequestsThrottleDefinition
      *
      * @return the builder
      */
-    public ConcurrentRequestsThrottleDefinition asyncDelayed() {
+    public ThrottleDefinition asyncDelayed() {
         return asyncDelayed(true);
     }
 
@@ -183,7 +272,7 @@ public class ConcurrentRequestsThrottleDefinition
      *
      * @return the builder
      */
-    public ConcurrentRequestsThrottleDefinition asyncDelayed(boolean asyncDelayed) {
+    public ThrottleDefinition asyncDelayed(boolean asyncDelayed) {
         return asyncDelayed(Boolean.toString(asyncDelayed));
     }
 
@@ -192,7 +281,7 @@ public class ConcurrentRequestsThrottleDefinition
      *
      * @return the builder
      */
-    public ConcurrentRequestsThrottleDefinition asyncDelayed(String asyncDelayed) {
+    public ThrottleDefinition asyncDelayed(String asyncDelayed) {
         setAsyncDelayed(asyncDelayed);
         return this;
     }
@@ -206,7 +295,7 @@ public class ConcurrentRequestsThrottleDefinition
      * @param  rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit
      * @return                 the builder
      */
-    public ConcurrentRequestsThrottleDefinition rejectExecution(boolean rejectExecution) {
+    public ThrottleDefinition rejectExecution(boolean rejectExecution) {
         return rejectExecution(Boolean.toString(rejectExecution));
     }
 
@@ -219,7 +308,7 @@ public class ConcurrentRequestsThrottleDefinition
      * @param  rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit
      * @return                 the builder
      */
-    public ConcurrentRequestsThrottleDefinition rejectExecution(String rejectExecution) {
+    public ThrottleDefinition rejectExecution(String rejectExecution) {
         setRejectExecution(rejectExecution);
         return this;
     }
@@ -231,7 +320,7 @@ public class ConcurrentRequestsThrottleDefinition
      * @return                 the builder
      */
     @Override
-    public ConcurrentRequestsThrottleDefinition executorService(ExecutorService executorService) {
+    public ThrottleDefinition executorService(ExecutorService executorService) {
         this.executorServiceBean = executorService;
         return this;
     }
@@ -243,8 +332,22 @@ public class ConcurrentRequestsThrottleDefinition
      * @return                 the builder
      */
     @Override
-    public ConcurrentRequestsThrottleDefinition executorService(String executorService) {
+    public ThrottleDefinition executorService(String executorService) {
         setExecutorService(executorService);
+        return this;
+    }
+
+    /**
+     * Sets the throttling mode to one of the available modes enumerated in ThrottlingMode
+     *
+     * @param  mode The throttling mode as a string parameter. It currently accepts one of 'TotalRequests' or
+     *              `ConcurrentRequests`
+     * @see         ThrottlingMode
+     * @return      the builder
+     */
+    public ThrottleDefinition mode(String mode) {
+        setMode(mode);
+
         return this;
     }
 
@@ -268,6 +371,22 @@ public class ConcurrentRequestsThrottleDefinition
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
+    }
+
+    public String getTimePeriodMillis() {
+        if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
+            return timePeriodMillis;
+        }
+
+        throw new IllegalArgumentException("Time period in millis can only be obtained when using total requests mode");
+    }
+
+    public void setTimePeriodMillis(String timePeriodMillis) {
+        if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
+            this.timePeriodMillis = timePeriodMillis;
+        } else {
+            throw new IllegalArgumentException("Time period in millis can only be set when using total requests mode");
+        }
     }
 
     public String getAsyncDelayed() {
@@ -312,5 +431,20 @@ public class ConcurrentRequestsThrottleDefinition
 
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    /**
+     * Sets the throttling mode to one of the available modes enumerated in ThrottlingMode
+     *
+     * @param mode The throttling mode as a string parameter. It currently accepts one of 'TotalRequests' or
+     *             `ConcurrentRequests`
+     * @see        ThrottlingMode
+     */
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 }

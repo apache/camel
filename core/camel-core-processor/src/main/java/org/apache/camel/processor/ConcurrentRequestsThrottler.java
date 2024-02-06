@@ -31,11 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.Traceable;
-import org.apache.camel.spi.IdAware;
-import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * The throttling mechanism is a Semaphore with maxConcurrentRequests permits on it. Callers trying to acquire a permit
  * will block if necessary when maxConcurrentRequests permits have been acquired.
  */
-public class ConcurrentRequestsThrottler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class ConcurrentRequestsThrottler extends AbstractThrottler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentRequestsThrottler.class);
 
@@ -70,29 +66,12 @@ public class ConcurrentRequestsThrottler extends AsyncProcessorSupport implement
         ASYNC_REJECTED
     }
 
-    private final CamelContext camelContext;
-    private final ScheduledExecutorService asyncExecutor;
-    private final boolean shutdownAsyncExecutor;
-    private String id;
-    private String routeId;
-    private Expression maxConcurrentRequestsExpression;
-    private boolean rejectExecution;
-    private boolean asyncDelayed;
-    private boolean callerRunsWhenRejected = true;
-    private final Expression correlationExpression;
     private final Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
 
-    public ConcurrentRequestsThrottler(final CamelContext camelContext, final Expression maxConcurrentRequestsExpression,
-                     final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
-                     final boolean rejectExecution, Expression correlation) {
-        this.camelContext = camelContext;
-        this.rejectExecution = rejectExecution;
-        this.shutdownAsyncExecutor = shutdownAsyncExecutor;
-
-        ObjectHelper.notNull(maxConcurrentRequestsExpression, "maxConcurrentRequestsExpression");
-        this.maxConcurrentRequestsExpression = maxConcurrentRequestsExpression;
-        this.asyncExecutor = asyncExecutor;
-        this.correlationExpression = correlation;
+    public ConcurrentRequestsThrottler(final CamelContext camelContext, final Expression maxRequestsExpression,
+                                       final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
+                                       final boolean rejectExecution, Expression correlation) {
+        super(asyncExecutor, shutdownAsyncExecutor, camelContext, rejectExecution, correlation, maxRequestsExpression);
     }
 
     @Override
@@ -161,29 +140,6 @@ public class ConcurrentRequestsThrottler extends AsyncProcessorSupport implement
             }
         }
 
-        callback.done(doneSync);
-        return doneSync;
-    }
-
-    private static boolean handleException(Exchange exchange, AsyncCallback callback, Exception t, boolean doneSync) {
-        exchange.setException(t);
-        callback.done(doneSync);
-        return doneSync;
-    }
-
-    private static boolean handleInterrupt(
-            Exchange exchange, AsyncCallback callback, InterruptedException e, boolean doneSync) {
-        Thread.currentThread().interrupt();
-        // determine if we can still run, or the camel context is forcing a shutdown
-        boolean forceShutdown = exchange.getContext().getShutdownStrategy().isForceShutdown();
-        if (forceShutdown) {
-            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
-                         + exchange;
-            LOG.debug(msg);
-            exchange.setException(new RejectedExecutionException(msg, e));
-        } else {
-            exchange.setException(e);
-        }
         callback.done(doneSync);
         return doneSync;
     }
@@ -327,7 +283,7 @@ public class ConcurrentRequestsThrottler extends AsyncProcessorSupport implement
          * Evaluates the maxConcurrentRequestsExpression and adjusts the throttle rate up or down.
          */
         public synchronized void calculateAndSetMaxConcurrentRequestsExpression(final Exchange exchange) throws Exception {
-            Integer newThrottle = maxConcurrentRequestsExpression.evaluate(exchange, Integer.class);
+            Integer newThrottle = getMaximumRequestsExpression().evaluate(exchange, Integer.class);
 
             if (newThrottle != null && newThrottle < 0) {
                 throw new IllegalStateException("The maximumConcurrentRequests must be a positive number, was: " + newThrottle);
@@ -335,7 +291,7 @@ public class ConcurrentRequestsThrottler extends AsyncProcessorSupport implement
 
             if (newThrottle == null && throttleRate == 0) {
                 throw new RuntimeExchangeException(
-                        "The maxConcurrentRequestsExpression was evaluated as null: " + maxConcurrentRequestsExpression,
+                        "The maxConcurrentRequestsExpression was evaluated as null: " + getMaximumRequestsExpression(),
                         exchange);
             }
 
@@ -401,76 +357,27 @@ public class ConcurrentRequestsThrottler extends AsyncProcessorSupport implement
         }
     }
 
-    public boolean isRejectExecution() {
-        return rejectExecution;
-    }
-
-    public void setRejectExecution(boolean rejectExecution) {
-        this.rejectExecution = rejectExecution;
-    }
-
-    public boolean isAsyncDelayed() {
-        return asyncDelayed;
-    }
-
-    public void setAsyncDelayed(boolean asyncDelayed) {
-        this.asyncDelayed = asyncDelayed;
-    }
-
-    public boolean isCallerRunsWhenRejected() {
-        return callerRunsWhenRejected;
-    }
-
-    public void setCallerRunsWhenRejected(boolean callerRunsWhenRejected) {
-        this.callerRunsWhenRejected = callerRunsWhenRejected;
-    }
-
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getRouteId() {
-        return routeId;
-    }
-
-    @Override
-    public void setRouteId(String routeId) {
-        this.routeId = routeId;
-    }
-
-    /**
-     * Sets the maximum number of concurrent requests.
-     */
-    public void setMaximumConcurrentRequestsExpression(Expression maxConcurrentRequestsExpression) {
-        this.maxConcurrentRequestsExpression = maxConcurrentRequestsExpression;
-    }
-
-    public Expression getMaximumConcurrentRequests() {
-        return maxConcurrentRequestsExpression;
+    public String getMode() {
+        return "ConcurrentRequests";
     }
 
     /**
      * Gets the current maximum request. If it is grouped throttling applied with correlationExpression then the max
      * within the group will return
      */
-    public int getCurrentMaximumConcurrentRequests() {
+    @Override
+    public int getCurrentMaximumRequests() {
         return states.values().stream().mapToInt(ThrottlingState::getThrottleRate).max().orElse(0);
     }
 
     @Override
     public String getTraceLabel() {
-        return "throttle[" + maxConcurrentRequestsExpression + "]";
+        return "throttle[" + getMaximumRequestsExpression() + "]";
     }
 
     @Override
     public String toString() {
-        return id;
+        return getId();
     }
 }

@@ -100,7 +100,7 @@ import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThreads;
-import org.apache.camel.management.mbean.ManagedConcurrentRequestsThrottler;
+import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
 import org.apache.camel.management.mbean.ManagedThrowException;
 import org.apache.camel.management.mbean.ManagedTopicLoadBalancer;
@@ -172,7 +172,7 @@ import org.apache.camel.processor.StepProcessor;
 import org.apache.camel.processor.StopProcessor;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.ThreadsProcessor;
-import org.apache.camel.processor.ConcurrentRequestsThrottler;
+import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.processor.TryProcessor;
@@ -377,8 +377,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedDoCatch(context, (CatchProcessor) target, (CatchDefinition) definition);
             } else if (target instanceof FinallyProcessor) {
                 answer = new ManagedDoFinally(context, (FinallyProcessor) target, (FinallyDefinition) definition);
-            } else if (target instanceof ConcurrentRequestsThrottler) {
-                answer = new ManagedConcurrentRequestsThrottler(context, (ConcurrentRequestsThrottler) target, definition);
+            } else if (target instanceof Throttler) {
+                answer = new ManagedThrottler(context, (Throttler) target, definition);
             } else if (target instanceof DynamicRouter) {
                 answer = new ManagedDynamicRouter(context, (DynamicRouter) target, (DynamicRouterDefinition) definition);
             } else if (target instanceof RoutingSlip) {

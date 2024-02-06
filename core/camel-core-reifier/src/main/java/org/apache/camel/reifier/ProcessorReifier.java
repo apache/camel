@@ -98,7 +98,7 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.ThreadsDefinition;
-import org.apache.camel.model.ConcurrentRequestsThrottleDefinition;
+import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
@@ -316,8 +316,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new StopReifier(route, definition);
         } else if (definition instanceof ThreadsDefinition) {
             return new ThreadsReifier(route, definition);
-        } else if (definition instanceof ConcurrentRequestsThrottleDefinition) {
-            return new ConcurrentRequestsThrottleReifier(route, definition);
+        } else if (definition instanceof ThrottleDefinition) {
+            return new ThrottleReifier(route, definition);
         } else if (definition instanceof ThrowExceptionDefinition) {
             return new ThrowExceptionReifier(route, definition);
         } else if (definition instanceof ToDefinition) {
