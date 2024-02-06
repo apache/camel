@@ -14,28 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.throttle;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.ThreadPoolProfileBuilder;
+import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 
-/**
- *
- */
-public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
+public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
+
+    private String url = "seda:foo?concurrentConsumers=20";
+    private int size = 100;
 
     @Test
-    public void testThrottler() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(6);
+    public void testThrottlingRoutePolicy() throws Exception {
+        // we use seda which are not persistent and hence can loose a message
+        // when we get graceful shutdown support we can prevent this
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(size - 10);
 
-        template.sendBody("seda:start", "A");
-        template.sendBody("seda:start", "B");
-        template.sendBody("seda:start", "C");
-        template.sendBody("seda:start", "D");
-        template.sendBody("seda:start", "E");
-        template.sendBody("seda:start", "F");
+        for (int i = 0; i < size; i++) {
+            template.sendBody(url, "Message " + i);
+        }
 
         assertMockEndpointsSatisfied();
     }
@@ -45,13 +44,10 @@ public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // create a profile for the throttler
-                ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder("myThrottler");
-                builder.maxQueueSize(2);
-                context.getExecutorServiceManager().registerThreadPoolProfile(builder.build());
+                ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
+                policy.setMaxInflightExchanges(10);
 
-                from("seda:start").throttle(1).delay(100).asyncDelayed().executorService("myThrottler")
-                        .callerRunsWhenRejected(true).to("mock:result");
+                from(url).routePolicy(policy).delay(3).to("log:foo?groupSize=10").to("mock:result");
             }
         };
     }
