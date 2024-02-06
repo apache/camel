@@ -26,8 +26,8 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
 import org.apache.camel.component.dhis2.internal.Dhis2DeleteApiMethod;
-import org.hisp.dhis.api.model.v2_39_1.OrganisationUnit;
-import org.hisp.dhis.api.model.v2_39_1.WebMessage;
+import org.hisp.dhis.api.model.v40_2_2.OrganisationUnit;
+import org.hisp.dhis.api.model.v40_2_2.WebMessage;
 import org.hisp.dhis.integration.sdk.api.RemoteDhis2ClientException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -48,10 +48,10 @@ public class Dhis2DeleteIT extends AbstractDhis2TestSupport {
 
     @Test
     public void testResource() {
-        String orgUnitId = (String) ((Map<String, Object>) Environment.DHIS2_CLIENT.post("organisationUnits")
+        String orgUnitId = Environment.DHIS2_CLIENT.post("organisationUnits")
                 .withResource(new OrganisationUnit().withName("Acme").withShortName("Acme").withOpeningDate(new Date()))
                 .transfer()
-                .returnAs(WebMessage.class).getResponse().get()).get("uid");
+                .returnAs(WebMessage.class).getResponse().get().get("uid");
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String

@@ -17,6 +17,7 @@
 package org.apache.camel.component.dhis2;
 
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -41,8 +42,12 @@ abstract class AbstractDhis2TestSupport extends CamelTestSupport {
         final CamelContext context = super.createCamelContext();
         Dhis2Configuration configuration = new Dhis2Configuration();
         configuration.setBaseApiUrl(baseApiUrl);
-        configuration.setUsername(username);
-        configuration.setPassword(password);
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            configuration.setUsername(username);
+            configuration.setPassword(password);
+        } else {
+            configuration.setPersonalAccessToken(Environment.PERSONAL_ACCESS_TOKEN);
+        }
 
         // add Dhis2Component to Camel context
         final Dhis2Component component = new Dhis2Component(context);

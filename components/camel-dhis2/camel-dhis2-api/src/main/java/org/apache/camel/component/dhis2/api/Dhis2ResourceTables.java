@@ -19,6 +19,7 @@ package org.apache.camel.component.dhis2.api;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.camel.RuntimeCamelException;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.operation.PostOperation;
 
@@ -29,7 +30,7 @@ public class Dhis2ResourceTables {
         this.dhis2Client = dhis2Client;
     }
 
-    public void analytics(Boolean skipAggregate, Boolean skipEvents, Integer lastYears, Integer interval) {
+    public void analytics(Boolean skipAggregate, Boolean skipEvents, Integer lastYears, Integer interval, Boolean async) {
         PostOperation postOperation = dhis2Client.post("resourceTables/analytics");
         if (skipEvents != null) {
             postOperation.withParameter("skipEvents", String.valueOf(skipEvents));
@@ -44,22 +45,23 @@ public class Dhis2ResourceTables {
         Map<String, Object> webMessage = postOperation.transfer().returnAs(Map.class);
         String taskId = (String) ((Map<String, Object>) webMessage.get("response")).get("id");
 
-        Map<String, Object> notification = null;
-        while (notification == null || !(Boolean) notification.get("completed")) {
-            try {
-                Thread.sleep(Objects.requireNonNullElse(interval, 30000));
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            Iterable<Map> notifications = dhis2Client.get("system/tasks/ANALYTICS_TABLE/{taskId}",
-                    taskId).withoutPaging().transfer().returnAs(Map.class);
-            if (notifications.iterator().hasNext()) {
-                notification = notifications.iterator().next();
-                if (notification.get("level").equals("ERROR")) {
-                    throw new RuntimeException("Analytics failed => " + notification);
+        if (async == null || !async) {
+            Map<String, Object> notification = null;
+            while (notification == null || !(Boolean) notification.get("completed")) {
+                try {
+                    Thread.sleep(Objects.requireNonNullElse(interval, 30000));
+                } catch (InterruptedException e) {
+                    throw new RuntimeCamelException(e);
+                }
+                Iterable<Map> notifications = dhis2Client.get("system/tasks/ANALYTICS_TABLE/{taskId}",
+                        taskId).withoutPaging().transfer().returnAs(Map.class);
+                if (notifications.iterator().hasNext()) {
+                    notification = notifications.iterator().next();
+                    if (notification.get("level").equals("ERROR")) {
+                        throw new RuntimeCamelException("Analytics failed => " + notification);
+                    }
                 }
             }
         }
     }
-
 }

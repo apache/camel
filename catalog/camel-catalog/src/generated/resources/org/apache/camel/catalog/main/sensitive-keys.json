@@ -37,6 +37,7 @@
   "passcode",
   "passphrase",
   "password",
+  "personalaccesstoken",
   "privatekey",
   "privatekeyfile",
   "privatekeyname",

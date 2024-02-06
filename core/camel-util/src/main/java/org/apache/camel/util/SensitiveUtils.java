@@ -66,6 +66,7 @@ public final class SensitiveUtils {
                     "passcode",
                     "passphrase",
                     "password",
+                    "personalaccesstoken",
                     "privatekey",
                     "privatekeyfile",
                     "privatekeyname",
@@ -145,6 +146,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qpasscode\\E"
                                                     + "|\\Qpassphrase\\E"
                                                     + "|\\Qpassword\\E"
+                                                    + "|\\Qpersonalaccesstoken\\E"
                                                     + "|\\Qprivatekey\\E"
                                                     + "|\\Qprivatekeyfile\\E"
                                                     + "|\\Qprivatekeyname\\E"
@@ -180,7 +182,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {
