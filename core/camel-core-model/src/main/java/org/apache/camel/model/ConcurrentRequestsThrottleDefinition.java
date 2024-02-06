@@ -38,7 +38,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "expression", "correlationExpression" })
-public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
+public class ConcurrentRequestsThrottleDefinition
+        extends ExpressionNode implements ExecutorServiceAwareDefinition<ConcurrentRequestsThrottleDefinition> {
 
     @XmlTransient
     private ExecutorService executorServiceBean;
@@ -58,18 +59,18 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String rejectExecution;
 
-    public ThrottleDefinition() {
+    public ConcurrentRequestsThrottleDefinition() {
     }
 
-    public ThrottleDefinition(Expression maximumConcurrentRequests) {
+    public ConcurrentRequestsThrottleDefinition(Expression maximumConcurrentRequests) {
         super(maximumConcurrentRequests);
     }
 
-    public ThrottleDefinition(Expression maximumConcurrentRequests, Expression correlationExpression) {
+    public ConcurrentRequestsThrottleDefinition(Expression maximumConcurrentRequests, Expression correlationExpression) {
         this(ExpressionNodeHelper.toExpressionDefinition(maximumConcurrentRequests), correlationExpression);
     }
 
-    private ThrottleDefinition(ExpressionDefinition maximumConcurrentRequests, Expression correlationExpression) {
+    private ConcurrentRequestsThrottleDefinition(ExpressionDefinition maximumConcurrentRequests, Expression correlationExpression) {
         super(maximumConcurrentRequests);
 
         ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
@@ -100,7 +101,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param  maximumConcurrentRequests the maximum number of concurrent requests
      * @return                           the builder
      */
-    public ThrottleDefinition maximumConcurrentRequests(long maximumConcurrentRequests) {
+    public ConcurrentRequestsThrottleDefinition maximumConcurrentRequests(long maximumConcurrentRequests) {
         setExpression(
                 ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
         return this;
@@ -112,7 +113,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param  maximumConcurrentRequests the maximum number of concurrent requests
      * @return                           the builder
      */
-    public ThrottleDefinition maximumConcurrentRequests(String maximumConcurrentRequests) {
+    public ConcurrentRequestsThrottleDefinition maximumConcurrentRequests(String maximumConcurrentRequests) {
         setExpression(
                 ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.simpleExpression(maximumConcurrentRequests)));
         return this;
@@ -125,7 +126,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      *                               overall throttling
      * @return                       the builder
      */
-    public ThrottleDefinition correlationExpression(long correlationExpression) {
+    public ConcurrentRequestsThrottleDefinition correlationExpression(long correlationExpression) {
         return correlationExpression(ExpressionBuilder.constantExpression(correlationExpression));
     }
 
@@ -136,7 +137,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      *                               overall throttling
      * @return                       the builder
      */
-    public ThrottleDefinition correlationExpression(Expression correlationExpression) {
+    public ConcurrentRequestsThrottleDefinition correlationExpression(Expression correlationExpression) {
         ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
         cor.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
         setCorrelationExpression(cor);
@@ -151,7 +152,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
      */
-    public ThrottleDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
+    public ConcurrentRequestsThrottleDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
         return callerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
     }
 
@@ -163,7 +164,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
      */
-    public ThrottleDefinition callerRunsWhenRejected(String callerRunsWhenRejected) {
+    public ConcurrentRequestsThrottleDefinition callerRunsWhenRejected(String callerRunsWhenRejected) {
         setCallerRunsWhenRejected(callerRunsWhenRejected);
         return this;
     }
@@ -173,7 +174,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      *
      * @return the builder
      */
-    public ThrottleDefinition asyncDelayed() {
+    public ConcurrentRequestsThrottleDefinition asyncDelayed() {
         return asyncDelayed(true);
     }
 
@@ -182,7 +183,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      *
      * @return the builder
      */
-    public ThrottleDefinition asyncDelayed(boolean asyncDelayed) {
+    public ConcurrentRequestsThrottleDefinition asyncDelayed(boolean asyncDelayed) {
         return asyncDelayed(Boolean.toString(asyncDelayed));
     }
 
@@ -191,7 +192,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      *
      * @return the builder
      */
-    public ThrottleDefinition asyncDelayed(String asyncDelayed) {
+    public ConcurrentRequestsThrottleDefinition asyncDelayed(String asyncDelayed) {
         setAsyncDelayed(asyncDelayed);
         return this;
     }
@@ -205,7 +206,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param  rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit
      * @return                 the builder
      */
-    public ThrottleDefinition rejectExecution(boolean rejectExecution) {
+    public ConcurrentRequestsThrottleDefinition rejectExecution(boolean rejectExecution) {
         return rejectExecution(Boolean.toString(rejectExecution));
     }
 
@@ -218,7 +219,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param  rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit
      * @return                 the builder
      */
-    public ThrottleDefinition rejectExecution(String rejectExecution) {
+    public ConcurrentRequestsThrottleDefinition rejectExecution(String rejectExecution) {
         setRejectExecution(rejectExecution);
         return this;
     }
@@ -230,7 +231,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return                 the builder
      */
     @Override
-    public ThrottleDefinition executorService(ExecutorService executorService) {
+    public ConcurrentRequestsThrottleDefinition executorService(ExecutorService executorService) {
         this.executorServiceBean = executorService;
         return this;
     }
@@ -242,7 +243,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return                 the builder
      */
     @Override
-    public ThrottleDefinition executorService(String executorService) {
+    public ConcurrentRequestsThrottleDefinition executorService(String executorService) {
         setExecutorService(executorService);
         return this;
     }

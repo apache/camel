@@ -22,13 +22,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ThrottleDefinition;
+import org.apache.camel.model.ConcurrentRequestsThrottleDefinition;
 import org.apache.camel.processor.Throttler;
 
-public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
+public class ConcurrentRequestsThrottleReifier extends ExpressionReifier<ConcurrentRequestsThrottleDefinition> {
 
-    public ThrottleReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (ThrottleDefinition) definition);
+    public ConcurrentRequestsThrottleReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ConcurrentRequestsThrottleDefinition) definition);
     }
 
     @Override

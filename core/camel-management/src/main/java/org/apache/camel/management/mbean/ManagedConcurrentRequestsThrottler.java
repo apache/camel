@@ -18,17 +18,17 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.ManagedThrottlerMBean;
+import org.apache.camel.api.management.mbean.ManagedConcurrentRequestsThrottlerMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Throttler;
 
 import static org.apache.camel.builder.Builder.constant;
 
 @ManagedResource(description = "Managed Throttler")
-public class ManagedThrottler extends ManagedProcessor implements ManagedThrottlerMBean {
+public class ManagedConcurrentRequestsThrottler extends ManagedProcessor implements ManagedConcurrentRequestsThrottlerMBean {
     private final Throttler throttler;
 
-    public ManagedThrottler(CamelContext context, Throttler throttler, ProcessorDefinition<?> definition) {
+    public ManagedConcurrentRequestsThrottler(CamelContext context, Throttler throttler, ProcessorDefinition<?> definition) {
         super(context, throttler, definition);
         this.throttler = throttler;
     }

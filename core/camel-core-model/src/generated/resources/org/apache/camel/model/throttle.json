@@ -6,7 +6,7 @@
     "description": "Controls the rate at which messages are passed to the next node in the route",
     "deprecated": false,
     "label": "eip,routing",
-    "javaType": "org.apache.camel.model.ThrottleDefinition",
+    "javaType": "org.apache.camel.model.ConcurrentRequestsThrottleDefinition",
     "abstract": false,
     "input": true,
     "output": false
