@@ -33,6 +33,22 @@ In XML and YAML DSL the `type` option in `<xquery>` has been renamed to `resultT
 The copied exchange is no longer having exchange property CORRELATION_ID set that links to the original exchange.
 The reason is that this link should only be for EIPs with sub exchanges such as Splitter and Multicast.
 
+==== Throttle EIP
+
+// We refactored the Throttle EIP implementation so that Camel can support two different modes of throttling.
+//
+// One based on the total number of requests over a period of time ("TotalRequests" mode), that was the default on Camel up to
+// version 4.2.0. On Camel 4.3.0 we introduced a new one based on the number of concurrent requests and replaced the former.
+
+
+Previously Camel used a throttler based on the total number of requests over a period of time ("TotalRequests" mode). That was
+the default on Camel up to version 4.2.0. On Camel 4.3.0 we introduced a new one based on the number of concurrent requests and
+replaced the former.
+
+With Camel 4.4.0 we refactored the xref:next@components:eips:throttle-eip.adoc[Throttle EIP] implementation so that Camel can support two different modes of throttling.
+
+Check the component documentation for details about how to use each mode.
+
 ==== MDC logging
 
 When using custom MDC keys (need to configure `MDCLoggingKeysPattern`) then these custom keys are cleared at the end of routing.

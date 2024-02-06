@@ -19,7 +19,7 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.ConcurrentRequestsThrottlerTest;
+import org.apache.camel.processor.throttle.concurrent.ConcurrentRequestsThrottlerTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import static org.junit.jupiter.api.Assertions.assertTrue;

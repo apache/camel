@@ -1995,7 +1995,7 @@ Serialize and deserialize messages using Apache Thrift binary data format.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="throttle" type="tns:concurrentRequestsThrottleDefinition">
+  <xs:element name="throttle" type="tns:throttleDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -3531,7 +3531,6 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -3582,6 +3581,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -4095,7 +4095,6 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -4146,6 +4145,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -4204,7 +4204,6 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -4255,6 +4254,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -4304,7 +4304,6 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -4355,6 +4354,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -4387,7 +4387,6 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -4438,6 +4437,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -4837,7 +4837,6 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -4888,6 +4887,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -4973,91 +4973,6 @@ strategy and configure data at the same time.
             <xs:documentation xml:lang="en">
 <![CDATA[
 This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="concurrentRequestsThrottleDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:processorDefinition">
-        <xs:sequence>
-          <xs:choice>
-            <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
-            <xs:element ref="tns:constant"/>
-            <xs:element ref="tns:datasonnet"/>
-            <xs:element ref="tns:exchangeProperty"/>
-            <xs:element ref="tns:groovy"/>
-            <xs:element ref="tns:header"/>
-            <xs:element ref="tns:hl7terser"/>
-            <xs:element ref="tns:java"/>
-            <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
-            <xs:element ref="tns:jq"/>
-            <xs:element ref="tns:jsonpath"/>
-            <xs:element ref="tns:language"/>
-            <xs:element ref="tns:method"/>
-            <xs:element ref="tns:mvel"/>
-            <xs:element ref="tns:ognl"/>
-            <xs:element ref="tns:python"/>
-            <xs:element ref="tns:ref"/>
-            <xs:element ref="tns:simple"/>
-            <xs:element ref="tns:spel"/>
-            <xs:element ref="tns:tokenize"/>
-            <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
-            <xs:element ref="tns:xtokenize"/>
-            <xs:element ref="tns:xpath"/>
-            <xs:element ref="tns:xquery"/>
-          </xs:choice>
-          <xs:element minOccurs="0" name="correlationExpression" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same
-correlation key is throttled together.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute name="executorService" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To use a custom thread pool (ScheduledExecutorService) by the throttler.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="asyncDelayed" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Enables asynchronous delay which means the thread will not block while delaying. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="callerRunsWhenRejected" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true. Default
-value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="rejectExecution" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is
-by default false. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6073,7 +5988,6 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -6124,6 +6038,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -6163,7 +6078,6 @@ predicate evaluated as true or false.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -6214,6 +6128,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -6324,7 +6239,6 @@ Global option value.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -6375,6 +6289,7 @@ Global option value.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -6484,7 +6399,6 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -6535,6 +6449,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -6581,7 +6496,6 @@ intercepted.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -6632,6 +6546,7 @@ intercepted.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -6689,7 +6604,6 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -6740,6 +6654,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -6788,7 +6703,6 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -6839,6 +6753,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -7101,7 +7016,6 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -7152,6 +7066,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -10508,7 +10423,6 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -10559,6 +10473,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -10731,7 +10646,6 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -10782,6 +10696,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -10929,7 +10844,6 @@ its considered handled as well.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -10980,6 +10894,7 @@ its considered handled as well.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -11187,7 +11102,6 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -11238,6 +11152,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -11267,7 +11182,6 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -11318,6 +11232,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -11895,7 +11810,6 @@ Name of variable to remove.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -11946,6 +11860,7 @@ Name of variable to remove.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -12243,7 +12158,6 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -12294,6 +12208,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -12678,7 +12593,6 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -12729,6 +12643,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -13126,7 +13041,6 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -13177,6 +13091,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -13356,7 +13271,6 @@ individual unit of work. Default value: false
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -13407,6 +13321,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -13695,6 +13610,109 @@ handler. Is by default true. Default value: true
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="throttleDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:processorDefinition">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
+            <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
+            <xs:element ref="tns:exchangeProperty"/>
+            <xs:element ref="tns:groovy"/>
+            <xs:element ref="tns:header"/>
+            <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:java"/>
+            <xs:element ref="tns:js"/>
+            <xs:element ref="tns:joor"/>
+            <xs:element ref="tns:jq"/>
+            <xs:element ref="tns:jsonpath"/>
+            <xs:element ref="tns:language"/>
+            <xs:element ref="tns:method"/>
+            <xs:element ref="tns:mvel"/>
+            <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python"/>
+            <xs:element ref="tns:ref"/>
+            <xs:element ref="tns:simple"/>
+            <xs:element ref="tns:spel"/>
+            <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
+            <xs:element ref="tns:wasm"/>
+            <xs:element ref="tns:xtokenize"/>
+            <xs:element ref="tns:xpath"/>
+            <xs:element ref="tns:xquery"/>
+          </xs:choice>
+          <xs:element minOccurs="0" name="correlationExpression" type="tns:expressionSubElementDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+<![CDATA[
+The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same
+correlation key is throttled together.
+]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="mode" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the throttling mode to one of the available modes enumerated in ThrottlingMode. Default value: TotalRequests
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="executorService" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a custom thread pool (ScheduledExecutorService) by the throttler.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="asyncDelayed" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Enables asynchronous delay which means the thread will not block while delaying. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="callerRunsWhenRejected" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true. Default
+value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="rejectExecution" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is
+by default false. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timePeriodMillis" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the time period during which the maximum request count is valid for. Default value: 1000
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="throwExceptionDefinition">
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
@@ -13875,7 +13893,6 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -13926,6 +13943,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -14017,7 +14035,6 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
             <xs:element ref="tns:convertVariableTo"/>
@@ -14068,6 +14085,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
             <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
             <xs:element ref="tns:to"/>
             <xs:element ref="tns:toD"/>
@@ -17924,6 +17942,12 @@ An optional certificate alias to use. This is useful when the keystore has multi
       <xs:enumeration value="SUPPORTS"/>
       <xs:enumeration value="NOT_SUPPORTED"/>
       <xs:enumeration value="NEVER"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="throttlingMode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TotalRequests"/>
+      <xs:enumeration value="ConcurrentRequests"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="bindyType">

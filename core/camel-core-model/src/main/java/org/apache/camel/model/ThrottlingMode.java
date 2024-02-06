@@ -14,18 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor.throttle;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.throttle.concurrent.ThrottlerMethodCallTest;
+package org.apache.camel.model;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
-public class SpringThrottlerMethodCallTest extends ThrottlerMethodCallTest {
+@XmlType
+@XmlEnum
+public enum ThrottlingMode {
+    /**
+     * Uses a throttling mode that considers the total number of requests over defined period of time
+     */
+    TotalRequests,
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/ThrottlerMethodCallTest.xml");
+    /**
+     * Uses a throttling mode that uses a leaky-bucket algorithm to limit the outflow based on a maximum number of
+     * concurrent requests
+     */
+    ConcurrentRequests;
+
+    public static ThrottlingMode toMode(String mode) {
+        if (mode.equals(ThrottlingMode.TotalRequests.name())) {
+            return ThrottlingMode.TotalRequests;
+        }
+
+        return ThrottlingMode.ConcurrentRequests;
     }
 }

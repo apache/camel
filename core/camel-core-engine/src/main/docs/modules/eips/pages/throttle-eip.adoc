@@ -311,3 +311,77 @@ YAML::
 In the example above messages are throttled by the header with name region.
 So suppose there are regions for US, EMEA, and ASIA, then we have three different groups, that each
 are throttled by 100 messages per second.
+
+== Throttling Modes
+
+Apache Camel comes with two distinct throttling modes to control and manage the flow of requests in their applications.
+
+These modes address different aspects of request handling:
+
+*Total Requests Mode*:: Throttles requests based on the total number of requests made within a defined unit of time. It regulates the overall traffic flow to prevent overwhelming the system with an excessive number of requests.
+
+*Concurrent Connections Mode*:: Throttles requests by managing concurrent connections using a https://en.wikipedia.org/wiki/Leaky_bucket[leaky bucket algorithm.] This algorithm controls the rate at which requests are processed simultaneously, preventing system overload.
+
+=== Default Mode
+
+By default, Camel uses the *Total Requests Mode* as the default throttling mechanism.
+
+This means that, unless specified otherwise, the framework regulates the flow of requests based on the total number of requests per unit of time.
+
+=== Choosing Throttling Mode
+
+Users can choose their preferred throttling mode using different approaches:
+
+*DSL Methods*::
+
+- `totalRequestsMode()`: Sets the total requests mode.
+- `concurrentRequestsMode()`: Sets the concurrent connections mode.
+
+*Mode DSL Method*::
+
+- `mode(String)`: Users can specify the throttling mode by passing either `TotalRequests` or `ConcurrentRequests` as an argument.
+
+For example, `mode("ConcurrentRequests")` sets the throttling mode based on concurrent connections.
+
+These options provide users with fine-grained control over how Camel manages the flow of requests, allowing them to choose the mode that best aligns with their specific application requirements.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:a")
+  .throttle(3).mode("ConcurrentRequests")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:a"/>
+  <throttle mode="ConcurrentRequests">
+    <constant>3</constant>
+  </throttle>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:a
+    steps:
+      - throttle:
+          expression:
+            constant: 3
+          mode: ConcurrentRequests
+          timePeriodMillis: 10000
+      - to:
+          uri: mock:result
+----
+====
