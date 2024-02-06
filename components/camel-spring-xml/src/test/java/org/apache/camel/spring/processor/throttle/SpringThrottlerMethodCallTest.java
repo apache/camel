@@ -17,7 +17,7 @@
 package org.apache.camel.spring.processor.throttle;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.throttle.ThrottlerMethodCallTest;
+import org.apache.camel.processor.throttle.concurrent.ThrottlerMethodCallTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
