@@ -311,6 +311,7 @@ public class Run extends CamelCommand {
         // just boot silently and exit
         this.transformRun = true;
         this.ignoreLoadingError = ignoreLoadingError;
+        this.name = "transform";
         return run();
     }
 
@@ -940,7 +941,7 @@ public class Run extends CamelCommand {
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
-            if (!silentRun) {
+            if (!silentRun && !transformRun && !transformMessageRun) {
                 printer().println("Running Camel integration: " + name + " (version: " + camelVersion
                                   + ") in background with PID: " + p.pid());
             }
@@ -975,7 +976,7 @@ public class Run extends CamelCommand {
         pb.command(cmds);
         Process p = pb.start();
         this.spawnPid = p.pid();
-        if (!silentRun) {
+        if (!silentRun && !transformRun && !transformMessageRun) {
             printer().println("Running Camel integration: " + name + " in background with PID: " + p.pid());
         }
         return 0;
@@ -1052,7 +1053,7 @@ public class Run extends CamelCommand {
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
-            if (!silentRun) {
+            if (!silentRun && !transformRun && !transformMessageRun) {
                 printer().println("Running Camel integration: " + name + " (version: " + camelVersion
                                   + ") in background with PID: " + p.pid());
             }
