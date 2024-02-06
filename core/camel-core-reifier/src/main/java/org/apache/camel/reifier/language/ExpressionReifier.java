@@ -34,7 +34,6 @@ import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JoorExpression;
-import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.SimpleExpression;

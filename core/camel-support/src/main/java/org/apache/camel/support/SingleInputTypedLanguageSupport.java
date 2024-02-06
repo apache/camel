@@ -46,6 +46,10 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
+        if (expression != null && isStaticResource(expression)) {
+            expression = loadResource(expression);
+        }
+
         Class<?> type = property(Class.class, properties, 0, null);
         String variable = property(String.class, properties, 1, null);
         String header = property(String.class, properties, 2, null);
@@ -62,6 +66,10 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
 
     @Override
     public Predicate createPredicate(String expression, Object[] properties) {
+        if (expression != null && isStaticResource(expression)) {
+            expression = loadResource(expression);
+        }
+
         Class<?> type = property(Class.class, properties, 0, null);
         String variable = property(String.class, properties, 1, null);
         String header = property(String.class, properties, 2, null);
