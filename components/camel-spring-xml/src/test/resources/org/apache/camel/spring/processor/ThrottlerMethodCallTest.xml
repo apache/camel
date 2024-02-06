@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="myBean" class="org.apache.camel.spring.processor.SpringThrottlerMethodCallTest"/>
+  <bean id="myBean" class="org.apache.camel.spring.processor.throttle.SpringThrottlerMethodCallTest"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>

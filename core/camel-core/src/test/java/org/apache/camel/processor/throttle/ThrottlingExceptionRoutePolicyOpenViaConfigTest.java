@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.throttle;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +23,7 @@ import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTestSupport {
+public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport {
 
     private String url = "seda:foo?concurrentConsumers=20";
     private MockEndpoint result;
@@ -46,35 +46,37 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
         int threshold = 2;
         long failureWindow = 30;
         long halfOpenAfter = 100;
-        boolean keepOpen = true;
+        boolean keepOpen = false;
         policy = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null, keepOpen);
     }
 
     @Test
-    public void testThrottlingRoutePolicyStartWithAlwaysOpenOn() throws Exception {
+    public void testThrottlingRoutePolicyStartWithAlwaysOpenOffThenToggle() throws Exception {
 
-        log.debug("---- sending some messages");
+        // send first set of messages
+        // should go through b/c circuit is closed
         for (int i = 0; i < size; i++) {
-            template.sendBody(url, "Message " + i);
+            template.sendBody(url, "MessageRound1 " + i);
             Thread.sleep(3);
         }
-
-        // gives time for policy half open check to run every second
-        // and should not close b/c keepOpen is true
-        Thread.sleep(500);
-
-        // gives time for policy half open check to run every second
-        // but it should never close b/c keepOpen is true
-        result.expectedMessageCount(0);
+        result.expectedMessageCount(size);
         result.setResultWaitTime(1000);
         assertMockEndpointsSatisfied();
-    }
 
-    @Test
-    public void testThrottlingRoutePolicyStartWithAlwaysOpenOnThenClose() throws Exception {
+        // set keepOpen to true
+        policy.setKeepOpen(true);
 
+        // trigger opening circuit
+        // by sending another message
+        template.sendBody(url, "MessageTrigger");
+
+        // give time for circuit to open
+        Thread.sleep(500);
+
+        // send next set of messages
+        // should NOT go through b/c circuit is open
         for (int i = 0; i < size; i++) {
-            template.sendBody(url, "Message " + i);
+            template.sendBody(url, "MessageRound2 " + i);
             Thread.sleep(3);
         }
 
@@ -82,18 +84,17 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
         // and should not close b/c keepOpen is true
         Thread.sleep(500);
 
-        result.expectedMessageCount(0);
-        result.setResultWaitTime(1500);
+        result.expectedMessageCount(size + 1);
+        result.setResultWaitTime(1000);
         assertMockEndpointsSatisfied();
 
         // set keepOpen to false
-        // now half open check will succeed
         policy.setKeepOpen(false);
 
         // gives time for policy half open check to run every second
-        // and should close and get all the messages
-        result.expectedMessageCount(5);
-        result.setResultWaitTime(1500);
+        // and it should close b/c keepOpen is false
+        result.expectedMessageCount(size * 2 + 1);
+        result.setResultWaitTime(1000);
         assertMockEndpointsSatisfied();
     }
 

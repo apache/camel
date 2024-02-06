@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel.spring.processor.throttle;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.ThrottlerThreadPoolProfileTest;
+import org.apache.camel.processor.throttle.ThrottlerMethodCallTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-public class SpringThrottlerThreadPoolProfileTest extends ThrottlerThreadPoolProfileTest {
+public class SpringThrottlerMethodCallTest extends ThrottlerMethodCallTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/ThrottlerThreadPoolProfileTest.xml");
+                "org/apache/camel/spring/processor/ThrottlerMethodCallTest.xml");
     }
 }
