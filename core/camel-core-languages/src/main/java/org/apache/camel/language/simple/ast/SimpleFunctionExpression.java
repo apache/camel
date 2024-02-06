@@ -182,7 +182,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (exp == null) {
                 throw new SimpleParserException("Valid syntax: ${pretty(exp)} was: " + function, token.getIndex());
             }
-            exp = StringHelper.removeQuotes(exp);
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
             Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
             return ExpressionBuilder.prettyExpression(inlined);
         }
@@ -533,7 +533,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (exp == null) {
                 throw new SimpleParserException("Valid syntax: ${jq(exp)} was: " + function, token.getIndex());
             }
-            exp = StringHelper.removeQuotes(exp);
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
             if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
@@ -549,7 +549,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (exp == null) {
                 throw new SimpleParserException("Valid syntax: ${jsonpath(exp)} was: " + function, token.getIndex());
             }
-            exp = StringHelper.removeQuotes(exp);
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
             if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
@@ -564,7 +564,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (exp == null) {
                 throw new SimpleParserException("Valid syntax: ${xpath(exp)} was: " + function, token.getIndex());
             }
-            exp = StringHelper.removeQuotes(exp);
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
             if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
