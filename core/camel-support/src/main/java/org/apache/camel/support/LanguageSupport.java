@@ -67,7 +67,7 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
      */
     protected String loadResource(String expression) throws ExpressionIllegalSyntaxException {
         // we can only load static resources (if they are dynamic then simple will load them on-demand)
-        if (camelContext != null && isStaticResource(expression)) {
+        if (camelContext != null && expression != null && isStaticResource(expression)) {
             String uri = expression.substring(RESOURCE.length());
             InputStream is = null;
             try {

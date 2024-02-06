@@ -17,17 +17,16 @@
 package org.apache.camel.language.variable;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
  * A language for variable expressions.
  */
 @org.apache.camel.spi.annotations.Language("variable")
-public class VariableLanguage implements Language, IsSingleton {
+public class VariableLanguage extends LanguageSupport {
 
     public static Expression variable(String name) {
         return ExpressionBuilder.variableExpression(name);
@@ -40,11 +39,10 @@ public class VariableLanguage implements Language, IsSingleton {
 
     @Override
     public Expression createExpression(String expression) {
+        if (expression != null && isStaticResource(expression)) {
+            expression = loadResource(expression);
+        }
         return VariableLanguage.variable(expression);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
 }
