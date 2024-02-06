@@ -54,9 +54,9 @@ import org.slf4j.LoggerFactory;
  * The throttling mechanism is a Semaphore with maxConcurrentRequests permits on it. Callers trying to acquire a permit
  * will block if necessary when maxConcurrentRequests permits have been acquired.
  */
-public class Throttler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class ConcurrentRequestsThrottler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Throttler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConcurrentRequestsThrottler.class);
 
     private static final String DEFAULT_KEY = "CamelThrottlerDefaultKey";
 
@@ -82,7 +82,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     private final Expression correlationExpression;
     private final Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
 
-    public Throttler(final CamelContext camelContext, final Expression maxConcurrentRequestsExpression,
+    public ConcurrentRequestsThrottler(final CamelContext camelContext, final Expression maxConcurrentRequestsExpression,
                      final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
                      final boolean rejectExecution, Expression correlation) {
         this.camelContext = camelContext;

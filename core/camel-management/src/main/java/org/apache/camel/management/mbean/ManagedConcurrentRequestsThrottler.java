@@ -20,20 +20,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedConcurrentRequestsThrottlerMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.Throttler;
+import org.apache.camel.processor.ConcurrentRequestsThrottler;
 
 import static org.apache.camel.builder.Builder.constant;
 
 @ManagedResource(description = "Managed Throttler")
 public class ManagedConcurrentRequestsThrottler extends ManagedProcessor implements ManagedConcurrentRequestsThrottlerMBean {
-    private final Throttler throttler;
+    private final ConcurrentRequestsThrottler throttler;
 
-    public ManagedConcurrentRequestsThrottler(CamelContext context, Throttler throttler, ProcessorDefinition<?> definition) {
+    public ManagedConcurrentRequestsThrottler(CamelContext context, ConcurrentRequestsThrottler throttler, ProcessorDefinition<?> definition) {
         super(context, throttler, definition);
         this.throttler = throttler;
     }
 
-    public Throttler getThrottler() {
+    public ConcurrentRequestsThrottler getThrottler() {
         return throttler;
     }
 

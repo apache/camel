@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ConcurrentRequestsThrottleDefinition;
-import org.apache.camel.processor.Throttler;
+import org.apache.camel.processor.ConcurrentRequestsThrottler;
 
 public class ConcurrentRequestsThrottleReifier extends ExpressionReifier<ConcurrentRequestsThrottleDefinition> {
 
@@ -49,7 +49,7 @@ public class ConcurrentRequestsThrottleReifier extends ExpressionReifier<Concurr
         }
 
         boolean reject = parseBoolean(definition.getRejectExecution(), false);
-        Throttler answer = new Throttler(
+        ConcurrentRequestsThrottler answer = new ConcurrentRequestsThrottler(
                 camelContext, maxRequestsExpression, threadPool, shutdownThreadPool, reject, correlation);
 
         answer.setAsyncDelayed(async);
