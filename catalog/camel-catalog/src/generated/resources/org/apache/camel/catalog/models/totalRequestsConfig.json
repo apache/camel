@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "totalRequestsConfig",
+    "title": "Total Requests Config",
+    "deprecated": false,
+    "label": "configuration,eip",
+    "javaType": "org.apache.camel.model.config.TotalRequestsThrottlerConfig",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "timePeriodMillis": { "index": 0, "kind": "attribute", "displayName": "Time Period Millis", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the time period during which the maximum request count is valid for" }
+  }
+}

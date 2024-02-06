@@ -75,8 +75,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "combinedServiceFilter": return new ModelDeserializers.CombinedServiceCallServiceFilterConfigurationDeserializer();
             case "org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration": return new ModelDeserializers.CombinedServiceCallServiceFilterConfigurationDeserializer();
             case "org.apache.camel.model.app.ComponentScanDefinition": return new ModelDeserializers.ComponentScanDefinitionDeserializer();
-            case "throttle": return new ModelDeserializers.ConcurrentRequestsThrottleDefinitionDeserializer();
-            case "org.apache.camel.model.ConcurrentRequestsThrottleDefinition": return new ModelDeserializers.ConcurrentRequestsThrottleDefinitionDeserializer();
+            case "concurrent-config": return new ModelDeserializers.ConcurrentRequestsThrottlerConfigDeserializer();
+            case "concurrentConfig": return new ModelDeserializers.ConcurrentRequestsThrottlerConfigDeserializer();
+            case "org.apache.camel.model.config.ConcurrentRequestsThrottlerConfig": return new ModelDeserializers.ConcurrentRequestsThrottlerConfigDeserializer();
             case "constant": return new ModelDeserializers.ConstantExpressionDeserializer();
             case "org.apache.camel.model.language.ConstantExpression": return new ModelDeserializers.ConstantExpressionDeserializer();
             case "consul-service-discovery": return new ModelDeserializers.ConsulServiceCallServiceDiscoveryConfigurationDeserializer();
@@ -503,6 +504,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ThreadsDefinition": return new ModelDeserializers.ThreadsDefinitionDeserializer();
             case "thrift": return new ModelDeserializers.ThriftDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ThriftDataFormat": return new ModelDeserializers.ThriftDataFormatDeserializer();
+            case "throttle": return new ModelDeserializers.ThrottleDefinitionDeserializer();
+            case "org.apache.camel.model.ThrottleDefinition": return new ModelDeserializers.ThrottleDefinitionDeserializer();
             case "throw-exception": return new ModelDeserializers.ThrowExceptionDefinitionDeserializer();
             case "throwException": return new ModelDeserializers.ThrowExceptionDefinitionDeserializer();
             case "org.apache.camel.model.ThrowExceptionDefinition": return new ModelDeserializers.ThrowExceptionDefinitionDeserializer();
@@ -518,6 +521,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.TokenizerExpression": return new ModelDeserializers.TokenizerExpressionDeserializer();
             case "topic": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
+            case "total-requests-config": return new ModelDeserializers.TotalRequestsThrottlerConfigDeserializer();
+            case "totalRequestsConfig": return new ModelDeserializers.TotalRequestsThrottlerConfigDeserializer();
+            case "org.apache.camel.model.config.TotalRequestsThrottlerConfig": return new ModelDeserializers.TotalRequestsThrottlerConfigDeserializer();
             case "transacted": return new ModelDeserializers.TransactedDefinitionDeserializer();
             case "org.apache.camel.model.TransactedDefinition": return new ModelDeserializers.TransactedDefinitionDeserializer();
             case "transform": return new ModelDeserializers.TransformDefinitionDeserializer();

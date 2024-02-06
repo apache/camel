@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "concurrentConfig",
+    "title": "Concurrent Config",
+    "deprecated": false,
+    "label": "configuration,eip",
+    "javaType": "org.apache.camel.model.config.ConcurrentRequestsThrottlerConfig",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "maximumConcurrentRequests": { "index": 0, "kind": "attribute", "displayName": "Maximum Concurrent Requests", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "5", "description": "Sets the maximum number of concurrent requests" }
+  }
+}

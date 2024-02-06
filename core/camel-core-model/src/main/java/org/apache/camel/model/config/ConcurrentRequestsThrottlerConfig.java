@@ -19,6 +19,7 @@ package org.apache.camel.model.config;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
@@ -27,9 +28,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "concurrentConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConcurrentRequestsThrottlerConfig extends ThrottlerConfig {
-    private long maximumConcurrentRequests;
+    @XmlAttribute
+    @Metadata(defaultValue = "5", javaType = "java.lang.Integer")
+    private String maximumConcurrentRequests;
 
-    public long getMaximumConcurrentRequests() {
+    public String getMaximumConcurrentRequests() {
         return maximumConcurrentRequests;
     }
 
@@ -38,7 +41,7 @@ public class ConcurrentRequestsThrottlerConfig extends ThrottlerConfig {
      *
      * @param  maximumConcurrentRequests the maximum number of concurrent requests
      */
-    public void setMaximumConcurrentRequests(long maximumConcurrentRequests) {
+    public void setMaximumConcurrentRequests(String maximumConcurrentRequests) {
         this.maximumConcurrentRequests = maximumConcurrentRequests;
     }
 

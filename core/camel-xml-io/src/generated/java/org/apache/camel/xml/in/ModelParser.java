@@ -30,9 +30,7 @@ import org.w3c.dom.Element;
 import org.apache.camel.model.*;
 import org.apache.camel.model.app.*;
 import org.apache.camel.model.cloud.*;
-import org.apache.camel.model.config.BatchResequencerConfig;
-import org.apache.camel.model.config.ResequencerConfig;
-import org.apache.camel.model.config.StreamResequencerConfig;
+import org.apache.camel.model.config.*;
 import org.apache.camel.model.dataformat.*;
 import org.apache.camel.model.errorhandler.*;
 import org.apache.camel.model.language.*;
@@ -285,47 +283,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
-    protected ConcurrentRequestsThrottleDefinition doParseConcurrentRequestsThrottleDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ConcurrentRequestsThrottleDefinition(), (def, key, val) -> {
-            switch (key) {
-                case "asyncDelayed": def.setAsyncDelayed(val); break;
-                case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(val); break;
-                case "executorService": def.setExecutorService(val); break;
-                case "rejectExecution": def.setRejectExecution(val); break;
-                default: return processorDefinitionAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, (def, key) -> {
-            if ("correlationExpression".equals(key)) {
-                def.setCorrelationExpression(doParseExpressionSubElementDefinition());
-                return true;
-            }
-            return expressionNodeElementHandler().accept(def, key);
-        }, noValueHandler());
-    }
-    protected <T extends ExpressionNode> ElementHandler<T> expressionNodeElementHandler() {
-        return (def, key) -> {
-            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
-                def.setExpression(v);
-                return true;
-            }
-            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
-        };
-    }
-    protected <T extends ExpressionDefinition> AttributeHandler<T> expressionDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "id": def.setId(val); break;
-                case "trim": def.setTrim(val); break;
-                default: return false;
-            }
-            return true;
-        };
-    }
-    protected ExpressionDefinition doParseExpressionDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ExpressionDefinition(), expressionDefinitionAttributeHandler(),  noElementHandler(), expressionDefinitionValueHandler());
-    }
     protected ContextScanDefinition doParseContextScanDefinition() throws IOException, XmlPullParserException {
         return doParse(new ContextScanDefinition(), (def, key, val) -> {
             if ("includeNonSingletons".equals(key)) {
@@ -402,6 +359,29 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, expressionNodeElementHandler(), noValueHandler());
+    }
+    protected <T extends ExpressionNode> ElementHandler<T> expressionNodeElementHandler() {
+        return (def, key) -> {
+            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+            if (v != null) { 
+                def.setExpression(v);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        };
+    }
+    protected <T extends ExpressionDefinition> AttributeHandler<T> expressionDefinitionAttributeHandler() {
+        return (def, key, val) -> {
+            switch (key) {
+                case "id": def.setId(val); break;
+                case "trim": def.setTrim(val); break;
+                default: return false;
+            }
+            return true;
+        };
+    }
+    protected ExpressionDefinition doParseExpressionDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ExpressionDefinition(), expressionDefinitionAttributeHandler(),  noElementHandler(), expressionDefinitionValueHandler());
     }
     protected DynamicRouterDefinition doParseDynamicRouterDefinition() throws IOException, XmlPullParserException {
         return doParse(new DynamicRouterDefinition(), (def, key, val) -> {
@@ -1524,6 +1504,26 @@ public class ModelParser extends BaseParser {
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected ThrottleDefinition doParseThrottleDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ThrottleDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "asyncDelayed": def.setAsyncDelayed(val); break;
+                case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(val); break;
+                case "executorService": def.setExecutorService(val); break;
+                case "rejectExecution": def.setRejectExecution(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, (def, key) -> {
+            switch (key) {
+                case "concurrentRequestsConfig": def.setThrottlerConfig(doParseConcurrentRequestsThrottlerConfig()); break;
+                case "totalRequestsConfig": def.setThrottlerConfig(doParseTotalRequestsThrottlerConfig()); break;
+                case "correlationExpression": def.setCorrelationExpression(doParseExpressionSubElementDefinition()); break;
+                default: return expressionNodeElementHandler().accept(def, key);
+            }
+            return true;
+        }, noValueHandler());
+    }
     protected ThrowExceptionDefinition doParseThrowExceptionDefinition() throws IOException, XmlPullParserException {
         return doParse(new ThrowExceptionDefinition(), (def, key, val) -> {
             switch (key) {
@@ -2091,6 +2091,15 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
+    protected ConcurrentRequestsThrottlerConfig doParseConcurrentRequestsThrottlerConfig() throws IOException, XmlPullParserException {
+        return doParse(new ConcurrentRequestsThrottlerConfig(), (def, key, val) -> {
+            if ("maximumConcurrentRequests".equals(key)) {
+                def.setMaximumConcurrentRequests(val);
+                return true;
+            }
+            return false;
+        }, noElementHandler(), noValueHandler());
+    }
     protected StreamResequencerConfig doParseStreamResequencerConfig() throws IOException, XmlPullParserException {
         return doParse(new StreamResequencerConfig(), (def, key, val) -> {
             switch (key) {
@@ -2103,6 +2112,15 @@ public class ModelParser extends BaseParser {
                 default: return false;
             }
             return true;
+        }, noElementHandler(), noValueHandler());
+    }
+    protected TotalRequestsThrottlerConfig doParseTotalRequestsThrottlerConfig() throws IOException, XmlPullParserException {
+        return doParse(new TotalRequestsThrottlerConfig(), (def, key, val) -> {
+            if ("timePeriodMillis".equals(key)) {
+                def.setTimePeriodMillis(val);
+                return true;
+            }
+            return false;
         }, noElementHandler(), noValueHandler());
     }
     protected ASN1DataFormat doParseASN1DataFormat() throws IOException, XmlPullParserException {
@@ -3506,7 +3524,6 @@ public class ModelParser extends BaseParser {
             case "circuitBreaker": return doParseCircuitBreakerDefinition();
             case "onFallback": return doParseOnFallbackDefinition();
             case "claimCheck": return doParseClaimCheckDefinition();
-            case "throttle": return doParseConcurrentRequestsThrottleDefinition();
             case "convertBodyTo": return doParseConvertBodyDefinition();
             case "convertHeaderTo": return doParseConvertHeaderDefinition();
             case "convertVariableTo": return doParseConvertVariableDefinition();
@@ -3557,6 +3574,7 @@ public class ModelParser extends BaseParser {
             case "step": return doParseStepDefinition();
             case "stop": return doParseStopDefinition();
             case "threads": return doParseThreadsDefinition();
+            case "throttle": return doParseThrottleDefinition();
             case "throwException": return doParseThrowExceptionDefinition();
             case "to": return doParseToDefinition();
             case "toD": return doParseToDynamicDefinition();
