@@ -107,6 +107,7 @@
                                         <nullableOption>skipAggregate</nullableOption>
                                         <nullableOption>lastYears</nullableOption>
                                         <nullableOption>interval</nullableOption>
+                                        <nullableOption>async</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>

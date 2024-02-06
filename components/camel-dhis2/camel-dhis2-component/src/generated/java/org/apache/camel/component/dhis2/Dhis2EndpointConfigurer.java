@@ -46,6 +46,7 @@ public class Dhis2EndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("timeUnit", java.util.concurrent.TimeUnit.class);
         map.put("useFixedDelay", boolean.class);
         map.put("password", java.lang.String.class);
+        map.put("personalAccessToken", java.lang.String.class);
         map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -78,6 +79,8 @@ public class Dhis2EndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "personalaccesstoken":
+        case "personalAccessToken": target.getConfiguration().setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "repeatcount":
@@ -134,6 +137,8 @@ public class Dhis2EndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "password": return java.lang.String.class;
+        case "personalaccesstoken":
+        case "personalAccessToken": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "repeatcount":
@@ -186,6 +191,8 @@ public class Dhis2EndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "password": return target.getConfiguration().getPassword();
+        case "personalaccesstoken":
+        case "personalAccessToken": return target.getConfiguration().getPersonalAccessToken();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "repeatcount":

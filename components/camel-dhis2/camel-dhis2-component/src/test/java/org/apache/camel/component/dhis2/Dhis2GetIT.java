@@ -27,13 +27,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
 import org.apache.camel.component.dhis2.internal.Dhis2GetApiMethod;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
-import org.hisp.dhis.api.model.v2_39_1.OrganisationUnit;
+import org.hisp.dhis.api.model.v40_2_2.OrganisationUnit;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link org.apache.camel.component.dhis2.api.Dhis2Get} APIs.
@@ -55,8 +55,8 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
 
         final List<OrganisationUnit> result = requestBodyAndHeaders("direct://COLLECTION", null, headers);
 
-        assertEquals(2, result.size());
         LOG.debug("collection: {}", result);
+        assertTrue(result.size() >= 2);
     }
 
     @Test

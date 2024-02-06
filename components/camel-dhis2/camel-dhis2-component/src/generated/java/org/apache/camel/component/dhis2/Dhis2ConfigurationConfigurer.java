@@ -31,6 +31,8 @@ public class Dhis2ConfigurationConfigurer extends org.apache.camel.support.compo
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "personalaccesstoken":
+        case "PersonalAccessToken": target.setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
         case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -50,6 +52,8 @@ public class Dhis2ConfigurationConfigurer extends org.apache.camel.support.compo
         case "MethodName": return java.lang.String.class;
         case "password":
         case "Password": return java.lang.String.class;
+        case "personalaccesstoken":
+        case "PersonalAccessToken": return java.lang.String.class;
         case "username":
         case "Username": return java.lang.String.class;
         default: return null;
@@ -70,6 +74,8 @@ public class Dhis2ConfigurationConfigurer extends org.apache.camel.support.compo
         case "MethodName": return target.getMethodName();
         case "password":
         case "Password": return target.getPassword();
+        case "personalaccesstoken":
+        case "PersonalAccessToken": return target.getPersonalAccessToken();
         case "username":
         case "Username": return target.getUsername();
         default: return null;
