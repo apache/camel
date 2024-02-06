@@ -168,11 +168,11 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("seda:a").throttle(header("max"), 1).to("mock:result");
-                from("seda:b").throttle(header("max"), 2).to("mock:result2");
-                from("seda:c").throttle(header("max")).correlationExpression(header("key")).to("mock:resultdynamic");
+                from("seda:a").throttle(header("max"), 1).concurrentRequests().to("mock:result");
+                from("seda:b").throttle(header("max"), 2).concurrentRequests().to("mock:result2");
+                from("seda:c").throttle(header("max")).concurrentRequests().correlationExpression(header("key")).to("mock:resultdynamic");
 
-                from("direct:ga").throttle(constant(CONCURRENT_REQUESTS), header("key"))
+                from("direct:ga").throttle(constant(CONCURRENT_REQUESTS), header("key")).concurrentRequests()
                         .process(exchange -> {
                             String key = (String) exchange.getMessage().getHeader("key");
                             // should be no more in-flight exchanges than set on the throttle
@@ -185,7 +185,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                         })
                         .to("log:gresult", "mock:gresult");
 
-                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key"))
+                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key")).concurrentRequests()
                         .process(exchange -> {
                             String key = (String) exchange.getMessage().getHeader("key");
                             // should be no more in-flight exchanges than set on the throttle via the 'throttleValue' header

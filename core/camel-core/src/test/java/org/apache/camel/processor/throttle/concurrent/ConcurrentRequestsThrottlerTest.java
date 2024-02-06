@@ -200,7 +200,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
 
                 onException(ThrottlerRejectedExecutionException.class).handled(true).to("mock:error");
 
-                from("direct:a").throttle(CONCURRENT_REQUESTS)
+                from("direct:a").throttle(CONCURRENT_REQUESTS).concurrentRequests()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:a' too many requests");
                         })
@@ -210,7 +210,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:expressionConstant").throttle(constant(CONCURRENT_REQUESTS))
+                from("direct:expressionConstant").throttle(constant(CONCURRENT_REQUESTS)).concurrentRequests()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:expressionConstant' too many requests");
                         })
@@ -220,7 +220,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:expressionHeader").throttle(header("throttleValue"))
+                from("direct:expressionHeader").throttle(header("throttleValue")).concurrentRequests()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:expressionHeader' too many requests");
                         })
@@ -230,9 +230,9 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:start").throttle(2).rejectExecution(true).delay(1000).to("log:result", "mock:result");
+                from("direct:start").throttle(2).concurrentRequests().rejectExecution(true).delay(1000).to("log:result", "mock:result");
 
-                from("direct:fifo").throttle(1).delay(100).to("mock:result");
+                from("direct:fifo").throttle(1).concurrentRequests().delay(100).to("mock:result");
 
                 from("direct:release").errorHandler(deadLetterChannel("mock:error")).throttle(1).delay(100)
                         .process(exchange -> {

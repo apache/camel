@@ -67,10 +67,10 @@ public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("seda:a").throttle(3).delay(INTERVAL).asyncDelayed().to("log:result", "mock:result");
+                from("seda:a").throttle(3).concurrentRequests().delay(INTERVAL).asyncDelayed().to("log:result", "mock:result");
                 // END SNIPPET: ex
 
-                from("direct:a").throttle(3).delay(INTERVAL).asyncDelayed().to("log:result", "mock:result");
+                from("direct:a").throttle(3).concurrentRequests().delay(INTERVAL).asyncDelayed().to("log:result", "mock:result");
             }
         };
     }
