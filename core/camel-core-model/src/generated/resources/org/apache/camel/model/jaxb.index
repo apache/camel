@@ -6,7 +6,6 @@ ChoiceDefinition
 CircuitBreakerDefinition
 ClaimCheckDefinition
 ClaimCheckOperation
-ConcurrentRequestsThrottleDefinition
 ContextScanDefinition
 ConvertBodyDefinition
 ConvertHeaderDefinition
@@ -99,6 +98,7 @@ TemplatedRouteParameterDefinition
 TemplatedRoutesDefinition
 ThreadPoolProfileDefinition
 ThreadsDefinition
+ThrottleDefinition
 ThrowExceptionDefinition
 ToDefinition
 ToDynamicDefinition
