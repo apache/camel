@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 // time-bound that does not run well in shared environments
 @DisabledOnOs(OS.WINDOWS)
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
-public class ThrottlerTest extends ContextTestSupport {
+public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     private static final int MESSAGE_COUNT = 9;
     private static final int CONCURRENT_REQUESTS = 2;

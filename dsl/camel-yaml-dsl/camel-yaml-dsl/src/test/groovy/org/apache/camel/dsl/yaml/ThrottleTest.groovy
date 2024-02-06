@@ -17,7 +17,7 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
-import org.apache.camel.model.ThrottleDefinition
+import org.apache.camel.model.ConcurrentRequestsThrottleDefinition
 import org.apache.camel.model.language.ConstantExpression
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
@@ -28,7 +28,7 @@ class ThrottleTest extends YamlTestSupport {
         when:
             PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
-            with(context.routeDefinitions[0].outputs[0], ThrottleDefinition) {
+            with(context.routeDefinitions[0].outputs[0], ConcurrentRequestsThrottleDefinition) {
                 with (expression, ConstantExpression) {
                     language == 'constant'
                     expression == '5'

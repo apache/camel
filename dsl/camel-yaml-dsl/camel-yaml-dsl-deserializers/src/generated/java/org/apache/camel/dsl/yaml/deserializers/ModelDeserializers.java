@@ -16,6 +16,7 @@ import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.ClaimCheckDefinition;
+import org.apache.camel.model.ConcurrentRequestsThrottleDefinition;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.ConvertHeaderDefinition;
@@ -90,7 +91,6 @@ import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ThreadsDefinition;
-import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
@@ -2338,6 +2338,109 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "throttle",
+            types = org.apache.camel.model.ConcurrentRequestsThrottleDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Throttle",
+            description = "Controls the rate at which messages are passed to the next node in the route",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
+                    @YamlProperty(name = "asyncDelayed", type = "boolean", description = "Enables asynchronous delay which means the thread will not block while delaying.", displayName = "Async Delayed"),
+                    @YamlProperty(name = "callerRunsWhenRejected", type = "boolean", description = "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true", displayName = "Caller Runs When Rejected"),
+                    @YamlProperty(name = "correlationExpression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", description = "The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together.", displayName = "Correlation Expression"),
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "executorService", type = "string", description = "To use a custom thread pool (ScheduledExecutorService) by the throttler.", displayName = "Executor Service"),
+                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression to configure the maximum number of messages to throttle per request", displayName = "Expression", oneOf = "expression"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "rejectExecution", type = "boolean", description = "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false", displayName = "Reject Execution")
+            }
+    )
+    public static class ConcurrentRequestsThrottleDefinitionDeserializer extends YamlDeserializerBase<ConcurrentRequestsThrottleDefinition> {
+        public ConcurrentRequestsThrottleDefinitionDeserializer() {
+            super(ConcurrentRequestsThrottleDefinition.class);
+        }
+
+        @Override
+        protected ConcurrentRequestsThrottleDefinition newInstance() {
+            return new ConcurrentRequestsThrottleDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(ConcurrentRequestsThrottleDefinition target,
+                String propertyKey, String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "asyncDelayed": {
+                    String val = asText(node);
+                    target.setAsyncDelayed(val);
+                    break;
+                }
+                case "callerRunsWhenRejected": {
+                    String val = asText(node);
+                    target.setCallerRunsWhenRejected(val);
+                    break;
+                }
+                case "correlationExpression": {
+                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
+                    target.setCorrelationExpression(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "executorService": {
+                    String val = asText(node);
+                    target.setExecutorService(val);
+                    break;
+                }
+                case "expression": {
+                    org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
+                    target.setExpression(val);
+                    break;
+                }
+                case "inheritErrorHandler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "rejectExecution": {
+                    String val = asText(node);
+                    target.setRejectExecution(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -17973,109 +18076,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "throttle",
-            types = org.apache.camel.model.ThrottleDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Throttle",
-            description = "Controls the rate at which messages are passed to the next node in the route",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
-                    @YamlProperty(name = "asyncDelayed", type = "boolean", description = "Enables asynchronous delay which means the thread will not block while delaying.", displayName = "Async Delayed"),
-                    @YamlProperty(name = "callerRunsWhenRejected", type = "boolean", description = "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true", displayName = "Caller Runs When Rejected"),
-                    @YamlProperty(name = "correlationExpression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", description = "The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together.", displayName = "Correlation Expression"),
-                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
-                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "executorService", type = "string", description = "To use a custom thread pool (ScheduledExecutorService) by the throttler.", displayName = "Executor Service"),
-                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression to configure the maximum number of messages to throttle per request", displayName = "Expression", oneOf = "expression"),
-                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "rejectExecution", type = "boolean", description = "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false", displayName = "Reject Execution")
-            }
-    )
-    public static class ThrottleDefinitionDeserializer extends YamlDeserializerBase<ThrottleDefinition> {
-        public ThrottleDefinitionDeserializer() {
-            super(ThrottleDefinition.class);
-        }
-
-        @Override
-        protected ThrottleDefinition newInstance() {
-            return new ThrottleDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(ThrottleDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "asyncDelayed": {
-                    String val = asText(node);
-                    target.setAsyncDelayed(val);
-                    break;
-                }
-                case "callerRunsWhenRejected": {
-                    String val = asText(node);
-                    target.setCallerRunsWhenRejected(val);
-                    break;
-                }
-                case "correlationExpression": {
-                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
-                    target.setCorrelationExpression(val);
-                    break;
-                }
-                case "disabled": {
-                    String val = asText(node);
-                    target.setDisabled(val);
-                    break;
-                }
-                case "executorService": {
-                    String val = asText(node);
-                    target.setExecutorService(val);
-                    break;
-                }
-                case "expression": {
-                    org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
-                    target.setExpression(val);
-                    break;
-                }
-                case "inheritErrorHandler": {
-                    String val = asText(node);
-                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "rejectExecution": {
-                    String val = asText(node);
-                    target.setRejectExecution(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "description": {
-                    String val = asText(node);
-                    target.setDescription(val);
-                    break;
-                }
-                default: {
-                    ExpressionDefinition ed = target.getExpressionType();
-                    if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
-                    }
-                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
-                    if (ed != null) {
-                        target.setExpressionType(ed);
-                    } else {
-                        return false;
-                    }
                 }
             }
             return true;
