@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedThrottlerMBean extends ManagedProcessorMBean {
+public interface ManagedConcurrentRequestsThrottlerMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Maximum concurrent requests")
     long getMaximumConcurrentRequests();

@@ -100,7 +100,7 @@ import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThreads;
-import org.apache.camel.management.mbean.ManagedThrottler;
+import org.apache.camel.management.mbean.ManagedConcurrentRequestsThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
 import org.apache.camel.management.mbean.ManagedThrowException;
 import org.apache.camel.management.mbean.ManagedTopicLoadBalancer;
@@ -378,7 +378,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof FinallyProcessor) {
                 answer = new ManagedDoFinally(context, (FinallyProcessor) target, (FinallyDefinition) definition);
             } else if (target instanceof Throttler) {
-                answer = new ManagedThrottler(context, (Throttler) target, definition);
+                answer = new ManagedConcurrentRequestsThrottler(context, (Throttler) target, definition);
             } else if (target instanceof DynamicRouter) {
                 answer = new ManagedDynamicRouter(context, (DynamicRouter) target, (DynamicRouterDefinition) definition);
             } else if (target instanceof RoutingSlip) {
