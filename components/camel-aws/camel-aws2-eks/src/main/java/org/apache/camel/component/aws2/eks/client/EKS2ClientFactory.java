@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.eks.client;
 import org.apache.camel.component.aws2.eks.EKS2Configuration;
 import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientIAMProfileOptimizedImpl;
+import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientStandardImpl;
 
 /**
@@ -40,6 +41,8 @@ public final class EKS2ClientFactory {
             return new EKS2ClientIAMOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
             return new EKS2ClientIAMProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new EKS2ClientSessionTokenImpl(configuration);
         } else {
             return new EKS2ClientStandardImpl(configuration);
         }

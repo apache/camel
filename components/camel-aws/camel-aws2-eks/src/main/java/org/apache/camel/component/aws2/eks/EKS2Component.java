@@ -47,10 +47,12 @@ public class EKS2Component extends HealthCheckComponent {
         EKS2Endpoint endpoint = new EKS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
-                && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider()) && configuration.getEksClient() == null
+                && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
+                && Boolean.FALSE.equals(configuration.isUseSessionCredentials())
+                && configuration.getEksClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, Amazon eks client or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, useSessionCredentials is set to false, Amazon eks client or accessKey and secretKey must be specified");
         }
 
         return endpoint;
