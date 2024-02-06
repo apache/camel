@@ -1803,8 +1803,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    public ExpressionClause<ConcurrentRequestsThrottleDefinition> throttle() {
-        ConcurrentRequestsThrottleDefinition answer = new ConcurrentRequestsThrottleDefinition();
+    public ExpressionClause<ThrottleDefinition> throttle() {
+        ThrottleDefinition answer = new ThrottleDefinition();
         addOutput(answer);
         return createAndSetExpression(answer);
     }
@@ -1820,7 +1820,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  maximumConcurrentRequests the maximum number of concurrent messages
      * @return                           the builder
      */
-    public ConcurrentRequestsThrottleDefinition throttle(long maximumConcurrentRequests) {
+    public ThrottleDefinition throttle(long maximumConcurrentRequests) {
         return throttle(ExpressionBuilder.constantExpression(maximumConcurrentRequests));
     }
 
@@ -1835,8 +1835,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  maximumConcurrentRequests an expression to calculate the maximum concurrent request count
      * @return                           the builder
      */
-    public ConcurrentRequestsThrottleDefinition throttle(Expression maximumConcurrentRequests) {
-        ConcurrentRequestsThrottleDefinition answer = new ConcurrentRequestsThrottleDefinition(maximumConcurrentRequests);
+    public ThrottleDefinition throttle(Expression maximumConcurrentRequests) {
+        ThrottleDefinition answer = new ThrottleDefinition(maximumConcurrentRequests);
         addOutput(answer);
         return answer;
     }
@@ -1856,9 +1856,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                                   throttling
      * @return                           the builder
      */
-    public ConcurrentRequestsThrottleDefinition throttle(Expression maximumConcurrentRequests, long correlationExpressionKey) {
-        ConcurrentRequestsThrottleDefinition answer
-                = new ConcurrentRequestsThrottleDefinition(
+    public ThrottleDefinition throttle(Expression maximumConcurrentRequests, long correlationExpressionKey) {
+        ThrottleDefinition answer
+                = new ThrottleDefinition(
                         maximumConcurrentRequests, ExpressionBuilder.constantExpression(correlationExpressionKey));
         addOutput(answer);
         return answer;
@@ -1879,9 +1879,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                                   instead of overall throttling
      * @return                           the builder
      */
-    public ConcurrentRequestsThrottleDefinition throttle(Expression maximumConcurrentRequests, Expression correlationExpressionKey) {
-        ConcurrentRequestsThrottleDefinition
-                answer = new ConcurrentRequestsThrottleDefinition(maximumConcurrentRequests, correlationExpressionKey);
+    public ThrottleDefinition throttle(Expression maximumConcurrentRequests, Expression correlationExpressionKey) {
+        ThrottleDefinition
+                answer = new ThrottleDefinition(maximumConcurrentRequests, correlationExpressionKey);
         addOutput(answer);
         return answer;
     }
