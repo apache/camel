@@ -23,8 +23,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-  <bean id="incrementProcessor" class="org.apache.camel.spring.processor.SpringThrottlerGroupingTest$IncrementProcessor"/>
-  <bean id="decrementProcessor" class="org.apache.camel.spring.processor.SpringThrottlerGroupingTest$DecrementProcessor"/>
+  <bean id="incrementProcessor" class="org.apache.camel.spring.processor.throttle.SpringThrottlerGroupingTest$IncrementProcessor"/>
+  <bean id="decrementProcessor" class="org.apache.camel.spring.processor.throttle.SpringThrottlerGroupingTest$DecrementProcessor"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>
