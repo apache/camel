@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.URISupport;
 
 @Component("splunk-hec")
 public class SplunkHECComponent extends DefaultComponent {
@@ -32,6 +33,22 @@ public class SplunkHECComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SplunkHECEndpoint answer = new SplunkHECEndpoint(uri, this, new SplunkHECConfiguration());
         setProperties(answer, parameters);
+
+        String[] remainingSplits = remaining.split("/", 2);
+        if (remainingSplits.length != 2) {
+            throw new IllegalArgumentException("Invalid URI: " + URISupport.sanitizeUri(uri));
+        }
+
+        if (answer.getSplunkURL() == null || answer.getToken() == null) {
+            if (answer.getSplunkURL() == null) {
+                answer.setSplunkURL(remainingSplits[0]);
+            }
+
+            if (answer.getToken() == null) {
+                answer.setToken(remainingSplits[1]);
+            }
+        }
+
         return answer;
     }
 }

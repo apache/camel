@@ -15,19 +15,21 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class SplunkHECEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":splunkURL/token";
+    private static final String BASE = ":pathSplunkURL/pathToken";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(13);
+        Set<String> props = new HashSet<>(15);
         props.add("bodyOnly");
         props.add("headersOnly");
         props.add("host");
         props.add("https");
         props.add("index");
         props.add("lazyStartProducer");
+        props.add("pathSplunkURL");
+        props.add("pathToken");
         props.add("skipTlsVerify");
         props.add("source");
         props.add("sourceType");
@@ -36,7 +38,8 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
         props.add("time");
         props.add("token");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("pathToken");
         secretProps.add("token");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
@@ -54,8 +57,8 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "splunkURL", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "token", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "pathSplunkURL", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "pathToken", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
