@@ -18,6 +18,7 @@ package org.apache.camel.component.splunkhec;
 
 import java.net.UnknownHostException;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.HostUtils;
@@ -38,6 +39,9 @@ public class SplunkHECConfiguration {
     private String host;
     @UriParam(defaultValue = "/services/collector/event")
     private String splunkEndpoint = "/services/collector/event";
+    @UriParam(label = "security", secret = true)
+    @Metadata(required = true)
+    private String token;
     @UriParam(label = "security")
     private boolean skipTlsVerify;
     @UriParam(label = "security", defaultValue = "true")
@@ -115,6 +119,17 @@ public class SplunkHECConfiguration {
 
     public String getSplunkEndpoint() {
         return this.splunkEndpoint;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * Splunk HEC token (this is the token created for HEC and not the user's token)
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public boolean isSkipTlsVerify() {

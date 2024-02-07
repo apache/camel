@@ -35,21 +35,17 @@ import org.apache.commons.validator.routines.InetAddressValidator;
  * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
-             syntax = "splunk-hec:pathSplunkURL/pathToken", category = { Category.MONITORING },
+             syntax = "splunk-hec:splunkURL", category = { Category.MONITORING },
              headersClass = SplunkHECConstants.class)
 public class SplunkHECEndpoint extends DefaultEndpoint {
 
     private static final Pattern SPLUNK_URL_PATTERN = Pattern.compile("^(.*?):(\\d+)$");
     private static final Pattern SPLUNK_TOKEN_PATTERN = Pattern.compile("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$");
 
-    @UriParam(description = "Overrides Splunk URL in the component path")
-    @UriPath(name = "pathSplunkURL")
+    @UriPath
     @Metadata(required = true)
     private String splunkURL;
-    @UriParam(label = "security", secret = true, description = "Overrides Splunk HEC token in the component path")
-    @UriPath(name = "pathToken", label = "security", secret = true)
-    @Metadata(required = true)
-    private String token;
+
     @UriParam
     private SplunkHECConfiguration configuration;
 
@@ -82,9 +78,12 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
 
-        Matcher tokenMatch = SPLUNK_TOKEN_PATTERN.matcher(token);
+        String token = getConfiguration().getToken();
+        if (token == null) {
+            throw new IllegalArgumentException("A token must be defined");
+        }
 
-        if (!tokenMatch.matches()) {
+        if (!SPLUNK_TOKEN_PATTERN.matcher(token).matches()) {
             throw new IllegalArgumentException("Invalid Splunk HEC token provided");
         }
     }
@@ -112,17 +111,6 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
      */
     public void setSplunkURL(String splunkURL) {
         this.splunkURL = splunkURL;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    /**
-     * Splunk HEC token (this is the token created for HEC and not the user's token)
-     */
-    public void setToken(String token) {
-        this.token = token;
     }
 
 }

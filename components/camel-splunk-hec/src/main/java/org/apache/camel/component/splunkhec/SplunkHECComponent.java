@@ -31,23 +31,13 @@ public class SplunkHECComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SplunkHECEndpoint answer = new SplunkHECEndpoint(uri, this, new SplunkHECConfiguration());
-        setProperties(answer, parameters);
-
-        String[] remainingSplits = remaining.split("/", 2);
-        if (remainingSplits.length != 2) {
+        if (remaining.split("/").length > 1) {
             throw new IllegalArgumentException("Invalid URI: " + URISupport.sanitizeUri(uri));
         }
 
-        if (answer.getSplunkURL() == null || answer.getToken() == null) {
-            if (answer.getSplunkURL() == null) {
-                answer.setSplunkURL(remainingSplits[0]);
-            }
-
-            if (answer.getToken() == null) {
-                answer.setToken(remainingSplits[1]);
-            }
-        }
+        SplunkHECEndpoint answer = new SplunkHECEndpoint(uri, this, new SplunkHECConfiguration());
+        setProperties(answer, parameters);
+        answer.setSplunkURL(remaining);
 
         return answer;
     }

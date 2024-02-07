@@ -38,8 +38,8 @@ public class SplunkHECITManualTest extends CamelTestSupport {
     @Test
     public void testSendHEC() throws Exception {
         SplunkHECEndpoint endpoint = getMandatoryEndpoint(
-                "splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd", SplunkHECEndpoint.class);
-        assertEquals("4b35e71f-6a0f-4bab-94ce-f591ff45eecd", endpoint.getToken());
+                "splunk-hec:localhost:8088?token=4b35e71f-6a0f-4bab-94ce-f591ff45eecd", SplunkHECEndpoint.class);
+        assertEquals("4b35e71f-6a0f-4bab-94ce-f591ff45eecd", endpoint.getConfiguration().getToken());
         endpoint.getConfiguration().setSkipTlsVerify(true);
         endpoint.getConfiguration().setIndex("camel");
         endpoint.getConfiguration().setSource("camel");
@@ -84,7 +84,7 @@ public class SplunkHECITManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:hec").to(
-                        "splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd?source=camelsource&skipTlsVerify=true")
+                        "splunk-hec:localhost:8088?token=4b35e71f-6a0f-4bab-94ce-f591ff45eecd&source=camelsource&skipTlsVerify=true")
                         .to("mock:hec-result");
             }
         };
