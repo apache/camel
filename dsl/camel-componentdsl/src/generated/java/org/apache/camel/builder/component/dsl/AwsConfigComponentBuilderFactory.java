@@ -334,6 +334,22 @@ public interface AwsConfigComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * role.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sessionToken the value to set
+         * @return the dsl builder
+         */
+        default AwsConfigComponentBuilder sessionToken(
+                java.lang.String sessionToken) {
+            doSetProperty("sessionToken", sessionToken);
+            return this;
+        }
+        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -385,6 +401,24 @@ public interface AwsConfigComponentBuilderFactory {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
+        /**
+         * Set whether the Config client should expect to use Session
+         * Credentials. This is useful in situation in which the user needs to
+         * assume a IAM role for doing operations in Config.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default AwsConfigComponentBuilder useSessionCredentials(
+                boolean useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
+            return this;
+        }
     }
 
     class AwsConfigComponentBuilderImpl
@@ -426,9 +460,11 @@ public interface AwsConfigComponentBuilderFactory {
             case "accessKey": getOrCreateConfiguration((AWSConfigComponent) component).setAccessKey((java.lang.String) value); return true;
             case "profileCredentialsName": getOrCreateConfiguration((AWSConfigComponent) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((AWSConfigComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "sessionToken": getOrCreateConfiguration((AWSConfigComponent) component).setSessionToken((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((AWSConfigComponent) component).setTrustAllCertificates((boolean) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((AWSConfigComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((AWSConfigComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
+            case "useSessionCredentials": getOrCreateConfiguration((AWSConfigComponent) component).setUseSessionCredentials((boolean) value); return true;
             default: return false;
             }
         }

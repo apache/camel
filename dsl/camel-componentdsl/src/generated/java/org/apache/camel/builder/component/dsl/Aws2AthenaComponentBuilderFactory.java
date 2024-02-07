@@ -589,6 +589,22 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * role.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sessionToken the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder sessionToken(
+                java.lang.String sessionToken) {
+            doSetProperty("sessionToken", sessionToken);
+            return this;
+        }
+        /**
          * Set whether the Athena client should expect to load credentials
          * through a default credentials provider or to expect static
          * credentials to be passed in.
@@ -621,6 +637,24 @@ public interface Aws2AthenaComponentBuilderFactory {
         default Aws2AthenaComponentBuilder useProfileCredentialsProvider(
                 boolean useProfileCredentialsProvider) {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Athena client should expect to use Session
+         * Credentials. This is useful in situation in which the user needs to
+         * assume a IAM role for doing operations in Athena.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder useSessionCredentials(
+                boolean useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
             return this;
         }
     }
@@ -679,8 +713,10 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "kmsKey": getOrCreateConfiguration((Athena2Component) component).setKmsKey((java.lang.String) value); return true;
             case "profileCredentialsName": getOrCreateConfiguration((Athena2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Athena2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "sessionToken": getOrCreateConfiguration((Athena2Component) component).setSessionToken((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
+            case "useSessionCredentials": getOrCreateConfiguration((Athena2Component) component).setUseSessionCredentials((boolean) value); return true;
             default: return false;
             }
         }

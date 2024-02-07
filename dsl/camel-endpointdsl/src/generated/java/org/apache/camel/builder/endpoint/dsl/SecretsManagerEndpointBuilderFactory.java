@@ -365,6 +365,21 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * role.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sessionToken the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder sessionToken(String sessionToken) {
+            doSetProperty("sessionToken", sessionToken);
+            return this;
+        }
+        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -434,6 +449,43 @@ public interface SecretsManagerEndpointBuilderFactory {
         default SecretsManagerEndpointBuilder useDefaultCredentialsProvider(
                 String useDefaultCredentialsProvider) {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Secrets Manager client should expect to use Session
+         * Credentials. This is useful in situation in which the user needs to
+         * assume a IAM role for doing operations in Secrets Manager.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder useSessionCredentials(
+                boolean useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
+            return this;
+        }
+        /**
+         * Set whether the Secrets Manager client should expect to use Session
+         * Credentials. This is useful in situation in which the user needs to
+         * assume a IAM role for doing operations in Secrets Manager.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder useSessionCredentials(
+                String useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
             return this;
         }
     }

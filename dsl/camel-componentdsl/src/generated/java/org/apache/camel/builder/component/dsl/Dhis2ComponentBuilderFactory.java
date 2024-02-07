@@ -138,7 +138,9 @@ public interface Dhis2ComponentBuilderFactory {
         }
         /**
          * References a user-defined
-         * org.hisp.dhis.integration.sdk.api.Dhis2Client.
+         * org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is
+         * mutually exclusive to the baseApiUrl, username, password, and
+         * personalAccessToken options.
          * 
          * The option is a:
          * &lt;code&gt;org.hisp.dhis.integration.sdk.api.Dhis2Client&lt;/code&gt; type.
@@ -170,7 +172,7 @@ public interface Dhis2ComponentBuilderFactory {
             return this;
         }
         /**
-         * DHIS2 account password for accessing the DHIS2 API.
+         * Password of the DHIS2 username.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -184,7 +186,23 @@ public interface Dhis2ComponentBuilderFactory {
             return this;
         }
         /**
-         * DHIS2 account username for accessing the DHIS2 API.
+         * Personal access token to authenticate with DHIS2. This option is
+         * mutually exclusive to username and password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param personalAccessToken the value to set
+         * @return the dsl builder
+         */
+        default Dhis2ComponentBuilder personalAccessToken(
+                java.lang.String personalAccessToken) {
+            doSetProperty("personalAccessToken", personalAccessToken);
+            return this;
+        }
+        /**
+         * Username of the DHIS2 user to operate as.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -228,6 +246,7 @@ public interface Dhis2ComponentBuilderFactory {
             case "client": getOrCreateConfiguration((Dhis2Component) component).setClient((org.hisp.dhis.integration.sdk.api.Dhis2Client) value); return true;
             case "configuration": ((Dhis2Component) component).setConfiguration((org.apache.camel.component.dhis2.Dhis2Configuration) value); return true;
             case "password": getOrCreateConfiguration((Dhis2Component) component).setPassword((java.lang.String) value); return true;
+            case "personalAccessToken": getOrCreateConfiguration((Dhis2Component) component).setPersonalAccessToken((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((Dhis2Component) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }

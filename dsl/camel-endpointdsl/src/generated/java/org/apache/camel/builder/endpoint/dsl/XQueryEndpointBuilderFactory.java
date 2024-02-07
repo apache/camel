@@ -127,8 +127,7 @@ public interface XQueryEndpointBuilderFactory {
         }
         /**
          * To use a Camel Exchange property as the input source instead of
-         * Message body. It has a lower precedent than the name of header if
-         * both are set.
+         * Message body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -236,6 +235,20 @@ public interface XQueryEndpointBuilderFactory {
         default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            return this;
+        }
+        /**
+         * To use a variable as the input source instead of Message body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param variableName the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointConsumerBuilder variableName(String variableName) {
+            doSetProperty("variableName", variableName);
             return this;
         }
         /**
@@ -1210,8 +1223,7 @@ public interface XQueryEndpointBuilderFactory {
         }
         /**
          * To use a Camel Exchange property as the input source instead of
-         * Message body. It has a lower precedent than the name of header if
-         * both are set.
+         * Message body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1319,6 +1331,20 @@ public interface XQueryEndpointBuilderFactory {
         default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            return this;
+        }
+        /**
+         * To use a variable as the input source instead of Message body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param variableName the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointProducerBuilder variableName(String variableName) {
+            doSetProperty("variableName", variableName);
             return this;
         }
     }
@@ -1668,8 +1694,7 @@ public interface XQueryEndpointBuilderFactory {
         }
         /**
          * To use a Camel Exchange property as the input source instead of
-         * Message body. It has a lower precedent than the name of header if
-         * both are set.
+         * Message body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1777,6 +1802,20 @@ public interface XQueryEndpointBuilderFactory {
         default XQueryEndpointBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            return this;
+        }
+        /**
+         * To use a variable as the input source instead of Message body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param variableName the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointBuilder variableName(String variableName) {
+            doSetProperty("variableName", variableName);
             return this;
         }
     }

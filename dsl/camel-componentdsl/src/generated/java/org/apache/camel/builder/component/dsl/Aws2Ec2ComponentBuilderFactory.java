@@ -51,20 +51,6 @@ public interface Aws2Ec2ComponentBuilderFactory {
             extends
                 ComponentBuilder<AWS2EC2Component> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default Aws2Ec2ComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * To use a existing configured AmazonEC2Client as client.
          * 
          * The option is a:
@@ -189,20 +175,6 @@ public interface Aws2Ec2ComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default Aws2Ec2ComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -321,6 +293,20 @@ public interface Aws2Ec2ComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
+         */
+        default Aws2Ec2ComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
          * If using a profile credentials provider this parameter will set the
          * profile name.
          * 
@@ -334,6 +320,36 @@ public interface Aws2Ec2ComponentBuilderFactory {
         default Aws2Ec2ComponentBuilder profileCredentialsName(
                 java.lang.String profileCredentialsName) {
             doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default Aws2Ec2ComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * role.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sessionToken the value to set
+         * @return the dsl builder
+         */
+        default Aws2Ec2ComponentBuilder sessionToken(
+                java.lang.String sessionToken) {
+            doSetProperty("sessionToken", sessionToken);
             return this;
         }
         /**
@@ -388,6 +404,24 @@ public interface Aws2Ec2ComponentBuilderFactory {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
+        /**
+         * Set whether the EC2 client should expect to use Session Credentials.
+         * This is useful in situation in which the user needs to assume a IAM
+         * role for doing operations in EC2.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default Aws2Ec2ComponentBuilder useSessionCredentials(
+                boolean useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
+            return this;
+        }
     }
 
     class Aws2Ec2ComponentBuilderImpl
@@ -412,7 +446,6 @@ public interface Aws2Ec2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": getOrCreateConfiguration((AWS2EC2Component) component).setAccessKey((java.lang.String) value); return true;
             case "amazonEc2Client": getOrCreateConfiguration((AWS2EC2Component) component).setAmazonEc2Client((software.amazon.awssdk.services.ec2.Ec2Client) value); return true;
             case "configuration": ((AWS2EC2Component) component).setConfiguration((org.apache.camel.component.aws2.ec2.AWS2EC2Configuration) value); return true;
             case "lazyStartProducer": ((AWS2EC2Component) component).setLazyStartProducer((boolean) value); return true;
@@ -420,7 +453,6 @@ public interface Aws2Ec2ComponentBuilderFactory {
             case "overrideEndpoint": getOrCreateConfiguration((AWS2EC2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((AWS2EC2Component) component).setPojoRequest((boolean) value); return true;
             case "region": getOrCreateConfiguration((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": getOrCreateConfiguration((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((AWS2EC2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "autowiredEnabled": ((AWS2EC2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((AWS2EC2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
@@ -428,10 +460,14 @@ public interface Aws2Ec2ComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((AWS2EC2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((AWS2EC2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((AWS2EC2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "accessKey": getOrCreateConfiguration((AWS2EC2Component) component).setAccessKey((java.lang.String) value); return true;
             case "profileCredentialsName": getOrCreateConfiguration((AWS2EC2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "sessionToken": getOrCreateConfiguration((AWS2EC2Component) component).setSessionToken((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((AWS2EC2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((AWS2EC2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((AWS2EC2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
+            case "useSessionCredentials": getOrCreateConfiguration((AWS2EC2Component) component).setUseSessionCredentials((boolean) value); return true;
             default: return false;
             }
         }

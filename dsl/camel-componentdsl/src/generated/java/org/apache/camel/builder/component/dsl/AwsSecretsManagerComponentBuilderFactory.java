@@ -373,6 +373,22 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * role.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sessionToken the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder sessionToken(
+                java.lang.String sessionToken) {
+            doSetProperty("sessionToken", sessionToken);
+            return this;
+        }
+        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -405,6 +421,24 @@ public interface AwsSecretsManagerComponentBuilderFactory {
         default AwsSecretsManagerComponentBuilder useDefaultCredentialsProvider(
                 boolean useDefaultCredentialsProvider) {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Secrets Manager client should expect to use Session
+         * Credentials. This is useful in situation in which the user needs to
+         * assume a IAM role for doing operations in Secrets Manager.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder useSessionCredentials(
+                boolean useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
             return this;
         }
     }
@@ -450,8 +484,10 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((SecretsManagerComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "accessKey": getOrCreateConfiguration((SecretsManagerComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((SecretsManagerComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "sessionToken": getOrCreateConfiguration((SecretsManagerComponent) component).setSessionToken((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((SecretsManagerComponent) component).setTrustAllCertificates((boolean) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useSessionCredentials": getOrCreateConfiguration((SecretsManagerComponent) component).setUseSessionCredentials((boolean) value); return true;
             default: return false;
             }
         }
