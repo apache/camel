@@ -55,7 +55,6 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
 
         final List<OrganisationUnit> result = requestBodyAndHeaders("direct://COLLECTION", null, headers);
 
-        LOG.debug("collection: {}", result);
         assertTrue(result.size() >= 2);
         LOG.debug("collection: {}", result);
     }
