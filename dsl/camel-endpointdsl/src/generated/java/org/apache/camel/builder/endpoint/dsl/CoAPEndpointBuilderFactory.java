@@ -1400,20 +1400,6 @@ public interface CoAPEndpointBuilderFactory {
         }
 
         /**
-         * The URI of a CoAP server to call. Will override any existing URI
-         * configured directly on the endpoint.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code CoapUri}.
-         */
-        public String coapUri() {
-            return "CamelCoapUri";
-        }
-
-        /**
          * The content type.
          * 
          * The option is a: {@code String} type.
