@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.iam;
 import org.apache.camel.component.aws2.iam.client.IAM2ClientFactory;
 import org.apache.camel.component.aws2.iam.client.IAM2InternalClient;
 import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientOptimizedImpl;
+import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class IAMClientFactoryTest {
         iam2Configuration.setUseDefaultCredentialsProvider(true);
         IAM2InternalClient iamClient = IAM2ClientFactory.getIamClient(iam2Configuration);
         assertTrue(iamClient instanceof IAM2ClientOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenIamClient() {
+        IAM2Configuration iam2Configuration = new IAM2Configuration();
+        iam2Configuration.setUseSessionCredentials(true);
+        IAM2InternalClient iamClient = IAM2ClientFactory.getIamClient(iam2Configuration);
+        assertTrue(iamClient instanceof IAM2ClientSessionTokenImpl);
     }
 }
