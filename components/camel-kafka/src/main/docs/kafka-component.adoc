@@ -616,3 +616,24 @@ public void configure() {
 }
 ----
 include::spring-boot:partial$starter.adoc[]
+
+==== Dealing with long polling timeouts
+
+In some cases, applications may want the polling process to have a long timeout (see: `pollTimeoutMs`).
+
+To properly do so, first make sure to have a max polling interval that is higher than the polling timeout (see: `maxPollIntervalMs`).
+
+Then, increase the shutdown timeout to ensure that committing, closing and other Kafka operations are not abruptly aborted. For instance:
+
+[source,java]
+----
+public void configure() {
+    // Note that this can be configured in other ways
+    getCamelContext().getShutdownStrategy().setTimeout(10000);
+
+    // route setup ...
+}
+----
+
+
+
