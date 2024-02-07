@@ -2428,12 +2428,7 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("executorService", def.getExecutorService());
-        doWriteAttribute("rejectExecution", def.getRejectExecution());
-        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected());
-        doWriteAttribute("asyncDelayed", def.getAsyncDelayed());
         doWriteExpressionNodeElements(def);
-        doWriteElement("correlationExpression", def.getCorrelationExpression(), this::doWriteExpressionSubElementDefinition);
         doWriteElement(null, def.getThrottlerConfig(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "ConcurrentRequestsThrottlerConfig" -> doWriteConcurrentRequestsThrottlerConfig("concurrentRequestsConfig", (ConcurrentRequestsThrottlerConfig) def.getThrottlerConfig());
@@ -3088,7 +3083,9 @@ public class ModelWriter extends BaseWriter {
             ConcurrentRequestsThrottlerConfig def)
             throws IOException {
         startElement(name);
+        doWriteThrottlerConfigAttributes(def);
         doWriteAttribute("maximumConcurrentRequests", def.getMaximumConcurrentRequests());
+        doWriteThrottlerConfigElements(def);
         endElement(name);
     }
     protected void doWriteResequencerConfig(
@@ -3111,11 +3108,26 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("capacity", def.getCapacity());
         endElement(name);
     }
+    protected void doWriteThrottlerConfigAttributes(
+            ThrottlerConfig def)
+            throws IOException {
+        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected());
+        doWriteAttribute("executorService", def.getExecutorService());
+        doWriteAttribute("rejectExecution", def.getRejectExecution());
+        doWriteAttribute("asyncDelayed", def.getAsyncDelayed());
+    }
+    protected void doWriteThrottlerConfigElements(
+            ThrottlerConfig def)
+            throws IOException {
+        doWriteElement("correlationExpression", def.getCorrelationExpression(), this::doWriteExpressionSubElementDefinition);
+    }
     protected void doWriteThrottlerConfig(
             String name,
             ThrottlerConfig def)
             throws IOException {
         startElement(name);
+        doWriteThrottlerConfigAttributes(def);
+        doWriteThrottlerConfigElements(def);
         endElement(name);
     }
     protected void doWriteTotalRequestsThrottlerConfig(
@@ -3123,7 +3135,9 @@ public class ModelWriter extends BaseWriter {
             TotalRequestsThrottlerConfig def)
             throws IOException {
         startElement(name);
+        doWriteThrottlerConfigAttributes(def);
         doWriteAttribute("timePeriodMillis", def.getTimePeriodMillis());
+        doWriteThrottlerConfigElements(def);
         endElement(name);
     }
     protected void doWriteASN1DataFormat(

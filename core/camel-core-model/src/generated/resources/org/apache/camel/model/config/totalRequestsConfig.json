@@ -11,6 +11,11 @@
     "output": false
   },
   "properties": {
-    "timePeriodMillis": { "index": 0, "kind": "attribute", "displayName": "Time Period Millis", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the time period during which the maximum request count is valid for" }
+    "timePeriodMillis": { "index": 0, "kind": "attribute", "displayName": "Time Period Millis", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the time period during which the maximum request count is valid for" },
+    "correlationExpression": { "index": 1, "kind": "expression", "displayName": "Correlation Expression", "required": false, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "java", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "variable", "wasm", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false },
+    "executorService": { "index": 2, "kind": "attribute", "displayName": "Executor Service", "label": "advanced", "required": false, "type": "object", "javaType": "java.util.concurrent.ExecutorService", "deprecated": false, "autowired": false, "secret": false },
+    "asyncDelayed": { "index": 3, "kind": "attribute", "displayName": "Async Delayed", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false },
+    "callerRunsWhenRejected": { "index": 4, "kind": "attribute", "displayName": "Caller Runs When Rejected", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true },
+    "rejectExecution": { "index": 5, "kind": "attribute", "displayName": "Reject Execution", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false }
   }
 }

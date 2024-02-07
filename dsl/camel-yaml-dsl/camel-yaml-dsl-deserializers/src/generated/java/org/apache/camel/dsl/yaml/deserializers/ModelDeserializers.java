@@ -2355,7 +2355,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Concurrent Config",
             deprecated = false,
-            properties = @YamlProperty(name = "maximumConcurrentRequests", type = "number", defaultValue = "5", description = "Sets the maximum number of concurrent requests", displayName = "Maximum Concurrent Requests")
+            properties = {
+                    @YamlProperty(name = "asyncDelayed", type = "boolean", displayName = "Async Delayed"),
+                    @YamlProperty(name = "callerRunsWhenRejected", type = "boolean", displayName = "Caller Runs When Rejected"),
+                    @YamlProperty(name = "correlationExpression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", displayName = "Correlation Expression"),
+                    @YamlProperty(name = "executorService", type = "string", displayName = "Executor Service"),
+                    @YamlProperty(name = "maximumConcurrentRequests", type = "number", defaultValue = "5", description = "Sets the maximum number of concurrent requests", displayName = "Maximum Concurrent Requests"),
+                    @YamlProperty(name = "rejectExecution", type = "boolean", displayName = "Reject Execution")
+            }
     )
     public static class ConcurrentRequestsThrottlerConfigDeserializer extends YamlDeserializerBase<ConcurrentRequestsThrottlerConfig> {
         public ConcurrentRequestsThrottlerConfigDeserializer() {
@@ -2372,9 +2379,34 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "asyncDelayed": {
+                    String val = asText(node);
+                    target.setAsyncDelayed(val);
+                    break;
+                }
+                case "callerRunsWhenRejected": {
+                    String val = asText(node);
+                    target.setCallerRunsWhenRejected(val);
+                    break;
+                }
+                case "correlationExpression": {
+                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
+                    target.setCorrelationExpression(val);
+                    break;
+                }
+                case "executorService": {
+                    String val = asText(node);
+                    target.setExecutorService(val);
+                    break;
+                }
                 case "maximumConcurrentRequests": {
                     String val = asText(node);
                     target.setMaximumConcurrentRequests(val);
+                    break;
+                }
+                case "rejectExecution": {
+                    String val = asText(node);
+                    target.setRejectExecution(val);
                     break;
                 }
                 default: {
@@ -18029,17 +18061,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
-                    @YamlProperty(name = "asyncDelayed", type = "boolean", description = "Enables asynchronous delay which means the thread will not block while delaying.", displayName = "Async Delayed"),
-                    @YamlProperty(name = "callerRunsWhenRejected", type = "boolean", description = "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true", displayName = "Caller Runs When Rejected"),
                     @YamlProperty(name = "concurrentRequestsConfig", type = "object:org.apache.camel.model.config.ConcurrentRequestsThrottlerConfig", oneOf = "throttlerConfig"),
-                    @YamlProperty(name = "correlationExpression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", description = "The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together.", displayName = "Correlation Expression"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "executorService", type = "string", description = "To use a custom thread pool (ScheduledExecutorService) by the throttler.", displayName = "Executor Service"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression to configure the maximum number of messages to throttle per request", displayName = "Expression", oneOf = "expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "rejectExecution", type = "boolean", description = "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false", displayName = "Reject Execution"),
                     @YamlProperty(name = "totalRequestsConfig", type = "object:org.apache.camel.model.config.TotalRequestsThrottlerConfig", oneOf = "throttlerConfig")
             }
     )
@@ -18058,29 +18085,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
-                case "asyncDelayed": {
-                    String val = asText(node);
-                    target.setAsyncDelayed(val);
-                    break;
-                }
-                case "callerRunsWhenRejected": {
-                    String val = asText(node);
-                    target.setCallerRunsWhenRejected(val);
-                    break;
-                }
-                case "correlationExpression": {
-                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
-                    target.setCorrelationExpression(val);
-                    break;
-                }
                 case "disabled": {
                     String val = asText(node);
                     target.setDisabled(val);
-                    break;
-                }
-                case "executorService": {
-                    String val = asText(node);
-                    target.setExecutorService(val);
                     break;
                 }
                 case "expression": {
@@ -18091,11 +18098,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inheritErrorHandler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "rejectExecution": {
-                    String val = asText(node);
-                    target.setRejectExecution(val);
                     break;
                 }
                 case "throttlerConfig": {
@@ -18671,7 +18673,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Total Requests Config",
             deprecated = false,
-            properties = @YamlProperty(name = "timePeriodMillis", type = "string", defaultValue = "1000", description = "Sets the time period during which the maximum request count is valid for", displayName = "Time Period Millis")
+            properties = {
+                    @YamlProperty(name = "asyncDelayed", type = "boolean", displayName = "Async Delayed"),
+                    @YamlProperty(name = "callerRunsWhenRejected", type = "boolean", displayName = "Caller Runs When Rejected"),
+                    @YamlProperty(name = "correlationExpression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", displayName = "Correlation Expression"),
+                    @YamlProperty(name = "executorService", type = "string", displayName = "Executor Service"),
+                    @YamlProperty(name = "rejectExecution", type = "boolean", displayName = "Reject Execution"),
+                    @YamlProperty(name = "timePeriodMillis", type = "string", defaultValue = "1000", description = "Sets the time period during which the maximum request count is valid for", displayName = "Time Period Millis")
+            }
     )
     public static class TotalRequestsThrottlerConfigDeserializer extends YamlDeserializerBase<TotalRequestsThrottlerConfig> {
         public TotalRequestsThrottlerConfigDeserializer() {
@@ -18688,6 +18697,31 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "asyncDelayed": {
+                    String val = asText(node);
+                    target.setAsyncDelayed(val);
+                    break;
+                }
+                case "callerRunsWhenRejected": {
+                    String val = asText(node);
+                    target.setCallerRunsWhenRejected(val);
+                    break;
+                }
+                case "correlationExpression": {
+                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
+                    target.setCorrelationExpression(val);
+                    break;
+                }
+                case "executorService": {
+                    String val = asText(node);
+                    target.setExecutorService(val);
+                    break;
+                }
+                case "rejectExecution": {
+                    String val = asText(node);
+                    target.setRejectExecution(val);
+                    break;
+                }
                 case "timePeriodMillis": {
                     String val = asText(node);
                     target.setTimePeriodMillis(val);

@@ -1505,24 +1505,36 @@ public class ModelParser extends BaseParser {
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected ThrottleDefinition doParseThrottleDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ThrottleDefinition(), (def, key, val) -> {
+        return doParse(new ThrottleDefinition(),
+            processorDefinitionAttributeHandler(), (def, key) -> {
+            switch (key) {
+                case "concurrentRequestsConfig": def.setThrottlerConfig(doParseConcurrentRequestsThrottlerConfig()); break;
+                case "totalRequestsConfig": def.setThrottlerConfig(doParseTotalRequestsThrottlerConfig()); break;
+                default: return expressionNodeElementHandler().accept(def, key);
+            }
+            return true;
+        }, noValueHandler());
+    }
+    protected <T extends ThrottlerConfig> AttributeHandler<T> throttlerConfigAttributeHandler() {
+        return (def, key, val) -> {
             switch (key) {
                 case "asyncDelayed": def.setAsyncDelayed(val); break;
                 case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(val); break;
                 case "executorService": def.setExecutorService(val); break;
                 case "rejectExecution": def.setRejectExecution(val); break;
-                default: return processorDefinitionAttributeHandler().accept(def, key, val);
+                default: return false;
             }
             return true;
-        }, (def, key) -> {
-            switch (key) {
-                case "concurrentRequestsConfig": def.setThrottlerConfig(doParseConcurrentRequestsThrottlerConfig()); break;
-                case "totalRequestsConfig": def.setThrottlerConfig(doParseTotalRequestsThrottlerConfig()); break;
-                case "correlationExpression": def.setCorrelationExpression(doParseExpressionSubElementDefinition()); break;
-                default: return expressionNodeElementHandler().accept(def, key);
+        };
+    }
+    protected <T extends ThrottlerConfig> ElementHandler<T> throttlerConfigElementHandler() {
+        return (def, key) -> {
+            if ("correlationExpression".equals(key)) {
+                def.setCorrelationExpression(doParseExpressionSubElementDefinition());
+                return true;
             }
-            return true;
-        }, noValueHandler());
+            return false;
+        };
     }
     protected ThrowExceptionDefinition doParseThrowExceptionDefinition() throws IOException, XmlPullParserException {
         return doParse(new ThrowExceptionDefinition(), (def, key, val) -> {
@@ -2097,8 +2109,8 @@ public class ModelParser extends BaseParser {
                 def.setMaximumConcurrentRequests(val);
                 return true;
             }
-            return false;
-        }, noElementHandler(), noValueHandler());
+            return throttlerConfigAttributeHandler().accept(def, key, val);
+        }, throttlerConfigElementHandler(), noValueHandler());
     }
     protected StreamResequencerConfig doParseStreamResequencerConfig() throws IOException, XmlPullParserException {
         return doParse(new StreamResequencerConfig(), (def, key, val) -> {
@@ -2120,8 +2132,8 @@ public class ModelParser extends BaseParser {
                 def.setTimePeriodMillis(val);
                 return true;
             }
-            return false;
-        }, noElementHandler(), noValueHandler());
+            return throttlerConfigAttributeHandler().accept(def, key, val);
+        }, throttlerConfigElementHandler(), noValueHandler());
     }
     protected ASN1DataFormat doParseASN1DataFormat() throws IOException, XmlPullParserException {
         return doParse(new ASN1DataFormat(), (def, key, val) -> {

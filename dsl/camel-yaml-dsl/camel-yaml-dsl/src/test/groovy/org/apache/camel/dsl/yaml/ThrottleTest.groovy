@@ -17,12 +17,11 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.ThrottleDefinition
 import org.apache.camel.model.language.ConstantExpression
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
-import org.junit.jupiter.api.Disabled
 
-@Disabled
 class ThrottleTest extends YamlTestSupport {
 
     def "throttle definition (#resource.location)"(Resource resource) {
@@ -42,9 +41,11 @@ class ThrottleTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - throttle:  
+                          - throttle:
                               constant: "5"
-                              executor-service: "myExecutor"
+                              throttlerConfig:
+                                totalRequestsConfig:
+                                  executor-service: "myExecutor"      
                           - to: "mock:result"
                     '''),
                 asResource('expression-block', '''
@@ -54,7 +55,9 @@ class ThrottleTest extends YamlTestSupport {
                           - throttle: 
                               expression: 
                                 constant: "5"
-                              executor-service: "myExecutor"
+                              throttlerConfig:
+                                totalRequestsConfig:
+                                   executor-service: "myExecutor"
                           - to: "mock:result"
                     ''')
             ]

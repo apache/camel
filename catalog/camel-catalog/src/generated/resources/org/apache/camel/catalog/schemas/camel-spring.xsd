@@ -13661,59 +13661,11 @@ handler. Is by default true. Default value: true
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
           </xs:choice>
-          <xs:element minOccurs="0" name="correlationExpression" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same
-correlation key is throttled together.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
           <xs:choice minOccurs="0">
             <xs:element name="concurrentRequestsConfig" type="tns:concurrentRequestsThrottlerConfig"/>
             <xs:element ref="tns:totalRequestsConfig"/>
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="executorService" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To use a custom thread pool (ScheduledExecutorService) by the throttler.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="asyncDelayed" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Enables asynchronous delay which means the thread will not block while delaying. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="callerRunsWhenRejected" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true. Default
-value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="rejectExecution" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is
-by default false. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -13734,7 +13686,13 @@ Sets the maximum number of concurrent requests. Default value: 5
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType abstract="true" name="throttlerConfig">
-    <xs:sequence/>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="correlationExpression" type="tns:expressionSubElementDefinition"/>
+    </xs:sequence>
+    <xs:attribute name="executorService" type="xs:string"/>
+    <xs:attribute name="asyncDelayed" type="xs:string"/>
+    <xs:attribute name="callerRunsWhenRejected" type="xs:string"/>
+    <xs:attribute name="rejectExecution" type="xs:string"/>
   </xs:complexType>
   <xs:complexType name="totalRequestsThrottlerConfig">
     <xs:complexContent>

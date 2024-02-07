@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -41,31 +40,16 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "expression", "correlationExpression", "throttlerConfig" })
+@XmlType(propOrder = { "expression", "throttlerConfig" })
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
 
     @XmlTransient
     private ExecutorService executorServiceBean;
 
-    @XmlElement(name = "correlationExpression")
-    private ExpressionSubElementDefinition correlationExpression;
-    @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorService;
-    @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
-    private String asyncDelayed;
-    @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
-    private String callerRunsWhenRejected;
-    @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
-    private String rejectExecution;
-
-//    @XmlTransient
-//    private ConcurrentRequestsThrottlerConfig concurrentRequestsThrottlerConfig;
-//    @XmlTransient
-//    private TotalRequestsThrottlerConfig totalRequestsThrottlerConfig;
+    @XmlTransient
+    private ConcurrentRequestsThrottlerConfig concurrentRequestsThrottlerConfig;
+    @XmlTransient
+    private TotalRequestsThrottlerConfig totalRequestsThrottlerConfig;
 
     @XmlElements({
             @XmlElement(name = "concurrentRequestsConfig", type = ConcurrentRequestsThrottlerConfig.class),
@@ -89,11 +73,11 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     private ThrottleDefinition(ExpressionDefinition maximumRequestsPerPeriod, Expression correlationExpression) {
         super(maximumRequestsPerPeriod);
 
+        totalRequestsMode();
+
         ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
         cor.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
         setCorrelationExpression(cor);
-
-        totalRequestsMode();
     }
 
     public ThrottleDefinition totalRequestsMode() {
@@ -109,12 +93,12 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     public ThrottleDefinition totalRequests(TotalRequestsThrottlerConfig config) {
-        this.throttlerConfig = config;
+        setTotalRequestsThrottlerConfig(config);
         return this;
     }
 
     public ThrottleDefinition concurrentRequests(ConcurrentRequestsThrottlerConfig config) {
-        this.throttlerConfig = config;
+        setConcurrentRequestsThrottlerConfig(config);
         return this;
     }
 
@@ -373,7 +357,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public String getExecutorServiceRef() {
-        return executorService;
+        return throttlerConfig.getExecutorService();
     }
 
     /**
@@ -403,27 +387,27 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     public String getAsyncDelayed() {
-        return asyncDelayed;
+        return throttlerConfig.getAsyncDelayed();
     }
 
     public void setAsyncDelayed(String asyncDelayed) {
-        this.asyncDelayed = asyncDelayed;
+        throttlerConfig.setAsyncDelayed(asyncDelayed);
     }
 
     public String getCallerRunsWhenRejected() {
-        return callerRunsWhenRejected;
+        return throttlerConfig.getCallerRunsWhenRejected();
     }
 
     public void setCallerRunsWhenRejected(String callerRunsWhenRejected) {
-        this.callerRunsWhenRejected = callerRunsWhenRejected;
+        this.throttlerConfig.setCallerRunsWhenRejected(callerRunsWhenRejected);
     }
 
     public String getRejectExecution() {
-        return rejectExecution;
+        return throttlerConfig.getRejectExecution();
     }
 
     public void setRejectExecution(String rejectExecution) {
-        this.rejectExecution = rejectExecution;
+        throttlerConfig.setRejectExecution(rejectExecution);
     }
 
     /**
@@ -431,19 +415,19 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * same correlation key is throttled together.
      */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
-        this.correlationExpression = correlationExpression;
+        this.throttlerConfig.setCorrelationExpression(correlationExpression);
     }
 
     public ExpressionSubElementDefinition getCorrelationExpression() {
-        return correlationExpression;
+        return throttlerConfig.getCorrelationExpression();
     }
 
     public String getExecutorService() {
-        return executorService;
+        return throttlerConfig.getExecutorService();
     }
 
     public void setExecutorService(String executorService) {
-        this.executorService = executorService;
+        throttlerConfig.setExecutorService(executorService);
     }
 
     public ThrottlerConfig getThrottlerConfig() {
@@ -452,5 +436,28 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     public void setThrottlerConfig(ThrottlerConfig throttlerConfig) {
         this.throttlerConfig = throttlerConfig;
+    }
+
+    public ConcurrentRequestsThrottlerConfig getConcurrentRequestsThrottlerConfig() {
+        return concurrentRequestsThrottlerConfig;
+    }
+
+    public void setConcurrentRequestsThrottlerConfig(
+            ConcurrentRequestsThrottlerConfig concurrentRequestsThrottlerConfig) {
+        this.concurrentRequestsThrottlerConfig = concurrentRequestsThrottlerConfig;
+        this.throttlerConfig = concurrentRequestsThrottlerConfig;
+
+        this.totalRequestsThrottlerConfig = null;
+
+    }
+
+    public TotalRequestsThrottlerConfig getTotalRequestsThrottlerConfig() {
+        return totalRequestsThrottlerConfig;
+    }
+
+    public void setTotalRequestsThrottlerConfig(TotalRequestsThrottlerConfig totalRequestsThrottlerConfig) {
+        this.totalRequestsThrottlerConfig = totalRequestsThrottlerConfig;
+        this.throttlerConfig = totalRequestsThrottlerConfig;
+        this.concurrentRequestsThrottlerConfig = null;
     }
 }
