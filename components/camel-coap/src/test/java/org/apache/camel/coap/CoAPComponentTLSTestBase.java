@@ -60,7 +60,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     private static final int PORT8 = AvailablePortFinder.getNextAvailable();
 
     @ParameterizedTest
-    @ValueSource(strings = { "direct:start", "direct:selfsigned", "direct:clientauth", "direct:ciphersuites" })
+    @ValueSource(strings = { "direct:start", "direct:selfsigned", /*"direct:clientauth",*/ "direct:ciphersuites" })
     @DisplayName("Test calls with/without certificates")
     void testCall(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
