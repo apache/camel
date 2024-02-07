@@ -19,7 +19,9 @@ package org.apache.camel.component.splunkhec;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplunkHECEndpointTest {
     @Test
@@ -84,5 +86,17 @@ public class SplunkHECEndpointTest {
         Exception e = assertThrows(IllegalArgumentException.class, () -> new SplunkHECEndpoint(
                 "splunk-hec:yolo:188508/11111111-1111-1111-1111-111111111111", component, configuration));
         assertEquals("Invalid port: 188508", e.getMessage());
+    }
+
+    @Test
+    public void testSanitizedException() {
+        SplunkHECConfiguration configuration = new SplunkHECConfiguration();
+        SplunkHECComponent component = new SplunkHECComponent();
+        String tokenValue = "token-value";
+        Exception e = assertThrows(IllegalArgumentException.class, () -> new SplunkHECEndpoint(
+                "splunk-hec:localhost/11111111-1111-1111-1111-111111111111?token=" + tokenValue, component,
+                configuration));
+        assertTrue(e.getMessage().contains("token=xxxxxx"));
+        assertFalse(e.getMessage().contains(tokenValue));
     }
 }

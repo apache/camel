@@ -585,7 +585,7 @@ public interface Dhis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * DHIS2 account password for accessing the DHIS2 API.
+         * Password of the DHIS2 username.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -599,7 +599,23 @@ public interface Dhis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * DHIS2 account username for accessing the DHIS2 API.
+         * Personal access token to authenticate with DHIS2. This option is
+         * mutually exclusive to username and password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param personalAccessToken the value to set
+         * @return the dsl builder
+         */
+        default Dhis2EndpointConsumerBuilder personalAccessToken(
+                String personalAccessToken) {
+            doSetProperty("personalAccessToken", personalAccessToken);
+            return this;
+        }
+        /**
+         * Username of the DHIS2 user to operate as.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -788,7 +804,9 @@ public interface Dhis2EndpointBuilderFactory {
         }
         /**
          * References a user-defined
-         * org.hisp.dhis.integration.sdk.api.Dhis2Client.
+         * org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is
+         * mutually exclusive to the baseApiUrl, username, password, and
+         * personalAccessToken options.
          * 
          * The option is a:
          * &lt;code&gt;org.hisp.dhis.integration.sdk.api.Dhis2Client&lt;/code&gt; type.
@@ -805,7 +823,9 @@ public interface Dhis2EndpointBuilderFactory {
         }
         /**
          * References a user-defined
-         * org.hisp.dhis.integration.sdk.api.Dhis2Client.
+         * org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is
+         * mutually exclusive to the baseApiUrl, username, password, and
+         * personalAccessToken options.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.hisp.dhis.integration.sdk.api.Dhis2Client&lt;/code&gt; type.
@@ -860,7 +880,7 @@ public interface Dhis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * DHIS2 account password for accessing the DHIS2 API.
+         * Password of the DHIS2 username.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -874,7 +894,23 @@ public interface Dhis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * DHIS2 account username for accessing the DHIS2 API.
+         * Personal access token to authenticate with DHIS2. This option is
+         * mutually exclusive to username and password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param personalAccessToken the value to set
+         * @return the dsl builder
+         */
+        default Dhis2EndpointProducerBuilder personalAccessToken(
+                String personalAccessToken) {
+            doSetProperty("personalAccessToken", personalAccessToken);
+            return this;
+        }
+        /**
+         * Username of the DHIS2 user to operate as.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -949,7 +985,9 @@ public interface Dhis2EndpointBuilderFactory {
         }
         /**
          * References a user-defined
-         * org.hisp.dhis.integration.sdk.api.Dhis2Client.
+         * org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is
+         * mutually exclusive to the baseApiUrl, username, password, and
+         * personalAccessToken options.
          * 
          * The option is a:
          * &lt;code&gt;org.hisp.dhis.integration.sdk.api.Dhis2Client&lt;/code&gt; type.
@@ -966,7 +1004,9 @@ public interface Dhis2EndpointBuilderFactory {
         }
         /**
          * References a user-defined
-         * org.hisp.dhis.integration.sdk.api.Dhis2Client.
+         * org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is
+         * mutually exclusive to the baseApiUrl, username, password, and
+         * personalAccessToken options.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.hisp.dhis.integration.sdk.api.Dhis2Client&lt;/code&gt; type.
@@ -1022,7 +1062,7 @@ public interface Dhis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * DHIS2 account password for accessing the DHIS2 API.
+         * Password of the DHIS2 username.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1036,7 +1076,23 @@ public interface Dhis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * DHIS2 account username for accessing the DHIS2 API.
+         * Personal access token to authenticate with DHIS2. This option is
+         * mutually exclusive to username and password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param personalAccessToken the value to set
+         * @return the dsl builder
+         */
+        default Dhis2EndpointBuilder personalAccessToken(
+                String personalAccessToken) {
+            doSetProperty("personalAccessToken", personalAccessToken);
+            return this;
+        }
+        /**
+         * Username of the DHIS2 user to operate as.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1063,7 +1119,9 @@ public interface Dhis2EndpointBuilderFactory {
         }
         /**
          * References a user-defined
-         * org.hisp.dhis.integration.sdk.api.Dhis2Client.
+         * org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is
+         * mutually exclusive to the baseApiUrl, username, password, and
+         * personalAccessToken options.
          * 
          * The option is a:
          * &lt;code&gt;org.hisp.dhis.integration.sdk.api.Dhis2Client&lt;/code&gt; type.
@@ -1080,7 +1138,9 @@ public interface Dhis2EndpointBuilderFactory {
         }
         /**
          * References a user-defined
-         * org.hisp.dhis.integration.sdk.api.Dhis2Client.
+         * org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is
+         * mutually exclusive to the baseApiUrl, username, password, and
+         * personalAccessToken options.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.hisp.dhis.integration.sdk.api.Dhis2Client&lt;/code&gt; type.

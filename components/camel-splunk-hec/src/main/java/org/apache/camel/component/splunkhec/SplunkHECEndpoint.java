@@ -28,6 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.URISupport;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
@@ -45,7 +46,7 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String splunkURL;
-    @UriPath(label = "security")
+    @UriPath(label = "security", secret = true)
     @Metadata(required = true)
     private String token;
     @UriParam
@@ -59,7 +60,7 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
         Matcher match = URI_PARSER.matcher(uri);
         if (!match.matches()) {
-            throw new IllegalArgumentException("Invalid URI: " + uri);
+            throw new IllegalArgumentException("Invalid URI: " + URISupport.sanitizeUri(uri));
         }
         String hostname = match.group(1);
         int port = Integer.parseInt(match.group(2));
