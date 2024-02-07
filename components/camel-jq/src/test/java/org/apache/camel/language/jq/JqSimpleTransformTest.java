@@ -38,7 +38,7 @@ public class JqSimpleTransformTest extends JqTestSupport {
                         .transform().simple("""
                                 {
                                   "roll": ${jq(.id)},
-                                  "country": "${jq(.country // constant('sweden'))}",
+                                  "country": "${jq(.country // constant(sweden))}",
                                   "fullname": "${jq(.name)}"
                                 }""")
                         .to("mock:result");
