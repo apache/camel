@@ -117,6 +117,10 @@ public class Aws2EventbridgeUriDsl(
     it.property("secretKey", secretKey)
   }
 
+  public fun sessionToken(sessionToken: String) {
+    it.property("sessionToken", sessionToken)
+  }
+
   public fun trustAllCertificates(trustAllCertificates: String) {
     it.property("trustAllCertificates", trustAllCertificates)
   }
@@ -139,5 +143,13 @@ public class Aws2EventbridgeUriDsl(
 
   public fun useProfileCredentialsProvider(useProfileCredentialsProvider: Boolean) {
     it.property("useProfileCredentialsProvider", useProfileCredentialsProvider.toString())
+  }
+
+  public fun useSessionCredentials(useSessionCredentials: String) {
+    it.property("useSessionCredentials", useSessionCredentials)
+  }
+
+  public fun useSessionCredentials(useSessionCredentials: Boolean) {
+    it.property("useSessionCredentials", useSessionCredentials.toString())
   }
 }
