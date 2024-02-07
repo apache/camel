@@ -231,7 +231,28 @@ public interface CoAPEndpointBuilderFactory {
          * sslContextParameters.getServerParameters().getClientAuthentication()
          * value.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.elements.config.CertificateAuthenticationMode&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientAuthentication the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder clientAuthentication(
+                org.eclipse.californium.elements.config.CertificateAuthenticationMode clientAuthentication) {
+            doSetProperty("clientAuthentication", clientAuthentication);
+            return this;
+        }
+        /**
+         * Sets the configuration options for server-side client-authentication
+         * requirements. The value must be one of NONE, WANT, REQUIRE. If this
+         * value is not specified, then it falls back to checking the
+         * sslContextParameters.getServerParameters().getClientAuthentication()
+         * value.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.elements.config.CertificateAuthenticationMode&lt;/code&gt; type.
          * 
          * Group: security
          * 
@@ -670,7 +691,28 @@ public interface CoAPEndpointBuilderFactory {
          * sslContextParameters.getServerParameters().getClientAuthentication()
          * value.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.elements.config.CertificateAuthenticationMode&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientAuthentication the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder clientAuthentication(
+                org.eclipse.californium.elements.config.CertificateAuthenticationMode clientAuthentication) {
+            doSetProperty("clientAuthentication", clientAuthentication);
+            return this;
+        }
+        /**
+         * Sets the configuration options for server-side client-authentication
+         * requirements. The value must be one of NONE, WANT, REQUIRE. If this
+         * value is not specified, then it falls back to checking the
+         * sslContextParameters.getServerParameters().getClientAuthentication()
+         * value.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.elements.config.CertificateAuthenticationMode&lt;/code&gt; type.
          * 
          * Group: security
          * 
@@ -998,7 +1040,28 @@ public interface CoAPEndpointBuilderFactory {
          * sslContextParameters.getServerParameters().getClientAuthentication()
          * value.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.elements.config.CertificateAuthenticationMode&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientAuthentication the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointBuilder clientAuthentication(
+                org.eclipse.californium.elements.config.CertificateAuthenticationMode clientAuthentication) {
+            doSetProperty("clientAuthentication", clientAuthentication);
+            return this;
+        }
+        /**
+         * Sets the configuration options for server-side client-authentication
+         * requirements. The value must be one of NONE, WANT, REQUIRE. If this
+         * value is not specified, then it falls back to checking the
+         * sslContextParameters.getServerParameters().getClientAuthentication()
+         * value.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.elements.config.CertificateAuthenticationMode&lt;/code&gt; type.
          * 
          * Group: security
          * 
