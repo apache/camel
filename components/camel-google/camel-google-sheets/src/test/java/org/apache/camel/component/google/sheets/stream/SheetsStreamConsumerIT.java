@@ -32,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
 import org.apache.camel.component.google.sheets.MockGoogleSheetsClientFactory;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.MAJOR_DIMENSION;
@@ -42,7 +43,7 @@ import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStream
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SheetsStreamConsumerIntegrationTest {
+public class SheetsStreamConsumerIT {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .setDefaultPropertyInclusion(
@@ -54,7 +55,8 @@ public class SheetsStreamConsumerIntegrationTest {
             Arrays.asList("a1", "b1"),
             Arrays.asList("a2", "b2"));
 
-    public static class ConsumeValueRangeTest extends AbstractGoogleSheetsStreamTestSupport {
+    @Nested
+    class ConsumeValueRangeIT extends AbstractGoogleSheetsStreamTestSupport {
         Spreadsheet testSheet = getSpreadsheet();
 
         @Test
@@ -105,7 +107,8 @@ public class SheetsStreamConsumerIntegrationTest {
         }
     }
 
-    public static class ConsumeValueRangeSplitResultsTest extends AbstractGoogleSheetsStreamTestSupport {
+    @Nested
+    class ConsumeValueRangeSplitResultsIT extends AbstractGoogleSheetsStreamTestSupport {
         Spreadsheet testSheet = getSpreadsheet();
 
         @Test

@@ -129,9 +129,9 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
 
         JsonPathLanguage lan = (JsonPathLanguage) context.resolveLanguage("jsonpath");
-        lan.setOptions(Option.SUPPRESS_EXCEPTIONS);
 
-        Expression exp = lan.createExpression("$.foo");
+        Expression exp = lan.createExpression("$.foo",
+                new Object[] { null, null, null, null, null, null, null, null, null, Option.SUPPRESS_EXCEPTIONS });
         String nofoo = exp.evaluate(exchange, String.class);
 
         assertNull(nofoo);
@@ -143,11 +143,10 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
 
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
-        language.setUnpackArray(true);
-        language.setResultType(String.class);
 
-        JsonPathExpression expression = (JsonPathExpression) language.createExpression("$.store.book");
-        String json = (String) expression.evaluate(exchange);
+        Expression expression = language.createExpression("$.store.book",
+                new Object[] { String.class, null, null, null, null, null, null, null, true });
+        String json = expression.evaluate(exchange, String.class);
 
         // check that a single json object is returned, not an array
         assertTrue(json.startsWith("{") && json.endsWith("}"));
@@ -159,11 +158,10 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
 
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
-        language.setUnpackArray(false);
-        language.setResultType(String.class);
 
-        JsonPathExpression expression = (JsonPathExpression) language.createExpression("$.store.book");
-        String json = (String) expression.evaluate(exchange);
+        Expression expression = language.createExpression("$.store.book",
+                new Object[] { String.class, null, null, null, null, null, false });
+        String json = expression.evaluate(exchange, String.class);
 
         // check that an array is returned, not a single object
         assertTrue(json.startsWith("[") && json.endsWith("]"));

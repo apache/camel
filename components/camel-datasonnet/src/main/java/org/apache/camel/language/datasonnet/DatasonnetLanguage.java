@@ -18,7 +18,6 @@ package org.apache.camel.language.datasonnet;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,19 +27,16 @@ import com.datasonnet.Mapper;
 import com.datasonnet.document.MediaType;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.TypedLanguageSupport;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("datasonnet")
-public class DatasonnetLanguage extends TypedLanguageSupport implements PropertyConfigurer {
+public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DatasonnetLanguage.class);
 
     private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
@@ -65,10 +61,6 @@ public class DatasonnetLanguage extends TypedLanguageSupport implements Property
     // See: {@link GroovyLanguage}
     private final Map<String, Mapper> mapperCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
 
-    private MediaType bodyMediaType;
-    private MediaType outputMediaType;
-    private Collection<String> libraryPaths;
-
     @Override
     public Predicate createPredicate(String expression) {
         return createPredicate(expression, null);
@@ -85,17 +77,23 @@ public class DatasonnetLanguage extends TypedLanguageSupport implements Property
     }
 
     @Override
-    public Expression createExpression(String expression, Object[] properties) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         expression = loadResource(expression);
 
         DatasonnetExpression answer = new DatasonnetExpression(expression);
-        answer.setResultType(property(Class.class, properties, 0, getResultType()));
-
-        String stringBodyMediaType = property(String.class, properties, 1, null);
-        answer.setBodyMediaType(stringBodyMediaType != null ? MediaType.valueOf(stringBodyMediaType) : bodyMediaType);
-        String stringOutputMediaType = property(String.class, properties, 2, null);
-        answer.setOutputMediaType(stringOutputMediaType != null ? MediaType.valueOf(stringOutputMediaType) : outputMediaType);
-
+        answer.setSource(source);
+        answer.setResultType(property(Class.class, properties, 0, null));
+        String mediaType = property(String.class, properties, 4, null);
+        if (mediaType != null) {
+            answer.setBodyMediaType(MediaType.valueOf(mediaType));
+        }
+        mediaType = property(String.class, properties, 5, null);
+        if (mediaType != null) {
+            answer.setOutputMediaType(MediaType.valueOf(mediaType));
+        }
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
     }
 
@@ -111,62 +109,4 @@ public class DatasonnetLanguage extends TypedLanguageSupport implements Property
         return CLASSPATH_IMPORTS;
     }
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "bodyMediaType":
-            case "bodymediatype":
-                setBodyMediaType(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "outputMediaType":
-            case "outputmediatype":
-                setOutputMediaType(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "resultType":
-            case "resulttype":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    // Getter/Setter methods
-    // -------------------------------------------------------------------------
-
-    public MediaType getBodyMediaType() {
-        return bodyMediaType;
-    }
-
-    public void setBodyMediaType(MediaType bodyMediaType) {
-        this.bodyMediaType = bodyMediaType;
-    }
-
-    public void setBodyMediaType(String bodyMediaType) {
-        this.bodyMediaType = MediaType.valueOf(bodyMediaType);
-    }
-
-    public MediaType getOutputMediaType() {
-        return outputMediaType;
-    }
-
-    public void setOutputMediaType(MediaType outputMediaType) {
-        this.outputMediaType = outputMediaType;
-    }
-
-    public void setOutputMediaType(String outputMediaType) {
-        this.outputMediaType = MediaType.valueOf(outputMediaType);
-    }
-
-    public Collection<String> getLibraryPaths() {
-        return libraryPaths;
-    }
-
-    public void setLibraryPaths(Collection<String> libraryPaths) {
-        this.libraryPaths = libraryPaths;
-    }
 }

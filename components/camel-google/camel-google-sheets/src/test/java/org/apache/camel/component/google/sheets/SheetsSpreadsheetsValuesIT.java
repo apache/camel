@@ -36,6 +36,7 @@ import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollecti
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsValuesApiMethod;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,8 @@ public class SheetsSpreadsheetsValuesIT {
     private static final String PATH_PREFIX
             = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsValuesApiMethod.class).getName();
 
-    public static class GetTest extends AbstractGoogleSheetsTestSupport {
+    @Nested
+    class GetIT extends AbstractGoogleSheetsTestSupport {
         private Spreadsheet testSheet = getSpreadsheet();
 
         @Test
@@ -92,7 +94,8 @@ public class SheetsSpreadsheetsValuesIT {
         }
     }
 
-    public static class UpdateTest extends AbstractGoogleSheetsTestSupport {
+    @Nested
+    class UpdateIT extends AbstractGoogleSheetsTestSupport {
         private Spreadsheet testSheet = getSpreadsheet();
         private String range = "TEST_SHEET!A1:B2";
         private List<List<Object>> data = Arrays.asList(
@@ -153,7 +156,8 @@ public class SheetsSpreadsheetsValuesIT {
         }
     }
 
-    public static class AppendTest extends AbstractGoogleSheetsTestSupport {
+    @Nested
+    class AppendIT extends AbstractGoogleSheetsTestSupport {
         private Spreadsheet testSheet = getSpreadsheet();
         private List<List<Object>> data = Collections.singletonList(Arrays.asList("A10", "B10", "C10"));
         private String range = TEST_SHEET + "!A10";
@@ -211,7 +215,8 @@ public class SheetsSpreadsheetsValuesIT {
         }
     }
 
-    public static class ClearTest extends AbstractGoogleSheetsTestSupport {
+    @Nested
+    class ClearIT extends AbstractGoogleSheetsTestSupport {
         private Spreadsheet testSheet = getSpreadsheet();
 
         @Test

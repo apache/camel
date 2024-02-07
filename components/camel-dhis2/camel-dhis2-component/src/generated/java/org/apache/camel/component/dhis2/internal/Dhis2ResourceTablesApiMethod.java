@@ -25,7 +25,8 @@ public enum Dhis2ResourceTablesApiMethod implements ApiMethod {
         arg("skipAggregate", Boolean.class),
         arg("skipEvents", Boolean.class),
         arg("lastYears", Integer.class),
-        arg("interval", Integer.class));
+        arg("interval", Integer.class),
+        arg("async", Boolean.class));
 
     private final ApiMethod apiMethod;
 

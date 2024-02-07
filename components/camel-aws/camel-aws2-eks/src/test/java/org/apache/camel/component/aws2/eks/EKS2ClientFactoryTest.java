@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.eks;
 import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
 import org.apache.camel.component.aws2.eks.client.EKS2InternalClient;
 import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class EKS2ClientFactoryTest {
         eks2Configuration.setUseDefaultCredentialsProvider(true);
         EKS2InternalClient eks2Client = EKS2ClientFactory.getEksClient(eks2Configuration);
         assertTrue(eks2Client instanceof EKS2ClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenEKS2Client() {
+        EKS2Configuration eks2Configuration = new EKS2Configuration();
+        eks2Configuration.setUseSessionCredentials(true);
+        EKS2InternalClient eks2Client = EKS2ClientFactory.getEksClient(eks2Configuration);
+        assertTrue(eks2Client instanceof EKS2ClientSessionTokenImpl);
     }
 }

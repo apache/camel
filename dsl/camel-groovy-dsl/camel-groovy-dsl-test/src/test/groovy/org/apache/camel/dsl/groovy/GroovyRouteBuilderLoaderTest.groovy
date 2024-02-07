@@ -147,13 +147,13 @@ class GroovyRouteBuilderLoaderTest extends Specification {
             loadRoute('/routes/routes-with-languages-configuration.groovy')
 
         then:
+            context.start()
+
             with(context.resolveLanguage('bean'), BeanLanguage) {
-                beanType == String.class
-                method == "toUpperCase"
+                (!validate)
             }
             with(context.resolveLanguage('myBean'), BeanLanguage) {
-                beanType == String.class
-                method == "toLowerCase"
+                validate
             }
     }
 

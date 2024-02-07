@@ -117,28 +117,25 @@ public class JavaLanguage extends TypedLanguageSupport implements ScriptingLangu
 
     @Override
     public Expression createExpression(String expression) {
-        JoorExpression exp = new JoorExpression(expression);
-        exp.setCompiler(compiler);
-        exp.setResultType(getResultType());
-        exp.setSingleQuotes(singleQuotes);
-        exp.init(getCamelContext());
-        return exp;
+        return createExpression(expression, null);
     }
 
     @Override
     public Predicate createPredicate(String expression, Object[] properties) {
-        return (JoorExpression) createExpression(expression, properties);
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        JoorExpression exp = new JoorExpression(expression);
-        exp.setCompiler(compiler);
-        exp.setPreCompile(property(boolean.class, properties, 0, preCompile));
-        exp.setResultType(property(Class.class, properties, 1, getResultType()));
-        exp.setSingleQuotes(property(boolean.class, properties, 2, singleQuotes));
-        exp.init(getCamelContext());
-        return exp;
+        JoorExpression answer = new JoorExpression(expression);
+        answer.setCompiler(compiler);
+        answer.setResultType(property(Class.class, properties, 0, null));
+        answer.setPreCompile(property(boolean.class, properties, 1, preCompile));
+        answer.setSingleQuotes(property(boolean.class, properties, 2, singleQuotes));
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
+        return answer;
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.athena;
 import org.apache.camel.component.aws2.athena.client.Athena2ClientFactory;
 import org.apache.camel.component.aws2.athena.client.Athena2InternalClient;
 import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class AthenaClientFactoryTest {
         athena2Configuration.setUseDefaultCredentialsProvider(true);
         Athena2InternalClient athenaClient = Athena2ClientFactory.getAWSAthenaClient(athena2Configuration);
         assertTrue(athenaClient instanceof Athena2ClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenAthenaClient() {
+        Athena2Configuration athena2Configuration = new Athena2Configuration();
+        athena2Configuration.setUseSessionCredentials(true);
+        Athena2InternalClient athenaClient = Athena2ClientFactory.getAWSAthenaClient(athena2Configuration);
+        assertTrue(athenaClient instanceof Athena2ClientSessionTokenImpl);
     }
 }

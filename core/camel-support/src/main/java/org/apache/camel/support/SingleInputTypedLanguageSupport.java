@@ -17,66 +17,68 @@
 package org.apache.camel.support;
 
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.builder.PredicateBuilder;
 
 /**
  * Base class for {@link Language} implementations that support a result type and different sources of input data.
  */
 public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSupport {
 
-    private String variableName;
-    private String headerName;
-    private String propertyName;
+    @Override
+    public Predicate createPredicate(String expression) {
+        return createPredicate(expression, null);
+    }
 
-    public String getVariableName() {
-        return variableName;
+    @Override
+    public Expression createExpression(String expression) {
+        return createExpression(expression, null);
     }
 
     /**
-     * Name of variable to use as input, instead of the message body
-     * </p>
-     * It has as higher precedent if other are set.
+     * Whether using result type is supported
      */
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to use as input, instead of the message body
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * Name of property to use as input, instead of the message body.
-     * <p>
-     * It has a lower precedent than the name of header if both are set.
-     */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    protected boolean supportResultType() {
+        return true;
     }
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        Class<?> type = property(Class.class, properties, 0, getResultType());
-        String variable = property(String.class, properties, 1, getVariableName());
-        String header = property(String.class, properties, 2, getHeaderName());
-        String property = property(String.class, properties, 3, getPropertyName());
+        if (expression != null && isStaticResource(expression)) {
+            expression = loadResource(expression);
+        }
+
+        Class<?> type = property(Class.class, properties, 0, null);
+        String variable = property(String.class, properties, 1, null);
+        String header = property(String.class, properties, 2, null);
+        String property = property(String.class, properties, 3, null);
         Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
-        if (type == null || type == Object.class) {
+        if (getCamelContext() != null) {
+            source.init(getCamelContext());
+        }
+        if (type == null || type == Object.class || !supportResultType()) {
             return createExpression(source, expression, properties);
         }
         return ExpressionBuilder.convertToExpression(createExpression(source, expression, properties), type);
+    }
+
+    @Override
+    public Predicate createPredicate(String expression, Object[] properties) {
+        if (expression != null && isStaticResource(expression)) {
+            expression = loadResource(expression);
+        }
+
+        Class<?> type = property(Class.class, properties, 0, null);
+        String variable = property(String.class, properties, 1, null);
+        String header = property(String.class, properties, 2, null);
+        String property = property(String.class, properties, 3, null);
+        Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
+        if (getCamelContext() != null) {
+            source.init(getCamelContext());
+        }
+        return createPredicate(source, expression, properties);
     }
 
     /**
@@ -87,7 +89,19 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
      * @param  properties configuration properties (optimized as object array with hardcoded positions for properties)
      * @return            the created expression
      */
-    protected Expression createExpression(Expression source, String expression, Object[] properties) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a predicate based on the input with properties.
+     *
+     * @param  source     the expression allowing to retrieve the input data of the main expression.
+     * @param  expression the main expression to evaluate as predicate.
+     * @param  properties configuration properties (optimized as object array with hardcoded positions for properties)
+     * @return            the created predicate
+     */
+    public Predicate createPredicate(Expression source, String expression, Object[] properties) {
+        return PredicateBuilder.toPredicate(createExpression(source, expression, properties));
     }
 }

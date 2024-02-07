@@ -64,5 +64,17 @@ unmarshalling to avoid errors.
 from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor()); 
 ----
 
+== Dependencies
+
+If you use Maven you could just add the following to your `pom.xml`, substituting the version number for the latest and greatest release (see the download page for the latest versions).
+
+[source,xml]
+---------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-zip-deflater</artifactId>
+  <version>x.x.x</version>
+</dependency>
+---------------------------------------
 
 include::spring-boot:partial$starter.adoc[]

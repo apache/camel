@@ -23,6 +23,7 @@ import org.w3c.dom.Node;
 import net.sf.saxon.functions.CollectionFn;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.support.language.NamespacePrefix;
@@ -39,12 +40,23 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
         if (annotation instanceof XQuery) {
             XQuery xQueryAnnotation = (XQuery) annotation;
             builder.setStripsAllWhiteSpace(xQueryAnnotation.stripsAllWhiteSpace());
+
+            String variableName = null;
+            String headerName = null;
+            String propertyName = null;
+            if (ObjectHelper.isNotEmpty(xQueryAnnotation.variableName())) {
+                variableName = xQueryAnnotation.variableName();
+            }
             if (ObjectHelper.isNotEmpty(xQueryAnnotation.headerName())) {
-                builder.setHeaderName(xQueryAnnotation.headerName());
+                headerName = xQueryAnnotation.headerName();
             }
             if (ObjectHelper.isNotEmpty(xQueryAnnotation.propertyName())) {
-                builder.setPropertyName(xQueryAnnotation.propertyName());
+                propertyName = xQueryAnnotation.propertyName();
             }
+            if (variableName != null || headerName != null || propertyName != null) {
+                builder.setSource(ExpressionBuilder.singleInputExpression(variableName, headerName, propertyName));
+            }
+
             NamespacePrefix[] namespaces = xQueryAnnotation.namespaces();
             if (namespaces != null) {
                 for (NamespacePrefix namespacePrefix : namespaces) {

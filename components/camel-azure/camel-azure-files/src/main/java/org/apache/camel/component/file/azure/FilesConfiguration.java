@@ -56,6 +56,15 @@ public class FilesConfiguration extends RemoteFileConfiguration {
         setSendNoop(false);
         setBinary(true);
         setPassiveMode(true);
+        if (account == null) {
+            // URI host maps to the account option
+            String host = uri.getHost();
+            if (host != null) {
+                // reset host as it requires to know the account name also
+                setAccount(host);
+                setHost(host);
+            }
+        }
     }
 
     @Override

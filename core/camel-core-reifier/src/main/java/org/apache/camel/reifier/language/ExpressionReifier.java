@@ -34,7 +34,6 @@ import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JoorExpression;
-import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -113,8 +112,6 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             return new JavaExpressionReifier(camelContext, definition);
         } else if (definition instanceof JoorExpression) {
             return new JoorExpressionReifier(camelContext, definition);
-        } else if (definition instanceof JqExpression) {
-            return new JqExpressionReifier(camelContext, definition);
         } else if (definition instanceof JsonPathExpression) {
             return new JsonPathExpressionReifier(camelContext, definition);
         } else if (definition instanceof MethodCallExpression) {
@@ -129,10 +126,10 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             return new XPathExpressionReifier(camelContext, definition);
         } else if (definition instanceof XQueryExpression) {
             return new XQueryExpressionReifier(camelContext, definition);
-        } else if (definition instanceof SingleInputTypedExpressionDefinition) {
-            return new SingleInputTypedExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof WasmExpression) {
             return new WasmExpressionReifier(camelContext, definition);
+        } else if (definition instanceof SingleInputTypedExpressionDefinition) {
+            return new SingleInputTypedExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof TypedExpressionDefinition) {
             return new TypedExpressionReifier<>(camelContext, definition);
         } else if (definition != null) {

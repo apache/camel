@@ -64,7 +64,7 @@ runs:
         name: tests.log
         path: tests.log
     - name: Success comment
-      if: success()
+      if: success() 
       uses: ./.github/actions/create-or-update-comment
       with:
         comment-id: ${{ inputs.comment-id }}
@@ -74,7 +74,7 @@ runs:
 
           **Result** :white_check_mark: The tests passed successfully
     - name: Failure comment
-      if: failure()
+      if: failure() 
       uses: ./.github/actions/create-or-update-comment
       with:
         comment-id: ${{ inputs.comment-id }}

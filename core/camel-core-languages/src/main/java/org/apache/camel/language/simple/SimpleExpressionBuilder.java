@@ -691,7 +691,7 @@ public final class SimpleExpressionBuilder {
                 } catch (InvalidPayloadException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -772,7 +772,7 @@ public final class SimpleExpressionBuilder {
                 if (msg != null) {
                     // ognl is able to evaluate method name if it contains nested functions
                     // so we should not eager evaluate ognl as a string
-                    Expression ognlExp = bean.createExpression(null, new Object[] { msg, ognl });
+                    Expression ognlExp = bean.createExpression(null, new Object[] { null, msg, ognl });
                     ognlExp.init(exchange.getContext());
                     return ognlExp.evaluate(exchange, Object.class);
                 } else {
@@ -818,7 +818,7 @@ public final class SimpleExpressionBuilder {
                 if (body != null) {
                     // ognl is able to evaluate method name if it contains nested functions
                     // so we should not eager evaluate ognl as a string
-                    Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
+                    Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
                     ognlExp.init(exchange.getContext());
                     return ognlExp.evaluate(exchange, Object.class);
                 } else {
@@ -854,7 +854,7 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                Expression ognlExp = bean.createExpression(null, new Object[] { exchange, ognl });
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, exchange, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -915,7 +915,7 @@ public final class SimpleExpressionBuilder {
                 if (body == null) {
                     return null;
                 }
-                Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -1063,7 +1063,7 @@ public final class SimpleExpressionBuilder {
 
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                Expression ognlExp = bean.createExpression(null, new Object[] { exception, ognl });
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, exception, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -1145,7 +1145,7 @@ public final class SimpleExpressionBuilder {
                 return null;
             }
             if (method != null) {
-                Expression exp = beanLanguage.createExpression(null, new Object[] { property, method });
+                Expression exp = beanLanguage.createExpression(null, new Object[] { null, property, method });
                 exp.init(exchange.getContext());
                 return exp.evaluate(exchange, Object.class);
             } else {

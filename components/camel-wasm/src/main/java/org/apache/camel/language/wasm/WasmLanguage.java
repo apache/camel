@@ -19,7 +19,6 @@ package org.apache.camel.language.wasm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.StaticService;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
@@ -28,11 +27,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.wasm.Wasm;
 
 @Language(Wasm.SCHEME)
-public class WasmLanguage extends TypedLanguageSupport implements PropertyConfigurer, StaticService {
+public class WasmLanguage extends TypedLanguageSupport implements PropertyConfigurer {
+
     private String module;
 
     public WasmLanguage() {
-
     }
 
     public String getModule() {
@@ -59,18 +58,13 @@ public class WasmLanguage extends TypedLanguageSupport implements PropertyConfig
     }
 
     @Override
-    public void start() {
-        // noop
-    }
-
-    @Override
-    public void stop() {
-        // noop
-    }
-
-    @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
+    }
+
+    @Override
+    public Expression createExpression(String expression) {
+        return createExpression(expression, null);
     }
 
     @Override
@@ -79,22 +73,13 @@ public class WasmLanguage extends TypedLanguageSupport implements PropertyConfig
     }
 
     @Override
-    public Expression createExpression(String expression) {
-        WasmExpression answer = new WasmExpression(expression);
-        answer.setResultType(getResultType());
-        answer.setModule(getModule());
-        answer.init(getCamelContext());
-
-        return answer;
-    }
-
-    @Override
     public Expression createExpression(String expression, Object[] properties) {
         WasmExpression answer = new WasmExpression(expression);
-        answer.setResultType(property(Class.class, properties, 0, getResultType()));
+        answer.setResultType(property(Class.class, properties, 0, null));
         answer.setModule(property(String.class, properties, 1, getModule()));
-        answer.init(getCamelContext());
-
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
     }
 }

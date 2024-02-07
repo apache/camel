@@ -19,12 +19,10 @@ import org.apache.camel.language.bean.BeanLanguage
 camel {
     languages {
         language<BeanLanguage>("bean") {
-            beanType = String::class.java
-            method = "toUpperCase"
+            isValidate = false
         }
         language<BeanLanguage>("my-bean") {
-            beanType = String::class.java
-            method = "toLowerCase"
+            isValidate = true
         }
     }
 }

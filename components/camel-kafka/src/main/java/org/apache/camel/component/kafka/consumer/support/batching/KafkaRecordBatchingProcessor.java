@@ -31,6 +31,7 @@ import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.util.StopWatch;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
@@ -43,6 +44,9 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     private final KafkaConfiguration configuration;
     private final Processor processor;
     private final CommitManager commitManager;
+    private final StopWatch watch = new StopWatch();
+    private List<Exchange> exchangeList;
+
 
     private final class CommitSynchronization implements Synchronization {
         private final ExceptionHandler exceptionHandler;
@@ -107,17 +111,47 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     }
 
     public ProcessingResult processExchange(KafkaConsumer camelKafkaConsumer, ConsumerRecords<Object, Object> consumerRecords) {
+        LOG.debug("There's {} records to process ... max poll is set to {}", consumerRecords.count(), configuration.getMaxPollRecords());
         // Aggregate all consumer records in a single exchange
-        List<Exchange> exchangeList = new ArrayList<>(consumerRecords.count());
-
-        // Create an inner exchange for every consumer record retrieved
-        for (ConsumerRecord<Object, Object> consumerRecord : consumerRecords) {
-            TopicPartition tp = new TopicPartition(consumerRecord.topic(), consumerRecord.partition());
-            Exchange exchange = toExchange(camelKafkaConsumer, tp, consumerRecord);
-
-            exchangeList.add(exchange);
+        if (exchangeList == null) {
+            exchangeList = new ArrayList<>(configuration.getMaxPollRecords());
+            watch.takenAndRestart();
         }
 
+        if (hasExpiredRecords(consumerRecords)) {
+            LOG.debug("The polling timeout has expired with {} records in cache. Dispatching the incomplete batch for processing",
+                    exchangeList.size());
+
+            // poll timeout has elapsed, so check for expired records
+            processBatch(camelKafkaConsumer);
+            exchangeList = null;
+
+            return ProcessingResult.newUnprocessed();
+        }
+
+        for (ConsumerRecord<Object, Object> consumerRecord : consumerRecords) {
+            TopicPartition tp = new TopicPartition(consumerRecord.topic(), consumerRecord.partition());
+            Exchange childExchange = toExchange(camelKafkaConsumer, tp, consumerRecord);
+
+            exchangeList.add(childExchange);
+
+            if (exchangeList.size() == configuration.getMaxPollRecords()) {
+                processBatch(camelKafkaConsumer);
+                exchangeList = null;
+            }
+        }
+
+        // None of the states provided by the processing result are relevant for batch processing. We can simply return the
+        // default state
+        return ProcessingResult.newUnprocessed();
+
+    }
+
+    private boolean hasExpiredRecords(ConsumerRecords<Object, Object> consumerRecords) {
+        return !exchangeList.isEmpty() && consumerRecords.isEmpty() && watch.taken() >= configuration.getPollTimeoutMs();
+    }
+
+    private ProcessingResult processBatch(KafkaConsumer camelKafkaConsumer) {
         // Create the bundle exchange
         final Exchange exchange = camelKafkaConsumer.createExchange(false);
         final Message message = exchange.getMessage();

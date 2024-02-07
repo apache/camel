@@ -206,7 +206,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         for (Exchange exchange : exchangeList) {
             @SuppressWarnings("unchecked")
             List<RecordMetadata> recordMetaData1
-                    = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+                    = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORD_META));
             assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).offset() >= 0, "Offset is positive");
             assertTrue(recordMetaData1.get(0).topic().startsWith("test"), "Topic Name start with 'test'");
@@ -238,7 +238,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         for (Exchange exchange : exchangeList) {
             @SuppressWarnings("unchecked")
             List<RecordMetadata> recordMetaData1
-                    = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+                    = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORD_META));
             assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).offset() >= 0, "Offset is positive");
             assertTrue(recordMetaData1.get(0).topic().startsWith("test"), "Topic Name start with 'test'");
@@ -299,7 +299,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         assertEquals(2, exchangeList.size(), "Two Exchanges are expected");
         Exchange e1 = exchangeList.get(0);
         @SuppressWarnings("unchecked")
-        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (e1.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (e1.getIn().getHeader(KafkaConstants.KAFKA_RECORD_META));
         assertEquals(10, recordMetaData1.size(), "Ten RecordMetadata is expected.");
         for (RecordMetadata recordMeta : recordMetaData1) {
             assertTrue(recordMeta.offset() >= 0, "Offset is positive");
@@ -307,7 +307,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         }
         Exchange e2 = exchangeList.get(1);
         @SuppressWarnings("unchecked")
-        List<RecordMetadata> recordMetaData2 = (List<RecordMetadata>) (e2.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+        List<RecordMetadata> recordMetaData2 = (List<RecordMetadata>) (e2.getIn().getHeader(KafkaConstants.KAFKA_RECORD_META));
         assertEquals(5, recordMetaData2.size(), "Five RecordMetadata is expected.");
         for (RecordMetadata recordMeta : recordMetaData2) {
             assertTrue(recordMeta.offset() >= 0, "Offset is positive");
@@ -346,7 +346,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         for (Exchange exchange : exchangeList) {
             @SuppressWarnings("unchecked")
             List<RecordMetadata> recordMetaData1
-                    = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+                    = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORD_META));
             assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).offset() >= 0, "Offset is positive");
             assertTrue(recordMetaData1.get(0).topic().startsWith("test"), "Topic Name start with 'test'");

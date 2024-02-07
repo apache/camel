@@ -882,7 +882,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * @return         the builder to continue processing the DSL
      */
     public T tokenizeXML(String tagName) {
-        return tokenizeXML(tagName, null);
+        return delegate.tokenizeXMLPair(tagName, null, null);
     }
 
     /**
@@ -904,7 +904,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * @return                         the builder to continue processing the DSL
      */
     public T tokenizeXML(String tagName, String inheritNamespaceTagName) {
-        return tokenizeXML(tagName, inheritNamespaceTagName, 0);
+        return delegate.tokenizeXMLPair(tagName, inheritNamespaceTagName, null);
     }
 
     /**

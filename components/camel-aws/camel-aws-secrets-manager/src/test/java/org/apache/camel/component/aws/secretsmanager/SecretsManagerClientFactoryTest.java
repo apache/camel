@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.secretsmanager;
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerClientFactory;
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerInternalClient;
 import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerClientIAMOptimized;
+import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerClientSessionTokenImpl;
 import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -50,5 +51,14 @@ public class SecretsManagerClientFactoryTest {
         SecretsManagerInternalClient secretsManagerClient
                 = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
         assertTrue(secretsManagerClient instanceof SecretsManagerClientIAMOptimized);
+    }
+
+    @Test
+    public void getSecretsManagerSessionTokenClient() {
+        SecretsManagerConfiguration secretsManagerConfiguration = new SecretsManagerConfiguration();
+        secretsManagerConfiguration.setUseSessionCredentials(true);
+        SecretsManagerInternalClient secretsManagerClient
+                = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
+        assertTrue(secretsManagerClient instanceof SecretsManagerClientSessionTokenImpl);
     }
 }

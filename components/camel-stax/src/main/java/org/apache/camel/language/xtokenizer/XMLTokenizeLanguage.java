@@ -16,18 +16,17 @@
  */
 package org.apache.camel.language.xtokenizer;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.SingleInputLanguageSupport;
+import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.IteratorConvertTo;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.builder.Namespaces;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A language for tokenizer expressions.
@@ -41,153 +40,67 @@ import org.apache.camel.util.ObjectHelper;
  * </ul>
  */
 @Language("xtokenize")
-public class XMLTokenizeLanguage extends SingleInputLanguageSupport implements PropertyConfigurer {
+public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
 
-    private String path;
-    private char mode;
-    private int group;
-    private Namespaces namespaces;
-
-    @Deprecated
-    public static Expression tokenize(String path) {
-        return tokenize(null, path, 'i');
-    }
-
-    @Deprecated
-    public static Expression tokenize(String path, char mode) {
-        return tokenize(null, path, mode);
-    }
-
-    @Deprecated
-    public static Expression tokenize(String headerName, String path) {
-        return tokenize(headerName, path, 'i');
-    }
-
-    @Deprecated
-    public static Expression tokenize(String headerName, String path, char mode) {
-        return tokenize(headerName, path, mode, 1, null);
-    }
-
-    @Deprecated
-    public static Expression tokenize(String headerName, String path, char mode, int group, Namespaces namespaces) {
-        XMLTokenizeLanguage language = new XMLTokenizeLanguage();
-        language.setHeaderName(headerName);
-        language.setMode(mode);
-        language.setGroup(group);
-        language.setNamespaces(namespaces);
-        return language.createExpression(path);
+    @Override
+    protected boolean supportResultType() {
+        // result type is handled specially in tokenizer
+        return false;
     }
 
     @Override
-    public Predicate createPredicate(String expression) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
-    }
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
+        Class<?> type = property(Class.class, properties, 0, null);
+        Character mode = property(Character.class, properties, 4, "i");
 
-    /**
-     * Creates a tokenize expression.
-     */
-    @Override
-    public Expression createExpression(String expression) {
-        String path = expression != null ? expression : this.path;
-        ObjectHelper.notNull(path, "path");
-        XMLTokenExpressionIterator expr = new XMLTokenExpressionIterator(path, mode, group, getHeaderName(), getPropertyName());
-        if (namespaces != null) {
-            expr.setNamespaces(namespaces.getNamespaces());
-        }
-        return expr;
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
-    }
-
-    @Override
-    public Expression createExpression(String expression, Object[] properties) {
-        XMLTokenizeLanguage answer = new XMLTokenizeLanguage();
-        answer.setHeaderName(property(String.class, properties, 0, getHeaderName()));
-        answer.setMode(property(Character.class, properties, 1, "i"));
-        answer.setGroup(property(Integer.class, properties, 2, group));
-        Object obj = properties[3];
+        XMLTokenExpressionIterator xml = new XMLTokenExpressionIterator(source, expression, mode);
+        xml.setGroup(property(int.class, properties, 5, 1));
+        Object obj = properties[6];
         if (obj != null) {
+            Namespaces ns;
             if (obj instanceof Namespaces) {
-                answer.setNamespaces((Namespaces) obj);
+                ns = (Namespaces) obj;
             } else if (obj instanceof Map) {
-                Namespaces ns = new Namespaces();
+                ns = new Namespaces();
                 ((Map<String, String>) obj).forEach(ns::add);
-                answer.setNamespaces(ns);
             } else {
                 throw new IllegalArgumentException(
                         "Namespaces is not instance of java.util.Map or " + Namespaces.class.getName());
             }
+            xml.setNamespaces(ns.getNamespaces());
         }
-        String path = expression != null ? expression : this.path;
-        answer.setPropertyName(property(String.class, properties, 4, getPropertyName()));
-        answer.setVariableName(property(String.class, properties, 5, getVariableName()));
-        return answer.createExpression(path);
-    }
+        Expression answer = xml;
 
-    public String getPath() {
-        return path;
-    }
+        if (type != null && type != Object.class) {
+            // wrap iterator in a converter
+            final Expression delegate = xml;
+            answer = new ExpressionAdapter() {
+                @Override
+                public Object evaluate(Exchange exchange) {
+                    Object value = delegate.evaluate(exchange, Object.class);
+                    if (value instanceof Iterator<?> it) {
+                        value = new IteratorConvertTo(exchange, it, type);
+                    }
+                    return value;
+                }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+                @Override
+                public void init(CamelContext context) {
+                    super.init(context);
+                    delegate.init(context);
+                }
 
-    public char getMode() {
-        return mode;
-    }
-
-    public void setMode(char mode) {
-        this.mode = mode;
-    }
-
-    public int getGroup() {
-        return group;
-    }
-
-    public void setGroup(int group) {
-        this.group = group;
-    }
-
-    public Namespaces getNamespaces() {
-        return namespaces;
-    }
-
-    public void setNamespaces(Namespaces namespaces) {
-        this.namespaces = namespaces;
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
+                @Override
+                public String toString() {
+                    return delegate.toString();
+                }
+            };
         }
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "propertyname":
-            case "propertyName":
-                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "variablename":
-            case "variableName":
-                setVariableName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "mode":
-                setMode(PropertyConfigurerSupport.property(camelContext, char.class, value));
-                return true;
-            case "group":
-                setGroup(PropertyConfigurerSupport.property(camelContext, int.class, value));
-                return true;
-            case "namespaces":
-                setNamespaces(PropertyConfigurerSupport.property(camelContext, Namespaces.class, value));
-                return true;
-            default:
-                return false;
+
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
         }
+        return answer;
     }
+
 }

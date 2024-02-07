@@ -19,10 +19,8 @@ package org.apache.camel.language.jq;
 import net.thisptr.jackson.jq.Scope;
 import net.thisptr.jackson.jq.module.loaders.BuiltinModuleLoader;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -58,34 +56,14 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
     }
 
     @Override
-    public Predicate createPredicate(String expression) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
-    }
-
-    @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         JqExpression answer = new JqExpression(Scope.newChildScope(rootScope), expression);
-        answer.setResultType(getResultType());
-        answer.setVariableName(getVariableName());
-        answer.setHeaderName(getHeaderName());
-        answer.setPropertyName(getPropertyName());
-        answer.init(getCamelContext());
+        answer.setResultType(property(Class.class, properties, 0, null));
+        answer.setSource(source);
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
     }
 
-    @Override
-    public Expression createExpression(String expression, Object[] properties) {
-        JqExpression answer = new JqExpression(Scope.newChildScope(rootScope), expression);
-        answer.setResultType(property(Class.class, properties, 0, getResultType()));
-        answer.setVariableName(property(String.class, properties, 1, getVariableName()));
-        answer.setHeaderName(property(String.class, properties, 2, getHeaderName()));
-        answer.setPropertyName(property(String.class, properties, 3, getPropertyName()));
-        answer.init(getCamelContext());
-        return answer;
-    }
 }

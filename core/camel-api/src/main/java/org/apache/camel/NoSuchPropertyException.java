@@ -20,15 +20,18 @@ package org.apache.camel;
  * An exception caused when a mandatory property is not available on a message {@link Exchange}
  *
  * @see org.apache.camel.support.ExchangeHelper#getMandatoryProperty(Exchange, String, Class)
- *
  */
 public class NoSuchPropertyException extends CamelExchangeException {
 
     private final String propertyName;
     private final transient Class<?> type;
 
+    public NoSuchPropertyException(Exchange exchange, String propertyName) {
+        this(exchange, propertyName, null);
+    }
+
     public NoSuchPropertyException(Exchange exchange, String propertyName, Class<?> type) {
-        super("No '" + propertyName + "' property available of type: " + type.getName()
+        super("No '" + propertyName + "' exchange property available" + (type != null ? " of type: " + type.getName() : "")
               + reason(exchange, propertyName), exchange);
         this.propertyName = propertyName;
         this.type = type;

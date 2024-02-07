@@ -26,8 +26,14 @@ public class NoSuchHeaderException extends CamelExchangeException {
     private final String headerName;
     private final transient Class<?> type;
 
+    public NoSuchHeaderException(String message, Exchange exchange, String headerName) {
+        super(message, exchange);
+        this.headerName = headerName;
+        this.type = null;
+    }
+
     public NoSuchHeaderException(Exchange exchange, String headerName, Class<?> type) {
-        super("No '" + headerName + "' header available of type: " + type.getName()
+        super("No '" + headerName + "' header available" + (type != null ? " of type: " + type.getName() : "")
               + reason(exchange, headerName), exchange);
         this.headerName = headerName;
         this.type = type;
@@ -41,8 +47,8 @@ public class NoSuchHeaderException extends CamelExchangeException {
         return type;
     }
 
-    protected static String reason(Exchange exchange, String propertyName) {
-        Object value = exchange.getProperty(propertyName);
+    protected static String reason(Exchange exchange, String headerName) {
+        Object value = exchange.getMessage().getHeader(headerName);
         return valueDescription(value);
     }
 

@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "3.7.0", label = "language,transformation", title = "DataSonnet")
 @XmlRootElement(name = "datasonnet")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DatasonnetExpression extends TypedExpressionDefinition {
+public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute(name = "bodyMediaType")
     private String bodyMediaType;

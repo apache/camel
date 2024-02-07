@@ -55,6 +55,10 @@ public class WasmExpression extends ExpressionAdapter implements ExpressionResul
     public void init(CamelContext camelContext) {
         super.init(camelContext);
 
+        if (module == null) {
+            throw new IllegalArgumentException("Module must be configured");
+        }
+
         this.typeConverter = camelContext.getTypeConverter();
 
         if (resultTypeName != null && (resultType == null || resultType == Object.class)) {

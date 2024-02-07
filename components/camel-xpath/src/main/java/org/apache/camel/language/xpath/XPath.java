@@ -54,16 +54,17 @@ public @interface XPath {
     Class<?> resultType() default Object.class;
 
     /**
-     * The name of the header we want to apply the XPath expression to. If this is empty then the XPath expression will
-     * be applied to the exchange property or the body instead.
+     * The name of the variable we want to apply the XPath expression to.
+     */
+    String variableName() default "";
+
+    /**
+     * The name of the message header we want to apply the XPath expression to.
      */
     String headerName() default "";
 
     /**
-     * The name of the header we want to apply the XPath expression to. If this is empty then the XPath expression will
-     * be applied to the body instead.
-     * <p>
-     * It has a lower precedent than the name of header if both are set.
+     * The name of the exchange propery we want to apply the XPath expression to.
      */
     String propertyName() default "";
 

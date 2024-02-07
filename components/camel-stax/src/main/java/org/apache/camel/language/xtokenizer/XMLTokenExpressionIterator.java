@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +38,10 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExpressionAdapter;
@@ -57,21 +59,23 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     protected final String path;
     protected char mode;
     protected int group;
-    protected String headerName;
-    protected String propertyName;
-    protected String variableName;
+    protected Expression source;
     protected Map<String, String> nsmap;
 
     public XMLTokenExpressionIterator(String path, char mode) {
-        this(path, mode, 1, null, null);
+        this(null, path, mode);
     }
 
-    public XMLTokenExpressionIterator(String path, char mode, int group, String headerName, String propertyName) {
-        StringHelper.notEmpty(path, "path");
-        this.headerName = headerName;
-        this.propertyName = propertyName;
+    public XMLTokenExpressionIterator(Expression source, String path, char mode) {
+        this.source = source;
         this.path = path;
         this.mode = mode;
+    }
+
+    @Override
+    public void init(CamelContext context) {
+        super.init(context);
+        // group must be 1 or higher
         this.group = Math.max(group, 1);
     }
 
@@ -99,30 +103,6 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
     public void setGroup(int group) {
         this.group = group;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
-    public String getVariableName() {
-        return variableName;
-    }
-
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
     }
 
     protected Iterator<?> createIterator(InputStream in, String charset)
@@ -161,32 +141,29 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
      * @return             the evaluated value
      */
     protected Object doEvaluate(Exchange exchange, boolean closeStream) {
+        InputStream in = null;
         Reader reader = null;
         try {
-            if (headerName != null) {
-                String val = exchange.getIn().getHeader(headerName, String.class);
-                reader = new StringReader(val);
-            } else if (propertyName != null) {
-                String val = exchange.getProperty(propertyName, String.class);
-                reader = new StringReader(val);
-            } else if (variableName != null) {
-                String val = exchange.getVariable(variableName, String.class);
-                reader = new StringReader(val);
+            if (source != null) {
+                in = source.evaluate(exchange, InputStream.class);
             } else {
-                InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
-                // use xml stream reader which is capable of handling reading the xml stream
-                // according to <xml encoding> charset
-                reader = new XmlStreamReader(in);
+                in = exchange.getIn().getBody(InputStream.class);
             }
+            if (in == null) {
+                throw new InvalidPayloadException(exchange, InputStream.class);
+            }
+            // use xml stream reader which is capable of handling reading the xml stream
+            // according to <xml encoding> charset
+            reader = new XmlStreamReader(in);
             return createIterator(reader);
         } catch (Exception e) {
             exchange.setException(e);
             // must close input stream
-            IOHelper.close(reader);
+            IOHelper.close(in, reader);
             return null;
         } finally {
             if (closeStream) {
-                IOHelper.close(reader);
+                IOHelper.close(in, reader);
             }
         }
     }

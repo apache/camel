@@ -16,19 +16,46 @@
  */
 package org.apache.camel.language;
 
+import java.util.Iterator;
+
 import org.apache.camel.model.language.XQueryExpression;
 
 /**
  * Ensures that the "xquery" language is compliant with the single input expectations.
  */
-class XQueryLanguageTest extends AbstractSingleInputLanguageTest<XQueryExpression.Builder, XQueryExpression> {
+class XQueryLanguageTest extends AbstractSingleInputTypedLanguageTest<XQueryExpression.Builder, XQueryExpression> {
 
     XQueryLanguageTest() {
         super("/foo/text()", factory -> factory.xquery().resultType(String.class));
     }
 
     @Override
-    protected TestContext testContext() {
-        return new TestContext("<foo>John</foo>", "John", String.class);
+    protected Object defaultContentToSend() {
+        return "<foo>John</foo>";
     }
+
+    @Override
+    protected TestContext testWithTypeContext() {
+        return new TestContext(defaultContentToSend(), "John", String.class);
+    }
+
+    @Override
+    protected TestContext testWithoutTypeContext() {
+        return new TestContext(defaultContentToSend(), "John", null);
+    }
+
+    @Override
+    protected void assertTypeInstanceOf(Class<?> expected, Object body) {
+        // noop
+    }
+
+    @Override
+    protected void assertBodyReceived(Object expected, Object body) {
+        // uses an iterator, so we need to walk it to get the body
+        if (body instanceof Iterator<?> it) {
+            body = it.next();
+        }
+        super.assertBodyReceived(expected, body);
+    }
+
 }

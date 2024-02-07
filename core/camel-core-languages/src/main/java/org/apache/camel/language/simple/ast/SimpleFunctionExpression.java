@@ -182,7 +182,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (exp == null) {
                 throw new SimpleParserException("Valid syntax: ${pretty(exp)} was: " + function, token.getIndex());
             }
-            exp = StringHelper.removeQuotes(exp);
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
             Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
             return ExpressionBuilder.prettyExpression(inlined);
         }
@@ -265,11 +265,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
 
             // there are parameters then map them into properties
-            Object[] properties = new Object[5];
-            properties[2] = type;
-            properties[3] = ref;
-            properties[1] = method;
-            properties[4] = scope;
+            Object[] properties = new Object[7];
+            properties[3] = type;
+            properties[4] = ref;
+            properties[2] = method;
+            properties[5] = scope;
             return bean.createExpression(null, properties);
         }
 
@@ -533,7 +533,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (exp == null) {
                 throw new SimpleParserException("Valid syntax: ${jq(exp)} was: " + function, token.getIndex());
             }
-            exp = StringHelper.removeQuotes(exp);
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
             if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
@@ -549,7 +549,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (exp == null) {
                 throw new SimpleParserException("Valid syntax: ${jsonpath(exp)} was: " + function, token.getIndex());
             }
-            exp = StringHelper.removeQuotes(exp);
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
             if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
@@ -564,7 +564,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (exp == null) {
                 throw new SimpleParserException("Valid syntax: ${xpath(exp)} was: " + function, token.getIndex());
             }
-            exp = StringHelper.removeQuotes(exp);
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
             if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");

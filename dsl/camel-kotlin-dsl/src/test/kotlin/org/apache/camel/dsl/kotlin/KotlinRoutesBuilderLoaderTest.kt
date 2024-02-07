@@ -157,13 +157,13 @@ class KotlinRoutesBuilderLoaderTest {
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
+        ctx.start()
+
         val bean = ctx.resolveLanguage("bean") as BeanLanguage
-        assertThat(bean.beanType).isEqualTo(String::class.java)
-        assertThat(bean.method).isEqualTo("toUpperCase")
+        assertThat(bean.isValidate).isFalse()
 
         val mybean = ctx.resolveLanguage("my-bean") as BeanLanguage
-        assertThat(mybean.beanType).isEqualTo(String::class.java)
-        assertThat(mybean.method).isEqualTo("toLowerCase")
+        assertThat(mybean.isValidate).isTrue()
     }
 
     @Test

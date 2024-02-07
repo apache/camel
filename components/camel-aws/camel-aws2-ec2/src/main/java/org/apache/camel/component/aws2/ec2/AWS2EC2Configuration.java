@@ -33,10 +33,12 @@ public class AWS2EC2Configuration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(label = "advanced", autowired = true)
     private Ec2Client amazonEc2Client;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "producer,security", secret = true)
     private String accessKey;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "producer,security", secret = true)
     private String secretKey;
+    @UriParam(label = "producer,security", secret = true)
+    private String sessionToken;
     @UriParam(label = "producer")
     @Metadata(required = true)
     private AWS2EC2Operations operation;
@@ -60,6 +62,8 @@ public class AWS2EC2Configuration implements Cloneable {
     private boolean useDefaultCredentialsProvider;
     @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
+    @UriParam(label = "security")
+    private boolean useSessionCredentials;
     @UriParam(label = "security")
     private String profileCredentialsName;
 
@@ -94,6 +98,17 @@ public class AWS2EC2Configuration implements Cloneable {
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    /**
+     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     */
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
     }
 
     public AWS2EC2Operations getOperation() {
@@ -220,6 +235,18 @@ public class AWS2EC2Configuration implements Cloneable {
      */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
+    }
+
+    public boolean isUseSessionCredentials() {
+        return useSessionCredentials;
+    }
+
+    /**
+     * Set whether the EC2 client should expect to use Session Credentials. This is useful in situation in which the
+     * user needs to assume a IAM role for doing operations in EC2.
+     */
+    public void setUseSessionCredentials(boolean useSessionCredentials) {
+        this.useSessionCredentials = useSessionCredentials;
     }
 
     public String getProfileCredentialsName() {

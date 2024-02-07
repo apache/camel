@@ -12670,6 +12670,11 @@
               "title" : "Expression",
               "description" : "The expression value in your chosen language syntax"
             },
+            "headerName" : {
+              "type" : "string",
+              "title" : "Header Name",
+              "description" : "Name of header to use as input, instead of the message body"
+            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -12680,6 +12685,11 @@
               "title" : "Output Media Type",
               "description" : "The String representation of the MediaType to output"
             },
+            "propertyName" : {
+              "type" : "string",
+              "title" : "Property Name",
+              "description" : "Name of property to use as input, instead of the message body."
+            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
@@ -12689,6 +12699,11 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
+            },
+            "variableName" : {
+              "type" : "string",
+              "title" : "Variable Name",
+              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13042,7 +13057,7 @@
             "headerName" : {
               "type" : "string",
               "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body It has as higher precedent than the propertyName if both are set."
+              "description" : "Name of header to use as input, instead of the message body"
             },
             "id" : {
               "type" : "string",
@@ -13052,7 +13067,7 @@
             "propertyName" : {
               "type" : "string",
               "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set."
+              "description" : "Name of property to use as input, instead of the message body."
             },
             "resultType" : {
               "type" : "string",
@@ -13067,7 +13082,7 @@
             "variableName" : {
               "type" : "string",
               "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body It has as higher precedent if other are set."
+              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13210,7 +13225,7 @@
             "headerName" : {
               "type" : "string",
               "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body It has as higher precedent than the propertyName if both are set."
+              "description" : "Name of header to use as input, instead of the message body"
             },
             "id" : {
               "type" : "string",
@@ -13220,7 +13235,7 @@
             "propertyName" : {
               "type" : "string",
               "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set."
+              "description" : "Name of property to use as input, instead of the message body."
             },
             "resultType" : {
               "type" : "string",
@@ -13235,7 +13250,7 @@
             "variableName" : {
               "type" : "string",
               "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body It has as higher precedent if other are set."
+              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13268,7 +13283,7 @@
             "headerName" : {
               "type" : "string",
               "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body It has as higher precedent than the propertyName if both are set."
+              "description" : "Name of header to use as input, instead of the message body"
             },
             "id" : {
               "type" : "string",
@@ -13284,7 +13299,7 @@
             "propertyName" : {
               "type" : "string",
               "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set."
+              "description" : "Name of property to use as input, instead of the message body."
             },
             "resultType" : {
               "type" : "string",
@@ -13309,7 +13324,7 @@
             "variableName" : {
               "type" : "string",
               "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body It has as higher precedent if other are set."
+              "description" : "Name of variable to use as input, instead of the message body"
             },
             "writeAsString" : {
               "type" : "boolean",
@@ -13628,7 +13643,7 @@
             "headerName" : {
               "type" : "string",
               "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body It has as higher precedent than the propertyName if both are set."
+              "description" : "Name of header to use as input, instead of the message body"
             },
             "id" : {
               "type" : "string",
@@ -13648,12 +13663,17 @@
             "propertyName" : {
               "type" : "string",
               "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set."
+              "description" : "Name of property to use as input, instead of the message body."
             },
             "regex" : {
               "type" : "boolean",
               "title" : "Regex",
               "description" : "If the token is a regular expression pattern. The default value is false"
+            },
+            "resultType" : {
+              "type" : "string",
+              "title" : "Result Type",
+              "description" : "Sets the class of the result type (type from output)"
             },
             "skipFirst" : {
               "type" : "boolean",
@@ -13772,7 +13792,7 @@
             "headerName" : {
               "type" : "string",
               "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body It has as higher precedent than the propertyName if both are set."
+              "description" : "Name of header to use as input, instead of the message body"
             },
             "id" : {
               "type" : "string",
@@ -13797,7 +13817,12 @@
             "propertyName" : {
               "type" : "string",
               "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set."
+              "description" : "Name of property to use as input, instead of the message body."
+            },
+            "resultType" : {
+              "type" : "string",
+              "title" : "Result Type",
+              "description" : "Sets the class of the result type (type from output)"
             },
             "trim" : {
               "type" : "boolean",
@@ -13840,7 +13865,7 @@
             "headerName" : {
               "type" : "string",
               "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body It has as higher precedent than the propertyName if both are set."
+              "description" : "Name of header to use as input, instead of the message body"
             },
             "id" : {
               "type" : "string",
@@ -13873,14 +13898,19 @@
             "propertyName" : {
               "type" : "string",
               "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set."
+              "description" : "Name of property to use as input, instead of the message body."
+            },
+            "resultQName" : {
+              "type" : "string",
+              "title" : "Result QName",
+              "description" : "Sets the output type supported by XPath.",
+              "default" : "NODESET",
+              "enum" : [ "NUMBER", "STRING", "BOOLEAN", "NODESET", "NODE" ]
             },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
-              "description" : "Sets the class name of the result type (type from output) The default result type is NodeSet",
-              "default" : "NODESET",
-              "enum" : [ "NUMBER", "STRING", "BOOLEAN", "NODESET", "NODE" ]
+              "description" : "Sets the class of the result type (type from output)"
             },
             "saxon" : {
               "type" : "boolean",
@@ -13928,7 +13958,7 @@
             "headerName" : {
               "type" : "string",
               "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body It has as higher precedent than the propertyName if both are set."
+              "description" : "Name of header to use as input, instead of the message body"
             },
             "id" : {
               "type" : "string",
@@ -13946,7 +13976,7 @@
             "propertyName" : {
               "type" : "string",
               "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body. It has a lower precedent than the headerName if both are set."
+              "description" : "Name of property to use as input, instead of the message body."
             },
             "resultType" : {
               "type" : "string",
@@ -13957,11 +13987,6 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
-            },
-            "type" : {
-              "type" : "string",
-              "title" : "Type",
-              "description" : "Sets the class name of the result type (type from output) The default result type is NodeSet"
             },
             "variableName" : {
               "type" : "string",

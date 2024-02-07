@@ -21,7 +21,7 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(35);
         props.add("allowStAX");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -56,6 +56,7 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
         props.add("stripsAllWhiteSpace");
         props.add("timeUnit");
         props.add("useFixedDelay");
+        props.add("variableName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

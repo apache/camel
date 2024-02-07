@@ -30,8 +30,8 @@ public class JoorExpressionReifier extends TypedExpressionReifier<JoorExpression
     @Override
     protected Object[] createProperties() {
         Object[] properties = new Object[3];
-        properties[0] = parseBoolean(definition.getPreCompile());
-        properties[1] = definition.getResultType();
+        properties[0] = asResultType();
+        properties[1] = parseBoolean(definition.getPreCompile());
         properties[2] = parseBoolean(definition.getSingleQuotes());
         return properties;
     }

@@ -75,11 +75,11 @@ public final class ProducerUtil {
     public static void setRecordMetadata(Object body, List<RecordMetadata> recordMetadataList) {
         if (body instanceof Exchange) {
             Exchange ex = (Exchange) body;
-            ex.getMessage().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadataList);
+            ex.getMessage().setHeader(KafkaConstants.KAFKA_RECORD_META, recordMetadataList);
         }
         if (body instanceof Message) {
             Message msg = (Message) body;
-            msg.setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadataList);
+            msg.setHeader(KafkaConstants.KAFKA_RECORD_META, recordMetadataList);
         }
     }
 }

@@ -57,8 +57,15 @@ from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZipped
 
 == Dependencies
 
-This data format is provided in *camel-core* so no additional
-dependencies is needed.
+If you use Maven you could just add the following to your `pom.xml`, substituting the version number for the latest and greatest release (see the download page for the latest versions).
 
+[source,xml]
+---------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-zip-deflater</artifactId>
+  <version>x.x.x</version>
+</dependency>
+---------------------------------------
 
 include::spring-boot:partial$starter.adoc[]

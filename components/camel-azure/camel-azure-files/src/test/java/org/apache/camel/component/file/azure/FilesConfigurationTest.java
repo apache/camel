@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.azure;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,18 +25,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FilesConfigurationTest extends CamelTestSupport {
 
     @Test
-    @Disabled("It's not clear how account should be extracted")
     void accountForAccountHostURIShouldBeExtracted() {
         var remoteConf = context
                 .getEndpoint("azure-files://account.file.core.windows.net/share", FilesEndpoint.class)
                 .getConfiguration();
-        assertEquals("account", remoteConf.getAccount());
+        assertEquals("share", remoteConf.getShare());
+        assertEquals("account.file.core.windows.net", remoteConf.getAccount());
     }
 
     @Test
-    @Disabled("It's not clear how account should be extracted")
     void accountForAccountOnlyURIShouldBeExtracted() {
         var remoteConf = context.getEndpoint("azure-files://account/share", FilesEndpoint.class).getConfiguration();
+        assertEquals("share", remoteConf.getShare());
         assertEquals("account", remoteConf.getAccount());
     }
 
@@ -50,7 +49,6 @@ public class FilesConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    @Disabled("It's not clear how account should be extracted")
     void hostForAccountURIShouldDefaultToFileCoreWindowsNetSuffix() {
         var remoteConf = context.getEndpoint("azure-files://account/share", FilesEndpoint.class).getConfiguration();
         assertEquals("account.file.core.windows.net", remoteConf.getHost());
