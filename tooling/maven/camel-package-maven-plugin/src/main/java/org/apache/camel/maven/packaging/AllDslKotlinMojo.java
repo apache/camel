@@ -50,6 +50,7 @@ import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.text.CaseUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -84,6 +85,9 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "org.apache.camel.kotlin.dataformats")
     protected String dataFormatsPackageName;
 
+    @Parameter(defaultValue = "org.apache.camel.kotlin.languages")
+    protected String languagesPackageName;
+
     @Parameter
     protected File sourcesOutputDir;
 
@@ -95,6 +99,9 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/dataformats")
     protected File dataFormatsJsonDir;
+
+    @Parameter(defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/languages")
+    protected File languagesJsonDir;
 
     private transient String licenseHeader;
 
@@ -132,13 +139,112 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error loading license-header-java.txt file", e);
         }
 
-        executeDataFormats();
+        ClassLoader classLoader = constructClassLoaderForCamelProjects(
+                "core/camel-core-model", "core/camel-api");
+
+        executeLanguages(classLoader);
+        executeDataFormats(classLoader);
         executeComponents();
+    }
+
+    // --- Languages DSL ---
+
+    private void executeLanguages(ClassLoader classLoader) throws MojoFailureException {
+        List<LanguageModel> models = new ArrayList<>();
+
+        for (File file : languagesJsonDir.listFiles()) {
+            try {
+                LanguageModel result = JsonMapper.generateLanguageModel(Files.readString(file.toPath()));
+                models.add(result);
+            } catch (IOException e) {
+                throw new MojoFailureException("Error while reading language from catalog", e);
+            }
+        }
+
+        for (LanguageModel model : models) {
+            createLanguageDsl(model, classLoader);
+        }
+    }
+
+    private void createLanguageDsl(LanguageModel model, ClassLoader classLoader) throws MojoFailureException {
+        String name = model.getName();
+        getLog().info("Generating Language DSL for " + name);
+        String pascalCaseName = toPascalCase(name);
+        String dslClassName = pascalCaseName + "LanguageDsl";
+        Class<?> clazz;
+        try {
+            clazz = classLoader.loadClass(model.getModelJavaType());
+        } catch (ClassNotFoundException e) {
+            throw new MojoFailureException("Error while discovering class", e);
+        }
+
+        String funName = name;
+        if (name.contains("-") || name.contains("+")) {
+            funName = "`" + name + "`";
+        }
+        ClassName language = ClassName.bestGuess(model.getModelJavaType());
+
+        FunSpec.Builder funBuilder = FunSpec.builder(funName);
+        funBuilder.addParameter(funName, TypeNames.STRING);
+        funBuilder.addParameter(ParameterSpec
+                .builder("i", LambdaTypeName.get(
+                        new ClassName(languagesPackageName, dslClassName),
+                        new ArrayList<>(),
+                        TypeNames.UNIT))
+                .defaultValue("{}")
+                .build());
+        funBuilder.addCode("""
+                val def = %s(%s)
+                %s(def).apply(i)
+                return def
+                """.formatted(language.getSimpleName(), funName, dslClassName));
+        funBuilder.returns(language);
+
+        TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(dslClassName);
+        typeBuilder.addAnnotation(new ClassName("org.apache.camel.kotlin", "CamelDslMarker"));
+        typeBuilder.primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter("def", language)
+                .build());
+        typeBuilder.addProperty("def", language);
+        typeBuilder.addInitializerBlock(CodeBlock.of("this.def = def\n"));
+
+        for (LanguageModel.LanguageOptionModel property : model.getOptions()) {
+            String propertyName = property.getName();
+            if (propertyName.equals("expression")) {
+                continue;
+            }
+            Field field = FieldUtils.getField(clazz, propertyName, true);
+            if (field == null) {
+                MojoFailureException ex = new MojoFailureException(
+                        "Not found field %s for class %s".formatted(propertyName, clazz.getCanonicalName()));
+                getLog().error(ex);
+                throw ex;
+            }
+            TypeName javaType = parseJavaType(property.getJavaType());
+
+            if (field.getType().equals(String.class) && !javaType.equals(TypeNames.STRING)) {
+                appendPropertyBuilder(typeBuilder, propertyName, javaType, true);
+                appendPropertyBuilder(typeBuilder, propertyName, TypeNames.STRING, false);
+            } else if (field.getType().equals(Class.class)) {
+                TypeName clazzTypeName = ParameterizedTypeName.get(
+                        new ClassName("java.lang", "Class"),
+                        WildcardTypeName.producerOf(TypeNames.ANY));
+                appendPropertyBuilder(typeBuilder, propertyName, clazzTypeName, false);
+            } else {
+                appendPropertyBuilder(typeBuilder, propertyName, javaType, false);
+            }
+        }
+
+        writeSource(
+                FileSpec.builder(languagesPackageName, model.getName())
+                        .addFunction(funBuilder.build())
+                        .addType(typeBuilder.build()),
+                dslClassName, languagesPackageName);
     }
 
     // --- DataFormat DSL ---
 
-    private void executeDataFormats() throws MojoFailureException {
+    private void executeDataFormats(ClassLoader classLoader) throws MojoFailureException {
         List<DataFormatModel> models = new ArrayList<>();
 
         for (File file : dataFormatsJsonDir.listFiles()) {
@@ -151,19 +257,17 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         }
 
         for (DataFormatModel model : models) {
-            createDataFormatDsl(model);
+            createDataFormatDsl(model, classLoader);
         }
     }
 
-    private void createDataFormatDsl(DataFormatModel model) throws MojoFailureException {
+    private void createDataFormatDsl(DataFormatModel model, ClassLoader classLoader) throws MojoFailureException {
         String name = model.getName();
         getLog().info("Generating DataFormat DSL for " + name);
         String pascalCaseName = toPascalCase(name);
         String dslClassName = pascalCaseName + "DataFormatDsl";
         Class<?> clazz;
         try {
-            ClassLoader classLoader = constructClassLoaderForCamelProjects(
-                    "core/camel-core-model", "core/camel-api");
             clazz = classLoader.loadClass(model.getModelJavaType());
         } catch (ClassNotFoundException e) {
             throw new MojoFailureException("Error while discovering class", e);

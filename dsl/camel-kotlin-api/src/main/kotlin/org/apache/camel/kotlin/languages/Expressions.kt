@@ -14,11 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.kotlin
+package org.apache.camel.kotlin.languages
 
 import org.apache.camel.Expression
 import org.apache.camel.builder.ExpressionBuilder
+import org.apache.camel.builder.ValueBuilder
+import org.apache.camel.model.PropertyDefinition
 
 fun body(): Expression {
     return ExpressionBuilder.bodyExpression()
+}
+
+fun Expression.which(): ValueBuilder {
+    return ValueBuilder(this)
+}
+
+fun XpathLanguageDsl.namespace(namespace: Map<String, String>) {
+    this.namespace(namespace.entries.map { PropertyDefinition(it.key, it.value) }.toMutableList())
+}
+
+fun XqueryLanguageDsl.namespace(namespace: Map<String, String>) {
+    this.namespace(namespace.entries.map { PropertyDefinition(it.key, it.value) }.toMutableList())
 }

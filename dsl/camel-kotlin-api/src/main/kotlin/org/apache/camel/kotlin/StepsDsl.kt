@@ -20,6 +20,7 @@ import org.apache.camel.Exchange
 import org.apache.camel.ExchangePattern
 import org.apache.camel.Expression
 import org.apache.camel.Predicate
+import org.apache.camel.kotlin.languages.constant
 import org.apache.camel.kotlin.model.*
 import org.apache.camel.model.*
 import org.apache.camel.spi.DataType

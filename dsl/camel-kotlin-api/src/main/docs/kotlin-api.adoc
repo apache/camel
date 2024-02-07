@@ -304,7 +304,7 @@ When you cross-reference beans like in example (bean `test` reference `map`) be 
 
 == Using languages, expressions and predicates
 
-There are a number of functions that provides Camel languages like `constant` or `simple` and a number of helper functions for building predicates/expressions like `body` or `header`. All of them are in the package `org.apache.camel.kotlin`.
+There are a number of functions that provides Camel languages like `constant` or `simple` and a number of helper functions for building predicates/expressions like `body` or `header`. All of them are in the package `org.apache.camel.kotlin.languages`.
 
 There are two useful extension functions:
 

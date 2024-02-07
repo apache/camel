@@ -18,6 +18,8 @@ package org.apache.camel.kotlin
 
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.kotlin.components.direct
+import org.apache.camel.kotlin.languages.body
+import org.apache.camel.kotlin.languages.constant
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

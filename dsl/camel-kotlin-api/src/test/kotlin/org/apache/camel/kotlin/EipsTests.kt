@@ -20,10 +20,13 @@ import org.apache.camel.CamelExecutionException
 import org.apache.camel.Exchange
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.kotlin.components.direct
-import org.apache.camel.kotlin.components.mock
-import org.apache.camel.kotlin.components.`netty-http`
 import org.apache.camel.kotlin.dataformats.csv
-import org.junit.jupiter.api.*
+import org.apache.camel.kotlin.languages.body
+import org.apache.camel.kotlin.languages.constant
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference

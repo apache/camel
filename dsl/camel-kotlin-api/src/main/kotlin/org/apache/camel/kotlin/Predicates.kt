@@ -113,7 +113,3 @@ infix fun Expression.regex(regex: String): Predicate {
 infix fun Expression.regex(regex: Pattern): Predicate {
     return PredicateBuilder.regex(this, regex)
 }
-
-fun constant(constant: Boolean): Predicate {
-    return PredicateBuilder.constant(constant)
-}
