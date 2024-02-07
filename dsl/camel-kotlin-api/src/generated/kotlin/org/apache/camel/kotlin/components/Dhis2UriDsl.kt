@@ -196,6 +196,10 @@ public class Dhis2UriDsl(
     it.property("password", password)
   }
 
+  public fun personalAccessToken(personalAccessToken: String) {
+    it.property("personalAccessToken", personalAccessToken)
+  }
+
   public fun username(username: String) {
     it.property("username", username)
   }

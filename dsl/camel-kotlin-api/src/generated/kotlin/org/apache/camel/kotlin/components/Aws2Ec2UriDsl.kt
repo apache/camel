@@ -45,10 +45,6 @@ public class Aws2Ec2UriDsl(
     it.url("$label")
   }
 
-  public fun accessKey(accessKey: String) {
-    it.property("accessKey", accessKey)
-  }
-
   public fun amazonEc2Client(amazonEc2Client: String) {
     it.property("amazonEc2Client", amazonEc2Client)
   }
@@ -75,10 +71,6 @@ public class Aws2Ec2UriDsl(
 
   public fun region(region: String) {
     it.property("region", region)
-  }
-
-  public fun secretKey(secretKey: String) {
-    it.property("secretKey", secretKey)
   }
 
   public fun uriEndpointOverride(uriEndpointOverride: String) {
@@ -109,8 +101,20 @@ public class Aws2Ec2UriDsl(
     it.property("proxyProtocol", proxyProtocol)
   }
 
+  public fun accessKey(accessKey: String) {
+    it.property("accessKey", accessKey)
+  }
+
   public fun profileCredentialsName(profileCredentialsName: String) {
     it.property("profileCredentialsName", profileCredentialsName)
+  }
+
+  public fun secretKey(secretKey: String) {
+    it.property("secretKey", secretKey)
+  }
+
+  public fun sessionToken(sessionToken: String) {
+    it.property("sessionToken", sessionToken)
   }
 
   public fun trustAllCertificates(trustAllCertificates: String) {
@@ -135,5 +139,13 @@ public class Aws2Ec2UriDsl(
 
   public fun useProfileCredentialsProvider(useProfileCredentialsProvider: Boolean) {
     it.property("useProfileCredentialsProvider", useProfileCredentialsProvider.toString())
+  }
+
+  public fun useSessionCredentials(useSessionCredentials: String) {
+    it.property("useSessionCredentials", useSessionCredentials)
+  }
+
+  public fun useSessionCredentials(useSessionCredentials: Boolean) {
+    it.property("useSessionCredentials", useSessionCredentials.toString())
   }
 }

@@ -81,6 +81,10 @@ public class XqueryUriDsl(
     it.property("stripsAllWhiteSpace", stripsAllWhiteSpace.toString())
   }
 
+  public fun variableName(variableName: String) {
+    it.property("variableName", variableName)
+  }
+
   public fun sendEmptyMessageWhenIdle(sendEmptyMessageWhenIdle: String) {
     it.property("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle)
   }

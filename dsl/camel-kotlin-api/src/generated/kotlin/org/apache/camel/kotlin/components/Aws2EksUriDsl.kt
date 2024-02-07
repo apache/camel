@@ -129,11 +129,23 @@ public class Aws2EksUriDsl(
     it.property("secretKey", secretKey)
   }
 
+  public fun sessionToken(sessionToken: String) {
+    it.property("sessionToken", sessionToken)
+  }
+
   public fun trustAllCertificates(trustAllCertificates: String) {
     it.property("trustAllCertificates", trustAllCertificates)
   }
 
   public fun trustAllCertificates(trustAllCertificates: Boolean) {
     it.property("trustAllCertificates", trustAllCertificates.toString())
+  }
+
+  public fun useSessionCredentials(useSessionCredentials: String) {
+    it.property("useSessionCredentials", useSessionCredentials)
+  }
+
+  public fun useSessionCredentials(useSessionCredentials: Boolean) {
+    it.property("useSessionCredentials", useSessionCredentials.toString())
   }
 }

@@ -140,6 +140,18 @@ fun tokenize(tokenize: String, i: TokenizerExpressionDsl.() -> Unit = {}): Token
     return def
 }
 
+fun variable(variable: String, i: VariableExpressionDsl.() -> Unit = {}): VariableExpression {
+    val def = VariableExpression(variable)
+    VariableExpressionDsl(def).apply(i)
+    return def
+}
+
+fun wasm(wasm: String, i: WasmExpressionDsl.() -> Unit = {}): WasmExpression {
+    val def = WasmExpression(wasm)
+    WasmExpressionDsl(def).apply(i)
+    return def
+}
+
 fun xtokenize(xtokenize: String, i: XMLTokenizerExpressionDsl.() -> Unit = {}): XMLTokenizerExpression {
     val def = XMLTokenizerExpression(xtokenize)
     XMLTokenizerExpressionDsl(def).apply(i)
@@ -314,7 +326,7 @@ class MethodCallExpressionDsl(
 @CamelDslMarker
 class TokenizerExpressionDsl(
     val def: TokenizerExpression
-) : SingleInputExpressionDsl(def) {
+) : SingleInputTypedExpressionDsl(def) {
 
     fun endToken(endToken: String) {
         def.endToken = endToken
@@ -365,6 +377,19 @@ class TokenizerExpressionDsl(
     }
 }
 
+class VariableExpressionDsl(
+    val def: VariableExpression
+) : ExpressionDsl(def)
+
+class WasmExpressionDsl(
+    val def: WasmExpression
+) : TypedExpressionDsl(def) {
+
+    fun module(module: String) {
+        def.module = module
+    }
+}
+
 class XMLTokenizerExpressionDsl(
     val def: XMLTokenizerExpression
 ) : NamespaceAwareExpressionDsl(def) {
@@ -392,14 +417,6 @@ class XPathExpressionDsl(
 
     fun documentTypeName(documentTypeName: String) {
         def.documentTypeName = documentTypeName
-    }
-
-    fun resultType(resultType: KClass<*>) {
-        def.resultType = resultType.java
-    }
-
-    fun resultTypeName(resultTypeName: String) {
-        def.resultTypeName = resultTypeName
     }
 
     fun saxon(saxon: Boolean) {
@@ -452,18 +469,6 @@ class XQueryExpressionDsl(
     val def: XQueryExpression
 ): NamespaceAwareExpressionDsl(def) {
 
-    fun type(type: String) {
-        def.type = type
-    }
-
-    fun resultType(resultType: KClass<*>) {
-        def.resultType = resultType.java
-    }
-
-    fun resultTypeName(resultTypeName: String) {
-        def.resultTypeName = resultTypeName
-    }
-
     fun configurationRef(configurationRef: String) {
         def.configurationRef = configurationRef
     }
@@ -492,6 +497,10 @@ abstract class TypedExpressionDsl(
     private val def: TypedExpressionDefinition
 ) : ExpressionDsl(def) {
 
+    fun resultTypeName(resultTypeName: String) {
+        def.resultTypeName = resultTypeName
+    }
+
     fun resultType(resultType: KClass<*>) {
         def.resultType = resultType.java
     }
@@ -516,23 +525,9 @@ abstract class SingleInputTypedExpressionDsl(
 }
 
 @CamelDslMarker
-abstract class SingleInputExpressionDsl(
-    private val def: SingleInputExpressionDefinition
-) : ExpressionDsl(def) {
-
-    fun headerName(headerName: String) {
-        def.headerName = headerName
-    }
-
-    fun propertyName(propertyName: String) {
-        def.propertyName = propertyName
-    }
-}
-
-@CamelDslMarker
 abstract class NamespaceAwareExpressionDsl(
     private val def: NamespaceAwareExpression
-) : SingleInputExpressionDsl(def) {
+) : SingleInputTypedExpressionDsl(def) {
 
     fun namespaces(namespaces: Map<String, String>) {
         def.namespaces = namespaces
