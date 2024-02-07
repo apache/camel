@@ -3507,5 +3507,37 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>integration-test</id>
+            <!-- This profile can be used to run integration tests all by themselves without running the unit tests. -->
+            <!-- Use the command "mvn verify -Pintegration-test -Dquickly=true" to run the integration tests. -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${maven-failsafe-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <skipITs>false</skipITs>
+                            <includes>
+                                <include>**/*IT.java</include>
+                                <include>**/*IntegrationTest.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*Test.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
