@@ -78,6 +78,8 @@ public class CoAPObserveTest extends CoAPTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Hello 1", "Hello 2");
 
         notify.sendBody(null);
+        // send when we have received
+        Awaitility.await().until(() -> mock.getReceivedCounter() > 0);
         notify.sendBody(null);
 
         MockEndpoint.assertIsSatisfied(context());
