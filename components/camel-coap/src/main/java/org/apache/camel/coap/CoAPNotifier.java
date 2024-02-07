@@ -17,7 +17,6 @@
 package org.apache.camel.coap;
 
 import java.net.URI;
-import java.util.Optional;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
@@ -40,8 +39,7 @@ public class CoAPNotifier extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        URI uri = Optional.ofNullable(exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class))
-                .orElse(endpoint.getUri());
+        URI uri = endpoint.getUri();
         CamelCoapResource resource = endpoint.getCamelCoapResource(uri.getPath());
         if (resource == null) {
             throw new IllegalStateException("Resource not found: " + endpoint.getUri());

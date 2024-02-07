@@ -421,8 +421,14 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) throws IOException {
-
-        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder(Configuration.getStandard());
+        Configuration cfg;
+        try {
+            cfg = Configuration.getStandard();
+        } catch (Exception e) {
+            // in case error loading standard file
+            cfg = new Configuration();
+        }
+        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder(cfg);
         if (client) {
             if (advancedCertificateVerifier == null && sslContextParameters == null && advancedPskStore == null) {
                 throw new IllegalStateException(
@@ -530,11 +536,15 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
             client.setEndpoint(coapBuilder.build());
         } else if (CoAPEndpoint.enableTCP(getUri())) {
-            TcpClientConnector tcpConnector = null;
+            TcpClientConnector tcpConnector;
 
             // TLS + TCP
             if (getUri().getScheme().startsWith("coaps")) {
-                SSLContext sslContext = getSslContextParameters().createSSLContext(getCamelContext());
+                SSLContextParameters params = getSslContextParameters();
+                if (params == null) {
+                    params = new SSLContextParameters();
+                }
+                SSLContext sslContext = params.createSSLContext(getCamelContext());
                 tcpConnector = new TlsClientConnector(sslContext, Configuration.createStandardWithoutFile());
             } else {
                 tcpConnector = new TcpClientConnector(Configuration.createStandardWithoutFile());

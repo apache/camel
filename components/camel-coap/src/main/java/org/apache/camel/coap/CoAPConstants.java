@@ -53,9 +53,6 @@ public interface CoAPConstants {
                             "of what each code means.",
               javaType = "String")
     String COAP_RESPONSE_CODE = "CamelCoapResponseCode";
-    @Metadata(description = "The URI of a CoAP server to call. Will override any existing URI configured directly on the endpoint.",
-              javaType = "String")
-    String COAP_URI = "CamelCoapUri";
     @Metadata(description = "The content type", javaType = "String")
     String CONTENT_TYPE = Exchange.CONTENT_TYPE;
 }
