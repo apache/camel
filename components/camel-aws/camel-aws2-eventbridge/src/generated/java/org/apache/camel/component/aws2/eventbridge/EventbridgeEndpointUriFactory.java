@@ -21,7 +21,7 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(20);
         props.add("accessKey");
         props.add("eventPatternFile");
         props.add("eventbridgeClient");
@@ -36,14 +36,17 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
         props.add("proxyProtocol");
         props.add("region");
         props.add("secretKey");
+        props.add("sessionToken");
         props.add("trustAllCertificates");
         props.add("uriEndpointOverride");
         props.add("useDefaultCredentialsProvider");
         props.add("useProfileCredentialsProvider");
+        props.add("useSessionCredentials");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
         secretProps.add("accessKey");
         secretProps.add("secretKey");
+        secretProps.add("sessionToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
