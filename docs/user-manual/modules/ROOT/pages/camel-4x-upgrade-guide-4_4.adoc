@@ -21,12 +21,78 @@ Durations and some time-related information were consolidated in a new internal 
 
 The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` now has a 2nd parameter for the default value.
 
+Some of the Java DSL for `tokenize`, `xmlTokenize`, `xpath`, `xquery` and `jsonpath` has been removed as part of making the DSL model consistent.
+
+Here are a few examples of migration before vs after:
+
+[source,java]
+----
+ from("direct:in")
+    .choice()
+        .when().xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
+            .to("mock:premium")
+        .when() .xpath("/invoice/@orderType = 'standard'", "invoiceDetails")
+            .to("mock:standard")
+        .otherwise()
+            .to("mock:unknown")
+    .end();
+----
+
+You can use the _fluent expression_ builder to configure all the options:
+
+[source,java]
+----
+// use fluent builder expression to create the languages
+var premium = expression().xpath().expression("/invoice/@orderType = 'premium'").source("header:invoiceDetails").end();
+var standard = expression().xpath().expression("/invoice/@orderType = 'standard'").source("header:invoiceDetails").end();
+
+from("direct:in")
+    .choice()
+        .when(premium)
+            .to("mock:premium")
+        .when(standard)
+            .to("mock:standard")
+        .otherwise()
+            .to("mock:unknown")
+    .end();
+----
+
+In the example above notice how we use `source` to specify the input to use, in this case a header named invoiceDetails.
+The `source` can also be variable, or exchange property.
+
+And another example with `tokenize`:
+
+[source,java]
+----
+from("direct:start")
+    .split().tokenize("\r\n|\n", true, 2, "\n", true)
+        .log("${body}")
+        .to("mock:line");
+----
+
+You can use the _fluent expression_ builder to configure all the options:
+
+[source,java]
+----
+// use fluent builder expression to create the languages
+var token = expression().tokenize().token("\r\n|\n").regex(true).group(2).groupDelimiter("\n").skipFirst(true).end();
+
+from("direct:start")
+    .split(token)
+        .log("${body}")
+        .to("mock:line");
+----
+
 ==== Languages
 
 The way languages are created and configured by Camel has been refactored to be aligned and avoid a thread-safety issues
 when using Java DSL. The setter/getter on the `Language` classes for options that are not general has been removed (such as in `TokenizeLanguage`).
 
 In XML and YAML DSL the `type` option in `<xquery>` has been renamed to `resultType` to be aligned with the other languages.
+
+In XML and YAML DSL The `headerName` on `<xpath>`, `<xquery>` has been renamed to `source` and you should prefix the value with `header:name` to declare
+it is a header, because other kind of sources can be specified also. The same change has applied to `@XPath` and `@XQuery`
+language annotations.
 
 ==== WireTap EIP
 
