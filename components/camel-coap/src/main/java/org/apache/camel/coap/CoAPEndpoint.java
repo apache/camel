@@ -26,6 +26,7 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -46,15 +47,28 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.Resource;
+import org.eclipse.californium.elements.config.CertificateAuthenticationMode;
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
 import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
+import org.eclipse.californium.scandium.config.DtlsConfig;
+import org.eclipse.californium.scandium.config.DtlsConfig.DtlsRole;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.CertificateType;
-import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
-import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
+import org.eclipse.californium.scandium.dtls.cipher.CipherSuite;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
+import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
+import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CERTIFICATE_TYPES;
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CIPHER_SUITES;
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CLIENT_AUTHENTICATION_MODE;
+import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDED_CIPHER_SUITES_ONLY;
 
 /**
  * Send and receive messages to/from COAP capable devices.
@@ -62,6 +76,7 @@ import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri",
              category = { Category.IOT }, headersClass = CoAPConstants.class)
 public class CoAPEndpoint extends DefaultEndpoint {
+    final static Logger LOGGER = LoggerFactory.getLogger(CoAPEndpoint.class);
     @UriPath
     private URI uri;
     @UriParam(label = "consumer", enums = "DELETE,GET,POST,PUT")
@@ -71,14 +86,14 @@ public class CoAPEndpoint extends DefaultEndpoint {
     @UriParam(label = "security")
     private PublicKey publicKey;
     @UriParam(label = "security")
-    private TrustedRpkStore trustedRpkStore;
+    private NewAdvancedCertificateVerifier advancedCertificateVerifier;
     @UriParam(label = "security")
-    private PskStore pskStore;
+    private AdvancedPskStore advancedPskStore;
     @UriParam(label = "security")
     private String cipherSuites;
     private transient String[] configuredCipherSuites;
     @UriParam(label = "security")
-    private String clientAuthentication;
+    private CertificateAuthenticationMode clientAuthentication;
     @UriParam(label = "security", enums = "NONE,WANT,REQUIRE")
     private String alias;
     @UriParam(label = "security")
@@ -219,7 +234,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     /**
      * Notify observers that the resource of this URI has changed, based on RFC 7641. Use this flag on a destination
-     * endpoint, with an URI that matches an existing source endpoint URI.
+     * endpoint, with a URI that matches an existing source endpoint URI.
      */
     public void setNotify(boolean notify) {
         this.notify = notify;
@@ -242,31 +257,31 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Get the TrustedRpkStore to use to determine trust in raw public keys.
+     * Get the AdvancedCertificateVerifier to use to determine trust in raw public keys.
      */
-    public TrustedRpkStore getTrustedRpkStore() {
-        return trustedRpkStore;
+    public NewAdvancedCertificateVerifier getAdvancedCertificateVerifier() {
+        return advancedCertificateVerifier;
     }
 
     /**
-     * Set the TrustedRpkStore to use to determine trust in raw public keys.
+     * Set the AdvancedCertificateVerifier to use to determine trust in raw public keys.
      */
-    public void setTrustedRpkStore(TrustedRpkStore trustedRpkStore) {
-        this.trustedRpkStore = trustedRpkStore;
+    public void setAdvancedCertificateVerifier(NewAdvancedCertificateVerifier advancedCertificateVerifier) {
+        this.advancedCertificateVerifier = advancedCertificateVerifier;
     }
 
     /**
-     * Get the PskStore to use for pre-shared key.
+     * Get the AdvancedPskStore to use for pre-shared key.
      */
-    public PskStore getPskStore() {
-        return pskStore;
+    public AdvancedPskStore getAdvancedPskStore() {
+        return advancedPskStore;
     }
 
     /**
-     * Set the PskStore to use for pre-shared key.
+     * Set the AdvancedPskStore to use for pre-shared key.
      */
-    public void setPskStore(PskStore pskStore) {
-        this.pskStore = pskStore;
+    public void setAdvancedPskStore(AdvancedPskStore advancedPskStore) {
+        this.advancedPskStore = advancedPskStore;
     }
 
     /**
@@ -330,7 +345,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
      * one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back to checking the
      * sslContextParameters.getServerParameters().getClientAuthentication() value.
      */
-    public String getClientAuthentication() {
+    public CertificateAuthenticationMode getClientAuthentication() {
         return clientAuthentication;
     }
 
@@ -339,7 +354,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
      * WANT, REQUIRE. If this value is not specified, then it falls back to checking the
      * sslContextParameters.getServerParameters().getClientAuthentication() value.
      */
-    public void setClientAuthentication(String clientAuthentication) {
+    public void setClientAuthentication(CertificateAuthenticationMode clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
     }
 
@@ -356,27 +371,29 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     public boolean isClientAuthenticationRequired() {
-        String clientAuth = clientAuthentication;
+        CertificateAuthenticationMode clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
-            clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
+            clientAuth = CertificateAuthenticationMode
+                    .valueOf(sslContextParameters.getServerParameters().getClientAuthentication());
         }
 
-        return clientAuth != null && ClientAuthentication.valueOf(clientAuth) == ClientAuthentication.REQUIRE;
+        return clientAuth == CertificateAuthenticationMode.NEEDED;
     }
 
     public boolean isClientAuthenticationWanted() {
-        String clientAuth = clientAuthentication;
+        CertificateAuthenticationMode clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
-            clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
+            clientAuth = CertificateAuthenticationMode
+                    .valueOf(sslContextParameters.getServerParameters().getClientAuthentication());
         }
 
-        return clientAuth != null && ClientAuthentication.valueOf(clientAuth) == ClientAuthentication.WANT;
+        return clientAuth != null && ClientAuthentication.valueOf(String.valueOf(clientAuth)) == ClientAuthentication.WANT;
     }
 
     /**
      * Get all the certificates contained in the sslContextParameters truststore
      */
-    private Certificate[] getTrustedCerts() throws GeneralSecurityException, IOException {
+    private X509Certificate[] getTrustedCerts() throws GeneralSecurityException, IOException {
         if (sslContextParameters != null && sslContextParameters.getTrustManagers() != null) {
             KeyStore trustStore = sslContextParameters.getTrustManagers().getKeyStore().createKeyStore();
             Enumeration<String> aliases = trustStore.aliases();
@@ -389,10 +406,10 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 }
             }
 
-            return trustCerts.toArray(new Certificate[0]);
+            return trustCerts.toArray(new X509Certificate[0]);
         }
 
-        return new Certificate[0];
+        return new X509Certificate[0];
     }
 
     public static boolean enableDTLS(URI uri) {
@@ -404,20 +421,26 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) throws IOException {
-
-        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
+        Configuration cfg;
+        try {
+            cfg = Configuration.getStandard();
+        } catch (Exception e) {
+            // in case error loading standard file
+            cfg = new Configuration();
+        }
+        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder(cfg);
         if (client) {
-            if (trustedRpkStore == null && sslContextParameters == null && pskStore == null) {
+            if (advancedCertificateVerifier == null && sslContextParameters == null && advancedPskStore == null) {
                 throw new IllegalStateException(
-                        "Either a trustedRpkStore, sslContextParameters or pskStore object "
+                        "Either an advancedCertificateVerifier, sslContextParameters or advancedPskStore object "
                                                 + "must be configured for a TLS client");
             }
-            builder.setRecommendedCipherSuitesOnly(isRecommendedCipherSuitesOnly());
-            builder.setClientOnly();
+            builder.set(DTLS_RECOMMENDED_CIPHER_SUITES_ONLY, isRecommendedCipherSuitesOnly());
+            builder.set(DtlsConfig.DTLS_ROLE, DtlsRole.CLIENT_ONLY);
         } else {
-            if (privateKey == null && sslContextParameters == null && pskStore == null) {
+            if (privateKey == null && sslContextParameters == null && advancedPskStore == null) {
                 throw new IllegalStateException(
-                        "Either a privateKey, sslContextParameters or pskStore object "
+                        "Either a privateKey, sslContextParameters or advancedPskStore object "
                                                 + "must be configured for a TLS service");
             }
             if (privateKey != null && publicKey == null) {
@@ -430,9 +453,15 @@ public class CoAPEndpoint extends DefaultEndpoint {
             }
 
             builder.setAddress(address);
-            builder.setClientAuthenticationRequired(isClientAuthenticationRequired());
-            builder.setClientAuthenticationWanted(isClientAuthenticationWanted());
-            builder.setRecommendedCipherSuitesOnly(isRecommendedCipherSuitesOnly());
+            if (isClientAuthenticationRequired()) {
+                builder.set(DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NEEDED);
+            } else if (isClientAuthenticationWanted()) {
+                builder.set(DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.WANTED);
+            } else {
+                // Is it right to set to NONE here?
+                builder.set(DTLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NONE);
+            }
+            builder.set(DTLS_RECOMMENDED_CIPHER_SUITES_ONLY, isRecommendedCipherSuitesOnly());
         }
 
         try {
@@ -460,30 +489,37 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 }
 
                 PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, keyManagers.getKeyPassword().toCharArray());
-                builder.setIdentity(privateKey, keyStore.getCertificateChain(alias));
+                builder.setCertificateIdentityProvider(
+                        new SingleCertificateProvider(privateKey, keyStore.getCertificateChain(alias)));
+
             } else if (privateKey != null) {
-                builder.setIdentity(privateKey, publicKey);
+                builder.setCertificateIdentityProvider(new SingleCertificateProvider(privateKey, publicKey));
             }
 
-            if (pskStore != null) {
-                builder.setPskStore(pskStore);
+            if (advancedPskStore != null) {
+                builder.setAdvancedPskStore(advancedPskStore);
             }
 
             // Add all certificates from the truststore
-            Certificate[] certs = getTrustedCerts();
+            X509Certificate[] certs = getTrustedCerts();
             if (certs.length > 0) {
-                builder.setTrustStore(certs);
+                NewAdvancedCertificateVerifier trust = StaticNewAdvancedCertificateVerifier
+                        .builder()
+                        .setTrustedCertificates(certs)
+                        .build();
+                builder.setAdvancedCertificateVerifier(trust);
             }
-            if (trustedRpkStore != null) {
-                builder.setTrustCertificateTypes(CertificateType.RAW_PUBLIC_KEY);
-                builder.setRpkTrustStore(trustedRpkStore);
+            if (advancedCertificateVerifier != null) {
+                builder.set(DTLS_CERTIFICATE_TYPES, Arrays.asList(CertificateType.RAW_PUBLIC_KEY));
+                builder.setAdvancedCertificateVerifier(advancedCertificateVerifier);
             }
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Error in configuring TLS", e);
         }
 
         if (getConfiguredCipherSuites() != null) {
-            builder.setSupportedCipherSuites(getConfiguredCipherSuites());
+            LOGGER.debug("There are configured cipher suites: " + getConfiguredCipherSuites());
+            builder.set(DTLS_CIPHER_SUITES, CipherSuite.getTypesByNames(getConfiguredCipherSuites()));
         }
 
         return new DTLSConnector(builder.build());
@@ -500,18 +536,18 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
             client.setEndpoint(coapBuilder.build());
         } else if (CoAPEndpoint.enableTCP(getUri())) {
-            NetworkConfig config = NetworkConfig.createStandardWithoutFile();
-            int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
-            int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);
-            int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
-            TcpClientConnector tcpConnector = null;
+            TcpClientConnector tcpConnector;
 
             // TLS + TCP
             if (getUri().getScheme().startsWith("coaps")) {
-                SSLContext sslContext = getSslContextParameters().createSSLContext(getCamelContext());
-                tcpConnector = new TlsClientConnector(sslContext, tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                SSLContextParameters params = getSslContextParameters();
+                if (params == null) {
+                    params = new SSLContextParameters();
+                }
+                SSLContext sslContext = params.createSSLContext(getCamelContext());
+                tcpConnector = new TlsClientConnector(sslContext, Configuration.createStandardWithoutFile());
             } else {
-                tcpConnector = new TcpClientConnector(tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+                tcpConnector = new TcpClientConnector(Configuration.createStandardWithoutFile());
             }
 
             CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();

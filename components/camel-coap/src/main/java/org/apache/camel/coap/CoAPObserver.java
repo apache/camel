@@ -52,7 +52,8 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
         try {
             CoAPHelper.convertCoapResponseToMessage(response, camelExchange.getMessage());
             getProcessor().process(camelExchange);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            camelExchange.setException(e);
         } finally {
             Exception exception = camelExchange.getException();
             if (exception != null) {

@@ -31,7 +31,7 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.config.Configuration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +44,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
     @Test
     void testCoAP() throws Exception {
-        NetworkConfig.createStandardWithoutFile();
+        Configuration.createStandardWithoutFile();
         CoapClient client;
         CoapResponse rsp;
 
@@ -71,7 +71,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
     @Test
     void testCoAPMethodNotAllowedResponse() throws Exception {
-        NetworkConfig.createStandardWithoutFile();
+        Configuration.createStandardWithoutFile();
         CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/TestResource/Ducky");
         decorateClient(client);
         client.setTimeout(1000000L);
@@ -81,7 +81,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
     @Test
     void testCoAPNotFoundResponse() throws Exception {
-        NetworkConfig.createStandardWithoutFile();
+        Configuration.createStandardWithoutFile();
         CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/foo/bar/cheese");
         decorateClient(client);
         client.setTimeout(1000000L);

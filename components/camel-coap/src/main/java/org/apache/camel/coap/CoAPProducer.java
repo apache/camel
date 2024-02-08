@@ -16,10 +16,6 @@
  */
 package org.apache.camel.coap;
 
-import java.io.IOException;
-import java.net.URI;
-import java.security.GeneralSecurityException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -32,7 +28,7 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
  */
 public class CoAPProducer extends DefaultProducer {
     private final CoAPEndpoint endpoint;
-    private CoapClient client;
+    private volatile CoapClient client;
 
     public CoAPProducer(CoAPEndpoint endpoint) {
         super(endpoint);
@@ -41,7 +37,8 @@ public class CoAPProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        CoapClient client = getClient(exchange);
+        initClient();
+
         String ct = exchange.getIn().getHeader(CoAPConstants.CONTENT_TYPE, String.class);
         if (ct == null) {
             // ?default?
@@ -83,14 +80,17 @@ public class CoAPProducer extends DefaultProducer {
         }
     }
 
-    private synchronized CoapClient getClient(Exchange exchange) throws IOException, GeneralSecurityException {
+    protected synchronized void initClient() throws Exception {
         if (client == null) {
-            URI uri = exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class);
-            if (uri == null) {
-                uri = endpoint.getUri();
-            }
-            client = endpoint.createCoapClient(uri);
+            client = endpoint.createCoapClient(endpoint.getUri());
         }
-        return client;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (client != null) {
+            client.shutdown();
+            client = null;
+        }
     }
 }

@@ -22,6 +22,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
@@ -59,6 +60,8 @@ public class CoAPObserveTest extends CoAPTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Hello 1", "Hello 2");
 
         notify.sendBody(null);
+        // send when we have received
+        Awaitility.await().until(() -> mock.getReceivedCounter() > 0);
         notify.sendBody(null);
 
         MockEndpoint.assertIsSatisfied(context());
@@ -75,6 +78,8 @@ public class CoAPObserveTest extends CoAPTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Hello 1", "Hello 2");
 
         notify.sendBody(null);
+        // send when we have received
+        Awaitility.await().until(() -> mock.getReceivedCounter() > 0);
         notify.sendBody(null);
 
         MockEndpoint.assertIsSatisfied(context());
@@ -88,13 +93,16 @@ public class CoAPObserveTest extends CoAPTestSupport {
                 AtomicInteger i = new AtomicInteger(0);
 
                 fromF("coap://localhost:%d/TestResource?observable=true", PORT)
+                        .log("Received1: ${body}")
                         .process(exchange -> exchange.getMessage().setBody("Hello " + i.get()));
 
                 from("direct:notify")
                         .process(exchange -> i.incrementAndGet())
+                        .log("Sending ${body}")
                         .toF("coap://localhost:%d/TestResource?notify=true", PORT);
 
                 fromF("coap://localhost:%d/TestResource?observe=true", PORT)
+                        .log("Received2: ${body}")
                         .to("mock:sourceResults");
             }
         };

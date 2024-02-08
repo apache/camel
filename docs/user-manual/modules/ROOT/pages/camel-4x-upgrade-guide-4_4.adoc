@@ -102,6 +102,11 @@ This is part of the effort explained in CAMEL-18590.
 
 The NamedCassandraAggregationRepository now provides a deserializationFilter parameter. The default value for it is allowing all java packages and subpackages and all org.apache.camel packages and subpackages. If you plan to use particular classes and you want to expand the filter, you should change the value according to your needs. More details in CAMEL-20306.
 
+=== camel-coap
+
+Upgraded from org.eclipse.californium v2 to v3 which was a painful upgrade. Removed the `"CamelCoapUri` header that would
+allow a producer to create dynamic client to send to another Url. Use Camel's existing `toD` EIP for that instead.
+
 === camel-consul
 
 This component has migrated from `com.orbitz.consul:consul-client` to `org.kiwiproject:consul-client` as the former is no longer maintained,
