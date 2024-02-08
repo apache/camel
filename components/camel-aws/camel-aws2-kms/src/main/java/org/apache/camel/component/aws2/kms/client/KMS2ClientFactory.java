@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.kms.client;
 import org.apache.camel.component.aws2.kms.KMS2Configuration;
 import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientOptimizedImpl;
 import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientProfileOptimizedImpl;
+import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientStandardImpl;
 
 /**
@@ -40,6 +41,8 @@ public final class KMS2ClientFactory {
             return new KMS2ClientOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
             return new KMS2ClientProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new KMS2ClientSessionTokenImpl(configuration);
         } else {
             return new KMS2ClientStandardImpl(configuration);
         }
