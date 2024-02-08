@@ -40,8 +40,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "headername":
-        case "headerName": target.setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -54,8 +52,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "properties": target.setProperties(property(camelContext, java.util.Properties.class, value)); return true;
-        case "propertyname":
-        case "propertyName": target.setPropertyName(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "resulttype":
@@ -71,6 +67,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "source": target.setSource(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "staticquerycontext":
@@ -81,8 +78,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "variablename":
-        case "variableName": target.setVariableName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -109,8 +104,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "greedy": return boolean.class;
-        case "headername":
-        case "headerName": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "lazystartproducer":
@@ -123,8 +116,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "properties": return java.util.Properties.class;
-        case "propertyname":
-        case "propertyName": return java.lang.String.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "resulttype":
@@ -140,6 +131,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "schedulerProperties": return java.util.Map.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "source": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "staticquerycontext":
@@ -150,8 +142,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
-        case "variablename":
-        case "variableName": return java.lang.String.class;
         default: return null;
         }
     }
@@ -179,8 +169,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "greedy": return target.isGreedy();
-        case "headername":
-        case "headerName": return target.getHeaderName();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
@@ -193,8 +181,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "properties": return target.getProperties();
-        case "propertyname":
-        case "propertyName": return target.getPropertyName();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "resulttype":
@@ -210,6 +196,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "source": return target.getSource();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "staticquerycontext":
@@ -220,8 +207,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
-        case "variablename":
-        case "variableName": return target.getVariableName();
         default: return null;
         }
     }

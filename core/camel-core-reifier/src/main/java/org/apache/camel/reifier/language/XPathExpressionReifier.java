@@ -28,20 +28,10 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 
-public class XPathExpressionReifier extends TypedExpressionReifier<XPathExpression> {
+public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XPathExpression> {
 
     public XPathExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (XPathExpression) definition);
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
     }
 
     @Override
@@ -62,20 +52,18 @@ public class XPathExpressionReifier extends TypedExpressionReifier<XPathExpressi
     }
 
     protected Object[] createProperties() {
-        Object[] properties = new Object[13];
+        Object[] properties = new Object[11];
         properties[0] = asResultType();
-        properties[1] = parseString(definition.getVariableName());
-        properties[2] = parseString(definition.getHeaderName());
-        properties[3] = parseString(definition.getPropertyName());
-        properties[4] = definition.getDocumentType();
-        properties[5] = asQName(parseString(definition.getResultQName()));
-        properties[6] = parseBoolean(definition.getSaxon());
-        properties[7] = definition.getXPathFactory();
-        properties[8] = parseString(definition.getObjectModel());
-        properties[9] = parseBoolean(definition.getThreadSafety());
-        properties[10] = parseBoolean(definition.getPreCompile());
-        properties[11] = parseBoolean(definition.getLogNamespaces());
-        properties[12] = definition.getNamespaces();
+        properties[1] = parseString(definition.getSource());
+        properties[2] = definition.getDocumentType();
+        properties[3] = asQName(parseString(definition.getResultQName()));
+        properties[4] = parseBoolean(definition.getSaxon());
+        properties[5] = definition.getXPathFactory();
+        properties[6] = parseString(definition.getObjectModel());
+        properties[7] = parseBoolean(definition.getThreadSafety());
+        properties[8] = parseBoolean(definition.getPreCompile());
+        properties[9] = parseBoolean(definition.getLogNamespaces());
+        properties[10] = definition.getNamespaces();
         return properties;
     }
 

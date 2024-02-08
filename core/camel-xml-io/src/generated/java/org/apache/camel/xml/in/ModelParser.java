@@ -2876,13 +2876,11 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends SingleInputTypedExpressionDefinition> AttributeHandler<T> singleInputTypedExpressionDefinitionAttributeHandler() {
         return (def, key, val) -> {
-            switch (key) {
-                case "headerName": def.setHeaderName(val); break;
-                case "propertyName": def.setPropertyName(val); break;
-                case "variableName": def.setVariableName(val); break;
-                default: return typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            if ("source".equals(key)) {
+                def.setSource(val);
+                return true;
             }
-            return true;
+            return typedExpressionDefinitionAttributeHandler().accept(def, key, val);
         };
     }
     protected ExchangePropertyExpression doParseExchangePropertyExpression() throws IOException, XmlPullParserException {

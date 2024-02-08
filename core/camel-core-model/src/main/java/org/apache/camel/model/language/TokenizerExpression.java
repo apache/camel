@@ -195,15 +195,11 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         if (endToken != null) {
             return "tokenize{body() using tokens: " + token + "..." + endToken + "}";
         } else {
-            final String source;
-            if (getHeaderName() != null) {
-                source = "header: " + getHeaderName();
-            } else if (getPropertyName() != null) {
-                source = "property: " + getPropertyName();
-            } else {
-                source = "body()";
+            String s = getSource();
+            if (s == null) {
+                s = "body";
             }
-            return "tokenize{" + source + " using token: " + token + "}";
+            return "tokenize{" + s + " using token: " + token + "}";
         }
     }
 
@@ -312,6 +308,15 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
          */
         public Builder group(String group) {
             this.group = group;
+            return this;
+        }
+
+        /**
+         * To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple
+         * language as the group to support dynamic group sizes.
+         */
+        public Builder group(int group) {
+            this.group = Integer.toString(group);
             return this;
         }
 

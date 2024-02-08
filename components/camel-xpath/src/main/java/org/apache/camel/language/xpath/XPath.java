@@ -54,19 +54,11 @@ public @interface XPath {
     Class<?> resultType() default Object.class;
 
     /**
-     * The name of the variable we want to apply the XPath expression to.
+     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
+     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
+     * message body.
      */
-    String variableName() default "";
-
-    /**
-     * The name of the message header we want to apply the XPath expression to.
-     */
-    String headerName() default "";
-
-    /**
-     * The name of the exchange propery we want to apply the XPath expression to.
-     */
-    String propertyName() default "";
+    String source() default "";
 
     /**
      * Whether to log namespaces which can assist during troubleshooting

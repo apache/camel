@@ -49,8 +49,8 @@ public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSuppor
         @Handler
         public void handler(
                 @XQuery("/response") String response,
-                @XQuery(headerName = "invoiceDetails", value = "/invoice/person/name") String userName,
-                @XQuery(headerName = "invoiceDetails", value = "/invoice/person/date") String date) {
+                @XQuery(source = "header:invoiceDetails", value = "/invoice/person/name") String userName,
+                @XQuery(source = "header:invoiceDetails", value = "/invoice/person/date") String date) {
             this.response = response;
             this.userName = userName;
             this.date = date;

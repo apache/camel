@@ -27,8 +27,10 @@ public class JqExpressionFromHeaderAsStringTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                var jq = expression().jq().expression(".foo").resultType(String.class).source("header:Content").end();
+
                 from("direct:start")
-                        .transform().jq(".foo", String.class, "Content")
+                        .transform(jq)
                         .to("mock:result");
             }
         };

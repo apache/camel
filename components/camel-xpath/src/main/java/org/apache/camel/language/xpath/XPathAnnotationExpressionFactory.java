@@ -51,12 +51,9 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
             }
         }
 
-        String variableName = getVariableName(annotation);
-        String headerName = getHeaderName(annotation);
-        String propertyName = getPropertyName(annotation);
-        if (variableName != null || headerName != null || propertyName != null) {
-            Expression source = ExpressionBuilder.singleInputExpression(variableName, headerName, propertyName);
-            builder.setSource(source);
+        String source = getSource(annotation);
+        if (source != null) {
+            builder.setSource(ExpressionBuilder.singleInputExpression(source));
         }
 
         return builder;
@@ -70,57 +67,10 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
         return (NamespacePrefix[]) getAnnotationObjectValue(annotation, "namespaces");
     }
 
-    /**
-     * Extracts the value of the header method in the Annotation. For backwards compatibility this method will return
-     * null if the annotation's method is not found.
-     *
-     * @return If the annotation has the method 'headerName' then the name of the header we want to apply the XPath
-     *         expression to. Otherwise, null will be returned
-     */
-    protected String getHeaderName(Annotation annotation) {
+    protected String getSource(Annotation annotation) {
         String answer = null;
         try {
-            answer = (String) getAnnotationObjectValue(annotation, "headerName");
-        } catch (Exception e) {
-            // Do Nothing
-        }
-        if (answer != null && answer.isBlank()) {
-            return null;
-        }
-        return answer;
-    }
-
-    /**
-     * Extracts the value of the property method in the Annotation. For backwards compatibility this method will return
-     * null if the annotation's method is not found.
-     *
-     * @return If the annotation has the method 'propertyName' then the name of the property we want to apply the XPath
-     *         expression to. Otherwise, null will be returned
-     */
-    protected String getPropertyName(Annotation annotation) {
-        String answer = null;
-        try {
-            answer = (String) getAnnotationObjectValue(annotation, "propertyName");
-        } catch (Exception e) {
-            // Do Nothing
-        }
-        if (answer != null && answer.isBlank()) {
-            return null;
-        }
-        return answer;
-    }
-
-    /**
-     * Extracts the value of the property method in the Annotation. For backwards compatibility this method will return
-     * null if the annotation's method is not found.
-     *
-     * @return If the annotation has the method 'variableName' then the name of the property we want to apply the XPath
-     *         expression to. Otherwise, null will be returned
-     */
-    protected String getVariableName(Annotation annotation) {
-        String answer = null;
-        try {
-            answer = (String) getAnnotationObjectValue(annotation, "variableName");
+            answer = (String) getAnnotationObjectValue(annotation, "source");
         } catch (Exception e) {
             // Do Nothing
         }

@@ -23,7 +23,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
-import org.apache.camel.util.ObjectHelper;
 
 public class JqAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
@@ -42,25 +41,9 @@ public class JqAnnotationExpressionFactory extends DefaultAnnotationExpressionFa
         if (resultType != null) {
             answer.setResultType(resultType);
         }
-
-        if (annotation instanceof Jq) {
-            Jq jqAnnotation = (Jq) annotation;
-
-            String variableName = null;
-            String headerName = null;
-            String propertyName = null;
-            if (ObjectHelper.isNotEmpty(jqAnnotation.variableName())) {
-                variableName = jqAnnotation.variableName();
-            }
-            if (ObjectHelper.isNotEmpty(jqAnnotation.headerName())) {
-                headerName = jqAnnotation.headerName();
-            }
-            if (ObjectHelper.isNotEmpty(jqAnnotation.propertyName())) {
-                propertyName = jqAnnotation.propertyName();
-            }
-            if (variableName != null || headerName != null || propertyName != null) {
-                answer.setSource(ExpressionBuilder.singleInputExpression(variableName, headerName, propertyName));
-            }
+        String source = getSource(annotation);
+        if (source != null) {
+            answer.setSource(ExpressionBuilder.singleInputExpression(source));
         }
 
         answer.init(camelContext);
@@ -70,4 +53,18 @@ public class JqAnnotationExpressionFactory extends DefaultAnnotationExpressionFa
     private Class<?> getResultType(Annotation annotation) {
         return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
     }
+
+    protected String getSource(Annotation annotation) {
+        String answer = null;
+        try {
+            answer = (String) getAnnotationObjectValue(annotation, "source");
+        } catch (Exception e) {
+            // Do Nothing
+        }
+        if (answer != null && answer.isBlank()) {
+            return null;
+        }
+        return answer;
+    }
+
 }

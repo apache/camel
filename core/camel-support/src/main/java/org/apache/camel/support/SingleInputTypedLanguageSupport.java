@@ -51,17 +51,15 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
         }
 
         Class<?> type = property(Class.class, properties, 0, null);
-        String variable = property(String.class, properties, 1, null);
-        String header = property(String.class, properties, 2, null);
-        String property = property(String.class, properties, 3, null);
-        Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
+        String source = property(String.class, properties, 1, null);
+        Expression input = ExpressionBuilder.singleInputExpression(source);
         if (getCamelContext() != null) {
-            source.init(getCamelContext());
+            input.init(getCamelContext());
         }
         if (type == null || type == Object.class || !supportResultType()) {
-            return createExpression(source, expression, properties);
+            return createExpression(input, expression, properties);
         }
-        return ExpressionBuilder.convertToExpression(createExpression(source, expression, properties), type);
+        return ExpressionBuilder.convertToExpression(createExpression(input, expression, properties), type);
     }
 
     @Override
@@ -71,14 +69,12 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
         }
 
         Class<?> type = property(Class.class, properties, 0, null);
-        String variable = property(String.class, properties, 1, null);
-        String header = property(String.class, properties, 2, null);
-        String property = property(String.class, properties, 3, null);
-        Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
+        String source = property(String.class, properties, 1, null);
+        Expression input = ExpressionBuilder.singleInputExpression(source);
         if (getCamelContext() != null) {
-            source.init(getCamelContext());
+            input.init(getCamelContext());
         }
-        return createPredicate(source, expression, properties);
+        return createPredicate(input, expression, properties);
     }
 
     /**
