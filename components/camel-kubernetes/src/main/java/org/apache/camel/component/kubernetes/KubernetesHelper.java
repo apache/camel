@@ -42,11 +42,13 @@ public final class KubernetesHelper {
     public static KubernetesClient getKubernetesClient(KubernetesConfiguration configuration) {
         if (configuration.getKubernetesClient() != null) {
             return configuration.getKubernetesClient();
-        } else if (configuration.getMasterUrl() != null) {
-            return createKubernetesClient(configuration);
-        } else {
-            LOG.info("Creating default kubernetes client without applying configuration");
+        }
+        String master = configuration.getMasterUrl();
+        if (master == null || "local".equals(master) || "client".equals(master)) {
+            LOG.info("Creating default local Kubernetes client without applying configuration");
             return new KubernetesClientBuilder().build();
+        } else {
+            return createKubernetesClient(configuration);
         }
     }
 
