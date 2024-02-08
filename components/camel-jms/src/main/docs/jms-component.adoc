@@ -116,14 +116,14 @@ If you are consuming messages and using transactions
 (`transacted=true`) then the default settings for cache level can impact
 performance.
 
-If you are using XA transactions then you cannot cache as it can cause
+If you are using XA transactions, then you cannot cache as it can cause
 the XA transaction to not work properly.
 
 If you are *not* using XA, then you should consider caching as it speeds
 up performance, such as setting `cacheLevelName=CACHE_CONSUMER`.
 
 The default setting for `cacheLevelName` is
-`CACHE_AUTO`. This default auto detects the mode and sets the cache
+`CACHE_AUTO`. This default auto-detects the mode and sets the cache
 level accordingly to:
 
 * `CACHE_CONSUMER` if `transacted=false`
@@ -214,7 +214,7 @@ provide a few samples below to get started.
 
 === Receiving from JMS
 
-In the following sample we configure a route that receives JMS messages
+In the following sample, we configure a route that receives JMS messages
 and routes the message to a POJO:
 
 [source,java]
@@ -223,7 +223,7 @@ from("jms:queue:foo").
    to("bean:myBusinessLogic");
 --------------------------------
 
-You can of course use any of the EIP patterns so the route can be
+You can use any of the EIP patterns so the route can be
 context based. For example, here's how to filter an order topic for the
 big spenders:
 
@@ -236,7 +236,7 @@ from("jms:topic:OrdersTopic").
 
 === Sending to JMS
 
-In the sample below we poll a file folder and send the file content to a
+In the sample below, we poll a file folder and send the file content to a
 JMS topic. As we want the content of the file as a `TextMessage` instead
 of a `BytesMessage`, we need to convert the body to a `String`:
 
@@ -249,8 +249,7 @@ from("file://orders").
 
 === Using Annotations
 
-Camel also has annotations so you can use xref:manual::pojo-consuming.adoc[POJO
-Consuming] and POJO Producing.
+Camel also has annotations, so you can use xref:manual::pojo-consuming.adoc[POJO Consuming] and xref:manual::pojo-producing.adoc[POJO Producing].
 
 === Spring DSL sample
 
@@ -389,7 +388,7 @@ You can use the `messageConverter` option to do the mapping yourself in
 a Spring `org.springframework.jms.support.converter.MessageConverter`
 class.
 
-For example, in the route below we use a custom message converter when
+For example, in the route below, we use a custom message converter when
 sending a message to the JMS order queue:
 
 [source,java]
@@ -437,7 +436,7 @@ For the `exchange.in.header` the following rules apply for the header
 * Keys starting with `JMS` or `JMSX` are reserved.
 * `exchange.in.headers` keys must be literals and all be valid Java
 identifiers (do not use dots in the key name).
-* Camel replaces dots & hyphens and the reverse when when consuming JMS
+* Camel replaces dots & hyphens and the reverse when consuming JMS
 messages: +
  `.` is replaced by `_DOT_` and the reverse replacement when Camel
 consumes the message. +
@@ -449,7 +448,7 @@ own custom strategy for formatting keys.
 For the `exchange.in.header`, the following rules apply for the header
 **values**:
 
-* The values must be primitives or their counter objects (such as
+* The values must be primitives or their counter-objects (such as
 `Integer`, `Long`, `Character`). The types, `String`, `CharSequence`,
 `Date`, `BigDecimal` and `BigInteger` are all converted to their
 `toString()` representation. All other types are dropped.
@@ -493,7 +492,7 @@ it receives a JMS message:
 |`JMSPriority` |`int` |The JMS priority (with 0 as the lowest priority
 and 9 as the highest).
 
-|`JMSRedelivered` |`boolean` |Is the JMS message redelivered.
+|`JMSRedelivered` |`boolean` |Whether the JMS message is redelivered.
 
 |`JMSReplyTo` |`javax.jms.Destination` |The JMS reply-to destination.
 
@@ -504,22 +503,22 @@ and 9 as the highest).
 |`JMSXGroupID` |`String` |The JMS group ID.
 |=======================================================================
 
-As all the above information is standard JMS you can check the
+As all the above information is standard JMS, you can check the
 http://java.sun.com/javaee/5/docs/api/javax/jms/Message.html[JMS
 documentation] for further details.
 
 == About using Camel to send and receive messages and JMSReplyTo
 
-The JMS component is complex and you have to pay close attention to how
+The JMS component is complex, and you have to pay close attention to how
 it works in some cases. So this is a short summary of some of the
 areas/pitfalls to look for.
 
 When Camel sends a message using its `JMSProducer`, it checks the
 following conditions:
 
-* The message exchange pattern,
+* The message exchange pattern.
 * Whether a `JMSReplyTo` was set in the endpoint or in the message
-headers,
+headers.
 * Whether any of the following options have been set on the JMS
 endpoint: `disableReplyTo`, `preserveMessageQos`, `explicitQosEnabled`.
 
@@ -565,12 +564,12 @@ The `JmsConsumer` behaves as follows, depending on configuration:
 |_InOnly_ |- |Camel will not send a reply back, as the pattern is
 __InOnly__.
 
-|- |`disableReplyTo=true` |This option suppresses replies.
+|- |`disableReplyTo=true` |This option suppress replies.
 |=======================================================================
 
 So pay attention to the message exchange pattern set on your exchanges.
 
-If you send a message to a JMS destination in the middle of your route
+If you send a message to a JMS destination in the middle of your route,
 you can specify the exchange pattern to use, see more at
 Request Reply. +
  This is useful if you want to send an `InOnly` message to a JMS topic:
@@ -634,7 +633,7 @@ headers are set, `CamelJmsDestination` takes priority. Keep in mind that
 the JMS producer removes both `CamelJmsDestination` and
 `CamelJmsDestinationName` headers from the exchange and do not propagate
 them to the created JMS message in order to avoid the accidental loops
-in the routes (in scenarios when the message will be forwarded to the
+in the routes (in scenarios when the message will be forwarded to
 another JMS endpoint).
 
 == Configuring different JMS providers
@@ -648,7 +647,7 @@ preceding example configures an `activemq` component. You could do the
 same to configure MQSeries, TibCo, BEA, Sonic and so on.
 
 Once you have a named JMS component, you can then refer to endpoints
-within that component using URIs. For example for the component name,
+within that component using URIs. For example, for the component name,
 `activemq`, you can then refer to destinations using the URI format,
 `activemq:[queue:|topic:]destinationName`. You can use the same approach
 for all other JMS providers.
@@ -700,10 +699,10 @@ You can configure this option in one of the following ways:
 
 === Concurrent Consuming with async consumer
 
-Notice that each concurrent consumer will only pickup the next available
+Notice that each concurrent consumer will only pick up the next available
 message from the JMS broker, when the current message has been fully
 processed. You can set the option `asyncConsumer=true` to let the
-consumer pickup the next message from the JMS queue, while the previous
+consumer pick up the next message from the JMS queue, while the previous
 message is being processed asynchronously (by the
 Asynchronous Routing Engine). See
 more details in the table on top of the page about the `asyncConsumer`
@@ -729,26 +728,26 @@ summaries the options.
 |=======================================================================
 |Option |Performance |Cluster |Description
 |`Temporary` |Fast |Yes |A temporary queue is used as reply queue, and
-automatic created by Camel. To use this do *not* specify a replyTo queue
+automatic created by Camel. To use this, do *not* specify a `replyTo` queue
 name. And you can optionally configure `replyToType=Temporary` to make
 it stand out that temporary queues are in use.
 
 |`Shared` |Slow |Yes |A shared persistent queue is used as reply queue.
 The queue must be created beforehand, although some brokers can create
-them on the fly such as Apache ActiveMQ. To use this you must specify
+them on the fly, such as Apache ActiveMQ. To use this, you must specify
 the replyTo queue name. And you can optionally configure
 `replyToType=Shared` to make it stand out that shared queues are in use.
 A shared queue can be used in a clustered environment with multiple
-nodes running this Camel application at the same time. All using the
+nodes running this Camel application at the same time. All of them using the
 same shared reply queue. This is possible because JMS Message selectors
 are used to correlate expected reply messages; this impacts performance
-though. JMS Message selectors is slower, and therefore not as fast as
+though. JMS Message selectors are slower, and therefore not as fast as
 `Temporary` or `Exclusive` queues. See further below how to tweak this
 for better performance.
 
 |`Exclusive` |Fast |No (*Yes) |An exclusive persistent queue is used as
 reply queue. The queue must be created beforehand, although some brokers
-can create them on the fly such as Apache ActiveMQ. To use this you must
+can create them on the fly, such as Apache ActiveMQ. To use this, you must
 specify the replyTo queue name. And you *must* configure
 `replyToType=Exclusive` to instruct Camel to use exclusive queues, as
 `Shared` is used by default, if a `replyTo` queue name was configured.
@@ -759,18 +758,18 @@ with multiple nodes running this Camel application at the same time; as
 we do not have control if the reply queue comes back to the same node
 that sent the request message; that is why shared queues use JMS Message
 selectors to make sure of this. *Though* if you configure each Exclusive
-reply queue with an unique name per node, then you can run this in a
+reply queue with a unique name per node, then you can run this in a
 clustered environment. As then the reply message will be sent back to
-that queue for the given node, that awaits the reply message.
+that queue for the given node that awaits the reply message.
 
-|`concurrentConsumers` |Fast |Yes |Allows to process
+|`concurrentConsumers` |Fast |Yes |Allows processing
 reply messages concurrently using concurrent message listeners in use.
 You can specify a range using the `concurrentConsumers` and
 `maxConcurrentConsumers` options. *Notice:* That using `Shared` reply
 queues may not work as well with concurrent listeners, so use this
 option with care.
 
-|`maxConcurrentConsumers` |Fast |Yes |Allows to process
+|`maxConcurrentConsumers` |Fast |Yes |Allows processing
 reply messages concurrently using concurrent message listeners in use.
 You can specify a range using the `concurrentConsumers` and
 `maxConcurrentConsumers` options. *Notice:* That using `Shared` reply
@@ -779,15 +778,15 @@ option with care.
 |=======================================================================
 
 The `JmsProducer` detects the `InOut` and provides a `JMSReplyTo` header
-with the reply destination to be used. By default Camel uses a temporary
+with the reply destination to be used. By default, Camel uses a temporary
 queue, but you can use the `replyTo` option on the endpoint to specify a
 fixed reply queue (see more below about fixed reply queue).
 
-Camel will automatically setup a consumer which listen on the reply queue,
+Camel will automatically set up a consumer that listens to on the reply queue,
 so you should *not* do anything. +
  This consumer is a Spring `DefaultMessageListenerContainer` which
-listen for replies. However it's fixed to 1 concurrent consumer. +
- That means replies will be processed in sequence as there are only 1
+listen for replies. However, it's fixed to 1 concurrent consumer. +
+ That means replies will be processed in sequence as there is only 1
 thread to process the replies. You can configure the listener to use
 concurrent threads using the `concurrentConsumers` and
 `maxConcurrentConsumers` options. This allows you to easier configure
@@ -801,7 +800,7 @@ from(xxx)
 .to(zzz);
 -------------------------------------------------------
 
-In this route we instruct Camel to route replies
+In this route, we instruct Camel to route replies
 asynchronously using a thread pool with 5 threads.
 
 === Request-reply over JMS and using a shared fixed reply queue
@@ -817,14 +816,14 @@ from(xxx)
 .to(yyy)
 ---------------------------------------------
 
-In this example the fixed reply queue named "bar" is used. By default
+In this example, the fixed reply queue named "bar" is used. By default,
 Camel assumes the queue is shared when using fixed reply queues, and
-therefore it uses a `JMSSelector` to only pickup the expected reply
-messages (eg based on the `JMSCorrelationID`). See next section for
-exclusive fixed reply queues. That means its not as fast as temporary
-queues. You can speedup how often Camel will pull for reply messages
-using the `receiveTimeout` option. By default its 1000 millis. So to
-make it faster you can set it to 250 millis to pull 4 times per second
+therefore it uses a `JMSSelector` to only pick up the expected reply
+messages (e.g., based on the `JMSCorrelationID`). See the next section for
+exclusive fixed reply queues. That means it's not as fast as temporary
+queues. You can speed up how often Camel will pull for reply messages
+using the `receiveTimeout` option. By default, its 1000 milliseconds. So to
+make it faster, you can set it to 250 millis to pull 4 times per second
 as shown:
 
 [source,java]
@@ -835,21 +834,21 @@ from(xxx)
 ----------------------------------------------------------------
 
 Notice this will cause the Camel to send pull requests to the message
-broker more frequent, and thus require more network traffic. +
+broker more frequently, and thus require more network traffic. +
  It is generally recommended to use temporary queues if possible.
 
 === Request-reply over JMS and using an exclusive fixed reply queue
 
 In the previous example, Camel would anticipate the fixed reply queue
 named "bar" was shared, and thus it uses a `JMSSelector` to only consume
-reply messages which it expects. However there is a drawback doing this
-as the JMS selector is slower. Also the consumer on the reply queue is
-slower to update with new JMS selector ids. In fact it only updates when
+reply messages which it expects. However, there is a drawback to doing this
+as the JMS selector is slower. Also, the consumer on the reply queue is
+slower to update with new JMS selector ids. In fact, it only updates when
 the `receiveTimeout` option times out, which by default is 1 second. So
-in theory the reply messages could take up till about 1 sec to be
-detected. On the other hand if the fixed reply queue is exclusive to the
+in theory, the reply messages could take up till about 1 sec to be
+detected. On the other hand, if the fixed reply queue is exclusive to the
 Camel reply consumer, then we can avoid using the JMS selectors, and
-thus be more performant. In fact as fast as using temporary queues. There is
+thus be more performant. In fact, as fast as using temporary queues. There is
 the `ReplyToType` option which you can configure to `Exclusive` +
  to tell Camel that the reply queue is exclusive as shown in the example
 below:
@@ -862,7 +861,7 @@ from(xxx)
 -------------------------------------------------------------------
 
 Mind that the queue must be exclusive to each and every endpoint. So if
-you have two routes, then they each need an unique reply queue as shown
+you have two routes, then they each need a unique reply queue as shown
 in the next example:
 
 [source,java]
@@ -877,43 +876,48 @@ from(aaa)
 -----------------------------------------------------------------------------
 
 The same applies if you run in a clustered environment. Then each node
-in the cluster must use an unique reply queue name. As otherwise each
-node in the cluster may pickup messages which was intended as a reply on
-another node. For clustered environments its recommended to use shared
+in the cluster must use a unique reply queue name. As otherwise, each
+node in the cluster may pick up messages intended as a reply on
+another node. For clustered environments, it's recommended to use shared
 reply queues instead.
 
 == Synchronizing clocks between senders and receivers
 
-When doing messaging between systems, its desirable that the systems
-have synchronized clocks. For example when sending a xref:jms-component.adoc[JMS]
+When doing messaging between systems, it is desirable that the systems
+have synchronized clocks. For example, when sending a xref:jms-component.adoc[JMS]
 message, then you can set a time to live value on the message. Then the
-receiver can inspect this value, and determine if the message is already
+receiver can inspect this value and determine if the message is already
 expired, and thus drop the message instead of consume and process it.
-However this requires that both sender and receiver have synchronized
-clocks. If you are using http://activemq.apache.org/[ActiveMQ] then you
+However, this requires that both sender and receiver have synchronized
+clocks.
+
+[NOTE]
+====
+If you are using http://activemq.apache.org/[ActiveMQ], then you
 can use the http://activemq.apache.org/timestampplugin.html[timestamp
 plugin] to synchronize clocks.
+====
 
 == About time to live
 
 Read first above about synchronized clocks.
 
-When you do request/reply (InOut) over xref:jms-component.adoc[JMS] with Camel
+When you do request/reply (InOut) over xref:jms-component.adoc[JMS] with Camel,
 then Camel uses a timeout on the sender side, which is default 20
 seconds from the `requestTimeout` option. You can control this by
-setting a higher/lower value. However the time to live value is still
-set on the xref:jms-component.adoc[JMS] message being send. So that requires the
+setting a higher/lower value. However, the time to live value is still
+set on the xref:jms-component.adoc[JMS] message being sent. So that requires the
 clocks to be synchronized between the systems. If they are not, then you
 may want to disable the time to live value being set. This is now
 possible using the `disableTimeToLive` option from *Camel 2.8* onwards.
 So if you set this option to `disableTimeToLive=true`, then Camel does
 *not* set any time to live value when sending xref:jms-component.adoc[JMS]
-messages. *But* the request timeout is still active. So for example if
+messages. *But* the request timeout is still active. So for example, if
 you do request/reply over xref:jms-component.adoc[JMS] and have disabled time to
 live, then Camel will still use a timeout by 20 seconds (the
-`requestTimeout` option). That option can of course also be configured.
+`requestTimeout` option). That option can also be configured.
 So the two options `requestTimeout` and `disableTimeToLive` gives you
-fine grained control when doing request/reply.
+Fine-grained control when doing request/reply.
 
 You can provide a header in the message
 to override and use as the request timeout value instead of the endpoint
@@ -926,11 +930,11 @@ configured value. For example:
      .to("bean:processReply");
 --------------------------------------------------------
 
-In the route above we have a endpoint configured `requestTimeout` of 30
+In the route above we have an endpoint configured `requestTimeout` of 30
 seconds. So Camel will wait up till 30 seconds for that reply message to
 come back on the bar queue. If no reply message is received then a
 `org.apache.camel.ExchangeTimedOutException` is set on the
-Exchange and Camel continues routing the message,
+Exchange, and Camel continues routing the message,
 which would then fail due the exception, and Camel's error handler
 reacts.
 
@@ -938,9 +942,9 @@ If you want to use a per message timeout value, you can set the header
 with key
 `org.apache.camel.component.jms.JmsConstants#JMS_REQUEST_TIMEOUT` which
 has constant value `"CamelJmsRequestTimeout"` with a timeout value as
-long type.
+a long type.
 
-For example we can use a bean to compute the timeout value per
+For example, we can use a bean to compute the timeout value per
 individual message, such as calling the `"whatIsTheTimeout"` method on
 the service bean as shown below:
 
@@ -952,10 +956,10 @@ from("direct:someWhere")
   .to("bean:processReply");
 ----------------------------------------------------------------------------------------
 
-When you do fire and forget (InOut) over xref:jms-component.adoc[JMS] with Camel
+When you do fire and forget (InOut) over xref:jms-component.adoc[JMS] with Camel,
 then Camel by default does *not* set any time to live value on the
 message. You can configure a value by using the `timeToLive` option. For
-example to indicate a 5 sec., you set `timeToLive=5000`. The option
+example, to indicate a 5 sec., you set `timeToLive=5000`. The option
 `disableTimeToLive` can be used to force disabling the time to live,
 also for InOnly messaging. The `requestTimeout` option is not being used
 for InOnly messaging.
@@ -975,14 +979,14 @@ for further details.
 
 Transactions and [Request Reply] over JMS
 
-When using Request Reply over JMS you cannot
+When using Request Reply over JMS, you cannot
 use a single transaction; JMS will not send any messages until a commit
 is performed, so the server side won't receive anything at all until the
-transaction commits. Therefore to use xref:eips:requestReply-eip.adoc[Request
-Reply] you must commit a transaction after sending the request and then
+transaction commits. Therefore, to use xref:eips:requestReply-eip.adoc[Request
+Reply], you must commit a transaction after sending the request and then
 use a separate transaction for receiving the response.
 
-To address this issue the JMS component uses different properties to
+To address this issue, the JMS component uses different properties to
 specify transaction use for oneway messaging and request reply
 messaging:
 
@@ -1000,7 +1004,7 @@ component/endpoint:
 The benefit of doing so is that the cacheLevel setting will be honored
 when using local transactions without a configured TransactionManager.
 When a TransactionManager is configured, no caching happens at DMLC
-level and it is necessary to rely on a pooled connection factory. For more
+level, and it is necessary to rely on a pooled connection factory. For more
 details about this kind of setup, see
 http://tmielke.blogspot.com/2012/03/camel-jms-with-transactions-lessons.html[here]
 and
@@ -1035,7 +1039,7 @@ For example:
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------
-// we pretend to send it to some non existing dummy queue
+// we pretend to send it to some non-existing dummy queue
 template.send("activemq:queue:dummy, new Processor() {
    public void process(Exchange exchange) throws Exception {
       // and here we override the destination with the ReplyTo destination object so the message is sent to there instead of dummy
@@ -1049,19 +1053,19 @@ template.send("activemq:queue:dummy, new Processor() {
 
 In the sample below we send a Request Reply
 style message Exchange (we use the `requestBody`
-method = `InOut`) to the slow queue for further processing in Camel and
+method = `InOut`) to the slow queue for further processing in Camel, and
 we wait for a return reply:
 
 
 == Sending an InOnly message and keeping the JMSReplyTo header
 
-When sending to a xref:jms-component.adoc[JMS] destination using *camel-jms* the
+When sending to a xref:jms-component.adoc[JMS] destination using *camel-jms*, the
 producer will use the MEP to detect if its _InOnly_ or _InOut_ messaging.
-However there can be times where you want to send an _InOnly_ message but
-keeping the `JMSReplyTo` header. To do so you have to instruct Camel to
+However, there can be times where you want to send an _InOnly_ message but
+keeping the `JMSReplyTo` header. To do so, you have to instruct Camel to
 keep it, otherwise the `JMSReplyTo` header will be dropped.
 
-For example to send an _InOnly_ message to the foo queue, but with a
+For example, to send an _InOnly_ message to the foo queue, but with a
 `JMSReplyTo` with bar queue you can do as follows:
 
 [source,java]
@@ -1079,7 +1083,7 @@ Notice we use `preserveMessageQos=true` to instruct Camel to keep the
 
 == Setting JMS provider options on the destination
 
-Some JMS providers, like IBM's WebSphere MQ need options to be set on
+Some JMS providers, like IBM's WebSphere MQ, need options to be set on
 the JMS destination. For example, you may need to specify the
 `targetClient` option. Since `targetClient` is a WebSphere MQ option and not
 a Camel URI option, you need to set that on the JMS destination name
@@ -1092,7 +1096,7 @@ like so:
 .to("wmq:queue:MY_QUEUE?useMessageIDAsCorrelationID=true");
 -----------------------------------------------------------------------------------
 
-Some versions of WMQ won't accept this option on the destination name
+Some versions of WMQ won't accept this option on the destination name,
 and you will get an exception like:
 
 ----------------------------------------------------------------------------------------------------------------------------------
