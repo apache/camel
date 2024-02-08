@@ -8691,7 +8691,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-config-maps:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -8712,7 +8717,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-config-maps:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8735,7 +8745,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-cronjob:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -8755,7 +8770,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-cronjob:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8779,7 +8799,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -8800,7 +8825,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8824,7 +8854,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-deployments:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -8845,7 +8880,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-deployments:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8869,7 +8909,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-events:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -8890,7 +8935,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-events:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8914,7 +8964,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-hpa:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -8935,7 +8990,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-hpa:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8958,7 +9018,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-job:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -8978,7 +9043,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-job:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9002,7 +9072,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-namespaces:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9023,7 +9098,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-namespaces:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9046,7 +9126,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-nodes:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9066,7 +9151,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-nodes:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9090,7 +9180,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9111,7 +9206,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9135,7 +9235,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9156,7 +9261,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9179,7 +9289,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-pods:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9199,7 +9314,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-pods:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9223,7 +9343,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9244,7 +9369,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9267,7 +9397,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9287,7 +9422,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9310,7 +9450,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-secrets:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9330,7 +9475,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-secrets:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9353,7 +9503,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9373,7 +9528,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9397,7 +9557,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-services:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -9418,7 +9583,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kubernetes-services:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -10969,7 +11139,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openshift-build-configs:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -10989,7 +11164,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openshift-build-configs:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11012,7 +11192,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openshift-builds:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -11032,7 +11217,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openshift-builds:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11056,7 +11246,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openshift-deploymentconfigs:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param path masterUrl
      * @return the dsl builder
@@ -11077,7 +11272,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openshift-deploymentconfigs:masterUrl</code>
      * 
      * Path parameter: masterUrl (required)
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server. This should only be used when your
+     * Camel application is connecting from outside Kubernetes. If you run your
+     * Camel application inside Kubernetes, then you can use local or client as
+     * the URL to tell Camel to run in local mode. If you connect remotely to
+     * Kubernetes, then you may also need some of the many other configuration
+     * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13442,16 +13642,12 @@ public class StaticEndpointBuilders {
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
      * 
-     * Syntax: <code>splunk-hec:splunkURL/token</code>
+     * Syntax: <code>splunk-hec:splunkURL</code>
      * 
      * Path parameter: splunkURL (required)
      * Splunk Host and Port (example: my_splunk_server:8089)
      * 
-     * Path parameter: token (required)
-     * Splunk HEC token (this is the token created for HEC and not the user's
-     * token)
-     * 
-     * @param path splunkURL/token
+     * @param path splunkURL
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(
@@ -13467,18 +13663,14 @@ public class StaticEndpointBuilders {
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
      * 
-     * Syntax: <code>splunk-hec:splunkURL/token</code>
+     * Syntax: <code>splunk-hec:splunkURL</code>
      * 
      * Path parameter: splunkURL (required)
      * Splunk Host and Port (example: my_splunk_server:8089)
      * 
-     * Path parameter: token (required)
-     * Splunk HEC token (this is the token created for HEC and not the user's
-     * token)
-     * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path splunkURL/token
+     * @param path splunkURL
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(
