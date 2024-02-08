@@ -32,7 +32,7 @@ for this component:
 == URI format
 
 -------------------------------
-splunk-hec:[endpoint]/[token]?[options]
+splunk-hec:[splunkURL]?[options]
 -------------------------------
 
 
@@ -72,7 +72,7 @@ server.
 [source,java]
 -------------------------------
 from("direct:start")
-        .to("splunk-hec://localhost:8080?token");
+        .to("splunk-hec://localhost:8080?token=token");
 -------------------------------
 
 If you are ingesting a large enough dataset with a big enough lag then the time
@@ -83,13 +83,13 @@ you want to override the index time you can do so.
 -------------------------------
 from("kafka:logs")
         .setHeader(SplunkHECConstants.INDEX_TIME, simple("${headers[kafka.HEADERS].lastKey('TIME')}"))
-        .to("splunk-hec://localhost:8080/token");
+        .to("splunk-hec://localhost:8080?token=token");
 -------------------------------
 
 [source,java]
 -------------------------------
 from("kafka:logs")
-        .toD("splunk-hec://localhost:8080/token?time=${headers[kafka.HEADERS].lastKey('TIME')}");
+        .toD("splunk-hec://localhost:8080?token=token&time=${headers[kafka.HEADERS].lastKey('TIME')}");
 -------------------------------
 
 

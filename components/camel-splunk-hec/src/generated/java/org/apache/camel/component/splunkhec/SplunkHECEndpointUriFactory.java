@@ -15,7 +15,7 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class SplunkHECEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":splunkURL/token";
+    private static final String BASE = ":splunkURL";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
@@ -55,7 +55,6 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "splunkURL", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "token", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

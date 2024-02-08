@@ -154,6 +154,10 @@ The component now has support for batch processing.
 Removed deprecated `org.apache.camel.component.jsonvalidator.DefaultJsonSchemaLoader`,
 use `org.apache.camel.component.jsonvalidator.DefaultJsonUriSchemaLoader` instead.
 
+=== camel-splunk-hec
+
+Removed `token` from the URI's path in favor of setting it through a `token` query parameter. While the `token` was in the URI path, it could potentially be leaked within the logs.
+
 
 == Camel Spring Boot
 

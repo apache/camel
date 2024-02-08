@@ -64,6 +64,12 @@ public class SplunkHECConfigurationTest {
     }
 
     @Test
+    public void testDefaultToken() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertNull(config.getToken());
+    }
+
+    @Test
     public void testDefaultSkipTlsVerifyIsFalse() {
         SplunkHECConfiguration config = new SplunkHECConfiguration();
         assertFalse(config.isSkipTlsVerify());

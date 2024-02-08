@@ -18,16 +18,12 @@ package org.apache.camel.component.splunkhec.integration;
 
 import java.util.Collections;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.splunkhec.SplunkHECComponent;
-import org.apache.camel.component.splunkhec.SplunkHECConfiguration;
 import org.apache.camel.component.splunkhec.SplunkHECEndpoint;
 import org.apache.camel.component.splunkhec.SplunkHECProducer;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -41,35 +37,31 @@ public class SplunkHECITManualTest extends CamelTestSupport {
 
     @Test
     public void testSendHEC() throws Exception {
-        CamelContext ctx = new DefaultCamelContext();
+        SplunkHECEndpoint endpoint = getMandatoryEndpoint(
+                "splunk-hec:localhost:8088?token=4b35e71f-6a0f-4bab-94ce-f591ff45eecd", SplunkHECEndpoint.class);
+        assertEquals("4b35e71f-6a0f-4bab-94ce-f591ff45eecd", endpoint.getConfiguration().getToken());
+        endpoint.getConfiguration().setSkipTlsVerify(true);
+        endpoint.getConfiguration().setIndex("camel");
+        endpoint.getConfiguration().setSource("camel");
+        endpoint.getConfiguration().setSourceType("camel");
 
-        SplunkHECConfiguration configuration = new SplunkHECConfiguration();
-        configuration.setSkipTlsVerify(true);
-        configuration.setIndex("camel");
-        configuration.setSource("camel");
-        configuration.setSourceType("camel");
-        SplunkHECComponent component = new SplunkHECComponent();
-        SplunkHECEndpoint endpoint = new SplunkHECEndpoint(
-                "splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd", component, configuration);
-        assertEquals("4b35e71f-6a0f-4bab-94ce-f591ff45eecd", endpoint.getToken());
-        endpoint.setCamelContext(ctx);
         SplunkHECProducer producer = new SplunkHECProducer(endpoint);
         producer.start();
 
-        Exchange ex = new DefaultExchange(ctx);
+        Exchange ex = new DefaultExchange(context());
         DefaultMessage message = new DefaultMessage(ex);
         message.setBody("TEST sending to Splunk");
         message.setHeader("foo", "bar");
         ex.setIn(message);
         producer.process(ex);
 
-        Exchange ex2 = new DefaultExchange(ctx);
+        Exchange ex2 = new DefaultExchange(context());
         DefaultMessage message2 = new DefaultMessage(ex2);
         message2.setBody(Collections.singletonMap("key", "value"));
         ex2.setIn(message2);
         producer.process(ex2);
 
-        Exchange ex3 = new DefaultExchange(ctx);
+        Exchange ex3 = new DefaultExchange(context());
         DefaultMessage message3 = new DefaultMessage(ex3);
         message3.setBody(null);
         ex3.setIn(message3);
@@ -92,7 +84,7 @@ public class SplunkHECITManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:hec").to(
-                        "splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd?source=camelsource&skipTlsVerify=true")
+                        "splunk-hec:localhost:8088?token=4b35e71f-6a0f-4bab-94ce-f591ff45eecd&source=camelsource&skipTlsVerify=true")
                         .to("mock:hec-result");
             }
         };
