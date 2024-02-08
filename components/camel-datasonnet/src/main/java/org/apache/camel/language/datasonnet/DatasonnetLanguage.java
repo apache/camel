@@ -83,11 +83,11 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
         DatasonnetExpression answer = new DatasonnetExpression(expression);
         answer.setSource(source);
         answer.setResultType(property(Class.class, properties, 0, null));
-        String mediaType = property(String.class, properties, 4, null);
+        String mediaType = property(String.class, properties, 2, null);
         if (mediaType != null) {
             answer.setBodyMediaType(MediaType.valueOf(mediaType));
         }
-        mediaType = property(String.class, properties, 5, null);
+        mediaType = property(String.class, properties, 3, null);
         if (mediaType != null) {
             answer.setOutputMediaType(MediaType.valueOf(mediaType));
         }

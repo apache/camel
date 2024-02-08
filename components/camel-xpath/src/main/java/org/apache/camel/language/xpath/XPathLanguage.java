@@ -134,15 +134,15 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         if (clazz != null) {
             builder.setResultType(clazz);
         }
-        clazz = property(Class.class, properties, 4, documentType);
+        clazz = property(Class.class, properties, 2, documentType);
         if (clazz != null) {
             builder.setDocumentType(clazz);
         }
-        QName qname = property(QName.class, properties, 5, resultQName);
+        QName qname = property(QName.class, properties, 3, resultQName);
         if (qname != null) {
             builder.setResultQName(qname);
         }
-        Boolean bool = property(Boolean.class, properties, 6, saxon);
+        Boolean bool = property(Boolean.class, properties, 4, saxon);
         if (bool != null) {
             builder.setUseSaxon(bool);
             if (bool) {
@@ -151,28 +151,28 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         }
         if (!builder.isUseSaxon()) {
             // xpath factory can only be set if not saxon is enabled as saxon has its own factory and object model
-            XPathFactory fac = property(XPathFactory.class, properties, 7, xpathFactory);
+            XPathFactory fac = property(XPathFactory.class, properties, 5, xpathFactory);
             if (fac != null) {
                 builder.setXPathFactory(fac);
             }
-            String str = property(String.class, properties, 8, objectModelUri);
+            String str = property(String.class, properties, 6, objectModelUri);
             if (str != null) {
                 builder.setObjectModelUri(str);
             }
         }
-        bool = property(Boolean.class, properties, 9, threadSafety);
+        bool = property(Boolean.class, properties, 7, threadSafety);
         if (bool != null) {
             builder.setThreadSafety(bool);
         }
-        bool = property(Boolean.class, properties, 10, preCompile);
+        bool = property(Boolean.class, properties, 8, preCompile);
         if (bool != null) {
             builder.setPreCompile(bool);
         }
-        bool = property(Boolean.class, properties, 11, logNamespaces);
+        bool = property(Boolean.class, properties, 9, logNamespaces);
         if (bool != null) {
             builder.setLogNamespaces(bool);
         }
-        Map<String, String> ns = property(Map.class, properties, 12, null);
+        Map<String, String> ns = property(Map.class, properties, 10, null);
         if (ns != null && !ns.isEmpty()) {
             builder.setNamespaces(ns);
         }

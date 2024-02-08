@@ -51,11 +51,11 @@ public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
     @Override
     public Expression createExpression(Expression source, String expression, Object[] properties) {
         Class<?> type = property(Class.class, properties, 0, null);
-        Character mode = property(Character.class, properties, 4, "i");
+        Character mode = property(Character.class, properties, 2, "i");
 
         XMLTokenExpressionIterator xml = new XMLTokenExpressionIterator(source, expression, mode);
-        xml.setGroup(property(int.class, properties, 5, 1));
-        Object obj = properties[6];
+        xml.setGroup(property(int.class, properties, 3, 1));
+        Object obj = properties[4];
         if (obj != null) {
             Namespaces ns;
             if (obj instanceof Namespaces) {

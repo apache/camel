@@ -105,12 +105,12 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
         answer.setSource(source);
         answer.setPredicate(predicate);
         answer.setResultType(property(Class.class, properties, 0, null));
-        answer.setSuppressExceptions(property(boolean.class, properties, 4, isSuppressExceptions()));
-        answer.setAllowSimple(property(boolean.class, properties, 5, isAllowSimple()));
-        answer.setAllowEasyPredicate(property(boolean.class, properties, 6, isAllowEasyPredicate()));
-        answer.setWriteAsString(property(boolean.class, properties, 7, isWriteAsString()));
-        answer.setUnpackArray(property(boolean.class, properties, 8, isUnpackArray()));
-        Object option = property(Object.class, properties, 9, null);
+        answer.setSuppressExceptions(property(boolean.class, properties, 2, isSuppressExceptions()));
+        answer.setAllowSimple(property(boolean.class, properties, 3, isAllowSimple()));
+        answer.setAllowEasyPredicate(property(boolean.class, properties, 4, isAllowEasyPredicate()));
+        answer.setWriteAsString(property(boolean.class, properties, 5, isWriteAsString()));
+        answer.setUnpackArray(property(boolean.class, properties, 6, isUnpackArray()));
+        Object option = property(Object.class, properties, 7, null);
         if (option != null) {
             List<Option> list = new ArrayList<>();
             if (option instanceof String str) {
