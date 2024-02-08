@@ -1047,10 +1047,13 @@ public class ExpressionBuilder {
      * Returns an expression for evaluating the expression/predicate using the given language
      *
      * @param  expression the expression or predicate
-     * @param  input      input to use instead of message body
+     * @param  source     Source to use, instead of message body. You can prefix with variable:, header:, or property:
+     *                    to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or
+     *                    null to use default source, which is the message body.
      * @return            an expression object which will evaluate the expression/predicate using the given language
      */
-    public static Expression singleInputLanguageExpression(final String language, final String expression, final String input) {
+    public static Expression singleInputLanguageExpression(
+            final String language, final String expression, final String source) {
         return new ExpressionAdapter() {
             private Expression expr;
             private Predicate pred;
@@ -1070,31 +1073,9 @@ public class ExpressionBuilder {
                 super.init(context);
                 Language lan = context.resolveLanguage(language);
                 if (lan != null) {
-                    if (input != null && lan instanceof SingleInputTypedLanguageSupport sil) {
-                        String prefix = StringHelper.before(input, ":");
-                        String name = StringHelper.after(input, ":");
-                        if (prefix != null) {
-                            prefix = prefix.trim();
-                        }
-                        if (name != null) {
-                            name = name.trim();
-                        }
-                        String header = null;
-                        String property = null;
-                        String variable = null;
-                        if ("header".equals(prefix)) {
-                            header = name;
-                        } else if ("property".equals(prefix) || "exchangeProperty".equals(prefix)) {
-                            property = name;
-                        } else if ("variable".equals(prefix)) {
-                            variable = name;
-                        } else {
-                            throw new IllegalArgumentException(
-                                    "Invalid input source for language. Should either be header:key, exchangeProperty:key, or variable:key, was: "
-                                                               + input);
-                        }
-                        Expression source = ExpressionBuilder.singleInputExpression(variable, header, property);
-                        expr = sil.createExpression(source, expression, null);
+                    if (source != null && lan instanceof SingleInputTypedLanguageSupport sil) {
+                        Expression input = ExpressionBuilder.singleInputExpression(source);
+                        expr = sil.createExpression(input, expression, null);
                         expr.init(context);
                         pred = PredicateBuilder.toPredicate(expr);
                         pred.init(context);
@@ -1303,24 +1284,26 @@ public class ExpressionBuilder {
     /**
      * Creates a source {@link Expression} for languages that can accept input from other sources than the message body.
      *
-     * @param  variableName the name of the variable from which the input data must be extracted if not empty.
-     * @param  headerName   the name of the header from which the input data must be extracted if not empty.
-     * @param  propertyName the name of the property from which the input data must be extracted if not empty and
-     *                      {@code headerName} is empty.
-     * @return              a variable expression if {@code variableName} is not empty, a header expression if
-     *                      {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is
-     *                      not empty or finally a body expression.
+     * @param  source Source to use, instead of message body. You can prefix with variable:, header:, or property: to
+     *                specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to
+     *                use default source, which is the message body.
+     * @return        a variable expression if {@code variableName} is not empty, a header expression if
+     *                {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is not
+     *                empty or finally a body expression.
      */
-    public static Expression singleInputExpression(String variableName, String headerName, String propertyName) {
+    public static Expression singleInputExpression(String source) {
         final Expression exp;
-        if (ObjectHelper.isNotEmpty(variableName)) {
-            exp = variableExpression(variableName, true);
-        } else if (ObjectHelper.isNotEmpty(headerName)) {
-            exp = headerExpression(headerName, true);
-        } else if (ObjectHelper.isNotEmpty(propertyName)) {
-            exp = exchangePropertyExpression(propertyName, true);
-        } else {
+        if (source == null || source.isEmpty()) {
             exp = bodyExpression();
+        } else if (source.startsWith("header:")) {
+            exp = headerExpression(source.substring(7), true);
+        } else if (source.startsWith("property:")) {
+            exp = exchangePropertyExpression(source.substring(9), true);
+        } else {
+            if (source.startsWith("variable:")) {
+                source = source.substring(9);
+            }
+            exp = variableExpression(source);
         }
         return exp;
     }
@@ -2414,29 +2397,22 @@ public class ExpressionBuilder {
      * Returns an {@link TokenXMLExpressionIterator} expression
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
-        StringHelper.notEmpty(tagName, "tagName");
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLExpression(Expression source, String tagName, String inheritNamespaceTagName) {
-        StringHelper.notEmpty(tagName, "tagName");
         return new TokenXMLExpressionIterator(source, tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode) {
-        return tokenizeXMLAwareExpression(null, path, mode, 1, null);
+        return tokenizeXMLAwareExpression(path, mode, 1, null);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
-        return tokenizeXMLAwareExpression(null, path, mode, group, null);
+        return tokenizeXMLAwareExpression(path, mode, group, null);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group, Namespaces namespaces) {
-        return tokenizeXMLAwareExpression(null, path, mode, group, namespaces);
-    }
-
-    public static Expression tokenizeXMLAwareExpression(
-            String headerName, String path, char mode, int group, Namespaces namespaces) {
         StringHelper.notEmpty(path, "path");
         return new ExpressionAdapter() {
             private Expression exp;
@@ -2451,7 +2427,7 @@ public class ExpressionBuilder {
                 super.init(context);
                 final Language language = context.resolveLanguage("xtokenize");
                 this.exp = language.createExpression(path,
-                        new Object[] { null, null, headerName, null, mode, group, namespaces });
+                        new Object[] { null, null, mode, group, namespaces });
                 this.exp.init(context);
             }
 

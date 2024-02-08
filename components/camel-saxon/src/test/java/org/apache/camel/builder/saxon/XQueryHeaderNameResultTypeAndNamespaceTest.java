@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
  * Test XPath DSL with the ability to apply XPath on a header
  */
 public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport {
+
     @Test
     public void testXPathWithNamespace() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:55");
@@ -43,12 +44,14 @@ public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport
         return new RouteBuilder() {
             public void configure() {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
+                var xq = expression().xquery().expression("/c:number = 55").namespaces(ns).resultType(Integer.class)
+                        .source("header:cheeseDetails").end();
 
                 from("direct:in").choice()
-                        .when().xquery("/c:number = 55", Integer.class, ns, "cheeseDetails")
-                        .to("mock:55")
+                        .when(xq)
+                            .to("mock:55")
                         .otherwise()
-                        .to("mock:other")
+                            .to("mock:other")
                         .end();
             }
         };

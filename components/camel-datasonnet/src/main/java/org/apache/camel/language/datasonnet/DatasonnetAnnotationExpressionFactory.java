@@ -14,57 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.xpath;
+package org.apache.camel.language.datasonnet;
 
 import java.lang.annotation.Annotation;
 
+import com.datasonnet.document.MediaType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
-import org.apache.camel.support.language.NamespacePrefix;
 
 /**
- * Factory for the XPath expression annotations.
+ * Factory for the Datasonnet expression annotations.
  */
-public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
+public class DatasonnetAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
     public Expression createExpression(
             CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
             Class<?> expressionReturnType) {
-        String xpath = getExpressionFromAnnotation(annotation);
+
+        String ds = getExpressionFromAnnotation(annotation);
+        DatasonnetExpression answer = new DatasonnetExpression(ds);
 
         Class<?> resultType = getResultType(annotation);
         if (resultType.equals(Object.class)) {
             resultType = expressionReturnType;
         }
+        String source = getSource(annotation);
+        answer.setSource(ExpressionBuilder.singleInputExpression(source));
 
-        XPathBuilder builder = XPathBuilder.xpath(xpath, resultType);
-        builder.preCompile(isPreCompile(annotation));
-        builder.setLogNamespaces(isLogNamespaces(annotation));
-        NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
-        if (namespaces != null) {
-            for (NamespacePrefix namespacePrefix : namespaces) {
-                builder = builder.namespace(namespacePrefix.prefix(), namespacePrefix.uri());
+        if (annotation instanceof Datasonnet) {
+            Datasonnet ann = (Datasonnet) annotation;
+            if (!ann.bodyMediaType().isEmpty()) {
+                answer.setBodyMediaType(MediaType.valueOf(ann.bodyMediaType()));
+            }
+            if (!ann.outputMediaType().isEmpty()) {
+                answer.setOutputMediaType(MediaType.valueOf(ann.outputMediaType()));
             }
         }
 
-        String source = getSource(annotation);
-        if (source != null) {
-            builder.setSource(ExpressionBuilder.singleInputExpression(source));
-        }
-
-        return builder;
+        return ExpressionBuilder.convertToExpression(answer, resultType);
     }
 
     protected Class<?> getResultType(Annotation annotation) {
         return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
-    }
-
-    protected NamespacePrefix[] getExpressionNameSpacePrefix(Annotation annotation) {
-        return (NamespacePrefix[]) getAnnotationObjectValue(annotation, "namespaces");
     }
 
     protected String getSource(Annotation annotation) {
@@ -78,25 +73,5 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
             return null;
         }
         return answer;
-    }
-
-    protected boolean isLogNamespaces(Annotation annotation) {
-        // in case @XPath is extended in a custom annotation then it may not have the method
-        try {
-            return (boolean) getAnnotationObjectValue(annotation, "logNamespaces");
-        } catch (Exception e) {
-            // Do Nothing
-        }
-        return false;
-    }
-
-    protected boolean isPreCompile(Annotation annotation) {
-        // in case @XPath is extended in a custom annotation then it may not have the method
-        try {
-            return (boolean) getAnnotationObjectValue(annotation, "preCompile");
-        } catch (Exception e) {
-            // Do Nothing
-        }
-        return false;
     }
 }

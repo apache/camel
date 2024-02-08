@@ -14,37 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.jq;
+package org.apache.camel.language.datasonnet;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class JqExpressionFromHeaderAsStringTest extends JqTestSupport {
+public class DatasonnetAnnotationTest extends CamelTestSupport {
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                var jq = expression().jq().expression(".foo").resultType(String.class).source("header:Content").end();
-
                 from("direct:start")
-                        .transform(jq)
+                        .bean(MyBean.class)
                         .to("mock:result");
             }
         };
     }
 
     @Test
-    public void testExpression() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("bar");
+    public void testAnnotation() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello, DataSonnet. I am Camel");
 
-        ObjectNode node = MAPPER.createObjectNode();
-        node.put("foo", "bar");
-
-        template.sendBodyAndHeader("direct:start", null, "Content", node);
+        template.sendBody("direct:start", "DataSonnet");
 
         MockEndpoint.assertIsSatisfied(context);
     }
+
+    public static class MyBean {
+
+        public String hello(@Datasonnet("'Hello, ' + payload") String payload) {
+            return payload + ". I am Camel";
+        }
+    }
+
 }

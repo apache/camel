@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.xpath;
+package org.apache.camel.component.hl7;
 
 import java.lang.annotation.Annotation;
 
@@ -23,48 +23,31 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
-import org.apache.camel.support.language.NamespacePrefix;
 
 /**
- * Factory for the XPath expression annotations.
+ * Factory for the HL7 terser expression annotations.
  */
-public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
+public class Hl7TerserAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
     public Expression createExpression(
             CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
             Class<?> expressionReturnType) {
-        String xpath = getExpressionFromAnnotation(annotation);
 
+        String hl7 = getExpressionFromAnnotation(annotation);
         Class<?> resultType = getResultType(annotation);
         if (resultType.equals(Object.class)) {
             resultType = expressionReturnType;
         }
-
-        XPathBuilder builder = XPathBuilder.xpath(xpath, resultType);
-        builder.preCompile(isPreCompile(annotation));
-        builder.setLogNamespaces(isLogNamespaces(annotation));
-        NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
-        if (namespaces != null) {
-            for (NamespacePrefix namespacePrefix : namespaces) {
-                builder = builder.namespace(namespacePrefix.prefix(), namespacePrefix.uri());
-            }
-        }
-
         String source = getSource(annotation);
-        if (source != null) {
-            builder.setSource(ExpressionBuilder.singleInputExpression(source));
-        }
+        Expression input = ExpressionBuilder.singleInputExpression(source);
+        Expression exp = Hl7TerserLanguage.terser(input, hl7);
 
-        return builder;
+        return ExpressionBuilder.convertToExpression(exp, resultType);
     }
 
     protected Class<?> getResultType(Annotation annotation) {
         return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
-    }
-
-    protected NamespacePrefix[] getExpressionNameSpacePrefix(Annotation annotation) {
-        return (NamespacePrefix[]) getAnnotationObjectValue(annotation, "namespaces");
     }
 
     protected String getSource(Annotation annotation) {
@@ -78,25 +61,5 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
             return null;
         }
         return answer;
-    }
-
-    protected boolean isLogNamespaces(Annotation annotation) {
-        // in case @XPath is extended in a custom annotation then it may not have the method
-        try {
-            return (boolean) getAnnotationObjectValue(annotation, "logNamespaces");
-        } catch (Exception e) {
-            // Do Nothing
-        }
-        return false;
-    }
-
-    protected boolean isPreCompile(Annotation annotation) {
-        // in case @XPath is extended in a custom annotation then it may not have the method
-        try {
-            return (boolean) getAnnotationObjectValue(annotation, "preCompile");
-        } catch (Exception e) {
-            // Do Nothing
-        }
-        return false;
     }
 }

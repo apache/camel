@@ -20,7 +20,6 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
-import org.apache.camel.spi.Metadata;
 
 /**
  * Expression for which a result type can be provided along with the source of the input (body, header or property).
@@ -28,13 +27,7 @@ import org.apache.camel.spi.Metadata;
 public abstract class SingleInputTypedExpressionDefinition extends TypedExpressionDefinition {
 
     @XmlAttribute
-    private String variableName;
-    @XmlAttribute
-    @Metadata(label = "advanced")
-    private String headerName;
-    @XmlAttribute
-    @Metadata(label = "advanced")
-    private String propertyName;
+    private String source;
 
     protected SingleInputTypedExpressionDefinition() {
     }
@@ -49,42 +42,20 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
 
     protected SingleInputTypedExpressionDefinition(AbstractBuilder<?, ?> builder) {
         super(builder);
-        this.variableName = builder.variableName;
-        this.headerName = builder.headerName;
-        this.propertyName = builder.propertyName;
+        this.source = builder.source;
     }
 
-    public String getVariableName() {
-        return variableName;
-    }
-
-    /**
-     * Name of variable to use as input, instead of the message body
-     */
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-    public String getHeaderName() {
-        return headerName;
+    public String getSource() {
+        return source;
     }
 
     /**
-     * Name of header to use as input, instead of the message body
+     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
+     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
+     * message body.
      */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * Name of property to use as input, instead of the message body.
-     */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     /**
@@ -96,15 +67,23 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
             T extends AbstractBuilder<T, E>, E extends SingleInputTypedExpressionDefinition>
             extends TypedExpressionDefinition.AbstractBuilder<T, E> {
 
-        private String variableName;
-        private String headerName;
-        private String propertyName;
+        private String source;
 
         /**
-         * Name of variable to use as input, instead of the message body
+         * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind
+         * of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which
+         * is the message body.
+         */
+        public T source(String source) {
+            this.source = source;
+            return (T) this;
+        }
+
+        /**
+         * Name of variable to use as source, instead of the message body
          */
         public T variableName(String variableName) {
-            this.variableName = variableName;
+            this.source = "variable:" + variableName;
             return (T) this;
         }
 
@@ -112,7 +91,7 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
          * Name of header to use as input, instead of the message body
          */
         public T headerName(String headerName) {
-            this.headerName = headerName;
+            this.source = "header:" + headerName;
             return (T) this;
         }
 
@@ -120,7 +99,7 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
          * Name of property to use as input, instead of the message body.
          */
         public T propertyName(String propertyName) {
-            this.propertyName = propertyName;
+            this.source = "property:" + propertyName;
             return (T) this;
         }
     }

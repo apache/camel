@@ -35,7 +35,7 @@ public class Hl7TerserLanguage extends SingleInputTypedLanguageSupport {
         return terser(ExpressionBuilder.bodyExpression(), expression);
     }
 
-    private static Expression terser(final Expression source, final String expression) {
+    public static Expression terser(final Expression source, final String expression) {
         ObjectHelper.notNull(expression, "expression");
         return new ExpressionAdapter() {
 

@@ -21,7 +21,7 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(33);
         props.add("allowStAX");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -33,7 +33,6 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
-        props.add("headerName");
         props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("moduleURIResolver");
@@ -41,7 +40,6 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
         props.add("parameters");
         props.add("pollStrategy");
         props.add("properties");
-        props.add("propertyName");
         props.add("repeatCount");
         props.add("resourceUri");
         props.add("resultType");
@@ -51,12 +49,12 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
         props.add("scheduler");
         props.add("schedulerProperties");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("source");
         props.add("startScheduler");
         props.add("staticQueryContext");
         props.add("stripsAllWhiteSpace");
         props.add("timeUnit");
         props.add("useFixedDelay");
-        props.add("variableName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

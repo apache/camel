@@ -74,11 +74,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     @UriParam
     private boolean allowStAX;
     @UriParam
-    private String variableName;
-    @UriParam
-    private String headerName;
-    @UriParam
-    private String propertyName;
+    private String source;
 
     public XQueryEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -216,37 +212,17 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.allowStAX = allowStAX;
     }
 
-    public String getVariableName() {
-        return variableName;
+    public String getSource() {
+        return source;
     }
 
     /**
-     * To use a variable as the input source instead of Message body.
+     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
+     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
+     * message body.
      */
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * To use a Camel Message header as the input source instead of Message body.
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * To use a Camel Exchange property as the input source instead of Message body.
-     */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     @Override
@@ -282,7 +258,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.xquery.setStripsAllWhiteSpace(isStripsAllWhiteSpace());
         this.xquery.setAllowStAX(isAllowStAX());
         this.xquery.setModuleURIResolver(getModuleURIResolver());
-        this.xquery.setSource(ExpressionBuilder.singleInputExpression(getVariableName(), getHeaderName(), getPropertyName()));
+        this.xquery.setSource(ExpressionBuilder.singleInputExpression(getSource()));
         this.xquery.init(getCamelContext());
 
         setProcessor(xquery);

@@ -12683,11 +12683,6 @@
               "title" : "Expression",
               "description" : "The expression value in your chosen language syntax"
             },
-            "headerName" : {
-              "type" : "string",
-              "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body"
-            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -12698,25 +12693,20 @@
               "title" : "Output Media Type",
               "description" : "The String representation of the MediaType to output"
             },
-            "propertyName" : {
-              "type" : "string",
-              "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body."
-            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
               "description" : "Sets the class of the result type (type from output)"
             },
+            "source" : {
+              "type" : "string",
+              "title" : "Source",
+              "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
+            },
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
-            },
-            "variableName" : {
-              "type" : "string",
-              "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13067,35 +13057,25 @@
               "title" : "Expression",
               "description" : "The expression value in your chosen language syntax"
             },
-            "headerName" : {
-              "type" : "string",
-              "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body"
-            },
             "id" : {
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "propertyName" : {
-              "type" : "string",
-              "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body."
             },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
               "description" : "Sets the class of the result type (type from output)"
             },
+            "source" : {
+              "type" : "string",
+              "title" : "Source",
+              "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
+            },
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
-            },
-            "variableName" : {
-              "type" : "string",
-              "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13235,35 +13215,25 @@
               "title" : "Expression",
               "description" : "The expression value in your chosen language syntax"
             },
-            "headerName" : {
-              "type" : "string",
-              "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body"
-            },
             "id" : {
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
-            },
-            "propertyName" : {
-              "type" : "string",
-              "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body."
             },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
               "description" : "Sets the class of the result type (type from output)"
             },
+            "source" : {
+              "type" : "string",
+              "title" : "Source",
+              "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
+            },
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
-            },
-            "variableName" : {
-              "type" : "string",
-              "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13293,11 +13263,6 @@
               "title" : "Expression",
               "description" : "The expression value in your chosen language syntax"
             },
-            "headerName" : {
-              "type" : "string",
-              "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body"
-            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -13309,15 +13274,15 @@
               "description" : "To configure additional options on JSONPath. Multiple values can be separated by comma.",
               "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
             },
-            "propertyName" : {
-              "type" : "string",
-              "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body."
-            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
               "description" : "Sets the class of the result type (type from output)"
+            },
+            "source" : {
+              "type" : "string",
+              "title" : "Source",
+              "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
             },
             "suppressExceptions" : {
               "type" : "boolean",
@@ -13333,11 +13298,6 @@
               "type" : "boolean",
               "title" : "Unpack Array",
               "description" : "Whether to unpack a single element json-array into an object."
-            },
-            "variableName" : {
-              "type" : "string",
-              "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
             },
             "writeAsString" : {
               "type" : "boolean",
@@ -13653,11 +13613,6 @@
               "title" : "Group Delimiter",
               "description" : "Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter."
             },
-            "headerName" : {
-              "type" : "string",
-              "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body"
-            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -13672,11 +13627,6 @@
               "type" : "string",
               "title" : "Inherit Namespace Tag Name",
               "description" : "To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name to support dynamic names."
-            },
-            "propertyName" : {
-              "type" : "string",
-              "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body."
             },
             "regex" : {
               "type" : "boolean",
@@ -13693,6 +13643,11 @@
               "title" : "Skip First",
               "description" : "To skip the very first element"
             },
+            "source" : {
+              "type" : "string",
+              "title" : "Source",
+              "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
+            },
             "token" : {
               "type" : "string",
               "title" : "Token",
@@ -13702,11 +13657,6 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
-            },
-            "variableName" : {
-              "type" : "string",
-              "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
             },
             "xml" : {
               "type" : "boolean",
@@ -13802,11 +13752,6 @@
               "title" : "Group",
               "description" : "To group N parts together"
             },
-            "headerName" : {
-              "type" : "string",
-              "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body"
-            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -13827,25 +13772,20 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
             },
-            "propertyName" : {
-              "type" : "string",
-              "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body."
-            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
               "description" : "Sets the class of the result type (type from output)"
             },
+            "source" : {
+              "type" : "string",
+              "title" : "Source",
+              "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
+            },
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
-            },
-            "variableName" : {
-              "type" : "string",
-              "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13875,11 +13815,6 @@
               "title" : "Factory Ref",
               "description" : "References to a custom XPathFactory to lookup in the registry"
             },
-            "headerName" : {
-              "type" : "string",
-              "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body"
-            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -13908,11 +13843,6 @@
               "title" : "Pre Compile",
               "description" : "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default. This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such as if the application is ahead of time compiled (for example with camel-quarkus) which would then load the xpath factory of the built operating system, and not a JVM runtime."
             },
-            "propertyName" : {
-              "type" : "string",
-              "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body."
-            },
             "resultQName" : {
               "type" : "string",
               "title" : "Result QName",
@@ -13930,6 +13860,11 @@
               "title" : "Saxon",
               "description" : "Whether to use Saxon."
             },
+            "source" : {
+              "type" : "string",
+              "title" : "Source",
+              "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
+            },
             "threadSafety" : {
               "type" : "boolean",
               "title" : "Thread Safety",
@@ -13939,11 +13874,6 @@
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
-            },
-            "variableName" : {
-              "type" : "string",
-              "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],
@@ -13968,11 +13898,6 @@
               "title" : "Expression",
               "description" : "The expression value in your chosen language syntax"
             },
-            "headerName" : {
-              "type" : "string",
-              "title" : "Header Name",
-              "description" : "Name of header to use as input, instead of the message body"
-            },
             "id" : {
               "type" : "string",
               "title" : "Id",
@@ -13986,25 +13911,20 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
             },
-            "propertyName" : {
-              "type" : "string",
-              "title" : "Property Name",
-              "description" : "Name of property to use as input, instead of the message body."
-            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
               "description" : "Sets the class of the result type (type from output)"
             },
+            "source" : {
+              "type" : "string",
+              "title" : "Source",
+              "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
+            },
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
               "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks"
-            },
-            "variableName" : {
-              "type" : "string",
-              "title" : "Variable Name",
-              "description" : "Name of variable to use as input, instead of the message body"
             }
           }
         } ],

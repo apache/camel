@@ -24,20 +24,10 @@ import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 
-public class XQueryExpressionReifier extends TypedExpressionReifier<XQueryExpression> {
+public class XQueryExpressionReifier extends SingleInputTypedExpressionReifier<XQueryExpression> {
 
     public XQueryExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (XQueryExpression) definition);
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
     }
 
     @Override
@@ -58,11 +48,9 @@ public class XQueryExpressionReifier extends TypedExpressionReifier<XQueryExpres
     }
 
     protected Object[] createProperties() {
-        Object[] properties = new Object[4];
+        Object[] properties = new Object[2];
         properties[0] = asResultType();
-        properties[1] = parseString(definition.getVariableName());
-        properties[2] = parseString(definition.getHeaderName());
-        properties[3] = parseString(definition.getPropertyName());
+        properties[1] = parseString(definition.getSource());
         return properties;
     }
 

@@ -50,15 +50,15 @@ public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
     @Override
     public Expression createExpression(Expression source, String expression, Object[] properties) {
         Class<?> type = property(Class.class, properties, 0, null);
-        String token = property(String.class, properties, 4, expression);
-        String endToken = property(String.class, properties, 5, null);
-        String inheritNamespaceTagName = property(String.class, properties, 6, null);
-        String groupDelimiter = property(String.class, properties, 7, null);
-        boolean regex = property(boolean.class, properties, 8, false);
-        boolean xml = property(boolean.class, properties, 9, false);
-        boolean includeTokens = property(boolean.class, properties, 10, false);
-        String group = property(String.class, properties, 11, null);
-        boolean skipFirst = property(boolean.class, properties, 12, false);
+        String token = property(String.class, properties, 2, expression);
+        String endToken = property(String.class, properties, 3, null);
+        String inheritNamespaceTagName = property(String.class, properties, 4, null);
+        String groupDelimiter = property(String.class, properties, 5, null);
+        boolean regex = property(boolean.class, properties, 6, false);
+        boolean xml = property(boolean.class, properties, 7, false);
+        boolean includeTokens = property(boolean.class, properties, 8, false);
+        String group = property(String.class, properties, 9, null);
+        boolean skipFirst = property(boolean.class, properties, 10, false);
 
         if (endToken != null && inheritNamespaceTagName != null) {
             throw new IllegalArgumentException("Cannot have both xml and pair tokenizer enabled.");

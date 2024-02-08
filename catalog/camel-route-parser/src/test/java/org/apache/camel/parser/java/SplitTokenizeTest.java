@@ -105,13 +105,13 @@ public class SplitTokenizeTest extends CamelTestSupport {
                         .split().tokenize(",")
                         .to("mock:split");
 
+                var byHeader = expression().tokenize().token(",").source("header:myHeader").end();
                 from("direct:b")
-                        .split().tokenize(",", "myHeader")
+                        .split(byHeader)
                         .to("mock:split");
 
                 from("direct:c")
-                        .split().tokenize("(\\W+)\\s*", null, true)
-                        .to("mock:split");
+                        .split().tokenize("(\\W+)\\s*", true).to("mock:split");
 
                 from("direct:d")
                         .split().tokenizePair("[", "]", true)

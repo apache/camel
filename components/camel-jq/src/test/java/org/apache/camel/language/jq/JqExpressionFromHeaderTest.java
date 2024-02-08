@@ -28,9 +28,11 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                var jq = expression().jq().expression(".foo").source("header:Content").end();
+
                 from("direct:start")
                         .doTry()
-                        .transform().jq(".foo", "Content")
+                        .transform(jq)
                         .to("mock:result")
                         .doCatch(NoSuchHeaderException.class)
                         .to("mock:fail");

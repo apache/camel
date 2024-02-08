@@ -27,7 +27,24 @@ import org.apache.camel.support.language.LanguageAnnotation;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
-@LanguageAnnotation(language = "hl7terser")
+@LanguageAnnotation(language = "hl7terser", factory = Hl7TerserAnnotationExpressionFactory.class)
 public @interface Hl7Terser {
+
+    /**
+     * The HL7 terser which will be applied
+     */
     String value();
+
+    /**
+     * The desired return type from the evaluated HL7 terser.
+     */
+    Class<?> resultType() default Object.class;
+
+    /**
+     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
+     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
+     * message body.
+     */
+    String source() default "";
+
 }

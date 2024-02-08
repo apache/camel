@@ -29,9 +29,11 @@ public class JqExpressionFromPropertyTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                var jq = expression().jq().expression(".foo").source("property:Content").end();
+
                 from("direct:start")
                         .doTry()
-                        .transform().jq(".foo", Object.class, null, "Content")
+                        .transform(jq)
                         .to("mock:result")
                         .doCatch(NoSuchPropertyException.class)
                         .to("mock:fail");

@@ -36,27 +36,27 @@ public class TokenizerTest extends ExchangeTestSupport {
     Expression tokenize(String token, boolean regex) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
-        return language.createExpression(null, new Object[] { null, null, null, null, token, null, null, null, regex });
+        return language.createExpression(null, new Object[] { null, null, token, null, null, null, regex });
     }
 
     Expression tokenize(String headerName, String token) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
-        return language.createExpression(null, new Object[] { null, null, headerName, null, token });
+        return language.createExpression(null, new Object[] { null, "header:" + headerName, token });
     }
 
     Expression tokenizePair(String startToken, String endToken, boolean includeTokens) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
         return language.createExpression(null,
-                new Object[] { null, null, null, null, startToken, endToken, null, null, null, null, includeTokens });
+                new Object[] { null, null, startToken, endToken, null, null, null, null, includeTokens });
     }
 
     Expression tokenizeXML(String tagName, String inheritNamespaceTagName) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
         return language.createExpression(null,
-                new Object[] { null, null, null, null, tagName, null, inheritNamespaceTagName, null, null, true });
+                new Object[] { null, null, tagName, null, inheritNamespaceTagName, null, null, true });
     }
 
     @Override
@@ -135,7 +135,7 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeManualConfiguration() throws Exception {
         TokenizeLanguage lan = new TokenizeLanguage();
         lan.setCamelContext(context);
-        Expression exp = lan.createExpression(null, new Object[] { null, null, "names", null, "," });
+        Expression exp = lan.createExpression(null, new Object[] { null, "header:names", "," });
         exp.init(context);
 
         List<?> names = exp.evaluate(exchange, List.class);

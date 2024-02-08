@@ -24,7 +24,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
-import org.apache.camel.util.ObjectHelper;
 
 public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
@@ -49,25 +48,13 @@ public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpres
 
             answer.setSuppressExceptions(jsonPathAnnotation.suppressExceptions());
             answer.setAllowSimple(jsonPathAnnotation.allowSimple());
-
-            String variableName = null;
-            String headerName = null;
-            String propertyName = null;
-            if (ObjectHelper.isNotEmpty(jsonPathAnnotation.variableName())) {
-                variableName = jsonPathAnnotation.variableName();
-            }
-            if (ObjectHelper.isNotEmpty(jsonPathAnnotation.headerName())) {
-                headerName = jsonPathAnnotation.headerName();
-            }
-            if (ObjectHelper.isNotEmpty(jsonPathAnnotation.propertyName())) {
-                propertyName = jsonPathAnnotation.propertyName();
-            }
-            if (variableName != null || headerName != null || propertyName != null) {
-                answer.setSource(ExpressionBuilder.singleInputExpression(variableName, headerName, propertyName));
-            }
-
             Option[] options = jsonPathAnnotation.options();
             answer.setOptions(options);
+
+            String source = getSource(annotation);
+            if (source != null) {
+                answer.setSource(ExpressionBuilder.singleInputExpression(source));
+            }
         }
 
         answer.init(camelContext);
@@ -77,4 +64,18 @@ public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpres
     private Class<?> getResultType(Annotation annotation) {
         return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
     }
+
+    protected String getSource(Annotation annotation) {
+        String answer = null;
+        try {
+            answer = (String) getAnnotationObjectValue(annotation, "source");
+        } catch (Exception e) {
+            // Do Nothing
+        }
+        if (answer != null && answer.isBlank()) {
+            return null;
+        }
+        return answer;
+    }
+
 }
