@@ -44,6 +44,7 @@ public class KuduEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);
     private KuduClient kuduClient;
+    private boolean userManagedClient;
 
     @UriPath(name = "host", displayName = "Host", label = "common", description = "Host of the server to connect to")
     private String host;
@@ -85,11 +86,14 @@ public class KuduEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        try {
-            LOG.debug("Shutting down kudu client");
-            getKuduClient().shutdown();
-        } catch (Exception e) {
-            LOG.error("Unable to shutdown kudu client", e);
+        // Only shut down clients created by this endpoint
+        if (!isUserManagedClient()) {
+            try {
+                LOG.debug("Shutting down kudu client");
+                getKuduClient().shutdown();
+            } catch (Exception e) {
+                LOG.error("Unable to shutdown kudu client", e);
+            }
         }
 
         super.doStop();
@@ -158,5 +162,13 @@ public class KuduEndpoint extends DefaultEndpoint {
      */
     public void setOperation(KuduOperations operation) {
         this.operation = operation;
+    }
+
+    public boolean isUserManagedClient() {
+        return userManagedClient;
+    }
+
+    public void setUserManagedClient(boolean userManagedClient) {
+        this.userManagedClient = userManagedClient;
     }
 }

@@ -20,14 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.kudu.client.KuduClient;
 
 /**
  * Represents the component that manages {@link KuduEndpoint}.
  */
 @Component("kudu")
 public class KuduComponent extends DefaultComponent {
+    @Metadata(label = "advanced", autowired = true)
+    private KuduClient kuduClient;
+
     public KuduComponent(CamelContext context) {
         super(context);
     }
@@ -37,8 +42,24 @@ public class KuduComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new KuduEndpoint(remaining, this);
+        KuduEndpoint endpoint = new KuduEndpoint(remaining, this);
+        if (kuduClient != null) {
+            endpoint.setKuduClient(kuduClient);
+            endpoint.setUserManagedClient(true);
+        }
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public KuduClient getKuduClient() {
+        return kuduClient;
+    }
+
+    /**
+     * To use an existing Kudu client instance, instead of creating a client per endpoint. This allows you to customize
+     * various aspects to the client configuration.
+     */
+    public void setKuduClient(KuduClient kuduClient) {
+        this.kuduClient = kuduClient;
     }
 }
