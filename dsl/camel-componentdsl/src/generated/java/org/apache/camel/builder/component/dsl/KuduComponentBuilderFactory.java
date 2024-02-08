@@ -93,6 +93,24 @@ public interface KuduComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * To use an existing Kudu client instance, instead of creating a client
+         * per endpoint. This allows you to customize various aspects to the
+         * client configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.kudu.client.KuduClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kuduClient the value to set
+         * @return the dsl builder
+         */
+        default KuduComponentBuilder kuduClient(
+                org.apache.kudu.client.KuduClient kuduClient) {
+            doSetProperty("kuduClient", kuduClient);
+            return this;
+        }
     }
 
     class KuduComponentBuilderImpl
@@ -112,6 +130,7 @@ public interface KuduComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((KuduComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KuduComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "kuduClient": ((KuduComponent) component).setKuduClient((org.apache.kudu.client.KuduClient) value); return true;
             default: return false;
             }
         }
