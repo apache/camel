@@ -76,21 +76,6 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a Camel Message header as the input source instead of Message
-         * body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param headerName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointConsumerBuilder headerName(String headerName) {
-            doSetProperty("headerName", headerName);
-            return this;
-        }
-        /**
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
@@ -123,21 +108,6 @@ public interface XQueryEndpointBuilderFactory {
         default XQueryEndpointConsumerBuilder namespacePrefixes(
                 String namespacePrefixes) {
             doSetProperty("namespacePrefixes", namespacePrefixes);
-            return this;
-        }
-        /**
-         * To use a Camel Exchange property as the input source instead of
-         * Message body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param propertyName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointConsumerBuilder propertyName(String propertyName) {
-            doSetProperty("propertyName", propertyName);
             return this;
         }
         /**
@@ -205,6 +175,23 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
+         * Source to use, instead of message body. You can prefix with
+         * variable:, header:, or property: to specify kind of source.
+         * Otherwise, the source is assumed to be a variable. Use empty or null
+         * to use default source, which is the message body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointConsumerBuilder source(String source) {
+            doSetProperty("source", source);
+            return this;
+        }
+        /**
          * Whether to strip all whitespaces.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -235,20 +222,6 @@ public interface XQueryEndpointBuilderFactory {
         default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
-            return this;
-        }
-        /**
-         * To use a variable as the input source instead of Message body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param variableName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointConsumerBuilder variableName(String variableName) {
-            doSetProperty("variableName", variableName);
             return this;
         }
         /**
@@ -1172,21 +1145,6 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a Camel Message header as the input source instead of Message
-         * body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param headerName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointProducerBuilder headerName(String headerName) {
-            doSetProperty("headerName", headerName);
-            return this;
-        }
-        /**
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
@@ -1219,21 +1177,6 @@ public interface XQueryEndpointBuilderFactory {
         default XQueryEndpointProducerBuilder namespacePrefixes(
                 String namespacePrefixes) {
             doSetProperty("namespacePrefixes", namespacePrefixes);
-            return this;
-        }
-        /**
-         * To use a Camel Exchange property as the input source instead of
-         * Message body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param propertyName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointProducerBuilder propertyName(String propertyName) {
-            doSetProperty("propertyName", propertyName);
             return this;
         }
         /**
@@ -1301,6 +1244,23 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
+         * Source to use, instead of message body. You can prefix with
+         * variable:, header:, or property: to specify kind of source.
+         * Otherwise, the source is assumed to be a variable. Use empty or null
+         * to use default source, which is the message body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointProducerBuilder source(String source) {
+            doSetProperty("source", source);
+            return this;
+        }
+        /**
          * Whether to strip all whitespaces.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1331,20 +1291,6 @@ public interface XQueryEndpointBuilderFactory {
         default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
-            return this;
-        }
-        /**
-         * To use a variable as the input source instead of Message body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param variableName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointProducerBuilder variableName(String variableName) {
-            doSetProperty("variableName", variableName);
             return this;
         }
     }
@@ -1644,21 +1590,6 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a Camel Message header as the input source instead of Message
-         * body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param headerName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointBuilder headerName(String headerName) {
-            doSetProperty("headerName", headerName);
-            return this;
-        }
-        /**
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
@@ -1690,21 +1621,6 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointBuilder namespacePrefixes(String namespacePrefixes) {
             doSetProperty("namespacePrefixes", namespacePrefixes);
-            return this;
-        }
-        /**
-         * To use a Camel Exchange property as the input source instead of
-         * Message body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param propertyName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointBuilder propertyName(String propertyName) {
-            doSetProperty("propertyName", propertyName);
             return this;
         }
         /**
@@ -1772,6 +1688,23 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
+         * Source to use, instead of message body. You can prefix with
+         * variable:, header:, or property: to specify kind of source.
+         * Otherwise, the source is assumed to be a variable. Use empty or null
+         * to use default source, which is the message body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointBuilder source(String source) {
+            doSetProperty("source", source);
+            return this;
+        }
+        /**
          * Whether to strip all whitespaces.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1802,20 +1735,6 @@ public interface XQueryEndpointBuilderFactory {
         default XQueryEndpointBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
-            return this;
-        }
-        /**
-         * To use a variable as the input source instead of Message body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param variableName the value to set
-         * @return the dsl builder
-         */
-        default XQueryEndpointBuilder variableName(String variableName) {
-            doSetProperty("variableName", variableName);
             return this;
         }
     }

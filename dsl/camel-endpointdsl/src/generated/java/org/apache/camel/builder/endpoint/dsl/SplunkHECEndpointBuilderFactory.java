@@ -276,6 +276,22 @@ public interface SplunkHECEndpointBuilderFactory {
             doSetProperty("skipTlsVerify", skipTlsVerify);
             return this;
         }
+        /**
+         * Splunk HEC token (this is the token created for HEC and not the
+         * user's token).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder token(String token) {
+            doSetProperty("token", token);
+            return this;
+        }
     }
 
     /**
@@ -362,16 +378,12 @@ public interface SplunkHECEndpointBuilderFactory {
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-splunk-hec
          * 
-         * Syntax: <code>splunk-hec:splunkURL/token</code>
+         * Syntax: <code>splunk-hec:splunkURL</code>
          * 
          * Path parameter: splunkURL (required)
          * Splunk Host and Port (example: my_splunk_server:8089)
          * 
-         * Path parameter: token (required)
-         * Splunk HEC token (this is the token created for HEC and not the
-         * user's token)
-         * 
-         * @param path splunkURL/token
+         * @param path splunkURL
          * @return the dsl builder
          */
         default SplunkHECEndpointBuilder splunkHec(String path) {
@@ -386,18 +398,14 @@ public interface SplunkHECEndpointBuilderFactory {
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-splunk-hec
          * 
-         * Syntax: <code>splunk-hec:splunkURL/token</code>
+         * Syntax: <code>splunk-hec:splunkURL</code>
          * 
          * Path parameter: splunkURL (required)
          * Splunk Host and Port (example: my_splunk_server:8089)
          * 
-         * Path parameter: token (required)
-         * Splunk HEC token (this is the token created for HEC and not the
-         * user's token)
-         * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path splunkURL/token
+         * @param path splunkURL
          * @return the dsl builder
          */
         default SplunkHECEndpointBuilder splunkHec(

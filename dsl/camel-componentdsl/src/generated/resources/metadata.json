@@ -6562,7 +6562,7 @@
     "version": "4.4.0-SNAPSHOT",
     "scheme": "splunk-hec",
     "extendsScheme": "",
-    "syntax": "splunk-hec:splunkURL\/token",
+    "syntax": "splunk-hec:splunkURL",
     "async": false,
     "api": false,
     "consumerOnly": false,
