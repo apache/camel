@@ -68,8 +68,10 @@ public class XQueryHeaderNameTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                var premium = expression().xquery().expression("/invoice/@orderType = 'premium'").source("header:invoiceDetails").end();
-                var standard = expression().xquery().expression("/invoice/@orderType = 'standard'").source("header:invoiceDetails").end();
+                var premium = expression().xquery().expression("/invoice/@orderType = 'premium'")
+                        .source("header:invoiceDetails").end();
+                var standard = expression().xquery().expression("/invoice/@orderType = 'standard'")
+                        .source("header:invoiceDetails").end();
 
                 from("direct:in")
                     .choice()

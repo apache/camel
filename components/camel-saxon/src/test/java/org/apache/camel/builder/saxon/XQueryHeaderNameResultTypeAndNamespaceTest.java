@@ -44,7 +44,8 @@ public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport
         return new RouteBuilder() {
             public void configure() {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
-                var xq = expression().xquery().expression("/c:number = 55").namespaces(ns).resultType(Integer.class).source("header:cheeseDetails").end();
+                var xq = expression().xquery().expression("/c:number = 55").namespaces(ns).resultType(Integer.class)
+                        .source("header:cheeseDetails").end();
 
                 from("direct:in").choice()
                         .when(xq)
