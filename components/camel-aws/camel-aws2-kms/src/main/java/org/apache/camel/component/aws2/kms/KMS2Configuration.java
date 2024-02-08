@@ -37,6 +37,8 @@ public class KMS2Configuration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam(label = "security", secret = true)
+    private String sessionToken;
     @UriParam
     @Metadata(required = true)
     private KMS2Operations operation;
@@ -60,6 +62,8 @@ public class KMS2Configuration implements Cloneable {
     private boolean useDefaultCredentialsProvider;
     @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
+    @UriParam(label = "security")
+    private boolean useSessionCredentials;
     @UriParam(label = "security")
     private String profileCredentialsName;
 
@@ -94,6 +98,17 @@ public class KMS2Configuration implements Cloneable {
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    /**
+     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     */
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
     }
 
     public KMS2Operations getOperation() {
@@ -218,6 +233,18 @@ public class KMS2Configuration implements Cloneable {
      */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
+    }
+
+    public boolean isUseSessionCredentials() {
+        return useSessionCredentials;
+    }
+
+    /**
+     * Set whether the KMS client should expect to use Session Credentials. This is useful in situation in which the
+     * user needs to assume a IAM role for doing operations in KMS.
+     */
+    public void setUseSessionCredentials(boolean useSessionCredentials) {
+        this.useSessionCredentials = useSessionCredentials;
     }
 
     public String getProfileCredentialsName() {

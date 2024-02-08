@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.kms;
 import org.apache.camel.component.aws2.kms.client.KMS2ClientFactory;
 import org.apache.camel.component.aws2.kms.client.KMS2InternalClient;
 import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientOptimizedImpl;
+import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class KMSClientFactoryTest {
         kms2Configuration.setUseDefaultCredentialsProvider(true);
         KMS2InternalClient kmsClient = KMS2ClientFactory.getKmsClient(kms2Configuration);
         assertTrue(kmsClient instanceof KMS2ClientOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenKMSClient() {
+        KMS2Configuration kms2Configuration = new KMS2Configuration();
+        kms2Configuration.setUseSessionCredentials(true);
+        KMS2InternalClient kmsClient = KMS2ClientFactory.getKmsClient(kms2Configuration);
+        assertTrue(kmsClient instanceof KMS2ClientSessionTokenImpl);
     }
 }
