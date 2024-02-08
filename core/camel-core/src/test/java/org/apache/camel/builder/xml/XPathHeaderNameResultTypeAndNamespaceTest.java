@@ -44,7 +44,8 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() throws Exception {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
-                var xpath = expression().xpath().expression("/c:number = 55").namespaces(ns).resultType(Integer.class).source("header:cheeseDetails").end();
+                var xpath = expression().xpath().expression("/c:number = 55").namespaces(ns).resultType(Integer.class)
+                        .source("header:cheeseDetails").end();
 
                 from("direct:in").choice().when(xpath).to("mock:55")
                         .otherwise().to("mock:other").end();

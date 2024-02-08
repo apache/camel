@@ -864,6 +864,25 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
+     * Evaluates a token expression on the message body
+     *
+     * @param  token     the token
+     * @param  regex     whether the token is a regular expression or not
+     * @param  group     to group by the given number
+     * @param  skipFirst whether to skip the very first element
+     * @return           the builder to continue processing the DSL
+     */
+    public T tokenize(String token, boolean regex, String group, boolean skipFirst) {
+        TokenizerExpression expression = new TokenizerExpression();
+        expression.setToken(token);
+        expression.setSkipFirst(Boolean.toString(skipFirst));
+        expression.setGroup(group);
+        expression.setSkipFirst(Boolean.toString(skipFirst));
+        expression(expression);
+        return result;
+    }
+
+    /**
      * Evaluates a token pair expression on the message body
      *
      * @param  startToken    the start token

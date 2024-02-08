@@ -41,7 +41,8 @@ public class SplitTokenizerRegexpGroupTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                var token = expression().tokenize().token("\r\n|\n").regex(true).group(2).skipFirst(true).end();
+                var token = expression().tokenize().token("\r\n|\n").regex(true).group(2).groupDelimiter("\n").skipFirst(true)
+                        .end();
                 from("direct:start").split(token).to("mock:line");
             }
         };

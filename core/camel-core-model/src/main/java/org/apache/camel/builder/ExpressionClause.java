@@ -665,7 +665,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * @return           the builder to continue processing the DSL
      */
     public T tokenize(String token, boolean regex, boolean skipFirst) {
-        return delegate.tokenize(token, regex, 1, skipFirst);
+        return delegate.tokenize(token, regex, null, skipFirst);
     }
 
     /**
@@ -715,7 +715,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * @return           the builder to continue processing the DSL
      */
     public T tokenize(String token, boolean regex, String group, boolean skipFirst) {
-        return delegate.tokenize(token, regex, Integer.parseInt(group), skipFirst);
+        return delegate.tokenize(token, regex, group, skipFirst);
     }
 
     /**

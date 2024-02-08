@@ -67,16 +67,17 @@ public class XPathHeaderNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
 
-                var premium = expression().xpath().expression("/invoice/@orderType = 'premium'").source("header:invoiceDetails").end();
-                var standard = expression().xpath().expression("/invoice/@orderType = 'standard'").source("header:invoiceDetails").end();
+                var premium = expression().xpath().expression("/invoice/@orderType = 'premium'").source("header:invoiceDetails")
+                        .end();
+                var standard = expression().xpath().expression("/invoice/@orderType = 'standard'")
+                        .source("header:invoiceDetails").end();
 
                 from("direct:in").choice().when(premium)
-                            .to("mock:premium")
+                        .to("mock:premium")
                         .when(standard)
-                            .to("mock:standard")
+                        .to("mock:standard")
                         .otherwise()
-                            .to("mock:unknown").
-                        end();
+                        .to("mock:unknown").end();
             }
         };
     }

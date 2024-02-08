@@ -1047,13 +1047,13 @@ public class ExpressionBuilder {
      * Returns an expression for evaluating the expression/predicate using the given language
      *
      * @param  expression the expression or predicate
-     * @param  source     Source to use, instead of message body.
-     *                    You can prefix with variable:, header:, or property: to specify kind of source.
-     *                    Otherwise, the source is assumed to be a variable.
-     *                    Use empty or null to use default source, which is the message body.
+     * @param  source     Source to use, instead of message body. You can prefix with variable:, header:, or property:
+     *                    to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or
+     *                    null to use default source, which is the message body.
      * @return            an expression object which will evaluate the expression/predicate using the given language
      */
-    public static Expression singleInputLanguageExpression(final String language, final String expression, final String source) {
+    public static Expression singleInputLanguageExpression(
+            final String language, final String expression, final String source) {
         return new ExpressionAdapter() {
             private Expression expr;
             private Predicate pred;
@@ -1284,13 +1284,12 @@ public class ExpressionBuilder {
     /**
      * Creates a source {@link Expression} for languages that can accept input from other sources than the message body.
      *
-     * @param  source Source to use, instead of message body.
-     *                You can prefix with variable:, header:, or property: to specify kind of source.
-     *                Otherwise, the source is assumed to be a variable.
-     *                Use empty or null to use default source, which is the message body.
+     * @param  source Source to use, instead of message body. You can prefix with variable:, header:, or property: to
+     *                specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to
+     *                use default source, which is the message body.
      * @return        a variable expression if {@code variableName} is not empty, a header expression if
-     *                {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is
-     *                not empty or finally a body expression.
+     *                {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is not
+     *                empty or finally a body expression.
      */
     public static Expression singleInputExpression(String source) {
         final Expression exp;
