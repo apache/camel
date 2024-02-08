@@ -32,7 +32,7 @@
             <from uri="direct:in"/>
             <choice>
                 <when>
-                    <xpath headerName="cheeseDetails" resultType="java.lang.Integer">/c:number = 55</xpath>
+                    <xpath source="header:cheeseDetails" resultType="java.lang.Integer">/c:number = 55</xpath>
                     <to uri="mock:55"/>
                 </when>
                 <otherwise>

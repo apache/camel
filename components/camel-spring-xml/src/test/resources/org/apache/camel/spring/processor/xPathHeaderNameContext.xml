@@ -31,11 +31,11 @@
             <from uri="direct:in"/>
             <choice>
                 <when>
-                    <xpath headerName="invoiceDetails">/invoice/@orderType='premium'</xpath>
+                    <xpath source="header:invoiceDetails">/invoice/@orderType='premium'</xpath>
                     <to uri="mock:premium"/>
                 </when>
                 <when>
-                    <xpath headerName="invoiceDetails">/invoice/@orderType='standard'</xpath>
+                    <xpath source="header:invoiceDetails">/invoice/@orderType='standard'</xpath>
                     <to uri="mock:standard"/>
                 </when>
                 <otherwise>
