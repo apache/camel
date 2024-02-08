@@ -129,8 +129,7 @@ public class JmsConfiguration implements Cloneable {
                             + " may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option.")
     private boolean acceptMessagesWhileStopping;
     @UriParam(description = "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
-                            + " It is typically only required for durable topic subscriptions."
-                            + " If using Apache ActiveMQ you may prefer to use Virtual Topics instead.")
+                            + " It is typically only required for durable topic subscriptions with JMS 1.1.")
     private String clientId;
     @UriParam(description = "The durable subscriber name for specifying durable topic subscriptions. The clientId option must be configured as well.")
     private String durableSubscriptionName;
@@ -975,9 +974,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a
-     * single JMS connection instance. It is typically only required for durable topic subscriptions.
-     * <p>
-     * If using Apache ActiveMQ you may prefer to use Virtual Topics instead.
+     * single JMS connection instance. It is typically only required for durable topic subscriptions with JMS 1.1.
      */
     public void setClientId(String consumerClientId) {
         this.clientId = consumerClientId;

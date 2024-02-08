@@ -132,15 +132,27 @@ level accordingly to:
 So you can say the default setting is conservative. Consider using
 `cacheLevelName=CACHE_CONSUMER` if you are using non-XA transactions.
 
-=== Durable Subscriptions
+=== Durable Subscriptions with JMS 1.1
 
 If you wish to use durable topic subscriptions, you need to specify both
 `clientId` and `durableSubscriptionName`. The value of the `clientId`
 must be unique and can only be used by a single JMS connection instance
-in your entire network. You may prefer to use
-http://activemq.apache.org/virtual-destinations.html[Virtual Topics]
-instead to avoid this limitation. More background on durable messaging
-http://activemq.apache.org/how-do-durable-queues-and-topics-work.html[here].
+in your entire network.
+
+[NOTE]
+====
+If you are using the https://activemq.apache.org/components/classic/[Apache ActiveMQ Classic] or https://activemq.apache.org/components/artemis/[Apache ActiveMQ Artemis],
+you may prefer to use a feature called Virtual Topic. This should remove the necessity of having a unique `clientId`.
+
+You can consult the specific documentation for https://activemq.apache.org/components/artemis/migration-documentation/VirtualTopics.html[Artemis]
+or for https://activemq.apache.org/virtual-destinations.html[ActiveMQ Classic] for details about how to leverage this feature.
+
+You can find more details about durable messaging for ActiveMQ Classic http://activemq.apache.org/how-do-durable-queues-and-topics-work.html[here].
+====
+
+==== Durable Subscriptions with JMS 2.0
+
+If you wish to use durable topic subscriptions, you need to specify the `durableSubscriptionName`.
 
 === Message Header Mapping
 
