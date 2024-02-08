@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.lambda;
 import org.apache.camel.component.aws2.lambda.client.Lambda2ClientFactory;
 import org.apache.camel.component.aws2.lambda.client.Lambda2InternalClient;
 import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientOptimizedImpl;
+import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class LambdaClientFactoryTest {
         lambda2Configuration.setUseDefaultCredentialsProvider(true);
         Lambda2InternalClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
         assertTrue(lambdaClient instanceof Lambda2ClientOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenLambdaClient() {
+        Lambda2Configuration lambda2Configuration = new Lambda2Configuration();
+        lambda2Configuration.setUseSessionCredentials(true);
+        Lambda2InternalClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
+        assertTrue(lambdaClient instanceof Lambda2ClientSessionTokenImpl);
     }
 }
