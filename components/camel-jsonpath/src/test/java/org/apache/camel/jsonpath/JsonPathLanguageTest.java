@@ -131,7 +131,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         JsonPathLanguage lan = (JsonPathLanguage) context.resolveLanguage("jsonpath");
 
         Expression exp = lan.createExpression("$.foo",
-                new Object[] { null, null, null, null, null, null, null, null, null, Option.SUPPRESS_EXCEPTIONS });
+                new Object[] { null, null, null, null, null, null, null, Option.SUPPRESS_EXCEPTIONS });
         String nofoo = exp.evaluate(exchange, String.class);
 
         assertNull(nofoo);
@@ -145,7 +145,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
 
         Expression expression = language.createExpression("$.store.book",
-                new Object[] { String.class, null, null, null, null, null, null, null, true });
+                new Object[] { String.class, null, null, null, null, null, true });
         String json = expression.evaluate(exchange, String.class);
 
         // check that a single json object is returned, not an array
@@ -160,7 +160,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
 
         Expression expression = language.createExpression("$.store.book",
-                new Object[] { String.class, null, null, null, null, null, false });
+                new Object[] { String.class, null, null, null, false });
         String json = expression.evaluate(exchange, String.class);
 
         // check that an array is returned, not a single object

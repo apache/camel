@@ -2397,29 +2397,22 @@ public class ExpressionBuilder {
      * Returns an {@link TokenXMLExpressionIterator} expression
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
-        StringHelper.notEmpty(tagName, "tagName");
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLExpression(Expression source, String tagName, String inheritNamespaceTagName) {
-        StringHelper.notEmpty(tagName, "tagName");
         return new TokenXMLExpressionIterator(source, tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode) {
-        return tokenizeXMLAwareExpression(null, path, mode, 1, null);
+        return tokenizeXMLAwareExpression(path, mode, 1, null);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
-        return tokenizeXMLAwareExpression(null, path, mode, group, null);
+        return tokenizeXMLAwareExpression(path, mode, group, null);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group, Namespaces namespaces) {
-        return tokenizeXMLAwareExpression(null, path, mode, group, namespaces);
-    }
-
-    public static Expression tokenizeXMLAwareExpression(
-            String headerName, String path, char mode, int group, Namespaces namespaces) {
         StringHelper.notEmpty(path, "path");
         return new ExpressionAdapter() {
             private Expression exp;
@@ -2434,7 +2427,7 @@ public class ExpressionBuilder {
                 super.init(context);
                 final Language language = context.resolveLanguage("xtokenize");
                 this.exp = language.createExpression(path,
-                        new Object[] { null, null, headerName, null, mode, group, namespaces });
+                        new Object[] { null, null, mode, group, namespaces });
                 this.exp.init(context);
             }
 
