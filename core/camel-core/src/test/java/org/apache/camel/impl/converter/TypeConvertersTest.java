@@ -45,4 +45,16 @@ public class TypeConvertersTest extends ContextTestSupport {
         assertEquals("en", iso);
     }
 
+    @Test
+    public void testStringToPrimitiveTypes() throws Exception {
+        assertEquals(Short.parseShort("1"), context.getTypeConverter().mandatoryConvertTo(short.class, "1"));
+        assertEquals(Integer.parseInt("1"), context.getTypeConverter().mandatoryConvertTo(int.class, "1"));
+        assertEquals(Long.parseLong("1"), context.getTypeConverter().mandatoryConvertTo(long.class, "1"));
+
+        assertEquals(Float.parseFloat("1.1"), context.getTypeConverter().mandatoryConvertTo(float.class, "1.1"));
+        assertEquals(Double.parseDouble("1.1"), context.getTypeConverter().mandatoryConvertTo(double.class, "1.1"));
+
+        assertEquals("a".charAt(0), context.getTypeConverter().mandatoryConvertTo(char.class, "a"));
+        assertEquals(Boolean.parseBoolean("true"), context.getTypeConverter().mandatoryConvertTo(boolean.class, "true"));
+    }
 }
