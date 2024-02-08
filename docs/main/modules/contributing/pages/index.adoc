@@ -112,6 +112,7 @@ We recommend forking the code from the https://github.com/apache/camel/[camel Gi
 ----
 git clone https://github.com/your-github/camel.git
 cd camel
+git remote add upstream https://github.com/apache/camel.git
 ----
 
 Alternatively, if you are using the https://cli.github.com[GitHub CLI]:
@@ -242,12 +243,7 @@ CAMEL-9999: Some message goes here
 * When submitting a performance improvement, providing JMH test data as evidence or adding a JMH-based test on the https://github.com/apache/camel-performance-tests/[camel-performance-tests] repository is strongly recommended.
 * Be responsive, assume good intent and respect the https://www.apache.org/foundation/policies/conduct.html[Code of Conduct]
 * When contributing components, please make sure that their dependencies are available in the https://search.maven.org[Maven Central]. We do not accept contributions if the dependencies are not publicly available.
-* Tests must follow the following naming convention:
-** `*Test.java` (i.e.: MyComponentTest.java) for unit tests.
-** `*IT.java` (i.e.: MyComponentIT.java) for integration tests.
-** `*ManualTest.java` (i.e.: MyComponentManualTest.java) for manual tests.
-** Avoid `Thread.sleep` (they make our tests slow and unreliable)
-** To disable tests use JUnit's https://junit.org/junit5/docs/current/api/org.junit.jupiter.api/org/junit/jupiter/api/Disabled.html[@Disabled] annotation or one of its siblings (i.e.: `@DisabledIfSystemProperty` and others)
+* Do read the xref:testing-camel.adoc[Testing Camel] page to learn about naming convention and other practices that may be required
 
 Following these guidelines will help you in getting your contribution accepted.
 
@@ -270,7 +266,7 @@ The code will be tested automatically. The access to the build and test logs is 
 
 === Submitting your changes via Patches
 
-=== Manual patch files
+==== Manual patch files
 
 For smaller patches, you may also submit a patch file instead of using a Pull Request. To do this:
 
@@ -292,6 +288,51 @@ or,
 [source,bash]
 ----
 git diff --no-prefix > patchfile.txt
+----
+
+=== Adjusting your contribution
+
+The Apache Camel project uses Git to track changes and control the versions. Although it is a rather complex versioning system,
+there is a vast amount of https://git-scm.com/book/en/v2[material available on the web]. Some basic understanding of Git is
+necessary for contributing with Apache Camel.
+
+In some cases, the reviewers may ask for certain things involving Git to be done prior to merging your code.
+
+The sections below describe how to use the git command-line perform some of the tasks that reviewers may ask.
+
+[NOTE]
+====
+Some operations may also be done using the user interfaces provided by IDEs such as IntelliJ.
+====
+
+==== Rebase the code
+
+A common request is for the user to rebase the code. Reviewers typically ask for this when the HEAD (last commit) used for
+creating the contribution (i.e.; the code on your fork) is too outdated compared to the current version in the Camel upstream repository.
+
+You can usually do this by running the following set of commands:
+
+[source,bash]
+----
+# Checkout to the main branch
+git checkout main
+
+# Fetch the latest changes from main (make sure you have the upstream remote - check using the command git remote -v)
+git pull --rebase upstream main
+
+# Checkout the branch where you have your changes (replace your-branch with the branch you are working on)
+git rebase main your-branch
+----
+
+==== Edit the commit message
+
+[source,bash]
+----
+# Amend the commit. This opens the default text editor (usually vim) so you can write the commit message.
+git commit --amend
+
+# After saving the changes, push them to the repository (replace your-branch with the branch you are working on)
+git push -f origin your-branch
 ----
 
 == Watching your Contribution

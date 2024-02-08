@@ -109,3 +109,32 @@ mvn -Pfastinstall,deploy clean install
 ------------------------------------------
 
 The build with deployment will build source jars, javadoc and other artifacts needed for deployment.
+
+== Verifying the coding style
+
+== Camel 4.x
+
+Starting with Camel 4.0.0, our build system will automatically verify and format the code when doing a full build or
+when running certain phases that trigger it (i.e.; when running `mvn verify`).
+
+== Camel 3.x
+
+Apache Camel source code uses a coding style/format that can be verified for compliance using the "checkstyle" plugin.
+
+To enable source style checking, build Camel with the `-Psourcecheck` profile:
+
+[source,bash]
+----
+mvn clean install -Psourcecheck
+----
+
+Please remember to run this check on your code changes before submitting a patch or GitHub PR. You do not need to run this against the entire project, but only in the modules you modified.
+
+
+For instance, if you do some code changes in the camel-ftp component, following which you can run the check from within this directory:
+
+[source,bash]
+----
+cd camel-ftp
+mvn clean install -Psourcecheck
+----
