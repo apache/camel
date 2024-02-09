@@ -18,13 +18,13 @@
 The AWS2 Kinesis component supports consuming messages from and producing messages to Amazon Kinesis (no Batch supported)
 service.
 
-AWS2 Kinesis component also supports Synchronous and Asynchronous Client which means you choose what fits best your requirements,
-so if you need the connection (client) to be async there's a property of 'asyncClient' (in DSL also can be found) needs to be turned true.
+The AWS2 Kinesis component also supports Synchronous and Asynchronous Client, which means you choose what fits best your requirements,
+so if you need the connection (client) to be async, there's a property of 'asyncClient' (in DSL also can be found) needs to be turned true.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon Kinesis. More information are available
+signed up to use Amazon Kinesis. More information is available
 at https://aws.amazon.com/kinesis/[AWS Kinesis]
 
 
@@ -34,9 +34,11 @@ at https://aws.amazon.com/kinesis/[AWS Kinesis]
 aws2-kinesis://stream-name[?options]
 -----------------------------------
 
-The stream needs to be created prior to it being used. +
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
+The stream needs to be created prior to it being used.
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
 
 
 // component-configure options: START
@@ -63,28 +65,28 @@ configured.
 
 This component implements the Batch Consumer.
 
-This allows you for instance to know how many messages exists in this
-batch and for instance let the Aggregator
+This allows you, for instance, to know how many messages exist in this
+batch and for instance, let the Aggregator
 aggregate this number of messages.
 
 The consumer is able to consume either from a single specific shard or
-all available shards (multiple shards consumption) of Amazon Kinesis therefore if you leave the 'shardId'
-property in the DSL configuration empty then it'll consume all available shards
+all available shards (multiple shards consumption) of Amazon Kinesis, therefore, if you leave the 'shardId'
+property in the DSL configuration empty, then it'll consume all available shards
 otherwise only the specified shard corresponding to the shardId will be consumed.
 
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
-You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
 
 The order of evaluation for Default Credentials Provider is the following:
 
-- Java system properties - aws.accessKeyId and aws.secretKey
-- Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+- Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+- Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 - Web Identity Token from AWS STS.
 - The shared credentials and config files.
-- Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+- Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
 - Amazon EC2 Instance profile credentials.
 
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
