@@ -61,7 +61,7 @@ public class Sns2Configuration implements Cloneable {
     @UriParam
     private String uriEndpointOverride;
 
-    // Producer only properties
+    // Producer-only properties
     @UriParam
     private String subject;
     @UriParam
@@ -136,7 +136,7 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     * Amazon AWS Session Token used when the user needs to assume an IAM role
      */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
@@ -225,8 +225,8 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which SNS client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * The region in which the SNS client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -281,7 +281,7 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Setting the autocreation of the topic
+     * Setting the auto-creation of the topic
      */
     public void setAutoCreateTopic(boolean autoCreateTopic) {
         this.autoCreateTopic = autoCreateTopic;
@@ -326,8 +326,8 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the SNS client should expect to use Session Credentials. This is useful in situation in which the
-     * user needs to assume a IAM role for doing operations in SNS.
+     * Set whether the SNS client should expect to use Session Credentials. This is useful in a situation in which the
+     * user needs to assume an IAM role for doing operations in SNS.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
@@ -338,14 +338,14 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * If using a profile credentials provider this parameter will set the profile name
+     * If using a profile credentials provider, this parameter will set the profile name
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }
 
     /**
-     * Only for FIFO Topic. Strategy for setting the messageGroupId on the message. Can be one of the following options:
+     * Only for FIFO Topic. Strategy for setting the messageGroupId on the message. It can be one of the following options:
      * *useConstant*, *useExchangeId*, *usePropertyValue*. For the *usePropertyValue* option, the value of property
      * "CamelAwsMessageGroupId" will be used.
      */
@@ -374,7 +374,7 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. Can be one of the following
+     * Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. It can be one of the following
      * options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication* option, no
      * messageDeduplicationId will be set on the message.
      */
@@ -397,7 +397,7 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
      * option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
@@ -428,11 +428,11 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Whether or not the topic is a FIFO topic
+     * Whether the topic is a FIFO topic
      */
     boolean isFifoTopic() {
-        // AWS docs suggest this is valid derivation.
-        // FIFO topic names must end with .fifo, and standard topic cannot
+        // AWS docs suggest this is a valid derivation.
+        // FIFO topic names must end with .fifo, and a standard topic cannot
         if (ObjectHelper.isNotEmpty(topicName)) {
             if (topicName.endsWith(".fifo")) {
                 return true;
