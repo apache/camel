@@ -66,6 +66,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sequencenumber":
         case "sequenceNumber": getOrCreateConfiguration(target).setSequenceNumber(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "shardclosed":
         case "shardClosed": getOrCreateConfiguration(target).setShardClosed(property(camelContext, org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class, value)); return true;
         case "shardid":
@@ -78,6 +80,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": getOrCreateConfiguration(target).setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": getOrCreateConfiguration(target).setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -128,6 +132,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": return java.lang.String.class;
         case "sequencenumber":
         case "sequenceNumber": return java.lang.String.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "shardclosed":
         case "shardClosed": return org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class;
         case "shardid":
@@ -140,6 +146,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         default: return null;
         }
     }
@@ -186,6 +194,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "sequencenumber":
         case "sequenceNumber": return getOrCreateConfiguration(target).getSequenceNumber();
+        case "sessiontoken":
+        case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
         case "shardclosed":
         case "shardClosed": return getOrCreateConfiguration(target).getShardClosed();
         case "shardid":
@@ -198,6 +208,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return getOrCreateConfiguration(target).isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return getOrCreateConfiguration(target).isUseSessionCredentials();
         default: return null;
         }
     }

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.firehose;
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseClientFactory;
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseInternalClient;
 import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientSessionTokenImpl;
 import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -50,5 +51,14 @@ public class KinesisFirehoseClientFactoryTest {
         KinesisFirehoseInternalClient kinesisFirehoseClient
                 = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
         assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenFirehoseClient() {
+        KinesisFirehose2Configuration kinesis2Configuration = new KinesisFirehose2Configuration();
+        kinesis2Configuration.setUseSessionCredentials(true);
+        KinesisFirehoseInternalClient kinesisFirehoseClient
+                = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
+        assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientSessionTokenImpl);
     }
 }

@@ -79,6 +79,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "sequencenumber":
         case "sequenceNumber": target.getConfiguration().setSequenceNumber(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": target.getConfiguration().setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "shardclosed":
         case "shardClosed": target.getConfiguration().setShardClosed(property(camelContext, org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class, value)); return true;
         case "shardid":
@@ -97,6 +99,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": target.getConfiguration().setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -167,6 +171,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "sequencenumber":
         case "sequenceNumber": return java.lang.String.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "shardclosed":
         case "shardClosed": return org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class;
         case "shardid":
@@ -185,6 +191,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "useFixedDelay": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         default: return null;
         }
     }
@@ -251,6 +259,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sequencenumber":
         case "sequenceNumber": return target.getConfiguration().getSequenceNumber();
+        case "sessiontoken":
+        case "sessionToken": return target.getConfiguration().getSessionToken();
         case "shardclosed":
         case "shardClosed": return target.getConfiguration().getShardClosed();
         case "shardid":
@@ -269,6 +279,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "useFixedDelay": return target.isUseFixedDelay();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return target.getConfiguration().isUseSessionCredentials();
         default: return null;
         }
     }
