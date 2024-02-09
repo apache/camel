@@ -84,15 +84,16 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Consumer Example
 
-In this sample we poll James Strachan's blog.
+In this sample, we poll James Strachan's blog.
 
 [source,java]
 ---------------------------------------------------------------------------------
 from("atom://http://macstrac.blogspot.com/feeds/posts/default").to("seda:feeds");
 ---------------------------------------------------------------------------------
 
-In this sample we want to filter only good blogs we like to a SEDA
-queue. The sample also shows how to setup Camel standalone, not running
+In this sample, we want to filter only good blogs we like to a SEDA
+queue.
+The sample also shows how to set up Camel standalone, not running
 in any Container or using Spring.
 
 
