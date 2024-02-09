@@ -125,3 +125,21 @@ setting the message header `GooglePubsubConstants.ACK_DEADLINE` to the value in 
 
 
 include::spring-boot:partial$starter.adoc[]
+
+== Manual Acknowledgement
+
+By default, the PubSub consumer will acknowledge messages once the exchange has been processed, or negative-acknowledge them if the exchange has failed.
+
+It the _ackMode_ option is set to `NONE`, the component will not acknowledge messages, and it is up to the route to do so.
+In this case, a `GooglePubsubAcknowledge` object is stored in the header `GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE` and can be used to acknowledge messages:
+
+[source,java]
+----
+from("google-pubsub:{{project.name}}:{{subscription.name}}?ackMode=NONE")
+    .process(exchange -> {
+        GooglePubsubAcknowledge acknowledge = exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE, GooglePubsubAcknowledge.class);
+        acknowledge.ack(exchange); // or .nack(exchange)
+    });
+----
+
+Manual acknowledgement works with both the asynchronous and synchronous consumers and will use the acknowledgement id which is stored in `GooglePubsubConstants.ACK_ID`.
