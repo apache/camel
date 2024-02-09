@@ -77,8 +77,8 @@ public class AvroComponent extends DefaultComponent {
     }
 
     /**
-     * Registers new responder with uri as key. Registers consumer in responder. In case if responder is already
-     * registered by this uri then just registers consumer.
+     * Registers new responder with uri as a key. Registers consumer in responder. In case if responder is already
+     * registered by this uri, then register consumer.
      *
      * @param  uri         URI of the endpoint without message name
      * @param  messageName message name
@@ -95,8 +95,8 @@ public class AvroComponent extends DefaultComponent {
     }
 
     /**
-     * Calls unregister of consumer by appropriate message name. In case if all consumers are unregistered then it
-     * removes responder from the registry.
+     * Calls unregister of consumer by the appropriate message name.
+     * In case if all consumers are unregistered, then it removes responder from the registry.
      *
      * @param uri         URI of the endpoint without message name
      * @param messageName message name
