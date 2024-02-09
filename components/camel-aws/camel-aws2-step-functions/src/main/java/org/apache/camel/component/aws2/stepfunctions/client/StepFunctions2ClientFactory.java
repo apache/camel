@@ -18,6 +18,8 @@ package org.apache.camel.component.aws2.stepfunctions.client;
 
 import org.apache.camel.component.aws2.stepfunctions.StepFunctions2Configuration;
 import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientIAMProfileOptimizedImpl;
+import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientStandardImpl;
 
 /**
@@ -35,7 +37,14 @@ public final class StepFunctions2ClientFactory {
      * @return               StepFunctionsClient
      */
     public static StepFunctions2InternalClient getSfnClient(StepFunctions2Configuration configuration) {
-        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
-                ? new StepFunctions2ClientIAMOptimizedImpl(configuration) : new StepFunctions2ClientStandardImpl(configuration);
+        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
+            return new StepFunctions2ClientIAMOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
+            return new StepFunctions2ClientIAMProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new StepFunctions2ClientSessionTokenImpl(configuration);
+        } else {
+            return new StepFunctions2ClientStandardImpl(configuration);
+        }
     }
 }

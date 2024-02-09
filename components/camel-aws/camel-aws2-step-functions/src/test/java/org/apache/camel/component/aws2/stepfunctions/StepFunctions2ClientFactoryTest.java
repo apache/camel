@@ -19,6 +19,8 @@ package org.apache.camel.component.aws2.stepfunctions;
 import org.apache.camel.component.aws2.stepfunctions.client.StepFunctions2ClientFactory;
 import org.apache.camel.component.aws2.stepfunctions.client.StepFunctions2InternalClient;
 import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientIAMProfileOptimizedImpl;
+import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +49,21 @@ public class StepFunctions2ClientFactoryTest {
         sfn2Configuration.setUseDefaultCredentialsProvider(true);
         StepFunctions2InternalClient sfnClient = StepFunctions2ClientFactory.getSfnClient(sfn2Configuration);
         assertTrue(sfnClient instanceof StepFunctions2ClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getIAMProfileOptimizedSfnClient() {
+        StepFunctions2Configuration sfn2Configuration = new StepFunctions2Configuration();
+        sfn2Configuration.setUseProfileCredentialsProvider(true);
+        StepFunctions2InternalClient sfnClient = StepFunctions2ClientFactory.getSfnClient(sfn2Configuration);
+        assertTrue(sfnClient instanceof StepFunctions2ClientIAMProfileOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenSfnClient() {
+        StepFunctions2Configuration sfn2Configuration = new StepFunctions2Configuration();
+        sfn2Configuration.setUseSessionCredentials(true);
+        StepFunctions2InternalClient sfnClient = StepFunctions2ClientFactory.getSfnClient(sfn2Configuration);
+        assertTrue(sfnClient instanceof StepFunctions2ClientSessionTokenImpl);
     }
 }
