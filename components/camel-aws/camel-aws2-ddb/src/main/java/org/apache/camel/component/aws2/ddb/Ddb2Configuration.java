@@ -149,7 +149,7 @@ public class Ddb2Configuration implements Cloneable {
     }
 
     /**
-     * Determines whether or not strong consistency should be enforced when data is read.
+     * Determines whether strong consistency should be enforced when data is read.
      */
     public void setConsistentRead(boolean consistentRead) {
         this.consistentRead = consistentRead;
@@ -260,7 +260,7 @@ public class Ddb2Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * Set the need for overriding the endpoint. This option needs to be used in combination with uriEndpointOverride
      * option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
