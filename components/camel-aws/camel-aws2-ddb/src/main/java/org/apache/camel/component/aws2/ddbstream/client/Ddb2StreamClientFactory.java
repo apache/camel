@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.ddbstream.client;
 import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration;
 import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientIAMProfileOptimizedImpl;
+import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientSessionTokenImpl;
 import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientStandardImpl;
 
 /**
@@ -40,6 +41,8 @@ public final class Ddb2StreamClientFactory {
             return new Ddb2StreamClientIAMOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
             return new Ddb2StreamClientIAMProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new Ddb2StreamClientSessionTokenImpl(configuration);
         } else {
             return new Ddb2StreamClientStandardImpl(configuration);
         }

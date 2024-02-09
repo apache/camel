@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.ddbstream;
 import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamClientFactory;
 import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamInternalClient;
 import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientSessionTokenImpl;
 import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class Ddb2StreamClientFactoryTest {
         ddb2StreamConfiguration.setUseDefaultCredentialsProvider(true);
         Ddb2StreamInternalClient ddb2StreamClient = Ddb2StreamClientFactory.getDynamoDBStreamClient(ddb2StreamConfiguration);
         assertTrue(ddb2StreamClient instanceof Ddb2StreamClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenDdb2StreamClient() {
+        Ddb2StreamConfiguration ddb2StreamConfiguration = new Ddb2StreamConfiguration();
+        ddb2StreamConfiguration.setUseSessionCredentials(true);
+        Ddb2StreamInternalClient ddb2StreamClient = Ddb2StreamClientFactory.getDynamoDBStreamClient(ddb2StreamConfiguration);
+        assertTrue(ddb2StreamClient instanceof Ddb2StreamClientSessionTokenImpl);
     }
 }
