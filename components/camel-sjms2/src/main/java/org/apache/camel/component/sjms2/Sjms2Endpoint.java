@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Send and receive messages to/from a JMS Queue or Topic using plain JMS 2.x API.
  *
- * This component uses plain JMS 2.x API where as the jms component uses Spring JMS.
+ * This component uses plain JMS 2.x API, whereas the jms component uses Spring JMS.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "sjms2", extendsScheme = "sjms", title = "Simple JMS2",
              syntax = "sjms2:destinationType:destinationName", category = { Category.MESSAGING },
