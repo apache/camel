@@ -409,7 +409,7 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maves-surefire-plugin</artifactId>
+                    <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin-version}</version>
                 </plugin>
                 <plugin>
