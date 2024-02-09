@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The ArangoDb component is a ArangoDb client that uses the https://github.com/arangodb/arangodb-java-driver[arango java driver] to perform queries on collections and graphs in the ArangoDb database.
+The ArangoDb component is client for ArangoDb that uses the https://github.com/arangodb/arangodb-java-driver[arango java driver] to perform queries on collections and graphs in the ArangoDb database.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
