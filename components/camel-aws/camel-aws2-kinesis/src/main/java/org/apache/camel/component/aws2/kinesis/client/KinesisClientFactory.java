@@ -17,12 +17,7 @@
 package org.apache.camel.component.aws2.kinesis.client;
 
 import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisAsyncClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisAsyncClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisAsyncClientStandardImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientStandardImpl;
+import org.apache.camel.component.aws2.kinesis.client.impl.*;
 
 /**
  * Factory class to return the correct type of AWS Kinesis client.
@@ -43,6 +38,8 @@ public final class KinesisClientFactory {
             return new KinesisClientIAMOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
             return new KinesisClientIAMProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new KinesisClientSessionTokenImpl(configuration);
         } else {
             return new KinesisClientStandardImpl(configuration);
         }
@@ -59,6 +56,8 @@ public final class KinesisClientFactory {
             return new KinesisAsyncClientIAMOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
             return new KinesisAsyncClientIAMProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new KinesisAsyncClientSessionTokenImpl(configuration);
         } else {
             return new KinesisAsyncClientStandardImpl(configuration);
         }
