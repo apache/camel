@@ -30,7 +30,7 @@ unit test your routes.
 ## Components
 
 Apache Camel comes alongside several artifacts with components, data formats, languages, and kinds.
-The up to date list is available online at the Camel website:
+The up-to-date list is available online at the Camel website:
 
 * Components: <https://camel.apache.org/components/latest/>
 * Data Formats: <https://camel.apache.org/components/latest/dataformats/>
@@ -72,7 +72,7 @@ email lists, GitHub, chat
 
 Website: <https://camel.apache.org/>
 
-Github (source): <https://github.com/apache/camel>
+GitHub (source): <https://github.com/apache/camel>
 
 Issue tracker: <https://issues.apache.org/jira/projects/CAMEL>
 
@@ -95,8 +95,7 @@ For additional help, support, we recommend referencing this page first:
 
 If you get stuck somewhere, please feel free to reach out to us on either StackOverflow, Chat, or the email mailing list.
 
-Please help us make Apache Camel better - we appreciate any feedback
-you may have.
+Please help us make Apache Camel better — we appreciate any feedback you may have.
 
 Enjoy!
 
