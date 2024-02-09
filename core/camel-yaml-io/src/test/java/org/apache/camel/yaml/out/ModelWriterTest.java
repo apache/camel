@@ -39,7 +39,9 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.rest.RestDefinition;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.IOHelper.stripLineComments;
@@ -294,6 +296,28 @@ public class ModelWriterTest {
 
         String out = sw.toString();
         String expected = stripLineComments(Paths.get("src/test/resources/route9.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    @Disabled("CAMEL-20402")
+    public void testRest() throws Exception {
+        StringWriter sw = new StringWriter();
+        ModelWriter writer = new ModelWriter(sw);
+
+        RestDefinition rest = new RestDefinition();
+        rest.verb("get").to("direct:start");
+        writer.writeRestDefinition(rest);
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute10");
+        route.setInput(new FromDefinition("direct:start"));
+        SetBodyDefinition sb = new SetBodyDefinition(new SimpleExpression("${body}${body}"));
+        route.addOutput(sb);
+        writer.writeRouteDefinition(route);
+
+        String out = sw.toString();
+        String expected = stripLineComments(Paths.get("src/test/resources/route10.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
