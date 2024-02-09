@@ -53,6 +53,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": target.getConfiguration().setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -61,6 +63,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": target.getConfiguration().setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         case "writecapacity":
         case "writeCapacity": target.getConfiguration().setWriteCapacity(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
@@ -107,6 +111,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -115,6 +121,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         case "writecapacity":
         case "writeCapacity": return java.lang.Long.class;
         default: return null;
@@ -157,6 +165,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "region": return target.getConfiguration().getRegion();
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
+        case "sessiontoken":
+        case "sessionToken": return target.getConfiguration().getSessionToken();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "uriendpointoverride":
@@ -165,6 +175,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return target.getConfiguration().isUseSessionCredentials();
         case "writecapacity":
         case "writeCapacity": return target.getConfiguration().getWriteCapacity();
         default: return null;
