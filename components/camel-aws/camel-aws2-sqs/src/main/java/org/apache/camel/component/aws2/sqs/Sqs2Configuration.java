@@ -132,7 +132,7 @@ public class Sqs2Configuration implements Cloneable {
     private String profileCredentialsName;
 
     /**
-     * Whether or not the queue is a FIFO queue
+     * Whether the queue is a FIFO queue
      */
     boolean isFifoQueue() {
         // AWS docs suggest this is valid derivation.
@@ -156,7 +156,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Name of queue. The queue will be created if they don't already exists.
+     * Name of queue. The queue will be created if they don't already exist.
      */
     public void setQueueName(String queueName) {
         this.queueName = queueName;
@@ -189,7 +189,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     * Amazon AWS Session Token used when the user needs to assume an IAM role
      */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
@@ -211,7 +211,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * To use the AmazonSQS as client
+     * To use the AmazonSQS client
      */
     public void setAmazonSQSClient(SqsClient amazonSQSClient) {
         this.amazonSQSClient = amazonSQSClient;
@@ -224,7 +224,7 @@ public class Sqs2Configuration implements Cloneable {
     /**
      * The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being
      * retrieved by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest.
-     * This only make sense if its different from defaultVisibilityTimeout. It changes the queue visibility timeout
+     * This only makes sense if it's different from defaultVisibilityTimeout. It changes the queue visibility timeout
      * attribute permanently.
      */
     public void setVisibilityTimeout(Integer visibilityTimeout) {
@@ -336,7 +336,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * If enabled then a scheduled background task will keep extending the message visibility on SQS. This is needed if
+     * If enabled, then a scheduled background task will keep extending the message visibility on SQS. This is needed if
      * it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set. See details at
      * Amazon docs.
      */
@@ -373,7 +373,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Specify the queue owner aws account id when you need to connect the queue with different account owner.
+     * Specify the queue owner aws account id when you need to connect the queue with a different account owner.
      */
     public void setQueueOwnerAWSAccountId(String queueOwnerAWSAccountId) {
         this.queueOwnerAWSAccountId = queueOwnerAWSAccountId;
@@ -384,7 +384,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Whether or not to send the DeleteMessage to the SQS queue if the exchange has property with key
+     * Whether to send the DeleteMessage to the SQS queue if the exchange has property with key
      * {@link Sqs2Constants#SQS_DELETE_FILTERED} (CamelAwsSqsDeleteFiltered) set to true.
      */
     public void setDeleteIfFiltered(boolean deleteIfFiltered) {
@@ -397,7 +397,7 @@ public class Sqs2Configuration implements Cloneable {
 
     /**
      * The region in which SQS client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -420,7 +420,7 @@ public class Sqs2Configuration implements Cloneable {
 
     /**
      * To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored. This
-     * parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes.
+     * parameter is intended to be used to connect to a mock implementation of SQS, for testing purposes.
      */
     public void setQueueUrl(String queueUrl) {
         this.queueUrl = queueUrl;
@@ -495,7 +495,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Only for FIFO queues. Strategy for setting the messageGroupId on the message. Can be one of the following
+     * Only for FIFO queues. Strategy for setting the messageGroupId on the message. It can be one of the following
      * options: *useConstant*, *useExchangeId*, *usePropertyValue*. For the *usePropertyValue* option, the value of
      * property "CamelAwsMessageGroupId" will be used.
      */
@@ -524,7 +524,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message. Can be one of the following
+     * Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message. It can be one of the following
      * options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication* option, no
      * messageDeduplicationId will be set on the message.
      */
@@ -558,7 +558,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Setting the autocreation of the queue
+     * Setting the auto-creation of the queue
      */
     public void setAutoCreateQueue(boolean autoCreateQueue) {
         this.autoCreateQueue = autoCreateQueue;
@@ -614,8 +614,8 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the SQS client should expect to use Session Credentials. This is useful in situation in which the
-     * user needs to assume a IAM role for doing operations in SQS.
+     * Set whether the SQS client should expect to use Session Credentials. This is useful in a situation in which the
+     * user needs to assume an IAM role for doing operations in SQS.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
@@ -637,7 +637,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * What to do if sending to AWS SQS has more messages than AWS allows (currently only maximum 10 message headers is
+     * What to do if sending to AWS SQS has more messages than AWS allows (currently only maximum 10 message headers are
      * allowed).
      *
      * WARN will log a WARN about the limit is for each additional header, so the message can be sent to AWS. WARN_ONCE
@@ -654,7 +654,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
      * option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
@@ -677,7 +677,7 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * If using a profile credentials provider this parameter will set the profile name
+     * If using a profile credentials provider, this parameter will set the profile name
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
