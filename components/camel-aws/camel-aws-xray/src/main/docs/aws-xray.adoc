@@ -27,7 +27,7 @@ The configuration properties for the AWS XRay tracer are:
 |addExcludePatterns | &nbsp; | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern matching routeId's. The pattern
 uses the rules from Intercept.
-|setTracingStrategy | NoopTracingStrategy | Allows a custom Camel `InterceptStrategy` to be provided in order to track invoked processor definitions like `BeanDefinition` or `ProcessDefinition`. `TraceAnnotatedTracingStrategy` will track any classes invoked via `.bean(...)` or `.process(...)` that contain a `@XRayTrace` annotation at class level.
+|setTracingStrategy | NoopTracingStrategy | Allows a custom Camel `InterceptStrategy` to be provided to track invoked processor definitions like `BeanDefinition` or `ProcessDefinition`. `TraceAnnotatedTracingStrategy` will track any classes invoked via `.bean(...)` or `.process(...)` that contain a `@XRayTrace` annotation at class level.
 
 |=======================================================================
 
@@ -44,7 +44,7 @@ context. You can optionally specify a `Tracer`, or alternatively it can be impli
 [source,java]
 --------------------------------------------------------------------------------------------------
 XRayTracer xrayTracer = new XRayTracer();
-// By default it uses a NoopTracingStrategy, but you can override it with a specific InterceptStrategy implementation.
+// By default, it uses a NoopTracingStrategy, but you can override it with a specific InterceptStrategy implementation.
 xrayTracer.setTracingStrategy(...);
 // And then initialize the context
 xrayTracer.init(camelContext);
@@ -65,9 +65,9 @@ In case of the default `NoopTracingStrategy` only the creation and deletion of e
 
 === Tracking of comprehensive route execution
 
-In order to track the execution of an exchange among multiple routes, on exchange creation a unique trace ID is generated and stored in the headers if no corresponding value was yet available. This trace ID is copied over to new exchanges in order to keep a consistent view of the processed exchange.
+To track the execution of an exchange among multiple routes, on exchange creation a unique trace ID is generated and stored in the headers if no corresponding value was yet available. This trace ID is copied over to new exchanges to keep a consistent view of the processed exchange.
 
-As AWS XRay traces work on a thread-local basis the current sub/segment should be copied over to the new thread and set as explained in https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-multithreading.html[in the AWS XRay documentation]. The Camel AWS XRay component therefore provides an additional header field that the component will use in order to set the passed AWS XRay `Entity` to the new thread and thus keep the tracked data to the route rather than exposing a new segment which seems uncorrelated with any of the executed routes.
+As AWS XRay traces work on a thread-local basis, the current sub/segment should be copied over to the new thread and set as explained in https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-multithreading.html[the AWS XRay documentation]. The Camel AWS XRay component therefore provides an additional header field that the component will use to set the passed AWS XRay `Entity` to the new thread and thus keep the tracked data to the route rather than exposing a new segment which seems uncorrelated with any of the executed routes.
 
 The component will use the following constants found in the headers of the exchange:
 
@@ -88,9 +88,9 @@ You can find an example demonstrating the way to configure AWS XRay tracing with
 
 == Dependency
 
-In order to include AWS XRay support into Camel, the archive containing the Camel related AWS XRay related classes need to be added to the project. In addition to that, AWS XRay libraries also need to be available.
+To include AWS XRay support into Camel, the archive containing the Camel related AWS XRay related classes needs to be added to the project. In addition to that, AWS XRay libraries also need to be available.
 
-To include both, AWS XRay and Camel, dependencies use the following Maven imports:
+To include both AWS XRay and Camel dependencies, use the following Maven imports:
 
 [source,xml]
 ----
