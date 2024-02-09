@@ -431,7 +431,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     Resource resource = entry.getKey();
 
                     StringBuilder sbLocal = new StringBuilder();
-                    doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "rest", "route-configurations",
+                    doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "routeConfiguration",
+                            "route-configurations",
                             sbLocal, sbLog);
                     // dump each resource into its own file
                     doDumpToDirectory(resource, sbLocal, "route-configurations", "xml", files);
@@ -529,9 +530,10 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             // remove spring schema xmlns that camel-jaxb dumper includes
             xml = StringHelper.replaceFirst(xml, " xmlns=\"http://camel.apache.org/schema/spring\">", ">");
             xml = xml.replace("</" + replace + ">", "</" + replace + ">\n");
-            // remove outer routes tag
-            xml = StringHelper.replaceFirst(xml, "<routes>", "");
-            xml = StringHelper.replaceFirst(xml, "</routes>", "");
+            // remove outer tag (routes, rests, etc)
+            replace = replace + "s";
+            xml = StringHelper.replaceFirst(xml, "<" + replace + ">", "");
+            xml = StringHelper.replaceFirst(xml, "</" + replace + ">", "");
 
             sbLocal.append(xml);
             appendLogDump(resource, xml, sbLog);
