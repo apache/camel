@@ -60,7 +60,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.
  *
- * This component uses plain JMS API where as the jms component uses Spring JMS.
+ * This component uses plain JMS API, whereas the jms component uses Spring JMS.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName",
              category = { Category.MESSAGING }, headersClass = SjmsConstants.class)
@@ -186,7 +186,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     private boolean testConnectionOnStartup;
     @UriParam(label = "advanced",
               description = "Whether to startup the consumer message listener asynchronously, when starting a route."
-                            + " For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover."
+                            + " For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or fail over."
                             + " This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker"
                             + " using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level,"
                             + " and the consumer will not be able to receive messages; You can then restart the route to retry.")
@@ -420,7 +420,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     /**
      * When one of the QoS properties are configured such as {@link #setDeliveryPersistent(boolean)},
      * {@link #setPriority(int)} or {@link #setTimeToLive(long)} then we should auto default the setting of
-     * {@link #setExplicitQosEnabled(Boolean)} if its not been configured yet
+     * {@link #setExplicitQosEnabled(Boolean)} if it has not been configured yet
      */
     protected void configuredQoS() {
         if (explicitQosEnabled == null) {

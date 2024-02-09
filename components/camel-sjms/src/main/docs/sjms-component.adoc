@@ -15,21 +15,21 @@
 *{component-header}*
 
 The Simple JMS Component is a JMS component that only uses JMS APIs
-and no 3rd-party framework such as Spring JMS.
+and no third-party framework such as Spring JMS.
 
 The component was reworked from Camel 3.8 onwards
 to be similar to the existing Camel JMS component that is based on Spring JMS.
 
 The reason is to offer many of the same features and functionality from the JMS component,
-but for users that requires lightweight without having to include the Spring Framework.
+but for users that require lightweight without having to include the Spring Framework.
 
 There are some advanced features in the Spring JMS component that has been omitted, such as
-shared queues for request/reply. Spring JMS offers fine grained tunings for concurrency settings,
+shared queues for request/reply. Spring JMS offers fine-grained tunings for concurrency settings,
 which can be tweaked for dynamic scaling up and down depending on load. This is a special feature in Spring JMS
 that would require substantial code to implement in SJMS.
 
-The SJMS component does not support for Spring or JTA Transaction, however support for internal local transactions
-is supported using JMS or Transaction or Client Acknowledge Mode. See more further below.
+The SJMS component does not support for Spring or JTA Transaction, however, support for internal local transactions
+is supported using JMS or Transaction or Client Acknowledge Mode. See further details below.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -139,8 +139,8 @@ the message to `sjms:queue:order:2`, assuming the `id` value was 2.
 
 Keep in mind that the JMS producer removes both `CamelJmsDestinationName`
 headers from the exchange and do not propagate  them to the created JMS
-message in order to avoid the accidental loops
-in the routes (in scenarios when the message will be forwarded to the
+message to avoid the accidental loops
+in the routes (in scenarios when the message will be forwarded to
 another JMS endpoint).
 
 == Using toD
@@ -149,8 +149,8 @@ If you need to send messages to a lot of different JMS destinations, it
 makes sense to reuse a SJMS endpoint and specify the dynamic destinations
 with simple language using xref:eips:toD-eip.adoc[toD].
 
-For example suppose you need to send messages to queues with order types,
-then using toD could for example be done as follows:
+For example, suppose you need to send messages to queues with order types,
+then using toD could, for example, be done as follows:
 
 [source,java]
 --------------------------------
@@ -167,7 +167,7 @@ The SJMS component supports this from both the consumer and producers. If a cons
 is transacted, then the active JMS Session will commit or rollback at the end of processing the message.
 
 SJMS producers that are `transacted=true` will also defer until the end of processing the message
-before the the active JMS Session will commit or rollback.
+before the active JMS Session will commit or rollback.
 
 You can combine consumer and producer, such as:
 
@@ -184,8 +184,8 @@ then both the consumer and the producer will commit (or rollback in case of an e
 
 === Message Header Format
 
-The SJMS Component uses the same header format strategy that is used in
-the Camel JMS Component. This plugable strategy ensures that messages
+The SJMS Component uses the same header format strategy used in
+the Camel JMS Component. This pluggable strategy ensures that messages
 sent over the wire conform to the JMS Message spec.
 
 For the `exchange.in.header` the following rules apply for the header
@@ -194,40 +194,40 @@ keys:
 * Keys starting with `JMS` or `JMSX` are reserved.
 * `exchange.in.headers` keys must be literals and all be valid Java
 identifiers (do not use dots in the key name).
-* Camel replaces dots & hyphens and the reverse when when consuming JMS
+* Camel replaces dots & hyphens and the reverse when consuming JMS
 messages:
 
-** is replaced by _DOT_ and the reverse replacement when Camel consumes
+** it is replaced by _DOT_ and the reverse replacement when Camel consumes
 the message.
-** is replaced by _HYPHEN_ and the reverse replacement when Camel
+** it is replaced by _HYPHEN_ and the reverse replacement when Camel
 consumes the message.See also the option `jmsKeyFormatStrategy`,
 which allows use of your own custom strategy for formatting keys.
 
 === Message Content
 
-To deliver content over the wire we must ensure that the body of the
+To deliver content over the wire, we must ensure that the body of the
 message that is being delivered adheres to the JMS Message
 Specification. Therefore, all that are produced must either be
-primitives or their counter objects (such as `Integer`, `Long`, `Character`).
+primitives or their counter-objects (such as `Integer`, `Long`, `Character`).
 The types, `String`, `CharSequence`, `Date`, `BigDecimal` and `BigInteger` are all
 converted to their `toString()` representation. All other types are
 dropped.
 
 === Clustering
 
-When using _InOut_ with SJMS in a clustered environment you must either
+When using _InOut_ with SJMS in a clustered environment, you must either
 use TemporaryQueue destinations or use a unique reply to
-destination per InOut producer endpoint. Message correlation is handled
-by the producer, not with message selectors at the broker.
+destination per InOut producer endpoint. The producer handles message
+correlation is handled, not with message selectors at the broker.
 
 [NOTE]
 ====
-You should only use queues as reply-to destination types, topics is not recommended or fully supported.
+You should only use queues as reply-to destination types, topics are not recommended or fully supported.
 ====
 
-Currently the only correlation strategy is to use the `JMSCorrelationId`.
+Currently, the only correlation strategy is to use the `JMSCorrelationId`.
 The _InOut_ Consumer uses this strategy as well ensuring that all
-responses messages to the included `JMSReplyTo` destination also have the
+response messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
 
 
