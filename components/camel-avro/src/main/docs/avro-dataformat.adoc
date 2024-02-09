@@ -89,7 +89,7 @@ reference it from your route.
     </camelContext>
 --------------------------------------------------------------------------------------
 
-In the same manner you can umarshal using the avro data format.
+In the same manner, you can unmarshal using the avro data format.
 
 
 include::spring-boot:partial$starter.adoc[]
