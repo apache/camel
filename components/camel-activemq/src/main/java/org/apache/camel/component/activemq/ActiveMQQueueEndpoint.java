@@ -77,7 +77,7 @@ public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsa
     }
 
     /**
-     * If a number is set > 0 then this limits the number of messages that are returned when browsing the queue
+     * If a number is set > 0, then this limits the number of messages that are returned when browsing the queue
      */
     @ManagedAttribute
     public void setMaximumBrowseSize(int maximumBrowseSize) {

@@ -79,7 +79,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
     /**
      * Enables or disables whether a Spring {@link SingleConnectionFactory} will be used so that when messages are sent
-     * to ActiveMQ from outside a message consuming thread, pooling will be used rather than the default with the Spring
+     * to ActiveMQ from outside a message-consuming thread, pooling will be used rather than the default with the Spring
      * {@link JmsTemplate} which will create a new connection, session, producer for each message then close them all
      * down again.
      * <p/>
@@ -95,7 +95,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
     /**
      * Enables or disables whether a PooledConnectionFactory will be used so that when messages are sent to ActiveMQ
-     * from outside of a message consuming thread, pooling will be used rather than the default with the Spring
+     * from outside of a message-consuming thread, pooling will be used rather than the default with the Spring
      * {@link JmsTemplate} which will create a new connection, session, producer for each message then close them all
      * down again.
      * <p/>
@@ -114,7 +114,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
      * considered unsafe as malicious payload can exploit the host system. That's why starting with versions 5.12.2 and
      * 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that can be exchanged using ObjectMessages.
      * <br/>
-     * This option can be set to <tt>true</tt> to trust all packages (eg whitelist is *).
+     * This option can be set to <tt>true</tt> to trust all packages (e.g., whitelist is *).
      * <p/>
      * See more details at:
      * <a href="http://activemq.apache.org/objectmessage.html">http://activemq.apache.org/objectmessage.html</a>
@@ -154,11 +154,11 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
         if (acf != null) {
             if (customBrokerURL) {
-                // okay a custom broker url was configured which we want to ensure
+                // okay, a custom broker url was configured which we want to ensure
                 // the real target connection factory knows about
                 acf.setBrokerURL(brokerURL);
             } else {
-                // its the opposite the target has the brokerURL which we want to set on this
+                // it's the opposite the target has the brokerURL which we want to set on this
                 setBrokerURL(acf.getBrokerURL());
             }
         }
