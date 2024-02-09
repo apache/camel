@@ -31,9 +31,9 @@ https://aws.amazon.com/ec2/[Amazon EC2].
 aws2-ec2://label[?options]
 -------------------------
 
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
+You can append query options to the URI in the following format:
 
+`?options=value&option2=value&...`
 
 // component-configure options: START
 
@@ -59,15 +59,15 @@ the https://aws.amazon.com/ec2/[Amazon EC2] service.
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
-You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
 
 The order of evaluation for Default Credentials Provider is the following:
 
- - Java system properties - aws.accessKeyId and aws.secretKey
- - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
- - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
  - Amazon EC2 Instance profile credentials. 
 
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
@@ -160,7 +160,7 @@ from("direct:stop")
 
 == Using a POJO as body
 
-Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as a body.
 In AWS EC2 there are multiple operations you can submit, as an example for Create and run an instance, you can do something like:
 
 [source,java]
@@ -170,7 +170,7 @@ from("direct:start")
   .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances&pojoRequest=true");
 ------------------------------------------------------------------------------------------------------
 
-In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
 == Dependencies
 
