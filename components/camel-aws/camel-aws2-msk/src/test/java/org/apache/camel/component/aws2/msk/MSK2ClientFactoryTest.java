@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.msk;
 import org.apache.camel.component.aws2.msk.client.MSK2ClientFactory;
 import org.apache.camel.component.aws2.msk.client.MSK2InternalClient;
 import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientOptimizedImpl;
+import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class MSK2ClientFactoryTest {
         msk2Configuration.setUseDefaultCredentialsProvider(true);
         MSK2InternalClient mskClient = MSK2ClientFactory.getKafkaClient(msk2Configuration);
         assertTrue(mskClient instanceof MSK2ClientOptimizedImpl);
+    }
+
+    @Test
+    public void getMSKSessionTokenClient() {
+        MSK2Configuration msk2Configuration = new MSK2Configuration();
+        msk2Configuration.setUseSessionCredentials(true);
+        MSK2InternalClient mskClient = MSK2ClientFactory.getKafkaClient(msk2Configuration);
+        assertTrue(mskClient instanceof MSK2ClientSessionTokenImpl);
     }
 }

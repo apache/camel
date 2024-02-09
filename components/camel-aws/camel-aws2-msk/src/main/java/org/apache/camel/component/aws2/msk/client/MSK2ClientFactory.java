@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.msk.client;
 import org.apache.camel.component.aws2.msk.MSK2Configuration;
 import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientOptimizedImpl;
 import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientProfileOptimizedImpl;
+import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientStandardImpl;
 
 /**
@@ -40,6 +41,8 @@ public final class MSK2ClientFactory {
             return new MSK2ClientOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
             return new MSK2ClientProfileOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new MSK2ClientSessionTokenImpl(configuration);
         } else {
             return new MSK2ClientStandardImpl(configuration);
         }
