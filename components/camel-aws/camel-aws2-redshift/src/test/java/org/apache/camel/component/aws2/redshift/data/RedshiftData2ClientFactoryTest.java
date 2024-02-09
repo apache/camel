@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.redshift.data;
 import org.apache.camel.component.aws2.redshift.data.client.RedshiftData2ClientFactory;
 import org.apache.camel.component.aws2.redshift.data.client.RedshiftData2InternalClient;
 import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -50,5 +51,14 @@ public class RedshiftData2ClientFactoryTest {
         RedshiftData2InternalClient redshiftDataClient
                 = RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
         assertTrue(redshiftDataClient instanceof RedshiftData2ClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getSessionTokenRedshiftDataClient() {
+        RedshiftData2Configuration redshiftData2Configuration = new RedshiftData2Configuration();
+        redshiftData2Configuration.setUseSessionCredentials(true);
+        RedshiftData2InternalClient redshiftDataClient
+                = RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
+        assertTrue(redshiftDataClient instanceof RedshiftData2ClientSessionTokenImpl);
     }
 }
