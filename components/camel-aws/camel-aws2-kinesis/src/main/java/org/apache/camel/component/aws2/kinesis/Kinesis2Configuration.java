@@ -78,7 +78,7 @@ public class Kinesis2Configuration implements Cloneable {
               description = "This option will set the CBOR_ENABLED property during the execution")
     private boolean cborEnabled = true;
     @UriParam(label = "common", defaultValue = "false",
-              description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride"
+              description = "Set the need for overriding the endpoint. This option needs to be used in combination with uriEndpointOverride"
                             + " option")
     private boolean overrideEndpoint;
     @UriParam(label = "common",

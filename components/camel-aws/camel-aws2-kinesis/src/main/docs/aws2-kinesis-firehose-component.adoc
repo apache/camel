@@ -20,7 +20,7 @@ The AWS2 Kinesis Firehose component supports sending messages to Amazon Kinesis 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon Kinesis Firehose. More information are available
+signed up to use Amazon Kinesis Firehose. More information is available
 at https://aws.amazon.com/kinesis/firehose/[AWS Kinesis Firehose]
 
 [NOTE]
@@ -35,9 +35,11 @@ The AWS2 Kinesis Firehose component is not supported in OSGI
 aws2-kinesis-firehose://delivery-stream-name[?options]
 -----------------------------------
 
-The stream needs to be created prior to it being used. +
- You can append query options to the URI in the following format,
-?options=value&option2=value&...
+The stream needs to be created prior to it being used.
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
 
 == URI Options
 
@@ -79,15 +81,15 @@ configured.
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
-You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
 
 The order of evaluation for Default Credentials Provider is the following:
 
- - Java system properties - aws.accessKeyId and aws.secretKey
- - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
- - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
  - Amazon EC2 Instance profile credentials. 
 
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
@@ -131,7 +133,7 @@ Camel-AWS s3 component provides the following operation on the producer side:
 
 === Send Batch Records Example
 
-You can send an iterable of Kinesis Record (as the following example shows) or you can send directly a PutRecordBatchRequest POJO instance in the body.
+You can send an iterable of Kinesis Record (as the following example shows), or you can send directly a PutRecordBatchRequest POJO instance in the body.
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------------
