@@ -16,7 +16,7 @@
 
 The SQL component allows you to work with databases using JDBC
 queries. The difference between this component and xref:jdbc-component.adoc[JDBC]
-component is that in case of SQL the query is a property of the endpoint
+component is that in case of SQL, the query is a property of the endpoint,
 and it uses message payload as parameters passed to the query.
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
@@ -37,8 +37,8 @@ for this component:
 
 The SQL component also supports:
 
-* a JDBC based repository for the Idempotent Consumer EIP pattern. See further below.
-* a JDBC based repository for the Aggregator EIP pattern. See further below.
+* A JDBC-based repository for the Idempotent Consumer EIP pattern. See further details below.
+* A JDBC-based repository for the Aggregator EIP pattern. See further details below.
 
 == URI format
 
@@ -60,8 +60,7 @@ You can use named parameters by using `:#name_of_the_parameter` style as shown:
 sql:select * from table where id=:#myId order by name[?options]
 ----
 
-When using named parameters, Camel will lookup the names from, in the
-given precedence:
+When using named parameters, Camel will look up the names in the given precedence:
 
 1. from a xref:languages:simple-language.adoc[Simple] expressions
 2. from message body if its a `java.util.Map`
@@ -89,7 +88,7 @@ syntax that can be used in the SQL queries, than the small example above.
 IMPORTANT: Notice that the standard `?` symbol that denotes the parameters to an
 SQL query is substituted with the `pass:[#]` symbol, because the `?` symbol is
 used to specify options for the endpoint. The `?` symbol replacement can
-be configured on endpoint basis.
+be configured on an endpoint basis.
 
 You can externalize your SQL queries to files in the classpath or file system as shown:
 
@@ -110,8 +109,8 @@ order by
   name
 ----
 
-In the file you can use multilines and format the SQL as you wish. And
-also use comments such as the – dash line.
+In the file, you can use multi-lines and format the SQL as you wish.
+And also use comments such as the – dash line.
 
 
 // component-configure options: START
@@ -155,7 +154,7 @@ parameters must be provided in a header with the
 key `SqlConstants.SQL_PARAMETERS`. This allows the SQL component to work
 more dynamically as the SQL query is from the message body. Use templating
 (such as xref:components::velocity-component.adoc[Velocity], xref:components::freemarker-component.adoc[Freemarker])
-for conditional processing, e.g. to include or exclude `where` clauses
+for conditional processing, e.g., to include or exclude `where` clauses
 depending on the presence of query parameters.
 
 == Result of the query
@@ -181,11 +180,9 @@ from("jms:order.inbox")
 
 == Using StreamList
 
-The producer supports `outputType=StreamList`
-that uses an iterator to stream the output of the query. This allows to
-process the data in a streaming fashion which for example can be used by
-the Splitter EIP to process each row one at a time,
-and load data from the database as needed.
+The producer supports `outputType=StreamList` that uses an iterator to stream the output of the query.
+This allows processing the data in a streaming fashion which, for example,
+can be used by the Splitter EIP to process each row one at a time, and load data from the database as needed.
 
 [source,java]
 ----
@@ -225,9 +222,12 @@ sql:select * from table where id=# order by name?dataSource=#myDS
 == Using named parameters
 
 In the given route below, we want to get all the projects from the
-projects table. Notice the SQL query has 2 named parameters, `:#lic` and
-`:#min`. Camel will then look up for these parameters from the message body or
-message headers. Notice in the example above we set two headers with
+`projects` table.
+Notice the SQL query has two named parameters, `:#lic` and
+`:#min`.
+Camel will then look up for these parameters from the message body or
+message headers.
+Notice in the example above we set two headers with
 constant value for the named parameters:
 
 [source,java]
@@ -249,7 +249,7 @@ from("direct:projects")
 
 == Using expression parameters in producers
 
-In the given route below, we want to get all the project from the
+In the given route below, we want to get all the projects from the
 database. It uses the body of the exchange for defining the license and
 uses the value of a property as the second parameter.
 
@@ -266,7 +266,7 @@ from("direct:projects")
 When using the SQL component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.
 
-For example in the sample below we call the nextId method on the bean myIdGenerator:
+For example, in the sample below we call the nextId method on the bean myIdGenerator:
 
 [source,java]
 ----
@@ -290,14 +290,13 @@ public static class MyIdGenerator {
 ----
 
 Notice that there is no existing `Exchange` with message body and headers, so
-the simple expression you can use in the consumer are most useable for calling
+the simple expression you can use in the consumer is most usable for calling
 bean methods as in this example.
 
 == Using IN queries with dynamic values
 
-The SQL producer allows to use SQL queries with
-IN statements where the IN values is dynamic computed. For example from
-the message body or a header etc.
+The SQL producer allows using SQL queries with `IN` statements where the `IN` values are dynamically computed.
+For example, from the message body or a header, etc.
 
 To use IN you need to:
 
@@ -356,10 +355,9 @@ from("direct:query")
     .to("mock:query");
 ----
 
-== Using the JDBC based idempotent repository
+== Using the JDBC-based idempotent repository
 
-In this section we will use the JDBC based
-idempotent repository.
+In this section, we will use the JDBC-based idempotent repository.
 
 [TIP]
 ====
@@ -370,7 +368,7 @@ There is an abstract class
 you can extend to build custom JDBC idempotent repository.
 ====
 
-First we have to create the database table which will be used by the
+First, we have to create the database table which will be used by the
 idempotent repository. We use the following schema:
 
 [source,sql]
@@ -385,8 +383,9 @@ does not map to any of the JDBC time types: *DATE*, *TIME*, or
 
 The above SQL is consistent with most popular SQL vendors.
 
-When working with concurrent consumers it is crucial to create a unique constraint on the column combination of
-processorName and messageId. This constraint will be prevent multiple consumers adding the same key to the repository
+When working with concurrent consumers, it is crucial to create a unique constraint on the column combination of
+processorName and messageId.
+This constraint will be preventing multiple consumers from adding the same key to the repository
 and allow only one consumer to handle the message.
 
 The SQL above includes the constraint by creating a primary key. If you prefer to use a different
@@ -403,56 +402,52 @@ your needs:
 |===
 |Parameter |Default Value |Description
 
-|createTableIfNotExists |true |Defines whether or not Camel should try to create the table if it
-doesn't exist.
+|createTableIfNotExists |`true` |Defines whether Camel should try to create the table if it doesn't exist.
 
-|tableName | CAMEL_MESSAGEPROCESSED | To use a custom table name instead of the default name: CAMEL_MESSAGEPROCESSED.
+|tableName | `CAMEL_MESSAGEPROCESSED` | To use a custom table name instead of the default name: `CAMEL_MESSAGEPROCESSED`.
 
-|tableExistsString |SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0 |This query is used to figure out whether the table already exists or
+|tableExistsString |`SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0` |This query is used to figure out whether the table already exists or
 not. It must throw an exception to indicate the table doesn't exist.
 
-|createString |CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255),
-messageId VARCHAR(100), createdAt TIMESTAMP) |The statement which is used to create the table.
+|createString |`CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255),messageId VARCHAR(100), createdAt TIMESTAMP)` |The statement which is used to create the table.
 
-|queryString |SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND
-messageId = ? |The query which is used to figure out whether the message already exists
+|queryString |`SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?` |The query which is used to figure out whether the message already exists
 in the repository (the result is not equals to '0'). It takes two
 parameters. This first one is the processor name (`String`) and the
 second one is the message id (`String`).
 
-|insertString |INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt)
-VALUES (?, ?, ?) |The statement which is used to add the entry into the table. It takes
-three parameter. The first one is the processor name (`String`), the
+|insertString |`INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)` |The statement which is used to add the entry into the table. It takes
+three parameters. The first one is the processor name (`String`), the
 second one is the message id (`String`) and the third one is the
 timestamp (`java.sql.Timestamp`) when this entry was added to the
 repository.
 
-|deleteString |DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ? |The statement which is used to delete the entry from the database.
-It takes two parameter. This first one is the processor name (`String`) and
+|deleteString |`DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?` |The statement which is used to delete the entry from the database.
+It takes two parameters. This first one is the processor name (`String`) and
 the second one is the message id (`String`).
 |===
 
 The option `tableName` can be used to use the default SQL queries but with a different table name.
-However, if you want to customize the SQL queries then you can configure each of them individually.
+However, if you want to customize the SQL queries, then you can configure each of them individually.
 
 === Orphan Lock aware Jdbc IdempotentRepository 
 
-One of the limitations of `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` is that it does not handle orphan locks resulting from JVM crash or non graceful shutdown. This can result in unprocessed files/messages if this is implementation is used with camel-file, camel-ftp etc. if you need to address orphan locks processing then use
-`org.apache.camel.processor.idempotent.jdbc.JdbcOrphanLockAwareIdempotentRepository`.  This repository keeps track of the locks held by an instance of the application. For each lock held, the application will send keep alive signals to the lock repository resulting in updating the createdAt column with the current Timestamp. When an application instance tries to acquire a lock if the, then there are three possibilities exist : 
+One of the limitations of `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` is that it does not handle orphan locks resulting from JVM crash or non-graceful shutdown. This can result in unprocessed files/messages if this is implementation is used with camel-file, camel-ftp etc. if you need to address orphan locks processing then use
+`org.apache.camel.processor.idempotent.jdbc.JdbcOrphanLockAwareIdempotentRepository`.  This repository keeps track of the locks held by an instance of the application. For each lock held, the application will send keep-alive signals to the lock repository resulting in updating the createdAt column with the current Timestamp. When an application instance tries to acquire a lock, then there are three possibilities:
 
 * lock entry does not exist then the lock is provided using the base implementation of `JdbcMessageIdRepository`. 
 
-* lock already exists and the createdAt < System.currentTimeMillis() - lockMaxAgeMillis. In this case it is assumed that an active instance has the lock and the lock is not provided to the new instance requesting the lock
+* lock already exists and the `createdAt` < `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that an active instance has the lock and the lock is not provided to the new instance requesting the lock
 
-* lock already exists and the createdAt > = System.currentTimeMillis() - lockMaxAgeMillis. In this case it is assumed that there is no active instance which has the lock and the lock is provided to the requesting instance. The reason behind is that if the original instance which had the lock, if it was still running, it would have updated the Timestamp on createdAt using its keepAlive mechanism
+* lock already exists and the `createdAt` > = `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that there is no active instance which has the lock and the lock is provided to the requesting instance. The reason behind is that if the original instance which had the lock, if it was still running, it would have updated the Timestamp on createdAt using its keepAlive mechanism
 
 This repository has two additional configuration parameters 
 
 [cols="1,1"]
 |===
 |Parameter | Description
-|lockMaxAgeMillis | This refers to the duration after which the lock is considered orphaned i.e. if the currentTimestamp - createdAt >= lockMaxAgeMillis then lock is orphaned.
-|lockKeepAliveIntervalMillis | The frequency at which keep alive updates are done to createdAt Timestamp column.
+|lockMaxAgeMillis | This refers to the duration after which the lock is considered orphaned, i.e., if the currentTimestamp - createdAt >= lockMaxAgeMillis then lock is orphaned.
+|lockKeepAliveIntervalMillis | The frequency at which keep-alive updates are done to createdAt Timestamp column.
 |===
 
 === Caching Jdbc IdempotentRepository 
@@ -471,14 +466,14 @@ be made with regard to stale data and your specific usage.
 
 `JdbcAggregationRepository` is an `AggregationRepository` which on the
 fly persists the aggregated messages. This ensures that you will not
-lose messages, as the default aggregator will use an in memory only
+lose messages, as the default aggregator will use an in-memory only
 `AggregationRepository`. The `JdbcAggregationRepository` allows together with Camel to provide
 persistent support for the Aggregator.
 
 Only when an Exchange has been successfully
 processed it will be marked as complete which happens when the `confirm`
 method is invoked on the `AggregationRepository`. This means if the same
-Exchange fails again it will be kept retried until success.
+Exchange fails again, it will be kept retried until success.
 
 You can use option `maximumRedeliveries` to limit the maximum number of
 redelivery attempts for a given recovered Exchange.
@@ -489,22 +484,22 @@ You can see some examples in the unit tests of camel-sql, for example `JdbcAggre
 
 === Database
 
-To be operational, each aggregator uses two table: the aggregation and
-completed one. By convention the completed has the same name as the
+To be operational, each aggregator uses two tables: the aggregation and
+completed one. By convention, the completed has the same name as the
 aggregation one suffixed with `"_COMPLETED"`. The name must be
 configured in the Spring bean with the `RepositoryName` property. In the
-following example aggregation will be used.
+following example, aggregation will be used.
 
-The table structure definition of both table are identical: in both case
+The table structure definition of both tables is identical: in both cases,
 a String value is used as key (*id*) whereas a Blob contains the
-exchange serialized in byte array.
+exchange serialized in a byte array.
 However, one difference should be remembered: the *id* field does not
 have the same content depending on the table.
 In the aggregation table *id* holds the correlation id used by the
 component to aggregate the messages. In the completed table, *id* holds
-the id of the exchange stored in corresponding the blob field.
+the id of the exchange stored in the corresponding blob field.
 
-Here is the SQL query used to create the tables, just replace
+Here is the SQL query used to create the tables. Replace
 `"aggregation"` with your aggregator repository name.
 
 [source,sql]
@@ -527,8 +522,8 @@ CREATE TABLE aggregation_completed (
 == Storing body and headers as text
 
 You can configure the `JdbcAggregationRepository` to store message body
-and select(ed) headers as String in separate columns. For example to
-store the body, and the following two headers `companyName` and
+and select(ed) headers as String in separate columns.
+For example, to store the body, and the following two headers `companyName` and
 `accountName` use the following SQL:
 
 [source,sql]
@@ -588,9 +583,9 @@ the `currentThread` one. The benefit is to be able to load classes
 exposed by other bundles. This allows the exchange body and headers to
 have custom types object references.
 
-While deserializing it's important to notice that the decode function and the unmarshallExchange method will allow only all java packages and subpackages 
-and org.apache.camel packages and subpackages. The remaining classes will be blacklisted. So you'll need to change the filter in case of need. 
-This could be accomplished by changing the deserializationFilter field on the repository.
+While deserializing, it's important to notice that the decode function and the unmarshallExchange method will allow only all java packages and subpackages
+and org.apache.camel packages and subpackages. The remaining classes will be blacklisted. So you'll need to change the filter in case of a need.
+This could be accomplished by changing the deserializationFilter field in the repository.
 
 === Transaction
 
@@ -599,15 +594,14 @@ transaction.
 
 ==== Service (Start/Stop)
 
-The `start` method verify the connection of the database and the
-presence of the required tables. If anything is wrong it will fail
-during starting.
+The `start` method verify the connection of the database and the presence of the required tables.
+If anything is wrong, it will fail during starting.
 
 === Aggregator configuration
 
 Depending on the targeted environment, the aggregator might need some
 configuration. As you already know, each aggregator should have its own
-repository (with the corresponding pair of table created in the
+repository (with the corresponding pair of tables created in the
 database) and a data source. If the default lobHandler is not adapted to
 your database system, it can be injected with the `lobHandler` property.
 
@@ -633,15 +627,18 @@ Here is the declaration for Oracle:
 === Optimistic locking
 
 You can turn on `optimisticLocking` and use
-this JDBC based aggregation repository in a clustered environment where
+this JDBC-based aggregation repository in a clustered environment where
 multiple Camel applications shared the same database for the aggregation
-repository. If there is a race condition there JDBC driver will throw a
-vendor specific exception which the `JdbcAggregationRepository` can
-react upon. To know which caused exceptions from the JDBC driver is
-regarded as an optimistic locking error we need a mapper to do this.
-Therefore there is a
+repository.
+If there is a race condition there, the JDBC driver will throw a
+vendor-specific exception which the `JdbcAggregationRepository` can
+react upon.
+To know which caused exceptions from the JDBC driver is
+regarded as an optimistic locking error, we need a mapper to do this.
+Therefore, there is a
 `org.apache.camel.processor.aggregate.jdbc.JdbcOptimisticLockingExceptionMapper`
-allows you to implement your custom logic if needed. There is a default
+allows you to implement your custom logic if needed.
+There is a default
 implementation
 `org.apache.camel.processor.aggregate.jdbc.DefaultJdbcOptimisticLockingExceptionMapper`
 which works as follows:
@@ -651,16 +648,16 @@ The following check is done:
 * If the caused exception is an `SQLException` then the SQLState is
 checked if starts with 23.
 * If the caused exception is a `DataIntegrityViolationException`
-* If the caused exception class name has "ConstraintViolation" in its
+* If the caused exception `class name` has _ConstraintViolation_ in its
 name.
-* Optional checking for FQN class name matches if any class names has been
+* Optional checking for FQN class name matches if any class names have been
 configured.
 
-You can in addition add FQN classnames, and if any of the caused
-exception (or any nested) equals any of the FQN class names, then its an
+You can, in addition, add FQN class names, and if any of the caused
+ exceptions (or any nested) equals any of the FQN class names, then it is an
 optimistic locking error.
 
-Here is an example, where we define 2 extra FQN class names from the
+Here is an example, where we define two extra FQN class names from the
 JDBC vendor.
 
 [source,xml]
@@ -676,8 +673,8 @@ class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
 <bean id="myExceptionMapper" class="org.apache.camel.processor.aggregate.jdbc.DefaultJdbcOptimisticLockingExceptionMapper">
   <property name="classNames">
     <util:set>
-      <value>com.foo.sql.MyViolationExceptoion</value>
-      <value>com.foo.sql.MyOtherViolationExceptoion</value>
+      <value>com.foo.sql.MyViolationException</value>
+      <value>com.foo.sql.MyOtherViolationException</value>
     </util:set>
   </property>
 </bean>
@@ -708,9 +705,11 @@ so `propagationBehaviorName` is convenient setter that allows to use names of th
 
 JdbcAggregationRepository does not provide recovery in a clustered environment.
 
-You may use ClusteredJdbcAggregationRepository that provides a limited support for recovery in a clustered environment : recovery mechanism is dealt separately by members of the cluster, i.e. a member may only recover exchanges that it completed itself.
+You may use ClusteredJdbcAggregationRepository that provides a limited support for recovery in a clustered environment:
+recovery mechanism is dealt separately by members of the cluster,
+i.e., a member may only recover exchanges that it completed itself.
 
-To enable this behaviour, property `recoverByInstance` must be set to true, and `instanceId` property must be defined using a unique identifier (a string) for each member of the cluster.
+To enable this behavior, property `recoverByInstance` must be set to true, and `instanceId` property must be defined using a unique identifier (a string) for each member of the cluster.
 
 Besides, completed table must have a `instance_id VARCHAR(255)` column.
 
@@ -718,9 +717,9 @@ NOTE: Since each member is the only responsible for the recovery of its complete
 
 === PostgreSQL case
 
-There's special database that may cause problems with optimistic locking used by `JdbcAggregationRepository`.
+There's a special database that may cause problems with optimistic locking used by `JdbcAggregationRepository`:
 PostgreSQL marks connection as invalid in case of data integrity violation exception (the one with SQLState 23505).
-This makes the connection effectively unusable within nested transaction.
+This makes the connection effectively unusable within a nested transaction.
 Details can be found
 https://www.postgresql.org/message-id/200609241203.59292.ralf.wiebicke%40exedio.com[in this document].
 
