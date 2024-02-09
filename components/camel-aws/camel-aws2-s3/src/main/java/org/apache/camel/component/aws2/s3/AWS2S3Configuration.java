@@ -146,9 +146,9 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Setup the partSize which is used in multi-part upload, the default size is 25M.
+     * Set up the partSize which is used in multipart upload, the default size is 25M.
      *
-     * Camel will only do multi-part uploads for files that are larger than the part-size thresholds. Files that are
+     * Camel will only do multipart uploads for files that are larger than the part-size thresholds. Files that are
      * smaller will be uploaded in a single operation.
      */
     public void setPartSize(long partSize) {
@@ -160,10 +160,10 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * If it is true, camel will upload the file with multi-part format, the part size is decided by the partSize
+     * If it is true, camel will upload the file with multipart format. The part size is decided by the partSize
      * option.
      *
-     * Camel will only do multi-part uploads for files that are larger than the part-size thresholds. Files that are
+     * Camel will only do multipart uploads for files that are larger than the part-size thresholds. Files that are
      * smaller will be uploaded in a single operation.
      */
     public void setMultiPartUpload(boolean multiPartUpload) {
@@ -197,7 +197,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     * Amazon AWS Session Token used when the user needs to assume an IAM role
      */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
@@ -266,7 +266,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Name of the bucket. The bucket will be created if it doesn't already exists.
+     * Name of the bucket. The bucket will be created if it doesn't already exist.
      */
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
@@ -288,19 +288,19 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The region in which S3 client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * The region in which the S3 client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
     }
 
     /**
-     * If it is true, the S3Object exchange will be consumed and put into the body and closed. If false the S3Object
+     * If it is true, the S3Object exchange will be consumed and put into the body and closed. If false, the S3Object
      * stream will be put raw into the body and the headers will be set with the S3 object metadata. This option is
-     * strongly related to autocloseBody option. In case of setting includeBody to true because the S3Object stream will
+     * strongly related to the autocloseBody option. In case of setting includeBody to true because the S3Object stream will
      * be consumed then it will also be closed, while in case of includeBody false then it will be up to the caller to
-     * close the S3Object stream. However setting autocloseBody to true when includeBody is false it will schedule to
+     * close the S3Object stream. However, setting autocloseBody to true when includeBody is false it will schedule to
      * close the S3Object stream automatically on exchange completion.
      */
     public void setIncludeBody(boolean includeBody) {
@@ -312,8 +312,8 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * If it is true, the S3 Object Body will be ignored completely, if it is set to false the S3 Object will be put in
-     * the body. Setting this to true, will override any behavior defined by includeBody option.
+     * If it is true, the S3 Object Body will be ignored completely if it is set to false, the S3 Object will be put in
+     * the body. Setting this to true will override any behavior defined by includeBody option.
      */
     public boolean isIgnoreBody() {
         return ignoreBody;
@@ -328,10 +328,10 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed.
+     * Delete objects from S3 after they have been retrieved. The deleting is only performed if the Exchange is committed.
      * If a rollback occurs, the object is not deleted.
      * <p/>
-     * If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you
+     * If this option is false, then the same objects will be retrieved over and over again in the polls. Therefore, you
      * need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the
      * {@link AWS2S3Constants#BUCKET_NAME} and {@link AWS2S3Constants#KEY} headers, or only the
      * {@link AWS2S3Constants#KEY} header.
@@ -345,7 +345,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Move objects from S3 bucket to a different bucket after they have been retrieved. To accomplish the operation the
+     * Move objects from S3 bucket to a different bucket after they have been retrieved. To accomplish the operation, the
      * destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed.
      * If a rollback occurs, the object is not moved.
      */
@@ -369,7 +369,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Define the destination bucket prefix to use when an object must be moved and moveAfterRead is set to true.
+     * Define the destination bucket prefix to use when an object must be moved, and moveAfterRead is set to true.
      */
     public void setDestinationBucketPrefix(String destinationBucketPrefix) {
         this.destinationBucketPrefix = destinationBucketPrefix;
@@ -380,7 +380,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Define the destination bucket suffix to use when an object must be moved and moveAfterRead is set to true.
+     * Define the destination bucket suffix to use when an object must be moved, and moveAfterRead is set to true.
      */
     public void setDestinationBucketSuffix(String destinationBucketSuffix) {
         this.destinationBucketSuffix = destinationBucketSuffix;
@@ -515,7 +515,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Define the id of Customer key to use in case CustomerKey is enabled
+     * Define the id of the Customer key to use in case CustomerKey is enabled
      */
     public void setCustomerKeyId(String customerKeyId) {
         this.customerKeyId = customerKeyId;
@@ -581,8 +581,8 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the S3 client should expect to use Session Credentials. This is useful in situation in which the user
-     * needs to assume a IAM role for doing operations in S3.
+     * Set whether the S3 client should expect to use Session Credentials. This is useful in a situation in which the user
+     * needs to assume an IAM role for doing operations in S3.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
@@ -594,7 +594,7 @@ public class AWS2S3Configuration implements Cloneable {
 
     /**
      * Setting the autocreation of the S3 bucket bucketName. This will apply also in case of moveAfterRead option
-     * enabled and it will create the destinationBucket if it doesn't exist already.
+     * enabled, and it will create the destinationBucket if it doesn't exist already.
      */
     public void setAutoCreateBucket(boolean autoCreateBucket) {
         this.autoCreateBucket = autoCreateBucket;
@@ -616,7 +616,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
      * option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
@@ -672,7 +672,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * When stream mode is true the upload to bucket will be done in streaming
+     * When stream mode is true, the upload to bucket will be done in streaming
      */
     public void setStreamingUploadMode(boolean streamingUploadMode) {
         this.streamingUploadMode = streamingUploadMode;
@@ -760,7 +760,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * If using a profile credentials provider this parameter will set the profile name
+     * If using a profile credentials provider, this parameter will set the profile name
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
