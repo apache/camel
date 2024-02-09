@@ -874,6 +874,21 @@ public interface GooglePubsubEndpointBuilderFactory {
         public String googlePubsubOrderingKey() {
             return "CamelGooglePubsubOrderingKey";
         }
+
+        /**
+         * Can be used to manually acknowledge or negative-acknowledge a message
+         * when ackMode=NONE.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.google.pubsub.consumer.GooglePubsubAcknowledge} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GooglePubsubAcknowledge}.
+         */
+        public String googlePubsubAcknowledge() {
+            return "CamelGooglePubsubAcknowledge";
+        }
     }
     static GooglePubsubEndpointBuilder endpointBuilder(
             String componentName,

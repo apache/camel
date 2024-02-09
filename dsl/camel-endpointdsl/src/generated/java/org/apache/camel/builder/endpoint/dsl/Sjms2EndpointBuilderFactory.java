@@ -771,7 +771,7 @@ public interface Sjms2EndpointBuilderFactory {
          * Whether to startup the consumer message listener asynchronously, when
          * starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
-         * and/or failover. This will cause Camel to block while starting
+         * and/or fail over. This will cause Camel to block while starting
          * routes. By setting this option to true, you will let routes startup,
          * while the JmsConsumer connects to the JMS broker using a dedicated
          * thread in asynchronous mode. If this option is used, then beware that
@@ -796,7 +796,7 @@ public interface Sjms2EndpointBuilderFactory {
          * Whether to startup the consumer message listener asynchronously, when
          * starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
-         * and/or failover. This will cause Camel to block while starting
+         * and/or fail over. This will cause Camel to block while starting
          * routes. By setting this option to true, you will let routes startup,
          * while the JmsConsumer connects to the JMS broker using a dedicated
          * thread in asynchronous mode. If this option is used, then beware that
@@ -1966,7 +1966,7 @@ public interface Sjms2EndpointBuilderFactory {
          * Whether to startup the consumer message listener asynchronously, when
          * starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
-         * and/or failover. This will cause Camel to block while starting
+         * and/or fail over. This will cause Camel to block while starting
          * routes. By setting this option to true, you will let routes startup,
          * while the JmsConsumer connects to the JMS broker using a dedicated
          * thread in asynchronous mode. If this option is used, then beware that
@@ -1991,7 +1991,7 @@ public interface Sjms2EndpointBuilderFactory {
          * Whether to startup the consumer message listener asynchronously, when
          * starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
-         * and/or failover. This will cause Camel to block while starting
+         * and/or fail over. This will cause Camel to block while starting
          * routes. By setting this option to true, you will let routes startup,
          * while the JmsConsumer connects to the JMS broker using a dedicated
          * thread in asynchronous mode. If this option is used, then beware that
@@ -2667,7 +2667,7 @@ public interface Sjms2EndpointBuilderFactory {
          * Whether to startup the consumer message listener asynchronously, when
          * starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
-         * and/or failover. This will cause Camel to block while starting
+         * and/or fail over. This will cause Camel to block while starting
          * routes. By setting this option to true, you will let routes startup,
          * while the JmsConsumer connects to the JMS broker using a dedicated
          * thread in asynchronous mode. If this option is used, then beware that
@@ -2692,7 +2692,7 @@ public interface Sjms2EndpointBuilderFactory {
          * Whether to startup the consumer message listener asynchronously, when
          * starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
-         * and/or failover. This will cause Camel to block while starting
+         * and/or fail over. This will cause Camel to block while starting
          * routes. By setting this option to true, you will let routes startup,
          * while the JmsConsumer connects to the JMS broker using a dedicated
          * thread in asynchronous mode. If this option is used, then beware that

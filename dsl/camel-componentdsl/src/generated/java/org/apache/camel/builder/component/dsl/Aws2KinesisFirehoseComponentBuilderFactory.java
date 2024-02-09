@@ -100,40 +100,6 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
-         * Set the overriding uri endpoint. This option needs to be used in
-         * combination with overrideEndpoint option.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param uriEndpointOverride the value to set
-         * @return the dsl builder
-         */
-        default Aws2KinesisFirehoseComponentBuilder uriEndpointOverride(
-                java.lang.String uriEndpointOverride) {
-            doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Kinesis Firehose client should expect to load
-         * credentials through a default credentials provider or to expect
-         * static credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2KinesisFirehoseComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -190,6 +156,40 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
         default Aws2KinesisFirehoseComponentBuilder region(
                 java.lang.String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisFirehoseComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis Firehose client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisFirehoseComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -327,6 +327,22 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * role.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sessionToken the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisFirehoseComponentBuilder sessionToken(
+                java.lang.String sessionToken) {
+            doSetProperty("sessionToken", sessionToken);
+            return this;
+        }
+        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -360,6 +376,24 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
+        /**
+         * Set whether the Kinesis Firehose client should expect to use Session
+         * Credentials. This is useful in situation in which the user needs to
+         * assume a IAM role for doing operations in Kinesis Firehose.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisFirehoseComponentBuilder useSessionCredentials(
+                boolean useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
+            return this;
+        }
     }
 
     class Aws2KinesisFirehoseComponentBuilderImpl
@@ -387,11 +421,11 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             case "cborEnabled": getOrCreateConfiguration((KinesisFirehose2Component) component).setCborEnabled((boolean) value); return true;
             case "configuration": ((KinesisFirehose2Component) component).setConfiguration((org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((KinesisFirehose2Component) component).setOverrideEndpoint((boolean) value); return true;
-            case "uriEndpointOverride": getOrCreateConfiguration((KinesisFirehose2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
-            case "useDefaultCredentialsProvider": getOrCreateConfiguration((KinesisFirehose2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "lazyStartProducer": ((KinesisFirehose2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((KinesisFirehose2Component) component).setOperation((org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations) value); return true;
             case "region": getOrCreateConfiguration((KinesisFirehose2Component) component).setRegion((java.lang.String) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((KinesisFirehose2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((KinesisFirehose2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "amazonKinesisFirehoseClient": getOrCreateConfiguration((KinesisFirehose2Component) component).setAmazonKinesisFirehoseClient((software.amazon.awssdk.services.firehose.FirehoseClient) value); return true;
             case "autowiredEnabled": ((KinesisFirehose2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyHost((java.lang.String) value); return true;
@@ -400,8 +434,10 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             case "accessKey": getOrCreateConfiguration((KinesisFirehose2Component) component).setAccessKey((java.lang.String) value); return true;
             case "profileCredentialsName": getOrCreateConfiguration((KinesisFirehose2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((KinesisFirehose2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "sessionToken": getOrCreateConfiguration((KinesisFirehose2Component) component).setSessionToken((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((KinesisFirehose2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((KinesisFirehose2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
+            case "useSessionCredentials": getOrCreateConfiguration((KinesisFirehose2Component) component).setUseSessionCredentials((boolean) value); return true;
             default: return false;
             }
         }

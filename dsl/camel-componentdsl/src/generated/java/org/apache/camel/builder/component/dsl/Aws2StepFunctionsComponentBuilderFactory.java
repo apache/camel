@@ -392,6 +392,40 @@ public interface Aws2StepFunctionsComponentBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
+        /**
+         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * role.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sessionToken the value to set
+         * @return the dsl builder
+         */
+        default Aws2StepFunctionsComponentBuilder sessionToken(
+                java.lang.String sessionToken) {
+            doSetProperty("sessionToken", sessionToken);
+            return this;
+        }
+        /**
+         * Set whether the Step Functions client should expect to use Session
+         * Credentials. This is useful in situation in which the user needs to
+         * assume a IAM role for doing operations in Step Functions.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default Aws2StepFunctionsComponentBuilder useSessionCredentials(
+                boolean useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
+            return this;
+        }
     }
 
     class Aws2StepFunctionsComponentBuilderImpl
@@ -436,6 +470,8 @@ public interface Aws2StepFunctionsComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((StepFunctions2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "accessKey": getOrCreateConfiguration((StepFunctions2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((StepFunctions2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "sessionToken": getOrCreateConfiguration((StepFunctions2Component) component).setSessionToken((java.lang.String) value); return true;
+            case "useSessionCredentials": getOrCreateConfiguration((StepFunctions2Component) component).setUseSessionCredentials((boolean) value); return true;
             default: return false;
             }
         }
