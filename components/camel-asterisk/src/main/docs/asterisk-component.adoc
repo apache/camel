@@ -16,7 +16,7 @@
 
 The Asterisk component allows you to work easily with an Asterisk PBX Server http://www.asterisk.org/ using https://asterisk-java.org/[asterisk-java]
 
-This component help to interface with http://www.voip-info.org/wiki-Asterisk+manager+API[Asterisk Manager Interface]
+This component helps to interface with http://www.voip-info.org/wiki-Asterisk+manager+API[Asterisk Manager Interface]
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
