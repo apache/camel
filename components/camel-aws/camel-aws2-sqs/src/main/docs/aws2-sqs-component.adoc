@@ -30,9 +30,11 @@ https://aws.amazon.com/sqs[Amazon SQS].
 aws2-sqs://queueNameOrArn[?options]
 ------------------------------
 
-The queue will be created if they don't already exists. +
- You can append query options to the URI in the following format,
-?options=value&option2=value&...
+The queue will be created if they don't already exist.
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
 
 
 // component-configure options: START
@@ -59,23 +61,23 @@ the https://aws.amazon.com/sqs[Amazon's SQS].
 
 This component implements the Batch Consumer.
 
-This allows you for instance to know how many messages exists in this
-batch and for instance let the Aggregator
+This allows you, for instance, to know how many messages exist in this
+batch and for instance, let the Aggregator
 aggregate this number of messages.
 
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
-You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
 
 The order of evaluation for Default Credentials Provider is the following:
 
- - Java system properties - aws.accessKeyId and aws.secretKey
- - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
- - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
  - Amazon EC2 Instance profile credentials. 
  
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
@@ -94,7 +96,7 @@ If your Camel Application is running behind a firewall or if you need to
 have more control over the SqsClient instance configuration, you can
 create your own instance, and configure Camel to use your instance by the bean id.
 
-In the example below we use _myClient_ as the bean id:
+In the example below, we use _myClient_ as the bean id:
 
 [source,java]
 ---------------------------------------------------------------------------------
@@ -115,15 +117,15 @@ When the option delayQueue is set to true, the SQS Queue will be a DelayQueue wi
 DelaySeconds option as delay. For more information about DelayQueue you can read the https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-delay-queues.html[AWS SQS documentation].
 One important information to take into account is the following:
 
-- For standard queues, the per-queue delay setting is not retroactive—changing the setting doesn't affect the delay of messages already in the queue.
-- For FIFO queues, the per-queue delay setting is retroactive—changing the setting affects the delay of messages already in the queue.
+- For standard queues, the per-queue delay setting is not retroactively—changing the setting doesn't affect the delay of messages already in the queue.
+- For FIFO queues, the per-queue delay setting is retroactively—changing the setting affects the delay of messages already in the queue.
 
 as stated in the official documentation. If you want to specify a delay on single messages, you can ignore the delayQueue option, while you can set this option 
-to true, if you need to add a fixed delay to all messages enqueued.
+to true if you need to add a fixed delay to all messages enqueued.
 
 === Server Side Encryption
 
-There is a set of Server Side Encryption attributes for a queue. The related option are serverSideEncryptionEnabled, keyMasterKeyId and kmsDataKeyReusePeriod.
+There is a set of Server Side Encryption attributes for a queue. The related option are: `serverSideEncryptionEnabled`, `keyMasterKeyId` and `kmsDataKeyReusePeriod`.
 The SSE is disabled by default. You need to explicitly set the option to true and set the related parameters as queue attributes.
 
 == JMS-style Selectors
@@ -131,7 +133,7 @@ The SSE is disabled by default. You need to explicitly set the option to true an
 SQS does not allow selectors, but you can effectively achieve this by
 using the Camel Filter EIP and setting an
 appropriate `visibilityTimeout`. When SQS dispatches a message, it will
-wait up to the visibility timeout before it will try to dispatch the
+wait up to the visibility timeout before it tries to dispatch the
 message to a different consumer unless a DeleteMessage is received. By
 default, Camel will always send the DeleteMessage at the end of the
 route, unless the route ended in failure. To achieve appropriate
@@ -191,7 +193,7 @@ from("direct:start")
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ------------------------------------------------------------------------------------------------------
 
-As result you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examinate to check what messages were successfull and what not.
+As result, you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examine to check what messages were successful and what not.
 The id set on each message of the batch will be a Random UUID.
 
 == Delete single Message
@@ -206,7 +208,7 @@ from("direct:start")
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ------------------------------------------------------------------------------------------------------
 
-As result you'll get an exchange containing a `DeleteMessageResponse` instance, that you can use to check if the message was deleted or not.
+As result, you'll get an exchange containing a `DeleteMessageResponse` instance, that you can use to check if the message was deleted or not.
 
 == List Queues
 
@@ -219,7 +221,7 @@ from("direct:start")
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ------------------------------------------------------------------------------------------------------
 
-As result you'll get an exchange containing a `ListQueuesResponse` instance, that you can examinate to check the actual queues.
+As result, you'll get an exchange containing a `ListQueuesResponse` instance, that you can examine to check the actual queues.
 
 == Purge Queue
 
@@ -234,19 +236,19 @@ from("direct:start")
 
 As result you'll get an exchange containing a `PurgeQueueResponse` instance.
 
-== Queue Autocreation
+== Queue Auto-creation
 
 With the option `autoCreateQueue` users are able to avoid the autocreation of an SQS Queue in case it doesn't exist. The default for this option is `false`.
-If set to false any operation on a not-existent queue in AWS won't be successful and an error will be returned.
+If set to _false_, any operation on a non-existent queue in AWS won't be successful and an error will be returned.
 
 == Send Batch Message and Message Deduplication Strategy
 
-In case you're using a SendBatchMessage Operation, you can set two different kind of Message Deduplication Strategy:
+In case you're using a SendBatchMessage Operation, you can set two different kinds of Message Deduplication Strategy:
 - useExchangeId
 - useContentBasedDeduplication
 
 The first one will use a ExchangeIdMessageDeduplicationIdStrategy, that will use the Exchange ID as parameter
-The other one will use a NullMessageDeduplicationIdStrategy, that will use the body as deduplication element.
+The other one will use a NullMessageDeduplicationIdStrategy, that will use the body as a deduplication element.
 
 In case of send batch message operation, you'll need to use the `useContentBasedDeduplication` and on the Queue you're pointing you'll need to enable the `content based deduplication` option.
 
