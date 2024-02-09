@@ -136,4 +136,16 @@ public class Aws2StepFunctionsUriDsl(
   public fun secretKey(secretKey: String) {
     it.property("secretKey", secretKey)
   }
+
+  public fun sessionToken(sessionToken: String) {
+    it.property("sessionToken", sessionToken)
+  }
+
+  public fun useSessionCredentials(useSessionCredentials: String) {
+    it.property("useSessionCredentials", useSessionCredentials)
+  }
+
+  public fun useSessionCredentials(useSessionCredentials: Boolean) {
+    it.property("useSessionCredentials", useSessionCredentials.toString())
+  }
 }

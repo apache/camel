@@ -96,6 +96,14 @@ public class CoapUriDsl(
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  public fun advancedCertificateVerifier(advancedCertificateVerifier: String) {
+    it.property("advancedCertificateVerifier", advancedCertificateVerifier)
+  }
+
+  public fun advancedPskStore(advancedPskStore: String) {
+    it.property("advancedPskStore", advancedPskStore)
+  }
+
   public fun alias(alias: String) {
     it.property("alias", alias)
   }
@@ -112,10 +120,6 @@ public class CoapUriDsl(
     it.property("privateKey", privateKey)
   }
 
-  public fun pskStore(pskStore: String) {
-    it.property("pskStore", pskStore)
-  }
-
   public fun publicKey(publicKey: String) {
     it.property("publicKey", publicKey)
   }
@@ -130,9 +134,5 @@ public class CoapUriDsl(
 
   public fun sslContextParameters(sslContextParameters: String) {
     it.property("sslContextParameters", sslContextParameters)
-  }
-
-  public fun trustedRpkStore(trustedRpkStore: String) {
-    it.property("trustedRpkStore", trustedRpkStore)
   }
 }

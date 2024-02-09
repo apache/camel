@@ -40,16 +40,9 @@ public class SplunkHecUriDsl(
 
   private var splunkURL: String = ""
 
-  private var token: String = ""
-
   public fun splunkURL(splunkURL: String) {
     this.splunkURL = splunkURL
-    it.url("$splunkURL/$token")
-  }
-
-  public fun token(token: String) {
-    this.token = token
-    it.url("$splunkURL/$token")
+    it.url("$splunkURL")
   }
 
   public fun bodyOnly(bodyOnly: String) {
@@ -118,5 +111,9 @@ public class SplunkHecUriDsl(
 
   public fun skipTlsVerify(skipTlsVerify: Boolean) {
     it.property("skipTlsVerify", skipTlsVerify.toString())
+  }
+
+  public fun token(token: String) {
+    it.property("token", token)
   }
 }

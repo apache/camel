@@ -98,16 +98,8 @@ public class XpathLanguageDsl(
     def.namespace = namespace
   }
 
-  public fun variableName(variableName: String) {
-    def.variableName = variableName
-  }
-
-  public fun headerName(headerName: String) {
-    def.headerName = headerName
-  }
-
-  public fun propertyName(propertyName: String) {
-    def.propertyName = propertyName
+  public fun source(source: String) {
+    def.source = source
   }
 
   public fun resultType(resultType: Class<out Any>) {

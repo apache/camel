@@ -53,16 +53,8 @@ public class XqueryUriDsl(
     it.property("allowStAX", allowStAX.toString())
   }
 
-  public fun headerName(headerName: String) {
-    it.property("headerName", headerName)
-  }
-
   public fun namespacePrefixes(namespacePrefixes: String) {
     it.property("namespacePrefixes", namespacePrefixes)
-  }
-
-  public fun propertyName(propertyName: String) {
-    it.property("propertyName", propertyName)
   }
 
   public fun resultsFormat(resultsFormat: String) {
@@ -73,16 +65,16 @@ public class XqueryUriDsl(
     it.property("resultType", resultType)
   }
 
+  public fun source(source: String) {
+    it.property("source", source)
+  }
+
   public fun stripsAllWhiteSpace(stripsAllWhiteSpace: String) {
     it.property("stripsAllWhiteSpace", stripsAllWhiteSpace)
   }
 
   public fun stripsAllWhiteSpace(stripsAllWhiteSpace: Boolean) {
     it.property("stripsAllWhiteSpace", stripsAllWhiteSpace.toString())
-  }
-
-  public fun variableName(variableName: String) {
-    it.property("variableName", variableName)
   }
 
   public fun sendEmptyMessageWhenIdle(sendEmptyMessageWhenIdle: String) {

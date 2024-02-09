@@ -26,6 +26,10 @@ class ThrottleDsl(
     val def: ThrottleDefinition
 ) : OptionalIdentifiedDsl(def) {
 
+    fun mode(mode: String) {
+        def.mode(mode)
+    }
+
     fun correlationExpression(correlationExpression: Expression) {
         def.correlationExpression(correlationExpression)
     }
@@ -52,6 +56,14 @@ class ThrottleDsl(
 
     fun rejectExecution(rejectExecution: String) {
         def.rejectExecution(rejectExecution)
+    }
+
+    fun timePeriodMillis(timePeriodMillis: String) {
+        def.timePeriodMillis = timePeriodMillis
+    }
+
+    fun timePeriodMillis(timePeriodMillis: Long) {
+        def.timePeriodMillis = timePeriodMillis.toString()
     }
 
     fun executorService(executorService: ExecutorService) {
