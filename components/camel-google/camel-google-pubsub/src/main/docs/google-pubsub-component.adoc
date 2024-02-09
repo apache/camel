@@ -130,7 +130,7 @@ include::spring-boot:partial$starter.adoc[]
 
 By default, the PubSub consumer will acknowledge messages once the exchange has been processed, or negative-acknowledge them if the exchange has failed.
 
-It the _ackMode_ option is set to `NONE`, the component will not acknowledge messages, and it is up to the route to do so.
+If the _ackMode_ option is set to `NONE`, the component will not acknowledge messages, and it is up to the route to do so.
 In this case, a `GooglePubsubAcknowledge` object is stored in the header `GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE` and can be used to acknowledge messages:
 
 [source,java]
