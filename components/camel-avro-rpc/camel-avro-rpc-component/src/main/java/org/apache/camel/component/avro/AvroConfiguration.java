@@ -63,7 +63,7 @@ public class AvroConfiguration implements Cloneable {
         }
     }
 
-    public void parseURI(URI uri) throws Exception {
+    public void parseURI(URI uri) {
         transport = AvroTransport.valueOf(uri.getScheme());
 
         setHost(uri.getHost());

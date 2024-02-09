@@ -31,7 +31,7 @@ import org.apache.camel.util.URISupport;
 @Component("avro")
 public class AvroComponent extends DefaultComponent {
 
-    private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<>();
 
     @Metadata(label = "advanced")
     private AvroConfiguration configuration;

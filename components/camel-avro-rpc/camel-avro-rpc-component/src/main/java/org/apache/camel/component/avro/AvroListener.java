@@ -47,7 +47,7 @@ public class AvroListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AvroListener.class);
 
-    private ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<>();
     private AvroConsumer defaultConsumer;
     private final Server server;
 

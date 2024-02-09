@@ -21,7 +21,7 @@ import org.apache.avro.ipc.reflect.ReflectResponder;
 import org.apache.avro.reflect.ReflectData;
 
 public class AvroReflectResponder extends ReflectResponder {
-    private AvroListener listener;
+    private final AvroListener listener;
 
     public AvroReflectResponder(Protocol protocol, AvroListener listener) {
         super(protocol, listener);

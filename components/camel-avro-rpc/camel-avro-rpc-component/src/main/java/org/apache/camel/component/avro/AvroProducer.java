@@ -53,7 +53,7 @@ public abstract class AvroProducer extends DefaultAsyncProducer {
                 messageName = getEndpoint().getConfiguration().getMessageName();
             }
 
-            requestor.request(messageName, wrapObjectToArray(request), new Callback<Object>() {
+            requestor.request(messageName, wrapObjectToArray(request), new Callback<>() {
                 @Override
                 public void handleResult(Object result) {
                     // got result from avro, so set it on the exchange and invoke the callback
