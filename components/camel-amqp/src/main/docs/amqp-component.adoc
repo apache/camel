@@ -66,7 +66,7 @@ former is almost identical to the latter:
 from("amqp:queue:incoming").
   to(...);
  
-// Sending message to the AMQP topic
+// Sending messages to the AMQP topic
 from(...).
   to("amqp:topic:notify");
 ----
@@ -84,7 +84,7 @@ AMQPComponent authorizedAmqp = AMQPComponent.amqpComponent("amqp://localhost:567
 
 You can also add an instance
 of `org.apache.camel.component.amqp.AMQPConnectionDetails` to the
-registry in order to automatically configure the AMQP component. For example for Spring Boot you just have to define bean:
+registry to automatically configure the AMQP component. For example, for Spring Boot, you have to define bean:
 
 *AMQP connection details auto-configuration*
 
@@ -145,7 +145,7 @@ If you, for example, need to enable `amqp.traceFrames` you can do that by append
 AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672?amqp.traceFrames=true");
 ----
 
-For reference take a look at the https://qpid.apache.org/releases/qpid-jms-1.7.0/docs/index.html[QPID JMS client configuration]
+For reference, take a look at the https://qpid.apache.org/releases/qpid-jms-1.7.0/docs/index.html[QPID JMS client configuration]
 
 == Using topics
 
