@@ -1229,9 +1229,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         public void notify(CamelEvent event) throws Exception {
             if (event instanceof CamelEvent.ExchangeSendingEvent ess) {
                 Exchange e = ess.getExchange();
-                if (uris.containsKey(e)) {
-                    uris.put(e, ess.getEndpoint());
-                }
+                uris.computeIfPresent(e, (key, val) -> ess.getEndpoint());
             }
         }
 

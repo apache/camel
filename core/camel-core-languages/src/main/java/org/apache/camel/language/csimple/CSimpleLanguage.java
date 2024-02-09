@@ -133,19 +133,16 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
         String text = expression.replace("\n", "");
         text = text.trim();
 
-        Predicate answer = compiledPredicates.get(text);
-        if (answer == null && compilationSupport != null) {
-            CSimpleExpression exp = compilationSupport.compilePredicate(getCamelContext(), expression);
-            if (exp != null) {
-                exp.init(getCamelContext());
-                compiledPredicates.put(text, exp);
-                answer = exp;
+        return compiledPredicates.computeIfAbsent(text, key -> {
+            if (compilationSupport != null) {
+                CSimpleExpression exp = compilationSupport.compilePredicate(getCamelContext(), expression);
+                if (exp != null) {
+                    exp.init(getCamelContext());
+                    return exp;
+                }
             }
-        }
-        if (answer == null) {
             throw new CSimpleException("Cannot find compiled csimple language for predicate: " + expression, expression);
-        }
-        return answer;
+        });
     }
 
     @Override
@@ -171,19 +168,16 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
         String text = expression.replace("\n", "");
         text = text.trim();
 
-        Expression answer = compiledExpressions.get(text);
-        if (answer == null && compilationSupport != null) {
-            CSimpleExpression exp = compilationSupport.compileExpression(getCamelContext(), expression);
-            if (exp != null) {
-                exp.init(getCamelContext());
-                compiledExpressions.put(text, exp);
-                answer = exp;
+        return compiledExpressions.computeIfAbsent(text, key -> {
+            if (compilationSupport != null) {
+                CSimpleExpression exp = compilationSupport.compileExpression(getCamelContext(), expression);
+                if (exp != null) {
+                    exp.init(getCamelContext());
+                    return exp;
+                }
             }
-        }
-        if (answer == null) {
             throw new CSimpleException("Cannot find compiled csimple language for expression: " + expression, expression);
-        }
-        return answer;
+        });
     }
 
     private CompilationSupport compilationSupport() {
