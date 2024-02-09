@@ -162,7 +162,7 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     * Amazon AWS Session Token used when the user needs to assume an IAM role
      */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
@@ -217,8 +217,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which Athena client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id().
+     * The region in which the Athena client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example, ap-east-1). You'll need to use the name Region.EU_WEST_1.id().
      */
     public void setRegion(String region) {
         this.region = region;
@@ -478,7 +478,7 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the Athena client should expect to use Session Credentials. This is useful in situation in which the
+     * Set whether the Athena client should expect to use Session Credentials. This is useful in a situation in which the
      * user needs to assume a IAM role for doing operations in Athena.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
