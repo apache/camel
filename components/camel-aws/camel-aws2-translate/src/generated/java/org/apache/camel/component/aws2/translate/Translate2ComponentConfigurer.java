@@ -57,6 +57,8 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontoken":
+        case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcelanguage":
         case "sourceLanguage": getOrCreateConfiguration(target).setSourceLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "targetlanguage":
@@ -71,6 +73,8 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": getOrCreateConfiguration(target).setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesessioncredentials":
+        case "useSessionCredentials": getOrCreateConfiguration(target).setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -112,6 +116,8 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
+        case "sessiontoken":
+        case "sessionToken": return java.lang.String.class;
         case "sourcelanguage":
         case "sourceLanguage": return java.lang.String.class;
         case "targetlanguage":
@@ -126,6 +132,8 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
+        case "usesessioncredentials":
+        case "useSessionCredentials": return boolean.class;
         default: return null;
         }
     }
@@ -163,6 +171,8 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
+        case "sessiontoken":
+        case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
         case "sourcelanguage":
         case "sourceLanguage": return getOrCreateConfiguration(target).getSourceLanguage();
         case "targetlanguage":
@@ -177,6 +187,8 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return getOrCreateConfiguration(target).isUseProfileCredentialsProvider();
+        case "usesessioncredentials":
+        case "useSessionCredentials": return getOrCreateConfiguration(target).isUseSessionCredentials();
         default: return null;
         }
     }

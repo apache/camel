@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.translate;
 import org.apache.camel.component.aws2.translate.client.Translate2ClientFactory;
 import org.apache.camel.component.aws2.translate.client.Translate2InternalClient;
 import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientIAMOptimized;
+import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class Translate2ClientFactoryTest {
         translate2Configuration.setUseDefaultCredentialsProvider(true);
         Translate2InternalClient translateClient = Translate2ClientFactory.getTranslateClient(translate2Configuration);
         assertTrue(translateClient instanceof Translate2ClientIAMOptimized);
+    }
+
+    @Test
+    public void getTranslateSessionTokenClient() {
+        Translate2Configuration translate2Configuration = new Translate2Configuration();
+        translate2Configuration.setUseSessionCredentials(true);
+        Translate2InternalClient translateClient = Translate2ClientFactory.getTranslateClient(translate2Configuration);
+        assertTrue(translateClient instanceof Translate2ClientSessionTokenImpl);
     }
 }
