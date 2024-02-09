@@ -16,24 +16,21 @@
  */
 package org.apache.camel.component.google.pubsub.consumer;
 
-import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import org.apache.camel.Exchange;
 
-public class AcknowledgeAsync implements GooglePubsubAcknowledge {
+/**
+ * Can be used for acknowledging or negative-acknowledging a PubSub message when using the consumer.
+ */
+public interface GooglePubsubAcknowledge {
+    /**
+     * Acknowledges message using the corresponding
+     * {@link org.apache.camel.component.google.pubsub.GooglePubsubConstants#ACK_ID}
+     */
+    void ack(Exchange exchange);
 
-    private final AckReplyConsumer ackReplyConsumer;
-
-    public AcknowledgeAsync(AckReplyConsumer ackReplyConsumer) {
-        this.ackReplyConsumer = ackReplyConsumer;
-    }
-
-    @Override
-    public void ack(Exchange exchange) {
-        ackReplyConsumer.ack();
-    }
-
-    @Override
-    public void nack(Exchange exchange) {
-        ackReplyConsumer.nack();
-    }
+    /**
+     * Negative-acknowledges message using the corresponding
+     * {@link org.apache.camel.component.google.pubsub.GooglePubsubConstants#ACK_ID}
+     */
+    void nack(Exchange exchange);
 }

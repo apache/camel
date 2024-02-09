@@ -34,6 +34,10 @@ public final class GooglePubsubConstants {
                             " respected.",
               javaType = "String")
     public static final String ORDERING_KEY = "CamelGooglePubsubOrderingKey";
+    @Metadata(label = "consumer", description = "Can be used to manually acknowledge or negative-acknowledge a " +
+                                                "message when ackMode=NONE.",
+              javaType = "org.apache.camel.component.google.pubsub.consumer.GooglePubsubAcknowledge")
+    public static final String GOOGLE_PUBSUB_ACKNOWLEDGE = "CamelGooglePubsubAcknowledge";
     public static final String RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX = "goog";
 
     public enum AckMode {
