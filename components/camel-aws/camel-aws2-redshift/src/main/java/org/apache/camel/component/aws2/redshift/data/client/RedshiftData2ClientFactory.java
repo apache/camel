@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.redshift.data.client;
 
 import org.apache.camel.component.aws2.redshift.data.RedshiftData2Configuration;
 import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientStandardImpl;
 
 /**
@@ -35,7 +36,12 @@ public final class RedshiftData2ClientFactory {
      * @return               RedshiftDataClient
      */
     public static RedshiftData2InternalClient getRedshiftDataClient(RedshiftData2Configuration configuration) {
-        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
-                ? new RedshiftData2ClientIAMOptimizedImpl(configuration) : new RedshiftData2ClientStandardImpl(configuration);
+        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
+            return new RedshiftData2ClientIAMOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
+            return new RedshiftData2ClientSessionTokenImpl(configuration);
+        } else {
+            return new RedshiftData2ClientStandardImpl(configuration);
+        }
     }
 }
