@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-This component provides a support for Apache Avro's rpc, by
+This component provides support for Apache Avro's rpc, by
 providing producers and consumers endpoint for using avro over netty or
 http. Before Camel 3.2 this functionality was a part of camel-avro component.
 
@@ -85,12 +85,12 @@ You can easily generate classes from a schema, using maven, ant etc.
 More details can be found at the
 http://avro.apache.org/docs/current/[Apache Avro documentation].
 
-However, it doesn't enforce a schema first approach and you can create
-schema for your existing classes. *Since 2.12* you can use existing
-protocol interfaces to make RCP calls. You should use interface for the
-protocol itself and POJO beans or primitive/String classes for parameter
+However, it doesn't enforce a schema-first approach, and you can create
+schema for your existing classes.
+You can use existing protocol interfaces to make RCP calls.
+You should use interface for the protocol itself and POJO beans or primitive/String classes for parameter
 and result types. Here is an example of the class that corresponds to
-schema above:
+the schema above:
 
 [source,java]
 --------------------------------------------------------------
@@ -113,7 +113,7 @@ data format._
 
 == Using Avro RPC in Camel
 
-As mentioned above Avro also provides RPC support over multiple
+As mentioned above, Avro also provides RPC support over multiple
 transports such as http and netty. Camel provides consumers and
 producers for these two transports.
 
@@ -123,14 +123,17 @@ avro:[transport]:[host]:[port][?options]
 
 The supported transport values are currently http or netty.
 
-*Since 2.12* you can specify message name right in the URI:
+[NOTE]
+====
+You can specify the message name right in the URI:
 
 ------------------------------------------------------
 avro:[transport]:[host]:[port][/messageName][?options]
 ------------------------------------------------------
+====
 
-For consumers this allows you to have multiple routes attached to the
-same socket. Dispatching to correct route will be done by the avro
+For consumers, this allows you to have multiple routes attached to the
+same socket. Dispatching to the correct route will be done by the avro
 component automatically. Route with no messageName specified (if any)
 will be used as default.
 
@@ -139,11 +142,11 @@ contain the parameters of the operation specified in the avro protocol.
 The response will be added in the body of the "out" message.
 
 In a similar manner when using camel avro consumers for avro ipc, the
-requests parameters will be placed inside the "in" message body of the
-created exchange and once the exchange is processed the body of the
+request parameters will be placed inside the "in" message body of the
+created exchange. Once the exchange is processed, the body of the
 "out" message will be sent as a response.
 
-*Note:* By default consumer parameters are wrapped into array. If you've
+*Note:* By default, consumer parameters are wrapped into an array. If you've
 got only one parameter, *since 2.12* you can use `singleParameter` URI
 option to receive it directly in the "in" message body without array
 wrapping.
@@ -166,7 +169,8 @@ An example of using camel avro producers via http:
 ---------------------------------------------------------------------------------------------------------------------------
 
 In the example above you need to fill `CamelAvroMessageName` header.
-*Since 2.12* you can use following syntax to call constant messages:
+
+You can use the following syntax to call constant messages:
 
 [source,xml]
 -------------------------------------------------------------------------------------------------------------------------------
@@ -196,8 +200,7 @@ An example of consuming messages using camel avro consumers via netty:
         </route>
 ------------------------------------------------------------------------------------------------------------------------------
 
-*Since 2.12* you can set up two distinct routes to perform the same
-task:
+You can set up two distinct routes to perform the same task:
 
 [source,xml]
 -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -213,8 +216,8 @@ task:
 
 In the example above, get takes only one parameter, so `singleParameter`
 is used and `getProcessor` will receive Value class directly in body,
-while `putProcessor` will receive an array of size 2 with String key and
-Value value filled as array contents.
+while `putProcessor` will receive an array of size 2 with `String` key and
+`Value` value filled as array contents.
 
 
 == Avro via HTTP SPI
