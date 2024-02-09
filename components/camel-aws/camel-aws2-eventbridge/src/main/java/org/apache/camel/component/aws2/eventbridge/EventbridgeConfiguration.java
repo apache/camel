@@ -72,7 +72,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * To use a existing configured AWS Eventbridge as client
+     * To use an existing configured AWS Eventbridge client
      */
     public void setEventbridgeClient(EventBridgeClient eventbridgeClient) {
         this.eventbridgeClient = eventbridgeClient;
@@ -105,7 +105,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     * Amazon AWS Session Token used when the user needs to assume an IAM role
      */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
@@ -160,8 +160,8 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which Eventbridge client needs to work. When using this parameter, the configuration will expect
-     * the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * The region in which the Eventbridge client needs to work. When using this parameter, the configuration will expect
+     * the lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -205,7 +205,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * The eventbus name, the default value is default and this means it will be the AWS event bus of your account.
+     * The eventbus name, the default value is default, and this means it will be the AWS event bus of your account.
      */
     public void setEventbusName(String eventbusName) {
         this.eventbusName = eventbusName;
@@ -216,7 +216,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
      * option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
@@ -262,8 +262,8 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * Set whether the Eventbridge client should expect to use Session Credentials. This is useful in situation in which
-     * the user needs to assume a IAM role for doing operations in Eventbridge.
+     * Set whether the Eventbridge client should expect to use Session Credentials. This is useful in a situation in which
+     * the user needs to assume an IAM role for doing operations in Eventbridge.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
