@@ -73,7 +73,7 @@ public class ECS2Configuration implements Cloneable {
     }
 
     /**
-     * To use a existing configured AWS ECS as client
+     * To use an existing configured AWS ECS client
      */
     public void setEcsClient(EcsClient ecsClient) {
         this.ecsClient = ecsClient;
@@ -106,7 +106,7 @@ public class ECS2Configuration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Session Token used when the user needs to assume a IAM role
+     * Amazon AWS Session Token used when the user needs to assume an IAM role
      */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
@@ -161,8 +161,8 @@ public class ECS2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which ECS client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * The region in which the ECS client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -195,7 +195,7 @@ public class ECS2Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
      * option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
@@ -241,8 +241,8 @@ public class ECS2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the ECS client should expect to use Session Credentials. This is useful in situation in which the
-     * user needs to assume a IAM role for doing operations in ECS.
+     * Set whether the ECS client should expect to use Session Credentials. This is useful in a situation in which the
+     * user needs to assume an IAM role for doing operations in ECS.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
@@ -253,7 +253,7 @@ public class ECS2Configuration implements Cloneable {
     }
 
     /**
-     * If using a profile credentials provider this parameter will set the profile name
+     * If using a profile credentials provider, this parameter will set the profile name
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
