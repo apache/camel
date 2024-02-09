@@ -65,8 +65,8 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
                         .routeId(ASYNC_ROUTE_ID)
                         .to("mock:receiveResultAsync")
                         .process(exchange -> {
-                            GooglePubsubAcknowledge acknowledge =
-                                    exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE,
+                            GooglePubsubAcknowledge acknowledge
+                                    = exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE,
                                             GooglePubsubAcknowledge.class);
 
                             if (ManualAcknowledgementIT.ack) {
@@ -82,8 +82,8 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
                         .routeId(SYNC_ROUTE_ID)
                         .to("mock:receiveResultSync")
                         .process(exchange -> {
-                            GooglePubsubAcknowledge acknowledge =
-                                    exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE,
+                            GooglePubsubAcknowledge acknowledge
+                                    = exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE,
                                             GooglePubsubAcknowledge.class);
 
                             if (ManualAcknowledgementIT.ack) {
