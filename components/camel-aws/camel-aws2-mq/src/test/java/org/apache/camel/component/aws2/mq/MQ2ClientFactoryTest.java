@@ -48,4 +48,12 @@ public class MQ2ClientFactoryTest {
         MQ2InternalClient mqClient = MQ2ClientFactory.getMqClient(mq2Configuration);
         assertTrue(mqClient instanceof MQ2ClientOptimizedImpl);
     }
+
+    @Test
+    public void getSessionTokenMQClient() {
+        MQ2Configuration mq2Configuration = new MQ2Configuration();
+        mq2Configuration.setUseDefaultCredentialsProvider(true);
+        MQ2InternalClient mqClient = MQ2ClientFactory.getMqClient(mq2Configuration);
+        assertTrue(mqClient instanceof MQ2ClientOptimizedImpl);
+    }
 }
