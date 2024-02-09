@@ -88,11 +88,14 @@ public class KuduEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         // Only shut down clients created by this endpoint
         if (!isUserManagedClient()) {
-            try {
+            KuduClient client = getKuduClient();
+            if (client != null) {
                 LOG.debug("Shutting down kudu client");
-                getKuduClient().shutdown();
-            } catch (Exception e) {
-                LOG.error("Unable to shutdown kudu client", e);
+                try {
+                    client.shutdown();
+                } catch (Exception e) {
+                    LOG.error("Unable to shutdown kudu client", e);
+                }
             }
         }
 
