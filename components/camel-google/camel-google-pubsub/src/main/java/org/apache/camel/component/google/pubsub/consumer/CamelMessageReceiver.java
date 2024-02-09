@@ -57,13 +57,13 @@ public class CamelMessageReceiver implements MessageReceiver {
 
         exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, pubsubMessage.getMessageId());
         exchange.getIn().setHeader(GooglePubsubConstants.PUBLISH_TIME, pubsubMessage.getPublishTime());
+        exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, pubsubMessage.getAttributesMap());
 
-        if (null != pubsubMessage.getAttributesMap()) {
-            exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, pubsubMessage.getAttributesMap());
-        }
-
+        GooglePubsubAcknowledge acknowledge = new AcknowledgeAsync(ackReplyConsumer);
         if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
-            exchange.getExchangeExtension().addOnCompletion(new AcknowledgeAsync(ackReplyConsumer));
+            exchange.getExchangeExtension().addOnCompletion(new AcknowledgeCompletion(acknowledge));
+        } else {
+            exchange.getIn().setHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE, acknowledge);
         }
 
         try {
