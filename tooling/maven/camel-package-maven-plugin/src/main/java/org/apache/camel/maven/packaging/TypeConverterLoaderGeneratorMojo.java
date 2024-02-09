@@ -471,6 +471,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 return "int";
             } else if ("java.lang.Long".equals(to)) {
                 return "long";
+            } else if ("java.lang.Short".equals(to)) {
+                return "short";
             } else if ("java.lang.Character".equals(to)) {
                 return "char";
             } else if ("java.lang.Boolean".equals(to)) {
