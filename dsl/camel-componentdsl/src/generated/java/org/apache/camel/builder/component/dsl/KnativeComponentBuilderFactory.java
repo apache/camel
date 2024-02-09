@@ -194,6 +194,22 @@ public interface KnativeComponentBuilderFactory {
             return this;
         }
         /**
+         * The SinkBinding configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sinkBinding the value to set
+         * @return the dsl builder
+         */
+        default KnativeComponentBuilder sinkBinding(
+                org.apache.camel.component.knative.spi.KnativeSinkBinding sinkBinding) {
+            doSetProperty("sinkBinding", sinkBinding);
+            return this;
+        }
+        /**
          * Set the transport options.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
@@ -374,6 +390,42 @@ public interface KnativeComponentBuilderFactory {
             doSetProperty("name", name);
             return this;
         }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default KnativeComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default KnativeComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
     }
 
     class KnativeComponentBuilderImpl
@@ -407,6 +459,7 @@ public interface KnativeComponentBuilderFactory {
             case "environmentPath": ((KnativeComponent) component).setEnvironmentPath((java.lang.String) value); return true;
             case "filters": getOrCreateConfiguration((KnativeComponent) component).setFilters((java.util.Map) value); return true;
             case "producerFactory": ((KnativeComponent) component).setProducerFactory((org.apache.camel.component.knative.spi.KnativeProducerFactory) value); return true;
+            case "sinkBinding": getOrCreateConfiguration((KnativeComponent) component).setSinkBinding((org.apache.camel.component.knative.spi.KnativeSinkBinding) value); return true;
             case "transportOptions": getOrCreateConfiguration((KnativeComponent) component).setTransportOptions((java.util.Map) value); return true;
             case "typeId": getOrCreateConfiguration((KnativeComponent) component).setTypeId((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((KnativeComponent) component).setBridgeErrorHandler((boolean) value); return true;
@@ -417,6 +470,8 @@ public interface KnativeComponentBuilderFactory {
             case "autowiredEnabled": ((KnativeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "kind": getOrCreateConfiguration((KnativeComponent) component).setKind((java.lang.String) value); return true;
             case "name": getOrCreateConfiguration((KnativeComponent) component).setName((java.lang.String) value); return true;
+            case "healthCheckConsumerEnabled": ((KnativeComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((KnativeComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }

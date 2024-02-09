@@ -171,6 +171,37 @@ public interface KnativeEndpointBuilderFactory {
             return this;
         }
         /**
+         * The SinkBinding configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sinkBinding the value to set
+         * @return the dsl builder
+         */
+        default KnativeEndpointConsumerBuilder sinkBinding(
+                org.apache.camel.component.knative.spi.KnativeSinkBinding sinkBinding) {
+            doSetProperty("sinkBinding", sinkBinding);
+            return this;
+        }
+        /**
+         * The SinkBinding configuration.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sinkBinding the value to set
+         * @return the dsl builder
+         */
+        default KnativeEndpointConsumerBuilder sinkBinding(String sinkBinding) {
+            doSetProperty("sinkBinding", sinkBinding);
+            return this;
+        }
+        /**
          * Set the transport options.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
@@ -597,6 +628,37 @@ public interface KnativeEndpointBuilderFactory {
             return this;
         }
         /**
+         * The SinkBinding configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sinkBinding the value to set
+         * @return the dsl builder
+         */
+        default KnativeEndpointProducerBuilder sinkBinding(
+                org.apache.camel.component.knative.spi.KnativeSinkBinding sinkBinding) {
+            doSetProperty("sinkBinding", sinkBinding);
+            return this;
+        }
+        /**
+         * The SinkBinding configuration.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sinkBinding the value to set
+         * @return the dsl builder
+         */
+        default KnativeEndpointProducerBuilder sinkBinding(String sinkBinding) {
+            doSetProperty("sinkBinding", sinkBinding);
+            return this;
+        }
+        /**
          * Set the transport options.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
@@ -868,6 +930,37 @@ public interface KnativeEndpointBuilderFactory {
          */
         default KnativeEndpointBuilder filters(String filters) {
             doSetProperty("filters", filters);
+            return this;
+        }
+        /**
+         * The SinkBinding configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sinkBinding the value to set
+         * @return the dsl builder
+         */
+        default KnativeEndpointBuilder sinkBinding(
+                org.apache.camel.component.knative.spi.KnativeSinkBinding sinkBinding) {
+            doSetProperty("sinkBinding", sinkBinding);
+            return this;
+        }
+        /**
+         * The SinkBinding configuration.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sinkBinding the value to set
+         * @return the dsl builder
+         */
+        default KnativeEndpointBuilder sinkBinding(String sinkBinding) {
+            doSetProperty("sinkBinding", sinkBinding);
             return this;
         }
         /**

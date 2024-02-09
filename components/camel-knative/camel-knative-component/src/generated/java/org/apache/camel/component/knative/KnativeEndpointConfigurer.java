@@ -44,6 +44,8 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "reply": target.getConfiguration().setReply(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "replywithcloudevent":
         case "replyWithCloudEvent": target.getConfiguration().setReplyWithCloudEvent(property(camelContext, boolean.class, value)); return true;
+        case "sinkbinding":
+        case "sinkBinding": target.getConfiguration().setSinkBinding(property(camelContext, org.apache.camel.component.knative.spi.KnativeSinkBinding.class, value)); return true;
         case "transportoptions":
         case "transportOptions": target.getConfiguration().setTransportOptions(property(camelContext, java.util.Map.class, value)); return true;
         default: return false;
@@ -76,6 +78,8 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "reply": return java.lang.Boolean.class;
         case "replywithcloudevent":
         case "replyWithCloudEvent": return boolean.class;
+        case "sinkbinding":
+        case "sinkBinding": return org.apache.camel.component.knative.spi.KnativeSinkBinding.class;
         case "transportoptions":
         case "transportOptions": return java.util.Map.class;
         default: return null;
@@ -109,6 +113,8 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "reply": return target.getConfiguration().getReply();
         case "replywithcloudevent":
         case "replyWithCloudEvent": return target.getConfiguration().isReplyWithCloudEvent();
+        case "sinkbinding":
+        case "sinkBinding": return target.getConfiguration().getSinkBinding();
         case "transportoptions":
         case "transportOptions": return target.getConfiguration().getTransportOptions();
         default: return null;

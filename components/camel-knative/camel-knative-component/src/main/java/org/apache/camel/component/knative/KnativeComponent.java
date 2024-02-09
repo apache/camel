@@ -26,10 +26,11 @@ import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeConsumerFactory;
 import org.apache.camel.component.knative.spi.KnativeEnvironment;
 import org.apache.camel.component.knative.spi.KnativeProducerFactory;
+import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -38,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(KnativeConstants.SCHEME)
-public class KnativeComponent extends DefaultComponent {
+public class KnativeComponent extends HealthCheckComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(KnativeComponent.class);
 
     @Metadata
@@ -213,7 +214,7 @@ public class KnativeComponent extends DefaultComponent {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (ObjectHelper.isEmpty(remaining)) {
@@ -270,11 +271,21 @@ public class KnativeComponent extends DefaultComponent {
                 env = CamelContextHelper.findSingleByType(getCamelContext(), KnativeEnvironment.class);
             }
 
-            if (env == null) {
-                throw new IllegalStateException("Cannot load Knative configuration from file or env variable");
+            conf.setEnvironment(env);
+        }
+
+        if (conf.getSinkBinding() != null) {
+            if (conf.getEnvironment() == null) {
+                conf.setEnvironment(new KnativeEnvironment());
             }
 
-            conf.setEnvironment(env);
+            // if a SinkBinding is configured, then we must add it to the environment
+            KnativeResource sbRes = KnativeSupport.asResource(getCamelContext(), conf.getSinkBinding());
+            conf.getEnvironment().getResources().add(sbRes);
+        }
+
+        if (conf.getEnvironment() == null) {
+            throw new IllegalStateException("Cannot load Knative configuration from file or env variable");
         }
 
         return conf;

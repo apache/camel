@@ -176,7 +176,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         final Exchange exchange = getEndpoint().createExchange();
         final Message message = toMessage(request, exchange);
 
-        Buffer payload = routingContext.getBody();
+        Buffer payload = routingContext.body().buffer();
         if (payload != null) {
             message.setBody(payload.getBytes());
         } else {
@@ -187,7 +187,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         // need to process the request on a thread on the Vert.x worker pool.
         //
         // As example the following route may block the Vert.x event loop as the camel-http component
-        // is not async so if the service is scaled-down, the it may take a while to become ready and
+        // is not async so if the service is scaled-down, then it may take a while to become ready and
         // the camel-http component blocks until the service becomes available.
         //
         // from("knative:event/my.event")

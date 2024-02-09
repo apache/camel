@@ -47,6 +47,10 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "environmentpath":
         case "environmentPath": target.setEnvironmentPath(property(camelContext, java.lang.String.class, value)); return true;
         case "filters": getOrCreateConfiguration(target).setFilters(property(camelContext, java.util.Map.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "kind": getOrCreateConfiguration(target).setKind(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -56,6 +60,8 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "reply": getOrCreateConfiguration(target).setReply(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "replywithcloudevent":
         case "replyWithCloudEvent": getOrCreateConfiguration(target).setReplyWithCloudEvent(property(camelContext, boolean.class, value)); return true;
+        case "sinkbinding":
+        case "sinkBinding": getOrCreateConfiguration(target).setSinkBinding(property(camelContext, org.apache.camel.component.knative.spi.KnativeSinkBinding.class, value)); return true;
         case "transportoptions":
         case "transportOptions": getOrCreateConfiguration(target).setTransportOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "typeid":
@@ -86,6 +92,10 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "environmentpath":
         case "environmentPath": return java.lang.String.class;
         case "filters": return java.util.Map.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "kind": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -95,6 +105,8 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "reply": return java.lang.Boolean.class;
         case "replywithcloudevent":
         case "replyWithCloudEvent": return boolean.class;
+        case "sinkbinding":
+        case "sinkBinding": return org.apache.camel.component.knative.spi.KnativeSinkBinding.class;
         case "transportoptions":
         case "transportOptions": return java.util.Map.class;
         case "typeid":
@@ -126,6 +138,10 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "environmentpath":
         case "environmentPath": return target.getEnvironmentPath();
         case "filters": return getOrCreateConfiguration(target).getFilters();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "kind": return getOrCreateConfiguration(target).getKind();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
@@ -135,6 +151,8 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "reply": return getOrCreateConfiguration(target).getReply();
         case "replywithcloudevent":
         case "replyWithCloudEvent": return getOrCreateConfiguration(target).isReplyWithCloudEvent();
+        case "sinkbinding":
+        case "sinkBinding": return getOrCreateConfiguration(target).getSinkBinding();
         case "transportoptions":
         case "transportOptions": return getOrCreateConfiguration(target).getTransportOptions();
         case "typeid":

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.spi.Configurer;
 
 @Configurer
-public final class KnativeResource {
+public class KnativeResource {
     private String name;
     private String url;
     private Knative.Type type;
