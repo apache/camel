@@ -23,7 +23,6 @@ import org.apache.camel.component.aws2.stepfunctions.client.StepFunctions2Intern
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -37,15 +36,15 @@ import software.amazon.awssdk.utils.AttributeMap;
  * Manage an AWS StepFunctions client for all users to use (enabling temporary creds). This implementation is for remote
  * instances to manage the credentials on their own (eliminating credential rotations)
  */
-public class StepFunctions2ClientIAMOptimizedImpl implements StepFunctions2InternalClient {
+public class StepFunctions2ClientIAMProfileOptimizedImpl implements StepFunctions2InternalClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StepFunctions2ClientIAMOptimizedImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StepFunctions2ClientIAMProfileOptimizedImpl.class);
     private StepFunctions2Configuration configuration;
 
     /**
      * Constructor that uses the config file.
      */
-    public StepFunctions2ClientIAMOptimizedImpl(StepFunctions2Configuration configuration) {
+    public StepFunctions2ClientIAMProfileOptimizedImpl(StepFunctions2Configuration configuration) {
         LOG.trace("Creating an AWS StepFunctions client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
         this.configuration = configuration;
     }
@@ -71,10 +70,6 @@ public class StepFunctions2ClientIAMOptimizedImpl implements StepFunctions2Inter
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
-        }
-        if (configuration.getProfileCredentialsName() != null) {
-            clientBuilder = clientBuilder
-                    .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
         }
         if (configuration.isOverrideEndpoint()) {
             clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
