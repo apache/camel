@@ -237,8 +237,11 @@ CAMEL-9999: Some message goes here
 
 === Making a good contribution
 
+* Less is more:
+** Avoid creating unnecessary Maven profiles (i.e.; to enable/disable tests)
+** Avoid creating custom surefire/failsafe configurations (use defaults as much as possible)
 * Ensure that the unit tests include proper assertions.
-* Avoid simply outputting changes to the standard output/error or just logging.
+* Avoid simply outputting changes to the standard output/error or just logging (tests **must** have assertions).
 * Please also avoid unnecessary changes, like reordering methods and fields, which will make your PR harder to review.
 * When submitting a performance improvement, providing JMH test data as evidence or adding a JMH-based test on the https://github.com/apache/camel-performance-tests/[camel-performance-tests] repository is strongly recommended.
 * Be responsive, assume good intent and respect the https://www.apache.org/foundation/policies/conduct.html[Code of Conduct]
