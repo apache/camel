@@ -157,6 +157,7 @@ public final class RouteVariableRepository extends ServiceSupport implements Bro
         if (variables != null) {
             if ("*".equals(key)) {
                 variables.clear();
+                routes.remove(id);
                 return null;
             } else {
                 return variables.remove(key);
