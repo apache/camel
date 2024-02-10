@@ -516,7 +516,7 @@ class PipeLoaderTest extends YamlTestSupport {
         }
     }
 
-    def "Pipe from kamelet to knative"() {
+    def "Pipe from kamelet to knative channel"() {
         when:
 
         // stub knative for testing as it requires to setup connection to a real knative broker
@@ -551,6 +551,127 @@ class PipeLoaderTest extends YamlTestSupport {
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'knative:channel/my-messages'
+            }
+        }
+    }
+
+    def "Pipe from knative channel to kamelet"() {
+        when:
+
+        // stub knative for testing as it requires to setup connection to a real knative broker
+        context.removeComponent("knative")
+        context.addComponent("knative", context.getComponent("stub"))
+
+        loadBindings('''
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: knative-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: InMemoryChannel
+                      apiVersion: messaging.knative.dev/v1
+                      name: my-messages
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    properties:
+                      showHeaders: true
+            ''')
+        then:
+        context.routeDefinitions.size() == 2
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'knative-event-source'
+            input.endpointUri == 'knative:channel/my-messages'
+            outputs.size() == 1
+            with (outputs[0], ToDefinition) {
+                endpointUri == 'kamelet:log-sink?showHeaders=true'
+            }
+        }
+    }
+
+    def "Pipe from kamelet to knative broker"() {
+        when:
+
+        // stub knative for testing as it requires to setup connection to a real knative broker
+        context.removeComponent("knative")
+        context.addComponent("knative", context.getComponent("stub"))
+
+        loadBindings('''
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "Hello world!"
+                  sink:
+                    ref:
+                      kind: Broker
+                      apiVersion: eventing.knative.dev/v1
+                      name: foo-broker
+                    properties:
+                      type: org.apache.camel.event.messages  
+            ''')
+        then:
+        context.routeDefinitions.size() == 2
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'timer-event-source'
+            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            outputs.size() == 1
+            with (outputs[0], ToDefinition) {
+                endpointUri == 'knative:event/org.apache.camel.event.messages?kind=Broker&name=foo-broker'
+            }
+        }
+    }
+
+    def "Pipe from knative broker to kamelet"() {
+        when:
+
+        // stub knative for testing as it requires to setup connection to a real knative broker
+        context.removeComponent("knative")
+        context.addComponent("knative", context.getComponent("stub"))
+
+        loadBindings('''
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: knative-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Broker
+                      apiVersion: eventing.knative.dev/v1
+                      name: foo-broker
+                    properties:
+                      type: org.apache.camel.event.messages  
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    properties:
+                      showHeaders: true
+            ''')
+        then:
+        context.routeDefinitions.size() == 2
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'knative-event-source'
+            input.endpointUri == 'knative:event/org.apache.camel.event.messages?kind=Broker&name=foo-broker'
+            outputs.size() == 1
+            with (outputs[0], ToDefinition) {
+                endpointUri == 'kamelet:log-sink?showHeaders=true'
             }
         }
     }

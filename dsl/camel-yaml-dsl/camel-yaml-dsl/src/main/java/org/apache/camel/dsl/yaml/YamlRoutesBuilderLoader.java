@@ -105,7 +105,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     private static final String BINDING_VERSION = "camel.apache.org/v1alpha1";
     private static final String PIPE_VERSION = "camel.apache.org/v1";
     private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1";
-    private static final String KNATIVE_VERSION = "messaging.knative.dev/v1";
+    private static final String KNATIVE_MESSAGING_VERSION = "messaging.knative.dev/v1";
+    private static final String KNATIVE_EVENTING_VERSION = "eventing.knative.dev/v1";
+    private static final String KNATIVE_EVENT_TYPE = "org.apache.camel.event";
 
     private final Map<String, Boolean> preparseDone = new ConcurrentHashMap<>();
 
@@ -875,11 +877,17 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         boolean strimzi
                 = !kamelet && mn != null && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(STRIMZI_VERSION))
                         && anyTupleMatches(mn.getValue(), "kind", "KafkaTopic");
-        boolean knative
+        boolean knativeBroker
+                = !kamelet && mn != null
+                        && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_EVENTING_VERSION))
+                        && anyTupleMatches(mn.getValue(), "kind", "Broker");
+        boolean knativeChannel
                 = !kamelet && !strimzi && mn != null
-                        && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_VERSION));
+                        && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_MESSAGING_VERSION));
         String uri;
-        if (kamelet || strimzi || knative) {
+        if (knativeBroker) {
+            uri = KNATIVE_EVENT_TYPE;
+        } else if (kamelet || strimzi || knativeChannel) {
             uri = extractTupleValue(mn.getValue(), "name");
         } else {
             uri = extractTupleValue(node.getValue(), "uri");
@@ -888,6 +896,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         // properties
         MappingNode prop = asMappingNode(nodeAt(node, "/properties"));
         Map<String, Object> params = asMap(prop);
+
+        if (knativeBroker && params != null && params.containsKey("type")) {
+            // Use explicit event type from properties - remove setting from params and set as uri
+            uri = params.remove("type").toString();
+        }
+
         if (params != null && !params.isEmpty()) {
             String query = URISupport.createQueryString(params);
             uri = uri + "?" + query;
@@ -897,7 +911,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             return "kamelet:" + uri;
         } else if (strimzi) {
             return "kafka:" + uri;
-        } else if (knative) {
+        } else if (knativeBroker) {
+            if (uri.contains("?")) {
+                uri += "&kind=Broker&name=" + extractTupleValue(mn.getValue(), "name");
+            } else {
+                uri += "?kind=Broker&name=" + extractTupleValue(mn.getValue(), "name");
+            }
+            return "knative:event/" + uri;
+        } else if (knativeChannel) {
             return "knative:channel/" + uri;
         } else {
             return uri;
