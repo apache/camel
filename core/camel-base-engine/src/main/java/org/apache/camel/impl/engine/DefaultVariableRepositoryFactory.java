@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Collection;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -30,8 +32,6 @@ import org.apache.camel.support.RouteVariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
 
 /**
  * Default {@link VariableRepositoryFactory}.
