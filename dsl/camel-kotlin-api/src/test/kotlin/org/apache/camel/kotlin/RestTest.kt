@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class RestTests {
+class RestTest {
 
     private lateinit var ctx: DefaultCamelContext
 

@@ -168,7 +168,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
 
     private void createLanguageDsl(LanguageModel model, ClassLoader classLoader) throws MojoFailureException {
         String name = model.getName();
-        getLog().info("Generating Language DSL for " + name);
+        getLog().debug("Generating Language DSL for " + name);
         String pascalCaseName = toPascalCase(name);
         String dslClassName = pascalCaseName + "LanguageDsl";
         Class<?> clazz;
@@ -239,7 +239,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                 FileSpec.builder(languagesPackageName, model.getName())
                         .addFunction(funBuilder.build())
                         .addType(typeBuilder.build()),
-                dslClassName, languagesPackageName);
+                dslClassName, languagesPackageName, "Language DSL for " + name);
     }
 
     // --- DataFormat DSL ---
@@ -263,7 +263,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
 
     private void createDataFormatDsl(DataFormatModel model, ClassLoader classLoader) throws MojoFailureException {
         String name = model.getName();
-        getLog().info("Generating DataFormat DSL for " + name);
+        getLog().debug("Generating DataFormat DSL for " + name);
         String pascalCaseName = toPascalCase(name);
         String dslClassName = pascalCaseName + "DataFormatDsl";
         Class<?> clazz;
@@ -321,7 +321,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                 FileSpec.builder(dataFormatsPackageName, model.getName())
                         .addFunction(funBuilder.build())
                         .addType(typeBuilder.build()),
-                dslClassName, dataFormatsPackageName);
+                dslClassName, dataFormatsPackageName, "DataFormat DSL for " + name);
     }
 
     private String extractPropertyName(DataFormatModel model, DataFormatModel.DataFormatOptionModel property) {
@@ -373,7 +373,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
 
     private void createEndpointDsl(ComponentModel model, List<ComponentModel> aliases) throws MojoFailureException {
         String name = model.getName();
-        getLog().info("Generating Endpoint DSL for " + name);
+        getLog().debug("Generating Endpoint DSL for " + name);
         String pascalCaseName = toPascalCase(name);
         String dslClassName = pascalCaseName + "UriDsl";
 
@@ -409,7 +409,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                 FileSpec.builder(componentsPackageName, model.getName())
                         .addFunction(funBuilder.build())
                         .addType(typeBuilder.build()),
-                dslClassName, componentsPackageName);
+                dslClassName, componentsPackageName, "Endpoint DSL for " + name);
     }
 
     private void processPathOptions(ComponentModel model, TypeSpec.Builder typeBuilder) throws MojoFailureException {
@@ -498,7 +498,8 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         return className;
     }
 
-    private void writeSource(FileSpec.Builder fileBuilder, String fileName, String packageName) throws MojoFailureException {
+    private void writeSource(FileSpec.Builder fileBuilder, String fileName, String packageName, String what)
+            throws MojoFailureException {
         StringBuilder codeBuilder = new StringBuilder();
         codeBuilder.append(licenseHeader);
         codeBuilder.append("\n");
@@ -508,10 +509,23 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error while appending kotlin code", e);
         }
         String code = codeBuilder.toString();
-        updateResource(
-                sourcesOutputDir.toPath(),
-                packageName.replace('.', '/') + "/" + fileName + ".kt",
-                code);
+        String filePath = packageName.replace('.', '/') + "/" + fileName + ".kt";
+        Path fullPath = sourcesOutputDir.toPath().resolve(filePath);
+        boolean update = true;
+        try {
+            if (Files.exists(fullPath)) {
+                String existingCode = Files.readString(fullPath);
+                if (existingCode.equals(code)) {
+                    update = false;
+                }
+            }
+        } catch (IOException e) {
+            throw new MojoFailureException(e);
+        }
+        if (update) {
+            getLog().info("Updating " + what);
+            updateResource(sourcesOutputDir.toPath(), filePath, code);
+        }
     }
 
     private String toPascalCase(String name) {

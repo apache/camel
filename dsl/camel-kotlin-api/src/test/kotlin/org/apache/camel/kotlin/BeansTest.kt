@@ -26,7 +26,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class BeansTests {
+class BeansTest {
 
     private lateinit var ctx: DefaultCamelContext
 
