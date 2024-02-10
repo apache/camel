@@ -39,6 +39,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
@@ -86,7 +87,7 @@ public final class SimpleExpressionBuilder {
                 ognl, "variableOgnl(" + ognl + ")",
                 (exchange, exp) -> {
                     String text = exp.evaluate(exchange, String.class);
-                    return exchange.getVariable(text);
+                    return ExchangeHelper.getVariable(exchange, text);
                 });
     }
 
