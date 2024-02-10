@@ -810,6 +810,16 @@ public class ExpressionClause<T> implements Expression, Predicate {
         return delegate.tokenizeXMLPair(tagName, inheritNamespaceTagName, group);
     }
 
+    /**
+     * Evaluates a variable expression
+     *
+     * @param  name the variable name
+     * @return      the builder to continue processing the DSL
+     */
+    public T variable(String name) {
+        return delegate.variable(name);
+    }
+
     public T xtokenize(String path, Namespaces namespaces) {
         return xtokenize(path, 'i', namespaces);
     }

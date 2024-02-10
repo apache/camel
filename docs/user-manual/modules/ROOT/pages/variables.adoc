@@ -15,9 +15,11 @@ and some EIPs and components. With the newly introduced _variables_ then these a
 The variables are stored in one or more `org.apache.camel.spi.VariableRepository`. By default, there are the following repositories
 
 - `ExchangeVariableRepository` - A private repository per `Exchange` that holds variables that are private for the lifecycle of each `Exchange`.
-- `GlobalVariableRepository` - Uses `global` as id. A shared global repository for the entire `CamelContext`.
+- `RouteVariableRepository` - Uses `route` as id. A single repository, that holds variables per `Route`.
+- `GlobalVariableRepository` - Uses `global` as id. A single global repository for the entire `CamelContext`.
 
 The `ExchangeVariableRepository` is special as its private per exchange and is the default repository when used during routing.
+The `RouteVariableRepository` is a single repository that holds variables that are route scoped.
 
 TIP: There is also `org.apache.camel.spi.BrowsableVariableRepository` which is an extension to `VariableRepository` that
 has APIs to browse the currently variables. This is used by Camel with Camel JBang, and JMX to be able to see the current variables
@@ -28,7 +30,7 @@ from management tooling, CLI and the developer console.
 You can implement custom `org.apache.camel.spi.VariableRepository` and plugin to be used out of the box with Apache Camel.
 For example, you can build a custom repository that stores the variables in a database, so they are persisted.
 
-Each repository must have its own unique id. However, it's also possible to replace the default `global` repository with another.
+Each repository must have its own unique id. However, it's also possible to replace the default `global`, or `route` repositories with another.
 
 IMPORTANT: The id `exchange` and `header` is reserved by Camel internally and should not be used as id for custom repositories.
 
@@ -72,6 +74,23 @@ Object val = context.getVariable("myGlobalKey");
 
 // you can get the value as a specific type
 String str = context.getVariable("myGlobalKey", String.class);
+----
+
+You can also assign a variable to a specific route with `route:` as follows:
+
+[source,java]
+----
+exchange.setVariable("route:myRouteId:myRouteKey", someObjectHere);
+----
+
+And you can get route variables as well:
+
+[source,java]
+----
+Object val = context.getVariable("route:myRouteId:myRouteKey");
+
+// you can get the value as a specific type
+String str = context.getVariable("route:myRouteId:myRouteKey", String.class);
 ----
 
 == Setting and getting variables from DSL
@@ -139,9 +158,31 @@ YAML::
 ----
 ====
 
+When `route` variables in Camel routes, then the `routeId` is implied as the current route, if not explicit declared.
+For example the following example the first route will set a variable in the 2nd route. And then 2nd route can then get
+the route variable without having to specify the route id:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start").routeId("first")
+    // sets variable in another route
+    .setVariable("route:second:foo").constant("Hello World")
+    .to("mock:end");
+
+from("direct:second").routeId("second")
+    // use variable from this route
+    .setBody().variable("route:foo");
+----
+====
+
+
 == Configuring initial variables on startup
 
-When Camel is starting then it's possible to configure initial variables.
+When Camel is starting then it's possible to configure initial variables for `global` and `route` repositories only.
 
 This can be done in `application.properties` as shown below:
 
@@ -151,17 +192,18 @@ camel.variable.greeting = Random number
 camel.variable.random = 999
 ----
 
-The variables are default set on the `global` repository, but you can specify a custom repository by
-prefixing with `id:` in the key, such as below:
+The variables are default set on the `global` repository, but you can set route scoped variables,
+using `route.` as prefix. As we cannot use colon (`:`) in property keys, then dot is used to separate
+the route id from the variable name, eg `myRoute.gold`.
 
 [source,properties]
 ----
-camel.variable.acme:gold = true
+camel.variable.route.myRoute.gold = true
 camel.variable.greeting = Random number
 camel.variable.random = 999
 ----
 
-Here the gold variable is set on the `acme` repository, and the other variables are set on the `global` repository.
+Here the gold variable is set on the `route` repository, and the other variables are set on the `global` repository.
 
 The value of a variable can also be loaded from file system, such as a JSon file. To do this you should
 prefix the value with `resource:file:` or `resource:classpath:` to load from file system or classpath,

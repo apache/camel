@@ -16,7 +16,10 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Collection;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
@@ -24,6 +27,8 @@ import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.GlobalVariableRepository;
+import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.RouteVariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +44,7 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
 
     private final CamelContext camelContext;
     private VariableRepository global;
+    private VariableRepository route;
     private FactoryFinder factoryFinder;
 
     public DefaultVariableRepositoryFactory(CamelContext camelContext) {
@@ -54,6 +60,9 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
 
         if (global != null && "global".equals(id)) {
             return global;
+        }
+        if (route != null && "route".equals(id)) {
+            return route;
         }
 
         VariableRepository repo = CamelContextHelper.lookup(camelContext, id, VariableRepository.class);
@@ -98,9 +107,32 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
             global = new GlobalVariableRepository();
             camelContext.getRegistry().bind(GLOBAL_VARIABLE_REPOSITORY_ID, global);
         }
+        // let's see if there is a custom route repo
+        repo = getVariableRepository("route");
+        if (repo != null) {
+            if (!(repo instanceof RouteVariableRepository)) {
+                LOG.info("Using VariableRepository: {} as route repository", repo.getId());
+            }
+            route = repo;
+        } else {
+            route = new RouteVariableRepository();
+            camelContext.getRegistry().bind(ROUTE_VARIABLE_REPOSITORY_ID, route);
+        }
 
         if (!camelContext.hasService(global)) {
             camelContext.addService(global);
+        }
+        if (!camelContext.hasService(route)) {
+            camelContext.addService(route);
+            camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+                @Override
+                public void onRoutesRemove(Collection<Route> routes) {
+                    // remove all variables from this route
+                    for (Route r : routes) {
+                        route.removeVariable(r.getRouteId() + ":*");
+                    }
+                }
+            });
         }
     }
 
