@@ -71,6 +71,10 @@ public class KnativeUriDsl(
     it.property("filters", filters)
   }
 
+  public fun sinkBinding(sinkBinding: String) {
+    it.property("sinkBinding", sinkBinding)
+  }
+
   public fun transportOptions(transportOptions: String) {
     it.property("transportOptions", transportOptions)
   }
