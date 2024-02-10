@@ -47,8 +47,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.spi.VariableRepository;
-import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ConstantExpressionAdapter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -255,24 +253,10 @@ public class ExpressionBuilder {
      */
     public static Expression variableExpression(final Expression variableName, final boolean mandatory) {
         return new ExpressionAdapter() {
-            private VariableRepositoryFactory factory;
-
             @Override
             public Object evaluate(Exchange exchange) {
                 String key = variableName.evaluate(exchange, String.class);
-                String id = StringHelper.before(key, ":");
-                Object answer;
-                if (id != null) {
-                    VariableRepository repo = factory.getVariableRepository(id);
-                    if (repo != null) {
-                        key = StringHelper.after(key, ":");
-                        answer = repo.getVariable(key);
-                    } else {
-                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
-                    }
-                } else {
-                    answer = exchange.getVariable(key);
-                }
+                Object answer = ExchangeHelper.getVariable(exchange, key);
                 if (mandatory && answer == null) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(new NoSuchVariableException(exchange, key));
                 }
@@ -283,7 +267,6 @@ public class ExpressionBuilder {
             public void init(CamelContext context) {
                 super.init(context);
                 variableName.init(context);
-                factory = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
             }
 
             @Override
@@ -325,7 +308,6 @@ public class ExpressionBuilder {
     public static Expression variableExpression(final Expression variableName, final Expression typeName) {
         return new ExpressionAdapter() {
             private ClassResolver classResolver;
-            private VariableRepositoryFactory factory;
             private TypeConverter converter;
 
             @Override
@@ -338,22 +320,11 @@ public class ExpressionBuilder {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 String key = variableName.evaluate(exchange, String.class);
-                String id = StringHelper.before(key, ":");
-                if (id != null) {
-                    VariableRepository repo = factory.getVariableRepository(id);
-                    if (repo != null) {
-                        key = StringHelper.after(key, ":");
-                        Object value = repo.getVariable(key);
-                        if (value != null) {
-                            value = converter.convertTo(type, value);
-                        }
-                        return value;
-                    } else {
-                        throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
-                    }
-                } else {
-                    return exchange.getVariable(key, type);
+                Object value = ExchangeHelper.getVariable(exchange, key);
+                if (value != null) {
+                    value = converter.convertTo(type, value);
                 }
+                return value;
             }
 
             @Override
@@ -362,7 +333,6 @@ public class ExpressionBuilder {
                 variableName.init(context);
                 typeName.init(context);
                 classResolver = context.getClassResolver();
-                factory = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
                 converter = context.getTypeConverter();
             }
 
