@@ -237,6 +237,16 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public boolean isIncludeExchangeVariables() {
+        return backlogDebugger.isIncludeExchangeVariables();
+    }
+
+    @Override
+    public void setIncludeExchangeVariables(boolean includeExchangeVariables) {
+        backlogDebugger.setIncludeExchangeVariables(includeExchangeVariables);
+    }
+
+    @Override
     public boolean isBodyIncludeStreams() {
         return backlogDebugger.isBodyIncludeStreams();
     }

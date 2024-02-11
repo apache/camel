@@ -93,14 +93,20 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
     boolean isIncludeExchangeProperties();
 
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    void setIncludeExchangeProperties(boolean includeExchangeProperties);
+
+    @ManagedAttribute(description = "Whether to include exchange variables in the trace message.")
+    boolean isIncludeExchangeVariables();
+
+    @ManagedAttribute(description = "Whether to include exchange variables in the trace message.")
+    void setIncludeExchangeVariables(boolean includeExchangeVariables);
+
     @ManagedAttribute(description = "Whether tracing routes created from Rest DSL.")
     boolean isTraceRests();
 
     @ManagedAttribute(description = "Whether tracing routes created from route templates or kamelets.")
     boolean isTraceTemplates();
-
-    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
-    void setIncludeExchangeProperties(boolean includeExchangeProperties);
 
     @ManagedOperation(description = "Dumps the traced messages for the given node or route")
     List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId);

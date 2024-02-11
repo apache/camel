@@ -476,7 +476,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             jo.put("elapsed", watch.taken());
             jo.put("status", "success");
             // avoid double wrap
-            jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true,
+            jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
                     BODY_MAX_CHARS).getMap("message"));
             IOHelper.writeText(jo.toJson(), outputFile);
         }
@@ -581,7 +581,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     jo.put("elapsed", watch.taken());
                     jo.put("status", "success");
                     // avoid double wrap
-                    jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true,
+                    jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
                             BODY_MAX_CHARS).getMap("message"));
                     IOHelper.writeText(jo.toJson(), outputFile);
                 } else {

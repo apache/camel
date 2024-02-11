@@ -91,6 +91,10 @@ public class Debug extends Run {
                         description = "Show exchange properties in traced messages")
     boolean showExchangeProperties;
 
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
+                        description = "Show exchange variables in traced messages")
+    boolean showExchangeVariables;
+
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in traced messages")
     boolean showHeaders = true;
@@ -142,6 +146,7 @@ public class Debug extends Run {
         tableHelper.setPretty(pretty);
         tableHelper.setLoggingColor(loggingColor);
         tableHelper.setShowExchangeProperties(showExchangeProperties);
+        tableHelper.setShowExchangeVariables(showExchangeVariables);
 
         // read log input
         final AtomicBoolean quit = new AtomicBoolean();
