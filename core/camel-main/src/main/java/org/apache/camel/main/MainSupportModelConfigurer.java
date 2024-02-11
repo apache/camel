@@ -115,7 +115,10 @@ public final class MainSupportModelConfigurer {
             }
             repo.setVariable(key, value);
         }
-        autoConfiguredProperties.putAll(variableProperties);
+        for (var e : variableProperties.entrySet()) {
+            String loc = variableProperties.getLocation(e.getKey());
+            autoConfiguredProperties.put(loc, "camel.variable." + e.getKey(), e.getValue());
+        }
     }
 
     static void setThreadPoolProperties(
