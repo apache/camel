@@ -234,16 +234,17 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
         if (keyPredicate != null) {
 
             // make sure a resource path is provided
-            final String resourcePath = (String) properties.get(RESOURCE_PATH_PROPERTY);
-            if (resourcePath == null) {
-                throw new IllegalArgumentException(
-                        "Resource path must be provided in endpoint URI, or URI parameter '" + RESOURCE_PATH_PROPERTY
-                                                   + "', or exchange header '"
-                                                   + Olingo4Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
-            }
+            properties.compute(RESOURCE_PATH_PROPERTY, (key, resourcePath) -> {
+                if (resourcePath == null) {
+                    throw new IllegalArgumentException(
+                            "Resource path must be provided in endpoint URI, or URI parameter '" + RESOURCE_PATH_PROPERTY
+                                                       + "', or exchange header '"
+                                                       + Olingo4Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
+                }
 
-            // append keyPredicate to dynamically create resource path
-            properties.put(RESOURCE_PATH_PROPERTY, resourcePath + '(' + keyPredicate + ')');
+                // append keyPredicate to dynamically create resource path
+                return resourcePath + "(" + keyPredicate + ")";
+            });
         }
 
         // handle individual queryParams
