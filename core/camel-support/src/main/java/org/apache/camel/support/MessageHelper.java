@@ -526,7 +526,8 @@ public final class MessageHelper {
                 // dump value as XML, use Camel type converter to convert to String
                 if (value != null) {
                     try {
-                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles,
+                                maxChars);
                         if (xml != null) {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
@@ -564,7 +565,8 @@ public final class MessageHelper {
                 // dump value as XML, use Camel type converter to convert to String
                 if (value != null) {
                     try {
-                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles,
+                                maxChars);
                         if (xml != null) {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
@@ -597,7 +599,8 @@ public final class MessageHelper {
                 // dump value as XML, use Camel type converter to convert to String
                 if (value != null) {
                     try {
-                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles,
+                                maxChars);
                         if (xml != null) {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
