@@ -3486,7 +3486,7 @@
                                 <include>**/*Test.java</include>
                             </includes>
                             <excludes>
-                                <exclude>**/*IntegrationTest.java</exclude>
+                                <exclude>**/*IT.java</exclude>
                                 <exclude>**/*XXXTest.*</exclude>
                             </excludes>
                             <forkCount>${camel.surefire.forkCount}</forkCount>
