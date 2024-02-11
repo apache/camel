@@ -1649,6 +1649,7 @@ public abstract class BaseMainSupport extends BaseService {
         debugger.setBodyIncludeStreams(config.isBodyIncludeStreams());
         debugger.setBodyIncludeFiles(config.isBodyIncludeFiles());
         debugger.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
+        debugger.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
         debugger.setIncludeException(config.isIncludeException());
         debugger.setLoggingLevel(config.getLoggingLevel().name());
         debugger.setSuspendMode(config.isWaitForAttach());
