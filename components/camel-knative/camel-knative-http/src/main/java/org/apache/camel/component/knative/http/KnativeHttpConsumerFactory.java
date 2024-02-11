@@ -53,6 +53,13 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
     }
 
     @Override
+    protected void doInit() throws Exception {
+        if (router == null) {
+            router = KnativeHttpSupport.lookupRouter(camelContext);
+        }
+    }
+
+    @Override
     public Consumer createConsumer(
             Endpoint endpoint, KnativeTransportConfiguration config, KnativeResource service, Processor processor) {
         Objects.requireNonNull(this.router, "router");
