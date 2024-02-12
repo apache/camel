@@ -62,6 +62,13 @@ public class KnativeHttpProducerFactory extends ServiceSupport implements CamelC
     }
 
     @Override
+    protected void doInit() throws Exception {
+        if (vertx == null) {
+            vertx = KnativeHttpSupport.lookupVertxInstance(camelContext);
+        }
+    }
+
+    @Override
     public Producer createProducer(Endpoint endpoint, KnativeTransportConfiguration config, KnativeResource service) {
         Objects.requireNonNull(this.vertx, "vertx");
 
