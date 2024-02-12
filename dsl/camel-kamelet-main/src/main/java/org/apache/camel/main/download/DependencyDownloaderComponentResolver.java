@@ -24,7 +24,6 @@ import org.apache.camel.Service;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
-import org.apache.camel.component.platform.http.main.DefaultMainHttpServerFactory;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
@@ -84,10 +83,10 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
                 HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
                 CamelJBangSettingsHelper.writeSettings("camel.jbang.platform-http.port", String.valueOf(config.getPort()));
                 if (!silent) {
-                    // enable http server if not silent
-                    MainHttpServerFactory factory = new DefaultMainHttpServerFactory();
-                    Service httpServer = factory.newHttpServer(config);
                     try {
+                        // enable http server if not silent
+                        MainHttpServerFactory factory = resolveMainHttpServerFactory(camelContext);
+                        Service httpServer = factory.newHttpServer(config);
                         camelContext.addService(httpServer, true, true);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
