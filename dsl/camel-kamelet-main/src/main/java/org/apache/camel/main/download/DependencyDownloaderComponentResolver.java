@@ -75,8 +75,9 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             sc.setShadow(true);
             sc.setShadowPattern(stubPattern);
         }
-        if (answer instanceof PlatformHttpComponent) {
+        if (answer instanceof PlatformHttpComponent || "knative".equals(name)) {
             // setup a default http server on port 8080 if not already done
+            // knative also requires a http server
             MainHttpServer server = camelContext.hasService(MainHttpServer.class);
             if (server == null) {
                 // need to capture we use http-server
