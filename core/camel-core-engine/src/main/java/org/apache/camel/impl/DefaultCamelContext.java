@@ -152,11 +152,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    protected void initPlugins() {
-        super.initPlugins();
-    }
-
-    @Override
     protected void doDumpRoutes() {
         DumpRoutesStrategy strategy = CamelContextHelper.findSingleByType(this, DumpRoutesStrategy.class);
         if (strategy == null) {
