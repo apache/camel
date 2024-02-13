@@ -4,7 +4,8 @@
 
 In Camel 4.4, we have introduced the concept of _variables_.
 
-A variable is a key/value that can hold a value that can either be private per `Exchange`, or shared per route, or globally.
+A variable is a key/value that can hold a value that can either be private per `Exchange`,
+or shared per route, or per `CamelContext`.
 
 NOTE: You can also use _exchange properties_ as variables, but the exchange properties are also used internally by Camel,
 and some EIPs and components. With the newly introduced _variables_ then these are exclusively for end users.
