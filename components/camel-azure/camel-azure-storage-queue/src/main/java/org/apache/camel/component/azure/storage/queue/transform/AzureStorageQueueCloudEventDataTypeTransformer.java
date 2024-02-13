@@ -45,7 +45,7 @@ public class AzureStorageQueueCloudEventDataTypeTransformer extends Transformer 
 
         if (message.getHeaders().containsKey(QueueConstants.MESSAGE_ID)) {
             headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
-                    "azure.storage.blob." + message.getHeader(QueueConstants.MESSAGE_ID, String.class));
+                    "azure.storage.queue." + message.getHeader(QueueConstants.MESSAGE_ID, String.class));
         }
 
         if (message.getHeaders().containsKey(QueueConstants.POP_RECEIPT)) {
