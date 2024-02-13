@@ -39,7 +39,7 @@ for this component:
 
 If you are using http://activemq.apache.org/[Apache ActiveMQ], you
 should prefer the ActiveMQ component as it has been
-optimized for ActiveMQ. All of the options and
+optimized for ActiveMQ. All the options and
 samples on this page are also valid for the ActiveMQ
 component.
 ====
@@ -132,7 +132,13 @@ level accordingly to:
 So you can say the default setting is conservative. Consider using
 `cacheLevelName=CACHE_CONSUMER` if you are using non-XA transactions.
 
-=== Durable Subscriptions with JMS 1.1
+=== Durable Subscriptions
+
+==== Durable Subscriptions with JMS 2.0
+
+If you wish to use durable topic subscriptions, you need to specify the `durableSubscriptionName`.
+
+==== Durable Subscriptions with JMS 1.1
 
 If you wish to use durable topic subscriptions, you need to specify both
 `clientId` and `durableSubscriptionName`. The value of the `clientId`
@@ -149,10 +155,6 @@ or for https://activemq.apache.org/virtual-destinations.html[ActiveMQ Classic] f
 
 You can find more details about durable messaging for ActiveMQ Classic http://activemq.apache.org/how-do-durable-queues-and-topics-work.html[here].
 ====
-
-==== Durable Subscriptions with JMS 2.0
-
-If you wish to use durable topic subscriptions, you need to specify the `durableSubscriptionName`.
 
 === Message Header Mapping
 
@@ -426,7 +428,7 @@ The possible values are defined in the `enum` class,
 
 == Message format when sending
 
-The exchange that is sent over the JMS wire must conform to the
+The exchange sent over the JMS wire must conform to the
 http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html[JMS Message
 spec].
 
@@ -510,7 +512,7 @@ documentation] for further details.
 == About using Camel to send and receive messages and JMSReplyTo
 
 The JMS component is complex, and you have to pay close attention to how
-it works in some cases. So this is a short summary of some of the
+it works in some cases. So this is a short summary of some
 areas/pitfalls to look for.
 
 When Camel sends a message using its `JMSProducer`, it checks the
@@ -632,7 +634,7 @@ If both the `CamelJmsDestination` and the `CamelJmsDestinationName`
 headers are set, `CamelJmsDestination` takes priority. Keep in mind that
 the JMS producer removes both `CamelJmsDestination` and
 `CamelJmsDestinationName` headers from the exchange and do not propagate
-them to the created JMS message in order to avoid the accidental loops
+them to the created JMS message to avoid the accidental loops
 in the routes (in scenarios when the message will be forwarded to
 another JMS endpoint).
 
@@ -641,7 +643,7 @@ another JMS endpoint).
 You can configure your JMS provider in Spring XML as
 follows:
 
-Basically, you can configure as many JMS component instances as you wish
+You can configure as many JMS component instances as you wish
 and give them *a unique name using the* `id` **attribute**. The
 preceding example configures an `activemq` component. You could do the
 same to configure MQSeries, TibCo, BEA, Sonic and so on.
@@ -681,7 +683,7 @@ JNDI lookup.
 == Concurrent Consuming
 
 A common requirement with JMS is to consume messages concurrently in
-multiple threads in order to make an application more responsive. You
+multiple threads to make an application more responsive. You
 can set the `concurrentConsumers` option to specify the number of
 threads servicing the JMS endpoint, as follows:
 
@@ -785,8 +787,8 @@ fixed reply queue (see more below about fixed reply queue).
 Camel will automatically set up a consumer that listens to on the reply queue,
 so you should *not* do anything. +
  This consumer is a Spring `DefaultMessageListenerContainer` which
-listen for replies. However, it's fixed to 1 concurrent consumer. +
- That means replies will be processed in sequence as there is only 1
+listen for replies. However, it's fixed to one concurrent consumer. +
+ That means replies will be processed in sequence as there is only one
 thread to process the replies. You can configure the listener to use
 concurrent threads using the `concurrentConsumers` and
 `maxConcurrentConsumers` options. This allows you to easier configure
@@ -801,7 +803,7 @@ from(xxx)
 -------------------------------------------------------
 
 In this route, we instruct Camel to route replies
-asynchronously using a thread pool with 5 threads.
+asynchronously using a thread pool with five threads.
 
 === Request-reply over JMS and using a shared fixed reply queue
 
@@ -1061,7 +1063,7 @@ we wait for a return reply:
 
 When sending to a xref:jms-component.adoc[JMS] destination using *camel-jms*, the
 producer will use the MEP to detect if its _InOnly_ or _InOut_ messaging.
-However, there can be times where you want to send an _InOnly_ message but
+However, there can be times when you want to send an _InOnly_ message but
 keeping the `JMSReplyTo` header. To do so, you have to instruct Camel to
 keep it, otherwise the `JMSReplyTo` header will be dropped.
 
