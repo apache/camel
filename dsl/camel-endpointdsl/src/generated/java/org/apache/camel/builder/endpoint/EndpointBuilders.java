@@ -256,6 +256,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.QdrantEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory,

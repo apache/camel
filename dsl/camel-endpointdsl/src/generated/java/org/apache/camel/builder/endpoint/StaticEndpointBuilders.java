@@ -12114,6 +12114,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Qdrant (camel-qdrant)
+     * Perform operations on the Qdrant Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-qdrant
+     * 
+     * Syntax: <code>qdrant:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.QdrantEndpointBuilderFactory.QdrantEndpointBuilder qdrant(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.QdrantEndpointBuilderFactory.endpointBuilder("qdrant", path);
+    }
+    /**
+     * Qdrant (camel-qdrant)
+     * Perform operations on the Qdrant Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-qdrant
+     * 
+     * Syntax: <code>qdrant:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.QdrantEndpointBuilderFactory.QdrantEndpointBuilder qdrant(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.QdrantEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Quartz (camel-quartz)
      * Schedule sending of messages using the Quartz 2.x scheduler.
      * 

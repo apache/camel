@@ -242,6 +242,7 @@
         <module>camel-pubnub</module>
         <module>camel-pulsar</module>
         <module>camel-python</module>
+        <module>camel-qdrant</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
         <module>camel-reactive-executor-tomcat</module>

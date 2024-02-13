@@ -3388,6 +3388,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.PulsarComponentBuilderFactory.pulsar();
     }
     /**
+     * Qdrant (camel-qdrant)
+     * Perform operations on the Qdrant Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-qdrant
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.QdrantComponentBuilderFactory.QdrantComponentBuilder qdrant() {
+        return org.apache.camel.builder.component.dsl.QdrantComponentBuilderFactory.qdrant();
+    }
+    /**
      * Quartz (camel-quartz)
      * Schedule sending of messages using the Quartz 2.x scheduler.
      * 

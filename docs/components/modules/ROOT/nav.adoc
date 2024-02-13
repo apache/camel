@@ -256,6 +256,7 @@
 ** xref:properties-component.adoc[Properties]
 ** xref:pubnub-component.adoc[PubNub]
 ** xref:pulsar-component.adoc[Pulsar]
+** xref:qdrant-component.adoc[Qdrant]
 ** xref:quartz-component.adoc[Quartz]
 ** xref:quickfix-component.adoc[QuickFix]
 ** xref:reactive-streams-component.adoc[Reactive Streams]
