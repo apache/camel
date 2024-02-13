@@ -36,6 +36,7 @@ public final class SensitiveUtils {
                     "acltoken",
                     "api_key",
                     "api_secret",
+                    "apikey",
                     "apipassword",
                     "apiuser",
                     "apiusername",
@@ -114,6 +115,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qacltoken\\E"
                                                     + "|\\Qapi_key\\E"
                                                     + "|\\Qapi_secret\\E"
+                                                    + "|\\Qapikey\\E"
                                                     + "|\\Qapipassword\\E"
                                                     + "|\\Qapiuser\\E"
                                                     + "|\\Qapiusername\\E"
