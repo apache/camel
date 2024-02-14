@@ -53,7 +53,7 @@ include::partial$component-endpoint-options.adoc[]
 
 === Using Azure Key Vault Property Function
 
-To use this function you'll need to provide credentials to Azure Key Vault Service as environment variables:
+To use this function, you'll need to provide credentials to Azure Key Vault Service as environment variables:
 
 [source,bash]
 ----
@@ -89,7 +89,7 @@ camel.vault.azure.azureIdentityEnabled = true
 camel.vault.azure.vaultName = vaultName
 ----
 
-At this point you'll be able to reference a property in the following way:
+At this point, you'll be able to reference a property in the following way:
 
 [source,xml]
 ----
@@ -115,9 +115,9 @@ You could specify a default value in case the secret is not present on Azure Key
 </camelContext>
 ----
 
-In this case if the secret doesn't exist, the property will fallback to "default" as value.
+In this case, if the secret doesn't exist, the property will fall back to "default" as value.
 
-Also you are able to get particular field of the secret, if you have for example a secret named database of this form:
+Also, you are able to get a particular field of the secret, if you have, for example, a secret named database of this form:
 
 [source,bash]
 ----
@@ -157,7 +157,7 @@ You could specify a default value in case the particular field of secret is not 
 </camelContext>
 ----
 
-In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fall back to "admin" as value.
 
 There is also the syntax to get a particular version of the secret for both the approach, with field/default value specified or only with secret:
 
@@ -171,7 +171,7 @@ There is also the syntax to get a particular version of the secret for both the 
 </camelContext>
 ----
 
-This approach will return the RAW route secret with version 'bf9b4f4b-8e63-43fd-a73c-3e2d3748b451'.
+This approach will return the RAW route secret with the version 'bf9b4f4b-8e63-43fd-a73c-3e2d3748b451'.
 
 [source,xml]
 ----
@@ -197,13 +197,13 @@ This approach will return the route secret value with version 'bf9b4f4b-8e63-43f
 
 This approach will return the username field of the database secret with version 'bf9b4f4b-8e63-43fd-a73c-3e2d3748b451' or admin in case the secret doesn't exist or the version doesn't exist.
 
-For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+For the moment we are not considering the rotation function if any are applied, but it is in the work to be done.
 
 The only requirement is adding the camel-azure-key-vault jar to your Camel application.
 
 === Automatic Camel context reloading on Secret Refresh
 
-Being able to reload Camel context on a Secret Refresh, could be done by specifying the usual credentials (the same used for Azure Key Vault Property Function).
+Being able to reload Camel context on a Secret Refresh could be done by specifying the usual credentials (the same used for Azure Key Vault Property Function).
 
 With Environment variables:
 
@@ -241,7 +241,7 @@ camel.vault.azure.azureIdentityEnabled = true
 camel.vault.azure.vaultName = vaultName
 ----
 
-To enable the automatic refresh you'll need additional properties to set:
+To enable the automatic refresh, you'll need additional properties to set:
 
 [source,properties]
 ----
