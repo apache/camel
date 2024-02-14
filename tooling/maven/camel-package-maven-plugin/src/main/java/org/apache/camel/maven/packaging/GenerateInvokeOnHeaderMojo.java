@@ -42,7 +42,7 @@ import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 
 /**
- * Abstract class for @InvokeOnHeader factory generator.
+ * Factory for generating code for @InvokeOnHeader.
  */
 @Mojo(name = "generate-invoke-on-header", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
       requiresDependencyCollection = ResolutionScope.COMPILE,
