@@ -858,7 +858,6 @@ camel init https://gist.github.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92 --
 
 IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
 
-
 === Using a specific Camel version
 
 You can specify which Camel version to run as shown:
@@ -1002,6 +1001,49 @@ camel version list --runtime=quarkus
 ----
 
 TIP: See more options with `camel version list --help`.
+
+=== Manage plugins
+
+Camel JBang uses a plugin concept for some of the subcommands so users can add functionality on demand.
+Each provided plugin adds a list of commands to the Camel JBang command line tool.
+
+You can list the supported plugins with
+
+[source,bash]
+----
+camel plugin get --all
+----
+
+[source,text]
+----
+Supported plugins:
+
+ NAME     COMMAND  DEPENDENCY                             DESCRIPTION
+ camel-k  k        org.apache.camel:camel-jbang-plugin-k  Manage Camel integrations on Kubernetes
+----
+
+In case you want to enable a plugin and its functionality you can add it as follows:
+
+[source,bash]
+----
+camel plugin add <plugin-name>
+----
+
+This adds the plugin and all subcommands are now available for execution.
+
+You can list the currently installed plugins with:
+
+[source,bash]
+----
+camel plugin get
+----
+
+To remove a plugin from the current Camel JBang command line tooling you can use the `plugin delete` command.
+
+[source,bash]
+----
+camel plugin delete <plugin-name>
+----
 
 === Running Camel K integrations or pipes
 

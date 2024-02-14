@@ -7,6 +7,23 @@ Please make sure to meet these prerequisites for running Camel integrations on K
 
 Running Camel routes on Kubernetes is quite simple with Camel JBang.
 In fact, you can develop and test your Camel route locally with Camel JBang and then promote the same source to running it as an integration on Kubernetes.
+
+The Camel JBang Kubernetes functionality is provided as a command plugin.
+This means you need to enable the `camel-k` plugin first to use the subcommands in Camel JBang.
+
+[source,bash]
+----
+camel plugin add camel-k
+----
+
+You should see the `camel-k` plugin listed as installed plugin.
+
+[source,bash]
+----
+camel plugin get
+----
+
+Now Camel JBang is able to run the subcommands offered by the plugin.
 Simply run the integration using the `k` subcommand in Camel JBang.
 
 [source,bash]
