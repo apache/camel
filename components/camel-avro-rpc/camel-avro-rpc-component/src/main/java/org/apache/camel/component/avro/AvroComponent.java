@@ -95,8 +95,8 @@ public class AvroComponent extends DefaultComponent {
     }
 
     /**
-     * Calls unregister of consumer by the appropriate message name.
-     * In case if all consumers are unregistered, then it removes responder from the registry.
+     * Calls unregister of consumer by the appropriate message name. In case if all consumers are unregistered, then it
+     * removes responder from the registry.
      *
      * @param uri         URI of the endpoint without message name
      * @param messageName message name

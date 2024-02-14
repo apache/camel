@@ -60,7 +60,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private final FileOperations operations = new FileOperations(this);
 
-
     @UriPath(name = "directoryName")
     @Metadata(required = true)
     private File file;

@@ -109,8 +109,8 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * Set the need for overidding the endpoint. This option needs to be
-         * used in combination with uriEndpointOverride option.
+         * Set the need for overriding the endpoint. This option needs to be
+         * used in combination with the uriEndpointOverride option.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -141,9 +141,9 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which Lambda client needs to work. When using this
+         * The region in which the Lambda client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
-         * region (for example ap-east-1) You'll need to use the name
+         * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -195,7 +195,7 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a existing configured AwsLambdaClient as client.
+         * To use an existing configured AwsLambdaClient client.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.services.lambda.LambdaClient&lt;/code&gt; type.
@@ -306,7 +306,7 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
+         * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -336,7 +336,7 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -405,8 +405,8 @@ public interface Aws2LambdaComponentBuilderFactory {
         }
         /**
          * Set whether the Lambda client should expect to use Session
-         * Credentials. This is useful in situation in which the user needs to
-         * assume a IAM role for doing operations in Lambda.
+         * Credentials. This is useful in a situation in which the user needs to
+         * assume an IAM role for doing operations in Lambda.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
