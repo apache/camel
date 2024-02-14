@@ -75,13 +75,14 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             sc.setShadow(true);
             sc.setShadowPattern(stubPattern);
         }
-        if (answer instanceof PlatformHttpComponent) {
-            // setup a default http server on port 8080 if not already done
+        if (answer instanceof PlatformHttpComponent || name.equals("knative")) {
+            // set up a default http server on configured port if not already done
             MainHttpServer server = camelContext.hasService(MainHttpServer.class);
             if (server == null) {
-                // need to capture we use http-server
+                // need to capture that we use a http-server
                 HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
-                CamelJBangSettingsHelper.writeSettings("camel.jbang.platform-http.port", String.valueOf(config.getPort()));
+                CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.jbang.platform-http.port",
+                        String.valueOf(config.getPort()));
                 if (!silent) {
                     try {
                         // enable http server if not silent

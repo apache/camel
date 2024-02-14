@@ -35,18 +35,18 @@ public final class CamelJBangSettingsHelper {
     private CamelJBangSettingsHelper() {
     }
 
-    public static void writeSettings(String key, String value) {
+    public static void writeSettingsIfNotExists(String key, String value) {
         if (FILE.exists()) {
             try {
-                String line = key + "=" + value;
 
                 String context;
                 try (FileInputStream fis = new FileInputStream(FILE)) {
                     context = IOHelper.loadText(fis);
                 }
 
-                if (!context.contains(line)) {
-                    // append line as it was not already present
+                if (!context.contains(key + "=")) {
+                    // append line as key has not been set before
+                    String line = key + "=" + value;
                     try (FileOutputStream fos = new FileOutputStream(FILE, true)) {
                         fos.write(line.getBytes(StandardCharsets.UTF_8));
                         fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));

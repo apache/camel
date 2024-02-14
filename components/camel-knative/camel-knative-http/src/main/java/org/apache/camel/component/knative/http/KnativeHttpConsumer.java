@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
@@ -57,7 +58,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     private final KnativeTransportConfiguration configuration;
     private final Predicate<HttpServerRequest> filter;
     private final KnativeResource resource;
-    private final Router router;
+    private final Supplier<Router> router;
     private final HeaderFilterStrategy headerFilterStrategy;
 
     private String basePath;
@@ -68,7 +69,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     public KnativeHttpConsumer(KnativeTransportConfiguration configuration,
                                Endpoint endpoint,
                                KnativeResource resource,
-                               Router router,
+                               Supplier<Router> router,
                                Processor processor) {
         super(endpoint, processor);
         this.configuration = configuration;
@@ -116,7 +117,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
 
             LOGGER.debug("Creating route for path: {}", path);
 
-            route = router.route(
+            route = router.get().route(
                     HttpMethod.POST,
                     path);
 
