@@ -92,7 +92,7 @@ from("file://target/files")
     .to("bean:foo");
 ----
 
-In Spring DSL it is also easy to use log DSL as shown below:
+In XML DSL it is also easy to use log DSL as shown below:
 [source,xml]
 ----
 <route id="foo">
@@ -131,10 +131,10 @@ It is possible to reference an existing logger instance. For example:
 
 === Configuring logging name
 
-The log message will be logged at `INFO` level using the route id as the logger name.
-So for example if you have not assigned an id to the route, then Camel will use `route-1`, `route-2` as the logger name.
+The log message will be logged at `INFO` level using the route id as the logger name (or source name:line if source location is enabled, see TIP below).
+So for example, if you have not assigned an id to the route, then Camel will use `route-1`, `route-2` as the logger name.
 
-For example to use "fooRoute" as the route id, you can do:
+To use "fooRoute" as the route id, you can do:
 
 [source,java]
 ----
@@ -153,6 +153,9 @@ And in XML:
   <to uri="bean:foo"/>
 </route>
 ----
+
+TIP: If you enable `sourceLocationEnabled=true` on `CamelContext` then Camel will use source file:line as logger name,
+instead of the route id. This is for example what `camel-jbang` do, to make it easy to see where in the source code the log is located.
 
 ==== Using custom logger from the Registry
 
