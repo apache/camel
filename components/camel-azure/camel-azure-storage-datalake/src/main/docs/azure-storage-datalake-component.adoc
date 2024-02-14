@@ -1,5 +1,5 @@
-= Azure Storage Datalake Service Component
-:doctitle: Azure Storage Datalake Service
+= Azure Storage Data Lake Service Component
+:doctitle: Azure Storage Data Lake Service
 :shortname: azure-storage-datalake
 :artifactid: camel-azure-storage-datalake
 :description: Sends and receives files to/from Azure DataLake Storage.
@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The Azure storage datalake component is used for storing and retrieving file from Azure Storage Datalake Sevice using the *Azure APIs v12*.
+The Azure storage datalake component is used for storing and retrieving file from Azure Storage Data Lake Service using the *Azure APIs v12*.
 
 Prerequisites
 
@@ -40,10 +40,10 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 azure-storage-datalake:accountName[/fileSystemName][?options]
 ----
 
-In case of a consumer, both accountName and fileSystemName are required. In case of the producer, it depends on the operation
+In the case of the consumer, both `accountName` and `fileSystemName` are required. In the case of the producer, it depends on the operation
 being requested.
 
-You can append query options to the URI in the following format, ?option1=value&option2=value&...
+You can append query options to the URI in the following format: `?option1=value&option2=value&...`
 
 
 // component-configure options: START
@@ -62,19 +62,19 @@ include::partial$component-endpoint-options.adoc[]
 
 === Methods of authentication
 
-In order to use this component, you will have to provide at least one of the specific credentialType parameters:
+To use this component, you will have to provide at least one of the specific credentialType parameters:
 
-- SHARED_KEY_CREDENTIAL: Provide `accountName` and `accessKey` for your azure account or provide StorageSharedKeyCredential instance which can be provided into `sharedKeyCredential` option.
-- CLIENT_SECRET: Provide ClientSecretCredential instance which can be provided into `clientSecretCredential` option or provide `accountName`, `clientId`, `clientSecret` and `tenantId` for authentication with Azure Active Directory.
-- SERVICE_CLIENT_INSTANCE: Provide a DataLakeServiceClient instance which can be provided into `serviceClient` option.
-- AZURE_IDENTITY: Use the Default Azure Credential Provider Chain
-- AZURE_SAS: Provide `sasSignature` or `sasCredential` parameters to use SAS mechanism
+- `SHARED_KEY_CREDENTIAL`: Provide `accountName` and `accessKey` for your azure account or provide StorageSharedKeyCredential instance which can be provided into `sharedKeyCredential` option.
+- `CLIENT_SECRET`: Provide ClientSecretCredential instance which can be provided into `clientSecretCredential` option or provide `accountName`, `clientId`, `clientSecret` and `tenantId` for authentication with Azure Active Directory.
+- `SERVICE_CLIENT_INSTANCE`: Provide a DataLakeServiceClient instance which can be provided into `serviceClient` option.
+- `AZURE_IDENTITY`: Use the Default Azure Credential Provider Chain
+- `AZURE_SAS`: Provide `sasSignature` or `sasCredential` parameters to use SAS mechanism
 
-Default is CLIENT_SECRET
+The default is `CLIENT_SECRET`.
 
 == Usage
 
-For example, in order to download content from file `test.txt` located on the `filesystem` in `camelTesting` storage account, use the following snippet:
+For example, to download content from file `test.txt` located on the `filesystem` in `camelTesting` storage account, use the following snippet:
 
 [source,java]
 ----
@@ -86,7 +86,7 @@ to("file://fileDirectory");
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== Automatic detection of service client
+=== Automatic detection of a service client
 
 The component is capable of automatically detecting the presence of a DataLakeServiceClient bean in the registry.
 Hence, if your registry has only one instance of type DataLakeServiceClient, it will be automatically used as the default client.
@@ -111,9 +111,9 @@ For these operations, `accountName` and `fileSystemName` options are required
 [width="100%", cols="10%,90%", options="header",]
 |===
 |Operation |Description
-|`createFileSystem` | Creates a new file System with the storage account
-|`deleteFileSystem` | Deletes the specified file system within the storage account
-|`listPaths` | Returns list of all the files within the given path in the given file system , with folder structure flattened
+|`createFileSystem` | Create a new file System with the storage account
+|`deleteFileSystem` | Delete the specified file system within the storage account
+|`listPaths` | Returns list of all the files within the given path in the given file system, with folder structure flattened
 |===
 
 *Operations on Directory level*
@@ -122,8 +122,8 @@ For these operations, `accountName`, `fileSystemName` and `directoryName` option
 [width="100%", cols="10%,90%", options="header",]
 |===
 |Operation |Description
-|`createFile` | Creates a new file in the specified directory within the fileSystem
-|`deleteDirectory` | Deletes the specified directory within the file system
+|`createFile` | Create a new file in the specified directory within the fileSystem
+|`deleteDirectory` | Delete the specified directory within the file system
 |===
 
 *Operations on file level*
@@ -133,18 +133,18 @@ For these operations, `accountName`, `fileSystemName` and `fileName` options are
 |===
 |Operation |Description
 |`getFile` | Get the contents of a file
-|`downloadToFile` | Downloadd the entire file from the file system into a path specified by fileDir.
-|`downloadLink` | Generate download link for the specified file using Shared Access Signature (SAS).
+|`downloadToFile` | Download the entire file from the file system into a path specified by fileDir.
+|`downloadLink` | Generate a download link for the specified file using Shared Access Signature (SAS).
 The expiration time to be set for the link can be specified otherwise 1 hour is taken as default.
-|`deleteFile` | Deletes the specified file.
+|`deleteFile` | Delete the specified file.
 |`appendToFile` | Appends the data passed to the specified file in the file System. Flush command is
 required after append.
 |`flushToFile` | Flushes the data already appended to the specified file.
-|`openQueryInputStream` | Opens an inputstream based on the query passed to the endpoint. For this operation,
+|`openQueryInputStream` | Opens an `InputStream` based on the query passed to the endpoint. For this operation,
 you must first register the query acceleration feature with your subscription.
 |===
 
-Refer the examples section below for more details on how to use these operations
+Refer to the examples section below for more details on how to use these operations
 
 === Consumer Examples
 To consume a file from the storage datalake into a file using the file component, this can be done like this:
@@ -225,20 +225,20 @@ from("direct:start")
 
 -  `getFile`
 
-This can be done in two ways, We can either set an outputstream in the exchange body
+This can be done in two ways, We can either set an `OutputStream` in the exchange body
 
 [source,java]
 ----
 from("direct:start")
     .process(exchange -> {
-        // set an outputstream where the file data can should be written
+        // set an OutputStream where the file data can should be written
         exchange.getIn().setBody(outputStream);
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=getFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
 ----
 
-Or if body is not set, the operation will give an inputstream, given that you have already registered for query acceleration
+Or if the body is not set, the operation will give an `InputStream`, given that you have already registered for query acceleration
 in azure portal.
 
 [source,java]
@@ -375,16 +375,16 @@ from("direct:start")
 
 === Testing
 
-Please run all the unit tests and integration test while making changes to the component as changes or version upgrades can break things.
-For running all the test in the component, you will need to obtain azure accountName and accessKey. After obtaining the same, you
-can run the full test, on this component directory, by running the following maven command
+Please run all the unit tests and integration tests while making changes to the component as changes or version upgrades can break things.
+For running all the tests in the component, you will need to obtain azure `accountName` and `accessKey`. After obtaining the same, you
+can run the full test on this component directory by running the following maven command
 
 [source,bash]
 ----
 mvn verify -Dazure.storage.account.name=<accountName> -Dazure.storage.account.key=<accessKey>
 ----
 
-You can also skip the integration test, and run only basic unit test by using the command
+You can also skip the integration test and run only basic unit test by using the command
 
 [source,bash]
 ----
