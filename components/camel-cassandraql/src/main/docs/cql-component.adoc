@@ -17,16 +17,16 @@
 http://cassandra.apache.org[Apache Cassandra] is an open source NoSQL
 database designed to handle large amounts on commodity hardware. Like
 Amazon's DynamoDB, Cassandra has a peer-to-peer and master-less
-architecture to avoid single point of failure and garanty high
+architecture to avoid a single point of failure and guaranty high
 availability. Like Google's BigTable, Cassandra data is structured using
-column families which can be accessed through the Thrift RPC API or a
+column families which can be accessed through the Thrift RPC API or an
 SQL-like API called CQL.
 
-NOTE: This component aims at integrating Cassandra 2.0+ using the CQL3 API
-(not the Thrift API). It's based on
-https://github.com/datastax/java-driver[Cassandra Java Driver] provided
-by DataStax.
-
+[NOTE]
+====
+This component aims at integrating Cassandra 2.0+ using the CQL3 API instead of the Thrift API.
+It's based on https://github.com/datastax/java-driver[Cassandra Java Driver] provided by DataStax.
+====
 
 // component-configure options: START
 
@@ -60,7 +60,7 @@ one.
 |`cql:bean:sessionRef` |Provided Session reference
 |======================================================================
 
-To fine tune the Cassandra connection (SSL options, pooling options,
+To fine-tune the Cassandra connection (SSL options, pooling options,
 load balancing policy, retry policy, reconnection policy...), create
 your own Cluster instance and give it to the Camel endpoint.
 
@@ -70,7 +70,7 @@ your own Cluster instance and give it to the Camel endpoint.
 
 The Camel Cassandra endpoint expects a bunch of simple objects (`Object`
 or `Object[]` or `Collection<Object>`) which will be bound to the CQL
-statement as query parameters. If message body is null or empty, then 
+statement as query parameters. If the message body is null or empty, then
 CQL query will be executed without binding parameters.
 
 Headers:
@@ -117,7 +117,7 @@ CREATE TABLE CAMEL_IDEMPOTENT (
   AND gc_grace_seconds = 86400;
 ---------------------------------------------------------
 
-This repository implementation uses lightweight transactions (also known
+This repository implementation uses lightweight transactions, (also known
 as Compare and Set) and requires Cassandra 2.0.7+.
 
 Alternatively, the `CassandraIdempotentRepository` does not have a
@@ -187,13 +187,13 @@ Alternatively, the `CassandraAggregationRepository` does not have a
 `LOCAL_QUORUM`…
 |=======================================================================
 
-While deserializing it's important to notice that the the unmarshallExchange method will allow only all java packages and subpackages
+While deserializing, it's important to notice that the `unmarshallExchange` method will allow only all java packages and subpackages
 and org.apache.camel packages and subpackages. The remaining classes will be blacklisted. So you'll need to change the filter in case of need.
-This could be accomplished by changing the deserializationFilter field on the repository.
+This could be accomplished by changing the deserializationFilter field in the repository.
 
 == Examples
 
-To insert something on a table you can use the following code:
+To insert something on a table, you can use the following code:
 
 [source,java]
 ---------------------------------------------------------
@@ -202,11 +202,11 @@ from("direct:input")
     .to("cql://localhost/camel_ks?cql=" + CQL);
 ---------------------------------------------------------
 
-At this point you should be able to insert data by using a list as body
+At this point, you should be able to insert data by using a list as body
 
 [source,java]
 ---------------------------------------------------------
-Arrays.asList("davsclaus", "Claus", "Ibsen")
+Arrays.asList("davsclaus", "Claus", "Ibsen");
 ---------------------------------------------------------
 
 The same approach can be used for updating or querying the table.
