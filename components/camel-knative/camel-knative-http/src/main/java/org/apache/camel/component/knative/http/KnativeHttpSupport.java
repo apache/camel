@@ -103,7 +103,7 @@ public final class KnativeHttpSupport {
     }
 
     /**
-     * Retrieve router from given CamelContext or create new instance.
+     * Retrieve router from given CamelContext using the default platform http router name.
      *
      * @param  camelContext the current context.
      * @return              router
@@ -114,15 +114,10 @@ public final class KnativeHttpSupport {
             return router;
         }
 
-        router = CamelContextHelper.lookup(
+        return CamelContextHelper.lookup(
                 camelContext,
                 PLATFORM_HTTP_ROUTER_NAME,
                 Router.class);
-        if (router != null) {
-            return router;
-        }
-
-        return Router.router(lookupVertxInstance(camelContext));
     }
 
     /**

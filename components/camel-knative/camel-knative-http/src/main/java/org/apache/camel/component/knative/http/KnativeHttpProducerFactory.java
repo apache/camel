@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.knative.spi.KnativeProducerFactory;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.component.knative.spi.KnativeTransportConfiguration;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 public class KnativeHttpProducerFactory extends ServiceSupport implements CamelContextAware, KnativeProducerFactory {
@@ -39,6 +40,10 @@ public class KnativeHttpProducerFactory extends ServiceSupport implements CamelC
     }
 
     public KnativeHttpProducerFactory setVertx(Vertx vertx) {
+        if (ServiceHelper.isStarted(this)) {
+            throw new IllegalArgumentException("Can't set the Vertx instance after the service has been started");
+        }
+
         this.vertx = vertx;
         return this;
     }
