@@ -64,21 +64,25 @@ include::partial$component-endpoint-headers.adoc[]
 === Authentication Information
 
 You have three different Credential Types: AZURE_IDENTITY, TOKEN_CREDENTIAL and CONNECTION_STRING. You can also provide a client instance yourself.
-To use this component, you have 3 options in order to provide the required Azure authentication information:
+To use this component, you have three options to provide the required Azure authentication information:
 
-CONNECTION_STRING:
+*CONNECTION_STRING*:
+
 - Provide `connectionString` string it is the simplest option to get started.
 
-TOKEN_CREDENTIAL:
-- Provide an implementation of `com.azure.core.credential.TokenCredential` into the Camel's Registry, e.g. using the `com.azure.identity.DefaultAzureCredentialBuilder().build();` API.
+*TOKEN_CREDENTIAL*:
+
+- Provide an implementation of `com.azure.core.credential.TokenCredential` into the Camel's Registry, e.g., using the `com.azure.identity.DefaultAzureCredentialBuilder().build();` API.
 See the documentation https://docs.microsoft.com/en-us/azure/active-directory/authentication/overview-authentication[here about Azure-AD authentication].
 
-AZURE_IDENTITY:
+*AZURE_IDENTITY*:
+
 - This will use `com.azure.identity.DefaultAzureCredentialBuilder().build();` instance. This will follow the Default Azure Credential Chain.
 See the documentation https://docs.microsoft.com/en-us/azure/active-directory/authentication/overview-authentication[here about Azure-AD authentication].
 
-Client instance:
-- You can provide a `com.azure.messaging.servicebus.ServiceBusSenderAsyncClient` for sending message and/or `com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient` to receive messages. If you provide the instances they will be autowired.
+*Client instance*:
+
+- You can provide a `com.azure.messaging.servicebus.ServiceBusSenderAsyncClient` for sending message and/or `com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient` to receive messages. If you provide the instances, they will be autowired.
 
 === Message Body
 In the producer, this component accepts message body of `String`, `byte[]` and `BinaryData` types or `List<String>`, `List<byte[]>` and `List<BinaryData>` to send batch messages.
