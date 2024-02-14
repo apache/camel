@@ -53,4 +53,9 @@ public @interface DataTypeTransformer {
      */
     String toType() default "";
 
+    /**
+     * A human-readable description of what this transformer can do.
+     */
+    String description() default "";
+
 }

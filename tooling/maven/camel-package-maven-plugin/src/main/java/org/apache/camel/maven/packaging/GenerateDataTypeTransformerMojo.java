@@ -140,6 +140,10 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
             if (to != null) {
                 model.setFrom(to.value().toString());
             }
+            var desc = a.value("description");
+            if (desc != null) {
+                model.setDescription(desc.value().toString());
+            }
             models.add(model);
         });
         models.sort(Comparator.comparing(DataTypeTransformerModel::getName));
@@ -166,6 +170,10 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
 
     private JsonObject asJsonObject(DataTypeTransformerModel model) {
         JsonObject jo = new JsonObject();
+        // we need to know the maven GAV also
+        jo.put("groupId", project.getGroupId());
+        jo.put("artifactId", project.getArtifactId());
+        jo.put("version", project.getVersion());
         jo.put("className", model.getClassName());
         jo.put("name", model.getName());
         if (model.getFrom() != null) {
@@ -174,11 +182,10 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         if (model.getTo() != null) {
             jo.put("to", model.getTo());
         }
+        if (model.getDescription() != null) {
+            jo.put("description", model.getDescription());
+        }
         return jo;
-    }
-
-    private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^A-Za-z0-9-]", "-");
     }
 
 }

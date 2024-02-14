@@ -1,0 +1,12 @@
+{
+  "groupId": "org.apache.camel",
+  "artifactId": "camel-azure-storage-blob",
+  "version": "4.4.0-SNAPSHOT",
+  "transformers": [
+    {
+      "className": "org.apache.camel.component.azure.storage.blob.transform.AzureStorageBlobCloudEventDataTypeTransformer",
+      "name": "azure-storage-blob:application-cloudevents"
+    }
+  ]
+}
+
