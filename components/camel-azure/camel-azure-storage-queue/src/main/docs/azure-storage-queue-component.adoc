@@ -16,7 +16,7 @@
 *{component-header}*
 
 The Azure Storage Queue component supports storing and retrieving the messages to/from
-https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service using *Azure APIs v12*. However in case of versions above v12,
+https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service using *Azure APIs v12*. However, in the case of versions above v12,
 we will see if this component can adopt these changes depending on how much breaking changes can result.
 
 Prerequisites
@@ -44,12 +44,13 @@ for this component:
 azure-storage-queue://accountName[/queueName][?options]
 ------------------------------
 
-In case of consumer, accountName and queueName are required. In case of producer, it depends on the operation that being
-requested, for example if operation is on a service level, e.b: listQueues, only accountName is required, but in case
-of operation being requested on the queue level, e.g: createQueue, sendMessage.. etc, both accountName and queueName are required.
+In the case of consumer, `accountName` and `queueName` are required.
+
+In the case of producer, it depends on the operation that being requested, for example, if operation is on a service level, e.b: `listQueues`, only `accountName` is required, but in the case
+of operation being requested on the queue level, e.g.: `createQueue, `sendMessage`, etc., both `accountName` and `queueName` are required.
 
 The queue will be created if it does not already exist.
-You can append query options to the URI in the following format, ?options=value&option2=value&...
+You can append query options to the URI in the following format: `?options=value&option2=value&...`
 
 
 // component-configure options: START
@@ -69,7 +70,7 @@ include::partial$component-endpoint-options.adoc[]
 
 *Required information options:*
 
-To use this component, you have multiple options in order to provide the required Azure authentication information:
+To use this component, you have multiple options to provide the required Azure authentication information:
 
 - By providing your own QueueServiceClient instance which can be injected into `serviceClient`.
 - Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. 
@@ -79,7 +80,7 @@ To use this component, you have multiple options in order to provide the require
 
 == Usage
 
-For example in order to get a message content from the queue `messageQueue`
+For example, to get a message content from the queue `messageQueue`
 in the `storageAccount` storage account and, use the following snippet:
 
 [source,java]
@@ -121,12 +122,12 @@ from("azure-storage-queue://cameldev/queue1?serviceClient=#client")
 === Automatic detection of QueueServiceClient client in registry
 
 The component is capable of detecting the presence of an QueueServiceClient bean into the registry.
-If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter, like the example above.
+If it's the only instance of that type, it will be used as the client, and you won't have to define it as uri parameter, like the example above.
 This may be really useful for smarter configuration of the endpoint.
 
 === Azure Storage Queue Producer operations
 
-Camel Azure Storage Queue component provides wide range of operations on the producer side:
+Camel Azure Storage Queue component provides a wide range of operations on the producer side:
 
 *Operations on the service level*
 
@@ -147,10 +148,10 @@ For these operations, `accountName` and `queueName` are *required*.
 |`createQueue` | Creates a new queue.
 |`deleteQueue` | Permanently deletes the queue.
 |`clearQueue`| Deletes all messages in the queue..
-|`sendMessage`| *Default Producer Operation* Sends a message with a given time-to-live and a timeout period where the message is invisible in the queue. The message text is evaluated from the exchange message body.
-                By default, if the queue doesn`t exist, it will create an empty queue first. If you want to disable this, set the config `createQueue` or header `CamelAzureStorageQueueCreateQueue` to `false`.
+|`sendMessage`| *Default Producer Operation* Sends a message with a given time-to-live and timeout period where the message is invisible in the queue. The message text is evaluated from the exchange message body.
+                By default, if the queue doesn't exist, it will create an empty queue first. If you want to disable this, set the config `createQueue` or header `CamelAzureStorageQueueCreateQueue` to `false`.
 |`deleteMessage`| Deletes the specified message in the queue.
-|`receiveMessages`|  Retrieves up to the maximum number of messages from the queue and hides them from other operations for the timeout period. However it will not dequeue the message from the queue due to reliability reasons.
+|`receiveMessages`|  Retrieves up to the maximum number of messages from the queue and hides them from other operations for the timeout period. However, it will not dequeue the message from the queue due to reliability reasons.
 |`peekMessages`| Peek messages from the front of the queue up to the maximum number of messages.
 |`updateMessage`| Updates the specific message in the queue with a new message and resets the visibility timeout. The message text is evaluated from the exchange message body.
 |===
@@ -158,7 +159,7 @@ For these operations, `accountName` and `queueName` are *required*.
 Refer to the example section in this page to learn how to use these operations into your camel application.
 
 === Consumer Examples
-To consume a queue into a file component with maximum 5 messages in one batch, this can be done like this:
+To consume a queue into a file component with maximum five messages in one batch, this can be done like this:
 
 [source,java]
 -----------------------------------------------------------------------
@@ -175,7 +176,7 @@ from("direct:start")
     .process(exchange -> {
       // set the header you want the producer to evaluate, refer to the previous
       // section to learn about the headers that can be set
-      // e.g, to only returns list of queues with 'awesome' prefix:
+      // e.g., to only returns a list of queues with 'awesome' prefix:
       exchange.getIn().setHeader(QueueConstants.QUEUES_SEGMENT_OPTIONS, new QueuesSegmentOptions().setPrefix("awesome"));
      })
     .to("azure-storage-queue://cameldev?serviceClient=#client&operation=listQueues")
@@ -192,7 +193,7 @@ from("direct:start")
     .process(exchange -> {
       // set the header you want the producer to evaluate, refer to the previous
       // section to learn about the headers that can be set
-      // e.g:
+      // e.g.:
       exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
      })
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=createQueue");
@@ -206,7 +207,7 @@ from("direct:start")
     .process(exchange -> {
       // set the header you want the producer to evaluate, refer to the previous
       // section to learn about the headers that can be set
-      // e.g:
+      // e.g.:
       exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
      })
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=deleteQueue");
@@ -220,7 +221,7 @@ from("direct:start")
     .process(exchange -> {
       // set the header you want the producer to evaluate, refer to the previous
       // section to learn about the headers that can be set
-      // e.g:
+      // e.g.:
       exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
      })
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=clearQueue");
@@ -234,7 +235,7 @@ from("direct:start")
     .process(exchange -> {
       // set the header you want the producer to evaluate, refer to the previous
       // section to learn about the headers that can be set
-      // e.g:
+      // e.g.:
       exchange.getIn().setBody("message to send");
       // we set a visibility of 1min
       exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMinutes(1));
@@ -250,7 +251,7 @@ from("direct:start")
     .process(exchange -> {
       // set the header you want the producer to evaluate, refer to the previous
       // section to learn about the headers that can be set
-      // e.g:
+      // e.g.:
       // Mandatory header:
       exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
       // Mandatory header:
@@ -293,7 +294,7 @@ from("direct:start")
    .process(exchange -> {
        // set the header you want the producer to evaluate, refer to the previous
        // section to learn about the headers that can be set
-       // e.g:
+       // e.g.:
        exchange.getIn().setBody("new message text");
        // Mandatory header:
        exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
@@ -308,7 +309,7 @@ from("direct:start")
 
 === Development Notes (Important)
 
-When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests
+When developing on this component, you will need to obtain your Azure `accessKey` to run the integration tests. In addition to the mocked unit tests,
 you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
 To run the integration tests, on this component directory, run the following maven command:
 
