@@ -1,0 +1,12 @@
+{
+  "transformers": [
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-google-storage",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.google.storage.transform.GoogleStorageCloudEventDataTypeTransformer",
+      "name": "google-storage:application-cloudevents"
+    }
+  ]
+}
+

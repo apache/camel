@@ -155,7 +155,9 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                     JsonObject jo = asJsonObject(model);
                     arr.add(jo);
                 }
-                String json = arr.toJson();
+                JsonObject root = new JsonObject();
+                root.put("transformers", arr);
+                String json = root.toJson();
                 json = Jsoner.prettyPrint(json, 2);
 
                 // we need to store in META-INF to avoid confusing with component json

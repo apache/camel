@@ -1,0 +1,19 @@
+{
+  "transformers": [
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-cloudevents",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.cloudevents.transformer.CloudEventJsonDataTypeTransformer",
+      "name": "application-cloudevents+json"
+    },
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-cloudevents",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.cloudevents.transformer.CloudEventHttpDataTypeTransformer",
+      "name": "http:application-cloudevents"
+    }
+  ]
+}
+

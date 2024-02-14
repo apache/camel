@@ -1,0 +1,26 @@
+{
+  "transformers": [
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-jackson",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.jackson.transform.JsonDataTypeTransformer",
+      "name": "application-json"
+    },
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-jackson",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.jackson.transform.JsonPojoDataTypeTransformer",
+      "name": "application-x-java-object"
+    },
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-jackson",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.jackson.transform.JsonStructDataTypeTransformer",
+      "name": "application-x-struct"
+    }
+  ]
+}
+

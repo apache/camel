@@ -1,0 +1,12 @@
+{
+  "transformers": [
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-azure-storage-queue",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.azure.storage.queue.transform.AzureStorageQueueCloudEventDataTypeTransformer",
+      "name": "azure-storage-queue:application-cloudevents"
+    }
+  ]
+}
+

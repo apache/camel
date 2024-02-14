@@ -1,0 +1,26 @@
+{
+  "transformers": [
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-jackson-protobuf",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.jackson.protobuf.transform.ProtobufBinaryDataTypeTransformer",
+      "name": "protobuf-binary"
+    },
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-jackson-protobuf",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.jackson.protobuf.transform.ProtobufPojoDataTypeTransformer",
+      "name": "protobuf-x-java-object"
+    },
+    {
+      "groupId": "org.apache.camel",
+      "artifactId": "camel-jackson-protobuf",
+      "version": "4.4.0-SNAPSHOT",
+      "className": "org.apache.camel.component.jackson.protobuf.transform.ProtobufStructDataTypeTransformer",
+      "name": "protobuf-x-struct"
+    }
+  ]
+}
+
