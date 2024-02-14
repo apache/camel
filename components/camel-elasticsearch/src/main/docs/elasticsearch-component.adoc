@@ -56,8 +56,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Message Operations
 
-The following ElasticSearch operations are currently supported. Simply
-set an endpoint URI option or exchange header with a key of "operation"
+The following ElasticSearch operations are currently supported.
+Set an endpoint URI option or exchange header with a key of "operation"
 and a value set to one of the following. Some operations also require
 other parameters or the message body to be set.
 
@@ -70,7 +70,7 @@ You can set the name of the target index by setting the message header with the 
 You can set the indexId by setting the message header with
 the key "indexId".
 
-|GetById |*String* or *GetRequest.Builder* index id of content to retrieve |Retrieves the document corresponding to the given index id and returns a GetResponse object in the body.
+|GetById |*String* or *GetRequest.Builder* index id of content to retrieve |Retrieves the document corresponding to the given index id and returns a `GetResponse` object in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the type of document by setting the message header with
 the key "documentClass".
@@ -95,7 +95,7 @@ You can set the starting document offset by setting the message header with the 
 
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|Exists |None |Checks whether the index exists or not and returns a Boolean flag in the body.
+|Exists |None |Check whether the index exists or not and returns a Boolean flag in the body.
 
 You must set the name of the target index by setting the message header with the key "indexName".
 
@@ -111,7 +111,7 @@ to configure it globally at the component level thanks to the option _enableDocu
 |===
 
 == Configure the component and enable basic authentication
-To use the Elasticsearch component it has to be configured with a minimum configuration.
+To use the Elasticsearch component, it has to be configured with a minimum configuration.
 
 [source,java]
 ----
@@ -153,7 +153,7 @@ from("direct:index")
 </route>
 ----
 
-*For this operation you'll need to specify a indexId header.*
+*For this operation, you'll need to specify an `indexId` header.*
 
 A client would simply need to pass a body message containing a Map to
 the route. The result body contains the indexId created.
@@ -207,7 +207,7 @@ HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMeta
 
 ----
 
-Search using Elasticsearch scroll api in order to fetch all results.
+Search using Elasticsearch scroll api to fetch all results.
 
 [source,java]
 ----
@@ -246,7 +246,7 @@ from("direct:search")
 
 == MultiSearch Example
 
-MultiSearching on specific field(s) and value use the Operation ´MultiSearch´.
+MultiSearching on specific field(s) and value uses the Operation ´MultiSearch´.
 Pass in the MultiSearchRequest instance
 
 [source,java]
@@ -277,7 +277,7 @@ List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSe
 
 == Document type
 
-For all the search operations, it is possible to indicate the type of document to retrieve in order to get the result already unmarshalled with the expected type.
+For all the search operations, it is possible to indicate the type of document to retrieve to get the result already unmarshalled with the expected type.
 
 The document type can be set using the header "documentClass" or via the uri parameter of the same name.
 
@@ -299,7 +299,7 @@ This is needed because Spring Boot v2 provides jakarta.json-api:1.1.6, and Elast
 
 === Use RestClient provided by Spring Boot
 
-By default Spring Boot will auto configure an Elasticsearch RestClient that will be used by camel, it is possible to customize the client with the following basic properties:
+By default, Spring Boot will auto configure an Elasticsearch RestClient that will be used by camel, it is possible to customize the client with the following basic properties:
 
 [source,properties]
 ----
@@ -312,7 +312,7 @@ More information can be found in https://docs.spring.io/spring-boot/docs/current
 
 === Disable Sniffer when using Spring Boot
 
-When Spring Boot is on the classpath the Sniffer client for Elasticsearch is enabled by default. This option can be disabled in the Spring Boot Configuration:
+When Spring Boot is on the classpath, the Sniffer client for Elasticsearch is enabled by default. This option can be disabled in the Spring Boot Configuration:
 
 [source,yaml]
 ----
