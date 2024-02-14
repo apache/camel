@@ -38,25 +38,19 @@ import org.apache.camel.spi.annotations.ServiceFactory;
 public @interface DataTypeTransformer {
 
     /**
-     * Data type transformer name. Identifies the data type transformer. Should be unique in the Camel context. Can be a
-     * combination of scheme and name. Is used to detect/reference the transformer when specifying input/output data
-     * types on routes.
-     *
-     * @return the data type transformer name.
+     * Data type transformer name. Identifies the data type transformer. It Should be unique in the Camel context. It
+     * Can be a combination of scheme and name. It Is used to detect/reference the transformer when specifying
+     * input/output data types on routes.
      */
     String name() default "";
 
     /**
      * Data type representing the input of the transformation. Also used to detect the transformer.
-     *
-     * @return
      */
     String fromType() default "";
 
     /**
      * Data type representing the result of the transformation. Also used to detect the transformer.
-     *
-     * @return
      */
     String toType() default "";
 

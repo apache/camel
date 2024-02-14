@@ -69,8 +69,6 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Get the transformer name that represents the supported data type model.
-     *
-     * @return
      */
     public String getName() {
         return name;
@@ -92,8 +90,6 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Set the name for this transformer. Usually a combination of scheme and name.
-     *
-     * @param name the transformer name
      */
     public Transformer setName(String name) {
         this.name = name;
@@ -101,7 +97,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     }
 
     /**
-     * Set the scheme and/or name for this transformer. When using only a scheme the transformer applies to all
+     * Set the scheme and/or name for this transformer. When using only a scheme, the transformer applies to all
      * transformations with that scheme.
      *
      * @param scheme supported data type scheme
@@ -122,8 +118,6 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Set 'from' data type.
-     *
-     * @param from 'from' data type
      */
     public Transformer setFrom(String from) {
         this.from = new DataType(from);
@@ -132,8 +126,6 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Set 'to' data type.
-     *
-     * @param to 'to' data type
      */
     public Transformer setTo(String to) {
         this.to = new DataType(to);
@@ -155,8 +147,4 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
         return String.format("%s[name='%s', from='%s', to='%s']", this.getClass().getSimpleName(), name, from, to);
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        // no-op
-    }
 }
