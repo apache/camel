@@ -160,8 +160,9 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which the Eventbridge client needs to work. When using this parameter, the configuration will expect
-     * the lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * The region in which the Eventbridge client needs to work. When using this parameter, the configuration will
+     * expect the lowercase name of the region (for example, ap-east-1) You'll need to use the name
+     * Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -216,8 +217,8 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
-     * option
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
@@ -262,8 +263,8 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * Set whether the Eventbridge client should expect to use Session Credentials. This is useful in a situation in which
-     * the user needs to assume an IAM role for doing operations in Eventbridge.
+     * Set whether the Eventbridge client should expect to use Session Credentials. This is useful in a situation in
+     * which the user needs to assume an IAM role for doing operations in Eventbridge.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;

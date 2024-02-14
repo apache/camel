@@ -65,7 +65,7 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autocreation of the queue.
+         * Setting the auto-creation of the queue.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -97,7 +97,7 @@ public interface Aws2SqsComponentBuilderFactory {
         }
         /**
          * Set the need for overriding the endpoint. This option needs to be
-         * used in combination with uriEndpointOverride option.
+         * used in combination with the uriEndpointOverride option.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -129,7 +129,7 @@ public interface Aws2SqsComponentBuilderFactory {
         }
         /**
          * Specify the queue owner aws account id when you need to connect the
-         * queue with different account owner.
+         * queue with a different account owner.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -146,7 +146,7 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * The region in which SQS client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
-         * region (for example ap-east-1) You'll need to use the name
+         * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -267,8 +267,8 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether or not to send the DeleteMessage to the SQS queue if the
-         * exchange has property with key Sqs2Constants#SQS_DELETE_FILTERED
+         * Whether to send the DeleteMessage to the SQS queue if the exchange
+         * has property with key Sqs2Constants#SQS_DELETE_FILTERED
          * (CamelAwsSqsDeleteFiltered) set to true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -285,7 +285,7 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * If enabled then a scheduled background task will keep extending the
+         * If enabled, then a scheduled background task will keep extending the
          * message visibility on SQS. This is needed if it takes a long time to
          * process the message. If set to true defaultVisibilityTimeout must be
          * set. See details at Amazon docs.
@@ -374,8 +374,8 @@ public interface Aws2SqsComponentBuilderFactory {
          * subsequent retrieve requests after being retrieved by a
          * ReceiveMessage request to set in the
          * com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only
-         * make sense if its different from defaultVisibilityTimeout. It changes
-         * the queue visibility timeout attribute permanently.
+         * makes sense if it's different from defaultVisibilityTimeout. It
+         * changes the queue visibility timeout attribute permanently.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -463,9 +463,10 @@ public interface Aws2SqsComponentBuilderFactory {
         }
         /**
          * Only for FIFO queues. Strategy for setting the messageDeduplicationId
-         * on the message. Can be one of the following options: useExchangeId,
-         * useContentBasedDeduplication. For the useContentBasedDeduplication
-         * option, no messageDeduplicationId will be set on the message.
+         * on the message. It can be one of the following options:
+         * useExchangeId, useContentBasedDeduplication. For the
+         * useContentBasedDeduplication option, no messageDeduplicationId will
+         * be set on the message.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -482,7 +483,7 @@ public interface Aws2SqsComponentBuilderFactory {
         }
         /**
          * Only for FIFO queues. Strategy for setting the messageGroupId on the
-         * message. Can be one of the following options: useConstant,
+         * message. It can be one of the following options: useConstant,
          * useExchangeId, usePropertyValue. For the usePropertyValue option, the
          * value of property CamelAwsMessageGroupId will be used.
          * 
@@ -500,13 +501,13 @@ public interface Aws2SqsComponentBuilderFactory {
         }
         /**
          * What to do if sending to AWS SQS has more messages than AWS allows
-         * (currently only maximum 10 message headers is allowed). WARN will log
-         * a WARN about the limit is for each additional header, so the message
-         * can be sent to AWS. WARN_ONCE will only log one time a WARN about the
-         * limit is hit, and drop additional headers, so the message can be sent
-         * to AWS. IGNORE will ignore (no logging) and drop additional headers,
-         * so the message can be sent to AWS. FAIL will cause an exception to be
-         * thrown and the message is not sent to AWS.
+         * (currently only maximum 10 message headers are allowed). WARN will
+         * log a WARN about the limit is for each additional header, so the
+         * message can be sent to AWS. WARN_ONCE will only log one time a WARN
+         * about the limit is hit, and drop additional headers, so the message
+         * can be sent to AWS. IGNORE will ignore (no logging) and drop
+         * additional headers, so the message can be sent to AWS. FAIL will
+         * cause an exception to be thrown and the message is not sent to AWS.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -539,7 +540,7 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * To use the AmazonSQS as client.
+         * To use the AmazonSQS client.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
@@ -726,7 +727,7 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * To define the queueUrl explicitly. All other parameters, which would
          * influence the queueUrl, are ignored. This parameter is intended to be
-         * used, to connect to a mock implementation of SQS, for testing
+         * used to connect to a mock implementation of SQS, for testing
          * purposes.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -788,7 +789,7 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
+         * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -818,7 +819,7 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -886,8 +887,8 @@ public interface Aws2SqsComponentBuilderFactory {
         }
         /**
          * Set whether the SQS client should expect to use Session Credentials.
-         * This is useful in situation in which the user needs to assume a IAM
-         * role for doing operations in SQS.
+         * This is useful in a situation in which the user needs to assume an
+         * IAM role for doing operations in SQS.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

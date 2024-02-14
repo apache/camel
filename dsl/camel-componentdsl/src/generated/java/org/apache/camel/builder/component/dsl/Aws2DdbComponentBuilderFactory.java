@@ -65,8 +65,8 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Determines whether or not strong consistency should be enforced when
-         * data is read.
+         * Determines whether strong consistency should be enforced when data is
+         * read.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -184,7 +184,7 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Set the need for overidding the endpoint. This option needs to be
+         * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
