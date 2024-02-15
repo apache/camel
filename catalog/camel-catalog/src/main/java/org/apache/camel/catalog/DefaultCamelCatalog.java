@@ -44,6 +44,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -62,7 +63,9 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public static final String FIND_DATA_FORMAT_NAMES = "findDataFormatNames";
     public static final String LIST_DATA_FORMATS_AS_JSON = "listDataFormatsAsJson";
     public static final String FIND_LANGUAGE_NAMES = "findLanguageNames";
+    public static final String FIND_TRANSFORMER_NAMES = "findTransformerNames";
     public static final String LIST_LANGUAGES_AS_JSON = "listLanguagesAsJson";
+    public static final String LIST_TRANSFORMERS_AS_JSON = "listTransformersAsJson";
 
     private final VersionHelper version = new VersionHelper();
 
@@ -224,6 +227,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
+    public List<String> findTransformerNames() {
+        return cache(FIND_TRANSFORMER_NAMES, runtimeProvider::findTransformerNames);
+    }
+
+    @Override
     public List<String> findModelNames() {
         return cache("findModelNames", () -> {
             try (InputStream is = versionManager.getResourceAsStream(MODELS_CATALOG)) {
@@ -329,8 +337,18 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
+    public String transformerJSonSchema(String name) {
+        return cache("transformer-" + name, name, super::transformerJSonSchema);
+    }
+
+    @Override
     public LanguageModel languageModel(String name) {
         return cache("language-model-" + name, name, super::languageModel);
+    }
+
+    @Override
+    public TransformerModel transformerModel(String name) {
+        return cache("transformer-model-" + name, name, super::transformerModel);
     }
 
     @Override
@@ -426,6 +444,15 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::languageJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("language"))
+                .toList()));
+    }
+
+    @Override
+    public String listTransformersAsJson() {
+        return cache(LIST_TRANSFORMERS_AS_JSON, () -> JsonMapper.serialize(findTransformerNames().stream()
+                .map(this::transformerJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("transformer"))
                 .toList()));
     }
 

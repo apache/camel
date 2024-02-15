@@ -53,6 +53,7 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
@@ -110,6 +111,15 @@ public abstract class AbstractCamelCatalog {
     public LanguageModel languageModel(String name) {
         String json = languageJSonSchema(name);
         return json != null ? JsonMapper.generateLanguageModel(json) : null;
+    }
+
+    public String transformerJSonSchema(String name) {
+        return getJSonSchemaResolver().getTransformerJSonSchema(name);
+    }
+
+    public TransformerModel transformerModel(String name) {
+        String json = transformerJSonSchema(name);
+        return json != null ? JsonMapper.generateTransformerModel(json) : null;
     }
 
     public String otherJSonSchema(String name) {

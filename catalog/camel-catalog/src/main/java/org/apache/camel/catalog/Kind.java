@@ -23,6 +23,7 @@ public enum Kind {
     component,
     dataformat,
     language,
+    transformer,
     other,
     eip
 }

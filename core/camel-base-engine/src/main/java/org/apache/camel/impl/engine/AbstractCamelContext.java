@@ -1463,8 +1463,24 @@ public abstract class AbstractCamelContext extends BaseService
         return null;
     }
 
+    @Override
+    public String getTransformerParameterJsonSchema(String transformerName) throws IOException {
+        String name = sanitizeFileName(transformerName) + ".json";
+        String path = DefaultTransformerResolver.DATA_TYPE_TRANSFORMER_RESOURCE_PATH + name;
+        String inputStream = doLoadResource(transformerName, path, "transformer");
+        if (inputStream != null) {
+            return inputStream;
+        }
+        return null;
+    }
+
     // Helper methods
     // -----------------------------------------------------------------------
+
+    private String sanitizeFileName(String fileName) {
+        return fileName.replaceAll("[^A-Za-z0-9-]", "-");
+    }
+
     @Override
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until

@@ -109,6 +109,12 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getTransformerJSonSchema(String name) {
+        final String file = camelCatalog.getRuntimeProvider().getTransformerJSonSchemaDirectory() + "/" + name + EXTENSION;
+        return loadResourceFromVersionManager(file);
+    }
+
+    @Override
     public String getModelJSonSchema(String name) {
         final String file = MODEL_DIR + "/" + name + EXTENSION;
 
