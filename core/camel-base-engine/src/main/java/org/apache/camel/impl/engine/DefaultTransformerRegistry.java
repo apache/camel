@@ -142,11 +142,15 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
 
         if (answer == null) {
             if (transformerResolver == null) {
-                TransformerResolver<?> contextResolver = context.getRegistry().findSingleByType(TransformerResolver.class);
-                if (contextResolver != null) {
-                    transformerResolver = (TransformerResolver<TransformerKey>) contextResolver;
+                TransformerResolver<?> resolver = context.getRegistry().findSingleByType(TransformerResolver.class);
+                if (resolver == null) {
+                    resolver = context.getCamelContextExtension().getContextPlugin(TransformerResolver.class);
+                }
+                if (resolver != null) {
+                    transformerResolver = (TransformerResolver<TransformerKey>) resolver;
                 } else {
                     transformerResolver = new DefaultTransformerResolver();
+                    LOG.debug("Creating DefaultTransformerResolver");
                 }
             }
 
