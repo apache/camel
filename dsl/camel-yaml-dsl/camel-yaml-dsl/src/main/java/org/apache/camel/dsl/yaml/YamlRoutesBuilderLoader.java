@@ -102,6 +102,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     // API versions for Camel-K Integration and Pipe
     // we are lenient so lets just assume we can work with any of the v1 even if they evolve
     private static final String INTEGRATION_VERSION = "camel.apache.org/v1";
+    @Deprecated
     private static final String BINDING_VERSION = "camel.apache.org/v1alpha1";
     private static final String PIPE_VERSION = "camel.apache.org/v1";
     private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1";
@@ -320,7 +321,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             // camel-k: integration
             boolean integration = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(INTEGRATION_VERSION)) &&
                     anyTupleMatches(mn.getValue(), "kind", "Integration");
-            // camel-k: kamelet binding
+            // camel-k: kamelet binding (deprecated)
             boolean binding = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(BINDING_VERSION)) &&
                     anyTupleMatches(mn.getValue(), "kind", "KameletBinding");
             // camel-k: pipe
@@ -329,6 +330,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             if (integration) {
                 target = preConfigureIntegration(root, ctx, target, preParse);
             } else if (binding || pipe) {
+                if (binding) {
+                    LOG.warn("CamelK kind=KameletBinding is deprecated. Use CamelK kind=Pipe instead.");
+                }
                 target = preConfigurePipe(root, ctx, target, preParse);
             }
         }
