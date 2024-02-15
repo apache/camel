@@ -30,6 +30,10 @@ public interface STS2Constants {
     String ROLE_SESSION_NAME = "CamelAwsStsRoleSessionName";
     @Metadata(description = "The name of the federated user.", javaType = "String")
     String FEDERATED_NAME = "CamelAwsStsFederatedName";
+    @Metadata(description = "The duration, in seconds, of the role session. It could go from 900 seconds, to 1 to 12 hours (dependent on administrator settings. The default if not specified is 3600 seconds.",
+              javaType = "Integer")
+    String ASSUME_ROLE_DURATION_SECONDS = "CamelAwsStsAssumeRoleDurationSeconds";
+
     String ACCESS_KEY_ID = "CamelAwsStsAccessKeyId";
     String SECRET_KEY_ID = "CamelAwsStsSecretKey";
 }
