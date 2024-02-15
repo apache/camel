@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -59,6 +60,7 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         private String from;
         private String to;
         private String description;
+        private boolean deprecated;
 
         public String getClassName() {
             return className;
@@ -99,6 +101,14 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         public void setDescription(String description) {
             this.description = description;
         }
+
+        public boolean isDeprecated() {
+            return deprecated;
+        }
+
+        public void setDeprecated(boolean deprecated) {
+            this.deprecated = deprecated;
+        }
     }
 
     public GenerateDataTypeTransformerMojo() {
@@ -124,9 +134,13 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         List<DataTypeTransformerModel> models = new ArrayList<>();
         List<AnnotationInstance> annotations = index.getAnnotations(DATA_TYPE_ANNOTATION);
         annotations.forEach(a -> {
-            String currentClass = a.target().asClass().name().toString();
             DataTypeTransformerModel model = new DataTypeTransformerModel();
+
+            String currentClass = a.target().asClass().name().toString();
+            boolean deprecated
+                    = a.target().asClass().hasAnnotation(Deprecated.class) || project.getName().contains("(deprecated)");
             model.setClassName(currentClass);
+            model.setDeprecated(deprecated);
             var name = a.value("name");
             if (name != null) {
                 model.setName(name.value().toString());
@@ -170,20 +184,23 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
     private JsonObject asJsonObject(DataTypeTransformerModel model) {
         JsonObject jo = new JsonObject();
         // we need to know the maven GAV also
-        jo.put("groupId", project.getGroupId());
-        jo.put("artifactId", project.getArtifactId());
-        jo.put("version", project.getVersion());
-        jo.put("className", model.getClassName());
+        jo.put("kind", "transformer");
         jo.put("name", model.getName());
+        jo.put("title", asTitle(model.getName()));
+        if (model.getDescription() != null) {
+            jo.put("description", model.getDescription());
+        }
+        jo.put("deprecated", model.isDeprecated());
+        jo.put("javaType", model.getClassName());
         if (model.getFrom() != null) {
             jo.put("from", model.getFrom());
         }
         if (model.getTo() != null) {
             jo.put("to", model.getTo());
         }
-        if (model.getDescription() != null) {
-            jo.put("description", model.getDescription());
-        }
+        jo.put("groupId", project.getGroupId());
+        jo.put("artifactId", project.getArtifactId());
+        jo.put("version", project.getVersion());
         JsonObject root = new JsonObject();
         root.put("transformer", jo);
         return root;
@@ -191,6 +208,16 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
 
     private String sanitizeFileName(String fileName) {
         return fileName.replaceAll("[^A-Za-z0-9-]", "-");
+    }
+
+    private String asTitle(String name) {
+        name = Strings.camelDashToTitle(name);
+        String part = Strings.after(name, ":");
+        if (part != null) {
+            part = Strings.capitalize(part);
+            name = Strings.before(name, ":") + " (" + part + ")";
+        }
+        return name;
     }
 
 }
